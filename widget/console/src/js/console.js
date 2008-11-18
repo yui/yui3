@@ -45,7 +45,7 @@ var getCN = Y.ClassNameManager.getClassName,
     C_CONSOLE_BD       = getCN(CONSOLE,'bd'),
     C_CONSOLE_FT       = getCN(CONSOLE,'ft'),
     C_CONSOLE_CONTROLS = getCN(CONSOLE,'controls'),
-    C_TITLE            = getCN(CONSOLE,TITLE),
+    C_CONSOLE_TITLE    = getCN(CONSOLE,TITLE),
 
     RE_INLINE_SOURCE = /^(\S+)\s/,
     RE_AMP = /&/g,
@@ -114,13 +114,13 @@ Y.mix(Console, {
         console_hd_class       : C_CONSOLE_HD,
         console_bd_class       : C_CONSOLE_BD,
         console_ft_class       : C_CONSOLE_FT,
-        console_controls_class : C_LABEL,
+        console_controls_class : C_CONSOLE_CONTROLS,
         console_checkbox_class : C_CHECKBOX,
         console_pause_class    : C_PAUSE,
-        console_pause_label_class : C_CONSOLE_PAUSE_LABEL,
+        console_pause_label_class : C_PAUSE_LABEL,
         console_button_class   : C_BUTTON,
         console_clear_class    : C_CLEAR,
-        console_title_class    : C_TITLE
+        console_title_class    : C_CONSOLE_TITLE
     },
 
     HEAD_TEMPLATE    :
@@ -245,7 +245,7 @@ Y.mix(Console, {
         },
 
         lastTime : {
-            value : new Date()
+            value : new Date(),
             readOnly: true
         }
 
@@ -263,6 +263,10 @@ Y.extend(Console,Y.Widget,{
     buffer     : null,
 
     // API methods
+    log : function () {
+        return Y.log.apply(Y,arguments);
+    },
+
     clearConsole : function () {
         // TODO: clear event listeners from console contents
         this._console.set(INNER_HTML,'');
@@ -270,10 +274,14 @@ Y.extend(Console,Y.Widget,{
         this._clearTimeout();
 
         this.buffer = [];
+
+        return this;
     },
 
     reset : function () {
         this.fire(RESET);
+        
+        return this;
     },
 
     printBuffer: function () {
@@ -299,6 +307,8 @@ Y.extend(Console,Y.Widget,{
         }
 
         Y.config.debug = debug;
+
+        return this;
     },
 
     printLogEntry : function (m) {
@@ -313,6 +323,8 @@ Y.extend(Console,Y.Widget,{
         var n = create(substitute(this.get('entryTemplate'),m));
 
         this._addToConsole(n);
+
+        return this;
     },
 
     
@@ -411,7 +423,7 @@ Y.extend(Console,Y.Widget,{
         m.elapsedTime     = m.time - this.get(LAST_TIME);
         m.totalTime       = m.time - this.get(START_TIME);
 
-        this.set(LAST_TIME,m.time);
+        this._set(LAST_TIME,m.time);
 
         return m;
     },
@@ -533,7 +545,7 @@ Y.extend(Console,Y.Widget,{
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            el = cb.query(DOT+C_PAUSE_LABEL_CLASS);
+            el = cb.query(DOT+C_PAUSE_LABEL);
             if (el) {
                 el.set(INNER_HTML,after.pause);
             }
@@ -550,7 +562,7 @@ Y.extend(Console,Y.Widget,{
     _afterPausedChange : function (e) {
         var paused = e.newVal;
 
-        if (e.src !== UI) {
+        if (e.src !== Y.Widget.SRC_UI) {
             var node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
             if (node) {
                 node.set(CHECKED,paused);
