@@ -1,24 +1,70 @@
-YUI.add('node-menunav', function(Y) {
+/**
+* <p>The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, 
+* drop down navigational menus that are both accessible and easy to customize, while only requiring 
+* a small set of dependencies.</p>
+* <p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a Node instance's 
+* <code>plug</code> method.</p>
+* 
+* <code>
+* var oMenuNav = Y.Node.get("#productsandservices");<br>
+* oMenuNav.plug(Y.Plugin.NodeMenuNav);
+* </code>
+* 
+* <p>The MenuNav Node Plugin has several configuration properties that can be set via an 
+* object literal that is passed as a second argument to a Node instance's <code>plug</code> method.
+* </p>
+* 
+* <code>
+* var oMenuNav = Y.Node.get("#productsandservices");<br>
+* oMenuNav.plug(Y.Plugin.NodeMenuNav, { autoSubmenuDisplay: true });
+* </code>
+* 
+* <p> The complete list of The MenuNav Node Plugin configuration properties are:</p>
+* <dl>
+* 	<dt>useARIA</dt>
+* 		<dd>Boolean indicating if use of the WAI-ARIA Roles and States should be enabled for the 
+* 		MenuNav.  Set to true by default for Firefox 3 and Internet Explorer 8 as currently only 
+* 		these browsers have support for ARIA, and are supported by several screen readers for 
+* 		Windows that also offer support for ARIA.</dd>
+* 
+* 	<dt>autoSubmenuDisplay</dt>
+* 		<dd>Boolean indicating if submenus are automatically made visible when the user mouses over 
+* 		the menu's items.  Set to true by default.</dd>
+* 
+* 	<dt>submenuShowDelay</dt>
+* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
+* 		made visible when the user mouses over the menu's label.  Set to 250 by default.</dd>
+* 
+* 	<dt>submenuHideDelay</dt>
+* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
+* 		hidden when the user mouses out of a menu label heading in the direction of a submenu.  
+* 		Set to 250 by default.</dd>
+* 
+* 	<dt>mouseOutHideDelay</dt>
+* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
+* 		hidden when the user mouses out of it.  Set to 750 by default.</dd>
+* </dl>
+* 
+* @module nodemenunav
+*/
 
-// Util shortcuts
+	//	Util shortcuts
 
 var UA = Y.UA,
 	Lang = Y.Lang,
-	Later = Lang.later,
+	later = Y.later,
 	getClassName = Y.ClassNameManager.getClassName,
 
 
-	// Native types
+	//	Native types
 
 	TRUE = true,
 	FALSE = false,
 	NULL = null,
 
 
-	IFrameTemplate = NULL,
 
-
-	// Frequently used strings
+	//	Frequently used strings
 
 	MENU = "menu",
 	MENUITEM = "menuitem",
@@ -40,9 +86,10 @@ var UA = Y.UA,
 	KEYDOWN = "keydown",
 	CLICK = "click",
 	EMPTY_STRING = "",
+	FIRST_OF_TYPE = "first-of-type",
 
 
-	// CSS class names
+	//	CSS class names
 
 	CSS_MENU = getClassName(MENU),
 	CSS_MENU_HIDDEN = getClassName(MENU, HIDDEN),
@@ -52,19 +99,17 @@ var UA = Y.UA,
 	CSS_MENU_LABEL_MENUVISIBLE = getClassName(MENU, LABEL, (MENU + "visible")),
 	CSS_MENUITEM = getClassName(MENUITEM),
 	CSS_MENUITEM_ACTIVE = getClassName(MENUITEM, ACTIVE),
-	CSS_SHIM = getClassName("shim"),
 
 
-	// CSS selectors
+	//	CSS selectors
 	
-	MENU_SELECTOR = PERIOD + CSS_MENU,
-	FIRST_CHILD_SELECTOR = ":first-child";
+	MENU_SELECTOR = PERIOD + CSS_MENU;
 
 
-// Utility functions
+//	Utility functions
 
 
-// TO DO: Can Node implement this circular functionality?
+//	TO DO: Remove once Node implements circular functionality
 var getPreviousSibling = function (node) {
 
 	var oPrevious = node.previous(),
@@ -73,7 +118,7 @@ var getPreviousSibling = function (node) {
 
 	if (!oPrevious) {
 		oChildren = node.get(PARENT_NODE).get(CHILDREN);
-		oPrevious = oChildren.item(oChildren.get("length") - 1);
+		oPrevious = oChildren.item(oChildren.size() - 1);
 	}
 	
 	return oPrevious;
@@ -81,7 +126,7 @@ var getPreviousSibling = function (node) {
 };
 
 
-// TO DO: Can Node implement this circular functionality?
+//	TO DO: Remove once Node implements circular functionality
 var getNextSibling = function (node) {
 
 	var oNext = node.next(),
@@ -176,7 +221,7 @@ var hasVisibleSubmenu = function (menuLabel) {
 
 var getItemAnchor = function (node) {
 
-	return isAnchor(node) ? node : node.query((LOWERCASE_A + FIRST_CHILD_SELECTOR));
+	return isAnchor(node) ? node : node.query(LOWERCASE_A);
 
 };
 
@@ -190,15 +235,9 @@ var getNodeWithClass = function (node, className, searchAncestors) {
 		if (node.hasClass(className)) {
 			oItem = node;
 		}
-		else {
 		
-			if (searchAncestors) {
-				oItem = node.ancestor((PERIOD + className));
-			}
-			else if (className === CSS_MENU_LABEL) {	// Avoid false positives 
-				oItem = node.query((PERIOD + className + FIRST_CHILD_SELECTOR));
-			}
-		
+		if (!oItem && searchAncestors) {
+			oItem = node.ancestor((PERIOD + className));
 		}
 	
 	}
@@ -240,7 +279,14 @@ var getMenuLabel = function (node, searchAncestors) {
 	var oItem;
 	
 	if (node) {
-		oItem = getNodeWithClass(node, CSS_MENU_LABEL, searchAncestors);
+	
+		if (searchAncestors) {
+			oItem = getNodeWithClass(node, CSS_MENU_LABEL, searchAncestors);
+		}
+		else {
+			oItem = getNodeWithClass(node, CSS_MENU_LABEL) || node.query((PERIOD + CSS_MENU_LABEL));
+		}
+		
 	}
 	
 	return oItem;
@@ -292,7 +338,7 @@ var getPreviousItem = function (item) {
 
 var getFirstItem = function (menu) {
 	
-	return getItem(menu.query(("li" + FIRST_CHILD_SELECTOR)));
+	return getItem(menu.query("li"));
 
 };
 
@@ -308,7 +354,7 @@ var blurItem = function (item) {
 
 	var oAnchor = getItemAnchor(item);
 
-	// TO DO:  The try/catch should be implemented in Node
+	//	TO DO:  Remove once implemented in Node
 	try {
 		oAnchor.blur();
 	}
@@ -321,7 +367,7 @@ var focusItem = function (item) {
 
 	var oAnchor = getItemAnchor(item);
 
-	// TO DO:  The try/catch should be implemented in Node
+	//	TO DO:  Remove once implemented in Node
 	try {
 		oAnchor.focus();
 	}
@@ -340,7 +386,7 @@ var handleMouseOverForNode = function (node, target) {
 var handleMouseOutForNode = function (node, relatedTarget) {
 
 	return node && !node[HANDLED_MOUSEOUT] && 
-			(node !== relatedTarget && !node.contains(relatedTarget));
+		(node !== relatedTarget && !node.contains(relatedTarget));
 
 };
 
@@ -350,15 +396,19 @@ var MenuNav = function (config) {
 	var menuNav = this,
 		oRootMenu = config.owner,
 		oDocument,
-		oLIs,
 		oSubmenu,
-		oFirstAnchor,
 		sID,
 		bUseARIA,
 		bAutoSubmenuDisplay,
 		nMouseOutHideDelay,
 		oMenuLabel,
-		oMenuToggle;
+		oMenuToggle,
+		oListNodes,
+		oMenuNodes,
+		oMenuItemContentNodes,
+		oMenuLabelNodes,
+		oFirstItem,
+		oULs;
 		
 
 	if (oRootMenu) {
@@ -368,14 +418,15 @@ var MenuNav = function (config) {
 		nMouseOutHideDelay = config.mouseOutHideDelay;
 		
 
-		// Enable ARIA for Firefox 3 and IE 8 by default since those are the two browsers 
-		// that current support ARIA
+		//	Enable ARIA for Firefox 3 and IE 8 by default since those are the two browsers 
+		//	that current support ARIA
 
 		menuNav._useARIA = Lang.isBoolean(bUseARIA) ? 
 						bUseARIA : ((UA.gecko && UA.gecko >= 1.9) || (UA.ie && UA.ie >= 8));
 
 
-		menuNav._autoSubmenuDisplay = Lang.isBoolean(bAutoSubmenuDisplay) ? bAutoSubmenuDisplay : TRUE;
+		menuNav._autoSubmenuDisplay = 
+					Lang.isBoolean(bAutoSubmenuDisplay) ? bAutoSubmenuDisplay : TRUE;
 
 		menuNav._submenuShowDelay = config.submenuShowDelay || 250;
 		menuNav._submenuHideDelay = config.submenuHideDelay || 250;
@@ -383,27 +434,39 @@ var MenuNav = function (config) {
 		menuNav._mouseOutHideDelay = Lang.isNumber(nMouseOutHideDelay) ? nMouseOutHideDelay : 750;
 
 
-		// Hide all visible submenus
+		//	Hide all visible submenus
 
-		oRootMenu.queryAll(MENU_SELECTOR).addClass(CSS_MENU_HIDDEN);
+		oMenuNodes = oRootMenu.queryAll(MENU_SELECTOR);
+
+		if (oMenuNodes) {
+			oMenuNodes.addClass(CSS_MENU_HIDDEN);
+		}
 
 
-		// Wire up all event handlers
+		oULs = oRootMenu.queryAll("ul:" + FIRST_OF_TYPE);
 
-		oRootMenu.on("mouseover", Y.bind(menuNav._onMouseOver, menuNav));
-		oRootMenu.on("mouseout", Y.bind(menuNav._onMouseOut, menuNav));
-		oRootMenu.on("mousemove", Y.bind(menuNav._onMouseMove, menuNav));
-		oRootMenu.on(MOUSEDOWN, Y.bind(menuNav._toggleSubmenuDisplay, menuNav));
-		oRootMenu.on(KEYDOWN, Y.bind(menuNav._toggleSubmenuDisplay, menuNav));
-		oRootMenu.on(CLICK, Y.bind(menuNav._toggleSubmenuDisplay, menuNav));
-		oRootMenu.on("keypress", Y.bind(menuNav._onKeyPress, menuNav));
-		oRootMenu.on(KEYDOWN, Y.bind(menuNav._onKeyDown, menuNav));
+		if (oULs) {
+			oULs.addClass(FIRST_OF_TYPE);
+		}
+
+
+		//	Wire up all event handlers
+
+
+		oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
+		oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
+		oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
+		oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+		oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+		oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
+		oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
+		oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
 
 		oDocument = oRootMenu.get("ownerDocument");
 
-		oDocument.on(MOUSEDOWN, Y.bind(menuNav._onDocMouseDown, menuNav));
+		oDocument.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
 
-		Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oDocument);
+		Y.on("focus", menuNav._onDocFocus, menuNav, oDocument);
 
 		menuNav._rootMenu = oRootMenu;
 
@@ -413,64 +476,81 @@ var MenuNav = function (config) {
 			setARIARole(oRootMenu, "menubar");
 
 
-			oLIs = oRootMenu.queryAll("li,ul").each(function (node) {
+			oListNodes = oRootMenu.queryAll("ul,li");
 			
-				setARIAPresentation(node);
-			
-			});
-			
+			if (oListNodes) {
 
-			oRootMenu.queryAll((PERIOD + getClassName(MENUITEM, "content"))).each(function (node) {
-
-				removeFromTabIndex(node);
-				setARIARole(node, MENUITEM);
-
-			});
-
-
-			oRootMenu.queryAll((PERIOD + CSS_MENU_LABEL)).each(function (node) {
-
-				oMenuLabel = node;
-				oMenuToggle = node.query((PERIOD + getClassName(MENU, "toggle")));
+				oListNodes.each(function (node) {
 				
-				if (oMenuToggle) {
+					setARIAPresentation(node);
+				
+				});
 
-					setARIAPresentation(oMenuToggle);
-					removeFromTabIndex(oMenuToggle);
+			}
+			
+
+			oMenuItemContentNodes = oRootMenu.queryAll((PERIOD + getClassName(MENUITEM, "content")));
+
+			if (oMenuItemContentNodes) {
+
+				oMenuItemContentNodes.each(function (node) {
+	
+					removeFromTabIndex(node);
+					setARIARole(node, MENUITEM);
+	
+				});
+
+			}
+			
+
+			oMenuLabelNodes = oRootMenu.queryAll((PERIOD + CSS_MENU_LABEL));
+
+			if (oMenuLabelNodes) {
+
+				oMenuLabelNodes.each(function (node) {
+	
+					oMenuLabel = node;
+					oMenuToggle = node.query((PERIOD + getClassName(MENU, "toggle")));
 					
-					oMenuLabel = oMenuToggle.previous();
-				
-				}
-
-				setARIARole(oMenuLabel, MENUITEM);
-				setARIAProperty(oMenuLabel, "haspopup", TRUE);
-				removeFromTabIndex(oMenuLabel);
-				
-
-				// TO DO: Should be able to remove since the new Node will take care of this 
-				sID = oMenuLabel.get(ID);
-				
-				if (!sID) {
-					sID = oMenuLabel.get("_yuid");
-					oMenuLabel.set(ID, sID);
-				}
-				
-				oSubmenu = node.next();
-
-				setARIARole(oSubmenu, MENU);
-				setARIAProperty(oSubmenu, "labelledby", sID);
-				setARIAProperty(oSubmenu, HIDDEN, TRUE);
-				
-			});
+					if (oMenuToggle) {
+	
+						setARIAPresentation(oMenuToggle);
+						removeFromTabIndex(oMenuToggle);
+						
+						oMenuLabel = oMenuToggle.previous();
+					
+					}
+	
+					setARIARole(oMenuLabel, MENUITEM);
+					setARIAProperty(oMenuLabel, "haspopup", TRUE);
+					removeFromTabIndex(oMenuLabel);
 
 
-			if (oLIs) {
+					sID = oMenuLabel.get(ID);
+					
+					if (!sID) {
+						sID = Y.guid();
+						oMenuLabel.set(ID, sID);
+					}
+					
+					oSubmenu = node.next();
+	
+					setARIARole(oSubmenu, MENU);
+					setARIAProperty(oSubmenu, "labelledby", sID);
+					setARIAProperty(oSubmenu, HIDDEN, TRUE);
+					
+				});
+			
+			}
 
-				oFirstAnchor = oLIs.item(0).query(LOWERCASE_A);
 
-				placeInDefaultTabIndex(oFirstAnchor);
+			oFirstItem = getFirstItem(oRootMenu);
 
-				menuNav._firstItem = getItem(oFirstAnchor, TRUE);
+			if (oFirstItem) {
+
+				placeInDefaultTabIndex(getItemAnchor(oFirstItem));
+
+				menuNav._firstItem = oFirstItem;
 
 			}
 
@@ -485,57 +565,170 @@ MenuNav.NAME = "nodeMenuNav";
 MenuNav.NS = "nodeMenuNav";
 
 
-//	Need to set the "frameBorder" property to 0 to supress the default <iframe>
-//	border in IE.  Setting the CSS "border" property alone doesn't supress it.
+/** 
+* @property Y.Plugin.NodeMenuNav.SHIM_TEMPLATE
+* @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
+* used to prevent <code>&#60;select&#62;</code> elements from poking through menus.
+* @default null
+* @type String
+*/
 
-MenuNav.SHIM_TEMPLATE = '<iframe role="presentation" class="' + CSS_SHIM + '" title="Menu Stacking Shim" src="javascript:false;"></iframe>';
+//	Need to set the "frameBorder" property to 0 to suppress the default <iframe>
+//	border in IE.  Setting the CSS "border" property alone doesn't suppress it.
+
+MenuNav.SHIM_TEMPLATE	=	'<iframe frameborder="0" role="presentation" class="' + 
+							getClassName("shim") + 
+							'" title="Menu Stacking Shim" src="javascript:false;"></iframe>';
 
 
 MenuNav.prototype = {
 
-	// Private properties
+	//	Protected properties
 
-	_rootMenu: NULL,	// The root Menu in the Menu hierarchy
+	/** 
+	* @property _rootMenu
+	* @description Node instance representing the root menu in the MenuNav.
+	* @default null
+	* @protected
+	* @type Node
+	*/
+	_rootMenu: NULL,	
 
-	//	The item in a Menu the user is currently interacting with.  Could be a MenuItem
-	//	(marked with the "yui-menuitem") class or Menu label (marked with the 
-	//	"yui-menu-label") class.
 
+	/** 
+	* @property _activeItem
+	* @description Node instance representing the MenuNav's active descendent - the menuitem or 
+	* menu label the user is currently interacting with.
+	* @default null
+	* @protected
+	* @type Node
+	*/
 	_activeItem: NULL, 
 
-	_activeMenu: NULL,	// The parent Menu of the currently active item
 
+	/** 
+	* @property _activeMenu
+	* @description Node instance representing the menu that is the parent of the MenuNav's 
+	* active descendent.
+	* @default null
+	* @protected
+	* @type Node
+	*/
+	_activeMenu: NULL,
+
+
+	/** 
+	* @property _hasFocus
+	* @description Boolean indicating if the MenuNav has focus.
+	* @default false
+	* @protected
+	* @type Boolean
+	*/
 	_hasFocus: FALSE,
 
 
 	//	In gecko-based browsers a mouseover and mouseout event will fire even 
 	//	if a DOM element moves out from under the mouse without the user actually
-	//	moving the mouse.  This bug affects Menu beause the user can hit the 
-	//	Esc key to hide a Menu, and if the mouse is over the Menu when the 
-	//	user presses Esc, the onMenuMouseOut handler will be called.  To fix this 
-	//	bug the following flag (this._blockMouseEvent) is used to block the code in the 
-	//	onMenuMouseOut handler from executing.
+	//	moving the mouse.  This bug affects MenuNav because the user can hit the 
+	//	Esc key to hide a menu, and if the mouse is over the menu when the 
+	//	user presses Esc, the _onMenuMouseOut handler will be called.  To fix this 
+	//	bug the following flag (_blockMouseEvent) is used to block the code in the 
+	//	_onMenuMouseOut handler from executing.
 
+	/** 
+	* @property _blockMouseEvent
+	* @description Boolean indicating whether or not to handle the "mouseover" event.
+	* @default false
+	* @protected
+	* @type Boolean
+	*/
 	_blockMouseEvent: FALSE,
 
+
+	/** 
+	* @property _currentMouseX
+	* @description Number representing the current x coordinate of the mouse inside the MenuNav.
+	* @default 0
+	* @protected
+	* @type Number
+	*/
 	_currentMouseX: 0,
 
+
+	/** 
+	* @property _movingToSubmenu
+	* @description Boolean indicating if the mouse is moving from a menu label to its 
+	* corresponding submenu.
+	* @default false
+	* @protected
+	* @type Boolean
+	*/
 	_movingToSubmenu: FALSE,
 
+
+	/** 
+	* @property _showSubmenuTimer
+	* @description Timer used to show a submenu.
+	* @default null
+	* @protected
+	* @type Object
+	*/
 	_showSubmenuTimer: NULL,
 
+
+	/** 
+	* @property _hideSubmenuTimer
+	* @description Timer used to hide a submenu.
+	* @default null
+	* @protected
+	* @type Object
+	*/
 	_hideSubmenuTimer: NULL,
 
+
+	/** 
+	* @property _hideAllSubmenusTimer
+	* @description Timer used to hide a all submenus.
+	* @default null
+	* @protected
+	* @type Object
+	*/
 	_hideAllSubmenusTimer: NULL,
 
-	_firstItem: NULL,	// The first item in the root Menu
 
+	/** 
+	* @property _firstItem
+	* @description Node instance representing the first item (menuitem or menu label) in the root 
+	* menu of a MenuNav.
+	* @default null
+	* @protected
+	* @type Node
+	*/
+	_firstItem: NULL,
+
+
+	/** 
+	* @property _autoSubmenuDisplay
+    * @description Boolean indicating if submenus are automatically made visible when the user 
+    * mouses over the menu's items.
+    * @default true
+	* @protected
+    * @type Boolean
+	*/
 	_autoSubmenuDisplay: TRUE,
 
 
 
-	// Private methods
+	//	Protected methods
 
+	/**
+	* @method _isRoot
+	* @description Returns a boolean indicating if the specified menu is the root menu in 
+	* the MenuNav.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	* @return {Boolean} Boolean indicating if the specified menu is the root menu in the MenuNav.	
+	*/
 	_isRoot: function (menu) {
 
 		return this._rootMenu.compareTo(menu);
@@ -543,6 +736,13 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _getTopmostSubmenu
+	* @description Returns the topmost submenu of a submenu hierarchy.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	* @return {Node} Node instance representing a menu.
+	*/
 	_getTopmostSubmenu: function (menu) {
 	
 		var menuNav = this,
@@ -565,6 +765,11 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _clearActiveItem
+	* @description Clears the MenuNav's active descendent.
+	* @protected
+	*/
 	_clearActiveItem: function () {
 
 		var menuNav = this,
@@ -585,34 +790,55 @@ MenuNav.prototype = {
 	},
 
 
-	_setActiveItem: function (node) {
+	/**
+	* @method _setActiveItem
+	* @description Sets the specified menuitem or menu label as the MenuNav's active descendent.
+	* @protected
+	* @param {Node} item Node instance representing a menuitem or menu label.
+	*/
+	_setActiveItem: function (item) {
 	
 		var menuNav = this;
 		
 		menuNav._clearActiveItem();
-		
-		var oActiveItem = getItem(node);
 
-		oActiveItem.addClass(getActiveClass(oActiveItem));
+		item.addClass(getActiveClass(item));
 
 		if (menuNav._useARIA) {
-			placeInDefaultTabIndex(getItemAnchor(oActiveItem));
+			placeInDefaultTabIndex(getItemAnchor(item));
 		}
 		
-		menuNav._activeItem = oActiveItem;
+		menuNav._activeItem = item;
 	
 	},
 
 
+	/**
+	* @method _focusItem
+	* @description Focuses the specified menuitem or menu label.
+	* @protected
+	* @param {Node} item Node instance representing a menuitem or menu label.
+	*/
 	_focusItem: function (item) {
 	
 		if (this._hasFocus) {
-			focusItem(item);
+		
+			//	Need to focus using a zero-second timeout to get Apple's VoiceOver to 
+			//	recognize that the focused item has changed
+
+			later(0, null, focusItem, item);
+
 		}
 	
 	},
 
 
+	/**
+	* @method _showMenu
+	* @description Shows the specified menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	*/
 	_showMenu: function (menu) {
 
 		var menuNav = this,
@@ -632,19 +858,26 @@ MenuNav.prototype = {
 		
 		menu.setXY(aXY);
 
-		if (UA.ie === 6) {
+		if (UA.ie < 8) {
 
-			if (!IFrameTemplate) {
-				IFrameTemplate = Y.Node.create(MenuNav.SHIM_TEMPLATE);
+			if (UA.ie === 6 && !menu.iframeShim) {
+	
+				menu.appendChild(Y.Node.create(MenuNav.SHIM_TEMPLATE));
+				menu.iframeShim = oIFrame;
+
 			}
 
-			oIFrame = menu.query(PERIOD + CSS_SHIM);
+			//	Clear previous values for height and width
 
-			if (!oIFrame) {
-				oIFrame = IFrameTemplate.cloneNode();
-				menu.appendChild(oIFrame);
-			}
+			menu.setStyles({ height: EMPTY_STRING, width: EMPTY_STRING });
 
+			//	Set the width and height of the menu's bounding box - this is necessary for IE 6
+			//	so that the CSS for the <iframe> shim can simply set the <iframe>'s width and height 
+			//	to 100% to ensure that dimensions of an <iframe> shim are always sync'd to the 
+			//	that of its parent menu.  Specifying a width and height also helps when positioning
+			//	decorator elements (for creating effects like rounded corners) inside a menu's 
+			//	bounding box in IE 7.
+			
 			menu.setStyles({ 
 				height: (menu.get(OFFSET_HEIGHT) + PX), 
 				width: (menu.get(OFFSET_WIDTH) + PX) });
@@ -665,10 +898,19 @@ MenuNav.prototype = {
 	},
 	
 
+	/**
+	* @method _hideMenu 
+	* @description Hides the specified menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	* @param {Boolean} activateAndFocusLabel Boolean indicating if the label for the specified 
+	* menu should be focused and set as active.
+	*/
 	_hideMenu: function (menu, activateAndFocusLabel) {
 
 		var menuNav = this,
-			oLabel = menu.previous();
+			oLabel = menu.previous(),
+			oActiveItem;
 
 		oLabel.removeClass(CSS_MENU_LABEL_MENUVISIBLE);
 
@@ -678,11 +920,15 @@ MenuNav.prototype = {
 			menuNav._focusItem(oLabel);
 		}
 
+		oActiveItem = menu.query((PERIOD + CSS_MENUITEM_ACTIVE));
 
-		menu.queryAll((PERIOD + CSS_MENUITEM_ACTIVE)).removeClass(CSS_MENUITEM_ACTIVE);
+		if (oActiveItem) {
+			oActiveItem.removeClass(CSS_MENUITEM_ACTIVE);
+		}
 
-		// Clear the values for top and left that were set by the call to "setXY"
-		// so that any hidden position values are applied from class names
+		//	Clear the values for top and left that were set by the call to "setXY" when the menu
+		//	was shown so that the hidden position specified in the core CSS file will take affect.
+
 		menu.setStyles({ left: EMPTY_STRING, top: EMPTY_STRING });
 		
 		menu.addClass(CSS_MENU_HIDDEN);
@@ -691,20 +937,35 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _hideAllSubmenus
+	* @description Hides all submenus of the specified menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	*/
 	_hideAllSubmenus: function (menu) {
 
 		var menuNav = this,
 			oSubmenus = menu.queryAll(MENU_SELECTOR);
 
-		oSubmenus.each(Y.bind(function (submenuNode) {
+		if (oSubmenus) {
+
+			oSubmenus.each(Y.bind(function (submenuNode) {
+			
+				menuNav._hideMenu(submenuNode);
+			
+			}, menuNav));
 		
-			menuNav._hideMenu(submenuNode);
-		
-		}, menuNav));
+		}
 	
 	},
 
 
+	/**
+	* @method _cancelShowSubmenuTimer
+	* @description Cancels the timer used to show a submenu.
+	* @protected
+	*/
 	_cancelShowSubmenuTimer: function () {
 
 		var menuNav = this,
@@ -718,6 +979,11 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _cancelHideSubmenuTimer
+	* @description Cancels the timer used to hide a submenu.
+	* @protected
+	*/
 	_cancelHideSubmenuTimer: function () {
 
 		var menuNav = this,
@@ -733,20 +999,45 @@ MenuNav.prototype = {
 
 
 
-	// Event handlers for discrete pieces of pieces of the Menu
+	//	Event handlers for discrete pieces of pieces of the menu
 
 
+	/**
+	* @method _onMenuMouseOver
+	* @description "mouseover" event handler for a menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuMouseOver: function (menu, event) {
 
-		var menuNav = this;
+		var menuNav = this,
+			oHideAllSubmenusTimer = menuNav._hideAllSubmenusTimer;
+
+		if (oHideAllSubmenusTimer) {
+			oHideAllSubmenusTimer.cancel();
+			menuNav._hideAllSubmenusTimer = NULL;
+		}
 
 		menuNav._cancelHideSubmenuTimer();
 
 		menuNav._activeMenu = menu;
 
+
+		if (menuNav._movingToSubmenu && isHorizontalMenu(menu)) {
+			menuNav._movingToSubmenu = FALSE;
+		}
+
 	},
 
 
+	/**
+	* @method _onMenuMouseOut
+	* @description "mouseout" event handler for a menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuMouseOut: function (menu, event) {
 
 		var menuNav = this,
@@ -770,7 +1061,7 @@ MenuNav.prototype = {
 
 					menuNav._hideAllSubmenusTimer = 
 
-							Later(menuNav._mouseOutHideDelay, menuNav, function () {
+							later(menuNav._mouseOutHideDelay, menuNav, function () {
 
 								var	oSubmenu;
 
@@ -780,7 +1071,7 @@ MenuNav.prototype = {
 						
 								if (oActiveMenu) {
 						
-									// Focus the label element for the topmost submenu
+									//	Focus the label element for the topmost submenu
 									oSubmenu = menuNav._getTopmostSubmenu(oActiveMenu);
 									menuNav._focusItem(oSubmenu.previous());
 						
@@ -810,13 +1101,19 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _onMenuLabelMouseOver
+	* @description "mouseover" event handler for a menu label.
+	* @protected
+	* @param {Node} menuLabel Node instance representing a menu label.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuLabelMouseOver: function (menuLabel, event) {
 
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bIsRoot = menuNav._isRoot(oActiveMenu),
 			bUseAutoSubmenuDisplay = (menuNav._autoSubmenuDisplay && bIsRoot || !bIsRoot),
-			oHideAllSubmenusTimer = menuNav._hideAllSubmenusTimer,
 			oSubmenu;
 
 
@@ -825,12 +1122,6 @@ MenuNav.prototype = {
 		
 
 		if (bUseAutoSubmenuDisplay && !menuNav._movingToSubmenu) {
-
-
-			if (oHideAllSubmenusTimer) {
-				oHideAllSubmenusTimer.cancel();
-				menuNav._hideAllSubmenusTimer = NULL;
-			}
 	
 			menuNav._cancelHideSubmenuTimer();
 			menuNav._cancelShowSubmenuTimer();
@@ -846,7 +1137,7 @@ MenuNav.prototype = {
 					menuNav._hideAllSubmenus(oActiveMenu);
 
 					menuNav._showSubmenuTimer = 
-									Later(menuNav._submenuShowDelay, menuNav, 
+									later(menuNav._submenuShowDelay, menuNav, 
 											menuNav._showMenu, oSubmenu);
 				
 				}
@@ -858,6 +1149,13 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _onMenuLabelMouseOut
+	* @description "mouseout" event handler for a menu label.
+	* @protected
+	* @param {Node} menuLabel Node instance representing a menu label.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuLabelMouseOut: function (menuLabel, event) {
 
 		var menuNav = this,
@@ -872,20 +1170,20 @@ MenuNav.prototype = {
 
 			if (menuNav._movingToSubmenu && !menuNav._showSubmenuTimer && oSubmenu) {
 
-				// If the mouse is moving diagonally toward the submenu and another submenu 
-				// isn't in the process of being displayed (via a timer), then hide the submenu 
-				// via a timer to give the user some time to reach the submenu.
+				//	If the mouse is moving diagonally toward the submenu and another submenu 
+				//	isn't in the process of being displayed (via a timer), then hide the submenu 
+				//	via a timer to give the user some time to reach the submenu.
 			
-				menuNav._hideSubmenuTimer = Later(menuNav._submenuHideDelay, menuNav, 
+				menuNav._hideSubmenuTimer = later(menuNav._submenuHideDelay, menuNav, 
 															menuNav._hideMenu, oSubmenu);
 			
 			}
 			else if (!menuNav._movingToSubmenu && oSubmenu && 
 				!oSubmenu.contains(oRelatedTarget) && oRelatedTarget !== oSubmenu) {
 
-				// If the mouse is not moving toward the submenu, cancel any submenus that 
-				// might be in the process of being displayed (via a timer) and hide this 
-				// submenu immediately.
+				//	If the mouse is not moving toward the submenu, cancel any submenus that 
+				//	might be in the process of being displayed (via a timer) and hide this 
+				//	submenu immediately.
 
 				menuNav._cancelShowSubmenuTimer();
 
@@ -898,6 +1196,13 @@ MenuNav.prototype = {
 	},
 	
 
+	/**
+	* @method _onMenuItemMouseOver
+	* @description "mouseover" event handler for a menuitem.
+	* @protected
+	* @param {Node} menuItem Node instance representing a menuitem.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuItemMouseOver: function (menuItem, event) {
 
 		var menuNav = this,
@@ -919,6 +1224,13 @@ MenuNav.prototype = {
 	},
 	
 
+	/**
+	* @method _onMenuItemMouseOut
+	* @description "mouseout" event handler for a menuitem.
+	* @protected
+	* @param {Node} menuItem Node instance representing a menuitem.
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMenuItemMouseOut: function (menuItem, event) {
 
 		this._clearActiveItem();
@@ -926,6 +1238,12 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _onVerticalMenuKeyDown
+	* @description "keydown" event handler for vertical menus of a MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onVerticalMenuKeyDown: function (event) {
 
 		var menuNav = this,
@@ -944,7 +1262,7 @@ MenuNav.prototype = {
 
 		switch (nKeyCode) {
 
-			case 37:	// left arrow
+			case 37:	//	left arrow
 
 				oParentMenu = getParentMenu(oActiveMenu);
 
@@ -956,7 +1274,7 @@ MenuNav.prototype = {
 					
 					if (oItem) {
 
-						if (isMenuLabel(oItem)) {	// Menu label
+						if (isMenuLabel(oItem)) {	//	Menu label
 						
 							oSubmenu = oItem.next();
 						
@@ -969,7 +1287,7 @@ MenuNav.prototype = {
 							}
 						
 						}
-						else {	// MenuItem
+						else {	//	MenuItem
 
 							menuNav._setActiveItem(oItem);
 							focusItem(oItem);
@@ -988,7 +1306,7 @@ MenuNav.prototype = {
 
 			break;
 
-			case 39:	// right arrow
+			case 39:	//	right arrow
 
 				if (isMenuLabel(oTarget)) {
 					
@@ -1010,7 +1328,7 @@ MenuNav.prototype = {
 
 					if (oItem) {
 
-						if (isMenuLabel(oItem)) {	// Menu label
+						if (isMenuLabel(oItem)) {	//	Menu label
 
 							oSubmenu = oItem.next();
 
@@ -1022,7 +1340,7 @@ MenuNav.prototype = {
 							}
 						
 						}
-						else {	// MenuItem
+						else {	//	MenuItem
 
 							menuNav._setActiveItem(oItem);
 							focusItem(oItem);
@@ -1037,12 +1355,13 @@ MenuNav.prototype = {
 
 			break;
 
-			case 38:	// up arrow
-			case 40:	// down arrow
+			case 38:	//	up arrow
+			case 40:	//	down arrow
 
 				menuNav._hideAllSubmenus(oActiveMenu);
 
-				oNextItem = nKeyCode === 38 ? getPreviousItem(oFocusedItem) : getNextItem(oFocusedItem);
+				oNextItem = nKeyCode === 38 ? 
+								getPreviousItem(oFocusedItem) : getNextItem(oFocusedItem);
 
 				menuNav._setActiveItem(oNextItem);
 				focusItem(oNextItem);
@@ -1056,7 +1375,7 @@ MenuNav.prototype = {
 
 		if (bPreventDefault) {
 
-			// Prevent the browser from scrolling the window
+			//	Prevent the browser from scrolling the window
 
 			event.preventDefault();			
 
@@ -1065,6 +1384,12 @@ MenuNav.prototype = {
 	},
 	
 
+	/**
+	* @method _onHorizontalMenuKeyDown
+	* @description "keydown" event handler for horizontal menus of a MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onHorizontalMenuKeyDown: function (event) {
 
 		var menuNav = this,
@@ -1078,12 +1403,13 @@ MenuNav.prototype = {
 
 		switch (nKeyCode) {
 
-			case 37:	// left arrow
-			case 39:	// right arrow
+			case 37:	//	left arrow
+			case 39:	//	right arrow
 
 				menuNav._hideAllSubmenus(oActiveMenu);
 
-				oNextItem = nKeyCode === 37 ? getPreviousItem(oFocusedItem) : getNextItem(oFocusedItem);
+				oNextItem = nKeyCode === 37 ? 
+								getPreviousItem(oFocusedItem) : getNextItem(oFocusedItem);
 
 				menuNav._setActiveItem(oNextItem);
 				focusItem(oNextItem);
@@ -1092,7 +1418,7 @@ MenuNav.prototype = {
 
 			break;
 
-			case 40:	// down arrow
+			case 40:	//	down arrow
 
 				menuNav._hideAllSubmenus(oActiveMenu);
 
@@ -1116,7 +1442,7 @@ MenuNav.prototype = {
 
 		if (bPreventDefault) {
 
-			// Prevent the browser from scrolling the window
+			//	Prevent the browser from scrolling the window
 
 			event.preventDefault();			
 
@@ -1125,15 +1451,38 @@ MenuNav.prototype = {
 	},
 
 
-	// Generic DOM Event handlers
+	//	Generic DOM Event handlers
 
+
+	/**
+	* @method _onMouseMove
+	* @description "mousemove" event handler for the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMouseMove: function (event) {
 
-		this._currentMouseX = event.pageX;
+		var menuNav = this;
+
+		//	Using a timer to set the value of the "_currentMouseX" property helps improve the 
+		//	reliability of the calculation used to set the value of the "_movingToSubmenu"
+		//	property - especially in Opera.
+
+		later(10, menuNav, function () {
+
+			menuNav._currentMouseX = event.pageX;
+		
+		});
 	
 	},
 
 
+	/**
+	* @method _onMouseOver
+	* @description "mouseover" event handler for the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMouseOver: function (event) {
 
 		var menuNav = this,
@@ -1165,7 +1514,7 @@ MenuNav.prototype = {
 				oParentMenu = getParentMenu(oMenu);
 
 				if (oParentMenu) {
-	
+
 					oParentMenu[HANDLED_MOUSEOUT] = TRUE;
 					oParentMenu[HANDLED_MOUSEOVER] = FALSE;
 		
@@ -1196,6 +1545,12 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _onMouseOut
+	* @description "mouseout" event handler for the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onMouseOut: function (event) {
 			
 		var menuNav = this,
@@ -1211,7 +1566,6 @@ MenuNav.prototype = {
 
 		menuNav._movingToSubmenu = (oActiveMenu && !isHorizontalMenu(oActiveMenu) && 
 											((event.pageX - 5) > menuNav._currentMouseX));
-
 		
 		oTarget = event.target;
 		oRelatedTarget = event.relatedTarget;
@@ -1243,8 +1597,7 @@ MenuNav.prototype = {
 
 			oSubmenu = oMenuLabel.next();
 
-			if (oSubmenu && 
-					(oRelatedTarget === oSubmenu || oSubmenu.contains(oRelatedTarget))) {
+			if (oSubmenu && (oRelatedTarget === oSubmenu || oSubmenu.contains(oRelatedTarget))) {
 
 				bMovingToSubmenu = TRUE;
 
@@ -1264,6 +1617,14 @@ MenuNav.prototype = {
 	
 	},
 
+
+	/**
+	* @method _toggleSubmenuDisplay
+	* @description "mousedown," "keydown," and "click" event handler for the MenuNav used to 
+	* toggle the display of a submenu.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_toggleSubmenuDisplay: function (event) {
 
 		var menuNav = this,
@@ -1304,11 +1665,11 @@ MenuNav.prototype = {
 						if (sType === MOUSEDOWN || (sType === KEYDOWN && event.keyCode === 13)) {
 
 							//	The call to "preventDefault" below results in the element 
-							//	serving as the Menu's label to not receive focus in Webkit, therefore
-							//	the "_hasFocus" flag never gets set to true, meaning the first
-							//	item in the submenu isn't focused when the submenu is displayed.
-							//	To fix this issue, it is necessary to set the "_hasFocus"
-							//	flag to true.
+							//	serving as the menu's label to not receive focus in Webkit, 
+							//	therefore the "_hasFocus" flag never gets set to true, meaning the 
+							//	first item in the submenu isn't focused when the submenu is 
+							//	displayed.  To fix this issue, it is necessary to set the 
+							//	"_hasFocus" flag to true.
 	
 							if (UA.webkit && !menuNav._hasFocus) {
 								menuNav._hasFocus = TRUE;
@@ -1329,7 +1690,7 @@ MenuNav.prototype = {
 
 						if (sType === CLICK) {
 
-							// Prevent the browser from following the URL of the anchor element
+							//	Prevent the browser from following the URL of the anchor element
 							
 							event.preventDefault();
 						
@@ -1347,14 +1708,22 @@ MenuNav.prototype = {
 	},
 	
 
+	/**
+	* @method _onKeyPress
+	* @description "keypress" event handler for the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onKeyPress: function (event) {
 	
 		switch (event.keyCode) {
 
-			case 37:	// left arrow
-			case 38:	// up arrow
-			case 39:	// right arrow
-			case 40:	// down arrow
+			case 37:	//	left arrow
+			case 38:	//	up arrow
+			case 39:	//	right arrow
+			case 40:	//	down arrow
+
+				//	Prevent the browser from scrolling the window
 
 				event.preventDefault();
 
@@ -1365,6 +1734,12 @@ MenuNav.prototype = {
 	},	
 
 
+	/**
+	* @method _onKeyDown
+	* @description "keydown" event handler for the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onKeyDown: function (event) {
 
 		var menuNav = this,
@@ -1407,6 +1782,12 @@ MenuNav.prototype = {
 	},
 
 
+	/**
+	* @method _onDocMouseDown
+	* @description "mousedown" event handler for the owner document of the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onDocMouseDown: function (event) {
 	
 		var menuNav = this,
@@ -1420,8 +1801,8 @@ MenuNav.prototype = {
 
 
 			//	Document doesn't receive focus in Webkit when the user mouses down on it, 
-			//	so the "menuNav._hasFocus" flag won't get set to the correct value.  The 
-			//	following line corrects menuNav problem.
+			//	so the "_hasFocus" property won't get set to the correct value.  The 
+			//	following line corrects the problem.
 
 			if (UA.webkit) {
 				menuNav._hasFocus = FALSE;
@@ -1432,6 +1813,13 @@ MenuNav.prototype = {
 	
 	},
 
+
+	/**
+	* @method _onDocFocus
+	* @description "focus" event handler for the owner document of the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
 	_onDocFocus: function (event) {
 	
 		var menuNav = this,
@@ -1441,11 +1829,11 @@ MenuNav.prototype = {
 			oTarget = event.target;
 
 		
-		if (menuNav._rootMenu.contains(oTarget)) {	// The Menu has focus
+		if (menuNav._rootMenu.contains(oTarget)) {	//	The menu has focus
 
-			if (!menuNav._hasFocus) {	// Inital focus
+			if (!menuNav._hasFocus) {	//	Initial focus
 
-				//	First time the Menu has been focused, need to setup focused state and  
+				//	First time the menu has been focused, need to setup focused state and  
 				//	established active active descendant
 	
 				menuNav._hasFocus = TRUE;
@@ -1459,7 +1847,7 @@ MenuNav.prototype = {
 			}
 		
 		}
-		else {	//	The Menu has lost focus
+		else {	//	The menu has lost focus
 
 			menuNav._clearActiveItem();
 			
@@ -1482,5 +1870,3 @@ MenuNav.prototype = {
 Y.namespace('Plugin');
 
 Y.Plugin.NodeMenuNav = MenuNav;
-
-}, '@VERSION@' ,{requires:['node', 'classnamemanager']});
