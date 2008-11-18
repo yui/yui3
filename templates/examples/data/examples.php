@@ -17,5 +17,7 @@
    include($dataroot."/json/json.php");
    include($dataroot."/queue/queue.php");
    include($dataroot."/node/node.php");
+   include($dataroot."/overlay/overlay.php");
+   include($dataroot."/widget/widget.php");
    include($dataroot."/yui/yui.php");
 ?>
