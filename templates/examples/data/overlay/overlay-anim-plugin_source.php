@@ -7,6 +7,7 @@
 <button type="button" id="show">Show</button>
 <button type="button" id="hide">Hide</button>
 <button type="button" id="unplug">Unplug</button>
+<button type="button" id="plug">Plug (faster)</button>
 
 <script type="text/javascript">
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
@@ -25,12 +26,23 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
         animVisible : {
             valueFn : function() {
-                return new Y.Anim({
+
+                var anim = new Y.Anim({
                     node: this._owner.get("boundingBox"),
-                    from: { opacity: 0, visibility:"hidden" },
+                    from: { opacity: 0 },
                     to: { opacity: 1 },
                     duration: this.get("duration")
                 });
+
+                anim.on("start", function() {
+                    this.get("node").setStyle("opacity", 0);
+                });
+
+                anim.on("destroy", function() {
+                    this.get("node").setStyle("opacity", "");
+                });
+
+                return anim;
             }
         },
 
@@ -38,7 +50,6 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             valueFn : function() {
                 return new Y.Anim({
                     node: this._owner.get("boundingBox"),
-                    from: { opacity: 1 },
                     to: { opacity: 0 },
                     duration: this.get("duration")
                 });
@@ -53,7 +64,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             var animHidden = this.get("animHidden");
             var animVisible = this.get("animVisible");
 
-            animVisible.on("start", Y.bind(function() {
+            animVisible.after("start", Y.bind(function() {
                 this._uiSetVisible(true);
             }, this));
 
@@ -62,6 +73,11 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             }, this));
 
             this.before("_uiSetVisible", this._uiAnimSetVisible);
+        },
+
+        destructor : function() {
+            this.get("animVisible").destroy();
+            this.get("animHidden").destroy();
         },
 
         _uiAnimSetVisible : function(val) {
@@ -111,6 +127,10 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     Y.on("click", function() {
         overlay.unplug("fx");
     }, "#unplug");
+
+    Y.on("click", function() {
+        overlay.plug({fn:AnimPlugin, cfg:{duration:0.5}});
+    }, "#plug");
 
 });
 </script>
