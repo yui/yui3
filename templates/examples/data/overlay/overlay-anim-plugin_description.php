@@ -4,11 +4,11 @@
 
 <textarea name="code" class="JScript" rows="1" cols="60">
 YUI({...}).use("overlay", "anim", "plugin", function(Y) {
-    // We'll write our code here, after pulling in the default Overlay width, the Animation utility and the Plugin base class
+    // We'll write our code here, after pulling in the default Overlay widget, the Animation utility and the Plugin base class
 });
 </textarea>
 
-<p>TODO: Basic Class Structure</p>
+<p>TODO: Plugin Class Structure</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     // Animation Plugin Class
@@ -18,7 +18,7 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 
     // Define the namespace the plugin will occupy on the host
     AnimPlugin.NS = "fx";
-    AnimPlugin.NAME = "OverlayAnimPlugin";
+    AnimPlugin.NAME = "overlayAnimPlugin";
 
     // Define the default set of attributes for the plugin
     AnimPlugin.ATTRS = {
@@ -104,4 +104,21 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
             owner.get("boundingBox").removeClass(owner.getClassName("hidden"));
         }
     }
+</textarea>
+
+<p>TODO: Applying the Plugin</p>
+
+<textarea name="code" class="JScript" rows="1" cols="60">
+    var overlay = new Y.Overlay({
+        contentBox: "#overlay",
+        width:"10em",
+        height:"10em",
+        visible:false,
+        align: {
+            node: "#show", 
+            points: ["tl", "bl"]
+        },
+        plugins : [{fn:AnimPlugin, cfg:{duration:1.5}}]
+    });
+    overlay.render();
 </textarea>
