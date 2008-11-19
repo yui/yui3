@@ -2488,6 +2488,11 @@ var BASE = 'base',
             requires: ['node']
         },
 
+        slider: {
+            requires: ['widget', 'dd-constrain'],
+            skinnable: true
+        },
+
         stylesheet: { },
 
         substitute: {
