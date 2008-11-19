@@ -369,7 +369,8 @@ Y.extend(Slider, Y.Widget, {
     _ready : function (img) {
         // _isImageLoaded may return false because this is executed from the
         // image's onerror handler as well.
-        var method = this._isImageLoaded(img) ? 'removeClass' : 'addClass';
+        var method = img && this._isImageLoaded(img) ?
+                        'removeClass' : 'addClass';
 
         // If the thumb image url results in 404, assign a class to provide
         // default thumb dimensions/UI
@@ -391,7 +392,7 @@ Y.extend(Slider, Y.Widget, {
 
         this._setFactor();
 
-        this.set(VALUE,this.get(VALUE),{ddEvent:null});
+        this.set(VALUE,this.get(VALUE));
     },
 
     _uiSetThumbSize : function () {
@@ -403,7 +404,7 @@ Y.extend(Slider, Y.Widget, {
         // offsetWidth fails in hidden containers
         size = parseInt(thumb.getComputedStyle(dim),10);
 
-        if (this._isImageLoaded(img)) {
+        if (img && this._isImageLoaded(img)) {
             size = max(img.get(dim), size);
         }
 
@@ -442,7 +443,7 @@ Y.extend(Slider, Y.Widget, {
                     parseInt(thumb.getComputedStyle(dim),10),
                     parseInt(rail.getComputedStyle(dim),10));
 
-            if (this._isImageLoaded(img)) {
+            if (img && this._isImageLoaded(img)) {
                 size = max(img.get(dim),size);
             }
         }
@@ -517,7 +518,7 @@ Y.extend(Slider, Y.Widget, {
         var min    = this.get(MIN),
             max    = this.get(MAX);
 
-        return isNumber(v) &&
+        return !this.get(DISABLED) && isNumber(v) &&
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
@@ -569,7 +570,7 @@ Y.extend(Slider, Y.Widget, {
 
     _onDDStartDrag : function (e) {
         this._setRailOffsetXY();
-        this.fire(SLIDE_START,{ddEvent:e});
+        this.fire(SLIDE_START,{ ddEvent: e });
     },
 
     _onDDDrag : function (e) {
@@ -586,12 +587,12 @@ Y.extend(Slider, Y.Widget, {
         val = round(this.get(MIN) + (val * this._factor));
 
         if (before !== val) {
-            this.set(VALUE, val, {ddEvent:e.ddEvent});
+            this.set(VALUE, val, { ddEvent: e.ddEvent });
         }
     },
 
     _onDDEndDrag : function (e) {
-        this.fire(SLIDE_END,{ddEvent:e});
+        this.fire(SLIDE_END,{ ddEvent: e });
     },
 
 
@@ -622,9 +623,8 @@ Y.extend(Slider, Y.Widget, {
 
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
-            this.fire(VALUE_SET,{changeEv: e});
+            this.fire(VALUE_SET,{ changeEv: e });
         }
-        e.ddEvent = null;
     },
 
     _afterThumbChange : function (e) {
@@ -684,7 +684,7 @@ Y.extend(Slider, Y.Widget, {
     // Used to determine if there will is a current or pending request for the
     // image resource.
     _isImageLoading : function (img) {
-        return !img || !img.get(COMPLETE);
+        return img && !img.get(COMPLETE);
     },
 
     // Used to determine if the image resource arrived successfully or there was

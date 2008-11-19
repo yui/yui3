@@ -30,10 +30,8 @@
 </div>
 
 <script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
-<script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
-<script type="text/javascript" src="/3.x/build/slider/slider.js"></script>
 <script type="text/javascript">
-YUI({
+var Y = YUI({
     base:'/3.x/build/',
     filter: 'debug',
     logExclude:{
@@ -41,7 +39,14 @@ YUI({
         event:true,
         attribute:true
     }
-}).use('widget','slider',function (Y) {
+});
+
+Y.Env.meta.modules.slider = {
+    requires : ['widget','dd-constrain'],
+    skinnable : true
+}
+
+Y.use('slider',function (Y) {
 
 var report = Y.get('#report');
 //Y.DD.DDM.useShim = true;

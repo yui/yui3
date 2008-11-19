@@ -1,3 +1,18 @@
+/**
+ * @module classnamemanager
+ */
+
+/**
+ * A class for Widgets or classes that extend Base, providing: 
+ * 
+ * <ul>
+ *    <li>Easy creation of prefixed class names</li>
+ *    <li>Caching of previously created class names for improved performance.</li>
+ * </ul>
+ *
+ * @class YUI.ClassNameManager
+ */
+
 if (!Y.CLASS_NAME_PREFIX) {
 
 	/**
@@ -10,21 +25,9 @@ if (!Y.CLASS_NAME_PREFIX) {
 	Y.CLASS_NAME_PREFIX = "yui-";
 }
 
-
 // String constants
 var _HYPHEN = "-";
 
-
-/**
- * A class for Widgets or classes that extend Base, providing: 
- * 
- * <ul>
- *    <li>Easy creation of prefixed class names</li>
- *    <li>Caching of previously created class names for improved performance.</li>
- * </ul>
- * 
- * @class YUI.ClassNameManager
- */
 Y.ClassNameManager = function() {
 
 };

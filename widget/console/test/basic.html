@@ -3,9 +3,9 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="../../build/logreader/assets/skins/sam/logreader.css">
+    <!--link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css"-->
     <style type="text/css">
-.yui-skin-sam .yui-logreader-container {
+.yui-skin-sam #c .yui-console {
     position: relative;
     top: auto;
     right: auto;
@@ -24,24 +24,23 @@
     <input type="button" id="error" value="Log error msg">
 </div>
 
-<script type="text/javascript" src="../../build/yui/yui.js"></script>
-<!--script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js"></script>
-<script type="text/javascript" src="../../build/widget/widget-debug.js"></script>
-<script type="text/javascript" src="../../build/substitute/substitute-debug.js"></script>
-<script type="text/javascript" src="../../build/stylesheet/stylesheet-debug.js"></script>
-<script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script-->
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/console/console.js"></script>
+<script type="text/javascript" src="../../../build/widget/widget.js"></script>
 <script type="text/javascript">
-YUI({
-    base: '../../build/',
-    debug: true,
+Y = YUI({
+    base: '../../../build/',
     useConsole:false,
+    //logLevel: 'warn',
     filter: 'debug'
-}).use('logreader',function (Y) {
+});
+
+Y.Env.meta.modules.console = {
+    requires : ['substitute','widget'],
+    skinnable : true
+};
+
+Y.use('console',function (Y) {
 
 var x = {
     foo : 0,
@@ -55,19 +54,20 @@ Y.on('click',function (e) { Y.log('INFO message '+(++x.info)); },'#info');
 Y.on('click',function (e) { Y.log('WARN message '+(++x.warn),'warn'); },'#warn');
 Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#error');
 
-var r = new Y.log.Reader({
-    verbose : true,
+var yconsole = new Y.Console({
+    //verbose : true,
     //consoleLimit : 10,
     newestOnTop : false
 });
 
-r.render('#c');
+yconsole.render('#c');
 
 Y.log('testing');
 Y.log('testing known category','info');
 Y.log('testing new category','foo');
 Y.log('testing known source','info','global');
 Y.log('testing new source','info','bar');
+yconsole.log("Test from the console object",'info','Console');
 
 });
 </script>

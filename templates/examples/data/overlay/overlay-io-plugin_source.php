@@ -173,7 +173,10 @@ YUI(<?php echo getYUIConfig('filter:"raw"') ?>).use(<?php echo $requiredModules 
     var overlay = new Y.Overlay({
         width:"40em",
         visible:false,
-        centered: true,
+        align: {
+            node:"#show",
+            points: [Y.WidgetPositionExt.TL, Y.WidgetPositionExt.BL]
+        },
         zIndex:10,
         headerContent: generateHeaderMarkup(),
         bodyContent: "Feed data will be displayed here"
