@@ -20,7 +20,7 @@
     height: 2em;
     padding: 0 1ex;
 }
-.yui-skin-sam .yui-console-hd h4 {
+.yui-skin-sam .yui-console-title {
     font-size: 100%;
     line-height: 2em;
     margin: 0;
@@ -34,7 +34,7 @@
     position: absolute;
     right: 0;
 }
-.yui-skin-sam .yui-console-console {
+.yui-skin-sam .yui-console-bd {
     background: #fff;
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;

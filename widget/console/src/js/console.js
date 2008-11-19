@@ -66,7 +66,7 @@ var getCN = Y.ClassNameManager.getClassName,
     
     // Here for defaulting in ATTRS.entryTemplate.value
     ENTRY_TEMPLATE =
-        '<pre class="{entry_class}">'+
+        '<pre class="{entry_class} {cat_class} {src_class}">'+
             '<div class="{entry_meta_class}">'+
                 '<p>'+
                     '<span class="{entry_cat_class}">'+
