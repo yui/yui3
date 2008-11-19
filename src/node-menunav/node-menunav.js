@@ -48,10 +48,6 @@
 * @module nodemenunav
 */
 
-/**
- * @class NodeMenuNav
- */
-
 	//	Util shortcuts
 
 var UA = Y.UA,
