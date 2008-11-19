@@ -433,13 +433,15 @@
          * If not provided, the content will replace existing content in the section.
          */
         _uiSetStdMod : function(section, content, where) {
-            var node = this.getStdModNode(section) || this._renderStdMod(section);
-            if (content instanceof Node) {
-                this._addNodeRef(node, content, where);
-            } else {
-                this._addNodeHTML(node, content, where);
+            if (content) {
+                var node = this.getStdModNode(section) || this._renderStdMod(section);
+                if (content instanceof Node) {
+                    this._addNodeRef(node, content, where);
+                } else {
+                    this._addNodeHTML(node, content, where);
+                }
+                this.fire(ContentUpdate);
             }
-            this.fire(ContentUpdate);
         },
 
         /**

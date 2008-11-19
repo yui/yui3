@@ -1,1 +1,1 @@
-TODO
+This example show how you can use Widget's plugin infrastructure to add addition features to an existing widget. We create an IO plugin for Overlay (or more precisely for the WidgetStdMod extension) which adds IO capabilities, bound to a specific section (header, body or footer) of the Overlay's standard module.

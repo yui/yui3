@@ -59,11 +59,11 @@ $examples["overlay-anim-plugin"] = array(
 
 $examples["overlay-io-plugin"] = array(
     name => "IO Plugin",
-    modules => array("overlay"),
+    modules => array("overlay", "io"),
     description => "Shows how to create a simple plugin to retrieve content for the Overlay using the io utility.",
-    sequence => array(5),
+    sequence => array(5, 50),
     newWindow => "default",
-    requires => array("overlay"),
+    requires => array("overlay", "substitute", "io", "json", "plugin"),
     highlightSyntax => true
 );
 ?>

@@ -16,8 +16,8 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     }
 
     AnimPlugin.NS = "fx";
-    AnimPlugin.NAME = "OverlayAnimPlugin";
-    
+    AnimPlugin.NAME = "overlayAnimPlugin";
+
     AnimPlugin.ATTRS = {
         duration : {
             value: 0.2

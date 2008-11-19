@@ -2468,8 +2468,9 @@ var BASE = 'base',
             requires: ['get']
         },
 
-        logreader : {
-            requires : ['widget', 'substitute', 'stylesheet']
+        console: {
+            requires: ['widget', 'substitute'],
+            skinnable: true
         },
         
         oop: { 
