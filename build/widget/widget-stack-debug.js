@@ -320,11 +320,12 @@ YUI.add('widget-stack', function(Y) {
          * @private
          */
         _detachStackHandles : function(handleKey) {
-            var handles = this._stackHandles[handleKey];
-            if (handles) {
-                for (var i = handles.length - 1; i >= 0; --i) {
-                    handles[i].detach();
-                    delete handles[i];
+            var handles = this._stackHandles[handleKey],
+                handle;
+
+            if (handles && handles.length > 0) {
+                while((handle = handles.pop())) {
+                    handle.detach();
                 }
             }
         },
