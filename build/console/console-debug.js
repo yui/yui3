@@ -29,6 +29,7 @@ var getCN = Y.ClassNameManager.getClassName,
     DISABLED      = 'disabled',
     START_TIME    = 'startTime',
     LAST_TIME     = 'lastTime',
+    RENDERED      = 'rendered',
 
     DOT = '.',
 
@@ -125,19 +126,25 @@ Y.mix(Console, {
         console_title_class    : C_CONSOLE_TITLE
     },
 
-    HEAD_TEMPLATE    :
+    HTML_PARSER : {
+        head : C_CONSOLE_HD,
+        body : C_CONSOLE_BD,
+        foot : C_CONSOLE_FT
+    },
+
+    HEAD_TEMPLATE :
         '<div class="{console_hd_class}">'+
             '<h4 class="{console_title_class}">{str_title}</h4>'+
         '</div>',
 
-    CONSOLE_TEMPLATE : '<div class="{console_bd_class}"></div>',
+    BODY_TEMPLATE : '<div class="{console_bd_class}"></div>',
 
     FOOT_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
                 '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1"> '+
-                '<label class="{console_pause_label_class}">'+
+                        '{console_pause_class}" value="1" id="{id_guid}"> '+
+                '<label for="{id_guid}" class="{console_pause_label_class}">'+
                     '{str_pause}</label>' +
                 '<input type="button" class="'+
                     '{console_button_class} {console_clear_class}" '+
@@ -146,6 +153,12 @@ Y.mix(Console, {
         '</div>',
 
     ATTRS : {
+
+        logEvent : {
+            value : 'yui:log',
+            writeOnce : true,
+            validator : isString
+        },
 
         /**
          * Strings used in the Console UI.  Default locale en-us.
@@ -217,7 +230,7 @@ Y.mix(Console, {
         logLevel : {
             value : Y.config.logLevel,
             validator : function (v) {
-                return this._validateLogLevel(v);
+                return this._validateNewLogLevel(v);
             },
             set : function (v) {
                 return this._setLogLevel(v);
@@ -256,13 +269,16 @@ Y.mix(Console, {
 });
 
 Y.extend(Console,Y.Widget,{
-    _title     : null,
-    _console   : null,
-    _foot      : null,
 
-    _timeout   : null,
+    _head    : null,
 
-    buffer     : null,
+    _body    : null,
+
+    _foot    : null,
+
+    _timeout : null,
+
+    buffer   : null,
 
     // API methods
     log : function () {
@@ -271,7 +287,7 @@ Y.extend(Console,Y.Widget,{
 
     clearConsole : function () {
         // TODO: clear event listeners from console contents
-        this._console.set(INNER_HTML,'');
+        this._body.set(INNER_HTML,'');
 
         this._clearTimeout();
 
@@ -287,12 +303,8 @@ Y.extend(Console,Y.Widget,{
     },
 
     printBuffer: function () {
-        // Called from timeout, so calls to Y.log will not be caught by the
-        // recursion protection in event.  Turn off logging while printing.
-        var debug = Y.config.debug;
-        Y.config.debug = false;
-
         if (!this.get(PAUSED) && this.get('rendered')) {
+
             this._clearTimeout();
 
             var messages = this.buffer,
@@ -307,8 +319,6 @@ Y.extend(Console,Y.Widget,{
 
             this._trimOldEntries();
         }
-
-        Y.config.debug = debug;
 
         return this;
     },
@@ -334,7 +344,7 @@ Y.extend(Console,Y.Widget,{
     initializer : function (cfg) {
         this.buffer    = [];
 
-        Y.on('yui:log',Y.bind(this._onYUILog,this));
+        Y.on(this.get('logEvent'),Y.bind(this._onLogEvent,this));
 
         this.publish(ENTRY, { defaultFn: this._defEntryFn });
         this.publish(RESET, { defaultFn: this._defResetFn });
@@ -365,26 +375,28 @@ Y.extend(Console,Y.Widget,{
 
     
     // Support methods
-    // TODO: HTML_PARSER
     _initHead : function () {
         var cb   = this.get(CONTENT_BOX),
             info = merge(Console.CHROME_CLASSES, {
-                str_title : this.get('strings.title')
-            });
+                        str_title : this.get('strings.title')
+                    });
 
-        cb.insertBefore(
-            create(substitute(Console.HEAD_TEMPLATE,info)),
-            cb.get('firstChild') || null);
+        this._head = create(substitute(Console.HEAD_TEMPLATE,info));
+
+        cb.insertBefore(this._head,cb.get('firstChild'));
     },
 
     _initConsole : function () {
-        this._console = this.get(CONTENT_BOX).insertBefore(
-            create(substitute(Console.CONSOLE_TEMPLATE,Console.CHROME_CLASSES)),
-            this._foot || null);
+        this._body = create(substitute(
+                            Console.BODY_TEMPLATE,
+                            Console.CHROME_CLASSES));
+
+        this.get(CONTENT_BOX).appendChild(this._body);
     },
 
     _initFoot : function () {
         var info = merge(Console.CHROME_CLASSES, {
+                id_guid   : Y.guid(),
                 str_pause : this.get('strings.pause'),
                 str_clear : this.get('strings.clear')
             });
@@ -439,15 +451,16 @@ Y.extend(Console,Y.Widget,{
     },
 
     _addToConsole : function (node) {
-        var toTop = this.get('newestOnTop'), scrollTop;
+        var toTop = this.get('newestOnTop'),
+            bd    = this._body,
+            scrollTop;
 
-        this._console.insertBefore(node,toTop ?
-            this._console.get('firstChild') : null);
+        bd.insertBefore(node,toTop ? bd.get('firstChild') : null);
 
         if (this.get('scrollIntoView')) {
-            scrollTop = toTop ? 0 : this._console.get('scrollHeight');
+            scrollTop = toTop ? 0 : bd.get('scrollHeight');
 
-            this._console.set('scrollTop', scrollTop);
+            bd.set('scrollTop', scrollTop);
         }
     },
 
@@ -463,18 +476,20 @@ Y.extend(Console,Y.Widget,{
     },
 
     _trimOldEntries : function () {
-        if (this._console) {
-            var entries = this._console.queryAll(DOT+C_ENTRY),
+        var bd = this._body;
+
+        if (bd) {
+            var entries = bd.queryAll(DOT+C_ENTRY),
                 i = entries ? entries.size() - this.get('consoleLimit') : 0;
 
             if (i > 0) {
                 if (this.get('newestOnTop')) {
                     for (var l = entries.size(); i<l; i++) {
-                        this._console.removeChild(entries.item(i));
+                        bd.removeChild(entries.item(i));
                     }
                 } else {
                     for (;i>=0;--i) {
-                        this._console.removeChild(entries.item(i));
+                        bd.removeChild(entries.item(i));
                     }
                 }
             }
@@ -524,7 +539,7 @@ Y.extend(Console,Y.Widget,{
         return v;
     },
 
-    _validateLogLevel : function (v) {
+    _validateNewLogLevel : function (v) {
         return v === Console.LOG_LEVEL_INFO ||
                v === Console.LOG_LEVEL_WARN ||
                v === Console.LOG_LEVEL_ERROR;
@@ -585,11 +600,11 @@ Y.extend(Console,Y.Widget,{
 
 
     // Custom event listeners and default functions
-    _onYUILog : function (msg,cat,src) {
+    _onLogEvent : function (msg,cat,src) {
 
         if (!this.get(DISABLED) && this._isInLogLevel(msg,cat,src)) {
 
-            // TODO: needed?
+            /* TODO: needed? */
             var debug = Y.config.debug;
             Y.config.debug = false;
 
