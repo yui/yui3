@@ -1,3 +1,7 @@
+/**
+* @module classnamemanager
+*/
+
 // String constants
 var CLASS_NAME_PREFIX = 'classNamePrefix',
 	CLASS_NAME_DELIMITER = 'classNameDelimiter';
