@@ -393,6 +393,10 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 };
 
 
+/* 
+* @namespace Y.Plugin
+* @class NodeMenuNav
+*/
 var MenuNav = function (config) {
 
 	var menuNav = this,
@@ -468,7 +472,7 @@ var MenuNav = function (config) {
 
 		oDocument.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
 
-		Y.on("focus", menuNav._onDocFocus, menuNav, oDocument);
+		Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oDocument);
 
 		menuNav._rootMenu = oRootMenu;
 
@@ -568,7 +572,7 @@ MenuNav.NS = "nodeMenuNav";
 
 
 /** 
-* @property Y.Plugin.NodeMenuNav.SHIM_TEMPLATE
+* @property NodeMenuNav.SHIM_TEMPLATE
 * @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
 * used to prevent <code>&#60;select&#62;</code> elements from poking through menus.
 * @default null
