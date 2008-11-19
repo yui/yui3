@@ -6,8 +6,8 @@
 
 <button type="button" id="show">Show</button>
 <button type="button" id="hide">Hide</button>
-<button type="button" id="unplug">Unplug</button>
-<button type="button" id="plug">Plug (faster)</button>
+<button type="button" id="unplug">Unplug AnimPlugin</button>
+<button type="button" id="plug">Plug AnimPlugin (duration:0.5)</button>
 
 <script type="text/javascript">
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
@@ -89,16 +89,17 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
                     this.get("animVisible").stop();
                     this.get("animHidden").run();
                 }
-                return new Y.Do.Halt();
+                return new Y.Do.Prevent("AnimPlugin prevented default show/hide");
             }
         },
 
         _uiSetVisible : function(val) {
             var owner = this._owner;
+            var hiddenClass = owner.getClassName("hidden");
             if (!val) {
-                owner.get("boundingBox").addClass(owner.getClassName("hidden"));
+                owner.get("boundingBox").addClass(hiddenClass);
             } else {
-                owner.get("boundingBox").removeClass(owner.getClassName("hidden"));
+                owner.get("boundingBox").removeClass(hiddenClass);
             }
         }
     });
@@ -112,7 +113,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             node: "#show", 
             points: ["tl", "bl"]
         },
-        plugins : [{fn:AnimPlugin, cfg:{duration:1.5}}]
+        plugins : [{fn:AnimPlugin, cfg:{duration:2}}]
     });
     overlay.render();
 
@@ -129,6 +130,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     }, "#unplug");
 
     Y.on("click", function() {
+        overlay.unplug("fx");
         overlay.plug({fn:AnimPlugin, cfg:{duration:0.5}});
     }, "#plug");
 
