@@ -187,7 +187,7 @@ YUI.add("aop", function(Y) {
             af = this.after,
             prevented = false;
 
-        // for (i=0; i<this.before.length; ++i) {
+        // execute before
         for (i in bf) {
             if (bf.hasOwnProperty(i)) {
                 ret = bf[i].apply(this.obj, args);

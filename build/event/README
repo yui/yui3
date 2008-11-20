@@ -21,6 +21,7 @@ YUI Event Utility
     - before method re-added to Event.Target, which delegates to Do.before or
       subscribe.
     - Event.Target.after will delegate to Do.after if type is a function
+    - Added keylistener: Y.on('key', fn, element, 'down:13,65+ctrl+shift')
 
 3.0.0pr1
     - Initial Release
