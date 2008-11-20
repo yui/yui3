@@ -73,30 +73,9 @@ YUI.add("event", function(Y) {
          * @event available
          */
         available: {
-
             on: function(type, fn, id, o) {
-            // onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
-
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
-
-                /*
-
-                var a = Y.Array(arguments, 1, true), m = fn;
-
-                a.splice(1, 1);
-                a.unshift(id);
-
-
-                if (o) {
-                    var a2 = a.slice(1);
-                    m = Y.bind.apply(Y, a2);
-                }
-
-
-                return Y.Event.onAvailable.apply(Y.Event, a);
-                */
-
             },
 
             detach: function() {
@@ -112,25 +91,93 @@ YUI.add("event", function(Y) {
          * @event contentready
          */
         contentready: {
-
             on: function(type, fn, id, o) {
-                
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
+            },
 
-                /*
-                var a = Y.Array(arguments, 1, true), m = fn;
+            detach: function() {
 
-                a.splice(1, 1);
-                a.unshift(id);
+            }
+        },
 
-                if (o) {
-                    var a2 = a.slice(1);
-                    m = Y.bind.apply(Y, a2);
+        /**
+         * Add a key listener.  The listener will only be notified if the
+         * keystroke detected meets the supplied specification.  The
+         * spec consists of the key event type, followed by a colon,
+         * followed by zero or more comma separated key codes, followed
+         * by zero or more modifiers delimited by a plus sign.  Ex:
+         * press:12,65+shift+ctrl
+         * @event key
+         * @param fn {string} the function to execute
+         * @param id {string} the element(s) to bind
+         * @param spec {string} the keyCode and modifier specification
+         * @param o optional context object
+         * @param args 0..n additional arguments that should be provided 
+         * to the listener.
+         */
+        key: {
+
+            on: function(type, fn, id, spec, o) {
+
+                // parse spec ([key event type]:[criteria])
+                var parsed = spec.split(':'),
+
+                    // key event type: 'down', 'up', or 'press'
+                    etype = parsed[0],
+
+                    // list of key codes optionally followed by modifiers
+                    criteria = parsed[1].split(/,|\+/),
+
+                    // the name of the custom event that will be created for the spec
+                    ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec,
+
+                    a = Y.Array(arguments, 0, true);
+
+                // subscribe spec validator to the DOM event
+                Y.on(type + etype, function(e) {
+
+                    
+                    var passed = false, failed = false;
+
+                    for (var i=0; i<criteria.length; i=i+1) {
+                        var crit = criteria[i], critInt = parseInt(crit, 10);
+
+                        // pass this section if any supplied keyCode 
+                        // is found
+                        if (Y.Lang.isNumber(critInt)) {
+
+                            if (e.charCode === critInt) {
+                                passed = true;
+                            } else {
+                                failed = true;
+                            }
+
+                        // only check modifier if no keyCode was specified
+                        // or the keyCode check was successful.  pass only 
+                        // if every modifier passes
+                        } else if (passed || !failed) {
+                            passed = (e[crit + 'Key']);
+                        } else {
+                        }
+                    }
+
+                    // fire spec custom event if spec if met
+                    if (passed) {
+                        Y.fire(ename, e);
+                    }
+
+                }, id);
+
+                // subscribe supplied listener to custom event for spec validator
+                // remove element and spec
+                a.splice(2, 2);
+                a[0] = ename;
+                if (!a[2]) {
+                    a.push(Y.get(id));
                 }
 
-                return Y.Event.onContentReady.apply(Y.Event, a);
-                */
+                return Y.on.apply(Y, a);
             },
 
             detach: function() {
@@ -447,7 +494,7 @@ YUI.add("aop", function(Y) {
             af = this.after,
             prevented = false;
 
-        // for (i=0; i<this.before.length; ++i) {
+        // execute before
         for (i in bf) {
             if (bf.hasOwnProperty(i)) {
                 ret = bf[i].apply(this.obj, args);
@@ -846,8 +893,6 @@ YUI.add("event-custom", function(Y) {
                 se.fire.apply(se, args);
             }
 
-            // debugger;
-
             var s = new Y.Subscriber(fn, obj, args, when);
 
 
@@ -877,7 +922,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         subscribe: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true));
+            return this._subscribe(fn, obj, arguments, true);
         },
 
         /**
@@ -891,7 +936,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         after: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true), AFTER);
+            return this._subscribe(fn, obj, arguments, AFTER);
         },
 
         /**
@@ -1327,21 +1372,25 @@ YUI.add("event-custom", function(Y) {
          */
         // this.args = args;
 
-        var m = fn;
-        
-        if (obj) {
-            var a = (args) ? Y.Array(args) : [];
-            a.unshift(fn, obj);
-            m = Y.bind.apply(Y, a);
-        }
-        
         /**
          * }
          * fn bound to obj with additional arguments applied via Y.bind
          * @property wrappedFn
          * @type Function
          */
-        this.wrappedFn = m;
+        this.wrappedFn = fn;
+        
+        if (obj) {
+            /*
+            var a = (args) ? Y.Array(args) : [];
+            a.unshift(fn, obj);
+            // a.unshift(fn);
+            m = Y.bind.apply(Y, a);
+            */
+            this.wrappedFn = Y.bind.apply(Y, args);
+        }
+        
+
 
     };
 

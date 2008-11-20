@@ -13,7 +13,7 @@
         visibility:hidden;
     }
 
-    div.yui-tooltip-node {
+    div.yui-tooltip-trigger {
         border:1px solid #000;
         background-color:#acacee;
         width:10em;
@@ -21,7 +21,6 @@
         padding:5px;
         cursor:default;
     }
-
 </style>
 
 <!-- TODO: Temporary, until in loader -->

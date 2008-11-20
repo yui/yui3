@@ -304,8 +304,6 @@ YUI.add("event-custom", function(Y) {
                 se.fire.apply(se, args);
             }
 
-            // debugger;
-
             var s = new Y.Subscriber(fn, obj, args, when);
 
 
@@ -335,7 +333,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         subscribe: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true));
+            return this._subscribe(fn, obj, arguments, true);
         },
 
         /**
@@ -349,7 +347,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         after: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true), AFTER);
+            return this._subscribe(fn, obj, arguments, AFTER);
         },
 
         /**
@@ -793,21 +791,25 @@ YUI.add("event-custom", function(Y) {
          */
         // this.args = args;
 
-        var m = fn;
-        
-        if (obj) {
-            var a = (args) ? Y.Array(args) : [];
-            a.unshift(fn, obj);
-            m = Y.bind.apply(Y, a);
-        }
-        
         /**
          * }
          * fn bound to obj with additional arguments applied via Y.bind
          * @property wrappedFn
          * @type Function
          */
-        this.wrappedFn = m;
+        this.wrappedFn = fn;
+        
+        if (obj) {
+            /*
+            var a = (args) ? Y.Array(args) : [];
+            a.unshift(fn, obj);
+            // a.unshift(fn);
+            m = Y.bind.apply(Y, a);
+            */
+            this.wrappedFn = Y.bind.apply(Y, args);
+        }
+        
+
 
     };
 
