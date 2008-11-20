@@ -570,10 +570,20 @@ MenuNav.NS = "nodeMenuNav";
 
 
 /** 
+* @property NodeMenuNav.SHIM_TEMPLATE_TITLE
+* @description String representing the value for the <code>title</code> attribute for the shim used
+* to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
+* @default "Menu Stacking Shim"
+* @type String
+*/
+MenuNav.SHIM_TEMPLATE_TITLE = "Menu Stacking Shim";
+
+
+/** 
 * @property NodeMenuNav.SHIM_TEMPLATE
 * @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
-* used to prevent <code>&#60;select&#62;</code> elements from poking through menus.
-* @default null
+* used to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
+* @default '<iframe frameborder="0" role="presentation" class="yui-shim" title="Menu Stacking Shim" src="javascript:false;"></iframe>'
 * @type String
 */
 
@@ -582,7 +592,8 @@ MenuNav.NS = "nodeMenuNav";
 
 MenuNav.SHIM_TEMPLATE	=	'<iframe frameborder="0" role="presentation" class="' + 
 							getClassName("shim") + 
-							'" title="Menu Stacking Shim" src="javascript:false;"></iframe>';
+							'" title="' + MenuNav.SHIM_TEMPLATE_TITLE + 
+							'" src="javascript:false;"></iframe>';
 
 
 MenuNav.prototype = {
