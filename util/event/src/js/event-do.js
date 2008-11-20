@@ -104,18 +104,21 @@ YUI.add("aop", function(Y) {
             // register the callback
             o[sFn].register(sid, fn, when);
 
-            return sid;
+            return new Y.EventHandle(o[sFn], sid);
 
         },
 
         /**
          * Detach a before or after subscription
          * @method detach
-         * @param sid {string} the subscription handle
+         * @param handle {string} the subscription handle
          */
-        detach: function(sid) {
-            delete this.before[sid];
-            delete this.after[sid];
+        detach: function(handle) {
+
+            if (handle.detach) {
+                handle.detach();
+            }
+
         },
 
         _unload: function(e, me) {
@@ -160,6 +163,19 @@ YUI.add("aop", function(Y) {
     };
 
     /**
+     * Unregister a aop subscriber
+     * @method delete
+     * @param sid {string} the subscriber id
+     * @param fn {Function} the function to execute
+     * @param when {string} when to execute the function
+     */
+    Y.Do.Method.prototype._delete = function (sid) {
+        // Y.log('Y.Do._delete: ' + sid, 'info', 'Event');
+        delete this.before[sid];
+        delete this.after[sid];
+    };
+
+    /**
      * Execute the wrapped method
      * @method exec
      */
@@ -168,44 +184,43 @@ YUI.add("aop", function(Y) {
         var args = Y.Array(arguments, 0, true), 
             i, ret, newRet, 
             bf = this.before,
-            af = this.after;
+            af = this.after,
+            prevented = false;
 
-        // for (i=0; i<this.before.length; ++i) {
+        // execute before
         for (i in bf) {
             if (bf.hasOwnProperty(i)) {
                 ret = bf[i].apply(this.obj, args);
-
-                // Stop processing if a Halt object is returned
-                if (ret && ret.constructor == Y.Do.Halt) {
-                    // this.logger.debug("Halt before " + this.methodName + 
-                    //      ": " ret.msg);
-                    return ret.retVal;
-                // Check for altered arguments
-                } else if (ret && ret.constructor == Y.Do.AlterArgs) {
-                    // this.logger.debug("Params altered before " + 
-                    //      this.methodName + ": " ret.msg);
-                    args = ret.newArgs;
+                if (ret) {
+                    switch (ret.constructor) {
+                        case Y.Do.Halt:
+                            return ret.retVal;
+                        case Y.Do.AlterArgs:
+                            args = ret.newArgs;
+                            break;
+                        case Y.Do.Prevent:
+                            prevented = true;
+                            break;
+                        default:
+                    }
                 }
             }
         }
 
         // execute method
-        ret = this.method.apply(this.obj, args);
+        if (!prevented) {
+            ret = this.method.apply(this.obj, args);
+        }
 
         // execute after methods.
-        // for (i=0; i<this.after.length; ++i) {
         for (i in af) {
             if (af.hasOwnProperty(i)) {
                 newRet = af[i].apply(this.obj, args);
                 // Stop processing if a Halt object is returned
                 if (newRet && newRet.constructor == Y.Do.Halt) {
-                    // this.logger.debug("Halt after " + this.methodName + 
-                    //      ": " ret.msg);
                     return newRet.retVal;
                 // Check for a new return value
                 } else if (newRet && newRet.constructor == Y.Do.AlterReturn) {
-                    // this.logger.debug("Return altered after " + 
-                    //      this.methodName + ": " newRet.msg);
                     ret = newRet.newRetVal;
                 }
             }
@@ -247,6 +262,15 @@ YUI.add("aop", function(Y) {
     Y.Do.Halt = function(msg, retVal) {
         this.msg = msg;
         this.retVal = retVal;
+    };
+
+    /**
+     * Return a Prevent object when you want to prevent the wrapped function
+     * from executing, but want the remaining listeners to execute
+     * @class Do.Halt
+     */
+    Y.Do.Prevent = function(msg) {
+        this.msg = msg;
     };
 
     /**

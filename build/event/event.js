@@ -158,9 +158,8 @@ YUI.add("event", function(Y) {
                         // if every modifier passes
                         } else if (passed || !failed) {
                             passed = (e[crit + 'Key']);
-                        } else {
-                        }
-                    }
+                            failed = !passed;
+                        }                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
