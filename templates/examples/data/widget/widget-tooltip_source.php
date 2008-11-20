@@ -1,10 +1,10 @@
-<div class="yui-tooltip-node" title="Tooltip 1">Tooltip One</div>
+<div class="yui-tooltip-trigger" title="Tooltip 1">Tooltip One</div>
 
-<div class="yui-tooltip-node" title="Tooltip 2">Tooltip Two</div>
+<div class="yui-tooltip-trigger" title="Tooltip 2">Tooltip Two</div>
 
-<div class="yui-tooltip-node" title="Tooltip 3">Tooltip Three</div>
+<div class="yui-tooltip-trigger" title="Tooltip 3">Tooltip Three</div>
 
-<div class="yui-tooltip-node" title="Tooltip 4">Tooltip Four</div>
+<div class="yui-tooltip-trigger" title="Tooltip 4">Tooltip Four</div>
 
 <script type="text/javascript">
 YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules ?>, function(Y) {
@@ -17,7 +17,10 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
     }
 
     Tooltip.OFFSET_X = 15;
-    Tooltip.OFFSET_Y = 5;
+    Tooltip.OFFSET_Y = 15;
+
+    Tooltip.OFFSCREEN_X = -10000;
+    Tooltip.OFFSCREEN_Y = -10000;
 
     Tooltip.ATTRS = {
 
@@ -56,6 +59,10 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
 
         visible : {
             value:false
+        },
+
+        xy: {
+            value:[Tooltip.OFFSCREEN_X, Tooltip.OFFSCREEN_Y]
         }
     };
 
@@ -64,18 +71,34 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
     Y.extend(Tooltip, Y.Widget, {
 
         initializer : function(config) {
-            this._ttNodeClassName = this.getClassName("node");
 
-            this._currNode = {};
-            this._delegateHandle;
+            this._triggerClassName = this.getClassName("trigger");
+
+            this._currTrigger = {
+                node: null,
+                title: null,
+                mouseX: Tooltip.OFFSCREEN_X,
+                mouseY: Tooltip.OFFSCREEN_Y
+            };
+
+            this._eventHandles = {
+                delegate: null,
+                trigger: {
+                    mouseMove : null,
+                    mouseOut: null
+                }
+            };
+
+            this._timers = {
+                show: null,
+                hide: null
+            };
         },
 
         destructor : function() {
-            this._clearCurrNodeState();
-
-            if (this._delegateHandle) {
-                this._delegateHandle.detach();
-            }
+            this._clearCurrTrigger();
+            this._clearTimers();
+            this._clearHandles();
         },
 
         bindUI : function() {
@@ -91,6 +114,10 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             this._uiSetNodes(this.get("nodes"));
         },
 
+        hasTooltip : function(node) {
+            return (node && node.hasClass(this._triggerClassName));
+        },
+
         _afterSetContent : function(e) {
             this._uiSetContent(e.newVal);
         },
@@ -104,13 +131,13 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         },
 
         _uiSetNodes : function(nodes) {
-            if (this._boundNodes) {
-                this._boundNodes.removeClass(this._ttNodeClassName);
+            if (this._triggerNodes) {
+                this._triggerNodes.removeClass(this._triggerClassName);
             }
 
             if (nodes) {
-                this._boundNodes = nodes;
-                this._boundNodes.addClass(this._ttNodeClassName);
+                this._triggerNodes = nodes;
+                this._triggerNodes.addClass(this._triggerClassName);
             }
         },
 
@@ -129,25 +156,33 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         },
 
         _bindDelegate : function() {
-            if (this._delegateHandle) {
-                this._delegateHandle.detach();
+            var eventHandles = this._eventHandles;
+
+            if (eventHandles.delegate) {
+                eventHandles.delegate.detach();
+                eventHandles.delegate = null;
             }
 
             var delegate = this.get("delegate");
-            var mouseOverHandler = Y.bind(this._onDelegateMouseOver, this);
+            var onMouseOver = Y.bind(this._onDelegateMouseOver, this);
 
-            this._delegateHandle = Y.on("mouseover", mouseOverHandler, delegate);
+            eventHandles.delegate = Y.on("mouseover", onMouseOver, delegate);
         },
 
         _onDelegateMouseOver : function(e) {
-            if (this.hasTooltip(e.target)) {
-                this._doMouseEnter(e.target, e.pageX, e.pageY);
+            var node = e.target;
+
+            if (this.hasTooltip(node)) {
+                this._doMouseEnter(node, e.pageX, e.pageY);
             }
         },
 
         _onNodeMouseOut : function(e) {
-            if (e.target && e.target.compareTo(this._currNode.node)) {
-                this._doMouseLeave(e.target);
+            var node = e.target;
+            var currNode = this._currTrigger.node;
+
+            if (currNode && currNode.compareTo(node)) {
+                this._doMouseLeave(node);
             }
         },
 
@@ -155,97 +190,115 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             this._doMouseMove(e.pageX, e.pageY);
         },
 
-        hasTooltip : function(node) {
-            return (node && node.hasClass(this._ttNodeClassName));
+        _doMouseEnter : function(node, x, y) {
+            this._setCurrTrigger(node, x, y);
+            this._clearTimers();
+
+            var delay = (this.get("visible")) ? 0 : this.get("showDelay");
+
+            this._timers.show = Y.later(delay, this, this._showTooltip, [node]);
+        },
+
+        _doMouseMove : function(x, y) {
+            this._currTrigger.mouseX = x;
+            this._currTrigger.mouseY = y;
+        },
+
+        _doMouseLeave : function(node) {
+            this._clearCurrTrigger();
+            this._clearTimers();
+
+            this._timers.hide = Y.later(this.get("hideDelay"), this, this._hideTooltip);
         },
 
         _showTooltip : function(node) {
-            var x = this._currNode.mouseX;
-            var y = this._currNode.mouseY;
+            var x = this._currTrigger.mouseX;
+            var y = this._currTrigger.mouseY;
 
             this.move(x + Tooltip.OFFSET_X, y + Tooltip.OFFSET_Y);
 
             this.show();
 
-            this._hTimer = Y.later(this.get("autoHideDelay"), this, this._autoHideTooltip);
+            this._timers.hide = Y.later(this.get("autoHideDelay"), this, this._hideTooltip);
         },
 
         _hideTooltip : function() {
+            this._clearTimers();
             this.hide();
         },
 
-        _autoHideTooltip : function() {
-            this._clearTimers();
-            this._hideTooltip();
-        },
-
-        _setCurrNodeState : function(node, x, y) {
+        _setCurrTrigger : function(node, x, y) {
 
             var title = node.getAttribute("title");
             node.setAttribute("title", "");
+
             this.set("content", title);
 
-            this._currNode.mouseX = x;
-            this._currNode.mouseY = y;
+            var currTrigger = this._currTrigger;
+            var triggerHandles = this._eventHandles.trigger;
 
-            this._currNode.mouseMoveHandle = Y.on("mousemove", Y.bind(this._onNodeMouseMove, this), node);
-            this._currNode.mouseOutHandle = Y.on("mouseout", Y.bind(this._onNodeMouseOut, this), node);
+            currTrigger.mouseX = x;
+            currTrigger.mouseY = y;
+            currTrigger.node = node;
+            currTrigger.title = title;
 
-            this._currNode.node = node;
-            this._currNode.title = title;
+            triggerHandles.mouseMove = Y.on("mousemove", Y.bind(this._onNodeMouseMove, this), node);
+            triggerHandles.mouseOut = Y.on("mouseout", Y.bind(this._onNodeMouseOut, this), node);
         },
 
-        _clearCurrNodeState : function() {
-            if (this._currNode.node) {
-                var node = this._currNode.node;
-                var title = this._currNode.title || "";
+        _clearCurrTrigger : function() {
 
-                this._currNode.node = null;
-                this._currNode.title = "";
+            var currTrigger = this._currTrigger;
+            var triggerHandles = this._eventHandles.trigger;
 
-                this._currNode.mouseMoveHandle.detach();
-                this._currNode.mouseOutHandle.detach();
+            if (currTrigger.node) {
+                var node = currTrigger.node;
+                var title = currTrigger.title || "";
+
+                currTrigger.node = null;
+                currTrigger.title = "";
+
+                triggerHandles.mouseMove.detach();
+                triggerHandles.mouseOut.detach();
+
+                triggerHandles.mouseMove = null;
+                triggerHandles.mouseOut = null;
 
                 node.setAttribute("title", title);
             }
         },
 
         _clearTimers : function() {
-            if (this._hTimer) {
-                this._hTimer.cancel();
-                this._hTimer = null;
+            var timers = this._timers;
+            if (timers.hide) {
+                timers.hide.cancel();
+                timers.hide = null;
             }
-
-            if (this._sTimer) {
-                this._sTimer.cancel();
-                this._sTimer = null;
+            if (timers.show) {
+              timers.show.cancel();
+              timers.show = null;
             }
         },
 
-        _doMouseEnter : function(node, x, y) {
-            this._setCurrNodeState(node, x, y);
-            this._clearTimers();
+        _clearHandles : function() {
+            var eventHandles = this._eventHandles;
 
-            var delay = (this.get("visible")) ? 0 : this.get("showDelay");
-            this._sTimer = Y.later(delay, this, this._showTooltip, [node]);
-        },
-
-        _doMouseMove : function(x, y) {
-            this._currNode.mouseX = x;
-            this._currNode.mouseY = y;
-        },
-
-        _doMouseLeave : function(node) {
-            this._clearCurrNodeState();
-            this._clearTimers();
-            this._hTimer = Y.later(this.get("hideDelay"), this, this._hideTooltip);
+            if (eventHandles.delegate) {
+                this._eventHandles.delegate.detach();
+            }
+            if (eventHandles.trigger.mouseOut) {
+                eventHandles.trigger.mouseOut.detach();
+            }
+            if (eventHandles.trigger.mouseMove) {
+                eventHandles.trigger.mouseMove.detach();
+            }
         }
     });
 
     // dynamic:false = Modify the existing Tooltip class
     Tooltip = Y.Base.build(Tooltip, [Y.WidgetPosition, Y.WidgetStack], {dynamic:false});
 
-    var tt = new Tooltip({nodes:".tooltip"});
+    var tt = new Tooltip({nodes:".tooltip", zIndex:2});
     tt.render();
 });
 </script>
