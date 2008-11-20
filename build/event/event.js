@@ -181,7 +181,7 @@ YUI.add("event", function(Y) {
             },
 
             detach: function() {
-
+                // use the returned handle to unsubscribe
             }
         }
 

@@ -1,7 +1,5 @@
 YUI.add('node-menunav', function(Y) {
 
-YUI.add('node-menunav', function(Y) {
-
 /**
 * <p>The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, 
 * drop down navigational menus that are both accessible and easy to customize, and only require 
@@ -23,7 +21,7 @@ YUI.add('node-menunav', function(Y) {
 * <p>
 * <code>
 * var oMenuNav = Y.Node.get("#productsandservices");<br>
-* oMenuNav.plug(Y.Plugin.NodeMenuNav, { autoSubmenuDisplay: true });
+* oMenuNav.plug(Y.Plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
 * </code>
 * </p>
 * 
@@ -1895,8 +1893,6 @@ MenuNav.prototype = {
 Y.namespace('Plugin');
 
 Y.Plugin.NodeMenuNav = MenuNav;
-
-}, '@VERSION@' ,{requires:['node', 'classnamemanager']});
 
 
 }, '@VERSION@' ,{requires:['node', 'classnamemanager']});
