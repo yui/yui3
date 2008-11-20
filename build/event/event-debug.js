@@ -137,7 +137,7 @@ YUI.add("event", function(Y) {
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
 
-                    Y.log('keylistener: ' + e.charCode);
+                    // Y.log('keylistener: ' + e.charCode);
                     
                     var passed = false, failed = false;
 
@@ -149,11 +149,11 @@ YUI.add("event", function(Y) {
                         if (Y.Lang.isNumber(critInt)) {
 
                             if (e.charCode === critInt) {
-                                Y.log('passed: ' + crit);
+                                // Y.log('passed: ' + crit);
                                 passed = true;
                             } else {
                                 failed = true;
-                                Y.log('failed: ' + crit);
+                                // Y.log('failed: ' + crit);
                             }
 
                         // only check modifier if no keyCode was specified
@@ -161,11 +161,9 @@ YUI.add("event", function(Y) {
                         // if every modifier passes
                         } else if (passed || !failed) {
                             passed = (e[crit + 'Key']);
-                            Y.log(crit + ": " + passed);
-                        } else {
-                            Y.log('skipped: ' + crit);
-                        }
-                    }
+                            failed = !passed;
+                            // Y.log(crit + ": " + passed);
+                        }                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
