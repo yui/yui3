@@ -168,14 +168,6 @@ YUI.add("event", function(Y) {
 
                     // fire spec custom event if spec if met
                     if (passed) {
-                        // var ce = this._yuievt.events[ename];
-                        // the expectation is that the default context for
-                        // DOM event listeners is a Node instance for the
-                        // bound element.  the element may not be on the
-                        // page at the time the listener is attached, so
-                        // the only way to be sure this works is to update
-                        // ce.context = e.currentTarget;
-                        // ce.fire(e);
                         Y.fire(ename, e);
                     }
 
