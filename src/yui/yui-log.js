@@ -49,10 +49,14 @@ YUI.add("log", function(instance) {
 
             if (!bail) {
 
-                if (c.useConsole && typeof console != 'undefined') {
-                        var f = (cat && console[cat]) ? cat : 'log',
-                            m = (src) ? src + ': ' + msg : msg;
+                if (c.useConsole) {
+                    var m = (src) ? src + ': ' + msg : msg;
+                    if (typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log';
                         console[f](m);
+                    } else if (typeof opera != 'undefined') {
+                        opera.postError(m);
+                    }
                 }
 
                 if (Y.fire && !bail && !silent) {
