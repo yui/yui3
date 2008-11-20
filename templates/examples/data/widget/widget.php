@@ -21,7 +21,17 @@ $examples["widget-build"] = array(
     name => "Creating custom widget classes",
     modules => array("widget"),
     description => "Shows how to use Base.build to create custom Widget classes.",
-    sequence => array(0),
+    sequence => array(1),
+    newWindow => "default",
+    requires => array("widget", "widget-position", "widget-stack"),
+    highlightSyntax => true
+);
+
+$examples["widget-tooltip"] = array(
+    name => "Creating a simple Tooltip widget",
+    modules => array("widget"),
+    description => "Shows how to extend the Widget class, and add WidgetPosition and WidgetStack to create a Tooltip widget class.",
+    sequence => array(2),
     newWindow => "default",
     requires => array("widget", "widget-position", "widget-stack"),
     highlightSyntax => true
