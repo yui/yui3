@@ -159,10 +159,19 @@ YUI.add("event", function(Y) {
                         } else if (passed || !failed) {
                             passed = (e[crit + 'Key']);
                             failed = !passed;
-                        }                    }
+                        }                    
+                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
+                        // var ce = this._yuievt.events[ename];
+                        // the expectation is that the default context for
+                        // DOM event listeners is a Node instance for the
+                        // bound element.  the element may not be on the
+                        // page at the time the listener is attached, so
+                        // the only way to be sure this works is to update
+                        // ce.context = e.currentTarget;
+                        // ce.fire(e);
                         Y.fire(ename, e);
                     }
 
@@ -172,9 +181,17 @@ YUI.add("event", function(Y) {
                 // remove element and spec
                 a.splice(2, 2);
                 a[0] = ename;
-                if (!a[2]) {
+
+                /*
+
+                if (!a[2]) { 
+                    // @TODO the subscribe will not be executed in the node's
+                    // context unless it is present at the time the listener
+                    // is attached.
                     a.push(Y.get(id));
                 }
+
+                */
 
                 return Y.on.apply(Y, a);
             },
@@ -1012,7 +1029,7 @@ YUI.add("event-custom", function(Y) {
         _notify: function(s, args, ef) {
 
 
-            var ret;
+            var ret, c, ct;
 
             // emit an Event.Facade if this is that sort of event
             // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -1027,8 +1044,11 @@ YUI.add("event-custom", function(Y) {
                 }
 
             }
-             
-            ret = s.notify(this.context, args, this);
+
+            // The default context should be the object/element that
+            // the listener was bound to.
+            ct = (Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 return false;

@@ -137,7 +137,7 @@ YUI.add("event", function(Y) {
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
 
-                    // Y.log('keylistener: ' + e.charCode);
+                    // Y.log('keylistener: ' + e.keyCode);
                     
                     var passed = false, failed = false;
 
@@ -163,10 +163,19 @@ YUI.add("event", function(Y) {
                             passed = (e[crit + 'Key']);
                             failed = !passed;
                             // Y.log(crit + ": " + passed);
-                        }                    }
+                        }                    
+                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
+                        // var ce = this._yuievt.events[ename];
+                        // the expectation is that the default context for
+                        // DOM event listeners is a Node instance for the
+                        // bound element.  the element may not be on the
+                        // page at the time the listener is attached, so
+                        // the only way to be sure this works is to update
+                        // ce.context = e.currentTarget;
+                        // ce.fire(e);
                         Y.fire(ename, e);
                     }
 
@@ -176,9 +185,17 @@ YUI.add("event", function(Y) {
                 // remove element and spec
                 a.splice(2, 2);
                 a[0] = ename;
-                if (!a[2]) {
+
+                /*
+
+                if (!a[2]) { 
+                    // @TODO the subscribe will not be executed in the node's
+                    // context unless it is present at the time the listener
+                    // is attached.
                     a.push(Y.get(id));
                 }
+
+                */
 
                 return Y.on.apply(Y, a);
             },
