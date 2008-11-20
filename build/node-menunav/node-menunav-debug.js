@@ -591,8 +591,9 @@ MenuNav.SHIM_TEMPLATE_TITLE = "Menu Stacking Shim";
 * @property NodeMenuNav.SHIM_TEMPLATE
 * @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
 * used to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
-* @default &#34&#60;iframe frameborder=&#340&#34 role=&#34presentation&#34 class=&#34yui-shim&#34 
-* title=&#34Menu Stacking Shim&#34 src=&#34javascript:false;&#34&#62;&#60;/iframe&#60;&#34
+* @default &#34;&#60;iframe frameborder=&#34;0&#34; role=&#34presentation&#34; 
+* class=&#34yui-shim&#34; title=&#34Menu Stacking Shim&#34; 
+* src=&#34javascript:false;&#34;&#62;&#60;/iframe&#62;&#34;
 * @type String
 */
 
