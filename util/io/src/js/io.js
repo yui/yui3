@@ -381,16 +381,17 @@ YUI.add("io", function (Y) {
     * @return object
 	*/
 	function _io(uri, c) {
-		var c = c || {};
-		var o = _create((arguments.length === 3) ? arguments[2] : null, c);
-		var m = (c.method) ? c.method.toUpperCase() : 'GET';
-		var d = (c.data) ? c.data : null;
+		var c = c || {},
+		o = _create((arguments.length === 3) ? arguments[2] : null, c),
+		m = (c.method) ? c.method.toUpperCase() : 'GET',
+		d = (c.data) ? c.data : null,
+		f;
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
 		if (c.form) {
 			// Serialize the HTML form into a string of name-value pairs.
-			var f = _serialize(c.form);
+			f = _serialize(c.form);
 			// If config.data is defined, concatenate the data to the form string.
 			if (d) {
 				f += "&" + d;
@@ -432,11 +433,18 @@ YUI.add("io", function (Y) {
 		}
 		/* End Configuration Properties */
 
-		o.c.onreadystatechange = function() { _readyState(o, c); };
+		try {
+			o.c.onreadystatechange = function() { _readyState(o, c); };
+		}
+		catch(e) {
+			//offline
+		}
+
+
 		_open(o.c, m, uri);
 		_setHeaders(o.c, (c.headers || {}));
 		// Do not pass null, in the absence of data, as this
-		// results in a POST request with no Content-Length
+		// wiil result in a POST request with no Content-Length
 		// defined.
 		_async(o, (d || ''), c);
 
@@ -671,13 +679,43 @@ YUI.add("io", function (Y) {
 	*/
 	function _swf(uri, yid) {
 		var b = Y.Node.get("body");
-		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">';
-		swf += '<param name="movie" value="' + uri + '">';
-		swf += '<param name="FlashVars" value="yid=' + yid + '">';
-		swf += '<param name="allowScriptAccess" value="sameDomain">';
-		swf += '</object>';
+		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">' +
+				  '<param name="movie" value="' + uri + '">' +
+				  '<param name="FlashVars" value="yid=' + yid + '">' +
+				  '<param name="allowScriptAccess" value="sameDomain">' +
+				  '</object>';
 		b.appendChild(Y.Node.create(swf))
 		_xdr.flash = d.getElementById('yuiSwfIo');
+	};
+
+	function _upload(id) {
+
+		// IE does not allow the setting of id and name attributes as object
+		// properties via createElement().  A different iframe creation
+		// pattern is required for IE.
+		var frameId = 'ioUpload' + id,
+		io;
+
+		if(Y.UA.ie){
+			io = d.createElement('<iframe id="' + frameId + '" />');
+
+			// IE will throw a security exception in an SSL environment if the
+			// iframe source is undefined.
+			if(isSecure){
+				io.src = 'javascript:false';
+			}
+		}
+		else{
+			io = d.createElement('iframe');
+			io.id = frameId;
+			io.name = frameId;
+		}
+
+		io.style.position = 'absolute';
+		io.style.top = '-1000px';
+		io.style.left = '-1000px';
+
+		document.body.appendChild(io);
 	};
 
    /**
@@ -769,6 +807,8 @@ YUI.add("io", function (Y) {
 			case 'flash':
 				_swf(o.src, o.yid);
 				break;
+			case 'upload':
+				break;
 		}
 	};
 
@@ -833,6 +873,7 @@ YUI.add("io", function (Y) {
     * @return void
 	*/
 	function _startTimeout(o, c) {
+		// Replace with Y.later?
 		_timeout[o.id] = w.setTimeout(function() { _ioAbort(o, c); }, c.timeout);
 	};
 
@@ -900,12 +941,17 @@ YUI.add("io", function (Y) {
 		/*
 		 * IE reports HTTP 204 as HTTP 1223.
 		 * However, the response data are still available.
+		 *
+		 * setTimeout() is necessary to prevent synchronous transactions
+		 * in IE, when the response data are read from cache
+		 * (e.g., HTTP 304).
+		 *
 		 */
 		if (status >= 200 && status < 300 || status === 1223) {
-			_ioSuccess(o, c);
+			w.setTimeout( function() {_ioSuccess(o, c);}, 0);
 		}
 		else {
-			_ioFailure(o, c);
+			w.setTimeout( function() {_ioFailure(o, c);}, 0);
 		}
 	};
 
@@ -928,61 +974,73 @@ YUI.add("io", function (Y) {
 	* @method _serialize
 	* @private
 	* @static
-    * @param {object} c - Configuration object specific to form operations..
+    * @param {object} c - Configuration object specific to form operations.
     * @return string
 	*/
 	function _serialize(o) {
-		var str = '';
-		var f = (typeof o.id === 'object') ? o.id : d.getElementById(o.id);
-		var useDf = o.useDisabled || false;
-		var eUC = encodeURIComponent;
-		var e, n, v, dF;
+		var e, n, v, d,
+		var f = (typeof o.id === 'object') ? o.id : d.getElementById(o.id),
+		eUC = encodeURIComponent,
+		data = [],
+		useDf = o.useDisabled || false,
 
-		// Iterate over the form elements collection to construct the name-value pairs.
-		for (var i=0; i < f.elements.length; i++) {
+		item = 0,
+		i, ilen, j, jlen, o;
+
+		// Iterate over the form elements collection to construct the
+		// label-value pairs.
+		for (i = 0, ilen = f.elements.length; i < ilen; ++i) {
 			e = f.elements[i];
-			dF = e.disabled;
+			d = e.disabled;
 			n = e.name;
-			v = e.value;
-			//if config.form.useDisabled is defined as true, then disabled fields
-			//will be included in the serialized data.
-			if ((useDf) ? n : (n && dF));
-			{
-				switch (e.type)
-				{
+
+			if ((useDf) ? n : (n && !d)) {
+				n = encodeURIComponent(n) + '=';
+				v = encodeURIComponent(e.value);
+
+				switch (oElement.type) {
+					// Safari, Opera, FF all default opt.value from .text if
+					// value attribute not specified in markup
 					case 'select-one':
+					  if (e.selectedIndex > -1) {
+						  o = e.options[e.selectedIndex];
+						  data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
+					  }
+					  break;
 					case 'select-multiple':
-						for (var j = 0; j < e.options.length; j++) {
-							if (e.options[j].selected) {
-								if (Y.UA.ie) {
-									str += eUC(n) + '=' + eUC(e.options[j].attributes['value'].specified ? e.options[j].value : e.options[j].text) + '&';
-								}
-								else {
-									str += eUC(n) + '=' + eUC(e.options[j].hasAttribute('value') ? e.options[j].value : e.options[j].text) + '&';
-								}
-							}
-						}
-						break;
+					  if (e.selectedIndex > -1) {
+						  for (j = e.selectedIndex, jlen = e.options.length; j < jlen; ++j) {
+							  o = oElement.options[j];
+							  if (o.selected) {
+								  data[item++] = n + eUC((o.attributes.value && opt.attributes.value.specified) ? o.value : o.text);
+							  }
+						  }
+					  }
+					  break;
 					case 'radio':
 					case 'checkbox':
-						if (e.checked) {
-							str += eUC(n) + '=' + eUC(v) + '&';
+						if(e.checked){
+						  data[item++] = n + v;
 						}
 						break;
 					case 'file':
+						// stub case as XMLHttpRequest will only send the file path as a string.
 					case undefined:
+						// stub case for fieldset element which returns undefined.
 					case 'reset':
+						// stub case for input type reset button.
 					case 'button':
+						// stub case for input type button elements.
 						break;
 					case 'submit':
+						break;
 					default:
-						str += eUC(n) + '=' + eUC(v) + '&';
+						data[item++] = n + v;
 				}
 			}
-		}
-
-		Y.log('HTML form serialized. The value is: ' + str.substr(0, str.length - 1), 'info', 'io');
-		return str.substr(0, str.length - 1);
+	    }
+		Y.log('HTML form serialized. The value is: ' + data.join('&'), 'info', 'io');
+		return data.join('&');
 	};
 
 	_io.xdrReady = _ioXdrReady;

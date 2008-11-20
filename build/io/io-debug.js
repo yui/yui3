@@ -1,4 +1,5 @@
-YUI.add("io", function (Y) {
+YUI.add('io-base', function(Y) {
+
    /**
 	* HTTP communications module.
 	* @module io
@@ -14,21 +15,14 @@ YUI.add("io", function (Y) {
 	* @class io
 	*/
 
-  /**
-	* @event io:xdrReady
-	* @description This event is fired by YUI.io when a transaction is initiated..
-	* @type Event Custom
-	*/
-	var E_XDR_READY = 'io:xdrReady',
-
-  /**
+   /**
 	* @event io:start
 	* @description This event is fired by YUI.io when a transaction is initiated..
 	* @type Event Custom
 	*/
 	E_START = 'io:start',
 
-  /**
+   /**
 	* @event io:complete
 	* @description This event is fired by YUI.io when a transaction is complete and
 	* all response data are available.
@@ -36,7 +30,7 @@ YUI.add("io", function (Y) {
 	*/
 	E_COMPLETE = 'io:complete',
 
-  /**
+   /**
 	* @event io:success
 	* @description This event is fired by YUI.io when a transaction is complete and
 	* the HTTP status resolves to HTTP2xx.
@@ -44,7 +38,7 @@ YUI.add("io", function (Y) {
 	*/
 	E_SUCCESS = 'io:success',
 
-  /**
+   /**
 	* @event io:failure
 	* @description This event is fired by YUI.io when a transaction is complete and
 	* the HTTP status resolves to HTTP4xx, 5xx and above.
@@ -52,17 +46,13 @@ YUI.add("io", function (Y) {
 	*/
 	E_FAILURE = 'io:failure',
 
-  /**
+   /**
 	* @event io:abort
 	* @description This event is fired by YUI.io when a transaction is aborted
 	* explicitly or by a defined config.timeout.
 	* @type Event Custom
 	*/
 	E_ABORT = 'io:abort',
-
-	// Window reference
-	w = Y.config.win,
-	d = Y.config.doc,
 
 	//--------------------------------------
 	//  Properties
@@ -102,28 +92,6 @@ YUI.add("io", function (Y) {
 	_timeout = {},
 
    /**
-	* @description Object that stores callback handlers for cross-domain requests,
-	*
-	* @property _fn
-	* @private
-	* @static
-	* @type object
-	*/
-	_fn = {},
-
-   /**
-	* @description Map of transports created for cross-domain requests.
-	*
-	* @property _xdr
-	* @private
-	* @static
-	* @type object
-	*/
-	_xdr = {
-		flash:null
-	},
-
-   /**
 	* @description Array of transactions queued for processing
 	*
 	* @property _q
@@ -156,7 +124,10 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type int
 	*/
-	_qMaxSize = false;
+	_qMaxSize = false,
+
+	// Window reference
+	w = Y.config.win;
 
 	//--------------------------------------
 	//  Methods
@@ -381,16 +352,23 @@ YUI.add("io", function (Y) {
     * @return object
 	*/
 	function _io(uri, c) {
-		var c = c || {};
-		var o = _create((arguments.length === 3) ? arguments[2] : null, c);
-		var m = (c.method) ? c.method.toUpperCase() : 'GET';
-		var d = (c.data) ? c.data : null;
+		var c = c || {},
+		o = _create((arguments.length === 3) ? arguments[2] : null, c),
+		m = (c.method) ? c.method.toUpperCase() : 'GET',
+		d = (c.data) ? c.data : null,
+		f;
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
 		if (c.form) {
+
+			if (c.form.upload) {
+				u = Y.io._upload(o, uri, c);
+				return u;
+			}
+
 			// Serialize the HTML form into a string of name-value pairs.
-			var f = _serialize(c.form);
+			f = Y.io._serialize(c.form);
 			// If config.data is defined, concatenate the data to the form string.
 			if (d) {
 				f += "&" + d;
@@ -415,37 +393,36 @@ YUI.add("io", function (Y) {
 		}
 
 		if (c.xdr) {
-			if (c.on) {
-				_fn[o.id] = c.on;
-			}
-			if (d && m !== 'GET') {
-				c.data = d;
-			}
-			o.c.send(uri, c, o.id);
-
+			Y.io._xdr(uri, o, c);
 			return o;
 		}
 
-		// If config.timeout is defined, initialize timeout poll.
+		// If config.timeout is defined, and the request is standard XHR,
+		// initialize timeout polling.
 		if (c.timeout) {
 			_startTimeout(o, c);
 		}
 		/* End Configuration Properties */
 
 		o.c.onreadystatechange = function() { _readyState(o, c); };
-		_open(o.c, m, uri);
+		try {
+			_open(o.c, m, uri);
+		}
+		catch (e) {
+		}
 		_setHeaders(o.c, (c.headers || {}));
-		// Do not pass null, in the absence of data, as this
-		// results in a POST request with no Content-Length
-		// defined.
-		_async(o, (d || ''), c);
 
 		o.abort = function () {
 			_ioAbort(o, c);
 		}
+
 		o.isInProgress = function() {
 			return o.c.readyState !== 4 && o.c.readyState !== 0;
 		}
+		// Do not pass null, in the absence of data, as this
+		// wiil result in a POST request with no Content-Length
+		// defined.
+		_async(o, (d || ''), c);
 
 		return o;
 	};
@@ -468,11 +445,6 @@ YUI.add("io", function (Y) {
 			return event;
 	};
 
-	function _ioXdrReady(id) {
-		Y.fire(E_XDR_READY, id);
-		Y.log('XDR interface for YUI instance ' + id + ' is ready.', 'info', 'io');
-	}
-
    /**
 	* @description Fires event "io:start" and creates, fires a
 	* transaction-specific start event, if config.on.start is
@@ -490,10 +462,13 @@ YUI.add("io", function (Y) {
 		// Set default value of argument c, property "on" to Object if
 		// the property is null or undefined.
 		c.on = c.on || {};
-		var event;
+		var m = Y.io._fn || {},
+		fn = (m && m[id]) ? m[id] : null,
+		event;
 
-		if (_fn[id] && _fn[id].start) {
-			c.on.start = _fn[id].start;
+		if (fn) {
+			c.on.start = fn.start;
+			delete fn;
 		}
 
 		Y.fire(E_START, id);
@@ -548,11 +523,13 @@ YUI.add("io", function (Y) {
 		// Set default value of argument c, property "on" to Object if
 		// the property is null or undefined.
 		c.on = c.on || {};
-		var event;
+		var m = Y.io._fn || {},
+		fn = (m && m[o.id]) ? m[o.id] : null,
+		event;
 
-		if (_fn[o.id] && _fn[o.id].success) {
-			c.on.success = _fn[o.id].success;
-			delete _fn[o.id];
+		if (fn) {
+			c.on.success = fn.success;
+			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
 		}
@@ -584,11 +561,13 @@ YUI.add("io", function (Y) {
 		// Set default value of argument c, property "on" to Object if
 		// the property is null or undefined.
 		c.on = c.on || {};
-		var event;
+		var m = Y.io._fn || {},
+		fn = (m && m[o.id]) ? m[o.id] : null,
+		event;
 
-		if (_fn[o.id] && _fn[o.id].failure) {
-			c.on.failure = _fn[o.id].failure;
-			delete _fn[o.id];
+		if (fn) {
+			c.on.failure = fn.failure;
+			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
 		}
@@ -620,7 +599,9 @@ YUI.add("io", function (Y) {
 		// Set default value of argument c, property "on" to Object if
 		// the property is null or undefined.
 		c.on = c.on || {};
-		var event;
+		var m = Y.io._fn || {},
+		fn = (m && m[o.id]) ? m[o.id] : null,
+		event;
 
 		if(o && o.c  && !c.xdr) {
 			// Terminate the transaction
@@ -633,9 +614,9 @@ YUI.add("io", function (Y) {
 			}
 		}
 
-		if (_fn[o.id] && _fn[o.id].abort) {
-			c.on.abort = _fn[o.id].abort;
-			delete _fn[o.id];
+		if (fn) {
+			c.on.abort = fn.abort;
+			delete fn;
 		}
 
 		Y.fire(E_ABORT, o.id);
@@ -647,39 +628,6 @@ YUI.add("io", function (Y) {
 		_destroy(o, (c.xdr) ? true : false );
 		Y.log('Transaction timeout or explicit abort. The transaction is: ' + o.id, 'info', 'io');
 	}
-
-   /**
-	* @description Method that creates the XMLHttpRequest transport
-	*
-	* @method _xhr
-	* @private
-	* @static
-    * @return object
-	*/
-	function _xhr() {
-		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-	};
-
-   /**
-	* @description Method that creates the Flash transport swf.
-	*
-	* @method _swf
-	* @private
-	* @static
-    * @param {string} uri - location of IO.swf.
-    * @param {string} yid - string representation of YUI instance.
-    * @return void
-	*/
-	function _swf(uri, yid) {
-		var b = Y.Node.get("body");
-		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">';
-		swf += '<param name="movie" value="' + uri + '">';
-		swf += '<param name="FlashVars" value="yid=' + yid + '">';
-		swf += '<param name="allowScriptAccess" value="sameDomain">';
-		swf += '</object>';
-		b.appendChild(Y.Node.create(swf))
-		_xdr.flash = d.getElementById('yuiSwfIo');
-	};
 
    /**
 	* @description Method that increments _transactionId for each transaction.
@@ -711,14 +659,30 @@ YUI.add("io", function (Y) {
 	function _create(i, c) {
 		var o = {};
 		o.id = Y.Lang.isNumber(i) ? i : _id();
-		if (c && c.xdr) {
-			o.c = _xdr[c.xdr.use];
+
+		if (c.xdr) {
+			o.c = Y.io._transport[c.xdr.use];
+		}
+		else if (c.form && c.form.upload) {
+			o.c = {};
 		}
 		else {
 			o.c = _xhr();
 		}
 
 		return o;
+	};
+
+   /**
+	* @description Method that creates the XMLHttpRequest transport
+	*
+	* @method _xhr
+	* @private
+	* @static
+    * @return object
+	*/
+	function _xhr() {
+		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 	};
 
    /**
@@ -753,23 +717,6 @@ YUI.add("io", function (Y) {
 		}
 		else {
 			delete _headers[l];
-		}
-	};
-
-   /**
-	* @description Method to initialize the desired transport medium.
-	*
-	* @method _initTransport
-	* @private
-	* @static
-    * @param {object} o - object of transport configurations.
-    * @return void
-	*/
-	function _initTransport(o) {
-		switch (o.id) {
-			case 'flash':
-				_swf(o.src, o.yid);
-				break;
 		}
 	};
 
@@ -824,7 +771,8 @@ YUI.add("io", function (Y) {
 	};
 
    /**
-	* @description Starts timeout count if config,timeout is defined.
+	* @description Starts timeout count if the configuration object
+	* has a defined timeout property.
 	*
 	* @method _startTimeout
 	* @private
@@ -901,18 +849,22 @@ YUI.add("io", function (Y) {
 		/*
 		 * IE reports HTTP 204 as HTTP 1223.
 		 * However, the response data are still available.
+		 *
+		 * setTimeout() is used to prevent transactions from becoming
+		 * synchronous, in IE, when the response data are read from cache
+		 * (e.g., HTTP 304).
 		 */
 		if (status >= 200 && status < 300 || status === 1223) {
-			_ioSuccess(o, c);
+			w.setTimeout( function() { _ioSuccess(o, c); }, 0);
 		}
 		else {
-			_ioFailure(o, c);
+			w.setTimeout( function() {_ioFailure(o, c); }, 0);
 		}
 	};
 
-	function _destroy(o, isXdr) {
+	function _destroy(o, isTransport) {
 		// IE6 will throw a "Type Mismatch" error if the event handler is set to "null".
-		if(w.XMLHttpRequest && !isXdr) {
+		if(w.XMLHttpRequest && !isTransport) {
 			if (o.c) {
 				o.c.onreadystatechange = null;
 			}
@@ -922,75 +874,12 @@ YUI.add("io", function (Y) {
 		o = null;
 	};
 
-   /**
-	* @description Method to enumerate through an HTML form's elements collection
-	* and return a string comprised of key-value pairs.
-	*
-	* @method _serialize
-	* @private
-	* @static
-    * @param {object} c - Configuration object specific to form operations..
-    * @return string
-	*/
-	function _serialize(o) {
-		var str = '';
-		var f = (typeof o.id === 'object') ? o.id : d.getElementById(o.id);
-		var useDf = o.useDisabled || false;
-		var eUC = encodeURIComponent;
-		var e, n, v, dF;
-
-		// Iterate over the form elements collection to construct the name-value pairs.
-		for (var i=0; i < f.elements.length; i++) {
-			e = f.elements[i];
-			dF = e.disabled;
-			n = e.name;
-			v = e.value;
-			//if config.form.useDisabled is defined as true, then disabled fields
-			//will be included in the serialized data.
-			if ((useDf) ? n : (n && dF));
-			{
-				switch (e.type)
-				{
-					case 'select-one':
-					case 'select-multiple':
-						for (var j = 0; j < e.options.length; j++) {
-							if (e.options[j].selected) {
-								if (Y.UA.ie) {
-									str += eUC(n) + '=' + eUC(e.options[j].attributes['value'].specified ? e.options[j].value : e.options[j].text) + '&';
-								}
-								else {
-									str += eUC(n) + '=' + eUC(e.options[j].hasAttribute('value') ? e.options[j].value : e.options[j].text) + '&';
-								}
-							}
-						}
-						break;
-					case 'radio':
-					case 'checkbox':
-						if (e.checked) {
-							str += eUC(n) + '=' + eUC(v) + '&';
-						}
-						break;
-					case 'file':
-					case undefined:
-					case 'reset':
-					case 'button':
-						break;
-					case 'submit':
-					default:
-						str += eUC(n) + '=' + eUC(v) + '&';
-				}
-			}
-		}
-
-		Y.log('HTML form serialized. The value is: ' + str.substr(0, str.length - 1), 'info', 'io');
-		return str.substr(0, str.length - 1);
-	};
-
-	_io.xdrReady = _ioXdrReady;
 	_io.start = _ioStart;
+	_io.complete = _ioComplete;
 	_io.success = _ioSuccess;
 	_io.failure = _ioFailure;
 	_io.abort = _ioAbort;
+	_io.timeout = _timeout;
 
    	//--------------------------------------
    	//  Begin public interface definition
@@ -1008,19 +897,6 @@ YUI.add("io", function (Y) {
     * @return int
 	*/
 	_io.header = _setHeader;
-
-   /**
-	* @description Method for specifying and initializing a transport
-	* to facilitate cross-domain HTTP requests.  This is the
-	* interface for _initTransport
-	*
-	* @method transport
-	* @public
-	* @static
-    * @param {object} t - configuration object for the transport.
-    * @return boolean
-	*/
-	_io.transport = _initTransport;
 
    /**
 	* @description Method for requesting a transaction, and queueing the
@@ -1109,4 +985,204 @@ YUI.add("io", function (Y) {
     * @return object
     */
 	Y.io = _io;
-}, "3.0.0");
+
+
+
+}, '@VERSION@' );
+
+YUI.add('io-form', function(Y) {
+
+   /*
+	* @module io-base
+	* @submodule io-form
+	*/
+
+    Y.mix(Y.io, {
+       /**
+        * @description Method to enumerate through an HTML form's elements collection
+        * and return a string comprised of key-value pairs.
+        *
+        * @method _serialize
+        * @private
+        * @static
+        * @param {object} f - HTML form object or id.
+        * @return string
+        */
+        _serialize: function(o) {
+            var f = (typeof o.id === 'object') ? o.id : Y.config.doc.getElementById(o.id),
+            eUC = encodeURIComponent,
+            data = [],
+            useDf = o.useDisabled || false,
+            item = 0,
+            e, n, v, d, i, ilen, j, jlen, o;
+
+            // Iterate over the form elements collection to construct the
+            // label-value pairs.
+            for (i = 0, ilen = f.elements.length; i < ilen; ++i) {
+                e = f.elements[i];
+                d = e.disabled;
+                n = e.name;
+
+                if ((useDf) ? n : (n && !d)) {
+                    n = encodeURIComponent(n) + '=';
+                    v = encodeURIComponent(e.value);
+
+                    switch (e.type) {
+                        // Safari, Opera, FF all default opt.value from .text if
+                        // value attribute not specified in markup
+                        case 'select-one':
+                            if (e.selectedIndex > -1) {
+                                o = e.options[e.selectedIndex];
+                                data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
+                            }
+                            break;
+                        case 'select-multiple':
+                            if (e.selectedIndex > -1) {
+                                for (j = e.selectedIndex, jlen = e.options.length; j < jlen; ++j) {
+                                    o = e.options[j];
+                                    if (o.selected) {
+                                      data[item++] = n + eUC((o.attributes.value && opt.attributes.value.specified) ? o.value : o.text);
+                                    }
+                                }
+                            }
+                            break;
+                        case 'radio':
+                        case 'checkbox':
+                            if(e.checked){
+                                data[item++] = n + v;
+                            }
+                            break;
+                        case 'file':
+                            // stub case as XMLHttpRequest will only send the file path as a string.
+                        case undefined:
+                            // stub case for fieldset element which returns undefined.
+                        case 'reset':
+                            // stub case for input type reset button.
+                        case 'button':
+                            // stub case for input type button elements.
+                            break;
+                        case 'submit':
+                            break;
+                        default:
+                            data[item++] = n + v;
+                    }
+                }
+            }
+            Y.log('HTML form serialized. The value is: ' + data.join('&'), 'info', 'io');
+            return data.join('&');
+        }
+    }, true);
+
+
+
+}, '@VERSION@' ,{requires:['io-base']});
+
+YUI.add('io-xdr', function(Y) {
+
+   /*
+	* @module io-base
+	* @submodule io-xdr
+	*/
+
+   /**
+	* @event io:xdrReady
+	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @type Event Custom
+	*/
+	var E_XDR_READY = 'io:xdrReady';
+
+   /**
+	* @description Method that creates the Flash transport swf.
+	*
+	* @method _swf
+	* @private
+	* @static
+	* @param {string} uri - location of IO.swf.
+	* @param {string} yid - YUI instance id.
+	* @return void
+	*/
+	function swf(uri, yid) {
+		var XDR_SWF = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">' +
+		     		  '<param name="movie" value="' + uri + '">' +
+		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
+                      '<param name="allowScriptAccess" value="sameDomain">' +
+		    	      '</object>';
+		Y.get('body').appendChild(Y.Node.create(XDR_SWF))
+	};
+
+    Y.mix(Y.io, {
+
+	   /**
+		* @description Map of IO transports.
+		*
+		* @property _transport
+		* @private
+		* @static
+		* @type object
+		*/
+		_transport: {},
+
+	   /**
+		* @description Object that stores callback handlers for cross-domain requests
+		* when using Flash as the transport.
+		*
+		* @property _fn
+		* @private
+		* @static
+		* @type object
+		*/
+		_fn: {},
+
+		_xdr: function(uri, o, c){
+			if (c.on) {
+				this._fn[o.id] = c.on;
+			}
+			o.c.send(uri, c, o.id);
+
+			return o;
+		},
+
+	   /**
+		* @description Method to initialize the desired transport medium.
+		*
+		* @method transport
+		* @public
+		* @static
+		* @param {object} o - object of transport configurations.
+		* @return void
+		*/
+		transport: function(o) {
+			switch (o.id) {
+				case 'flash':
+					swf(o.src, o.yid);
+					this._transport.flash = Y.config.doc.getElementById('yuiSwfIo');
+					break;
+				case 'upload':
+					break;
+			}
+		},
+
+	   /**
+		* @description Fires event "io:xdrReady"
+		*
+		* @method xdrReady
+		* @private
+		* @static
+		* @param {number} id - transaction id
+		* @param {object} c - configuration object for the transaction.
+		*
+		* @return void
+		*/
+		xdrReady: function(id) {
+			Y.fire(E_XDR_READY, id);
+		}
+	});
+
+
+
+}, '@VERSION@' ,{requires:['io-base']});
+
+
+
+YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr']});
+
