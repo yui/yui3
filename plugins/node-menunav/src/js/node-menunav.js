@@ -391,7 +391,7 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 };
 
 
-/* 
+/** 
 * @namespace Y.Plugin
 * @class NodeMenuNav
 */
