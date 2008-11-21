@@ -174,20 +174,9 @@ YUI.add("event", function(Y) {
                 }, id);
 
                 // subscribe supplied listener to custom event for spec validator
-                // remove element and spec
+                // remove element and spec.
                 a.splice(2, 2);
                 a[0] = ename;
-
-                /*
-
-                if (!a[2]) { 
-                    // @TODO the subscribe will not be executed in the node's
-                    // context unless it is present at the time the listener
-                    // is attached.
-                    a.push(Y.get(id));
-                }
-
-                */
 
                 return Y.on.apply(Y, a);
             },
