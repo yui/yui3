@@ -277,6 +277,14 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
+
+        // if the url is undefined, this is probably a trailing comma problem in IE
+        if (!url) {
+            q.url.shift(); 
+            Y.log('skipping empty url');
+            return _next(id);
+        }
+
         Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
@@ -402,7 +410,7 @@ Y.Get = function() {
 
         // IE supports the readystatechange event for script and css nodes
         // Opera only for script nodes.  Opera support onload for script
-        // nodes, but this doesn't fire when their is a load failure.
+        // nodes, but this doesn't fire when there is a load failure.
         // The onreadystatechange appears to be a better way to respond
         // to both success and failure.
         if (ua.ie) {
@@ -410,6 +418,7 @@ Y.Get = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
                     Y.log(id + " onreadstatechange " + url, "info", "get");
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };
@@ -455,6 +464,7 @@ Y.Get = function() {
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
+         * @static
          * @param id {string} the transaction id
          * @private
          */
@@ -466,6 +476,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
+         * @static
          * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
