@@ -45,7 +45,7 @@ ul li {
 	list-style: disc outside;
 }
 dl dd {
-	/*giving UL's LIs generated numbers*/
+	/*providing spacing for definition terms*/
 	margin-left:1em;
 }
 th,td {
