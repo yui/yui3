@@ -2377,6 +2377,11 @@ var BASE = 'base',
         },
 
         classnamemanager: { },
+
+        console: {
+            requires: ['widget', 'substitute'],
+            skinnable: true
+        },
         
         cookie: { },
 
@@ -2471,11 +2476,6 @@ var BASE = 'base',
         loader: { 
             requires: ['get']
         },
-
-        console: {
-            requires: ['widget', 'substitute'],
-            skinnable: true
-        },
         
         oop: { 
             requires: ['yui-base']
@@ -2484,6 +2484,10 @@ var BASE = 'base',
         overlay: {
             requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
             skinnable: true
+        },
+
+        plugin: { 
+            requires: ['base']
         },
 
         profiler: { },

@@ -2,7 +2,7 @@
 <button type="button" id="hide">Hide Overlay</button>
 
 <script type="text/javascript">
-YUI(<?php echo getYUIConfig('filter:"raw"') ?>).use(<?php echo $requiredModules ?>, function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     var StdMod = Y.WidgetStdMod;
 

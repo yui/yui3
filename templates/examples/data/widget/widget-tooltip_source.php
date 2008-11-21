@@ -1,13 +1,13 @@
-<div class="yui-tooltip-trigger" title="Tooltip 1">Tooltip One</div>
-
-<div class="yui-tooltip-trigger" title="Tooltip 2">Tooltip Two</div>
-
-<div class="yui-tooltip-trigger" title="Tooltip 3">Tooltip Three</div>
-
-<div class="yui-tooltip-trigger" title="Tooltip 4">Tooltip Four</div>
+<div id="delegate">
+    <div class="yui-hastooltip" title="Tooltip 1" id="tt1">Tooltip One <span>(content from title)</span></div>
+    <div class="yui-hastooltip" title="Tooltip 2" id="tt2">Tooltip Two <span>(content set in event listener)</span></div>
+    <div class="yui-hastooltip" title="Tooltip 3" id="tt3">Tooltip Three <span>(content from lookup)</span></div>
+    <div class="yui-hastooltip" title="Tooltip 4" id="tt4">Tooltip Four <span>(content from title)</span><label></div>
+    <input type="checkbox" id="prevent" /> Prevent Tooltip Four</label>
+</div>
 
 <script type="text/javascript">
-YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules ?>, function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     var Lang = Y.Lang,
         Node = Y.Node;
@@ -28,7 +28,7 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             value: null
         },
 
-        nodes : {
+        triggerNodes : {
             value: null,
             set: function(val) {
                 if (val && Lang.isString(val)) {
@@ -46,11 +46,11 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         },
 
         showDelay : {
-            value:500
+            value:250
         },
 
         hideDelay : {
-            value:250
+            value:10
         },
 
         autoHideDelay : {
@@ -93,16 +93,18 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
                 show: null,
                 hide: null
             };
+
+            this.publish("triggerEnter", {defaultFn: this._defTriggerEnterFn, preventable:true});
+            this.publish("triggerLeave", {preventable:false});
         },
 
         destructor : function() {
-            this._clearCurrTrigger();
+            this._clearCurrentTrigger();
             this._clearTimers();
             this._clearHandles();
         },
 
         bindUI : function() {
-            this.after("contentChange", this._afterSetContent);
             this.after("delegateChange", this._afterSetDelegate);
             this.after("nodesChange", this._afterSetNodes);
 
@@ -110,16 +112,27 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         },
 
         syncUI : function() {
-            this._uiSetContent(this.get("content"));
-            this._uiSetNodes(this.get("nodes"));
+            this._uiSetNodes(this.get("triggerNodes"));
         },
 
-        hasTooltip : function(node) {
-            return (node && node.hasClass(this._triggerClassName));
+        setTriggerContent : function(content) {
+            var contentBox = this.get("contentBox");
+            contentBox.set("innerHTML", "");
+
+            if (content) {
+                if (content instanceof Node) {
+                    for (var i = 0, l = content.size(); i < l; ++i) {
+                        contentBox.appendChild(content.item(i));
+                    }
+                } else if (Lang.isString(content)) {
+                    contentBox.set("innerHTML", content);
+                }
+            }
         },
 
-        _afterSetContent : function(e) {
-            this._uiSetContent(e.newVal);
+        getParentTrigger : function(node) {
+            var cn = this._triggerClassName;
+            return (node.hasClass(cn)) ? node : node.ancestor(function(node) {node.hasClass(cn)});
         },
 
         _afterSetNodes : function(e) {
@@ -141,20 +154,6 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             }
         },
 
-        _uiSetContent : function(content) {
-            if (content) {
-                var contentBox = this.get("contentBox");
-                contentBox.set("innerHTML", "");
-                if (content instanceof Node) {
-                    for (var i = 0, l = content.size(); i < l; ++i) {
-                        contentBox.appendChild(content.item(i));
-                    }
-                } else {
-                    contentBox.set("innerHTML", content);
-                }
-            }
-        },
-
         _bindDelegate : function() {
             var eventHandles = this._eventHandles;
 
@@ -162,53 +161,54 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
                 eventHandles.delegate.detach();
                 eventHandles.delegate = null;
             }
-
-            var delegate = this.get("delegate");
-            var onMouseOver = Y.bind(this._onDelegateMouseOver, this);
-
-            eventHandles.delegate = Y.on("mouseover", onMouseOver, delegate);
+            eventHandles.delegate = Y.on("mouseover", Y.bind(this._onDelegateMouseOver, this), this.get("delegate"));
         },
 
         _onDelegateMouseOver : function(e) {
-            var node = e.target;
-
-            if (this.hasTooltip(node)) {
-                this._doMouseEnter(node, e.pageX, e.pageY);
+            var node = this.getParentTrigger(e.target);
+            if (node && (!this._currTrigger.node || !node.compareTo(this._currTrigger.node))) {
+                this._enterTrigger(node, e.pageX, e.pageY);
             }
         },
 
         _onNodeMouseOut : function(e) {
-            var node = e.target;
-            var currNode = this._currTrigger.node;
+            var to = e.relatedTarget;
+            var trigger = e.currentTarget;
 
-            if (currNode && currNode.compareTo(node)) {
-                this._doMouseLeave(node);
+            if (!trigger.contains(to)) {
+                this._leaveTrigger(trigger);
             }
         },
 
         _onNodeMouseMove : function(e) {
-            this._doMouseMove(e.pageX, e.pageY);
+            this._overTrigger(e.pageX, e.pageY);
         },
 
-        _doMouseEnter : function(node, x, y) {
-            this._setCurrTrigger(node, x, y);
-            this._clearTimers();
-
-            var delay = (this.get("visible")) ? 0 : this.get("showDelay");
-
-            this._timers.show = Y.later(delay, this, this._showTooltip, [node]);
+        _enterTrigger : function(node, x, y) {
+            this._setCurrentTrigger(node, x, y);
+            this.fire("triggerEnter", null, node, x, y);
         },
 
-        _doMouseMove : function(x, y) {
-            this._currTrigger.mouseX = x;
-            this._currTrigger.mouseY = y;
+        _defTriggerEnterFn : function(e, node, x, y) {
+            if (!this.get("disabled")) {
+                this._clearTimers();
+                var delay = (this.get("visible")) ? 0 : this.get("showDelay");
+                this._timers.show = Y.later(delay, this, this._showTooltip, [node]);
+            }
         },
+        
+        _leaveTrigger : function(node) {
+            this.fire("triggerLeave");
 
-        _doMouseLeave : function(node) {
-            this._clearCurrTrigger();
+            this._clearCurrentTrigger();
             this._clearTimers();
 
             this._timers.hide = Y.later(this.get("hideDelay"), this, this._hideTooltip);
+        },
+
+        _overTrigger : function(x, y) {
+            this._currTrigger.mouseX = x;
+            this._currTrigger.mouseY = y;
         },
 
         _showTooltip : function(node) {
@@ -218,6 +218,7 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             this.move(x + Tooltip.OFFSET_X, y + Tooltip.OFFSET_Y);
 
             this.show();
+            this._clearTimers();
 
             this._timers.hide = Y.later(this.get("autoHideDelay"), this, this._hideTooltip);
         },
@@ -227,29 +228,37 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             this.hide();
         },
 
-        _setCurrTrigger : function(node, x, y) {
+        _setTriggerContent : function(node) {
+            var content = this.get("content");
+            if (content && !(content instanceof Node || Lang.isString(content))) {
+                content = content[node.get("id")] || node.getAttribute("title");
+            }
+            this.setTriggerContent(content);
+        },
+
+        _setCurrentTrigger : function(node, x, y) {
+
+            var currTrigger = this._currTrigger,
+                triggerHandles = this._eventHandles.trigger;
+
+            this._setTriggerContent(node);
+
+            triggerHandles.mouseMove = Y.on("mousemove", Y.bind(this._onNodeMouseMove, this), node);
+            triggerHandles.mouseOut = Y.on("mouseout", Y.bind(this._onNodeMouseOut, this), node);
 
             var title = node.getAttribute("title");
             node.setAttribute("title", "");
-
-            this.set("content", title);
-
-            var currTrigger = this._currTrigger;
-            var triggerHandles = this._eventHandles.trigger;
 
             currTrigger.mouseX = x;
             currTrigger.mouseY = y;
             currTrigger.node = node;
             currTrigger.title = title;
-
-            triggerHandles.mouseMove = Y.on("mousemove", Y.bind(this._onNodeMouseMove, this), node);
-            triggerHandles.mouseOut = Y.on("mouseout", Y.bind(this._onNodeMouseOut, this), node);
         },
 
-        _clearCurrTrigger : function() {
+        _clearCurrentTrigger : function() {
 
-            var currTrigger = this._currTrigger;
-            var triggerHandles = this._eventHandles.trigger;
+            var currTrigger = this._currTrigger,
+                triggerHandles = this._eventHandles.trigger;
 
             if (currTrigger.node) {
                 var node = currTrigger.node;
@@ -260,7 +269,6 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
 
                 triggerHandles.mouseMove.detach();
                 triggerHandles.mouseOut.detach();
-
                 triggerHandles.mouseMove = null;
                 triggerHandles.mouseOut = null;
 
@@ -298,7 +306,30 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
     // dynamic:false = Modify the existing Tooltip class
     Tooltip = Y.Base.build(Tooltip, [Y.WidgetPosition, Y.WidgetStack], {dynamic:false});
 
-    var tt = new Tooltip({nodes:".tooltip", zIndex:2});
+    var tt = new Tooltip({
+        triggerNodes:".yui-hastooltip",
+        delegate: "#delegate",
+        content: {
+            tt3: "Tooltip 3 (from lookup)"
+        },
+        shim:false,
+        zIndex:2
+    });
     tt.render();
+
+    tt.on("triggerEnter", function(e, node, x, y) {
+        if (node && node.get("id") == "tt2") {
+            this.setTriggerContent("Tooltip 2 (from triggerEvent)");
+        }
+    });
+
+    var prevent = Y.Node.get("#prevent");
+    tt.on("triggerEnter", function(e, node, x, y) {
+        if (prevent.get("checked")) {
+            if (node && node.get("id") == "tt4") {
+                e.preventDefault();
+            }
+        }
+    });
 });
 </script>
