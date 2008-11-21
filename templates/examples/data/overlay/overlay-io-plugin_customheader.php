@@ -29,7 +29,3 @@
     }
 
 </style>
-
-<!-- TODO: Temporary, until in loader -->
-<link type="text/css" rel="stylesheet" href="<?php echo $buildDirectory ?>widget/assets/skins/sam/widget-stack.css"></script>
-<script type="text/javascript" src="<?php echo $buildDirectory ?>plugin/plugin.js"></script>
