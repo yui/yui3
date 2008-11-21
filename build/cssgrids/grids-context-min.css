@@ -19,7 +19,7 @@
 /*
 	TODO Maybe remove 
 */
-	.yui-grids body {
+	.yui-cssgrids body {
 		text-align:center;
 		margin-left:auto;margin-right:auto;
 	}
@@ -38,10 +38,10 @@
 		Subsection: General 
 	*/ 	
 
-	.yui-grids .yui-d0, /* 100% */
-	.yui-grids .yui-d1, /* 750px */
-	.yui-grids .yui-d2, /* 950px */
-	.yui-grids .yui-d3, /* 974px */
+	.yui-cssgrids .yui-d0, /* 100% */
+	.yui-cssgrids .yui-d1, /* 750px */
+	.yui-cssgrids .yui-d2, /* 950px */
+	.yui-cssgrids .yui-d3, /* 974px */
 	.yui-t1,
 	.yui-t2,
 	.yui-t3,
@@ -64,7 +64,7 @@
 	/* 
 		Subsection: 100% (doc) 
 	*/
-	.yui-grids .yui-d0 {
+	.yui-cssgrids .yui-d0 {
 		/* Left and Right margins are not a structural part of Grids. Without them Grids
 		   works fine, but content bleeds to the very edge of the document, which often
 		   impairs readability and usability. They are 
@@ -74,20 +74,20 @@
 	}
 
 
-	.yui-grids .yui-d0f {width:100%;}
+	.yui-cssgrids .yui-d0f {width:100%;}
 	/* 
 		Subsection: 950 Centered (doc2) 
 	*/
-	.yui-grids .yui-d2 {width:73.076em;*width:71.25em;}
-	.yui-grids .yui-d2f {width:950px;}
+	.yui-cssgrids .yui-d2 {width:73.076em;*width:71.25em;}
+	.yui-cssgrids .yui-d2f {width:950px;}
 
 
 	
 	/* 
 		Subsection: 974 Centered (doc3) 
 	*/
-	.yui-grids .yui-d3 {width:74.923em;*width:73.05em;}	
-	.yui-grids .yui-d3f {width:974px;}
+	.yui-cssgrids .yui-d3 {width:74.923em;*width:73.05em;}	
+	.yui-cssgrids .yui-d3f {width:974px;}
 	
 /*
 	Section: Preset Template Rules (.yui-t[1-6])
