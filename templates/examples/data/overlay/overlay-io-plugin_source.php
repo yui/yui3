@@ -46,7 +46,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             Y.io.transport({
                 id:'flash',
                 yid: Y.id,
-                src:'<?php echo $buildDirectory ?>io/IO.swf?stamp=' + (new Date()).getTime()
+                src:'<?php echo $buildDirectory ?>io/io.swf?stamp=' + (new Date()).getTime()
             });
         },
 
