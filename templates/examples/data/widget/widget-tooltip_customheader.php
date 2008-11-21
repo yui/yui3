@@ -13,15 +13,23 @@
         visibility:hidden;
     }
 
-    div.yui-tooltip-trigger {
-        border:1px solid #000;
-        background-color:#acacee;
-        width:10em;
-        margin:30px;
+    div.yui-hastooltip {
+        border:1px solid #243356;
+        background-color:#406ED9;
+        color:#ffffff;
+        width:25em;
+        margin:20px 0px;
         padding:5px;
         cursor:default;
     }
-</style>
 
-<!-- TODO: Temporary, until in loader -->
-<link type="text/css" rel="stylesheet" href="<?php echo $buildDirectory ?>widget/assets/skins/sam/widget-stack.css"></script>
+    div.yui-hastooltip span {
+        font-style:italic;
+        font-weight:bold;
+        color:#ABCEFF;
+    }
+
+    .yui-tooltip-content strong {
+        font-weight:bold;
+    }
+</style>
