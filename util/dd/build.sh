@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export YUI_BUILD_DIR=/home/davglass/src/build/builder/componentbuild
+export YUI_BUILD_DIR=/Users/davglass/src/build/builder/componentbuild
 
 ln -sf build.dd.xml build.xml
 wait

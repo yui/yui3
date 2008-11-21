@@ -1042,7 +1042,7 @@ YUI.add("event-custom", function(Y) {
 
             // The default context should be the object/element that
             // the listener was bound to.
-            ct = (Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
             ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
