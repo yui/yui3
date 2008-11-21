@@ -1874,7 +1874,7 @@ Y.Get = function() {
 
         // IE supports the readystatechange event for script and css nodes
         // Opera only for script nodes.  Opera support onload for script
-        // nodes, but this doesn't fire when their is a load failure.
+        // nodes, but this doesn't fire when there is a load failure.
         // The onreadystatechange appears to be a better way to respond
         // to both success and failure.
         if (ua.ie) {
@@ -2735,6 +2735,46 @@ Y.Env.meta = META;
          */
         // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
         this.moduleInfo = {};
+
+        /**
+         * Provides the information used to skin the skinnable components.
+         * The following skin definition would result in 'skin1' and 'skin2'
+         * being loaded for calendar (if calendar was requested), and
+         * 'sam' for all other skinnable components:
+         *
+         *   <code>
+         *   skin: {
+         *
+         *      // The default skin, which is automatically applied if not
+         *      // overriden by a component-specific skin definition.
+         *      // Change this in to apply a different skin globally
+         *      defaultSkin: 'sam', 
+         *
+         *      // This is combined with the loader base property to get
+         *      // the default root directory for a skin. ex:
+         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+         *      base: 'assets/skins/',
+         *
+         *      // The name of the rollup css file for the skin
+         *      path: 'skin.css',
+         *
+         *      // The number of skinnable components requested that are
+         *      // required before using the rollup file rather than the
+         *      // individual component css files
+         *      rollup: 3,
+         *
+         *      // Any component-specific overrides can be specified here,
+         *      // making it possible to load different skins for different
+         *      // components.  It is possible to load more than one skin
+         *      // for a given component as well.
+         *      overrides: {
+         *          calendar: ['skin1', 'skin2']
+         *      }
+         *   }
+         *   </code>
+         *   @property skin
+         */
+         this.skin = Y.merge(Y.Env.meta.skin);
         
         var defaults = Y.Env.meta.modules;
 
@@ -2804,45 +2844,6 @@ Y.Env.meta = META;
 
         this.skipped = {};
 
-        /**
-         * Provides the information used to skin the skinnable components.
-         * The following skin definition would result in 'skin1' and 'skin2'
-         * being loaded for calendar (if calendar was requested), and
-         * 'sam' for all other skinnable components:
-         *
-         *   <code>
-         *   skin: {
-         *
-         *      // The default skin, which is automatically applied if not
-         *      // overriden by a component-specific skin definition.
-         *      // Change this in to apply a different skin globally
-         *      defaultSkin: 'sam', 
-         *
-         *      // This is combined with the loader base property to get
-         *      // the default root directory for a skin. ex:
-         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
-         *      base: 'assets/skins/',
-         *
-         *      // The name of the rollup css file for the skin
-         *      path: 'skin.css',
-         *
-         *      // The number of skinnable components requested that are
-         *      // required before using the rollup file rather than the
-         *      // individual component css files
-         *      rollup: 3,
-         *
-         *      // Any component-specific overrides can be specified here,
-         *      // making it possible to load different skins for different
-         *      // components.  It is possible to load more than one skin
-         *      // for a given component as well.
-         *      overrides: {
-         *          calendar: ['skin1', 'skin2']
-         *      }
-         *   }
-         *   </code>
-         *   @property skin
-         */
-         this.skin = Y.merge(Y.Env.meta.skin);
 
         // Y.on('yui:load', this.loadNext, this);
 
@@ -2874,14 +2875,7 @@ Y.Env.meta = META;
                         var val = o[i];
                         if (i == 'require') {
                             this.require(val);
-                        // support the old callback syntax
-                        // } else if (i.indexOf('on') === 0) {
-                            // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else if (i == 'modules') {
-
-                            // Y.each(val, function(v, k) {
-                            //     this.addModule(v, k);
-                            // }, this);
 
                             // add a hash of module definitions
                             for (var j in val) {
@@ -2889,8 +2883,6 @@ Y.Env.meta = META;
                                     this.addModule(val[j], j);
                                 }
                             }
-                            
-
 
                         } else {
                             this[i] = val;
@@ -2903,18 +2895,8 @@ Y.Env.meta = META;
             var f = this.filter;
 
             if (L.isString(f)) {
-
                 f = f.toUpperCase();
-
                 this.filterName = f;
-
-                // the logger must be available in order to use the debug
-                // versions of the library
-                // @TODO review when logreader is available
-                // if (f === "DEBUG") {
-                //     this.require("log");
-                // }
-
                 this.filter = this.FILTERS[f];
             }
 
@@ -2962,15 +2944,18 @@ Y.Env.meta = META;
          * @method _addSkin
          * @param skin {string} the name of the skin
          * @param mod {string} the name of the module
+         * @param parent {string} parent module if this is a skin of a
+         * submodule or plugin
          * @return {string} the module name for the skin
          * @private
          */
-        _addSkin: function(skin, mod) {
+        _addSkin: function(skin, mod, parent) {
 
-            // Add a module definition for the skin rollup css
             var name = this.formatSkin(skin), info = this.moduleInfo,
                 sinf = this.skin, ext = info[mod] && info[mod].ext;
 
+            /*
+            // Add a module definition for the skin rollup css
             if (!info[name]) {
                 this.addModule({
                     'name': name,
@@ -2982,6 +2967,7 @@ Y.Env.meta = META;
                     'ext': ext
                 });
             }
+            */
 
             // Add a module definition for the module-specific skin css
             if (mod) {
@@ -2992,7 +2978,7 @@ Y.Env.meta = META;
                         'name': name,
                         'type': 'css',
                         'after': sinf.after,
-                        'path': pkg + '/' + sinf.base + skin + '/' + mod + '.css',
+                        'path': (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
                         'ext': ext
                     });
                 }
@@ -3043,6 +3029,8 @@ Y.Env.meta = META;
             o.requires = o.requires || [];
 
 
+            this.moduleInfo[name] = o;
+
             // Handle submodule logic
             var subs = o.submodules, i;
             if (subs) {
@@ -3054,6 +3042,12 @@ Y.Env.meta = META;
                         s.path = _path(name, i, o.type);
                         this.addModule(s, i);
                         sup.push(i);
+
+                        if (o.skinnable) {
+                            var smod = this._addSkin(this.skin.defaultSkin, i, name);
+                            sup.push(smod.name);
+                        }
+
                         l++;
                     }
                 }
@@ -3071,11 +3065,13 @@ Y.Env.meta = META;
                         plug.requires = plug.requires || [];
                         plug.requires.push(name);
                         this.addModule(plug, i);
+                        if (o.skinnable) {
+                            this._addSkin(this.skin.defaultSkin, i, name);
+                        }
                     }
                 }
             }
 
-            this.moduleInfo[name] = o;
             this.dirty = true;
 
             return o;
