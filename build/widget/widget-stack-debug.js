@@ -141,7 +141,7 @@ YUI.add('widget-stack', function(Y) {
      * @type String
      * @static
      */
-    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS_NAME + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
+    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS_NAME + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false" tabindex="-1" role="presentation"></iframe>';
 
     Stack.prototype = {
 

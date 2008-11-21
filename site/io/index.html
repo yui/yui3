@@ -62,7 +62,7 @@ include "../inc/header.inc";
 				include "../inc/include-notice.inc";
 				?>
 
-				<h4 id="your id here">A Simple Transaction</h4>
+				<h4>A Simple Transaction</h4>
 				<p>
 				<code>io()</code> is the primary method for making an HTTP request.  This method accepts two arguments: uri and the configuration object.
 				</p>
@@ -83,7 +83,7 @@ include "../inc/header.inc";
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO module.
-				YUI().use("io", function(Y) {
+				YUI().use("io-base", function(Y) {
 					var uri = "get.php?foo=bar";
 
 					// Define a function to handle the response data.
@@ -111,16 +111,57 @@ include "../inc/header.inc";
 
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
+					<li><a href="#modules">Modules</a></li>
 					<li><a href="#configuration">The Configuration Object</a></li>
 					<li><a href="#events">Events</a></li>
 					<li><a href="#xdr">Cross-Domain Requests</a></li>
+					<li><a href="#form">Serializing HTML Forms as Data</a></li>
+					<li><a href="#upload">Uploading files in an HTML Form</a></li>
 					<li><a href="#headers">Setting HTTP Headers</a></li>
 					<li><a href="#queue">Queue</a></li>
 				</ul>
 
+				<h4 id="modules">IO Modules</h4>
+				<p>Beginning with PR2, IO's core and supplementary features are split into a base module and sub-modules, to allow greater flexibility in selecting the desired features.</p>
+                 <table>
+					<thead>
+
+						<tr>
+							<th>Module</th>
+							<th>Description</th>
+						</tr>
+					</tbody>
+					<tbody>
+						<tr>
+							<td><code>io-base</code></td>
+
+							<td>This is the IO base class, containing the basic functionality needed for making HTTP requests.</td>
+						</tr>
+						<tr>
+							<td><code>io-xdr</code></td>
+							<td>This sub-module extends io-base, to add cross-domain request capabilities, using Flash as the transport.</td>
+						</tr>
+						<tr>
+
+							<td><code>io-form</code></td>
+							<td>This sub-module extends io-base, to add HTML form serialization, as transaction data.</td>
+						</tr>
+						<tr>
+							<td><code>io-upload-iframe</code></td>
+							<td>This sub-module extends io-base, to allow file uploads with an HTML form, using an iframe as the transport.</td>
+						</tr>
+
+						<tr>
+							<td><code>io-queue</code></td>
+							<td>This sub-module extends io-base, to provide a basic queue interface for IO.</td>
+						</tr>
+					</tbody>
+				</table>
+
+
 				<h4 id="configuration">The Configuration Object</h4>
 
-				<p>This object is the second argument of <code>YUI.io()</code>.  Its configurations help define transaction parameters and transaction response handling.  The configuration object, as well as all configuration properties are optional.  The following table describes all configuration properties used by <code>IO</code>.</p>
+				<p>This object is the second argument of <code>io()</code>.  Its properties define transaction parameters and transaction response handling.  The configuration object and all configuration properties are optional.  The following table describes all configuration properties used by <code>IO</code>.</p>
 
 				<table>
 					<thead>
@@ -161,7 +202,7 @@ include "../inc/header.inc";
 						</tr>
 						<tr>
 							<td>form (object)</td>
-							<td>This object instructs IO to use the labels and values of the specified HTML form as transaction data.
+							<td>This object instructs IO to use the labels and values of the specified HTML form as data.
 								<ul class="topspace">
 									<li><strong>id:</strong> This property can be defined as the id(String) of an HTML form or an object reference of the HTML form.</li>
 									<li><strong>useDisabled:</strong> When set to <strong>true</strong>, disabled field values are included as data.  The default value is false.</li>
@@ -184,7 +225,7 @@ include "../inc/header.inc";
 					</tbody>
 				</table>
 				<p>
-				This is an example of a configuration object, with all properties defined.
+				This is an example of a configuration object, with a set of properties defined.
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
 				/*
@@ -202,7 +243,10 @@ include "../inc/header.inc";
 				 *          so usage 'this' will reference Dispatch.
 				 * form: Object specifying the HTML form to be serialized into a key-value
 				 *       string and sent as data; and, informing IO to include disabled
-				 *       HTML form fields as part of the data.
+				 *       HTML form fields as part of the data.  If input type of "file"
+				 *       is present, setting the upload property to "true" will create an
+				 *       alternate transport, to submit the HTML form with the
+				 *       selected files.
 				 * xdr: Informs IO to use the defined transport, in this case Flash,
 				 *      to make a cross-domain request for this transaction.
 				 * arguments: Object of data, passed as an argument to the event
@@ -224,7 +268,8 @@ include "../inc/header.inc";
 					context: Dispatch,
 					form: {
 						id: formObject,
-						useDisabled: true
+						useDisabled: true,
+						upload: true
 					},
 					xdr: { use: 'flash' },
 					arguments: {
@@ -237,7 +282,7 @@ include "../inc/header.inc";
 
 				<h4 id="response">The Response Object</h4>
 				<p>
-				When a transaction is complete, the response data are passed as an object to the event handler.
+				When a transaction -- using the XHR object as a transport -- is complete, the response data are passed as an object to the event handler.
 				</p>
 				<table>
 					<thead>
@@ -276,6 +321,11 @@ include "../inc/header.inc";
 					</tr>
 					</tbody>
 				  </table>
+
+				<p>
+				NOTE: Transactions involving file upload or cross-domain requests, using alternate transports, only populate the <code>responseText</code> field.  The HTTP status and response headers are either inaccessible or unavailable to these alternate transports.
+				</p>
+
 
 				<h4 id="events">Events</h4>
 				<p>
@@ -372,7 +422,7 @@ include "../inc/header.inc";
 						<tr>
 							<td><strong>io:xdrReady</strong></td>
 							<td>
-							Fires when the XDR transport is ready for use.  This event only fires once when the transport initialization is complete.
+							Fires when the XDR transport is ready for use.  This event only fires once, when the transport initialization is complete.
 							</td>
 						</tr>
 					</tbody>
@@ -381,7 +431,7 @@ include "../inc/header.inc";
 				<p>The following example demonstrates an IO transaction with an event handler subscribed to "io:complete".</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO module.
-				YUI().use("io", function(Y) {
+				YUI().use("io-base", function(Y) {
 					/*
 					 * Create a function as the event handler for the event "io:complete".
 					 *
@@ -450,8 +500,8 @@ include "../inc/header.inc";
 				The following example demonstrates a cross-domain transaction, starting with the initialization of the XDR transport, and subscribing to three global IO events.
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				// Create a YUI instance using IO.
-				YUI().use("io", function(Y) {
+				// Create a YUI instance using the IO cross-domain submodule
+				YUI().use("io-xdr", function(Y) {
 					// Create a configuration object containing three defined properties:
 					// id: Identifies the transport to be used.
 					// yid: The ID of the YUI instance.
@@ -516,12 +566,121 @@ include "../inc/header.inc";
 				);
 				</textarea>
 
+				<h4 id="form">Serializing HTML Form as Data</h4>
+				<p>
+				IO can serialize HTML form fields into a string of encoded name-value pairs.  If the transaction is HTTP GET, the data are appended to the URI as a querystring.  If the transaction if HTTP POST, the data will be the POST message.
+				</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+
+				// Create a YUI instance using the IO form sub-module.
+				YUI().use("io-form", function(Y) {
+					// Create a configuration object for the file upload transaction.
+					// The form configuration should include two defined properties:
+					// id: This can be the ID or an object reference to the HTML form
+					//     containing the input type="file" elements.
+					// useDisabled: Set this property to "true" to include disabled
+					//              HTML form fields, as part of the data.  By
+					//              default, disabled fields are excluded from the
+					//              serialization.
+					var cfg = {
+						method: 'POST',
+						form: {
+							id: formObject,
+							useDisabled; true
+						}
+					};
+
+					// Define a function to handle the response data.
+					function complete(id, o, args) {
+					  var id = id; // Transaction ID.
+					  var data = o.responseText; // Response data.
+					  var args = args[1]; // 'ipsum'.
+					};
+
+					// Subscribe to event "io:complete", and pass an array
+					// as an argument to the event handler "complete".
+					Y.on('io:complete', complete, this, { 'foo':'bar' });
+
+					// Start the transaction.
+					var request = Y.io(uri, cfg);
+					};
+				);
+				</textarea>
+
+
+				<h4 id="upload">Uploading Files in an HTML Form</h4>
+				<p>
+				The default XHR transport, used in IO, cannot upload HTML form data that includes elements of type="file".  In this situation, IO will create an alternate transport, to facilitate the transaction. The following example shows how to configure a transaction involving file upload:
+				</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+				/*
+				 * This example demonstrates how to configure IO to upload files
+				 * from an HTML form.  This example uses the global events:
+				 * "io:start" and "io:complete" to handle the transaction and
+				 * response.  Transaction events can be defined and fired, as well,
+				 * in the configuration object; but, they are not used in this
+				 * example.
+				 */
+				// Create a YUI instance using the IO upload sub-module.
+				YUI().use("io-upload-iframe", function(Y) {
+					// Create a configuration object for the file upload transaction.
+					// The form configuration should include two defined properties:
+					// id: This can be the ID or an object reference to the HTML form
+					//     containing the input type="file" elements.
+					// upload: Set this property to "true" to indicate this is a file
+					//         upload transaction.
+					var cfg = {
+						method: 'POST',
+						form: {
+							id: formObject,
+							upload; true
+						}
+					};
+
+					/ Define a function to handle the start of a transaction
+					function start(id, args) {
+					  var id = id; // Transaction ID.
+					  var args = args.foo; // 'bar'
+					}
+
+					// Define a function to handle the response data.
+					function complete(id, o, args) {
+					  var id = id; // Transaction ID.
+					  var data = o.responseText; // Response data.
+					  var args = args[1]; // 'ipsum'.
+					};
+
+					// Subscribe to event "io:start", and pass an object
+					// as an argument to the event handler "start".
+					Y.on('io:start', start, this, { 'foo':'bar' });
+
+					// Subscribe to event "io:complete", and pass an array
+					// as an argument to the event handler "complete".
+					Y.on('io:complete', complete, this, ['lorem', 'ipsum']);
+
+					// Start the transaction.
+					var request = Y.io(uri, cfg);
+					};
+				);
+				</textarea>
+
+				<p>
+				When using the io-upload-iframe sub-module, to perform file upload transactions, only some events -- global and transaction -- will be processed and fired.  Specifically, these are:
+				</p>
+				<ul>
+					<li>Start</li>
+					<li>Complete</li>
+					<li>Abort</li>
+				</ul>
+				<p>Success and Failure events are not processed and fired because the iframe transport does not provide access to the HTTP status and response headers, to discern those states.</p>
+
+
 				<h4 id="headers">Setting HTTP Headers</h4>
 				<p>
 				IO can be configured to send default HTTP Headers for all transactions, in addition to any HTTP headers defined in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				YUI().use("io", function(Y) {
+				YUI().use("io-base", function(Y) {
 
 					// Set a new default HTTP header.
 					Y.io.header('Content-Type', 'application/json');
@@ -572,8 +731,8 @@ include "../inc/header.inc";
 					</tbody>
 				</table>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				// Create a YUI instance using IO.
-				YUI().use("io", function(Y) {
+				// Create a YUI instance using the IO queue sub-module.
+				YUI().use("io-queue", function(Y) {
 
 					// Stop the queue so transactions can be stored.
 					Y.io.queue.stop();
@@ -601,16 +760,16 @@ include "../inc/header.inc";
 
 				<h3 id="issues">Known Issues</h3>
 				<ul>
-					<li>Cross-domain requests, in PR1</li>
+					<li>HTTP POST transactions are set by Firefox 3.x, to use a "Content-Type" of "application/x-www-form-urlencoded; charset=UTF-8".  This cannot be overwritten by defining a different value in the configuration object.</li>
+					<li>Cross-domain requests</li>
 						<ul>
 							<li>Custom HTTP headers are only sent with HTTP POST.  This is a Flash Player issue.</li>
 							<li>Only <code>responseText</code> is populated in the response object.  HTTP status and HTTP response headers are not available.  These data are not accessible by Flash Player, except in IE.</li>
 							<li>XML response data are not supported.</li>
 							<li>IE 6 and 7 will fail to fire event <code>io:xdrReady</code> if the page is reloaded.  A timestamp querystring is added to io.swf, in the XDR example, to correct this condition.</li>
 						</ul>
-					<li>Forms features not supported with PR1</li>
+					<li>Forms features not supported with PR2</li>
 						<ul>
-							<li>File uploading.</li>
 							<li>Multiple HTML Submit buttons in one HTML form.</li>
 						</ul>
 				</ul>
