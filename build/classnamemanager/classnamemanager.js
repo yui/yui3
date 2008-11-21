@@ -1,5 +1,23 @@
 YUI.add('classnamemanager', function(Y) {
 
+/**
+* Contains a singleton (ClassNameManager) that enables easy creation and caching of 
+* prefixed class names.
+* @module classnamemanager
+*/
+
+/**
+ * A singleton class providing: 
+ * 
+ * <ul>
+ *    <li>Easy creation of prefixed class names</li>
+ *    <li>Caching of previously created class names for improved performance.</li>
+ * </ul>
+ * 
+ * @class ClassNameManager
+ * @static 
+ */
+
 // String constants
 var CLASS_NAME_PREFIX = 'classNamePrefix',
 	CLASS_NAME_DELIMITER = 'classNameDelimiter';
@@ -30,20 +48,6 @@ Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui';
 Y.config[CLASS_NAME_DELIMITER] = Y.config[CLASS_NAME_DELIMITER] || '-';
 
 
-
-// Class definition
-
-/**
- * A singleton class providing: 
- * 
- * <ul>
- *    <li>Easy creation of prefixed class names</li>
- *    <li>Caching of previously created class names for improved performance.</li>
- * </ul>
- * 
- * @class ClassNameManager
- * @static 
- */
 Y.ClassNameManager = function () {
 
 	var sPrefix = Y.config[CLASS_NAME_PREFIX],

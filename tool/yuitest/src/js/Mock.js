@@ -1,7 +1,8 @@
-YUI.add("mock", function(Y){
-
-    var L = Y.Lang,
-        O = Y.Object;
+    /**
+     * Mock objects for JavaScript and YUI Test.
+     *
+     * @module mock
+     */
 
     /**
      * Creates a new mock object.
@@ -19,15 +20,15 @@ YUI.add("mock", function(Y){
         
         //try to create mock that keeps prototype chain intact
         try {
-            mock = O(template);
+            mock = Y.Object(template);
         } catch (ex) {
             mock = {};
             Y.log("Couldn't create mock with prototype.", "warn", "Mock");
         }
         
         //create new versions of the methods so that they don't actually do anything
-        O.each(template, function(name){
-            if (L.isFunction(template[name])){
+        Y.Object.each(template, function(name){
+            if (Y.Lang.isFunction(template[name])){
                 mock[name] = function(){
                     Y.Assert.fail("Method " + name + "() was called but was not expected to be.");
                 };
@@ -44,7 +45,7 @@ YUI.add("mock", function(Y){
      * calls and changes, respectively.
      * @param {Object} mock The object to add the expectation to.
      * @param {Object} expectation An object defining the expectation. For
-     *      a method, the keys "method" and "arguments" are required with
+     *      a method, the keys "method" and "args" are required with
      *      an optional "returns" key available. For properties, the keys
      *      "property" and "value" are required.
      * @return {void}
@@ -61,9 +62,9 @@ YUI.add("mock", function(Y){
         //method expectation
         if (expectation.method){
             var name = expectation.method,
-                args = expectation.arguments || [],
+                args = expectation.args || expectation.arguments || [],
                 result = expectation.returns,
-                callCount = L.isNumber(expectation.callCount) ? expectation.callCount : 1,
+                callCount = Y.Lang.isNumber(expectation.callCount) ? expectation.callCount : 1,
                 error = expectation.error,
                 run = expectation.run || function(){};
                 
@@ -123,7 +124,7 @@ YUI.add("mock", function(Y){
      * @static
      */ 
     Y.Mock.verify = function(mock /*:Object*/){    
-        O.each(mock.__expectations, function(expectation){
+        Y.Object.each(mock.__expectations, function(expectation){
             if (expectation.method) {
                 Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
             } else if (expectation.property){
@@ -150,6 +151,4 @@ YUI.add("mock", function(Y){
     Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber,[]);
     Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString,[]);
     Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
-    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);    
-
-}, "@VERSION@");
+    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);

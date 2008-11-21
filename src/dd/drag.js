@@ -17,6 +17,7 @@
         OFFSET_WIDTH = 'offsetWidth',        
         MOUSE_UP = 'mouseup',
         MOUSE_DOWN = 'mousedown',
+        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -82,7 +83,6 @@
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_BEFORE_DRAG = 'drag:beforeDrag',
         EV_DRAG = 'drag:drag';
 
 
@@ -122,6 +122,7 @@
 
         DDM._regDrag(this);
     };
+
     Drag.NAME = 'drag';
 
     Drag.ATTRS = {
@@ -132,9 +133,11 @@
         */
         node: {
             set: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                } else {
+                    n = n.item(0);
                 }
                 return n;
             }
@@ -369,6 +372,7 @@
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
+                    config.bubbles = this.get('bubbles');
                     config.node = this.get(NODE);
                     this.target = new Y.DD.Drop(config);
                 }
@@ -405,7 +409,6 @@
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
-                EV_BEFORE_DRAG,
                 EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
@@ -541,6 +544,14 @@
             if (DDM.activeDrag) {
                 DDM._end();
             }
+        },
+        /** 
+        * @private
+        * @method _fixDragStart
+        * @description The function we use as the ondragstart handler when we start a drag in Internet Explorer. This keeps IE from blowing up on images as drag handles.
+        */
+        _fixDragStart: function(e) {
+            e.preventDefault();
         },
         /** 
         * @private
@@ -805,6 +816,7 @@
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.on(MOUSE_UP, this._handleMouseUp, this, true);
+            node.on(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @private
@@ -816,6 +828,7 @@
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
             node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.detach(MOUSE_UP, this._handleMouseUp, this, true);
+            node.detach(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @method start
@@ -889,16 +902,16 @@
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(eXY, noFire) {
-            this.fire(EV_BEFORE_DRAG);
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
 
+            //This will probably kill your machine ;)
+            //Y.log('dragging..', 'info', 'dd-drag');
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
-            //console.log(this.lastXY, ' :: ', this.nodeXY, ' :: ', this.realXY);
 
             if (this.get('move')) {
                 if (Y.UA.opera) {

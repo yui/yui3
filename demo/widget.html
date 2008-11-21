@@ -4,6 +4,7 @@
     <title>Widget Class</title>
 
     <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../build/widget/assets/skins/sam/widget.css" />
 
     <style type="text/css">
         .yui-pewidget, .yui-widget {
@@ -14,7 +15,7 @@
             margin:5px;
         }
 
-        .yui-pewidget-hidden, .yui-widget-hidden {
+        .yui-pewidget-hidden {
             visibility:hidden;
         }
 
@@ -33,7 +34,9 @@
     <div id="alpha">Widget.Alpha</div>
 
     <div id="beta-box">
-        <div id="beta-content"><span class="label">Widget.Beta</span></div>
+        <div id="beta-content">
+            <span class="label">Widget.Beta</span>
+        </div>
     </div>
 
 	<div id="widget-3-container"></div>
@@ -62,19 +65,18 @@
                 }
             };
 
-            Y.extend(PEWidget, Y.Widget, {
-
-                HTML_PARSER : {
-                    label : function(node) {
-                        var found = node.query("span.label");
-                        if (found) {
-                            return {
-                                contents: found.get("innerHTML")
-                            };
-                        }
+            PEWidget.HTML_PARSER = {
+                label : function(node) {
+                    var found = node.query("span.label");
+                    if (found) {
+                        return {
+                            contents: found.get("innerHTML")
+                        };
                     }
                 }
-            });
+            };
+
+            Y.extend(PEWidget, Y.Widget);
 
 			widget = new Y.Widget({ contentBox: '#alpha', width: 200 });
 			widget.render();

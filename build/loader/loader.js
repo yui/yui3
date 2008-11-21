@@ -137,6 +137,14 @@ var BASE = 'base',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
+    skin: {
+        defaultSkin: 'sam',
+        base: 'assets/skins/',
+        path: 'skin.css',
+        after: ['reset', 'fonts', 'grids', 'base']
+        //rollup: 3
+    },
+
     modules: {
 
        dom: {
@@ -215,6 +223,11 @@ var BASE = 'base',
         },
 
         classnamemanager: { },
+
+        console: {
+            requires: ['widget', 'substitute'],
+            skinnable: true
+        },
         
         cookie: { },
 
@@ -273,16 +286,24 @@ var BASE = 'base',
         
         io:{
             submodules: {
+
                 'io-base': {
                     requires: ['node']
                 }, 
+
                 'io-xdr': {
                     requires: ['io-base']
                 }, 
+
                 'io-form': {
                     requires: ['io-base']
                 }, 
+
                 'io-upload-iframe': {
+                    requires: ['io-base']
+                },
+
+                'io-queue': {
                     requires: ['io-base']
                 }
             }
@@ -301,18 +322,30 @@ var BASE = 'base',
         loader: { 
             requires: ['get']
         },
-
-        logreader : {
-            requires : ['widget', 'substitute', 'stylesheet']
-        },
         
         oop: { 
             requires: ['yui-base']
         },
 
+        overlay: {
+            requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            skinnable: true
+        },
+
+        plugin: { 
+            requires: ['base']
+        },
+
         profiler: { },
 
-        queue: { },
+        queue: {
+            requires: ['node']
+        },
+
+        slider: {
+            requires: ['widget', 'dd-constrain'],
+            skinnable: true
+        },
 
         stylesheet: { },
 
@@ -321,7 +354,18 @@ var BASE = 'base',
         },
 
         widget: {
-            requires: ['base', 'node', 'classnamemanager']
+            requires: ['base', 'node', 'classnamemanager'],
+            plugins: {
+                'widget-position': { },
+                'widget-position-ext': {
+                    requires: ['widget-position']
+                },
+                'widget-stack': {
+                    skinnable: true
+                },
+                'widget-stdmod': { }
+            },
+            skinnable: true
         },
 
         // Since YUI is required for everything else, it should not be specified as
@@ -571,6 +615,46 @@ Y.Env.meta = META;
          */
         // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
         this.moduleInfo = {};
+
+        /**
+         * Provides the information used to skin the skinnable components.
+         * The following skin definition would result in 'skin1' and 'skin2'
+         * being loaded for calendar (if calendar was requested), and
+         * 'sam' for all other skinnable components:
+         *
+         *   <code>
+         *   skin: {
+         *
+         *      // The default skin, which is automatically applied if not
+         *      // overriden by a component-specific skin definition.
+         *      // Change this in to apply a different skin globally
+         *      defaultSkin: 'sam', 
+         *
+         *      // This is combined with the loader base property to get
+         *      // the default root directory for a skin. ex:
+         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+         *      base: 'assets/skins/',
+         *
+         *      // The name of the rollup css file for the skin
+         *      path: 'skin.css',
+         *
+         *      // The number of skinnable components requested that are
+         *      // required before using the rollup file rather than the
+         *      // individual component css files
+         *      rollup: 3,
+         *
+         *      // Any component-specific overrides can be specified here,
+         *      // making it possible to load different skins for different
+         *      // components.  It is possible to load more than one skin
+         *      // for a given component as well.
+         *      overrides: {
+         *          calendar: ['skin1', 'skin2']
+         *      }
+         *   }
+         *   </code>
+         *   @property skin
+         */
+         this.skin = Y.merge(Y.Env.meta.skin);
         
         var defaults = Y.Env.meta.modules;
 
@@ -640,6 +724,7 @@ Y.Env.meta = META;
 
         this.skipped = {};
 
+
         // Y.on('yui:load', this.loadNext, this);
 
         this._config(o);
@@ -659,6 +744,8 @@ Y.Env.meta = META;
             }
         },
 
+        SKIN_PREFIX: "skin-",
+
         _config: function(o) {
 
             // apply config values
@@ -668,14 +755,7 @@ Y.Env.meta = META;
                         var val = o[i];
                         if (i == 'require') {
                             this.require(val);
-                        // support the old callback syntax
-                        // } else if (i.indexOf('on') === 0) {
-                            // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else if (i == 'modules') {
-
-                            // Y.each(val, function(v, k) {
-                            //     this.addModule(v, k);
-                            // }, this);
 
                             // add a hash of module definitions
                             for (var j in val) {
@@ -683,8 +763,6 @@ Y.Env.meta = META;
                                     this.addModule(val[j], j);
                                 }
                             }
-                            
-
 
                         } else {
                             this[i] = val;
@@ -697,21 +775,96 @@ Y.Env.meta = META;
             var f = this.filter;
 
             if (L.isString(f)) {
-
                 f = f.toUpperCase();
-
                 this.filterName = f;
-
-                // the logger must be available in order to use the debug
-                // versions of the library
-                // @TODO review when logreader is available
-                // if (f === "DEBUG") {
-                //     this.require("log");
-                // }
-
                 this.filter = this.FILTERS[f];
             }
 
+        },
+
+        /**
+         * Returns the skin module name for the specified skin name.  If a
+         * module name is supplied, the returned skin module name is 
+         * specific to the module passed in.
+         * @method formatSkin
+         * @param skin {string} the name of the skin
+         * @param mod {string} optional: the name of a module to skin
+         * @return {string} the full skin module name
+         */
+        formatSkin: function(skin, mod) {
+            var s = this.SKIN_PREFIX + skin;
+            if (mod) {
+                s = s + "-" + mod;
+            }
+
+            return s;
+        },
+
+        /**
+         * Reverses <code>formatSkin</code>, providing the skin name and
+         * module name if the string matches the pattern for skins.
+         * @method parseSkin
+         * @param mod {string} the module name to parse
+         * @return {skin: string, module: string} the parsed skin name 
+         * and module name, or null if the supplied string does not match
+         * the skin pattern
+         */
+        parseSkin: function(mod) {
+            
+            if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+                var a = mod.split("-");
+                return {skin: a[1], module: a[2]};
+            } 
+
+            return null;
+        },
+
+        /**
+         * Adds the skin def to the module info
+         * @method _addSkin
+         * @param skin {string} the name of the skin
+         * @param mod {string} the name of the module
+         * @param parent {string} parent module if this is a skin of a
+         * submodule or plugin
+         * @return {string} the module name for the skin
+         * @private
+         */
+        _addSkin: function(skin, mod, parent) {
+
+            var name = this.formatSkin(skin), info = this.moduleInfo,
+                sinf = this.skin, ext = info[mod] && info[mod].ext;
+
+            /*
+            // Add a module definition for the skin rollup css
+            if (!info[name]) {
+                this.addModule({
+                    'name': name,
+                    'type': 'css',
+                    'path': sinf.base + skin + '/' + sinf.path,
+                    //'supersedes': '*',
+                    'after': sinf.after,
+                    'rollup': sinf.rollup,
+                    'ext': ext
+                });
+            }
+            */
+
+            // Add a module definition for the module-specific skin css
+            if (mod) {
+                name = this.formatSkin(skin, mod);
+                if (!info[name]) {
+                    var mdef = info[mod], pkg = mdef.pkg || mod;
+                    this.addModule({
+                        'name': name,
+                        'type': 'css',
+                        'after': sinf.after,
+                        'path': (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
+                        'ext': ext
+                    });
+                }
+            }
+
+            return name;
         },
 
         /** Add a new module to the component metadata.         
@@ -756,17 +909,25 @@ Y.Env.meta = META;
             o.requires = o.requires || [];
 
 
+            this.moduleInfo[name] = o;
+
             // Handle submodule logic
-            var subs = o.submodules;
+            var subs = o.submodules, i;
             if (subs) {
                 var sup = [], l=0;
 
-                for (var i in subs) {
+                for (i in subs) {
                     if (subs.hasOwnProperty(i)) {
                         var s = subs[i];
                         s.path = _path(name, i, o.type);
                         this.addModule(s, i);
                         sup.push(i);
+
+                        if (o.skinnable) {
+                            var smod = this._addSkin(this.skin.defaultSkin, i, name);
+                            sup.push(smod.name);
+                        }
+
                         l++;
                     }
                 }
@@ -775,7 +936,22 @@ Y.Env.meta = META;
                 o.rollup = Math.min(l-1, 4);
             }
 
-            this.moduleInfo[name] = o;
+            var plugins = o.plugins;
+            if (plugins) {
+                for (i in plugins) {
+                    if (plugins.hasOwnProperty(i)) {
+                        var plug = plugins[i];
+                        plug.path = _path(name, i, o.type);
+                        plug.requires = plug.requires || [];
+                        plug.requires.push(name);
+                        this.addModule(plug, i);
+                        if (o.skinnable) {
+                            this._addSkin(this.skin.defaultSkin, i, name);
+                        }
+                    }
+                }
+            }
+
             this.dirty = true;
 
             return o;
@@ -934,6 +1110,25 @@ Y.Env.meta = META;
         _setup: function() {
 
             var info = this.moduleInfo, name, i, j;
+
+            // Create skin modules
+            for (name in info) {
+                if (info.hasOwnProperty(name)) {
+                    var m = info[name];
+                    if (m && m.skinnable) {
+                        var o=this.skin.overrides, smod;
+                        if (o && o[name]) {
+                            for (i=0; i<o[name].length; i=i+1) {
+                                smod = this._addSkin(o[name][i], name);
+                            }
+                        } else {
+                            smod = this._addSkin(this.skin.defaultSkin, name);
+                        }
+
+                        m.requires.push(smod);
+                    }
+                }
+            }
 
             var l = Y.merge(this.inserted); // shallow clone
 
@@ -1561,13 +1756,26 @@ Y.Env.meta = META;
          */
         _filter: function(u) {
 
+
             var f = this.filter;
 
-            if (f) {
+            if (u && f) {
                 var useFilter = true;
 
                 if (this.filterName == "DEBUG") {
                 
+                    var exc = this.logExclude,
+                        inc = this.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
                 }
             }
 

@@ -452,17 +452,20 @@
          * Gets multiple attribute values.
          *
          * @method getAtts
+         * @param {Array} Optional. An array of attribute names, whose values are required. If omitted, all attribute values are
+         * returned.
          * @return {Object} A hash of attributes: name/value pairs
          */
         getAtts: function(atts) {
-            var o = {};
-            if (atts) {
-                o = Y.clone(atts);
-            } else {
-                Y.each(this._conf.get(VALUE), function(val, att) {
-                    o[att] = val; 
-                });
+            var o = {}, i, l, att;
+            atts = atts || O.keys(this._conf.data[VALUE]);
+
+            for (i = 0, l = atts.length; i < l; i++) {
+                // Go through get, to retrieve massaged values and honor cloning
+                att = atts[i];
+                o[att] = this.get(att); 
             }
+
             return o;
         },
 
@@ -629,10 +632,9 @@
          * @param {String} attrName The name of the attribute
          * @param {String} strFullPath The full path of the property being changed, 
          * if this is a sub-attribute value being change
-         * @param {Function} defaultFn The default handler for the change event
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
+        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, opts) {
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing

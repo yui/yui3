@@ -17,6 +17,7 @@ $nav[]=array('node',$docroot.'examples/node/index.html','Node', 'Node - Function
 $nav[]=array('', '', 'YUI 3 Component Infrastructure - Examples', ' YUI 3 Utilities - Functional Examples');
 $nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
 $nav[]=array('base',$docroot.'examples/base/index.html','Base', 'Base - Functional Examples');
+$nav[]=array('widget',$docroot.'examples/widget/index.html','Widget', 'Widget - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Utilities - Examples', ' YUI 3 Utilities - Functional Examples');
 $nav[]=array('animation',$docroot.'examples/anim/index.html','Animation', 'Animation - Functional Examples');
@@ -26,6 +27,10 @@ $nav[]=array('get',$docroot.'examples/get/index.html','Get', 'Get - Functional E
 $nav[]=array('io',$docroot.'examples/io/index.html','IO', 'IO - Functional Examples');
 $nav[]=array('json',$docroot.'examples/json/index.html','JSON', 'JSON (JavaScript Object Notation) - Functional Examples');
 $nav[]=array('queue',$docroot.'examples/queue/index.html','Queue', 'Queue - Functional Examples');
+
+$nav[]=array('', '', 'YUI 3 Widgets - Examples', ' YUI 3 Widgets - Functional Examples');
+$nav[]=array('overlay',$docroot.'examples/overlay/index.html','Overlay', 'Overlay - Functional Examples');
+$nav[]=array('slider',$docroot.'examples/slider/index.html','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');
 $nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YUI CSS Reset - Functional Examples');

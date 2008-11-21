@@ -119,8 +119,9 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
-        // Allow var yui = YUI() instead of var yui = new YUI()
-        if (Y == window) {
+
+        // Allow instantiation without the new operator
+        if (!(Y instanceof YUI)) {
             return new YUI(o);
         } else {
             // set up the core environment
@@ -154,8 +155,7 @@ YUI.prototype = {
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
-
-        o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -556,7 +556,7 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        if (true) { // hasOwnProperty not available yet and not needed
+        if (true) {
             Y[i] = p[i];
         }
     }
@@ -624,10 +624,14 @@ YUI.add("log", function(instance) {
 
             if (!bail) {
 
-                if (c.useConsole && typeof console != 'undefined') {
-                        var f = (cat && console[cat]) ? cat : 'log',
-                            m = (src) ? src + ': ' + msg : msg;
+                if (c.useConsole) {
+                    var m = (src) ? src + ': ' + msg : msg;
+                    if (typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log';
                         console[f](m);
+                    } else if (typeof opera != 'undefined') {
+                        opera.postError(m);
+                    }
                 }
 
                 if (Y.fire && !bail && !silent) {
@@ -901,8 +905,11 @@ YUI.add("array", function(Y) {
             } else {
                 try {
                     // indexed, but no tagName (element) or alert (window)
-                    if ("length" in o && !("tagName" in o)  && !("alert" in o)) {
-                        r = 2;
+                    if ("length" in o && 
+                        !("tagName" in o) && 
+                        !("alert" in o) && 
+                        (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
+                            r = 2;
                     }
                         
                 } catch(ex) {}

@@ -56,7 +56,9 @@ YUI.add("event-custom", function(Y) {
          * @method detach
          */
         detach: function() {
+
             if (this.evt) {
+                // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
                 this.evt._delete(this.sub);
             }
         }
@@ -302,8 +304,6 @@ YUI.add("event-custom", function(Y) {
                 se.fire.apply(se, args);
             }
 
-            // debugger;
-
             var s = new Y.Subscriber(fn, obj, args, when);
 
 
@@ -333,7 +333,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         subscribe: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true));
+            return this._subscribe(fn, obj, arguments, true);
         },
 
         /**
@@ -347,7 +347,7 @@ YUI.add("event-custom", function(Y) {
          * @return {Event.Handle} unsubscribe handle
          */
         after: function(fn, obj) {
-            return this._subscribe(fn, obj, Y.Array(arguments, 2, true), AFTER);
+            return this._subscribe(fn, obj, arguments, AFTER);
         },
 
         /**
@@ -425,7 +425,7 @@ YUI.add("event-custom", function(Y) {
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret;
+            var ret, c, ct;
 
             // emit an Event.Facade if this is that sort of event
             // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -440,8 +440,11 @@ YUI.add("event-custom", function(Y) {
                 }
 
             }
-             
-            ret = s.notify(this.context, args, this);
+
+            // The default context should be the object/element that
+            // the listener was bound to.
+            ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 this.log(this.type + " cancelled by subscriber");
@@ -550,6 +553,16 @@ YUI.add("event-custom", function(Y) {
 
                 var ef = null;
                 if (this.emitFacade) {
+
+                    // this.fire({
+                    //   foo: 1
+                    //   bar: 2
+                    // }
+                    // this.fire({
+                    //   bar: 2
+                    // } // foo is still 1 unless we create a new facade
+                    this._facade = null;
+
                     ef = this._getFacade(args);
                     args[0] = ef;
                 }
@@ -781,21 +794,25 @@ YUI.add("event-custom", function(Y) {
          */
         // this.args = args;
 
-        var m = fn;
-        
-        if (obj) {
-            var a = (args) ? Y.Array(args) : [];
-            a.unshift(fn, obj);
-            m = Y.bind.apply(Y, a);
-        }
-        
         /**
          * }
          * fn bound to obj with additional arguments applied via Y.bind
          * @property wrappedFn
          * @type Function
          */
-        this.wrappedFn = m;
+        this.wrappedFn = fn;
+        
+        if (obj) {
+            /*
+            var a = (args) ? Y.Array(args) : [];
+            a.unshift(fn, obj);
+            // a.unshift(fn);
+            m = Y.bind.apply(Y, a);
+            */
+            this.wrappedFn = Y.bind.apply(Y, args);
+        }
+        
+
 
     };
 
@@ -810,21 +827,31 @@ YUI.add("event-custom", function(Y) {
          * @param ce {Event.Custom} The custom event that sent the notification
          */
         notify: function(defaultContext, args, ce) {
-            var c = this.obj || defaultContext, ret = true;
+            var c = this.obj || defaultContext, ret = true,
 
-            try {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.obj);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.obj);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
+                f = function() {
+                    switch (ce.signature) {
+                        case 0:
+                            ret = this.fn.call(c, ce.type, args, this.obj);
+                            break;
+                        case 1:
+                            ret = this.fn.call(c, args[0] || null, this.obj);
+                            break;
+                        default:
+                            ret = this.wrappedFn.apply(c, args || []);
+                    }
+                };
+
+            // Ease debugging by only catching errors if we will not re-throw
+            // them.
+            if (Y.config.throwFail) {
+                f.call(this);
+            } else {
+                try {
+                    f.call(this);
+                } catch(e) {
+                    Y.fail(this + ' failed: ' + e.message, e);
                 }
-            } catch(e) {
-                Y.fail(this + ' failed: ' + e.message, e);
             }
 
             return ret;

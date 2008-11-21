@@ -4,7 +4,6 @@
      *
      * @module base
      */
-
     var L = Y.Lang,
         O = Y.Object,
         SEP = ":",
@@ -98,6 +97,22 @@
         }
     };
 
+    /**
+     * The build configuration for the Base class.
+     * Defines the static fields which need to be aggregated,
+     * when this class is used as the main class passed to 
+     * the <a href="#method_build">Base.build</a> method.
+     *
+     * @property _buildCfg
+     * @type Object
+     * @static
+     * @final
+     * @private
+     */    
+    Base._buildCfg = {
+        aggregates : ["ATTRS"]
+    };
+
     var _instances = {};
 
     /**
@@ -112,7 +127,7 @@
      * <dl>
      *    <dt>dynamic &#60;boolean&#62;</dt>
      *    <dd>
-     *    <p>If true, a completely new class
+     *    <p>If true (default), a completely new class
      *    is created which extends the main class, and acts as the 
      *    host on which the extension classes are augmented.</p>
      *    <p>If false, the extensions classes are augmented directly to
@@ -120,9 +135,10 @@
      *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
-     *    on to the built class in addition to the default properties build 
-     *    will always aggregate - "ATTRS" and "PLUGINS", as defined by 
-     *    Base.build.AGGREGATES</dd>
+     *    on to the built class, in addition to the default properties build 
+     *    will always aggregate as defined by the main class' _buildCfg
+     *    property.
+     *    </dd>
      * </dl>
      *
      * @method build
@@ -136,46 +152,31 @@
     Base.build = function(main, extensions, cfg) {
 
         var build = Base.build,
-            builtClass,
-            extClass,
-            aggregates,
-            dynamic,
-            key = main.NAME;
 
-        if (cfg) {
-            aggregates = cfg.aggregates;
-            dynamic = cfg.dynamic;
-        }
+            builtClass = build._getClass(main, cfg),
+            aggregates = build._getAggregates(main, cfg),
+            dynamic = builtClass._yuibuild.dynamic,
 
-        // Create dynamic class or just modify main class
-        builtClass = (dynamic) ? build._template(main) : main;
+            key = main.NAME,
 
-        builtClass._yuibuild = {
-            id: null,
-            exts : [],
-            dynamic : dynamic
-        };
-
-        aggregates = (aggregates) ? build.AGGREGATES.concat(aggregates) : build.AGGREGATES;
-
-        var el = extensions.length,
-            al = aggregates.length,
-            i;
+            i, l;
 
         // Shallow isolate aggregates
-        if (dynamic && aggregates) {
-            for (i = 0; i < al; i++) {
-                var val = aggregates[i];
-                if (O.owns(main, val)) {
-                    builtClass[val] = L.isArray(main[val]) ? [] : {};
+        if (dynamic) {
+            if (aggregates) {
+                for (i = 0, l = aggregates.length; i < l; ++i) {
+                    var val = aggregates[i];
+                    if (O.owns(main, val)) {
+                        builtClass[val] = L.isArray(main[val]) ? [] : {};
+                    }
                 }
+                Y.aggregate(builtClass, main, true, aggregates);
             }
-            Y.aggregate(builtClass, main, true, aggregates);
         }
 
         // Augment/Aggregate
-        for (i = 0; i < el; i++) {
-            extClass = extensions[i];
+        for (i = 0, l = extensions.length; i < l; i++) {
+            var extClass = extensions[i];
 
             if (aggregates) {
                 Y.aggregate(builtClass, extClass, true, aggregates);
@@ -198,14 +199,13 @@
 
         return builtClass;
     };
-
+    
     Y.mix(Base.build, {
-
-        AGGREGATES : ["ATTRS", "PLUGINS"],
 
         _template: function(main) {
 
             function BuiltClass() {
+
                 BuiltClass.superclass.constructor.apply(this, arguments);
 
                 var f = BuiltClass._yuibuild.exts, 
@@ -214,11 +214,10 @@
                 for (var i = 0; i < l; i++) {
                     f[i].apply(this, arguments);
                 }
+
                 return this;
             }
-
             Y.extend(BuiltClass, main);
-
             return BuiltClass;
         },
 
@@ -236,6 +235,41 @@
             }
 
             return false;
+        },
+
+        _getClass : function(main, cfg) {
+
+            // Create dynamic class or just modify main class
+            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
+                builtClass = (dynamic) ? Base.build._template(main) : main;
+
+            builtClass._yuibuild = {
+                id: null,
+                exts : [],
+                dynamic : dynamic
+            };
+
+            return builtClass;
+        },
+
+        _getAggregates : function(main, cfg) {
+            var aggr = [],
+                cfgAggr = (cfg && cfg.aggregates),
+                c = main;
+
+            while (c && c.prototype) {
+                var classAggr = c._buildCfg && c._buildCfg.aggregates;
+                if (classAggr) {
+                    aggr = aggr.concat(classAggr);
+                }
+                c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            if (cfgAggr) {
+                aggr = aggr.concat(cfgAggr);
+            }
+
+            return aggr;
         }
     });
 
@@ -245,10 +279,10 @@
      * The custom class is created from the main class passed in as the first parameter 
      * along with the list of extension classes passed in
      * as the second parameter using <a href="#method_build">Base.build</a> 
-     * with "dynamic" set to true. See the documentation for this method 
+     * with "dynamic" set to true. See the documentation for Base.build method 
      * to see how the main class and extension classes are used.
      * </p>
-     * 
+     *
      * <p>Any arguments following the 2nd argument are passed as arguments to the 
      * constructor of the newly created class used to create the instance.</p>
      * 
@@ -264,7 +298,7 @@
      * @return {Object} An instance of the custom class
      */
     Base.create = function(main, extensions, args) {
-        var c = Base.build(main, extensions, {dynamic:true}),
+        var c = Base.build(main, extensions),
             cArgs = Y.Array(arguments, 2, true);
 
         function F(){}
@@ -299,8 +333,8 @@
 
             /**
              * <p>
-             * Init event, fired prior to initialization. Invoking
-             * the preventDefault method on the event object provided 
+             * Lifecycle event for the init phase, fired prior to initialization. 
+             * Invoking the preventDefault method on the event object provided 
              * to subscribers will prevent initialization from occuring.
              * </p>
              * <p>
@@ -344,9 +378,10 @@
 
             /**
              * <p>
-             * Destroy event, fired prior to destruction. Invoking
-             * the preventDefault method on the event object provided 
-             * to subscribers will prevent destruction from proceeding.
+             * Lifecycle event for the destroy phase, 
+             * fired prior to destruction. Invoking the preventDefault 
+             * method on the event object provided to subscribers will 
+             * prevent destruction from proceeding.
              * </p>
              * <p>
              * Subscribers to the "after" moment of this event, will be notified
@@ -377,8 +412,7 @@
             _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
 
-            this._conf.remove(INITIALIZED, VALUE);
-            this.set(INITIALIZED, true);
+            this._set(INITIALIZED, true);
         },
 
         /**
@@ -392,8 +426,7 @@
             this._destroyHierarchy();
             delete _instances[this._yuid];
 
-            this._conf.remove(DESTROYED, VALUE);
-            this.set(DESTROYED, true);
+            this._set(DESTROYED, true);
         },
 
         /**
@@ -656,4 +689,5 @@
 
     Y.mix(Base, Y.Attribute, false, null, 1);
 
+    Base.prototype.constructor = Base;
     Y.Base = Base;

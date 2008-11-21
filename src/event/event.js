@@ -73,25 +73,9 @@ YUI.add("event", function(Y) {
          * @event available
          */
         available: {
-
             on: function(type, fn, id, o) {
-
-                var a = Y.Array(arguments, 1, true), m = fn;
-
-                a.splice(1, 1);
-                a.unshift(id);
-
-                Y.log(a);
-
-                if (o) {
-                    var a2 = a.slice(1);
-                    // Y.log(a2);
-                    m = Y.bind.apply(Y, a2);
-                }
-
-
-                return Y.Event.onAvailable.apply(Y.Event, a);
-
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
             },
 
             detach: function() {
@@ -107,44 +91,102 @@ YUI.add("event", function(Y) {
          * @event contentready
          */
         contentready: {
-
             on: function(type, fn, id, o) {
-
-                var a = Y.Array(arguments, 1, true), m = fn;
-
-                a.splice(1, 1);
-                a.unshift(id);
-
-                if (o) {
-                    var a2 = a.slice(1);
-                    m = Y.bind.apply(Y, a2);
-                }
-
-                return Y.Event.onContentReady.apply(Y.Event, a);
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
             },
 
             detach: function() {
 
             }
+        },
+
+        /**
+         * Add a key listener.  The listener will only be notified if the
+         * keystroke detected meets the supplied specification.  The
+         * spec consists of the key event type, followed by a colon,
+         * followed by zero or more comma separated key codes, followed
+         * by zero or more modifiers delimited by a plus sign.  Ex:
+         * press:12,65+shift+ctrl
+         * @event key
+         * @param fn {string} the function to execute
+         * @param id {string} the element(s) to bind
+         * @param spec {string} the keyCode and modifier specification
+         * @param o optional context object
+         * @param args 0..n additional arguments that should be provided 
+         * to the listener.
+         */
+        key: {
+
+            on: function(type, fn, id, spec, o) {
+
+                // parse spec ([key event type]:[criteria])
+                var parsed = spec.split(':'),
+
+                    // key event type: 'down', 'up', or 'press'
+                    etype = parsed[0],
+
+                    // list of key codes optionally followed by modifiers
+                    criteria = parsed[1].split(/,|\+/),
+
+                    // the name of the custom event that will be created for the spec
+                    ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec,
+
+                    a = Y.Array(arguments, 0, true);
+
+                // subscribe spec validator to the DOM event
+                Y.on(type + etype, function(e) {
+
+                    // Y.log('keylistener: ' + e.keyCode);
+                    
+                    var passed = false, failed = false;
+
+                    for (var i=0; i<criteria.length; i=i+1) {
+                        var crit = criteria[i], critInt = parseInt(crit, 10);
+
+                        // pass this section if any supplied keyCode 
+                        // is found
+                        if (Y.Lang.isNumber(critInt)) {
+
+                            if (e.charCode === critInt) {
+                                // Y.log('passed: ' + crit);
+                                passed = true;
+                            } else {
+                                failed = true;
+                                // Y.log('failed: ' + crit);
+                            }
+
+                        // only check modifier if no keyCode was specified
+                        // or the keyCode check was successful.  pass only 
+                        // if every modifier passes
+                        } else if (passed || !failed) {
+                            passed = (e[crit + 'Key']);
+                            failed = !passed;
+                            // Y.log(crit + ": " + passed);
+                        }                    
+                    }
+
+                    // fire spec custom event if spec if met
+                    if (passed) {
+                        Y.fire(ename, e);
+                    }
+
+                }, id);
+
+                // subscribe supplied listener to custom event for spec validator
+                // remove element and spec.
+                a.splice(2, 2);
+                a[0] = ename;
+
+                return Y.on.apply(Y, a);
+            },
+
+            detach: function() {
+                // use the returned handle to unsubscribe
+            }
         }
 
     };
-
-    /*
-     * Subscribes to the yui:load event, which fires when a Y.use operation
-     * is complete.
-     * @method ready
-     * @param f {Function} the function to execute
-     * @param c Optional execution context
-     * @param args* 0..n Additional arguments to append 
-     * to the signature provided when the event fires.
-     * @return {YUI} the YUI instance
-     */
-    // Y.ready = function(f, c) {
-    //     var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
-    //     Y.on("yui:load", m);
-    //     return this;
-    // };
 
     /**
      * Attach an event listener, either to a DOM object
@@ -165,19 +207,11 @@ YUI.add("event", function(Y) {
         var adapt = Y.Env.eventAdaptors[type];
 
         if (adapt) {
-
             Y.log('Using adaptor for ' + type, 'info', 'event');
-
             return adapt.on.apply(Y, arguments);
-
         } else {
-
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.subscribe.apply(Y, arguments);
-                }
+                return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
             }
@@ -208,11 +242,7 @@ YUI.add("event", function(Y) {
             if (adapt) {
                 adapt.detach.apply(Y, arguments);
             } else if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.unsubscribe.apply(Y, arguments);
-                }
+                return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
             }
@@ -234,14 +264,14 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        // method override
-        // callback, object, sMethod
         if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
+        } else {
+            return Y.on.apply(Y, arguments);
         }
-
-        return Y;
     };
+
+    var after = Y.after;
 
     /**
      * Executes the callback after a DOM event, custom event
@@ -262,11 +292,10 @@ YUI.add("event", function(Y) {
     Y.after = function(type, f, o) {
         if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
+        } else {
+            return after.apply(Y, arguments);
         }
-
-        return Y;
     };
-
 
 
 }, "3.0.0", {

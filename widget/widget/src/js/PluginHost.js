@@ -1,3 +1,11 @@
+/**
+ * An augmentable class, which when added to a "Base" based class, allows 
+ * the class to support Plugins, providing plug and unplug methods and performing
+ * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ *
+ * @class PluginHost
+ */
+
 var L = Y.Lang;
 
 function PluginHost(config) {
@@ -8,21 +16,21 @@ function PluginHost(config) {
 }
 
 PluginHost.prototype = {
+
     /**
      * Register and instantiate a plugin with the Widget.
      * 
+     * @method plug
+     * @chainable
      * @param p {String | Object |Array} Accepts the registered 
      * namespace for the Plugin or an object literal with an "fn" property
      * specifying the Plugin class and a "cfg" property specifying
      * the configuration for the Plugin.
      * <p>
-     * Additionally an Array can also be passed in, with either String or 
-     * Object literal elements, allowing for multiple plugin registration in 
-     * a single call
+     * Additionally an Array can also be passed in, with either the above String or 
+     * Object literal values, allowing for multiple plugin registration in 
+     * a single call.
      * </p>
-     * @method plug
-     * @chain
-     * @public
      */
     plug: function(p) {
         if (p) {
@@ -44,9 +52,9 @@ PluginHost.prototype = {
      * Unregister and destroy a plugin already instantiated with the Widget.
      * 
      * @method unplug
-     * @param {String} ns The namespace key for the Plugin
-     * @chain
-     * @public
+     * @param {String} ns The namespace key for the Plugin. If not provided,
+     * all registered plugins are unplugged.
+     * @chainable
      */
     unplug: function(ns) {
         if (ns) {
@@ -75,9 +83,14 @@ PluginHost.prototype = {
     },
 
     /**
+     * Initializes static plugins registered on the host (the
+     * "PLUGINS" static property) and any plugins passed in 
+     * for the instance through the "plugins" configuration property.
+     *
+     * @method _initPlugins
+     * @param {Config} the user configuration object for the host.
      * @private
      */
-
     _initPlugins: function(config) {
 
         // Class Configuration
@@ -96,6 +109,8 @@ PluginHost.prototype = {
     },
 
     /**
+     * Private method used to unplug and destroy all plugins on the host
+     * @method _destroyPlugins
      * @private
      */
     _destroyPlugins: function() {
@@ -103,6 +118,10 @@ PluginHost.prototype = {
     },
 
     /**
+     * Private method used to instantiate and attach plugins to the host
+     * @method _plug
+     * @param {Function} PluginClass The plugin class to instantiate
+     * @param {Object} config The configuration object for the plugin
      * @private
      */
     _plug: function(PluginClass, config) {
@@ -124,7 +143,12 @@ PluginHost.prototype = {
     },
 
     /**
+     * Private method used to unregister and destroy a plugin already instantiated with the host.
+     *
+     * @method _unplug
      * @private
+     * @param {String} ns The namespace key for the Plugin. If not provided,
+     * all registered plugins are unplugged.
      */
     _unplug : function(ns) {
         if (ns) {
