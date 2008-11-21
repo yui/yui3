@@ -137,7 +137,7 @@ YUI.add("event", function(Y) {
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
 
-                    // Y.log('keylistener: ' + e.charCode);
+                    // Y.log('keylistener: ' + e.keyCode);
                     
                     var passed = false, failed = false;
 
@@ -163,7 +163,8 @@ YUI.add("event", function(Y) {
                             passed = (e[crit + 'Key']);
                             failed = !passed;
                             // Y.log(crit + ": " + passed);
-                        }                    }
+                        }                    
+                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
@@ -173,12 +174,9 @@ YUI.add("event", function(Y) {
                 }, id);
 
                 // subscribe supplied listener to custom event for spec validator
-                // remove element and spec
+                // remove element and spec.
                 a.splice(2, 2);
                 a[0] = ename;
-                if (!a[2]) {
-                    a.push(Y.get(id));
-                }
 
                 return Y.on.apply(Y, a);
             },

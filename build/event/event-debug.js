@@ -137,7 +137,7 @@ YUI.add("event", function(Y) {
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
 
-                    // Y.log('keylistener: ' + e.charCode);
+                    // Y.log('keylistener: ' + e.keyCode);
                     
                     var passed = false, failed = false;
 
@@ -163,7 +163,8 @@ YUI.add("event", function(Y) {
                             passed = (e[crit + 'Key']);
                             failed = !passed;
                             // Y.log(crit + ": " + passed);
-                        }                    }
+                        }                    
+                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
@@ -173,12 +174,9 @@ YUI.add("event", function(Y) {
                 }, id);
 
                 // subscribe supplied listener to custom event for spec validator
-                // remove element and spec
+                // remove element and spec.
                 a.splice(2, 2);
                 a[0] = ename;
-                if (!a[2]) {
-                    a.push(Y.get(id));
-                }
 
                 return Y.on.apply(Y, a);
             },
@@ -1026,7 +1024,7 @@ YUI.add("event-custom", function(Y) {
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret;
+            var ret, c, ct;
 
             // emit an Event.Facade if this is that sort of event
             // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -1041,8 +1039,11 @@ YUI.add("event-custom", function(Y) {
                 }
 
             }
-             
-            ret = s.notify(this.context, args, this);
+
+            // The default context should be the object/element that
+            // the listener was bound to.
+            ct = (Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 this.log(this.type + " cancelled by subscriber");
