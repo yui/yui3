@@ -30,7 +30,6 @@ Subsection: General
 	text-align: left;
 	width: 57.69em;
 	*width: 56.25em; /* doc1*/
-	min-width: 750px;
 }
 
 .yui-t1,
