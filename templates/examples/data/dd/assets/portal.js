@@ -1,6 +1,16 @@
 //Use loader to grab the modules needed
-YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function(Y) {
+YUI(yuiConfig).use('dd', 'anim', 'slider', 'css', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
+
+    //Make this an Event Target so we can bubble to it
+    var Portal = function() {
+        Portal.superclass.constructor.apply(this, arguments);
+    };
+    Portal.NAME = 'portal';
+    Y.extend(Portal, Y.Base);
+    //This is our new bubble target..
+    Y.Portal = new Portal();
+
 
     //Setup some private variables..
     var goingUp = false, lastY = 0, trans = {};
@@ -105,7 +115,8 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
             proxy: true,
             moveOnEnd: false,
             borderStyle: 'none',
-            data: data
+            data: data,
+            bubbles: Y.Portal
         });
         //Setup some stopper events
         dd.on('drag:start', _handleStart);
@@ -419,7 +430,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
     Now when we get a drop enter event, we check to see if the target is an LI, then we know it's out module.
     Here is where we move the module around in the DOM.    
     */
-    Y.DD.DDM.on('drop:enter', function(e) {
+    Y.Portal.on('drop:enter', function(e) {
         if (!e.drag || !e.drop || (e.drop !== e.target)) {
             return false;
         }
@@ -432,7 +443,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
 
     //Handle the drag:drag event
     //On drag we need to know if they are moved up or down so we can place the module in the proper DOM location.
-    Y.DD.DDM.on('drag:drag', function(e) {
+    Y.Portal.on('drag:drag', function(e) {
         var y = e.target.mouseXY[1];
         if (y < lastY) {
             goingUp = true;
@@ -447,7 +458,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
     Now that we have a drop on the target, we check to see if the drop was not on a LI.
     This means they dropped on the empty space of the UL.
     */
-    Y.DD.DDM.on('drag:drophit', function(e) {
+    Y.Portal.on('drag:drophit', function(e) {
         var drop = e.drop.get('node'),
             drag = e.drag.get('node');
 
@@ -460,7 +471,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
 
     //Handle the drag:start event
     //Use some CSS here to make our dragging better looking.
-    Y.DD.DDM.on('drag:start', function(e) {
+    Y.Portal.on('drag:start', function(e) {
         var drag = e.target;
         if (drag.target) {
             drag.target.set('locked', true);
@@ -473,7 +484,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
 
     //Handle the drag:end event
     //Replace some of the styles we changed on start drag.
-    Y.DD.DDM.on('drag:end', function(e) {
+    Y.Portal.on('drag:end', function(e) {
         var drag = e.target;
         if (drag.target) {
             drag.target.set('locked', false);
@@ -487,7 +498,7 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
     
 
     //Handle going over a UL, for empty lists
-    Y.DD.DDM.on('drop:over', function(e) {
+    Y.Portal.on('drop:over', function(e) {
         var drop = e.drop.get('node'),
             drag = e.drag.get('node');
 
@@ -503,10 +514,11 @@ YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function
 
     //Create simple targets for the main lists..
     var uls = Y.all('#play ul.list');
-    uls.each(function(v, k, items) {
+    uls.each(function(v, k) {
         var tar = new Y.DD.Drop({
-            node: items.item(k),
-            padding: '20 0'
+            node: v,
+            padding: '20 0',
+            bubbles: Y.Portal
         });
     });
     
