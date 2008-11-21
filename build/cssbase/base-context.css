@@ -45,7 +45,7 @@
 	list-style: disc outside;
 }
 .yui-cssbase dl dd {
-	/*giving UL's LIs generated numbers*/
+	/*providing spacing for definition terms*/
 	margin-left:1em;
 }
 .yui-cssbase th,.yui-cssbase td {
