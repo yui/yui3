@@ -374,6 +374,7 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
+                    config.bubbles = this.get('bubbles');
                     config.node = this.get(NODE);
                     this.target = new Y.DD.Drop(config);
                 }
@@ -893,6 +894,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _moveNode: function(eXY, noFire) {
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
+
             //This will probably kill your machine ;)
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -900,7 +902,6 @@ YUI.add('dd-drag', function(Y) {
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
-            //console.log(this.lastXY, ' :: ', this.nodeXY, ' :: ', this.realXY);
 
             if (this.get('move')) {
                 if (Y.UA.opera) {
