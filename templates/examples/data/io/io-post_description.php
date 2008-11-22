@@ -5,7 +5,7 @@
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 //Create a YUI instance including support for IO:
-YUI({base:"../../build/", timeout: 10000}).use("io", function(Y) {
+YUI({base:"../../build/", timeout: 10000}).use("io-base", function(Y) {
 	// Y is the YUI instance.
 	// The rest of the following code is encapsulated in this
 	// anonymous function.
@@ -84,7 +84,7 @@ Y.on("click", makeRequest, "#requestButton");</textarea>
 <p>The full JavaScript code for this example follows:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI({base:"../../build/", timeout: 10000}).use("io",
+YUI({base:"../../build/", timeout: 10000}).use("io-base",
 
 	function(Y) {
 

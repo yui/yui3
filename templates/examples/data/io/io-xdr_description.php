@@ -4,7 +4,7 @@
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 //Create a YUI instance including support for IO and JSON modules:
-YUI({base:"../../build/", timeout: 10000}).use("io", "substitute", "json-parse", function(Y) {
+YUI({base:"../../build/", timeout: 10000}).use("io-xdr", "substitute", "json-parse", function(Y) {
 	// Y is the YUI instance.
 	// The rest of the following code is encapsulated in this
 	// anonymous function.
@@ -57,7 +57,7 @@ Y.io.transport(xdrConfig);</textarea>
 <p>The full script source for this example is as follows:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI({base:"../../build/", timeout: 10000}).use("io", "substitute", "json-parse",
+YUI({base:"../../build/", timeout: 10000}).use("io-xdr", "substitute", "json-parse",
 
 	function(Y) {
 
