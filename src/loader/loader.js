@@ -322,6 +322,11 @@ var BASE = 'base',
         loader: { 
             requires: ['get']
         },
+
+        'node-menunav': {
+            requires: ['node', 'classnamemanager'],
+            skinnable: true
+        },
         
         oop: { 
             requires: ['yui-base']
