@@ -49,7 +49,7 @@
 * 		hidden when the user mouses out of it.  Set to 750 by default.</dd>
 * </dl>
 * 
-* @module nodemenunav
+* @module node-menunav
 */
 
 	//	Util shortcuts
@@ -569,12 +569,11 @@ var MenuNav = function (config) {
 };
 
 
-MenuNav.NAME = "nodeMenuNav";
-MenuNav.NS = "nodeMenuNav";
+MenuNav.NS = "MenuNav";
 
 
 /** 
-* @property NodeMenuNav.SHIM_TEMPLATE_TITLE
+* @property menuNav.SHIM_TEMPLATE_TITLE
 * @description String representing the value for the <code>title</code> attribute for the shim used
 * to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
 * @default "Menu Stacking Shim"
@@ -584,19 +583,28 @@ MenuNav.SHIM_TEMPLATE_TITLE = "Menu Stacking Shim";
 
 
 /** 
-* @property NodeMenuNav.SHIM_TEMPLATE
+* @property menuNav.SHIM_TEMPLATE
 * @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
 * used to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
-* @default &#34;&#60;iframe frameborder=&#34;0&#34; role=&#34presentation&#34; 
-* class=&#34yui-shim&#34; title=&#34Menu Stacking Shim&#34; 
-* src=&#34javascript:false;&#34;&#62;&#60;/iframe&#62;&#34;
+* @default &#34;&#60;iframe frameborder=&#34;0&#34; tabindex=&#34;-1&#34; 
+* class=&#34;yui-shim&#34; title=&#34;Menu Stacking Shim&#34; 
+* src=&#34;javascript:false;&#34;&#62;&#60;/iframe&#62;&#34;
 * @type String
 */
 
-//	Need to set the "frameBorder" property to 0 to suppress the default <iframe>
-//	border in IE.  Setting the CSS "border" property alone doesn't suppress it.
+//	<iframe> shim notes:
+//
+//	1) Need to set the "frameBorder" property to 0 to suppress the default <iframe> border in IE.  
+//	(Setting the CSS "border" property alone doesn't suppress it.)  
+//
+//	2) The "src" attribute of the <iframe> is set to "javascript:false;" so that it won't load a 
+//	page inside it, preventing the secure/nonsecure warning in IE when using HTTPS.
+//
+//	3) Since the role of the <iframe> shim is completely presentational, its "tabindex" attribute
+//	is set to "-1" and its title attribute is set to "Menu Stacking Shim".  Both strategies help
+//	users of screen readers to avoid mistakenly interacting with the <iframe> shim.
 
-MenuNav.SHIM_TEMPLATE	=	'<iframe frameborder="0" role="presentation" class="' + 
+MenuNav.SHIM_TEMPLATE	=	'<iframe frameborder="0" tabindex="-1" class="' + 
 							getClassName("shim") + 
 							'" title="' + MenuNav.SHIM_TEMPLATE_TITLE + 
 							'" src="javascript:false;"></iframe>';
