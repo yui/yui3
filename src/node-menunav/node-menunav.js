@@ -573,7 +573,7 @@ MenuNav.NS = "MenuNav";
 
 
 /** 
-* @property menuNav.SHIM_TEMPLATE_TITLE
+* @property NodeMenuNav.SHIM_TEMPLATE_TITLE
 * @description String representing the value for the <code>title</code> attribute for the shim used
 * to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
 * @default "Menu Stacking Shim"
@@ -583,7 +583,7 @@ MenuNav.SHIM_TEMPLATE_TITLE = "Menu Stacking Shim";
 
 
 /** 
-* @property menuNav.SHIM_TEMPLATE
+* @property NodeMenuNav.SHIM_TEMPLATE
 * @description String representing the HTML used to create the <code>&#60;iframe&#62;</code> shim 
 * used to prevent <code>&#60;select&#62;</code> elements from poking through menus in IE 6.
 * @default &#34;&#60;iframe frameborder=&#34;0&#34; tabindex=&#34;-1&#34; 
