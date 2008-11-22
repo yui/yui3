@@ -23,7 +23,7 @@ $examples["widget-build"] = array(
     description => "Shows how to use Base.build to create custom Widget classes.",
     sequence => array(1),
     newWindow => "default",
-    requires => array("widget", "widget-position", "widget-stack"),
+    requires => array("widget", "widget-position", "widget-stack", "widget-position-ext", "widget-stdmod", "queue"),
     highlightSyntax => true
 );
 
