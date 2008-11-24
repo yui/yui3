@@ -11,7 +11,7 @@
     
 YUI({
     base: '../build/'
-}).use('yuitest', 'cookie', 'logreader', function (Y) {
+}).use('yuitest', 'cookie', 'console', function (Y) {
 
     Y.namespace("Tests");
     
@@ -1387,7 +1387,7 @@ YUI({
     })();
 
     
-    var r = new Y.log.Reader({
+    var r = new Y.Console({
         verbose : true,
         //consoleLimit : 10,
         newestOnTop : false
