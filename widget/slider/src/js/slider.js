@@ -696,7 +696,7 @@ Y.extend(Slider, Y.Widget, {
     _isImageLoaded : function (img) {
         if (img) {
             var w = img.get('naturalWidth');
-            return img.get(COMPLETE) && (w === undefined ? img.get(WIDTH) : w);
+            return img.get(COMPLETE) && (!isNumber(w) ? img.get(WIDTH) : w);
         }
 
         return true;
