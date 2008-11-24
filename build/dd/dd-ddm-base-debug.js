@@ -17,7 +17,7 @@ YUI.add('dd-ddm-base', function(Y) {
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'DragDropMgr';
+    DDMBase.NAME = 'dragDropMgr';
 
     DDMBase.ATTRS = {
         /**
