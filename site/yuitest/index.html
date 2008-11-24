@@ -1214,16 +1214,16 @@ include("../inc/header.inc");
                 </textarea>
 
                 <h3 id="viewing-results">Viewing Results</h3>
-                <p>There are two ways to view test results. The first is to output test results to the Logger
-                component. To do so, you need only create a new Logged instance; the result results will be posted
+                <p>There are two ways to view test results. The first is to output test results to the Console
+                component. To do so, you need only create a new Console instance; the result results will be posted
                 to the logger automatically:</p>
                 <textarea name="code" class="JScript" cols="60" rows="1">
                 <script type="text/javascript">
                 
-                    var logger = new Y.log.Reader({
+                    var yconsole = new Y.Console({
                         newestOnTop: false                   
                     });
-                    logger.render('#log');
+                    yconsole.render('#log');
                     Y.Test.Runner.run();
                 
                 </script> 
