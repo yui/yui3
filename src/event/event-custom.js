@@ -4,6 +4,7 @@
  * @module event
  */
 YUI.add("event-custom", function(Y) {
+
     var onsubscribeType = "_event:onsub",
         AFTER = 'after', 
         CONFIGS = [

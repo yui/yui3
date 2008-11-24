@@ -18,22 +18,14 @@ YUI.add("event", function(Y) {
          * @event focus
          */
         focus: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.detach.apply(Y.Event, a);
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.detach.apply(Y.Event, arguments);
 
             }
         },
@@ -46,23 +38,14 @@ YUI.add("event", function(Y) {
          * @event blur
          */
         blur: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.detach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.detach.apply(Y.Event, arguments);
             }
         },
 
@@ -76,10 +59,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -94,10 +73,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -179,10 +154,6 @@ YUI.add("event", function(Y) {
                 a[0] = ename;
 
                 return Y.on.apply(Y, a);
-            },
-
-            detach: function() {
-                // use the returned handle to unsubscribe
             }
         }
 
@@ -204,13 +175,13 @@ YUI.add("event", function(Y) {
      */
     Y.on = function(type, f, o) {
         
-        var adapt = Y.Env.eventAdaptors[type];
-
-        if (adapt) {
+       var adapt = Y.Env.eventAdaptors[type];
+        
+        if (adapt && adapt.on) {
             Y.log('Using adaptor for ' + type, 'info', 'event');
             return adapt.on.apply(Y, arguments);
         } else {
-            if (type.indexOf(':') > -1) {
+            if (adapt || type.indexOf(':') > -1) {
                 return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
@@ -239,9 +210,9 @@ YUI.add("event", function(Y) {
         if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
         } else {
-            if (adapt) {
-                adapt.detach.apply(Y, arguments);
-            } else if (type.indexOf(':') > -1) {
+            if (adapt && adapt.detach) {
+                return adapt.detach.apply(Y, arguments);
+            } else if (adapt || type.indexOf(':') > -1) {
                 return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
@@ -603,6 +574,7 @@ YUI.add("aop", function(Y) {
  * @module event
  */
 YUI.add("event-custom", function(Y) {
+
     var onsubscribeType = "_event:onsub",
         AFTER = 'after', 
         CONFIGS = [
@@ -1989,42 +1961,69 @@ var Env = YUI.Env,
             return;
         }
 
-        /**
-         * Executes the supplied callback when the DOM is first usable.  This
-         * will execute immediately if called after the DOMReady event has
-         * fired.   @todo the DOMContentReady event does not fire when the
-         * script is dynamically injected into the page.  This means the
-         * DOMReady custom event will never fire in FireFox or Opera when the
-         * library is injected.  It _will_ fire in Safari, and the IE 
-         * implementation would allow for us to fire it if the defered script
-         * is not available.  We want this to behave the same in all browsers.
-         * Is there a way to identify when the script has been injected 
-         * instead of included inline?  Is there a way to know whether the 
-         * window onload event has fired without having had a listener attached 
-         * to it when it did so?
-         *
-         * <p>The callback is a Event.Custom, so the signature is:</p>
-         * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
-         * <p>For DOMReady events, there are no fire argments, so the
-         * signature is:</p>
-         * <p>"DOMReady", [], obj</p>
-         *
-         *
-         * @event event:ready 
-         * @for Event
-         *
-         * @param {function} fn what to execute when the element is found.
-         * @optional context execution context
-         * @optional args 1..n arguments to send to the listener
-         *
-         */
+        Y.mix(Y.Env.eventAdaptors, {
 
-        Y.publish('event:ready', {
+            /**
+             * Executes the supplied callback when the DOM is first usable.  This
+             * will execute immediately if called after the DOMReady event has
+             * fired.   @todo the DOMContentReady event does not fire when the
+             * script is dynamically injected into the page.  This means the
+             * DOMReady custom event will never fire in FireFox or Opera when the
+             * library is injected.  It _will_ fire in Safari, and the IE 
+             * implementation would allow for us to fire it if the defered script
+             * is not available.  We want this to behave the same in all browsers.
+             * Is there a way to identify when the script has been injected 
+             * instead of included inline?  Is there a way to know whether the 
+             * window onload event has fired without having had a listener attached 
+             * to it when it did so?
+             *
+             * <p>The callback is a Event.Custom, so the signature is:</p>
+             * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+             * <p>For DOMReady events, there are no fire argments, so the
+             * signature is:</p>
+             * <p>"DOMReady", [], obj</p>
+             *
+             *
+             * @event domready
+             * @for Event
+             *
+             * @param {function} fn what to execute when the element is found.
+             * @optional context execution context
+             * @optional args 1..n arguments to send to the listener
+             *
+             */
+            domready: {
+
+            },
+
+            /**
+             * Use domready event instead. @see domready
+             * @event event:ready
+             * @for Event
+             * @deprecated use 'domready' instead
+             */
+            'event:ready': {
+
+                on: function() {
+                    arguments[0] = 'domready';
+                    return Y.subscribe.apply(Y, arguments);
+                },
+
+                detach: function() {
+                    arguments[0] = 'domready';
+                    return Y.unsubscribe.apply(Y, arguments);
+                }
+            }
+
+        });
+
+
+        Y.publish('domready', {
             fireOnce: true
         });
 
         var yready = function() {
-            Y.fire('event:ready');
+            Y.fire('domready');
         };
 
         if (Env.DOMReady) {
@@ -2066,7 +2065,7 @@ var Env = YUI.Env,
         remove(window, "load", onLoad);
     },
 
-    EVENT_READY = 'event:ready',
+    EVENT_READY = 'domready',
 
     COMPAT_ARG = '~yui|2|compat~',
 

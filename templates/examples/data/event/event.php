@@ -21,7 +21,7 @@ $examples["event-simple"] = array(
 );
 
 $examples["event-timing"] = array(
-	name => "Using onAvailable, onContentReady, and event:ready",
+	name => "Using 'available', 'contentready', and 'domready'",
 	modules => array("event"),
 	description => "Event Utility gives you control over when you execute your scripts.  In addition to the window's <code>load</code> event, Event Utility lets you know when an element is available, when its children are available, and when the page's full DOM is available.",
 	sequence => array(3),

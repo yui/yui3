@@ -18,22 +18,14 @@ YUI.add("event", function(Y) {
          * @event focus
          */
         focus: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.detach.apply(Y.Event, a);
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.detach.apply(Y.Event, arguments);
 
             }
         },
@@ -46,23 +38,14 @@ YUI.add("event", function(Y) {
          * @event blur
          */
         blur: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.detach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.detach.apply(Y.Event, arguments);
             }
         },
 
@@ -76,10 +59,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -94,10 +73,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -179,10 +154,6 @@ YUI.add("event", function(Y) {
                 a[0] = ename;
 
                 return Y.on.apply(Y, a);
-            },
-
-            detach: function() {
-                // use the returned handle to unsubscribe
             }
         }
 
@@ -204,13 +175,13 @@ YUI.add("event", function(Y) {
      */
     Y.on = function(type, f, o) {
         
-        var adapt = Y.Env.eventAdaptors[type];
-
-        if (adapt) {
+       var adapt = Y.Env.eventAdaptors[type];
+        
+        if (adapt && adapt.on) {
             Y.log('Using adaptor for ' + type, 'info', 'event');
             return adapt.on.apply(Y, arguments);
         } else {
-            if (type.indexOf(':') > -1) {
+            if (adapt || type.indexOf(':') > -1) {
                 return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
@@ -239,9 +210,9 @@ YUI.add("event", function(Y) {
         if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
         } else {
-            if (adapt) {
-                adapt.detach.apply(Y, arguments);
-            } else if (type.indexOf(':') > -1) {
+            if (adapt && adapt.detach) {
+                return adapt.detach.apply(Y, arguments);
+            } else if (adapt || type.indexOf(':') > -1) {
                 return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
