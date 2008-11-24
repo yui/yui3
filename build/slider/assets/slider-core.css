@@ -21,3 +21,6 @@
     color: #000;
     overflow: hidden;
 }
+.yui-slider-image-error .yui-slider-thumb-image {
+    display: none;
+}
