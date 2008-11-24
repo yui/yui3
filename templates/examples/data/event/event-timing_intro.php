@@ -12,26 +12,26 @@ during a page's load process: </p>
 
 <ol>
 
-  <li><code><strong>onAvailable:</strong></code> <code>onAvailable</code>
+  <li><code><strong>available:</strong></code> <code>available</code>
   targets a single element and fires when that element is available (when it
   responds to <code>document.getElementById()</code>) &mdash; but you can't
   count on the element's children having been loaded at this point.</li>
 
-  <li><code><strong>onContentReady:</strong></code> When you care about not
+  <li><code><strong>contentready:</strong></code> When you care about not
   just your target element but its children as well, use
-  <code>onContentReady</code>. This method will tell you that your target
+  <code>contentready</code>. This event will tell you that your target
   element and all of its children are present in the DOM.</li>
   
-  <li><code><strong>event:ready:</strong></code> Some DOM scripting operations
+  <li><code><strong>domready:</strong></code> Some DOM scripting operations
   cannot be performed safely until the page's entire DOM has loaded. The
-  <code>event:ready</code> event will let you know that the DOM is fully loaded
+  <code>domready</code> event will let you know that the DOM is fully loaded
   and ready for you to modify  via script. This custom event takes the place of
   the <code>onDOMReady</code> event from previous versions of YUI.</li>
 
 </ol>
 
-<p>In the example box below, <code>onAvailable</code>,
-<code>onContentReady</code> and <code>event:ready</code> are all in use.  A
+<p>In the example box below, <code>available</code>,
+<code>contentready</code> and <code>domready</code> are all in use.  A
 <code>&lt;div&gt;</code> (with a green background) loads; it has 100 chidren;
 one of those children is an arbitrarily large image that will take awhile to
 load. Keep an eye on the console, if you have one available in your browser.
@@ -40,15 +40,15 @@ content becomes ready (after all of its 100 children have loaded), (3) the DOM
 becomes ready, and finally (4) the page loads.</p>
 
 <p><strong>Internet Explorer note:</strong> It isn't always safe to modify
-content during the onAvailable/onContentReady until after the <code>event:ready</code>
-moment.  In this browser, <code>event:ready</code> will execute before the
-onAvailable/onContentReady listeners.
+content during the available/contentready until after the <code>domready</code>
+moment.  In this browser, <code>domready</code> will execute before the
+available/contentready listeners.
 
 <p><strong>3.x note:</strong> This example has all of the YUI requirements included
 on the page.  This differs from the default YUI configuration, which will dynamically load required
-YUI modules.  Dynamic loading works asynchronously, so the event:ready moment
+YUI modules.  Dynamic loading works asynchronously, so the domready moment
 likely will have passed when it comes time to bind the listeners, and possibly
 the window load event as well.  All of the event listeners will actually fire in this
-case, but the order of the events will not be the same.  event:ready will
-execute before the onAvailable/onContentReady listeners, and the window
+case, but the order of the events will not be the same.  <code>domready</code> will
+execute before the available/contentready listeners, and the window
 load event may as well.</p>
