@@ -8,7 +8,7 @@
 * <p>
 * <code>
 * var oMenuNav = Y.Node.get("#productsandservices");<br>
-* oMenuNav.plug(Y.Plugin.NodeMenuNav);
+* oMenuNav.plug(Y.plugin.NodeMenuNav);
 * </code>
 * <p>
 *
@@ -19,7 +19,7 @@
 * <p>
 * <code>
 * var oMenuNav = Y.Node.get("#productsandservices");<br>
-* oMenuNav.plug(Y.Plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
+* oMenuNav.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
 * </code>
 * </p>
 * 
@@ -396,7 +396,7 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 
 
 /** 
-* @namespace Y.Plugin
+* @namespace Y.plugin
 * @class NodeMenuNav
 */
 var MenuNav = function (config) {
@@ -889,10 +889,10 @@ MenuNav.prototype = {
 
 		if (UA.ie < 8) {
 
-			if (UA.ie === 6 && !menu.iframeShim) {
+			if (UA.ie === 6 && !menu.hasIFrameShim) {
 	
 				menu.appendChild(Y.Node.create(MenuNav.SHIM_TEMPLATE));
-				menu.iframeShim = oIFrame;
+				menu.hasIFrameShim = TRUE;
 
 			}
 
@@ -1896,6 +1896,6 @@ MenuNav.prototype = {
 };
 
 
-Y.namespace('Plugin');
+Y.namespace('plugin');
 
-Y.Plugin.NodeMenuNav = MenuNav;
+Y.plugin.NodeMenuNav = MenuNav;

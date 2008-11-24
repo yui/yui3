@@ -12,7 +12,6 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @constructor
         */
 
-        Y.Plugin = Y.Plugin || {};
 
         var Drop = function(config) {
             config.node = config.owner;
@@ -34,7 +33,8 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
         Y.extend(Drop, Y.DD.Drop);
-        Y.Plugin.Drop = Drop;
+        Y.namespace('plugin');
+        Y.plugin.Drop = Drop;
 
 
 

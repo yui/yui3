@@ -10,7 +10,6 @@
         * @constructor
         */
 
-        Y.Plugin = Y.Plugin || {};
 
         var Drag = function(config) {
             config.node = config.owner;
@@ -32,5 +31,6 @@
 
 
         Y.extend(Drag, Y.DD.Drag);
-        Y.Plugin.Drag = Drag;
+        Y.namespace('plugin');
+        Y.plugin.Drag = Drag;
 

@@ -17,7 +17,7 @@ YUI.add('dd-ddm-base', function(Y) {
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'DragDropMgr';
+    DDMBase.NAME = 'dragDropMgr';
 
     DDMBase.ATTRS = {
         /**
@@ -1974,7 +1974,7 @@ YUI.add('dd-constrain', function(Y) {
 
     };
     
-    C.NAME = 'DragConstrained';
+    C.NAME = 'dragConstrained';
 
     C.ATTRS = {
         /**
@@ -2343,7 +2343,6 @@ YUI.add('dd-plugin', function(Y) {
         * @constructor
         */
 
-        Y.Plugin = Y.Plugin || {};
 
         var Drag = function(config) {
             config.node = config.owner;
@@ -2365,7 +2364,8 @@ YUI.add('dd-plugin', function(Y) {
 
 
         Y.extend(Drag, Y.DD.Drag);
-        Y.Plugin.Drag = Drag;
+        Y.namespace('plugin');
+        Y.plugin.Drag = Drag;
 
 
 
@@ -2819,7 +2819,6 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @constructor
         */
 
-        Y.Plugin = Y.Plugin || {};
 
         var Drop = function(config) {
             config.node = config.owner;
@@ -2841,7 +2840,8 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
         Y.extend(Drop, Y.DD.Drop);
-        Y.Plugin.Drop = Drop;
+        Y.namespace('plugin');
+        Y.plugin.Drop = Drop;
 
 
 

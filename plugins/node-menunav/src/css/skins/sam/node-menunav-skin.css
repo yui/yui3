@@ -163,6 +163,7 @@
 
 .yui-skin-sam .yui-menubuttonnav .yui-menu-label em {
 
+	font-style: normal;
 	padding-right: 20px;
     display: block;
     background: url(../../../img/skins/sam/horizontal-menu-submenu-indicator.png) right center no-repeat;
