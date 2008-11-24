@@ -36,7 +36,7 @@ include "../inc/header.inc";
       <li>An event facade that normalizes browser differences</li>
       <li>Automatic DOM event listener cleanup</li>
       <li>Simulation of events in all A-grade browsers</li>
-      <li>Pageload timing events (<code>onAvailable</code> and <code>onContentReady</code> at the element level and <code>event:ready</code> at the DOM level)
+      <li>Pageload timing events (<code>available</code> and <code>contentready</code> at the element level and <code>domready</code> at the DOM level)
       <li>Custom events that are bubbleable, cancelable, and have intrinsic AOP qualities</li>
    </ul>
    
@@ -50,8 +50,8 @@ include "../inc/header.inc";
 									<li><a href="#using">DOM Events</a></li>
 									<li><a href="#removeevent">Removing Events</a></li>
                                     <li><a href="#eventsimulation">Simulating Events</a></li>
-									<li><a href="#onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</a></li>
-									<li><a href="#ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
+									<li><a href="#onavailable">Using the <code>available</code> and <code>contentready</code> events (Formerly the <code>onAvailable</code> and <code>onContentReady</code> methods)</a></li>
+									<li><a href="#ondomready">Using the <code>domready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
 									<li><a href="#customevent">Using the CustomEvent Object</a></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -325,16 +325,16 @@ the type of event to fire, and an optional object specifying additional informat
 <p><strong>Safari 2.x Developers:</strong> Due to a bug in the Safari 2.x codebase, simulating a keydown event may cause the browser to 
   crash. This issue has been resolved in Safari 3.x.</p>  
 
-<h3 id="onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</h3>
-<p><code>onAvailable</code> lets you define a function that will execute as soon as an element
+<h3 id="onavailable">Using the <code>available</code> and <code>contentready</code> events (Formerly the <code>onAvailable</code> and <code>onContentReady</code> methods)</h3>
+<p><code>available</code> lets you define a function that will execute as soon as an element
   is detected in the DOM. The intent is to reduce the occurrence of timing issues
   when rendering script and html inline. It is not meant to be used to define
   handlers for elements that <em>may</em> eventually be in the document; it is meant to
   be used to detect elements you are in the process of loading.
 </p>
 <p>
-    The argument signature for <code>onAvailable</code> is illustrated here:</p>
-    
+
+The argument signature for <code>available</code> is illustrated here:</p>
   
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
  &lt;script type="text/javascript"&gt;
@@ -342,7 +342,7 @@ the type of event to fire, and an optional object specifying additional informat
  YUI().use('node', function(Y) {
 
      function TestObj(id) {
-       Y.Event.onAvailable(id, this.handleOnAvailable, this); 
+       Y.on('available', this.handleOnAvailable, id, this); 
      }
 
      TestObj.prototype.handleOnAvailable = function(me) {
@@ -357,17 +357,17 @@ the type of event to fire, and an optional object specifying additional informat
 
 </textarea></pre>
 
-<p>The <code>onContentReady</code> method shares an identical syntax with
-<code>onAvailable</code>.  The material difference between the two methods is
-that <code>onContentReady</code> waits until both the target element and its
+<p>The <code>contentready</code> method shares an identical syntax with
+<code>available</code>.  The material difference between the two methods is
+that <code>contentready</code> waits until both the target element and its
 <code>nextSibling</code> in the DOM respond to <code>getElementById</code>.
 This guarantees that the target element's contents will have loaded fully
 (excepting any dynamic content you might add later via script).  If
-<code>onContentReady</code> never detects a <code>nextSibling</code>, it fires
+<code>contentready</code> never detects a <code>nextSibling</code>, it fires
 with the <code>window.load</code> event.</p>
 
-<h3 id="ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</h3>
-<p>The <code>event:ready</code> custom event lets you define a function that
+<h3 id="ondomready">Using the <code>domready</code> Event (Formerly <code>onDOMReady</code>)</h3>
+<p>The <code>domready</code> custom event lets you define a function that
 will execute as soon as the DOM is in a usable state.  The DOM is not deemed
 "usable" until it is structurally complete; a number of bugs, primarily in IE,
 can lead to the browser crashing or failing to load the page successfully if
@@ -375,7 +375,7 @@ scripts attempt to insert information into the DOM prior to the DOM being in a
 complete state.</p>
 
 <p>DOM readiness is achieved before images have finished loading, however, so
-<code>event:ready</code> is often an excellent alternative to using the
+<code>domready</code> is often an excellent alternative to using the
 <code>window</code> object's <code>load</code> event.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -383,12 +383,12 @@ YUI().use('node', function(Y) {
      function init() {
         Y.Node.get("#hidden_element").set("visibility", "");
      }
-     Y.on("event:ready", init);
+     Y.on("domready", init);
 
      // As with all custom events, you can pass
      // a context object and arguments that will be
      // passed to your handlers:
-     // Y.on("event:ready", init, contexObject, argumentOne, argumentTwo, argumentN);
+     // Y.on("domready", init, contexObject, argumentOne, argumentTwo, argumentN);
 });
 </textarea>
 

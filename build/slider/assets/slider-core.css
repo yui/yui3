@@ -4,6 +4,11 @@
     display: inline-block;
     *display: inline; /* IE 7- (with zoom) */
     zoom: 1;
+    vertical-align: middle;
+}
+
+.yui-slider-content {
+    position: relative;
 }
 
 .yui-slider-rail {
