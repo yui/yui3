@@ -41,6 +41,7 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
 
         strings: {
             value: {
+                tooltip: "Press the arrow up/down keys for minor increments, page up/down for major increments.",
                 increment: "Increment",
                 decrement: "Decrement"
             }
@@ -69,7 +70,6 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             // Widget's descructor will purge the boundingBox, 
             // but if we wanted to we could implement additional 
             // cleanup code here. e.g.:
-
             this.inputNode = null;
             this.incrementNode = null;
             this.decrementNode = null;
@@ -100,13 +100,16 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         },
 
         _renderInput : function() {
-            var contentBox = this.get("contentBox");
-            var input = contentBox.query("." + Spinner.INPUT_CLASS);
+            var contentBox = this.get("contentBox"),
+                input = contentBox.query("." + Spinner.INPUT_CLASS),
+                strings = this.get("strings");
 
             if (!input) {
                 input = Node.create(Spinner.INPUT_TEMPLATE);
                 contentBox.appendChild(input);
             }
+
+            input.set("title", strings.tooltip);
             this.inputNode = input;
         },
 
@@ -222,5 +225,6 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
         min:0
     });
     spinner.render();
+    spinner.focus();
 });
 </script>
