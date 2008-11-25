@@ -9,39 +9,47 @@
         display:inline-block;
         zoom:1;
         *display:inline;
+        vertical-align:middle;
     }
-    
+
     .yui-spinner-content {
         padding:1px;
+        position:relative;
     }
 
     .yui-spinner-value {
         width:2em;
-        height:1.6em;
+        height:1.5em;
         text-align:right;
-        margin-right:0;
+        margin-right:22px;
         vertical-align:top;
         border:1px solid #000;
-        padding-top:1px;
-        padding-bottom:1px;
+        padding:2px;
     }
 
     .yui-spinner-increment, .yui-spinner-decrement {
-        width:1.5em;
+        position:absolute;
+        height:1em;
+        width:22px;
         overflow:hidden;
-        text-indent:-10000em;
-        border:1px solid #000;
+        text-indent:-10em;
+        border:1px solid #999;
         margin:0;
-        height:1.9em;
-        *margin-top:1px;
+        padding:0px;
     }
 
     .yui-spinner-increment {
-        background:#ddd url(<?php echo $assetsDirectory?>arrows.png) no-repeat 2px 4px;
+        top:1px;
+        *top:2px;
+        right:1px;
+        background:#ddd url(<?php echo $assetsDirectory?>arrows.png) no-repeat 50% 0px;
     }
 
      .yui-spinner-decrement {
-        background:#ddd url(<?php echo $assetsDirectory?>arrows.png) no-repeat 2px -14px;
+        bottom:1px;
+        *bottom:2px;
+        right:1px;
+        background:#ddd url(<?php echo $assetsDirectory?>arrows.png) no-repeat 50% -20px;
      }
 
     #widget-extend-example {
