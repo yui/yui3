@@ -22,6 +22,8 @@
         margin-right:0;
         vertical-align:top;
         border:1px solid #000;
+        padding-top:1px;
+        padding-bottom:1px;
     }
 
     .yui-spinner-increment, .yui-spinner-decrement {
