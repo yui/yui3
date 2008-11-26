@@ -1,3 +1,9 @@
+**** version 3.0.0 PR2 ***	
+
+  * No code changes.
+  * Minimized -min versions.
+  * Updated comments for DL DD.
+
 3.0.0PR1 - Initial release
 
 Module Name: "cssbase"
