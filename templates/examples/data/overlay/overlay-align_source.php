@@ -38,7 +38,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
         function() {
             /* Center overlay in #align2 */
             overlay.set("centered", "#align2");
-            alignment.set("innerHTML", 'centered: "#align2');
+            alignment.set("innerHTML", 'centered: "#align2"');
         },
         function() {
             /* Align right-center edge of overlay with right-center edge of viewport */
