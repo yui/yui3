@@ -1,4 +1,4 @@
-<h3>Basic XY Overlay Positioning</h3>
+<h3>Basic Overlay Stackability (zIndex and shim support)</h3>
 
 <p>TODO: Creating the Sandbox</p>
 
@@ -11,7 +11,6 @@ YUI({...}).use("overlay", function(Y) {
 <p>TODO: Instantiating the overlays</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
-
     for (var i = 0; i < n; ++i) {
 
         ovrXY = getOverlayXY(xy, i);
