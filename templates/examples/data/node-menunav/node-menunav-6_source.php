@@ -90,7 +90,7 @@
         </style>
 
 		<!-- YUI Seed -->
-		<script type="text/javascript" src="/yui3/build/yui/yui.js"></script>
+		<script type="text/javascript" src="<?php echo $buildDirectory; ?>yui/yui.js"></script>
 
 		<script type="text/javascript">
 
