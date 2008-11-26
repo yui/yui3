@@ -2,6 +2,10 @@
 
     * Added self-clearing for templates (e.g. div.yui-t1) for 
       cases when they are not within #bd. Per ticket 2201115
+    * Corrected ordering issue for "gb" per internal ticket 
+      2251219 and Sourceforge ticket 2131681
+    * Enabled nesting of gf within gc per internal ticket 
+      1458071 and Sourceforget ticket 1786723
 
 3.0.0PR1 - Initial release
 
