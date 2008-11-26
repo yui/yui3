@@ -36,7 +36,9 @@ include "../inc/header.inc";
       <li>An event facade that normalizes browser differences</li>
       <li>Automatic DOM event listener cleanup</li>
       <li>Simulation of events in all A-grade browsers</li>
-      <li>Pageload timing events (<code>available</code> and <code>contentready</code> at the element level and <code>domready</code> at the DOM level)
+      <li>Pageload timing events (<code>available</code> and <code>contentready</code> at the element level and <code>domready</code> at the DOM level)</li>
+      <li>Keylistener utility that responds only when certain key combinations are detected.</li>
+      <li>Focus/blur event abstraction layer that provides the ability to use deletegated listening techniques with these events.</li>
       <li>Custom events that are bubbleable, cancelable, and have intrinsic AOP qualities</li>
    </ul>
    
@@ -50,8 +52,12 @@ include "../inc/header.inc";
 									<li><a href="#using">DOM Events</a></li>
 									<li><a href="#removeevent">Removing Events</a></li>
                                     <li><a href="#eventsimulation">Simulating Events</a></li>
-									<li><a href="#onavailable">Using the <code>available</code> and <code>contentready</code> events (Formerly the <code>onAvailable</code> and <code>onContentReady</code> methods)</a></li>
+									<li><a href="#onavailable">Using the <code>available</code> and <code>contentready</code> Events (Formerly the <code>onAvailable</code> and <code>onContentReady</code> methods)</a></li>
 									<li><a href="#ondomready">Using the <code>domready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
+									<li><a href="#keylistener">Using the <code>key</code> Event</a></li>
+                                    <!--
+									<li><a href="#focusblur">Using the <code>focus</code> and <code>blur</code> Events</a></li>
+                                    -->
 									<li><a href="#customevent">Using the CustomEvent Object</a></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -391,6 +397,52 @@ YUI().use('node', function(Y) {
      // Y.on("domready", init, contexObject, argumentOne, argumentTwo, argumentN);
 });
 </textarea>
+
+
+<h3 id="keylistener">Using the <code>key</code> Event</h3>
+<p>The <code>key</code> event lets you define a function that will execute only when
+a certain key (or set of keys), with or without modifiers, is detected.</p>
+
+<h4 id="creatingkeylistener">Creating a Key Listener</h4>
+<p>The following will attach a keydown listener to an element with the id
+of 'text1'.  The listener will only be exectued if the return key (keyCode
+13) is detected, and the listener is remove the first time this key
+is detected.</p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+
+YUI().use('node', function(Y) {
+
+    // store the return value from Y.on to remove the listener later
+    var handle = Y.on('key', function(e, arg1, arg2, etc) {
+        Y.log(e.type + ": " + e.keyCode + ' -- ' + arg1);
+
+        // stopPropagation() and preventDefault()
+        e.halt();
+
+        // unsubscribe so this only happens once
+        handle.detach();
+
+    // Attach to 'text1', specify keydown, keyCode 13, make Y the context, add arguments
+    }, '#text1', 'down:13', Y, "arg1", "arg2", "etc");
+
+});
+
+</textarea>
+
+<h4 id="definespec">Defining a Key Listener Specification</h4>
+<p>In the previous example, 'down:13' was provided as the key listener
+specification.  This specifies that the lister should only fire if the
+return key triggers a keydown event.  The specification string consists of 
+three parts:
+<ol>
+<li>The key event type followed by a colon ('up:', 'down:, or 'press:')</li>
+<li>zero or more keyCodes to listen for, separated by commas.  If more than one
+keyCode is specified, the listener will fire if any of the codes are detected. ('up:12,13,14')</li>
+<li>zero or more modifiers keys to listen for, separated by the plus symbol.  If modifiers are
+specified, all must be detected in order for the listener to fire ('+shift+ctrl+alt+meta').</li>
+</ol>
+<p>So, the following specification will fire only if keyCode 65 or 66 is detected during a keypress event while shift and control
+are held down: 'press:65,66+shift+ctrl'</p>
 
 
 <h3 id="customevent">Using the CustomEvent Object </h3>
