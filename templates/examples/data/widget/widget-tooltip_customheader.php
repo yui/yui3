@@ -1,12 +1,15 @@
 <style type="text/css">
     .yui-tooltip {
+        position:absolute;
+    }
+
+    .yui-tooltip-content {
         color: #000;
         padding: 2px 5px;
         border-color: #D4C237 #A6982B #A6982B #A6982B;
         border-width: 1px;
         border-style: solid;
         background-color: #FFEE69;
-        position:absolute;
     }
 
     .yui-tooltip-hidden {

@@ -102,7 +102,6 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     var positionable = new Positionable({
         contentBox: "#widget2",
         width:"10em",
-        height:"10em",
         zIndex:1
     });
     positionable.render("#widget2-example");
@@ -138,7 +137,6 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     var alignable = new Alignable({
         width:"10em",
-        height:"10em",
         align : {
             node: "#widget3-example",
             points: ["cc", "cc"]

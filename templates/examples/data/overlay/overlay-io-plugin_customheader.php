@@ -1,8 +1,8 @@
 <style type="text/css">
-    .yui-overlay {
+    .yui-overlay-content {
+        padding:5px;
         background-color:#ccc;
         border:1px solid #000;
-        padding:5px;
     }
 
     .yui-overlay .yui-widget-hd, 
