@@ -1,0 +1,25 @@
+h1 {
+	text-align: left;
+	background-color: #ccc;
+	padding: .25em;
+	color: #000;
+}
+
+#footer {
+	border-top: solid 1px #000;
+	font-size: 85%;
+	padding-top: .25em;
+}
+
+form, form div {
+	margin: .5em 0;
+}
+
+p.first-of-type {
+	margin-top: .5em;
+}
+
+.yui-t1,
+.yui-d0 {
+	color: #999;
+}

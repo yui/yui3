@@ -7,14 +7,15 @@ $developerHome = 'http://developer.yahoo.com/yui/3';
 
 $loggerAvailable = false;
 
-$aTypes = array('core', 'utility', 'infra', 'widget', 'tool', 'css');
+$aTypes = array('core', 'utility', 'infra', 'widget', 'tool', 'css', 'nodeplugin');
 
 $oTypeNames = array('css'=>'YUI 3 CSS Foundation',
 					'core'=>'YUI 3 Core',
                     'utility'=>'YUI 3 Utilities', 
                     'infra'=>'YUI 3 Component Infrastructure',
                     'widget' => 'YUI 3 Widgets',
-                    'tool'=>'YUI 3 Developer Tools');
+                    'tool'=>'YUI 3 Developer Tools',
+                    'nodeplugin' => 'YUI 3 Node Plugin');
 
 //ydn indicates whether this is for the website or for distribution
 if(!isset($ydn)) {
