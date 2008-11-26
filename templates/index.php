@@ -70,6 +70,16 @@ include($docroot."inc/header.php");
 			        ?>
 				</ul>
 	
+				<h4>YUI 3 Node Plugins</h4>
+				<ul>
+			        <?php
+			            $aUtils = getModulesByType("nodeplugin",$modules);
+			            foreach($aUtils as $key=>$aUtil) {
+				            echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+			            }
+			        ?>
+				</ul>	
+	
 			</div>
 			<div class="yui-u">  
 			

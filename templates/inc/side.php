@@ -32,6 +32,9 @@ $nav[]=array('', '', 'YUI 3 Widgets - Examples', ' YUI 3 Widgets - Functional Ex
 $nav[]=array('overlay',$docroot.'examples/overlay/index.html','Overlay', 'Overlay - Functional Examples');
 $nav[]=array('slider',$docroot.'examples/slider/index.html','Slider', 'Slider - Functional Examples');
 
+$nav[]=array('', '', 'YUI 3 Node Plugins - Examples', ' YUI 3 Node Plugins - Functional Examples');
+$nav[]=array('nodemenunav',$docroot.'examples/nodemenunav/index.html','MenuNav Node Plugin', 'MenuNav Node Plugin - Functional Examples');
+
 $nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');
 $nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YUI CSS Reset - Functional Examples');
 $nav[]=array('cssfonts',$docroot.'examples/cssfonts/index.html','CSS Fonts', 'YUI Fonts - Functional Examples');
