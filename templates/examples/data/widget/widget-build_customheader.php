@@ -6,9 +6,6 @@
 }
 
 .yui-standardmodule {
-    padding:5px;
-    border:2px solid #000;
-    background-color:#eee;
     margin:10px;
 }
 
@@ -41,12 +38,12 @@
 /* Positionable Widget CSS */
 .yui-positionable {
     position:absolute;
-    border:1px solid #7B7F4F;
-    background-color:#999966;
-    color:#fff;
 }
 
 .yui-positionable-content {
+    border:1px solid #7B7F4F;
+    background-color:#999966;
+    color:#fff;
     padding:5px;
 }
 
@@ -57,12 +54,12 @@
 /* Alignable Widget CSS */
 .yui-alignable {
     position:absolute;
-    border:1px solid #000000;
-    background-color:#004C6D;
-    color:#fff;
 }
 
 .yui-alignable-content {
+    border:1px solid #000000;
+    background-color:#004C6D;
+    color:#fff;
     padding:5px;
 }
 
