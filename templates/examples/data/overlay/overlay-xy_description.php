@@ -20,7 +20,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <p>TODO: Instantiating the overlay</p>
 
-<textarea name="code" class="HTML" rows="1" cols="60">
+<textarea name="code" class="JScript" rows="1" cols="60">
     var xy = Y.Node.get("#overlay-position").getXY();
 
     // Create an overlay from markup
@@ -36,7 +36,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <p>TODO: Moving the overlay</p>
 
-<textarea name="code" class="HTML" rows="1" cols="60">
+<textarea name="code" class="JScript" rows="1" cols="60">
     var xInput = Y.Node.get("#x");
     var yInput = Y.Node.get("#y");
 
