@@ -1,1 +1,1 @@
-TODO
+<p>This example shows how you can work with the zIndex property which the Overlay supports, to implement a simple bringToTop function. The example code also listens for changes in the zIndex property, which is uses to update the content of the overlay, when it is brought to the top of the stack.</p>
