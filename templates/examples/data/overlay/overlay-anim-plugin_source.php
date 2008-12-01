@@ -26,20 +26,26 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
         animVisible : {
             valueFn : function() {
+                
+                var owner = this._owner,
+                    boundingBox = owner.get("boundingBox");
 
                 var anim = new Y.Anim({
-                    node: this._owner.get("boundingBox"),
-                    from: { opacity: 0 },
+                    node: boundingBox,
                     to: { opacity: 1 },
                     duration: this.get("duration")
                 });
 
-                anim.on("start", function() {
-                    this.get("node").setStyle("opacity", 0);
-                });
+                if (!owner.get("visible")) {
+                    boundingBox.setStyle("opacity", 0);
+                }
 
                 anim.on("destroy", function() {
-                    this.get("node").setStyle("opacity", "");
+                    if (Y.UA.ie) {
+                        this.get("node").setStyle("opacity", 1);
+                    } else {
+                        this.get("node").setStyle("opacity", "");
+                    }
                 });
 
                 return anim;
@@ -109,6 +115,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
         width:"10em",
         height:"10em",
         visible:false,
+        shim:false,
         align: {
             node: "#show", 
             points: ["tl", "bl"]
