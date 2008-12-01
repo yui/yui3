@@ -460,11 +460,11 @@ are held down: 'press:65,66+shift+ctrl'</p>
 YUI().use('node', function(Y) {
 
     //Define a constructor:
-    function CustomObject() {
+    function Publisher() {
         //create a custom event:
-        this.publish("CustomObject:testEvent");
+        this.publish("publisher:testEvent");
     }
-    //augment the CustomObject with Event.Target:
+    //augment the Publisher with Event.Target:
     Y.augment(Publisher, Y.Event.Target);
 });
 </textarea>
@@ -481,10 +481,10 @@ The <code>publish</code> constructor creates a new Custom Event; it takes one re
 
 
 <h3 id="customsubscribe">Subscribing (Listening) to a Custom Event</h3>
-<p>To subscribe to a custom event, use its <code>subscribe</code> method.  Following the code above, you would subscribe to the <code>CustomObject:testEvent</code> as follows:</p>
+<p>To subscribe to a custom event, use its <code>subscribe</code> method.  Following the code above, you would subscribe to the <code>publisher:testEvent</code> as follows:</p>
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
-var customObject = new CustomObject();
-customObject.subscribe("CustomObject:testEvent", function() {
+var publisher = new Publisher();
+publisher.subscribe("publisher:testEvent", function() {
 	//event handler code
 });
 </textarea></pre>
@@ -493,7 +493,7 @@ customObject.subscribe("CustomObject:testEvent", function() {
 <p>To trigger or <code>fire</code> a custom event, simpy call its <code>fire</code> method:</p>
 
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
-customObject.fire("CustomObject:testEvent");
+publisher.fire("publisher:testEvent");
 </textarea></pre>
 
 <?php include "../inc/mobileSection.inc";?>
