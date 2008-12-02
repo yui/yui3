@@ -5,14 +5,25 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <title>YUI Library Examples: MenuNav Node Plugin</title>
 
+<?php
+	if ($ydn) {
+?>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?<?php echo $yuiCurrentVersion; ?>/build/cssreset/reset-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssfonts/fonts-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssgrids/grids-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssbase/base-min.css">
+<?php
+	}
+	else {
+?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssreset/reset-min.css">
         <link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssfonts/fonts-min.css">
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssgrids/grids-min.css">
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssbase/base-min.css">
+<?php
+	}
+?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $assetsDirectory; ?>node-menunav-examples-base.css">
 
 		<!-- Custom Skin File -->
-		<link rel="stylesheet" type="text/css" href="<?php echo $assetsDirectory; ?>example7.css">
+<!-- 		<link rel="stylesheet" type="text/css" href="<?php echo $assetsDirectory; ?>example7.css"> -->
 
 		<!-- YUI Seed -->
 		<script type="text/javascript" src="<?php echo $buildDirectory; ?>yui/yui.js"></script>
@@ -23,23 +34,34 @@
 			//	script and CSS for the MenuNav Node Plugin and all of the required 
 			//	dependencies.
 
-			YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
-
+			YUI({
+			
+				base: "<?php echo $buildDirectory; ?>",
+			
+				modules: {
+					"custommenunavskin": {
+						type: "css",
+						fullpath: "<?php echo $assetsDirectory; ?>example7.css",
+						supersedes: ['skin-sam-widget']
+					}    
+				}
+			
+			}).use(<?php echo $requiredModules; ?>, "custommenunavskin", function(Y, result) {
+			
 				//	Use the "contentready" event to initialize the menu when the subtree of 
 				//	element representing the root menu (<div id="productsandservices">) is ready to 
 				//	be scripted.
-
+			
 				Y.on("contentready", function () {
-
+			
 					//	The scope of the callback will be a Node instance representing 
 					//	the root menu (<div id="productsandservices">).  Therefore, since "this"
 					//	represents a Node instance, it is possible to just call "this.plug"
 					//	passing in a reference to the MenuNav Node Plugin.
-
+			
 					this.plug(Y.plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
-
+			
 				}, "#productsandservices");
-
 			});
 		
 		</script>
