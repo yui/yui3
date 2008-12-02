@@ -87,7 +87,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
     <dt>cfg</dt>
     <dd>The io configuration object, to pass to io when intiating a transaction</dd>
     <dt>formatter</dt>
-    <dd>The default formatter to use when formatting response data. The default implementation simply passes back the response data passed in.</dd>
+    <dd>The formatter to use to formatting response data. The default implementation simply passes back the response data passed in, unchanged.</dd>
     <dt>section</dt>
     <dd>The Standard Module section to which the io plugin instance is bound. Response data will be used to populate this section, after passing through the configured formatter.</dd>
     <dt>loading</dt>
