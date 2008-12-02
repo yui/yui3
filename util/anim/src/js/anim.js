@@ -153,8 +153,6 @@
             }
         },
 
-        keyframes: {},
-
         /**
          * The starting values for the animated properties. 
          * Fields may be strings, numbers, or functions.
@@ -395,10 +393,10 @@
             this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
             this._actualFrames = 0;
             if (!this.get(PAUSED)) {
-                this._initFrames();
+                this._initAttr();
             }
             _running[Y.stamp(this)] = this;
-            //Y.Anim._startTimer();
+            Y.Anim._startTimer();
 
             this.fire(START);
         },
@@ -434,7 +432,6 @@
             this._set(START_TIME, null);
             this._set(ELAPSED_TIME, 0);
             this._set(PAUSED, false);
-            //this._set(REVERSE, false);
 
             delete _running[Y.stamp(this)];
             this.fire(END, {elapsed: this.get(ELAPSED_TIME)});
@@ -505,37 +502,6 @@
 
             this._set(START_TIME, new Date());
             this._set(ITERATION_COUNT, iterCount);
-        },
-
-        _initFrames: function() {
-            var from = this.get('from') || {},
-                to = this.get('to') || {},
-                keyframes = this.get('keyframes') || {};
-
-            //this._initFrom(from, keyframes);
-            //this._initTo(to, keyframes);
-
-            this._attrs = this._attrs || {};
-            Y.each(keyframes, this._initFrame, this);
-            console.log(this._attrs[0]);
-        },
-
-
-        _initFrame: function(attrs, frame) {
-            Y.each(attrs, function(val, attr) {
-                this._attrs[attr] = this._attrs[attr] || {};
-                if (typeof val === 'function') {
-                    val = val(this, attr);
-                }
-                this._attrs[attr][frame] = val;
-            }, this);
-        },
-
-        _initFrom: function(from, frames) {
-        },
-
-        _initTo: function(from, frames) {
-            
         },
 
         _initAttr: function() {
