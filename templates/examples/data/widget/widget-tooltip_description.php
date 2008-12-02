@@ -22,10 +22,10 @@
     }
 
     /* 
-       Required NAME static field, used to identify the Widget class and 
-       used as an event prefix, to generate class names etc. (set to the 
-       class name in camel case). 
-    */
+     *  Required NAME static field, used to identify the Widget class and 
+     *  used as an event prefix, to generate class names etc. (set to the 
+     *  class name in camel case). 
+     */
     Tooltip.NAME = "tooltip";
 
     /* Default Tooltip Attributes */
