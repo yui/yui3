@@ -201,7 +201,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
     },
 </textarea>
 
-<h4>The Custom Animated Visibility Method</h4>
+<h4>The Animated Visibility Method</h4>
 
 <p>The <code>_uiAnimSetVisible</code> method is the method we use to over-ride the default visiblity handling for the Overlay. Instead of simply adding or removing the <code>yui-overlay-hidden</code> class, it starts the appropriate animation depending on whether or not visible is being set to true or false:</p>
 
@@ -239,7 +239,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
 
 <p><strong>NOTE:</strong> We're evaluating whether or not <code>Y.Do</code> may provide access to the original method for a future release, which would make this replicated code unneccessary.</p>
 
-<h4>Using/Applying The AnimPlugin Class</h4>
+<h4>Using The Plugin</h4>
 
 <p>All <a href="../../api/Widget.html">Widgets</a> are <a href="../../api/PluginHost.html">PluginHosts</a>. They provide <code>plug</code> and <code>unplug</code> methods to allow users to add/remove plugins to/from existing instances. They also allow the user to specify the set of plugins to be applied to a new instance, along with their configurations, as part of the constructor arguments:</p>
 
