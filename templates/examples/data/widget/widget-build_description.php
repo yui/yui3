@@ -1,8 +1,17 @@
-<h3>Creating Custom Widget Flavors, using the WidgetPosition, WidgetStack, WidgetPositionExt and WidgetStdMod extensions</h3>
+<h3>Creating Custom Widget Classes</h3>
 
-<h4>Widget 1 - Widget with only WidgetStdMod (and no positioning or stacking support)</h4>
+<p>The <code>Base</code> class provides a <code>build</code> method which can be used to create custom versions of classes which derive from <code>Base</code> by adding extension classes to them.</p>
 
-<p>TODO: Using Build</p>
+<p>Widget ships with four such extensions for PR2: <code>WidgetPosition</code>, <code>WidgetStack</code>, <code>WidgetPositionExt</code> and <code>WidgetStdMod</code>.
+These extensions are used to build the basic <code>Overlay</code> widget, but can also be used individually, to create custom versions of the base <code>Widget</code> class.</p>
+
+<h3>Widget with WidgetStdMod support</h3>
+
+<p>Adding the <code>WidgetStdMod</code> extension to Widget, creates a statically positioned Widget, with support for standard module format sections - header, body and footer, which maybe useful in portal type use cases, where the positioning/stacking capabilities which come bundled with Overlay are not required.</p>
+
+<p>To create a custom class, we use <a href="../../api/Base.html#method_build"><code>Base.build</code></a>, which is described in detail on the landing page for <a href="http://developer.yahoo.com/yui/3/base/#buildcreate">Base</a>.</p>
+
+<p>We pass in <code>Widget</code> as the main class we want to add extensions to, and <code>WidgetStdMod</code> as the extension we'd like added to the main class:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var StandardModule = Y.Base.build(Y.Widget, [Y.WidgetStdMod]);
@@ -17,7 +26,20 @@
     stdmod.render();
 </textarea>
 
-<p>TODO: Testing it Out</p>
+<p><code>Base.build</code> will:</p>
+<ol>
+    <li>Create a new class which extends <code>Widget</code></li>
+    <li>Aggregate known <code>Base</code> and <code>Widget</code> fields, such as <code>ATTRS</code> and <code>HTML_PARSER</code> from <code>WidgetStdMod</code> on the new class</li>
+    <li>Augment prototype methods from <code>WidgetStdMod</code> onto the new class prototype</li>
+</ol>
+
+<p>The only other step we need to take is to give the newly created class a <code>NAME</code> just like any other extended Widget class.</p>
+
+<p>Note that the <code>Widget</code> class is unchanged, allowing you to now create instances of the base <code>Widget</code> class, without any standard module support, as well as instances of the StandardModule widget, which has standard module support.</p>
+
+<h4>Testing It Out</h4>
+
+<p>The example attempts to set content on an instance of the newly created <code>StandardModule</code> class, using the <code>setStdModContent</code> method which is added by the extension (which would otherwise not exist on the Widget instance).</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var contentInput = Y.Node.get("#content");
@@ -33,7 +55,11 @@
         stdmod.setStdModContent(section, content);
 
     }, "#setContent");
+</textarea>
 
+<p>To verify that no unrequested features are added, we also attempt to move the instance using the <code>move</code> method, which is not part of the base Widget class, and would be added by the <code>WidgetPosition</code> extension. This verifies that the other examples we have, which do create new classes which use <code>WidgetPosition</code>, have not modified the base Widget class.</p>
+
+<textarea name="code" class="JScript" rows="1" cols="60">
     // This shoud fail, since the StandardModule widget is not positionable
     Y.on("click", function(e) {
         try {
@@ -44,7 +70,12 @@
     }, "#tryMove");
 </textarea>
 
-<p>TODO: CSS Considerations</p>
+<p>Note that <code>Base.build</code> adds an <code>hasImpl</code> method to the built class, which allows you to query whether or not it has a partiular extension applied.</p>
+
+<h4>CSS Considerations</h4>
+
+<p>We need to define the CSS which goes with this new StandardModule widget class we have created. The only rule really required out of the box is the rule which handles visibility (<code>yui-standardmodule-hidden</code>). The "standardmodule" used in the class name comes from the <code>NAME</code> property we set up for the new class, and is used to prefix all state related classes added to the widgets bounding box.
+Since the StandardModule class is not positionable, we use <code>display:none</code> to define the <code>hidden</code> state.</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 
@@ -52,28 +83,13 @@
 .yui-standardmodule-hidden {
     display:none;
 }
-
-/* Bounding Box - default styling for this widget */
-.yui-standardmodule {
-    ...
-}
-
-/* Content Box - default styling for this widget */
-.yui-standardmodule-content {
-    ...
-}
-
-/* header, body, footer sections - default styling for this widget */
-.yui-standardmodule-content .yui-widget-hd, 
-.yui-standardmodule-content .yui-widget-bd, 
-.yui-standardmodule-content .yui-widget-ft {
-    ...
-}
 </textarea>
 
-<h4>Widget 2 - Widget with only WidgetPosition and WidgetStack support (no standard module or advanced positioning support)</h4>
+<p>The other "yui-standardmodule" rules are only used to create the required look/feel for this particular example, and do not impact the StandardModule widget's functionality.</p>
 
-<p>TODO: Using Build (note that base Widget class, or StandardModule class is unchanged)</p>
+<h3>Widget with WidgetPosition and WidgetStack support</h3>
+
+<p>As with the <code>StandardModule</code>, we use <code>Base.build</code> to create the new widget class. This time we add <code>WidgetPosition</code> and <code>WidgetStack</code> support to the base Widget class to create a basic XY positionable widget, with shimming and z-index support.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var Positionable = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack]);
@@ -92,7 +108,11 @@
     positionable.move(xy[0] + 5, xy[1] + 5);
 </textarea>
 
-<p>TODO: Testing it Out</p>
+<p>We <strong>don't</strong> add <code>WidgetPositionExt</code> or <code>WidgetStdMod</code> support, so the widget doesn't have extended positioning support (align, center) or standard module support. Hence we position it manually using the <code>move</code> method which the <code>WidgetPosition</code> extension provides.</p>
+
+<h4>Testing It Out</h4>
+
+<p>We should now be able to invoke the <code>move</code> method on an instance of the newly created <code>Positionable</code> class:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     // This should work, since Positionable has basic XY Positioning support
@@ -103,7 +123,11 @@
         positionable.move(x,y);
 
     }, "#move");
+</textarea>
 
+<p>And, as with the <code>StandardModule</code> class, we should not be allowed to invoke any methods from an extension which we didn't request:</p>
+
+<textarea name="code" class="JScript" rows="1" cols="60">
     // This should fail, since Positionable does not have Standard Module sections
     Y.on("click", function(e) {
         try {
@@ -114,7 +138,9 @@
     }, "#tryContent");
 </textarea>
 
-<p>TODO: CSS Considerations</p>
+<h4>CSS Considerations</h4>
+
+<p>Since now we have a positionable widget, with z-index support, we set the widget to be absolutely positioned by default, and control it's hidden state using <code>visibility</code> as opposed to <code>display</code></p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 /* Define absolute positioning as the default for positionable widgets */
@@ -131,9 +157,11 @@
 }
 </textarea>
 
-<h4>Widget 3 - Widget with WidgetPosition, WidgetStack and WidgetPositionExt support (but still no standard module)</h4>
+<h3>Widget with WidgetPosition, WidgetStack and WidgetPositionExt support</h3>
 
-<p>TODO: Using Build (note that base Widget class, or StandardModule class is unchanged)</p>
+<p>Lastly, we'll attempt to create a new widget class, which, in addition to basic positioning and stacking support, also has extended positioning support, allowing us to align it with other elements on the page.</p>
+
+<p>Again, we use <code>Base.build</code> to create our new <code>Alignable</code> widget class, by combining <code>WidgetPosition</code>, <code>WidgetStack</code> and <code>PositionExt</code> with the base widget class:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var Alignable = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetPositionExt, Y.WidgetStack]);
@@ -152,7 +180,9 @@
     alignable.render("#widget3-example");
 </textarea>
 
-<p>TODO: Testing it Out (using queue to run through 6 alignment steps)</p>
+<h4>Testing It Out</h4>
+
+<p>We'll attempt to align an instance of the <code>Alignable</code> class, using some of the additional attributes which <code>WidgetPositionExt</code> adds to the base <code>Widget</code> class: <code>align</code> and <code>centered</code>:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     // Align left-center egde of widget to right-center edge of the node with id "widget3-example"
@@ -175,7 +205,9 @@
     alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
 </textarea>
 
-<p>TODO: CSS Considerations (as with Widget 2 - the positioned widget</p>
+<h4>CSS Considerations</h4>
+
+<p>The <code>Alignable</code> widget class, has the same core CSS rules as the <code>Positionable</code> class, to define how it is positioned and how it is hidden:</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 /* Define absolute positioning as the default for alignable widgets */
