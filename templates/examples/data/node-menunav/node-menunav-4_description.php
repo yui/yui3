@@ -108,30 +108,26 @@ outside of the submenu.
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
+//	Call the "use" method, passing in "node-menunav".  This will load the 
+//	script and CSS for the MenuNav Node Plugin and all of the required 
+//	dependencies.
 
-	//	Call the "use" method, passing in "node-menunav".  This will load the 
-	//	script and CSS for the MenuNav Node Plugin and all of the required 
-	//	dependencies.
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
 
-	YUI().use("node-menunav", function(Y) {
+	//	Use the "contentready" event to initialize the menu when the subtree of 
+	//	element representing the root menu (<div id="productsandservices">) is ready to 
+	//	be scripted.
 
-		//	Use the "contentready" event to initialize the menu when the subtree of 
-		//	element representing the root menu (<div id="menu-1">) is ready to 
-		//	be scripted.
+	Y.on("contentready", function () {
 
-		Y.on("contentready", function () {
+		//	The scope of the callback will be a Node instance representing 
+		//	the root menu (<div id="productsandservices">).  Therefore, since "this"
+		//	represents a Node instance, it is possible to just call "this.plug"
+		//	passing in a reference to the MenuNav Node Plugin.
 
-			//	The scope of the callback will be a Node instance representing 
-			//	the root menu (<div id="menu-1">).  Therefore, since "this"
-			//	represents a Node instance, it is possible to just call "this.plug"
-			//	passing in a reference to the MenuNav Node Plugin.
+		this.plug(Y.plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
 
-			this.plug(Y.plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
+	}, "#productsandservices");
 
-		}, "#menu-1");
-	
-	});
-
-</script>
+});
 </textarea>
