@@ -1,4 +1,4 @@
-.yui-slider, .yui-slider-rail {
+.yui-slider {
     /* xbrowser inline-block styles */
     display: -moz-inline-stack; /* FF2 */
     display: inline-block;
@@ -17,6 +17,10 @@
 
 .yui-slider-thumb {
     position: absolute;
+}
+.yui-slider-thumb-image {
+    /* to collapse vertical space around short thumbs in tall line-height */
+    display: block;
 }
 
 .yui-slider-image-error .yui-slider-thumb {
