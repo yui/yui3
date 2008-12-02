@@ -203,7 +203,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
     }
 </textarea>
 
-<p>The <code>refresh</code> method, as implemented for the scope of this example, sets up the io configuration object for the transaction it is about to dispatch, filling in the default handlers for io's <code>start, complete, success, failure</code> if the user does not provide custom implementations.</p>
+<p>The <code>refresh</code> method, as implemented for the scope of this example, sets up the io configuration object for the transaction it is about to dispatch, filling in the default handlers for io's <code>start</code>, <code>complete</code>, <code>success</code> and <code>failure</code> events, if the user does not provide custom implementations.</p>
 
 <h4>The Default IO Event Handlers</h4>
 

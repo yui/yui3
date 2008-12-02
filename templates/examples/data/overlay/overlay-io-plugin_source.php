@@ -113,9 +113,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
                     cfg = this.get("cfg") || {};
                     cfg.on = cfg.on || {};
 
-                    cfg.on.start = Y.bind(this._defStartHandler, this);
-                    cfg.on.complete = Y.bind(this._defCompleteHandler, this);
-
+                    cfg.on.start = cfg.on.start || Y.bind(this._defStartHandler, this);
+                    cfg.on.complete = cfg.on.complete || Y.bind(this._defCompleteHandler, this);
+    
                     cfg.on.success = cfg.on.success || Y.bind(this._defSuccessHandler, this);
                     cfg.on.failure = cfg.on.failure || Y.bind(this._defFailureHandler, this);
 
