@@ -30,11 +30,16 @@
 
 <textarea name="code" class="JScript">
 //Use loader to grab the modules needed
-YUI({
-    base: '../../build/',
-    timeout: 1000
-}).use('dd-dragdrop-all', 'anim', 'anim-easing', 'io', 'cookie', 'json', function(Y) {
-    //Y.DD.DDM._debugShim = true;
+YUI(yuiConfig).use('dd', 'anim', 'io', 'cookie', 'json', function(Y) {
+    //Make this an Event Target so we can bubble to it
+    var Portal = function() {
+        Portal.superclass.constructor.apply(this, arguments);
+    };
+    Portal.NAME = 'portal';
+    Y.extend(Portal, Y.Base);
+    //This is our new bubble target..
+    Y.Portal = new Portal();
+
 
     //Setup some private variables..
     var goingUp = false, lastY = 0, trans = {};
@@ -74,7 +79,7 @@ YUI({
         'techcrunch': {
             id: 'techcrunch',
             title: 'TechCrunch',
-            url: 'feeds.feedburner.com/Techcrunch'
+            url: 'feedproxy.google.com/Techcrunch'
         },
         'smashing': {
             id: 'smashing',
@@ -87,7 +92,7 @@ YUI({
 	Y.io.transport({
 		id: 'flash',
 		yid: Y.id,
-		src: 'assets/io.swf'
+		src: buildDir + 'io/io.swf?stamp=' + (new Date()).getTime()
     });
     
     //Simple method for stopping event propagation
@@ -113,7 +118,7 @@ YUI({
         //Walk the list
         Y.each(list, function(v, k) {
             //Get all the li's in the list
-            var lis = Y.Node.get('#' + k).queryAll('li.item');
+            var lis = Y.all('#' + k + ' li.item');
             lis.each(function(v2, k2) {
                 //Get the drag instance for the list item
                 var dd = Y.DD.DDM.getDrag('#' + v2.get('id'));
@@ -139,7 +144,8 @@ YUI({
             proxy: true,
             moveOnEnd: false,
             borderStyle: 'none',
-            data: data
+            data: data,
+            bubbles: Y.Portal
         });
         //Setup some stopper events
         dd.on('drag:start', _handleStart);
@@ -298,7 +304,7 @@ YUI({
 		            if (oRSS && oRSS.count) {
                         //Walk the list and create the news list
 			            Y.each(oRSS.value.items, function(v, k) {
-                            if (k < 5) {
+                            if (k &lt; 5) {
                                 html += '<li><a href="' + v.link + '" target="_blank">' + v.title + '</a>';
                             }
                         });
@@ -453,20 +459,22 @@ YUI({
     Now when we get a drop enter event, we check to see if the target is an LI, then we know it's out module.
     Here is where we move the module around in the DOM.    
     */
-    Y.DD.DDM.on('drop:enter', function(e) {
+    Y.Portal.on('drop:enter', function(e) {
         if (!e.drag || !e.drop || (e.drop !== e.target)) {
             return false;
         }
         if (e.drop.get('node').get('tagName').toLowerCase() === 'li') {
-            _moveMod(e.drag, e.drop);
+            if (e.drop.get('node').hasClass('item')) {
+                _moveMod(e.drag, e.drop);
+            }
         }
     });
 
     //Handle the drag:drag event
     //On drag we need to know if they are moved up or down so we can place the module in the proper DOM location.
-    Y.DD.DDM.on('drag:drag', function(e) {
+    Y.Portal.on('drag:drag', function(e) {
         var y = e.target.mouseXY[1];
-        if (y < lastY) {
+        if (y &lt; lastY) {
             goingUp = true;
         } else {
             goingUp = false;
@@ -479,7 +487,7 @@ YUI({
     Now that we have a drop on the target, we check to see if the drop was not on a LI.
     This means they dropped on the empty space of the UL.
     */
-    Y.DD.DDM.on('drag:drophit', function(e) {
+    Y.Portal.on('drag:drophit', function(e) {
         var drop = e.drop.get('node'),
             drag = e.drag.get('node');
 
@@ -492,7 +500,7 @@ YUI({
 
     //Handle the drag:start event
     //Use some CSS here to make our dragging better looking.
-    Y.DD.DDM.on('drag:start', function(e) {
+    Y.Portal.on('drag:start', function(e) {
         var drag = e.target;
         if (drag.target) {
             drag.target.set('locked', true);
@@ -505,7 +513,7 @@ YUI({
 
     //Handle the drag:end event
     //Replace some of the styles we changed on start drag.
-    Y.DD.DDM.on('drag:end', function(e) {
+    Y.Portal.on('drag:end', function(e) {
         var drag = e.target;
         if (drag.target) {
             drag.target.set('locked', false);
@@ -519,7 +527,7 @@ YUI({
     
 
     //Handle going over a UL, for empty lists
-    Y.DD.DDM.on('drop:over', function(e) {
+    Y.Portal.on('drop:over', function(e) {
         var drop = e.drop.get('node'),
             drag = e.drag.get('node');
 
@@ -534,15 +542,14 @@ YUI({
     });
 
     //Create simple targets for the main lists..
-    
-    var uls = Y.Node.get('#play').queryAll('ul.list');
-    Y.each(uls, function(v, k, items) {
+    var uls = Y.all('#play ul.list');
+    uls.each(function(v, k) {
         var tar = new Y.DD.Drop({
-            node: items.item(k),
-            padding: '20 0'
+            node: v,
+            padding: '20 0',
+            bubbles: Y.Portal
         });
     });
-    
     
     
     Y.on('io:xdrReady', function() {
