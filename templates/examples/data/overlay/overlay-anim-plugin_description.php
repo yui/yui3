@@ -18,12 +18,13 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 <p>The <code>AnimPlugin</code> class will extend the <code>Plugin</code> base class. Since <code>Plugin</code> derives from <code>Base</code>, we follow the same pattern we use for widgets and other utilities which extend Base to setup our new class.</p>
 
 <p>Namely:</p>
-    <ul>
-        <li>Setting up the constructor to invoke the superclass constructor</li>
-        <li>Setting up a <code>NAME</code> property, to identify the class</li>
-        <li>Setting up the default attributes, using the <code>ATTRS</code> property</li>
-        <li>Providing prototype implementations for anything we want executed during initialization and destruction using the <code>initializer</code> and <code>destructor</code> lifecycle methods</li>
-    </ul>
+
+<ul>
+    <li>Setting up the constructor to invoke the superclass constructor</li>
+    <li>Setting up a <code>NAME</code> property, to identify the class</li>
+    <li>Setting up the default attributes, using the <code>ATTRS</code> property</li>
+    <li>Providing prototype implementations for anything we want executed during initialization and destruction using the <code>initializer</code> and <code>destructor</code> lifecycle methods</li>
+</ul>
     
 <p>Additionally, since this is a Plugin, we provide a <code>NS</code> property for the class, which defines the property which will refer to the AnimPlugin instance on the host class (e.g. <code>overlay.fx</code> will be an instance of <code>AnimPlugin</code></p>.
 
