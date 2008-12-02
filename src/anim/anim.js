@@ -47,15 +47,6 @@
         _instances = {},
         _timer;
 
-    var _setPrivate = function(anim, prop, val) {
-        if (typeof prop == 'string') {
-            anim._conf.add(prop, { value: val });
-        } else {
-            Y.each(prop, function(v, n) {
-                _setPrivate(anim, n, v);
-            });
-        }
-    };
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
         _instances[Y.stamp(this)] = this;
@@ -79,6 +70,9 @@
      */
     Y.Anim.DEFAULT_UNIT = 'px';
 
+    Y.Anim.DEFAULT_EASING = function (t, b, c, d) {
+        return c * t / d + b; // linear easing
+    };
 
     /**
      * Bucket for custom getters and setters
@@ -150,8 +144,12 @@
          * @type Function
          */
         easing: {
-            value: function (t, b, c, d) {
-                return c * t / d + b; // linear easing
+            value: Y.Anim.DEFAULT_EASING,
+
+            set: function(val) {
+                if (typeof val === 'string' && Y.Easing) {
+                    return Y.Easing[val];
+                }
             }
         },
 
@@ -392,7 +390,7 @@
         _added: false,
 
         _start: function() {
-            _setPrivate(this, START_TIME, new Date() - this.get(ELAPSED_TIME));
+            this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
             this._actualFrames = 0;
             if (!this.get(PAUSED)) {
                 this._initAttr();
@@ -404,8 +402,8 @@
         },
 
         _pause: function() {
-            _setPrivate(this, START_TIME, null);
-            _setPrivate(this, PAUSED, true);
+            this._set(START_TIME, null);
+            this._set(PAUSED, true);
             delete _running[Y.stamp(this)];
 
             /**
@@ -418,7 +416,7 @@
         },
 
         _resume: function() {
-            _setPrivate(this, PAUSED, false);
+            this._set(PAUSED, false);
             _running[Y.stamp(this)] = this;
 
             /**
@@ -431,10 +429,9 @@
         },
 
         _end: function(finish) {
-            _setPrivate(this, START_TIME, null);
-            _setPrivate(this, ELAPSED_TIME, 0);
-            _setPrivate(this, PAUSED, false);
-            //_setPrivate(this, REVERSE, false);
+            this._set(START_TIME, null);
+            this._set(ELAPSED_TIME, 0);
+            this._set(PAUSED, false);
 
             delete _running[Y.stamp(this)];
             this.fire(END, {elapsed: this.get(ELAPSED_TIME)});
@@ -474,7 +471,7 @@
             }
 
             this._actualFrames += 1;
-            _setPrivate(this, ELAPSED_TIME, t);
+            this._set(ELAPSED_TIME, t);
 
             this.fire(TWEEN);
             if (done) {
@@ -503,8 +500,8 @@
                 this._end();
             }
 
-            _setPrivate(this, START_TIME, new Date());
-            _setPrivate(this, ITERATION_COUNT, iterCount);
+            this._set(START_TIME, new Date());
+            this._set(ITERATION_COUNT, iterCount);
         },
 
         _initAttr: function() {
