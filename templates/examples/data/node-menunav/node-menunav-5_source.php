@@ -5,10 +5,21 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <title>YUI Library Examples: MenuNav Node Plugin</title>
 
+<?php
+	if ($ydn) {
+?>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?<?php echo $yuiCurrentVersion; ?>/build/cssreset/reset-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssfonts/fonts-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssgrids/grids-min.css&<?php echo $yuiCurrentVersion; ?>/build/cssbase/base-min.css">
+<?php
+	}
+	else {
+?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssreset/reset-min.css">
         <link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssfonts/fonts-min.css">
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssgrids/grids-min.css">
 		<link rel="stylesheet" type="text/css" href="<?php echo $buildDirectory; ?>cssbase/base-min.css">
+<?php
+	}
+?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $assetsDirectory; ?>node-menunav-examples-base.css">
 
         <style type="text/css">
