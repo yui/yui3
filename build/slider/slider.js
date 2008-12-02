@@ -1303,14 +1303,16 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Used to determine if the image resource arrived successfully or there was
+     * Used to determine if the image resource loaded successfully or there was
      * an error.
      *
      * NOTES:
-     *    img load error detectable by:
-     *    !img.complete in IE
-     *    img.complete && img.naturalWidth == 0 in FF, Saf
-     *    img.complete && img.width == 0 in Opera
+     * <ul>
+     *    <li>img load error fired xbrowser for image resources not yet resolved</li>
+     *    <li>img.complete reports false in IE for images not yet loaded as well as images that failed to load</li>
+     *    <li>img.complete true && img.naturalWidth == 0 in FF and Safari indicate image failed to load</li>
+     *    <li>img.complete && img.width == 0 in Opera indicates image failed to load</li>
+     * </ul>
      *
      * @method _isImageLoaded
      * @param img {Node} <code>img</code> Node
