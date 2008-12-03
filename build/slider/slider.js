@@ -657,13 +657,16 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _imageLoaded : function (e,img) {
+        var error = (e.type.toLowerCase().indexOf('error') > -1);
+
         if (this._stall) {
             this._stall.detach();
         }
 
+
         this._stall = false;
 
-        this._ready(img);
+        this._ready(img,error);
 
         this.set(DISABLED,this._disabled);
     },
@@ -674,13 +677,11 @@ Y.extend(Slider, Y.Widget, {
      *
      * @method _ready
      * @param img {Node} the thumbImage Node
+     * @param error {Boolean} Indicates an error while loading the thumbImage
      * @protected
      */
-    _ready : function (img) {
-        // _isImageLoaded may return false because this is executed from the
-        // image's onerror handler as well.
-        var method = img && this._isImageLoaded(img) ?
-                        'removeClass' : 'addClass';
+    _ready : function (img,error) {
+        var method = error ? 'addClass' : 'removeClass';
 
         // If the thumb image url results in 404, assign a class to provide
         // default thumb dimensions/UI
@@ -710,6 +711,7 @@ Y.extend(Slider, Y.Widget, {
 
         this._setFactor();
 
+
         this.set(VALUE,this.get(VALUE));
     },
 
@@ -729,8 +731,10 @@ Y.extend(Slider, Y.Widget, {
         // offsetWidth fails in hidden containers
         size = parseInt(thumb.getComputedStyle(dim),10);
 
+
         if (img && this._isImageLoaded(img)) {
-            size = max(img.get(dim), size);
+
+            size = img.get(dim);
         }
 
         this._thumbSize = size;
@@ -764,9 +768,11 @@ Y.extend(Slider, Y.Widget, {
             setxy = false;
 
         if (parseInt(size,10)) {
+
             // Convert to pixels
             rail.setStyle(dim,size);
             size = parseInt(rail.getComputedStyle(dim),10);
+
         } else {
             // Default from height or width (axis respective), or dims assigned
             // via css to the rail or thumb, whichever is largest.
@@ -783,7 +789,9 @@ Y.extend(Slider, Y.Widget, {
                     parseInt(thumb.getComputedStyle(dim),10),
                     parseInt(rail.getComputedStyle(dim),10));
 
+
             if (img && this._isImageLoaded(img)) {
+
                 size = max(img.get(dim),size);
             }
         }
@@ -840,6 +848,7 @@ Y.extend(Slider, Y.Widget, {
             gutter[1] = end;
         }
             
+
         this._dd.set('gutter', gutter.join(' '));
     },
 
@@ -929,7 +938,7 @@ Y.extend(Slider, Y.Widget, {
         var min    = this.get(MIN),
             max    = this.get(MAX);
 
-        return !this.get(DISABLED) && isNumber(v) &&
+        return isNumber(v) &&
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
@@ -1137,6 +1146,7 @@ Y.extend(Slider, Y.Widget, {
             max = this.get(MAX),
             v   = e.changeEv.newVal;
 
+
         v = round(((v - min) / (max - min)) * this._railSize);
 
         this._uiPositionThumb(v);
@@ -1159,7 +1169,7 @@ Y.extend(Slider, Y.Widget, {
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
-        dd._moveNode([xy,xy]);
+        dd._moveNode([xy,xy],true);
     },
 
 
@@ -1174,6 +1184,7 @@ Y.extend(Slider, Y.Widget, {
      */
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
+
             this.fire(VALUE_SET,{ changeEv: e });
         }
     },

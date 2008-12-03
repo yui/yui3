@@ -371,6 +371,7 @@ Y.extend(Widget, Y.Base, {
      * widget instance, and runs through the Widget's HTML_PARSER definition. 
      *
      * @method initializer
+     * @protected
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
@@ -410,6 +411,7 @@ Y.extend(Widget, Y.Base, {
      * list of registered widgets.
      *
      * @method destructor
+     * @protected
      */
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
@@ -439,7 +441,6 @@ Y.extend(Widget, Y.Base, {
      * </p>
      *
      * @method render
-     * @public
      * @chainable
      * @final 
      * @param  parentNode {Object | String} Optional. The Node under which the 
@@ -514,6 +515,7 @@ Y.extend(Widget, Y.Base, {
      * so it should be chained manually for subclasses if required.
      * 
      * @method renderer
+     * @protected
      */
     renderer: function() {
         this.renderUI();
@@ -528,6 +530,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      * 
      * @method bindUI
+     * @protected
      */
     bindUI: function() {},
 
@@ -538,6 +541,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      * 
      * @method renderUI
+     * @protected
      */
     renderUI: function() {},
 
@@ -548,6 +552,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      *
      * @method syncUI
+     * 
      */
     syncUI: function(){},
 

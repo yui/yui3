@@ -600,9 +600,11 @@ Y.extend(Slider, Y.Widget, {
         var img = this.get(THUMB_IMAGE);
 
         if (this._isImageLoading(img)) {
+            Y.log('Thumb image loading. Scheduling sync.','info','slider');
             // Schedule the sync for when the image loads/errors
             this._scheduleSync();
         } else {
+            Y.log('No thumb image, or image already loaded. Syncing immediately.','info','slider');
             this._ready(img);
         }
     },
@@ -657,13 +659,17 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _imageLoaded : function (e,img) {
+        var error = (e.type.toLowerCase().indexOf('error') > -1);
+
         if (this._stall) {
             this._stall.detach();
         }
 
+        Y.log('Thumb image '+e.type+'ed.  Syncing','info','slider');
+
         this._stall = false;
 
-        this._ready(img);
+        this._ready(img,error);
 
         this.set(DISABLED,this._disabled);
     },
@@ -674,13 +680,11 @@ Y.extend(Slider, Y.Widget, {
      *
      * @method _ready
      * @param img {Node} the thumbImage Node
+     * @param error {Boolean} Indicates an error while loading the thumbImage
      * @protected
      */
-    _ready : function (img) {
-        // _isImageLoaded may return false because this is executed from the
-        // image's onerror handler as well.
-        var method = img && this._isImageLoaded(img) ?
-                        'removeClass' : 'addClass';
+    _ready : function (img,error) {
+        var method = error ? 'addClass' : 'removeClass';
 
         // If the thumb image url results in 404, assign a class to provide
         // default thumb dimensions/UI
@@ -710,6 +714,8 @@ Y.extend(Slider, Y.Widget, {
 
         this._setFactor();
 
+        Y.log('placing thumb for value '+this.get(VALUE),'info','slider');
+
         this.set(VALUE,this.get(VALUE));
     },
 
@@ -729,8 +735,12 @@ Y.extend(Slider, Y.Widget, {
         // offsetWidth fails in hidden containers
         size = parseInt(thumb.getComputedStyle(dim),10);
 
+        Y.log('thumb '+dim+': '+size+'px','info','slider');
+
         if (img && this._isImageLoaded(img)) {
-            size = max(img.get(dim), size);
+            Y.log('using thumbImage '+dim+' ('+img.get(dim)+') for _thumbSize','info','slider');
+
+            size = img.get(dim);
         }
 
         this._thumbSize = size;
@@ -746,6 +756,7 @@ Y.extend(Slider, Y.Widget, {
      */
     _setThumbOffset : function () {
         this._thumbOffset = floor(this._thumbSize / 2);
+        Y.log('_thumbOffset calculated to '+this._thumbOffset+'px','info','slider');
     },
 
     /**
@@ -764,10 +775,15 @@ Y.extend(Slider, Y.Widget, {
             setxy = false;
 
         if (parseInt(size,10)) {
+            Y.log('railSize provided: '+size,'info','slider');
+
             // Convert to pixels
             rail.setStyle(dim,size);
             size = parseInt(rail.getComputedStyle(dim),10);
+
+            Y.log('pixel '+dim+' of railSize: '+size+'px', 'info', 'slider');
         } else {
+            Y.log('defaulting railSize from max of computed style and configured '+dim+' attribute value', 'info', 'slider');
             // Default from height or width (axis respective), or dims assigned
             // via css to the rail or thumb, whichever is largest.
             // Dear implementers, please use railSize, not height/width to
@@ -783,7 +799,11 @@ Y.extend(Slider, Y.Widget, {
                     parseInt(thumb.getComputedStyle(dim),10),
                     parseInt(rail.getComputedStyle(dim),10));
 
+            Y.log('pixel '+dim+' of rail: '+size+'px', 'info', 'slider');
+
             if (img && this._isImageLoaded(img)) {
+                Y.log('using max of thumbImage '+dim+' ('+img.get(dim)+' and '+size+' for railSize', 'info', 'slider');
+
                 size = max(img.get(dim),size);
             }
         }
@@ -840,6 +860,8 @@ Y.extend(Slider, Y.Widget, {
             gutter[1] = end;
         }
             
+        Y.log('setting DD gutter '+gutter.join(' '),'info','slider');
+
         this._dd.set('gutter', gutter.join(' '));
     },
 
@@ -854,6 +876,7 @@ Y.extend(Slider, Y.Widget, {
         this._factor = this._railSize ?
             (this.get(MAX) - this.get(MIN)) / this._railSize :
             1;
+        Y.log('_factor set to '+this._factor,'info','slider');
     },
 
     /**
@@ -929,7 +952,7 @@ Y.extend(Slider, Y.Widget, {
         var min    = this.get(MIN),
             max    = this.get(MAX);
 
-        return !this.get(DISABLED) && isNumber(v) &&
+        return isNumber(v) &&
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
@@ -1073,6 +1096,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _onDDStartDrag : function (e) {
+        Y.log('slide start','info','slider');
         this._setRailOffsetXY();
         this.fire(SLIDE_START,{ ddEvent: e });
     },
@@ -1085,6 +1109,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _onDDDrag : function (e) {
+        Y.log('thumb drag','info','slider');
         this.fire(THUMB_DRAG, { ddEvent: e });
     },
 
@@ -1101,8 +1126,7 @@ Y.extend(Slider, Y.Widget, {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
-        Y.log("Raw value: "+val+" Current value: "+before+
-              "Factored value: "+round(this.get(MIN) + (val * this._factor)));
+        Y.log('setting value from thumb drag: before('+before+') raw('+val+') factored('+round(this.get(MIN) + (val * this._factor))+')', 'info','slider');
 
         val = round(this.get(MIN) + (val * this._factor));
 
@@ -1119,6 +1143,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _onDDEndDrag : function (e) {
+        Y.log('slide end','info','slider');
         this.fire(SLIDE_END,{ ddEvent: e });
     },
 
@@ -1138,6 +1163,8 @@ Y.extend(Slider, Y.Widget, {
         var min = this.get(MIN),
             max = this.get(MAX),
             v   = e.changeEv.newVal;
+
+        Y.log('setting thumb position from value attribute update ('+v+')', 'info', 'slider');
 
         v = round(((v - min) / (max - min)) * this._railSize);
 
@@ -1161,7 +1188,7 @@ Y.extend(Slider, Y.Widget, {
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
-        dd._moveNode([xy,xy]);
+        dd._moveNode([xy,xy],true);
     },
 
 
@@ -1176,6 +1203,8 @@ Y.extend(Slider, Y.Widget, {
      */
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
+            Y.log('firing valueSet to position thumb', 'info', 'slider');
+
             this.fire(VALUE_SET,{ changeEv: e });
         }
     },
