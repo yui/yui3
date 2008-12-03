@@ -221,7 +221,7 @@ var _instances = {};
  *    <li>The render lifecycle method, in addition to the init and destroy 
  *        lifecycle methods provide by Base</li>
  *    <li>Abstract methods to support consistent MVC structure across 
- *        widgets: renderer, initUI, syncUI</li>
+ *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
  *        disabled, hasFocus, strings</li>
  *    <li>Plugin registration and activation support</li>
