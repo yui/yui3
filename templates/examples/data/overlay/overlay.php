@@ -47,23 +47,24 @@ $examples["overlay-stdmod"] = array(
     highlightSyntax => true
 );
 
+$examples["overlay-io-plugin"] = array(
+    name => "IO Plugin",
+    modules => array("overlay", "io", "plugin"),
+    description => "Shows how to create a simple plugin to retrieve content for the Overlay using the io utility.",
+    sequence => array(4, 50, 50),
+    newWindow => "default",
+    requires => array("overlay", "substitute", "io", "json", "plugin"),
+    highlightSyntax => true
+);
+
 $examples["overlay-anim-plugin"] = array(
     name => "Animation Plugin",
-    modules => array("overlay"),
+    modules => array("overlay", "anim", "plugin"),
     description => "Shows how to create a simple plugin to animate the Overlay's movement and visibility.",
-    sequence => array(4),
+    sequence => array(5, 50, 50),
     newWindow => "default",
     requires => array("overlay", "anim", "plugin"),
     highlightSyntax => true
 );
 
-$examples["overlay-io-plugin"] = array(
-    name => "IO Plugin",
-    modules => array("overlay", "io"),
-    description => "Shows how to create a simple plugin to retrieve content for the Overlay using the io utility.",
-    sequence => array(5, 50),
-    newWindow => "default",
-    requires => array("overlay", "substitute", "io", "json", "plugin"),
-    highlightSyntax => true
-);
 ?>
