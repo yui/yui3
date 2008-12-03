@@ -153,6 +153,12 @@ o.set("attrB", "Hello World!");
                             <td>The default value for this attribute</td>
                         </tr>
                         <tr>
+                            <td><code>valueFn</code></td>
+                            <td>Function</td>
+                            <td>A function, the return value of which is the value for the attribute. This property can be used instead of the 
+                            value property, for static configurations, if you need to set default values which require access to instance state ("this.something")</td>
+                        </tr>
+                        <tr>
                             <td><code>get</code></td>
                             <td>Function</td>
                             <td>
