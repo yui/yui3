@@ -12,7 +12,6 @@
 <script type="text/javascript">
 // Create a YUI instance and request the slider module and its dependencies
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
-//YUI({base:'/3.x/build/',filter:'debug',logExclude:{event:true,attribute:true}}).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // store the node to display the vertical Slider's current value
 var v_report = Y.get('#vert_value'),
@@ -39,7 +38,7 @@ vert_slider.render('.vert_slider');
 
 
 
-// instatiate the horizontal Slider, render it, and subscribe to its
+// instantiate the horizontal Slider, render it, and subscribe to its
 // valueChange event via method chaining.  No need to store the created Slider
 // in this case.
 new Y.Slider({

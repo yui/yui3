@@ -603,7 +603,7 @@ Y.extend(Slider, Y.Widget, {
             // Schedule the sync for when the image loads/errors
             this._scheduleSync();
         } else {
-            this._ready(img);
+            this._ready(img,!this._isImageLoaded(img));
         }
     },
 

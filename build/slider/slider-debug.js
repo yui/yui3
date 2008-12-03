@@ -607,7 +607,7 @@ Y.extend(Slider, Y.Widget, {
             this._scheduleSync();
         } else {
             Y.log('No thumb image, or image already loaded. Syncing immediately.','info','slider');
-            this._ready(img);
+            this._ready(img,!this._isImageLoaded(img));
         }
     },
 

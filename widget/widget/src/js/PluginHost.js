@@ -1,4 +1,10 @@
 /**
+ * Provides the base Widget class along with an augmentable PluginHost interface
+ *
+ * @module widget
+ */
+
+/**
  * An augmentable class, which when added to a "Base" based class, allows 
  * the class to support Plugins, providing plug and unplug methods and performing
  * instantiation and cleanup during the init and destroy lifecycle phases respectively.
