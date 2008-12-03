@@ -46,7 +46,9 @@ YUI.add('widget-position-ext', function(Y) {
             /**
              * @attribute align
              * @type Object
-             * @desciption The align attribute is used to align a reference point on the widget, with the refernce point on another node, or the viewport. The object which align expects has the following properties:
+             * @default null
+             * @desciption The align attribute is used to align a reference point on the widget, with the refernce point on another node, or the viewport. 
+             * The object which align expects has the following properties:
              * <dl>
              *       <dt>node</dt>
              *       <dd>
@@ -65,8 +67,6 @@ YUI.add('widget-position-ext', function(Y) {
              *         </p>
              *       </dd>
              *   </dl>
-             * @default null
-             * @description Extended positioning support to align the Widget with a node on the page, or with the viewport
              */
             align: {
                 value:null

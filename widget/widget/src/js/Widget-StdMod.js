@@ -239,12 +239,12 @@
      * e.g.
      * <pre>
      *    {
-     *       header : '&lt;div class="yui-widget-hd"&gt;&lt;/div&gt;,
-     *       body : '&lt;div class="yui-widget-bd"&gt;&lt;/div&gt;,
-     *       footer : '&lt;div class="yui-widget-ft"&gt;&lt;/div&gt;
+     *       header : '&lt;div class="yui-widget-hd"&gt;&lt;/div&gt;',
+     *       body : '&lt;div class="yui-widget-bd"&gt;&lt;/div&gt;',
+     *       footer : '&lt;div class="yui-widget-ft"&gt;&lt;/div&gt;'
      *    }
      * </pre>
-     * @property TEMPLATES
+     * @property WidgetStdMod.TEMPLATES
      * @type Object
      * @static
      */
