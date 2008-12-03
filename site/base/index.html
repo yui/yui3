@@ -271,8 +271,6 @@ include "../inc/header.inc";
             <p>In addition to the class hierarchy based support discussed above, the <code>Base</code> class also provides two static methods <code>build</code> and <code>create</code>, used to create custom
             classes or instances of classes derived from Base.</p>
 
-            <p><strong>NOTE:</strong> <code>build</code> and <code>create</code> are not currently being used by code in the 3.0.0 PR1 release and may be modified in future preview releases as requirements are refined.</p>
-
             <h5>Build</h5>
 
             <p>The <code>build</code> method can be used to dynamically create new classes, which are derived from an existing main class and mix in additional "extension" classes to add methods, attributes, events and properties to the main class.
@@ -351,12 +349,13 @@ include "../inc/header.inc";
             <ul>
                 <li>Creates a new 'built' class by extending the main class passed in as the first argument.</li>
                 <li>Augments the list of feature classes (the 2nd argument) to the built class, so that it now has their prototype methods.</li>
-                <li>Aggregates any known static properties (by default <code>ATTRS</code> is aggregated) on the built class.
-                The caller can provide other properties to aggregate also, using the 3rd configuration argument to build.</li>
+                <li>Aggregates any known static properties on the built class. Properties to aggregate are defined by a _buildCfg.aggregates on the main class. 
+                   For example Base defines the ATTRS property as a property which needs to be aggregated, and Widget adds the PLUGINS and HTML_PARSER properties.
+                   The caller can provide other properties to aggregate also, using the 3rd configuration argument to build.</li>
             </ul>
 
             <p>The new class constructor created by <code>build</code> will invoke the constructors for the main and feature classes when the new class is instantiated.</p>
-            
+
             <p>See Base's <a href="../api/Base.html#method_build">build method API documentation</a> for more details about the build method.</p>
 
             <h5>Create</h5>
