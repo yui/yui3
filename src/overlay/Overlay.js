@@ -14,7 +14,10 @@
  * @class Overlay
  * @constructor
  * @extends Widget
- * @uses WidgetPosition, WidgetStack, WidgetPositionExt, WidgetStdMod
+ * @uses WidgetPosition
+ * @uses WidgetStack
+ * @uses WidgetPositionExt
+ * @uses WidgetStdMod
  * @param {Object} object The user configuration for the instance.
  */
 Y.Overlay = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod]);
