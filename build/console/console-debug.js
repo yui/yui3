@@ -63,7 +63,7 @@ var getCN = Y.ClassNameManager.getClassName,
     substitute = Y.substitute,
     create     = Y.Node.create;
     
-/*
+/**
  * Console creates a visualization for messages logged through calls to a YUI
  * instance's <code>Y.log( message, category, source )</code> method.  The
  * debug versions of YUI modules will include logging statements to offer some

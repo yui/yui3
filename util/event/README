@@ -22,6 +22,7 @@ YUI Event Utility
       subscribe.
     - Event.Target.after will delegate to Do.after if type is a function
     - Added keylistener: Y.on('key', fn, element, 'down:13,65+ctrl+shift')
+    - event:ready event deprecated in favor of domready.
 
 3.0.0pr1
     - Initial Release

@@ -6,7 +6,8 @@ YUI.add("event", function(Y) {
 
     var FOCUS = Y.UA.ie ? "focusin" : "focus",
         BLUR = Y.UA.ie ? "focusout" : "blur",
-        CAPTURE = "capture_";
+        CAPTURE = "capture_",
+        Lang = Y.Lang;
 
     Y.Env.eventAdaptors = {
 
@@ -95,6 +96,11 @@ YUI.add("event", function(Y) {
 
             on: function(type, fn, id, spec, o) {
 
+                if (!spec || spec.indexOf(':') == -1) {
+                    arguments[0] = 'keypress';
+                    return Y.on.apply(Y, arguments);
+                }
+
                 // parse spec ([key event type]:[criteria])
                 var parsed = spec.split(':'),
 
@@ -102,12 +108,14 @@ YUI.add("event", function(Y) {
                     etype = parsed[0],
 
                     // list of key codes optionally followed by modifiers
-                    criteria = parsed[1].split(/,|\+/),
+                    criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null,
 
                     // the name of the custom event that will be created for the spec
-                    ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec,
+                    ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec,
 
                     a = Y.Array(arguments, 0, true);
+
+
 
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
@@ -120,7 +128,7 @@ YUI.add("event", function(Y) {
 
                         // pass this section if any supplied keyCode 
                         // is found
-                        if (Y.Lang.isNumber(critInt)) {
+                        if (Lang.isNumber(critInt)) {
 
                             if (e.charCode === critInt) {
                                 passed = true;
@@ -202,7 +210,7 @@ YUI.add("event", function(Y) {
 
         var adapt = Y.Env.eventAdaptors[type];
 
-        if (Y.Lang.isObject(type) && type.detach) {
+        if (Lang.isObject(type) && type.detach) {
             return type.detach();
         } else {
             if (adapt && adapt.detach) {
@@ -218,7 +226,8 @@ YUI.add("event", function(Y) {
     /**
      * Executes the callback before a DOM event, custom event
      * or method.  If the first argument is a function, it
-     * is assumed the target is a method.
+     * is assumed the target is a method.  For DOM and custom
+     * events, this is an alias for Y.on.
      *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
@@ -230,7 +239,7 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        if (Y.Lang.isFunction(type)) {
+        if (Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         } else {
             return Y.on.apply(Y, arguments);
@@ -244,8 +253,6 @@ YUI.add("event", function(Y) {
      * or method.  If the first argument is a function, it
      * is assumed the target is a method.
      *
-     * @TODO add event
-     *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
      *  
@@ -256,7 +263,7 @@ YUI.add("event", function(Y) {
      * @return {Event.Handle} unsubscribe handle
      */
     Y.after = function(type, f, o) {
-        if (Y.Lang.isFunction(type)) {
+        if (Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         } else {
             return after.apply(Y, arguments);
@@ -801,6 +808,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.signature = YUI3_SIGNATURE;
 
+        /**
+         * If set to true, the custom event will deliver an Event.Facade object
+         * that is similar to a DOM event object.
+         * @property emitFacade
+         * @type boolean
+         * @default false
+         */
         this.emitFacade = false;
 
         this.applyConfig(o, true);
