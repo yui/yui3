@@ -6,7 +6,8 @@ YUI.add("event", function(Y) {
 
     var FOCUS = Y.UA.ie ? "focusin" : "focus",
         BLUR = Y.UA.ie ? "focusout" : "blur",
-        CAPTURE = "capture_";
+        CAPTURE = "capture_",
+        Lang = Y.Lang;
 
     Y.Env.eventAdaptors = {
 
@@ -18,22 +19,14 @@ YUI.add("event", function(Y) {
          * @event focus
          */
         focus: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + FOCUS;
-
-                return Y.Event.detach.apply(Y.Event, a);
+                arguments[0] = CAPTURE + FOCUS;
+                return Y.Event.detach.apply(Y.Event, arguments);
 
             }
         },
@@ -46,23 +39,14 @@ YUI.add("event", function(Y) {
          * @event blur
          */
         blur: {
-
             on: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.attach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.attach.apply(Y.Event, arguments);
             },
 
             detach: function() {
-
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
-
-                return Y.Event.detach.apply(Y.Event, a);
-
+                arguments[0] = CAPTURE + BLUR;
+                return Y.Event.detach.apply(Y.Event, arguments);
             }
         },
 
@@ -76,10 +60,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -94,10 +74,6 @@ YUI.add("event", function(Y) {
             on: function(type, fn, id, o) {
                 var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
                 return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
-            },
-
-            detach: function() {
-
             }
         },
 
@@ -120,6 +96,11 @@ YUI.add("event", function(Y) {
 
             on: function(type, fn, id, spec, o) {
 
+                if (!spec || spec.indexOf(':') == -1) {
+                    arguments[0] = 'keypress';
+                    return Y.on.apply(Y, arguments);
+                }
+
                 // parse spec ([key event type]:[criteria])
                 var parsed = spec.split(':'),
 
@@ -127,12 +108,14 @@ YUI.add("event", function(Y) {
                     etype = parsed[0],
 
                     // list of key codes optionally followed by modifiers
-                    criteria = parsed[1].split(/,|\+/),
+                    criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null,
 
                     // the name of the custom event that will be created for the spec
-                    ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec,
+                    ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec,
 
                     a = Y.Array(arguments, 0, true);
+
+
 
                 // subscribe spec validator to the DOM event
                 Y.on(type + etype, function(e) {
@@ -145,7 +128,7 @@ YUI.add("event", function(Y) {
 
                         // pass this section if any supplied keyCode 
                         // is found
-                        if (Y.Lang.isNumber(critInt)) {
+                        if (Lang.isNumber(critInt)) {
 
                             if (e.charCode === critInt) {
                                 passed = true;
@@ -159,7 +142,8 @@ YUI.add("event", function(Y) {
                         } else if (passed || !failed) {
                             passed = (e[crit + 'Key']);
                             failed = !passed;
-                        }                    }
+                        }                    
+                    }
 
                     // fire spec custom event if spec if met
                     if (passed) {
@@ -169,18 +153,11 @@ YUI.add("event", function(Y) {
                 }, id);
 
                 // subscribe supplied listener to custom event for spec validator
-                // remove element and spec
+                // remove element and spec.
                 a.splice(2, 2);
                 a[0] = ename;
-                if (!a[2]) {
-                    a.push(Y.get(id));
-                }
 
                 return Y.on.apply(Y, a);
-            },
-
-            detach: function() {
-                // use the returned handle to unsubscribe
             }
         }
 
@@ -202,12 +179,12 @@ YUI.add("event", function(Y) {
      */
     Y.on = function(type, f, o) {
         
-        var adapt = Y.Env.eventAdaptors[type];
-
-        if (adapt) {
+       var adapt = Y.Env.eventAdaptors[type];
+        
+        if (adapt && adapt.on) {
             return adapt.on.apply(Y, arguments);
         } else {
-            if (type.indexOf(':') > -1) {
+            if (adapt || type.indexOf(':') > -1) {
                 return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
@@ -233,12 +210,12 @@ YUI.add("event", function(Y) {
 
         var adapt = Y.Env.eventAdaptors[type];
 
-        if (Y.Lang.isObject(type) && type.detach) {
+        if (Lang.isObject(type) && type.detach) {
             return type.detach();
         } else {
-            if (adapt) {
-                adapt.detach.apply(Y, arguments);
-            } else if (type.indexOf(':') > -1) {
+            if (adapt && adapt.detach) {
+                return adapt.detach.apply(Y, arguments);
+            } else if (adapt || type.indexOf(':') > -1) {
                 return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
@@ -249,7 +226,8 @@ YUI.add("event", function(Y) {
     /**
      * Executes the callback before a DOM event, custom event
      * or method.  If the first argument is a function, it
-     * is assumed the target is a method.
+     * is assumed the target is a method.  For DOM and custom
+     * events, this is an alias for Y.on.
      *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
@@ -261,7 +239,7 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        if (Y.Lang.isFunction(type)) {
+        if (Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         } else {
             return Y.on.apply(Y, arguments);
@@ -275,8 +253,6 @@ YUI.add("event", function(Y) {
      * or method.  If the first argument is a function, it
      * is assumed the target is a method.
      *
-     * @TODO add event
-     *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
      *  
@@ -287,7 +263,7 @@ YUI.add("event", function(Y) {
      * @return {Event.Handle} unsubscribe handle
      */
     Y.after = function(type, f, o) {
-        if (Y.Lang.isFunction(type)) {
+        if (Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         } else {
             return after.apply(Y, arguments);
@@ -598,6 +574,7 @@ YUI.add("aop", function(Y) {
  * @module event
  */
 YUI.add("event-custom", function(Y) {
+
     var onsubscribeType = "_event:onsub",
         AFTER = 'after', 
         CONFIGS = [
@@ -831,6 +808,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.signature = YUI3_SIGNATURE;
 
+        /**
+         * If set to true, the custom event will deliver an Event.Facade object
+         * that is similar to a DOM event object.
+         * @property emitFacade
+         * @type boolean
+         * @default false
+         */
         this.emitFacade = false;
 
         this.applyConfig(o, true);
@@ -1012,7 +996,7 @@ YUI.add("event-custom", function(Y) {
         _notify: function(s, args, ef) {
 
 
-            var ret;
+            var ret, c, ct;
 
             // emit an Event.Facade if this is that sort of event
             // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -1027,8 +1011,11 @@ YUI.add("event-custom", function(Y) {
                 }
 
             }
-             
-            ret = s.notify(this.context, args, this);
+
+            // The default context should be the object/element that
+            // the listener was bound to.
+            ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 return false;
@@ -1966,42 +1953,69 @@ var Env = YUI.Env,
             return;
         }
 
-        /**
-         * Executes the supplied callback when the DOM is first usable.  This
-         * will execute immediately if called after the DOMReady event has
-         * fired.   @todo the DOMContentReady event does not fire when the
-         * script is dynamically injected into the page.  This means the
-         * DOMReady custom event will never fire in FireFox or Opera when the
-         * library is injected.  It _will_ fire in Safari, and the IE 
-         * implementation would allow for us to fire it if the defered script
-         * is not available.  We want this to behave the same in all browsers.
-         * Is there a way to identify when the script has been injected 
-         * instead of included inline?  Is there a way to know whether the 
-         * window onload event has fired without having had a listener attached 
-         * to it when it did so?
-         *
-         * <p>The callback is a Event.Custom, so the signature is:</p>
-         * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
-         * <p>For DOMReady events, there are no fire argments, so the
-         * signature is:</p>
-         * <p>"DOMReady", [], obj</p>
-         *
-         *
-         * @event event:ready 
-         * @for Event
-         *
-         * @param {function} fn what to execute when the element is found.
-         * @optional context execution context
-         * @optional args 1..n arguments to send to the listener
-         *
-         */
+        Y.mix(Y.Env.eventAdaptors, {
 
-        Y.publish('event:ready', {
+            /**
+             * Executes the supplied callback when the DOM is first usable.  This
+             * will execute immediately if called after the DOMReady event has
+             * fired.   @todo the DOMContentReady event does not fire when the
+             * script is dynamically injected into the page.  This means the
+             * DOMReady custom event will never fire in FireFox or Opera when the
+             * library is injected.  It _will_ fire in Safari, and the IE 
+             * implementation would allow for us to fire it if the defered script
+             * is not available.  We want this to behave the same in all browsers.
+             * Is there a way to identify when the script has been injected 
+             * instead of included inline?  Is there a way to know whether the 
+             * window onload event has fired without having had a listener attached 
+             * to it when it did so?
+             *
+             * <p>The callback is a Event.Custom, so the signature is:</p>
+             * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+             * <p>For DOMReady events, there are no fire argments, so the
+             * signature is:</p>
+             * <p>"DOMReady", [], obj</p>
+             *
+             *
+             * @event domready
+             * @for Event
+             *
+             * @param {function} fn what to execute when the element is found.
+             * @optional context execution context
+             * @optional args 1..n arguments to send to the listener
+             *
+             */
+            domready: {
+
+            },
+
+            /**
+             * Use domready event instead. @see domready
+             * @event event:ready
+             * @for Event
+             * @deprecated use 'domready' instead
+             */
+            'event:ready': {
+
+                on: function() {
+                    arguments[0] = 'domready';
+                    return Y.subscribe.apply(Y, arguments);
+                },
+
+                detach: function() {
+                    arguments[0] = 'domready';
+                    return Y.unsubscribe.apply(Y, arguments);
+                }
+            }
+
+        });
+
+
+        Y.publish('domready', {
             fireOnce: true
         });
 
         var yready = function() {
-            Y.fire('event:ready');
+            Y.fire('domready');
         };
 
         if (Env.DOMReady) {
@@ -2041,7 +2055,7 @@ var Env = YUI.Env,
         remove(window, "load", onLoad);
     },
 
-    EVENT_READY = 'event:ready',
+    EVENT_READY = 'domready',
 
     COMPAT_ARG = '~yui|2|compat~',
 
