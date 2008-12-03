@@ -112,7 +112,7 @@ vert_slider.render('.vert_slider');
 
 
 
-// instatiate the horizontal Slider, render it, and subscribe to its
+// instantiate the horizontal Slider, render it, and subscribe to its
 // valueChange event via method chaining.  No need to store the created Slider
 // in this case.
 new Y.Slider({
