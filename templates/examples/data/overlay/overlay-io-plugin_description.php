@@ -26,7 +26,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
     <li>Providing prototype implementations for anything we want executed during initialization and destruction using the <code>initializer</code> and <code>destructor</code> lifecycle methods</li>
 </ul>
 
-<p>Additionally, since this is a Plugin, we provide a <code>NS</code> property for the class, which defines the property which will refer to the <code>StdModIOPlugin</code> instance on the host class (e.g. <code>overlay.io</code> will be an instance of <code>StdModIOPlugin</code>)</p>.
+<p>Additionally, since this is a plugin, we provide a <code>NS</code> property for the class, which defines the property which will refer to the <code>StdModIOPlugin</code> instance on the host class (e.g. <code>overlay.io</code> will be an instance of <code>StdModIOPlugin</code>)</p>.
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /* Standard Module IO Plugin Constructor */
@@ -149,9 +149,9 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
 
 <h4>Lifecycle Methods: initializer, destructor</h4>
 
-<p>For the purposes of this example, the initializer for the plugin activates the flash based <a href="../../io/#xdr">XDR</a> transport so that the plugin is able to dispatch both in-domain and cross-domain requests (the transport used for any particular uri, is controlled through the plugin's <code>cfg</code> attribute.</p>
+<p>For the purposes of this example, the <code>initializer</code> for the plugin activates the flash based <a href="../../io/#xdr">XDR</a> transport so that the plugin is able to dispatch both in-domain and cross-domain requests (the transport used for any particular uri, is controlled through the plugin's <code>cfg</code> attribute.</p>
 
-<p>The destructor terminates any existing transaction, if active when the plugin is destroyed (unplugged).</p>
+<p>The <code>destructor</code> terminates any existing transaction, if active when the plugin is destroyed (unplugged).</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     initializer: function() {
@@ -266,7 +266,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
     });
 </textarea>
 
-<p>And then use the <code>plug</code> method to add the <code>StdModIOPlugin</code>, providing it with a configuration to use when sending out io transactions (The <a href="overlay-anim-plugin.html">Anim Plugin</a> example shows how you could do the same thing during construction):</p>
+<p>And then use the <code>plug</code> method to add the <code>StdModIOPlugin</code>, providing it with a configuration to use when sending out io transactions (The <a href="overlay-anim-plugin.html">Animation Plugin</a> example shows how you could do the same thing during construction):</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /*

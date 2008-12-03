@@ -2,7 +2,7 @@
 
 <h4>Basic Class Structure</h4>
 
-<p>New widget classes, extending the base <code>Widget</code> class follow the same general pattern shown in the code snippet below and involve:</p>
+<p>Widgets classes follow the general pattern impemented by the <code>Spinner</code> class, shown in the code snippet below. The basic pattern for setting up a new widget class involves:</p>
 
 <ol>
     <li>Defining the constructor function for the new widget class, which invokes the superclass constructor to kick of the initialization chain <em>(line 2)</em></li>
@@ -76,18 +76,21 @@
     });
 </textarea>
 
-<p>Note that these steps are that same as any class which is derived from <a href="http://developer.yahoo.com/yui/3/base/"><code>Base</code></a>, nothing Widget specific is involved yet. Widget adds the concept of a rendered UI to the existing Base lifecycle (viz. init, destroy and attribute state configuration), which we'll see show up in Widget specific areas below.</p>
+<p>Note that these steps are the same for any class which is derived from <a href="http://developer.yahoo.com/yui/3/base/"><code>Base</code></a>, nothing Widget specific is involved yet. 
+Widget adds the concept of a rendered UI to the existing Base lifecycle (viz. init, destroy and attribute state configuration), which we'll see show up in Widget specific areas below.</p>
 
 <h4>The HTML_PARSER Property</h4>
 
 <p>
-<a href="../../api/Widget.html#property_HTML_PARSER"><code>HTML_PARSER</code></a> is a static property, introduced by the <code>Widget</code> class. It is used to set initial widget configuration values based on markup, providing basic progressive enhancement support. 
-The value of the <code>HTML_PARSER</code> property is an object literal, where each key is a widget attribute name, and the value is either a selector string (if the attribute is a node reference) or a function which is executed to provide 
-a value for the attribute from the markup on the page. Markup is thought of as an additional data source for the user to set initial attribute values, outside of the configuration object passed to the constructor 
+The first Widget specific property <code>Spinner</code> implements is the static <a href="../../api/Widget.html#property_HTML_PARSER"><code>HTML_PARSER</code></a> property. It is used to set the initial widget configuration based on markup, providing basic progressive enhancement support.
+</p>
+<p> 
+The value of the <code>HTML_PARSER</code> property is an object literal, where each property is a widget attribute name, and the value is either a selector string (if the attribute is a node reference) or a function which is executed to provide 
+a value for the attribute from the markup on the page. Markup is essentially thought of as an additional data source for the user to set initial attribute values, outside of the configuration object passed to the constructor 
 <em>(values passed to the constructor will take precedence over values picked up from markup)</em>.
 </p>
 
-<p>For <code>Spinner</code>, The <code>HTML_PARSER</code> map defines a function for the <code>value</code> attribute, which attempts to set the initial value of the spinner based on an input field present in the markup.</p>
+<p>For <code>Spinner</code>, <code>HTML_PARSER</code> defines a function for the <code>value</code> attribute, which sets the initial value of the spinner based on an input field if present in the markup.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /* 
@@ -111,7 +114,7 @@ a value for the attribute from the markup on the page. Markup is thought of as a
 
 <p>For <code>Spinner</code>, there is nothing special we need to do in the <code>initializer</code> (attribute setup is already taken care of), but it's left in the example to round out the lifecycle discussion.</p>
 
-<p>The <code>destructor</code> takes care of detaching any event listeners <code>Spinner</code> adds outside of the bounding box (event listeners on/inside the bounding box are purged by <code>Widget</code>'s destructor).</p>
+<p>The <code>destructor</code> takes care of detaching any event listeners <code>Spinner</code> adds outside of the bounding box (event listeners on/inside the bounding box are purged by <code>Widget</code>'s <code>destructor</code>).</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /*
@@ -148,9 +151,9 @@ a value for the attribute from the markup on the page. Markup is thought of as a
 
 <h4>Rendering Lifecycle Methods: renderer, renderUI, bindUI, syncUI</h4>
 
-<p>Widget adds a <code>render</code> method to the <code>init</code> and <code>destroy</code> methods provided by Base. The <code>init</code> and <code>destroy</code> methods invoking the corresponding <code>initializer</code> and <code>destructor</code> implementations for the widget. Similarly, the <code>render</code> method invokes the <code>renderer</code> implementation for the widget. Note that the <code>renderer</code> method is not chained automatically, unlike the <code>initializer</code> and <code>destructor</code> methods.</p>
+<p>Widget adds a <code>render</code> method to the <code>init</code> and <code>destroy</code> lifecycle methods provided by Base. The <code>init</code> and <code>destroy</code> methods invoke the corresponding <code>initializer</code> and <code>destructor</code> implementations for the widget. Similarly, the <code>render</code> method invokes the <code>renderer</code> implementation for the widget. Note that the <code>renderer</code> method is not chained automatically, unlike the <code>initializer</code> and <code>destructor</code> methods.</p>
 
-<p>The <code>Widget</code> class already comes with a default <code>renderer</code> implementation, which invokes the following abstract methods in the order shown <em>(with their respective responsiblities)</em>:</p>
+<p>The <code>Widget</code> class already provides a default <code>renderer</code> implementation, which invokes the following abstract methods in the order shown <em>(with their respective responsiblities)</em>:</p>
 
 <ol>
     <li><code>renderUI()</code> : responsible for creating/adding elements to the DOM to render the widget.</li>
@@ -208,21 +211,21 @@ a value for the attribute from the markup on the page. Markup is thought of as a
 
 <p>The PR2 release adds basic support for <code>"key"</code> events, which are used by <code>Spinner</code> to setup a listener for arrow up/down and page up/down keys on the spinner's bounding box (line 30).</p>
 
-<p>Event's <code>"key"</code> support, allows <code>Spinner</code> to define a single listener, which is only invoked for the key specification provided. The key specification in the above use case is <code>"down:38, 40, 33, 34"</code> for most browsers, indicating that 
+<p>Event's <code>"key"</code> support allows <code>Spinner</code> to define a single listener, which is only invoked for the key specification provided. The key specification in the above use case is <code>"down:38, 40, 33, 34"</code> for most browsers, indicating that 
 the <code>_onDirectionKey</code> method should only be called if the bounding box recieves a keydown event with a character code which is either 38, 40, 33 or 34. <code>"key"</code> specifications can also contain more <a href="../../api/YUI.html#event_key">advanced filter criteria</a>, involving modifiers such as CTRL and SHIFT.</p>
 
-<p>For the Spinner widget, we're looking for a key event which fires continously while the key is held down. This differs for Opera, so we need to fork for the key event we're intereted in. Future versions of <code>"key"</code> support will aim to provide this type of higher level cross-browser abstraction also.</p>
+<p>For the Spinner widget, we're looking for a key event which fires repeatedly while the key is held down. This differs for Opera, so we need to fork for the key event we're intereted in. Future versions of <code>"key"</code> support will aim to provide this type of higher level cross-browser abstraction also.</p>
 
 <h4>Attribute Supporting Methods</h4>
 
-<p>Since all widgets will be attribute driven, they will all follow a pretty similar pattern when it comes to how those attributes are used. For a given attribute, widgets will generally have:</p>
+<p>Since all widgets are attribute driven, they all follow a pretty similar pattern when it comes to how those attributes are used. For a given attribute, widgets will generally have:</p>
 <ul>
     <li>A prototype method to listen for changes in the attribute</li>
     <li>A prototype method to update the state of the rendered UI, to reflect the value of an attribute.</li>
     <li>A prototype method used to set/get/validate the attribute.</li>
 </ul>
 
-<p>These methods are kept on the prototype, to facilitate customization at any of the levels - event handling, ui updates, set/get/validation logic.</p>
+<p>These methods are kept on the prototype to facilitate customization at any of the levels - event handling, ui updates, set/get/validation logic.</p>
 
 <p>For <code>Spinner</code>, these corresponding methods for the <code>value</code> attribute are: <code>_afterValueChange</code>, <code>_uiSetValue</code> and <code>_validateValue</code>:</p>
 
@@ -317,7 +320,7 @@ the <code>_onDirectionKey</code> method should only be called if the bounding bo
 <p>A couple of interesting points worth noting: In the <code>"key"</code> listener we set up, we can call <code>e.preventDefault()</code> without having to check the character code, since the <code>"key"</code> event specifier will only invoke the listener 
 if one of the specified keys is pressed (arrow/page up/down)</p>
 
-<p>Also, to allow the spinner to increment/decrement while the mouse is held down, we setup a timer, which gets cleard out when we recieve a mouseup event on the document.</p>
+<p>Also, to allow the spinner to update it's value while the mouse button is held down, we setup a timer, which gets cleard out when we recieve a mouseup event on the document.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /*
@@ -396,7 +399,7 @@ if one of the specified keys is pressed (arrow/page up/down)</p>
 
 <h4>ClassName Support Methods</h4>
 
-<p>A key part of developing widgets which work with the DOM, is defining class names which the will use to mark the nodes it renders. These class names could be used to mark a node for later retrieval/lookup, for CSS application (both functional as well as cosmetic) or to indicate the current state of the widget.</p>
+<p>A key part of developing widgets which work with the DOM, is defining class names which it will use to mark the nodes it renders. These class names could be used to mark a node for later retrieval/lookup, for CSS application (both functional as well as cosmetic) or to indicate the current state of the widget.</p>
 
 <p>The widget infrastructure uses the <code>ClassNameManager</code> utility, to generate consistently named classes to apply to the nodes it adds to the page:</p>
 
@@ -413,7 +416,7 @@ When you need to generate standard class names in static code (where you don't h
 
 <h4>CSS Considerations</h4>
 
-<p>Since widget uses the <code>getClassName</code> method to generate state related classes and to mark the bounding box/content box of the widget (e.g. "yui-[widgetname]-content", "yui-[widgetname]-hidden", "yui-[widgetname]-disabled"), we need to provide the default CSS handling for states we're interested in handling for the new Spinner widget. The yui-[widgetname]-hidden rule is probably one state class, which all widgets will provide implementations for.</p>
+<p>Since widget uses the <code>getClassName</code> method to generate state related class names and to mark the bounding box/content box of the widget (e.g. "yui-[widgetname]-content", "yui-[widgetname]-hidden", "yui-[widgetname]-disabled"), we need to provide the default CSS handling for states we're interested in handling for the new Spinner widget. The "yui-[widgetname]-hidden" class is probably one state class, which all widgets will provide implementations for.</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 

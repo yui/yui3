@@ -1,1 +1,1 @@
-This example shows have you can mix and match the <code>WidgetPostion</code>, <code>WidgetPositionExt</code>, <code>WidgetStack</code> and <code>WidgetStdMod</code> extensions to build custom versions of the <code>Widget</code> class, using <code>Base.build</code>.
+This example shows how you can mix and match the <code>WidgetPostion</code>, <code>WidgetPositionExt</code>, <code>WidgetStack</code> and <code>WidgetStdMod</code> extensions to build custom versions of the <code>Widget</code> class, using <code>Base.build</code>.
