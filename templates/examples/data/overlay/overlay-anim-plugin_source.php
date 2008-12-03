@@ -12,40 +12,72 @@
 <script type="text/javascript">
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
+    /* Animation Plugin Constructor */
     function AnimPlugin(config) {
         AnimPlugin.superclass.constructor.apply(this, arguments);
     }
 
+    /* 
+     * The namespace for the plugin. This will be the property on the widget, which will 
+     * reference the plugin instance, when it's plugged in
+     */
     AnimPlugin.NS = "fx";
-    AnimPlugin.NAME = "overlayAnimPlugin";
 
+    /*
+     * The NAME of the AnimPlugin class. Used to prefix events generated
+     * by the plugin class.
+     */
+    AnimPlugin.NAME = "animPlugin";
+
+    /*
+     * The default set of attributes for the AnimPlugin class.
+     */
     AnimPlugin.ATTRS = {
+
+        /*
+         * Default duration. Used by the default animation implementations
+         */
         duration : {
             value: 0.2
         },
 
+        /*
+         * Default animation instance used for showing the widget (opacity fade-in)
+         */
         animVisible : {
             valueFn : function() {
 
+                var owner = this._owner,
+                    boundingBox = owner.get("boundingBox");
+
                 var anim = new Y.Anim({
-                    node: this._owner.get("boundingBox"),
-                    from: { opacity: 0 },
+                    node: boundingBox,
                     to: { opacity: 1 },
                     duration: this.get("duration")
                 });
 
-                anim.on("start", function() {
-                    this.get("node").setStyle("opacity", 0);
-                });
+                // Set initial opacity, to avoid initial flicker
+                if (!owner.get("visible")) {
+                    boundingBox.setStyle("opacity", 0);
+                }
 
+                // Clean up, on destroy. Where supported, remove
+                // opacity set using style. Else make 100% opaque
                 anim.on("destroy", function() {
-                    this.get("node").setStyle("opacity", "");
+                    if (Y.UA.ie) {
+                        this.get("node").setStyle("opacity", 1);
+                    } else {
+                        this.get("node").setStyle("opacity", "");
+                    }
                 });
 
                 return anim;
             }
         },
 
+        /*
+         * Default animation instance used for hiding the widget (opacity fade-out)
+         */
         animHidden : {
             valueFn : function() {
                 return new Y.Anim({
@@ -57,29 +89,44 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
         }
     }
 
+    /*
+     * Extend the base plugin class
+     */
     Y.extend(AnimPlugin, Y.Plugin, {
 
+        /*
+         * Initialization code. Called when the 
+         * plugin is instantiated (whenever it's 
+         * plugged into the host)
+         */
         initializer : function(config) {
+            this._bindAnimVisible();
+            this._bindAnimHidden();
 
-            var animHidden = this.get("animHidden");
-            var animVisible = this.get("animVisible");
+            this.on("animVisibleChange", this._bindAnimVisible);
+            this.on("animHiddenChange", this._bindAnimHidden);
 
-            animVisible.after("start", Y.bind(function() {
-                this._uiSetVisible(true);
-            }, this));
-
-            animHidden.after("end", Y.bind(function() {
-                this._uiSetVisible(false);
-            }, this));
-
+            // Override default _uiSetVisible method, with custom animated method
             this.before("_uiSetVisible", this._uiAnimSetVisible);
         },
 
+        /*
+         * Destruction code. Invokes destroy in the individual animation instances,
+         * and lets them take care of cleaning up any state.
+         */
         destructor : function() {
             this.get("animVisible").destroy();
             this.get("animHidden").destroy();
         },
 
+        /*
+         * The custom animation method, added by the plugin.
+         *
+         * This method replaces the default _uiSetVisible handler
+         * Widget provides, by injecting itself before _uiSetVisible,
+         * (using Plugins before method) and preventing the default
+         * behavior.
+         */
         _uiAnimSetVisible : function(val) {
             if (this._owner.get("rendered")) {
                 if (val) {
@@ -93,6 +140,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             }
         },
 
+        /*
+         * The original Widget _uiSetVisible implementation
+         */
         _uiSetVisible : function(val) {
             var owner = this._owner;
             var hiddenClass = owner.getClassName("hidden");
@@ -101,14 +151,36 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             } else {
                 owner.get("boundingBox").removeClass(hiddenClass);
             }
+        },
+
+        /* Sets up call to invoke original visibility handling when the animVisible animation is started */
+        _bindAnimVisible : function() {
+            var animVisible = this.get("animVisible");
+
+            // Setup original visibility handling (for show) before starting to animate
+            animVisible.on("start", Y.bind(function() {
+                this._uiSetVisible(true);
+            }, this));
+        },
+
+        /* Sets up call to invoke original visibility handling when the animHidden animation is complete */
+        _bindAnimHidden : function() {
+            var animHidden = this.get("animHidden");
+
+            // Setup original visibility handling (for hide) after completing animation
+            animHidden.after("end", Y.bind(function() {
+                this._uiSetVisible(false);
+            }, this));
         }
     });
 
+    // Create a new Overlay instance, and add AnimPlugin with a default duration of 2 seconds
     var overlay = new Y.Overlay({
         contentBox: "#overlay",
         width:"10em",
         height:"10em",
         visible:false,
+        shim:false,
         align: {
             node: "#show", 
             points: ["tl", "bl"]

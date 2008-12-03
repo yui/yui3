@@ -45,20 +45,28 @@ YUI.add('widget-position-ext', function(Y) {
 
             /**
              * @attribute align
-             * @type Object, with the following properties
-             * <dl>
-             *     <dd>node</dd>
-             *     <dt>The node to which the Widget is to be aligned. If set to null, the Widget is aligned to the Viewport</dt>
-             *     <dd>points</dd>
-             *     <dt>The 2 points to align. Supported alignment points are defined 
-             *     as static properties on WidgetPositionExt, e.g. <code>WidgetPositionExt.TR</code>.
-             *     e.g. <code>[WidgetPositionExt.TR, WidgetPositionExt.TL]</code> aligns the Top Right of the Widget with the
-             *     Top Left of the node/viewport, and <code>[WidgetPositionExt.CC, WidgetPositionExt.TC] aligns the center of the 
-             *     Widget with the Top Center of the node/viewport.  
-             *     </dt>
-             * </dl>
+             * @type Object
              * @default null
-             * @description Extended positioning support to align the Widget with a node on the page, or with the viewport
+             * @desciption The align attribute is used to align a reference point on the widget, with the refernce point on another node, or the viewport. 
+             * The object which align expects has the following properties:
+             * <dl>
+             *       <dt>node</dt>
+             *       <dd>
+             *         The node to which the Widget is to be aligned. If set to null, or not provided, the Widget is aligned to the viewport
+             *       </dd>
+             *       <dt>points</dt>
+             *       <dd>
+             *         <p>
+             *         A two element array, defining the two points on the Widget and node/viewport which are to be aligned. The first element is the point on the Widget, and the second element is the point on the node/viewport.
+             *         Supported alignment points are defined as static properties on <code>WidgetPositionExt</code>.
+             *         </p>
+             *         <p>
+             *         e.g. <code>[WidgetPositionExt.TR, WidgetPositionExt.TL]</code> aligns the Top-Right corner of the Widget with the
+             *         Top-Left corner of the node/viewport, and <code>[WidgetPositionExt.CC, WidgetPositionExt.TC]</code> aligns the Center of the 
+             *         Widget with the Top-Center edge of the node/viewport.
+             *         </p>
+             *       </dd>
+             *   </dl>
              */
             align: {
                 value:null

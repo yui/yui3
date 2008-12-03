@@ -27,7 +27,7 @@
 YUI({ base: '../build/', filter: 'debug' }).use('anim', function(Y) {
 
     var node = Y.Node.get('#foo', null, true);
-    node.plug(Y.Plugin.NodeFX);
+    node.plug(Y.plugin.NodeFX);
 
     node.fx.setAtts({
         from: {

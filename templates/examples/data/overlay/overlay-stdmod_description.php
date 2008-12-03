@@ -1,14 +1,20 @@
 <h3>Overlay's Standard Module Support</h3>
 
-<p>TODO: Creating the Sandbox</p>
+<h4>Setting Up The YUI Instance</h4>
+
+<p>To create an instance of an Overlay on you page, the only module you need to request is the <code>overlay</code> module. The <code>overlay</code> module will pull in the <code>widget</code>, <code>widget-stack</code>, <code>widget-position</code>, <code>widget-position-ext</code> and <code>widget-stdmod</code> dependencies it has.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
 YUI({...}).use("overlay", function(Y) {
-    
+    // We'll write example code here, where we have a Y.Overlay class available.
 });
 </textarea>
 
-<p>TODO: Creating From Markup</p>
+<p>Note, using the <code>overlay</code> module, will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h4>Creating The Overlay From Markup</h4>
+
+<p>For this example, we'll create the overlay instance from markup which already exists on the page, and is shown below:</p>
 
 <textarea name="code" class="HTML" rows="1" cols="60">
     &lt;div id="overlay"&gt;
@@ -18,7 +24,9 @@ YUI({...}).use("overlay", function(Y) {
     &lt;/div&gt;
 </textarea>
 
-<p>TODO: Instantiating the overlay</p>
+<h4>Instantiating The Overlay</h4>
+
+<p>To create an overlay instance, we use the overlay contructor <code>Y.Overlay</code>, and pass it the <code>contentBox</code> node reference for the existing markup on the page:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var overlay = new Y.Overlay({
@@ -29,10 +37,20 @@ YUI({...}).use("overlay", function(Y) {
             points:["tl", "tl"]
         }
     });
-    overlay.render("#overlay-stdmod");
+    overlay.render();
 </textarea>
 
-<p>TODO: Setting Content</p>
+<p>We also set it's width and align it to the filler paragraph in the example box ("#overlay-stdmod > .filler"). We don't pass any node references to the <code>render</code> method, so the Overlay is rendered in the location of the contentBox provided.</p>
+
+<h4>Setting Content</h4>
+
+<p>
+The example provides a set of input fields, allowing the user to set content in either of the 3 standard module sections which Overlay supports using Overlay's <code>setStdModContent</code> method. 
+The content can either be inserted before, appended after, or replace existing content in the specified section.</p>
+
+<p>
+Additionally the new content can be converted to a node instance before being added to the specified section. Although it has no impact on the example, if the new content is added as a string, innerHTML is used to insert before or append after the existing section content, removing any event listeners which may have been attached to elements inside the section. The ability to convert the content to a node instance is provided in the example to illustrate Overlay's ability to handle both content formats.
+</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     // Hold onto input field references.
@@ -61,7 +79,11 @@ YUI({...}).use("overlay", function(Y) {
     }, "#setContent");
 </textarea>
 
-<p>TODO: Overlay Look/Feel</p>
+<h4>CSS: Overlay Look/Feel</h4>
+
+<p>As with the other basic overlay examples, the overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
+
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header, body and footer sections:</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 /* Overlay Look/Feel */

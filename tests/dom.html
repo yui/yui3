@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DOM Test Suite</title>
+
+
+<link type="text/css" rel="stylesheet" href="/yui/2.x/build/logger/assets/logger.css">
+<link type="text/css" rel="stylesheet" href="/yui/2.x/build/yuitest/assets/testlogger.css">     
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/event/event.js"></script>
+<script type="text/javascript" src="../build/oop/oop.js"></script>
+<script type="text/javascript" src="../build/dom/dom.js"></script>
+<script type="text/javascript" src="../build/node/node-debug.js"></script>
+
+<script type="text/javascript" src="/yui/2.x/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/event/event.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/logger/logger-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/yuitest/yuitest.js"></script>
+<style>
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, li {
+    Xmargin:0;
+    Xpadding:0;
+}
+
+#doc {
+    border:5px solid #000;
+    margin:10px;
+    padding:10px;
+}
+
+#hd {
+    background:#ccc;
+}
+
+#foo {
+    float:left; /* required for getStyle test */
+}
+</style>
+
+<style type="text/css">
+
+</style>
+</head>
+<body>
+    <div id="doc">
+        <div id="hd"><h1>Page Header</h1></div>
+        <div id="bd">
+            <div id="main" class="main">
+                <h2 id="foo">Section Header</h2>
+                <em class="lorem ipsum ipsum" id="lorem-ipsum">lorem ipsum</em>
+                <div class="mod" id="mod1">
+                    <div class="hd">
+                        <h3>Module Header</h3>
+                    </div>
+                    <div class="bd">
+                        <p>Fusce feugiat diam. Vestibulum elementum dui in augue. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris pulvinar.</p>
+                    </div>
+                    <div class="ft"><a href="#">more</a></div>
+                </div>
+                <div class="mod" id="mod2">
+                    <div class="hd">
+                        <h3>Module Header</h3>
+                    </div>
+                    <div class="bd">
+                        <form action="#" method="get" id="search">
+                            <fieldset id="search-fields">
+                                <legend>Search</legend>
+                                <label for="search-p">Query</label>
+                                <input type="text" name="p" id="search-p">
+                                <input type="submit" value="search">
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="ft"><a href="http://www.developer.yahoo.com">more</a></div>
+                </div>
+            </div>
+        </div>
+        <div id="ft">
+            <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
+        </div>
+    </div>
+<script type="text/javascript">
+    YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
+        tool = YAHOO.tool,
+        Assert = YAHOO.util.Assert,
+        ArrayAssert = YAHOO.util.ArrayAssert,
+        suite = new tool.TestSuite("yuisuite");
+
+        var logger = new YAHOO.tool.TestLogger(null, { height: '80%' });
+
+        var doc = document.getElementById('doc'),
+            hd = document.getElementById('hd'),
+            bd = document.getElementById('bd'),
+            ft = document.getElementById('ft'),
+            mod1 = document.getElementById('mod1'),
+            mod2 = document.getElementById('mod2'),
+            h1 = hd.getElementsByTagName('h1')[0],
+            main = document.getElementById('main'),
+            lorem = document.getElementById('lorem-ipsum'),
+            search = document.getElementById('search'),
+            search_fields = document.getElementById('search-fields'),
+            search_p = document.getElementById('search-p'),
+            foo = document.getElementById('foo'),
+            tmp = document.createElement('div');
+
+        suite.add( new tool.TestCase({
+            name: 'DOM',
+
+            test_byId: function() {
+                Assert.areEqual(doc, Y.DOM.byId('doc'), 'byId("doc")');
+                Assert.isNull(Y.DOM.byId('fake-id'), 'byId("fake-id")');
+                Assert.isNull(Y.DOM.byId(null), 'byId(null)');
+                Assert.isNull(Y.DOM.byId(), 'byId()');
+
+            },
+
+            test_getText: function() {
+                Assert.areEqual(h1.innerHTML, Y.DOM.getText(hd), 'getText("hd")');
+                Assert.areEqual('', Y.DOM.getText(tmp), 'getText(tmp)');
+                Assert.areEqual('', Y.DOM.getText(null), 'getText(null)');
+                Assert.areEqual('', Y.DOM.getText(), 'getText()');
+            },
+
+            test_firstChild: function() {
+                Assert.isNull(Y.DOM.firstChild(tmp), 'firstChild(tmp)');
+                Assert.isNull(Y.DOM.firstChild(null), 'firstChild(null)');
+                Assert.isNull(Y.DOM.firstChild(), 'firstChild()');
+                Assert.isNull(Y.DOM.firstChild(1), 'firstChild(1)');
+                Assert.areEqual(hd, Y.DOM.firstChild(doc), 'firstChild(doc)');
+
+                Assert.areEqual(bd, Y.DOM.firstChild(doc,
+                    function(node) { return node.id === 'bd'; }
+                ), 'firstChild(doc, fn)');
+
+            },
+
+            test_lastChild: function() {
+                Assert.isNull(Y.DOM.lastChild(tmp), 'lastChild(tmp)');
+                Assert.areEqual(ft, Y.DOM.lastChild(doc), 'lastChild(doc)');
+
+                Assert.areEqual(bd, Y.DOM.lastChild(doc,
+                    function(node) { return node.id === 'bd'; }
+                ), 'lastChild(doc, fn)');
+
+            },
+
+            test_children: function() {
+                ArrayAssert.itemsAreEqual([], Y.DOM.children(tmp), 'children(tmp)');
+                ArrayAssert.itemsAreEqual([], Y.DOM.children(null), 'children(null)');
+                ArrayAssert.itemsAreEqual([], Y.DOM.children(), 'children()');
+                ArrayAssert.itemsAreEqual([hd, bd, ft], Y.DOM.children(doc), 'children(doc)');
+
+                ArrayAssert.itemsAreEqual([mod1, mod2], Y.DOM.children(main, function(node) {
+                    return node.className === 'mod';
+                }), 'children(main, fn)');
+            },           
+
+            test_childrenByTag: function() {
+                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(tmp), 'childrenByTag(tmp)');
+                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(null), 'childrenByTag(null)');
+                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(null, null), 'childrenByTag(null, null)');
+                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(), 'childrenByTag()');
+
+                ArrayAssert.itemsAreEqual([lorem], Y.DOM.childrenByTag(main, 'em'), 'children(main, "em")');
+                ArrayAssert.itemsAreEqual([search_p], Y.DOM.childrenByTag(search_fields, 'input', function(node) {
+                    return node.type === 'text';
+                },'childrenByTag(main, "input", fn)'));
+            },            
+
+            test_getStyle: function() {
+                Assert.areEqual('left',
+                        Y.DOM.getStyle(foo, 'float'), 'getStyle(foo, "float")');
+
+                doc.style.marginBottom = '10px';
+
+                Assert.areEqual('10px',
+                        Y.DOM.getStyle(doc, 'marginBottom'), 'doc, marginBottom');
+
+                Assert.areEqual('static',
+                        Y.DOM.getStyle(doc, 'position'), 'doc, position');
+            },            
+
+            test_setStyle: function() {
+                Y.DOM.setStyle(ft, 'opacity', 0.5);
+                Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
+                        0.5, 'wrong style returned');
+
+                Y.DOM.setStyle(main, 'float', 'none');
+                Assert.areEqual('none', Y.DOM.getStyle(main, 'float'),
+                        'wrong style returned');
+           },
+
+            test_create: function() {
+                var html = '<div>fresh</div>';
+                var el = Y.DOM.create(html);
+                Assert.areEqual('DIV', el.tagName, html);
+
+                html = '<input type="submit">';
+                el = Y.DOM.create(html);
+                Assert.areEqual('INPUT', el.tagName, html);
+
+                html = '<input name="test-input" type="radio">';
+                el = Y.DOM.create(html);
+                Assert.areEqual('radio', el.type, html);
+                Assert.areEqual('test-input', el.name, html);
+
+                html = '<form></form>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('FORM', el.tagName, html);
+
+                html = '<label>fresh</label>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('LABEL', el.tagName, html);
+
+                html = '<li>fresh</li>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('LI', el.tagName, html);
+
+                html = '<ul><li>fresh</li></ul>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(1, el.childNodes.length, html);
+
+                html = '<tr>fresh</tr>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('TR', el.tagName, html);
+
+                html = '<td>fresh</td>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('TD', el.tagName, html);
+
+                html = '<th>fresh</th>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('TH', el.tagName, html);
+
+                html = '<thead></thead>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('THEAD', el.tagName, html);
+
+                html = '<caption>fresh</caption>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('CAPTION', el.tagName, html);
+
+                /*
+                html = '<col></col>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('COL', el.tagName, html);
+                */
+
+                html = '<colgroup></colgroup>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('COLGROUP', el.tagName, html);
+
+                html = '<colgroup><col><col></colgroup>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('COLGROUP', el.tagName, html);
+
+                html = '<button>fresh</button>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('BUTTON', el.tagName, html);
+
+                html = '<optgroup></optgroup>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('OPTGROUP', el.tagName, html);
+
+                html = '<optgroup><option>foo</option></optgroup>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('OPTGROUP', el.tagName, html);
+
+                html = '<dd>fresh</dd>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('DD', el.tagName, html);
+
+                html = '<dt>fresh</dt>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('DT', el.tagName, html);
+
+                html = '<select><option>foo</option><option>bar</option></select>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('SELECT', el.tagName, html);
+                Assert.areEqual(2, el.childNodes.length, html);
+
+                html = '<table><tr><td>foo</td><td>bar</td></tr></table>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('TABLE', el.tagName, html);
+                Assert.areEqual(1, el.childNodes.length, html);
+
+                html = '<tr><td>foo</td><td>bar</td></tr>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('TR', el.tagName, html);
+                Assert.areEqual(2, el.childNodes.length, html);
+
+                html = '<iframe src="http://search.yahoo.com/" id="yui-iframetest"></iframe>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('http://search.yahoo.com/', el.src, html);
+                Assert.areEqual('yui-iframetest', el.id, html);
+
+/*
+                html = '<scr' + 'ipt src="http://search.yahoo.com/"></scr' + 'ipt>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('SCRIPT', el.tagName, html);
+                Assert.areEqual('http://search.yahoo.com/', el.src, html);
+
+                html =  '<link href="http://search.yahoo.com/" rel="stylesheet">';
+                el = Y.DOM.create(html);
+                Assert.areEqual('LINK', el.tagName, html);
+                Assert.areEqual('http://search.yahoo.com/', el.href, html);
+                Assert.areEqual(el.rel, 'stylesheet', html);
+
+*/
+                html = '<option>fresh</option>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('OPTION', el.tagName, html);
+
+                html = '<legend>fresh</legend>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('LEGEND', el.tagName, html);
+
+                html = '<fieldset>fresh</fieldset>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('FIELDSET', el.tagName, html);
+
+                html ='<div id="default-e34f85" class="mod view_default"> <div id="default-e34f85-hd" class="hd"><h2>Yahoo! Mail Preview</h2> <span class="mod-button-wrapper"> </span> </div> <div id="default-e34f85-bd" class="bd type_mail type_mail_default"> <p class="divider-b small text-right"><a href="http://us.lrd.yahoo.com/_ylt=AhQqDwn_HdUEqFrWLI8HTGP1cSkA/SIG=10rfos93v/**http%3A//mail.yahoo.com/">Go to Yahoo! Mail</a></p> <img src="http://l.yimg.com/a/i/ww/met/mail_promo_060608.gif" alt="Yahoo! Mail avatar shows the possibilities of email" class="promo" width="300px"> <p class="x-large sign-in-link"><a href="https://us.lrd.yahoo.com/_ylt=AnGramz3WfSHqLcCWa92OGj1cSkA/SIG=12tb7s4o8/**https%3A//login.yahoo.com/config/mail%3F.intl=us%26.src=ym%26.done=http%3A//mail.yahoo.com">Sign in</a> to preview your email here.</p> <p class="med-small">The all-new Yahoo! Mail:<br>More ways to connect with everyone.</p> </div></div>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('default-e34f85', el.id, html);
+
+                html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('THEAD', el.tagName, html);
+
+
+                html = ' <div>foo</div>';
+                el = Y.DOM.create(html);
+                Assert.isTrue(el.tagName === 'DIV', " + html + ");
+
+                html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('THEAD', el.tagName, html);
+
+            },
+
+            test_createNodes: function() {
+                var html = '<div>foo</div><div id="tmp-bar">bar</div><div>baz</div>';
+                var el = Y.DOM.create(html);
+                Assert.areEqual(3, el.length, html);
+                Assert.areEqual('tmp-bar', el[1].id, html);
+
+                html = '<option>foo</option><option id="tmp-bar">bar</option><option>baz</option>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(3, el.length, html);
+                Assert.areEqual('tmp-bar', el[1].id, html);
+
+                html = '<td>foo</td><td id="tmp-bar">bar</td><td>baz</td>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(3, el.length, html);
+                Assert.areEqual('tmp-bar', el[1].id, html);
+
+                html = '<tbody>foo</tbody><tbody id="tmp-bar">bar</tbody><tbody>baz</tbody>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(3, el.length, html);
+                Assert.areEqual('tmp-bar', el[1].id, html);
+
+                html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
+                el = Y.DOM.create(html);
+                Assert.areEqual(2, el.length, html);
+            },
+
+            test_ancestor: function() {
+                Assert.areEqual(doc, Y.DOM.ancestor(hd), 'ancestor(hd)');
+                Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
+                Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
+                Assert.areEqual(document.body, Y.DOM.ancestor(bd, function(node) { return node.tagName === 'BODY';}), 'ancestor(bd, fn)');
+            },
+
+
+            test_insertBefore: function() {
+                //Assert.areEqual(Y.DOM.insertBefore(ft, hd), Y.DOM.firstChild(doc), 'insertBefore(ft, hd)');
+                //Assert.areEqual(ft, Y.DOM.firstChild(doc), 'insertBefore(ft, hd)');
+            },
+
+
+            test_insertAfter: function() {
+                //Assert.areEqual(Y.DOM.insertAfter(hd, ft), ft.nextSibling, 'insertAfter(hd, ft)');
+                //Assert.areEqual(hd, ft.nextSibling, 'insertAfter(hd, ft)');
+            }
+        })); 
+        tool.TestRunner.add(suite);
+
+        if (parent && parent != window) {
+            tool.TestManager.load();
+        } else {
+            tool.TestRunner.run();
+        }
+
+});
+</script>
+</body>
+</html>

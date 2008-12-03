@@ -1,7 +1,10 @@
 YUI.add('slider', function(Y) {
 
 /**
- * @class Slider
+ * Create a sliding value range input visualized as a draggable thumb on a
+ * background element.
+ * 
+ * @module slider
  */
 
 var SLIDER = 'slider',
@@ -51,14 +54,38 @@ var SLIDER = 'slider',
     ceil     = M.ceil,
     abs      = M.abs;
 
+/**
+ * Create a slider to represent an integer value between a given minimum and
+ * maximum.
+ *
+ * @class Slider
+ * @param config {Object} Configuration object
+ * @constructor
+ */
 function Slider() {
     Slider.superclass.constructor.apply(this,arguments);
 }
 
 Y.mix(Slider, {
 
+    /**
+     * The identity of the widget.
+     *
+     * @property Slider.NAME
+     * @type String
+     * @static
+     */
     NAME : SLIDER,
 
+    /**
+     * Object property names used for respective X and Y axis Sliders (e.g.
+     * &quot;left&quot; vs. &quot;top&quot; for placing the thumb according to
+     * its representative value).
+     *
+     * @property Slider.AXIS_KEYS
+     * @type Object
+     * @static
+     */
     AXIS_KEYS : {
         x : {
             offsetEdge    : 'left',
@@ -78,13 +105,41 @@ Y.mix(Slider, {
         }
     },
 
+    /**
+     * Static Object hash used to capture existing markup for progressive
+     * enhancement.  Keys correspond to config attribute names and values
+     * are selectors used to inspect the contentBox for an existing node
+     * structure.
+     *
+     * @property Slider.HTML_PARSER
+     * @Type Object
+     * @static
+     */
     HTML_PARSER : {
         rail       : DOT + C_RAIL,
         thumb      : DOT + C_THUMB,
         thumbImage : DOT + C_THUMB_IMAGE
     },
 
+    /**
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property Slider.ATTRS
+     * @Type Object
+     * @static
+     */
     ATTRS : {
+
+        /**
+         * Axis upon which the Slider's thumb moves.  &quot;x&quot; for
+         * horizontal, &quot;y&quot; for vertical.
+         *
+         * @attribute axis
+         * @type String
+         * @default &quot;x&quot;
+         * @writeOnce
+         */
         axis : {
             value : 'x',
             writeOnce : true,
@@ -96,6 +151,14 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * Integer value associated with the left or top terminus of the
+         * Slider's rail, depending on the configured axis.
+         *
+         * @attribute min
+         * @type Number
+         * @default 0
+         */
         min : {
             value : 0,
             validator : function (v) {
@@ -103,6 +166,14 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * Integer value associated with the right or bottom terminus of the
+         * Slider's rail, depending on the configured axis.
+         *
+         * @attribute max
+         * @type Number
+         * @default 100
+         */
         max : {
             value : 100,
             validator : function (v) {
@@ -110,8 +181,16 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * The current value of the Slider.  This value is interpretted into a
+         * position for the thumb along the Slider's rail.
+         *
+         * @attribute value
+         * @type Number
+         * @default 0
+         */
         value : {
-            value : null,
+            value : 0,
             validator : function (v) {
                 return this._validateNewValue(v);
             },
@@ -120,6 +199,15 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * The Node representing the Slider's rail, usually visualized as a
+         * bar of some sort using a background image, along which the thumb
+         * moves.  This Node contains the thumb Node.
+         *
+         * @attribute rail
+         * @type Node
+         * @default null
+         */
         rail : {
             value : null,
             validator : function (v) {
@@ -130,6 +218,21 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * The Node representing the Slider's thumb, usually visualized as a
+         * pointer using a contained image Node (see thumbImage).  The current
+         * value of the Slider is calculated from the centerpoint of this
+         * Node in relation to the rail Node.  If provided, the thumbImage
+         * Node is contained within this Node.
+         *
+         * If no thumbImage is provided and the Node passed as the thumb is an
+         * <code>img</code> element, the assigned Node will be allocated to the
+         * thumbImage and the thumb container defaulted.
+         *
+         * @attribute thumb
+         * @type Node
+         * @default null
+         */
         thumb : {
             value : null,
             validator : function (v) {
@@ -140,6 +243,24 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * The Node representing the image element to use for the Slider's
+         * thumb.
+         *
+         * Alternately, an image URL can be passed and an <code>img</code>
+         * Node will be generated accordingly.
+         *
+         * If no thumbImage is provided and the Node passed as the thumb is an
+         * <code>img</code> element, the assigned Node will be allocated to the
+         * thumbImage and the thumb container defaulted.
+         *
+         * If thumbImage is provided but its URL resolves to a 404, a default
+         * style will be applied to maintain basic functionality.
+         *
+         * @attribute thumbImage
+         * @type Node|String
+         * @default null
+         */
         thumbImage : {
             value : null,
             validator : function (v) {
@@ -150,6 +271,18 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * The width or height of the rail element representing the physical
+         * space along which the thumb can move.  CSS size values (e.g. '30em')
+         * accepted but converted to pixels during render.
+         *
+         * Alternately, but not recommended, this attribute can be left
+         * unassigned in favor of specifying height or width.
+         *
+         * @attribute railSize
+         * @type String
+         * @default '0'
+         */
         railSize : {
             value : '0',
             validator : function (v) {
@@ -157,6 +290,14 @@ Y.mix(Slider, {
             }
         },
 
+        /**
+         * Boolean indicating whether clicking and dragging on the rail will
+         * trigger thumb movement.
+         *
+         * @attribute railEnabled
+         * @type @Boolean
+         * @default true
+         */
         railEnabled : {
             value : true,
             validator : isBoolean
@@ -166,20 +307,89 @@ Y.mix(Slider, {
 
 Y.extend(Slider, Y.Widget, {
 
+    /**
+     * Collection of object property names from the appropriate hash set in
+     * Slider.AXIS_KEYS.
+     *
+     * @property _key
+     * @type Object
+     * @protected
+     */
     _key : null,
 
+    /**
+     * Factor used to translate positional coordinates (e.g. left or top) to
+     * the Slider's value.
+     *
+     * @property _factor
+     * @type Number
+     * @protected
+     */
     _factor : 1,
 
+    /**
+     * Pixel dimension of the rail Node's width for X axis Sliders or height
+     * for Y axis Sliders.  Used with _factor to calculate positional
+     * coordinates for the thumb.
+     *
+     * @property _railSize
+     * @type Number
+     * @protected
+     */
     _railSize : null,
 
+    /**
+     * Pixel dimension of the thumb Node's width for X axis Sliders or height
+     * for Y axis Sliders.  Used with _factor to calculate positional
+     * coordinates for the thumb.
+     *
+     * @property _thumbSize
+     * @type Number
+     * @protected
+     */
     _thumbSize : null,
 
+    /**
+     * Pixel offset of the point in the thumb element from its top/left edge
+     * to where the value calculation should take place.  By default, this is
+     * calculated to half the width of the thumb, causing the value to be
+     * marked from the center of the thumb.
+     *
+     * @property _thumbOffset
+     * @type Number
+     * @protected
+     */
     _thumbOffset : 0,
 
+    /**
+     * Object returned from temporary subscription to disabledChange event to
+     * defer setting the disabled state while Slider is loading the thumb
+     * image.
+     *
+     * @property _stall
+     * @type Object
+     * @protected
+     */
     _stall : false,
 
+    /**
+     * Deferred value for the disabled attribute when stalled (see _stall
+     * property).
+     *
+     * @property _disabled
+     * @type Boolean
+     * @protected
+     */
     _disabled : false,
 
+    /**
+     * Construction logic executed durint Slider instantiation. Subscribe to
+     * after events for min, max, and railSize.  Publish custom events
+     * including slideStart and slideEnd.
+     *
+     * @method initializer
+     * @protected
+     */
     initializer : function () {
         this._key = Slider.AXIS_KEYS[this.get('axis')];
 
@@ -195,11 +405,23 @@ Y.extend(Slider, Y.Widget, {
         this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
     },
 
+    /**
+     * Create the DOM structure for the Slider.  Calls _initRail and _initThumb.
+     *
+     * @method renderUI
+     * @protected
+     */
     renderUI : function () {
         this._initRail();
         this._initThumb();
     },
 
+    /**
+     * Creates the rail element if not provided or discovered via HTML_PARSER.
+     *
+     * @method _initRail
+     * @protected
+     */
     _initRail : function () {
         var cb   = this.get(CONTENT_BOX),
             rail = this.get(RAIL);
@@ -218,6 +440,18 @@ Y.extend(Slider, Y.Widget, {
         rail.addClass(this.getClassName(RAIL,this.get('axis')));
     },
 
+    /**
+     * Creates the thumb element (not image) if not provided or discovered via
+     * HTML_PARSER.  If thumb is present and an <code>img</code> element
+     * <em>and</em> no thumbImage provided, reassigns the thumb element to the
+     * thumbImage and defaults the thumb element as a div.
+     *
+     * Makes sure the thumb is a child of the rail element and calls
+     * _initThumbImage if thumbImage is provided.
+     *
+     * @method _initThumb
+     * @protected
+     */
     _initThumb : function () {
         var rail    = this.get(RAIL),
             thumb   = this.get(THUMB);
@@ -248,6 +482,12 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Ensures the thumbImage is a child of the thumb element.
+     *
+     * @method _initThumbImage
+     * @protected
+     */
     _initThumbImage : function () {
         var thumb = this.get(THUMB),
             img   = this.get(THUMB_IMAGE);
@@ -261,6 +501,13 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Calls _bindThumbDD to create the Y.DD instance used to handle the thumb
+     * movement and binds Slider interaction to the configured value model.
+     *
+     * @method bindUI
+     * @protected
+     */
     bindUI : function () {
         this.publish(THUMB_DRAG, {defaultFn: this._defUpdateValueFromDD});
 
@@ -268,9 +515,15 @@ Y.extend(Slider, Y.Widget, {
 
         this.after('valueChange',      this._afterValueChange);
         this.after('thumbImageChange', this._afterThumbImageChange);
-        this.after(DISABLED_CHANGE,   this._afterDisabledChange);
+        this.after(DISABLED_CHANGE,    this._afterDisabledChange);
     },
 
+    /**
+     * Creates the Y.DD instance used to handle the thumb interaction.
+     * 
+     * @method _bindThumbDD
+     * @protected
+     */
     _bindThumbDD : function () {
         var ddConf = {
                 node           : this.get(THUMB),
@@ -288,12 +541,25 @@ Y.extend(Slider, Y.Widget, {
         this._initRailDD();
     },
 
+    /**
+     * Subscribes to the rail Node's mousedown event to actuate the thumb when
+     * backgroundEnabled is true.
+     *
+     * @method _initRailDD
+     * @protected
+     */
     _initRailDD : function () {
         this.get(RAIL).on('mousedown',Y.bind(this._handleRailMouseDown,this));
     },
 
-    // Parrot most of dd's onMouseDown behavior and manually move the
-    // thumb node to the click location.  DD will take over from there.
+    /**
+     * Moves the thumb to the mousedown position and hands control over to DD
+     * if the Slider is not disabled and railEnabled is true.
+     *
+     * @method _handleRailMouseDown
+     * @param e {Event} Mousedown event facade
+     * @protected
+     */
     _handleRailMouseDown : function (e) {
         if (this.get('railEnabled') && !this.get(DISABLED)) {
             var dd      = this._dd,
@@ -324,17 +590,35 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Synchronizes the DOM state with the attribute settings (most notably
+     * railSize and value).  If thumbImage is provided and is still loading,
+     * sync is delayed until it is complete, since the image's dimensions are
+     * taken into consideration for calculations.
+     *
+     * @method syncUI
+     */
     syncUI : function () {
         var img = this.get(THUMB_IMAGE);
 
         if (this._isImageLoading(img)) {
+            Y.log('Thumb image loading. Scheduling sync.','info','slider');
             // Schedule the sync for when the image loads/errors
             this._scheduleSync();
         } else {
-            this._ready(img);
+            Y.log('No thumb image, or image already loaded. Syncing immediately.','info','slider');
+            this._ready(img,!this._isImageLoaded(img));
         }
     },
 
+    /**
+     * Binds to the load and error event on the thumbImage to sync the DOM
+     * state with the attribute settings when the image resource is resolved.
+     * The Slider is disabled while it waits.
+     *
+     * @method _scheduleSync
+     * @protected
+     */
     _scheduleSync : function () {
         var img, handler;
 
@@ -351,28 +635,58 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Method subscribed to the disabledChange event when thumbImage is being
+     * loaded.  Prevents manually enabling the Slider until the thumbImage
+     * resource is resolved.  Intended value is stored during load and set upon
+     * completion.
+     *
+     * @method _stallDisabledChange
+     * @param e {Event} Change event for the disabled attribute
+     * @protected
+     */
     _stallDisabledChange : function (e) {
         this._disabled = e.newVal;
         e.preventDefault();
     },
 
+    /**
+     * Event handler assigned to the thumbImage's load and error event if it
+     * was not loaded prior to instantiation.  Calls _ready method and restores
+     * the Slider's disabled attribute.
+     *
+     * @method _imageLoaded
+     * @param e {Event} load or error event fired by the thumbImage
+     * @param img {Node} The thumbImage Node
+     * @protected
+     */
     _imageLoaded : function (e,img) {
+        var error = (e.type.toLowerCase().indexOf('error') > -1);
+
         if (this._stall) {
             this._stall.detach();
         }
 
+        Y.log('Thumb image '+e.type+'ed.  Syncing','info','slider');
+
         this._stall = false;
 
-        this._ready(img);
+        this._ready(img,error);
 
         this.set(DISABLED,this._disabled);
     },
 
-    _ready : function (img) {
-        // _isImageLoaded may return false because this is executed from the
-        // image's onerror handler as well.
-        var method = img && this._isImageLoaded(img) ?
-                        'removeClass' : 'addClass';
+    /**
+     * Fires the internal sync event, which barring preventDefault should
+     * execute _defSyncUI.
+     *
+     * @method _ready
+     * @param img {Node} the thumbImage Node
+     * @param error {Boolean} Indicates an error while loading the thumbImage
+     * @protected
+     */
+    _ready : function (img,error) {
+        var method = error ? 'addClass' : 'removeClass';
 
         // If the thumb image url results in 404, assign a class to provide
         // default thumb dimensions/UI
@@ -381,6 +695,14 @@ Y.extend(Slider, Y.Widget, {
         this.fire(SYNC);
     },
 
+    /**
+     * The default synchronization behavior, updating the Slider's DOM state to
+     * match the current attribute values.
+     *
+     * @method _defSyncUI
+     * @param e {Event} Internal sync event
+     * @protected
+     */
     _defSyncUI : function (e) {
         this._uiSetThumbSize();
 
@@ -394,9 +716,18 @@ Y.extend(Slider, Y.Widget, {
 
         this._setFactor();
 
+        Y.log('placing thumb for value '+this.get(VALUE),'info','slider');
+
         this.set(VALUE,this.get(VALUE));
     },
 
+    /**
+     * Captures the thumbs pixel height or width, depending on the Slider's
+     * axis, for use in positioning calculations.
+     *
+     * @method _uiSetThumbSize
+     * @protected
+     */
     _uiSetThumbSize : function () {
         var thumb = this.get(THUMB),
             dim   = this._key.dim,
@@ -406,17 +737,37 @@ Y.extend(Slider, Y.Widget, {
         // offsetWidth fails in hidden containers
         size = parseInt(thumb.getComputedStyle(dim),10);
 
+        Y.log('thumb '+dim+': '+size+'px','info','slider');
+
         if (img && this._isImageLoaded(img)) {
-            size = max(img.get(dim), size);
+            Y.log('using thumbImage '+dim+' ('+img.get(dim)+') for _thumbSize','info','slider');
+
+            size = img.get(dim);
         }
 
         this._thumbSize = size;
     },
 
+    /**
+     * Sets the _thumbOffset property for use in establishing the point in the
+     * thumb that should align to the rail position representing the calculated
+     * value.
+     *
+     * @method _setThumbOffset
+     * @protected
+     */
     _setThumbOffset : function () {
         this._thumbOffset = floor(this._thumbSize / 2);
+        Y.log('_thumbOffset calculated to '+this._thumbOffset+'px','info','slider');
     },
 
+    /**
+     * Stores the rail Node's pixel height or width, depending on the Slider's
+     * axis, for use in calculating thumb position from the value.
+     *
+     * @method _uiSetRailSize
+     * @protected
+     */
     _uiSetRailSize : function () {
         var rail  = this.get(RAIL),
             thumb = this.get(THUMB),
@@ -426,10 +777,15 @@ Y.extend(Slider, Y.Widget, {
             setxy = false;
 
         if (parseInt(size,10)) {
+            Y.log('railSize provided: '+size,'info','slider');
+
             // Convert to pixels
             rail.setStyle(dim,size);
             size = parseInt(rail.getComputedStyle(dim),10);
+
+            Y.log('pixel '+dim+' of railSize: '+size+'px', 'info', 'slider');
         } else {
+            Y.log('defaulting railSize from max of computed style and configured '+dim+' attribute value', 'info', 'slider');
             // Default from height or width (axis respective), or dims assigned
             // via css to the rail or thumb, whichever is largest.
             // Dear implementers, please use railSize, not height/width to
@@ -445,7 +801,11 @@ Y.extend(Slider, Y.Widget, {
                     parseInt(thumb.getComputedStyle(dim),10),
                     parseInt(rail.getComputedStyle(dim),10));
 
+            Y.log('pixel '+dim+' of rail: '+size+'px', 'info', 'slider');
+
             if (img && this._isImageLoaded(img)) {
+                Y.log('using max of thumbImage '+dim+' ('+img.get(dim)+' and '+size+' for railSize', 'info', 'slider');
+
                 size = max(img.get(dim),size);
             }
         }
@@ -466,11 +826,27 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Store the current XY position of the rail Node on the page.  For use in calculating thumb position from value.
+     *
+     * @method _setRailOffsetXY
+     * @protected
+     */
     _setRailOffsetXY : function () {
         this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
                          this._thumbOffset;
     },
 
+    /**
+     * Assigns the gutter attribute to the DD instance to allow the thumb to
+     * overshoot the edges of the rail element up to the _thumbOffset.  By
+     * default, this allows the thumb's center point to align with the far left
+     * or top edge of the rail element to represent the min value and the far
+     * right or bottom edge for the max.
+    *
+    * @method _setDDGutter
+    * @protected
+    */
     _setDDGutter : function () {
         var gutter = [0,0,0,0],
             i      = this._key.xyIndex,
@@ -486,65 +862,175 @@ Y.extend(Slider, Y.Widget, {
             gutter[1] = end;
         }
             
+        Y.log('setting DD gutter '+gutter.join(' '),'info','slider');
+
         this._dd.set('gutter', gutter.join(' '));
     },
 
+    /**
+     * Calculates the multiplier used to translate the value into a thumb
+     * position.
+     *
+     * @method _setFactor
+     * @protected
+     */
     _setFactor : function () {
         this._factor = this._railSize ?
             (this.get(MAX) - this.get(MIN)) / this._railSize :
             1;
+        Y.log('_factor set to '+this._factor,'info','slider');
     },
 
+    /**
+     * Convenience method for accessing the current value of the Slider.
+     * Equivalent to <code>slider.get(&quot;value&quot;)</code>.
+     *
+     * @method getValue
+     * @return {Number} the value
+     */
     getValue : function () {
         return this.get(VALUE);
     },
 
+    /**
+     * Convenience method for updating the current value of the Slider.
+     * Equivalent to <code>slider.set(&quot;value&quot;,val)</code>.
+     *
+     * @method setValue
+     * @param val {Number} the new value
+     */
     setValue : function (val) {
         this.set(VALUE,val);
     },
 
+    /**
+     * Validator applied to new values for the axis attribute. Only
+     * &quot;x&quot; and &quot;y&quot; are permitted.
+     *
+     * @method _validateNewAxis
+     * @param v {String} proposed value for the axis attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewAxis : function (v) {
         return isString(v) &&
                v.length === 1 && 'xy'.indexOf(v.toLowerCase()) > -1;
     },
 
+    /**
+     * Validator applied to the min attribute. Only numbers are allowed.
+     *
+     * @method _validateNewMin
+     * @param v {String} proposed value for the min attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewMin : function (v) {
         return isNumber(v);
     },
 
+    /**
+     * Validator applied to the max attribute. Only numbers are allowed.
+     *
+     * @method _validateNewMax
+     * @param v {String} proposed value for the max attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewMax : function (v) {
         return isNumber(v);
     },
 
+    /**
+     * Validator applied to the value attribute. Only numbers between the min
+     * and max are allowed.
+     *
+     * @method _validateNewValue
+     * @param v {String} proposed value for the value attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewValue : function (v) {
         var min    = this.get(MIN),
             max    = this.get(MAX);
 
-        return !this.get(DISABLED) && isNumber(v) &&
+        return isNumber(v) &&
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
+    /**
+     * Validator applied to the rail attribute. Only allows values through
+     * before the Slider is rendered.
+     *
+     * @method _validateNewRail
+     * @param v {String} proposed value for the rail attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewRail : function (v) {
         return !this.get(RENDERED) || v;
     },
 
+    /**
+     * Validator applied to the thumb attribute. Only allows values through
+     * before the Slider is rendered.
+     *
+     * @method _validateNewThumb
+     * @param v {String} proposed value for the thumb attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewThumb : function (v) {
         return !this.get(RENDERED) || v;
     },
 
+    /**
+     * Validator applied to the thumbImage attribute. Only allows values through
+     * before the Slider is rendered.
+     *
+     * @method _validateNewThumbImage
+     * @param v {String} proposed value for the thumbImage attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewThumbImage : function (v) {
         return !this.get(RENDERED) || v;
     },
 
+    /**
+     * Validator applied to the railSize attribute. Only css size values (e.g.
+     * '200px' are allowed.
+     *
+     * @method _validateNewRailSize
+     * @param v {String} proposed value for the railSize attribute
+     * @return Boolean
+     * @protected
+     */
     _validateNewRailSize : function (v) {
         return isString(v) &&
             (v === '0' || /^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/.test(v));
     },
 
+    /**
+     * Setter applied to the input when updating the railSize attribute.
+     *
+     * @method _setAxisFn
+     * @param v {String} proposed value for the axis attribute
+     * @return {String} lowercased first character of the input string
+     * @protected
+     */
     _setAxisFn : function (v) {
-        return v.toLowerCase();
+        return isString(v) ? v.toLowerCase().charAt(0) : null;
     },
 
+    /**
+     * Setter applied to the input when updating the value attribute.
+     *
+     * @method _setValueFn
+     * @param v {Number} proposed new value for the Slider
+     * @return {Number} rounded value or configured min if non-number input
+     * @protected
+     */
     _setValueFn : function (v) {
         if (!isNumber(v)) { 
             v = this.get(MIN);
@@ -553,14 +1039,47 @@ Y.extend(Slider, Y.Widget, {
         return round(v);
     },
 
+    /**
+     * Setter applied to the input when updating the rail attribute.  Input can
+     * be a Node, raw HTMLElement, or a selector string to locate it.
+     *
+     * @method _setRailFn
+     * @param v {Node|String|HTMLElement} The rail element Node or selector
+     * @return {Node} The Node if found.  Otherwise null.
+     * @protected
+     */
     _setRailFn : function (v) {
         return v ? Y.get(v) : null;
     },
 
+    /**
+     * Setter applied to the input when updating the thumb attribute.  Input can
+     * be a Node, raw HTMLElement, or a selector string to locate it.
+     *
+     * @method _setThumbFn
+     * @param v {Node|String|HTMLElement} The thumb element Node or selector
+     * @return {Node} The Node if found.  Otherwise null.
+     * @protected
+     */
     _setThumbFn : function (v) {
         return v ? Y.get(v) : null;
     },
 
+    /**
+     * Setter applied to the input when updating the thumbImage attribute.
+     * Input can be a Node, raw HTMLElement, selector string to locate it, or
+     * the URL for an image resource.
+     *
+     * String input will be treated as a selector.  If no element is found using
+     * the selector, an <code>img</code> Node will be created with the string
+     * used as the <code>src</code> attribute.
+     *
+     * @method _setThumbImageFn
+     * @param v {Node|String|HTMLElement} The thumbImage element Node, selector,
+     *          or image URL
+     * @return {Node} The Node if found or created.  Otherwise null.
+     * @protected
+     */
     _setThumbImageFn : function (v) {
         return v ? Y.get(v) ||
                 Y.Node.create('<img src="'+v+'" alt="Slider thumb">') :
@@ -570,21 +1089,46 @@ Y.extend(Slider, Y.Widget, {
 
 
 
+    /**
+     * Caches the current page position of the rail element and fires the
+     * slideStart event in response to the DD's drag:start.
+     *
+     * @method _onDDStartDrag
+     * @param e {Event} the DD instance's drag:start custom event
+     * @protected
+     */
     _onDDStartDrag : function (e) {
+        Y.log('slide start','info','slider');
         this._setRailOffsetXY();
         this.fire(SLIDE_START,{ ddEvent: e });
     },
 
+    /**
+     * Fires the thumbDrag event to queue Slider value update.
+     *
+     * @method _onDDDrag
+     * @param e {Event} the DD instance's drag:drag custom event
+     * @protected
+     */
     _onDDDrag : function (e) {
+        Y.log('thumb drag','info','slider');
         this.fire(THUMB_DRAG, { ddEvent: e });
     },
 
+    /**
+     * The default value update behavior in response to Slider thumb
+     * interaction.  Calculates the value using stored offsets, the _factor
+     * multiplier and the min value.
+     *
+     * @method _defUpdateValueFromDD
+     * @param e {Event} the internal thumbDrag event
+     * @protected
+     */
     _defUpdateValueFromDD : function (e) {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
-        Y.log("Raw value: "+val+" Current value: "+before+
-              "Factored value: "+round(this.get(MIN) + (val * this._factor)));
+        Y.log('setting value from thumb drag: before('+before+') raw('+val+') factored('+round(this.get(MIN) + (val * this._factor))+')', 'info','slider');
 
         val = round(this.get(MIN) + (val * this._factor));
 
@@ -593,23 +1137,51 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Fires the slideEnd event.
+     *
+     * @method _onDDEndDrag
+     * @param e {Event} the DD instance's drag:end custom event
+     * @protected
+     */
     _onDDEndDrag : function (e) {
+        Y.log('slide end','info','slider');
         this.fire(SLIDE_END,{ ddEvent: e });
     },
 
 
 
 
+    /**
+     * The default behavior for calculating the placement of the thumb in
+     * response to a value attribute update.  This is performed in response
+     * to firing the internal valueSet event.
+     *
+     * @method _defSetThumbPosition
+     * @param e {Event} the valueSet custom event
+     * @protected
+     */
     _defSetThumbPosition : function (e) {
         var min = this.get(MIN),
             max = this.get(MAX),
             v   = e.changeEv.newVal;
+
+        Y.log('setting thumb position from value attribute update ('+v+')', 'info', 'slider');
 
         v = round(((v - min) / (max - min)) * this._railSize);
 
         this._uiPositionThumb(v);
     },
 
+    /**
+     * Places the thumb at a particular X or Y location based on the configured
+     * axis.
+     *
+     * @method _uiPositionThumb
+     * @param xy {Number} the desired left or top pixel position of the thumb
+     *           in relation to the rail Node.
+     * @protected
+     */
     _uiPositionThumb : function (xy) {
         var dd  = this._dd;
 
@@ -618,17 +1190,35 @@ Y.extend(Slider, Y.Widget, {
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
-        dd._moveNode([xy,xy]);
+        dd._moveNode([xy,xy],true);
     },
 
 
 
+    /**
+     * Fires the internal valueSet event in response to a change in the value
+     * attribute.
+     *
+     * @method _afterValueChange
+     * @param e {Event} valueChange custom event
+     * @protected
+     */
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
+            Y.log('firing valueSet to position thumb', 'info', 'slider');
+
             this.fire(VALUE_SET,{ changeEv: e });
         }
     },
 
+    /**
+     * Replaces the thumb Node in response to a change in the thumb attribute.
+     * This only has effect before the Slider is rendered.
+     *
+     * @method _afterThumbChange
+     * @param e {Event} thumbChange custom event
+     * @protected
+     */
     _afterThumbChange : function (e) {
         var thumb;
 
@@ -647,6 +1237,15 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Sets or replaces the thumb's contained <code>img</code> Node with the
+     * new Node in response to a change in the thumbImage attribute.  This only
+     * has effect before the Slider is rendered.
+     *
+     * @method _afterThumbImageChange
+     * @param e {Event} thumbImageChange custom event
+     * @protected
+     */
     _afterThumbImageChange : function (e) {
         if (this.get(RENDERED)) {
             if (e.prevValue) {
@@ -659,42 +1258,100 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    /**
+     * Calls syncUI to update the Slider UI in response to change in the min
+     * attribute.
+     *
+     * @method _afterMinChange
+     * @param e {Event} minChange custom event
+     * @protected
+     */
     _afterMinChange : function (e) {
         this._refresh(e);
     },
 
+    /**
+     * Calls syncUI to update the Slider UI in response to change in the max
+     * attribute.
+     *
+     * @method _afterMaxChange
+     * @param e {Event} maxChange custom event
+     * @protected
+     */
     _afterMaxChange : function (e) {
         this._refresh(e);
     },
 
+    /**
+     * Calls syncUI to update the Slider UI in response to change in the
+     * railSize attribute.
+     *
+     * @method _afterRailSizeChange
+     * @param e {Event} railSizeChange custom event
+     * @protected
+     */
     _afterRailSizeChange : function (e) {
         this._refresh(e);
     },
 
+    /**
+     * Locks or unlocks the DD instance in response to a change in the disabled
+     * attribute.
+     *
+     * @method _afterDisabledChange
+     * @param e {Event} disabledChange custom event
+     * @protected
+     */
     _afterDisabledChange : function (e) {
         if (this._dd) {
             this._dd.set('lock',e.newVal);
         }
     },
 
+    /**
+     * Common handler to call syncUI in response to change events that occurred
+     * after the Slider is rendered.
+     *
+     * @method _refresh
+     * @param e {Event} An attribute change event
+     * @protected
+     */
     _refresh : function (e) {
         if (e.newVal !== e.prevVal && this.get(RENDERED)) {
             this.syncUI();
         }
     },
 
-    // Used to determine if there will is a current or pending request for the
-    // image resource.
+    /**
+     * Used to determine if there is a current or pending request for the
+     * thumbImage resource.
+     *
+     * @method _isImageLoading
+     * @param img {Node} <code>img</code> Node
+     * @return Boolean
+     * @protected
+     */
     _isImageLoading : function (img) {
         return img && !img.get(COMPLETE);
     },
 
-    // Used to determine if the image resource arrived successfully or there was
-    // an error.
-    // img load error detectable by:
-    // !img.complete in IE
-    // img.complete && img.naturalWidth == 0 in FF, Saf
-    // img.complete && img.width == 0 in Opera
+    /**
+     * Used to determine if the image resource loaded successfully or there was
+     * an error.
+     *
+     * NOTES:
+     * <ul>
+     *    <li>img load error fired xbrowser for image resources not yet resolved</li>
+     *    <li>img.complete reports false in IE for images not yet loaded as well as images that failed to load</li>
+     *    <li>img.complete true && img.naturalWidth == 0 in FF and Safari indicate image failed to load</li>
+     *    <li>img.complete && img.width == 0 in Opera indicates image failed to load</li>
+     * </ul>
+     *
+     * @method _isImageLoaded
+     * @param img {Node} <code>img</code> Node
+     * @return Boolean
+     * @protected
+     */
     _isImageLoaded : function (img) {
         if (img) {
             var w = img.get('naturalWidth');

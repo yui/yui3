@@ -56,4 +56,10 @@
         padding:5px;
     }
 
+    #widget-extend-example .hint {
+        margin-top:10px;
+        font-size:85%;
+        color:#00a;
+    }
+
 </style>

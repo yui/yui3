@@ -1,0 +1,524 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Node Test Suite</title>
+
+<link type="text/css" rel="stylesheet" href="/yui/2.x/build/logger/assets/logger.css">
+<link type="text/css" rel="stylesheet" href="/yui/2.x/build/yuitest/assets/testlogger.css">     
+
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/event/event.js"></script>
+<script type="text/javascript" src="../build/oop/oop.js"></script>
+<script type="text/javascript" src="../build/dom/dom.js"></script>
+<script type="text/javascript" src="../build/node/node-debug.js"></script>
+
+<script type="text/javascript" src="/yui/2.x/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/event/event.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/logger/logger-min.js"></script>
+<script type="text/javascript" src="/yui/2.x/build/yuitest/yuitest.js"></script>
+
+<style type="text/css">
+body {
+    font:13px/1.22 arial;
+    width:1000px;
+}
+
+#doc {
+    min-height:200px;
+}
+
+#get-style {
+    background:#ccc;
+    float:left;
+    font-size:10px;
+    height:10em;
+    padding:15px 0;
+    width:200px;
+}
+
+.mask {
+    background:#ccc;
+    position:absolute;
+    top:0;
+    left:0;
+    overflow:hidden;
+}
+
+#test-xy {
+    background:green;
+    position:absolute;
+    height:10px;
+    width:10px;
+}
+
+#test-computed {
+    width:50%;
+    margin:auto;
+    padding:10px;
+    z-index: 2;
+}
+</style>
+
+<style type="text/css">
+
+</style>
+</head>
+<body class="yui-skin-sam">
+    <div id="test-append"></div>
+    <div id="test-xy"></div>
+    <div id="doc" class="doc-wrap">
+        <form id="test-form" class="test-class" action="#">
+            <input name="test-data1">
+        </form><div id="test-class">test class</div>
+        <div id="test-prop">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
+        <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
+        <div id="get-style">getStyle</div>
+        <div id="baz">baz</div>
+        text
+        <div id="test-extras">extras</div>
+        <div id="test-children">foo <span>bar</span> <strong>baz</strong> </div>
+    </div>
+    <div id="inline-style" style="color: green">inline style</div>
+    <div id="foo"></div>
+    <div id="test-computed">test computed style</div>
+    <form>
+        <select id="test-select" name="test-select">
+            <option>foo</option>
+            <option>bar</option>
+            <option>baz</option>
+        </select>
+    </form>
+    <div id="test-nodes"> <ul> <li>item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li>item 4</li>
+        </ul>
+        <ol>
+            <li>item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li>item 4</li>
+        </ol>
+    </div>
+
+<script type="text/javascript">
+YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
+    var tool = YAHOO.tool,
+    suite = new tool.TestSuite("yuisuite");
+
+    var Assert = YAHOO.util.Assert;
+    var ArrayAssert = YAHOO.util.ArrayAssert;
+    var logger = new tool.TestLogger(null, { height: '800px', fontSize: '100%' });
+
+    var handleClick = function(e) {
+        //alert('click');
+        e.currentTarget.detach('click', handleClick);
+    };
+
+    Y.Node.get('html').on('click', handleClick);
+
+    var byId = function(id) {
+        return document.getElementById(id);
+    };
+
+    var $ = Y.Selector.query;
+
+    alert(Y.get('body').get('winHeight'));
+    suite.add( new tool.TestCase({
+        name: 'Y.Node Instance',
+
+        test_get: function() {
+            var node = Y.get('#test-nodes'),
+                nodes = Y.all('#test-nodes *');
+
+            // return null 
+            Assert.isNull(Y.get(''), 'Y.get("")');
+            Assert.isNull(Y.all(''), 'Y.all("")');
+            Assert.isNull(Y.get(null), 'Y.get(null)');
+            Assert.isNull(Y.all(null), 'Y.all(null)');
+            Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');
+            Assert.isNull(Y.get('#fake-id'), 'Y.get("#fake-id") === null');
+            Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');
+            Assert.isNull(Y.all('#foo *'), 'Y.all("#foo *") === null');
+
+            // return 1 
+            Assert.areEqual(byId('test-nodes').id, Y.get('#test-nodes').get('id'), 'Y.get("#test-nodes")');
+            Assert.areEqual(byId('test-nodes'), Y.Node[Y.get('#test-nodes')._yuid]()[0], 'Y.get("#test-nodes")');
+            Assert.areEqual(byId('test-nodes'), Y.Node[Y.get('#test-nodes')._yuid]()[0], 'Y.get("#test-nodes")');
+            Assert.areEqual('test-nodes', Y.get('#test-nodes').get('id'), 'Y.get("#test-nodes").get("id")');
+            Assert.areEqual(node, Y.get('#test-nodes'), 'node === Y.get("#test-nodes")');
+
+            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[0],
+                    Y.Node[Y.get('#test-nodes li:first-child')._yuid]()[0], 'Y.get("#test-nodes")');
+
+            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
+                    Y.Node[Y.get('#test-nodes li:nth-child(2)')._yuid]()[0], 'Y.get("#test-nodes:nth-child(2)")');
+
+            // return more than 1
+            ArrayAssert.itemsAreEqual($('#test-select option'), Y.Node[Y.all('#test-select option')._yuid](), 'Y.get("#test-select option")');
+            Assert.areEqual(3, Y.all('#test-select option').size(), 'Y.get("#test-select option").size()');
+            Assert.areEqual(2, Y.all('form').size(), 'Y.get("form").size()');
+            Assert.areEqual('FORM', Y.all('form').item(1).get('tagName'), 'Y.get("form").item(1)');
+
+            Assert.areEqual(1, Y.all('.bar').size(), 'Y.get(".bar")');
+            Assert.areNotEqual(nodes, Y.all('#test-nodes *'), 'nodes === Y.all("#test-nodes")');
+            Assert.areEqual(nodes.size(), Y.all('#test-nodes *').size(), 'nodes.size() === Y.all("#test-nodes").size()'); 
+        },
+
+        test_each: function() {
+            var count = 0,
+                nodes = Y.all('#test-nodes *');
+
+            nodes.each(function(node) {
+                count++;
+            });
+
+            Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
+        },
+
+        test_getters: function() {
+            var id = 'test-nodes',
+                element = byId(id),
+                node = Y.get('#' + id),
+                nodes = Y.all('#' + id + ' *');
+
+
+            Assert.areEqual(null, node.get(''), 'node.get("") === null');
+            Assert.areEqual(null, node.get('fake'), 'node.get("fake") === null');
+            Assert.areEqual(null, node.get('nodeValue'), 'nodeValue === null');
+
+            Assert.areEqual('DIV', node.get('nodeName'), 'nodeName === "DIV"');
+            Assert.areEqual('UL', nodes.get('nodeName')[0], 'nodeName === "UL"');
+            Assert.areEqual('LI', nodes.get('nodeName')[nodes.size() - 1], 'nodeName === "UL"');
+
+            Assert.areEqual(element.firstChild.nextSibling.nodeName, node.get('firstChild').get('nextSibling').get('nodeName'), 'node.firstChild.nextSibling.nodeName"');
+            Assert.areEqual(element.lastChild.nodeName, node.get('lastChild').get('nodeName'), 'lastChild.nodeName"');
+            Assert.areEqual(element.lastChild.nodeName, node.get('lastChild.nodeName'), 'node.get("lastChild.nodeName")');
+            Assert.areEqual(element.lastChild.previousSibling.nodeName, node.get('lastChild').get('previousSibling').get('nodeName'), 'node.lastChild.previousSibling.nodeName');
+
+            Assert.areEqual(9, node.get('ownerDocument').get('nodeType'), 'node.ownerDocument.nodeType ===  9');
+
+            Assert.areEqual('test-nodes', nodes.get('parentNode')[0].get('id'), 'nodes.get(parentNode)[0].get("id") === test-nodes');
+            Assert.areEqual(element.firstChild.nodeType, node.get('firstChild').get('nodeType'), 'firstChild.get("nodeType")');
+            Assert.areEqual(element.offsetWidth, node.get('offsetWidth'), 'offsetWidth === node.offsetWidth');
+            Assert.areEqual(element.offsetParent.tagName, node.get('offsetParent').get('tagName'), 'offsetParent.tagName === offsetParent.tagName');
+
+            Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
+
+            ArrayAssert.itemsAreEqual($('#test-select option'),
+                    Y.Node[Y.get('#test-select').get('options')._yuid](),
+                    'Y.get("#test-select.get("options")');
+
+            Assert.areEqual('test', Y.get('#test-prop').get('firstChild.nextSibling.firstChild.nodeValue'),
+                    'node.get("firstChild.nextSibling.firstChild.nodeValue")');
+
+            Assert.areEqual(2, node.get('children').size(), 'get("children")');
+
+            Assert.areEqual(8, Y.all('#' + id + ' li').size(), 'Y.all("#test-nodes li.size()")');
+            Assert.areEqual(1, Y.get('#' + id + ' li').size(), 'Y.get("#test-nodes li.size()")');
+
+            
+            Assert.areEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('tagName').length, 'node.get("childNodes")');
+            ArrayAssert.itemsAreEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('length').length, "node.get('childNodes').get('length')");
+
+        },
+            
+        test_create: function() {
+            var id = 'test-nodes',
+                element = byId(id),
+                node = Y.get('#' + id);
+
+            Assert.areEqual('fresh', node.create('<div id="fresh">fresh</div>').get('id'), 'node.create from string)');
+
+        },
+
+        test_setter: function() {
+            var id = 'test-prop',
+                element = byId(id),
+                node = Y.get('#' + id),
+                nodes = Y.all('#test-nodes *');
+
+            var childNodes = Y.get('body').get('childNodes');
+            childNodes.set('title', 'foo bar');
+            Assert.isTrue(byId('test-nodes').title == 'foo bar', 'Y.get("body").get("childNodes").set("title")');
+
+            node.set('foo', 'foo');
+            Assert.isNull(node.get('foo'), 'node.get("foo")');
+
+            node.set('title', 'my title');
+            Assert.areEqual('my title', Y.Node[node._yuid]()[0].title, 'node.title)');
+            Assert.areEqual('my title', node.get('title'), 'node.set("title")');
+            Assert.areEqual('my title', node.item(0).get('title'), 'node.item(0).get("title")');
+
+            nodes.set('className', 'foo');
+            Assert.areEqual('foo', Y.Node[nodes._yuid]()[0].className, 'node.className');
+            Assert.areEqual('foo', nodes.get('className')[2], 'node.get("className")');
+            Assert.areEqual('foo', nodes.item(nodes.size() - 2).get('className'),
+                    'nodes.item(nodes.size - 2).get("className")');
+
+            Y.get('body > form').set('test-select.selectedIndex', 2);
+            Assert.areEqual(2, byId('test-select').selectedIndex,
+                    'Y.get("body > form").set("test-select.selectedIndex", 2)');
+        },
+
+        test_dom_methods: function() {
+            var id = 'test-prop';
+            var element = byId(id);
+            var parent = Y.Node.get(element.parentNode);
+            var node = Y.Node.get('#test-prop');
+
+            //Assert.isTrue(element === Y.get(node), 'element === Y.get(node)');
+            Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
+            var insertNode = document.createElement('div');
+            Y.stamp(insertNode);
+            insertNode.innerHTML = 'inserted node';
+            Y.get('body').appendChild(Y.get('div'));
+            Assert.isTrue(Y.get('body').get('lastChild').compareTo(Y.get('#test-append')), 'get("body").appendChild(Y.get("#test-append"))');
+            Assert.areEqual(byId('test-append'), Y.Node[Y.get('body').get('lastChild')._yuid]()[0], 'get("body").appendChild(Y.get([0]"#test-append"))');
+            Assert.areEqual('inserted node', node.appendChild(insertNode).get('innerHTML'), 'appendChild(element input)');
+            Assert.areEqual('inserted node', node.removeChild(insertNode).get('innerHTML'), 'removeChild(element input)');
+
+            Assert.areEqual('inserted node', node.appendChild(Y.get(insertNode)).get('innerHTML'), 'appendChild(Node input)');
+            Assert.areEqual('inserted node', node.removeChild(Y.get(insertNode)).get('innerHTML'), 'removeChild(Node input)');
+
+            Assert.areEqual(1, node.cloneNode().get('nodeType'), 'cloneNode()');
+            Assert.isFalse(node === node.cloneNode(), 'node === node.cloneNode()');
+
+            // TODO: test deep clone with bound descendant
+            Assert.isTrue(node.get('childNodes').size() === node.cloneNode(true).get('childNodes').size(), 'node.get("childNodes").size() === node.cloneNode(true).get("childNodes").size()');
+
+            Assert.isTrue(node.hasChildNodes(), 'hasChildNodes()');
+
+            Assert.isTrue(node.compareTo(node), 'compareTo(node)');
+            Assert.isTrue(node.compareTo(Y.Node.get(node)), 'compareTo(new Y.Node)');
+
+            Assert.isFalse(node.create('<p>foo</p>').inDoc(), 'node.inDoc()');
+
+            Assert.isTrue(node.contains(byId('test-contains')), 'contains()');
+            Assert.isTrue(node.contains(node), 'contains() self');
+            Assert.isTrue(node.contains(element), 'contains() self');
+        
+            Assert.isFalse(node.contains(document.getElementsByTagName('div')), 'contains() false positive for collection');
+
+            Assert.areEqual('doc', node.ancestor(function(el) {
+                return el.get('id') === 'doc';
+            }).get('id'), 'ancestor');
+
+            Assert.isNull(node.ancestor(function(el) {
+                return el.hasAttribute('foo');
+            }), 'ancestor');
+            Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
+
+            Assert.isTrue(node.inDoc(), 'node.inDoc()');
+
+            Assert.areEqual(byId('test-contains'), Y.Node[node.byId('test-contains')._yuid]()[0], 'node.byId("test-contains")');
+            Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
+            Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
+            Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
+
+            node.removeAttribute('title');
+            Assert.isFalse(node.hasAttribute('title'), 'node.hasAttribute("title")');
+        },
+
+        test_fragment: function() {
+            var frag = Y.get('document').invoke('createDocumentFragment'),
+                element = byId('test-append');
+
+            frag.appendChild(element);
+            Assert.areEqual(element, Y.Node[frag.get('firstChild')._yuid]()[0], 'frag.appendChild()');
+            Y.get('body').appendChild(frag);
+        },
+
+        test_screen: function() {
+            var id = 'test-prop';
+            var element = byId(id);
+            var parent = Y.Node.get(element.parentNode);
+            var node = Y.Node.get(element);
+
+            var newNode = Y.Node.create('<div id="brand-new-foo">foo</div>');
+            Assert.areEqual('brand-new-foo', newNode.get('id'), 'Y.Node.create("<div></div>")');
+            Assert.areEqual(document.documentElement.scrollLeft, newNode.get('docScrollX'), 'newNode.get("docScrollX")');
+            Assert.areEqual(document.documentElement.scrollTop, node.get('docScrollY'), 'node.get("docScrollY")');
+
+            node.setXY([100, 100]);
+            ArrayAssert.itemsAreEqual([100, 100], node.getXY(), 'Node.getXY("foo", "bar")');
+        },
+
+        test_region: function() {
+            Assert.isTrue(Y.DOM.inRegion(byId('baz'), byId('doc')), 'DOM.inRegion(domNode, domNode)');
+            Assert.isTrue(Y.Node.get('#get-style').inRegion(byId('doc')), 'node.inRegion(domNode)');
+            Assert.isTrue(Y.Node.get('#get-style').inRegion(Y.Node.get('#doc')), 'node.inRegion(Node)');
+            ArrayAssert.itemsAreEqual(Y.DOM.region(Y.DOM.byId('doc')), Y.Node.get('#doc').get('region'), 'node.get("region")');
+        },
+
+        test_classes: function() {
+            var id = 'test-class';
+            var element = byId(id);
+            var parent = Y.Node.get(element.parentNode);
+            var node = Y.Node.get(element);
+
+            Assert.isTrue(node.get('previousSibling').hasClass('test-class'), 'node.get("previousSibling").hasClass("test-class")');
+
+            node.addClass('foo');
+            Assert.areEqual('foo', element.className, 'node.addClass("foo")');
+            node.removeClass('foo');
+            Assert.areEqual('', element.className, 'node.removeClass("foo")');
+
+            node.addClass('foo');
+            Y.Node.get('body').get('childNodes').addClass('foo');
+            Assert.isTrue(byId('test-class').className == 'foo', 'NodeList.addClass');
+            node.replaceClass('foo', 'bar');
+            Assert.areEqual('bar', element.className, 'Node.replaceClass("foo", "bar")');
+
+
+        },
+
+        test_setStyle: function() {
+            var element = byId('set-style'),
+                node = Y.Node.get(element),
+                nodes = node.get('childNodes');
+
+            node.setStyle('width', '20em');
+            Assert.areEqual('20em', element.style.width, "setStyle('width' '20em')");
+
+            node.setStyle('marginTop', '1em');
+            Assert.areEqual('1em', element.style.marginTop, "setStyle('marginTop','1em')");
+
+            node.setStyle('opacity', 0.5);
+            Assert.areEqual(0.5, node.getStyle('opacity'), "setStyle('opacity', 0.5)");
+
+            node.setStyle('float', 'left');
+            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
+            node.setStyle('float', 'left');
+            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
+            
+            nodes.setStyle('marginTop', '1em');
+            Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
+        },            
+
+        test_getStyle: function() {
+            var node = Y.Node.get('#get-style');
+
+            node.setStyle('opacity', 0.5);
+            Assert.areEqual(0.5, node.getStyle('opacity'), "node.getStyle('opacity')");
+            Assert.areEqual('left', node.getStyle('float'), "node.getStyle('float')");
+
+            Assert.areEqual('100px', node.getStyle('height'), "getStyle('height')");
+            Assert.areEqual('200px', node.getStyle('width'), "getStyle('width)'");
+            Assert.areEqual('visible', node.getStyle('visibility'), "visibility");
+            node.setStyle('visibility', 'hidden');
+            Assert.areEqual('hidden', node.getStyle('visibility'), "visibility");
+            node.setStyle('visibility', 'visible');
+        },
+
+        test_getComputedStyle: function() {
+            var node = Y.get('#test-computed');
+            var domNode = byId('test-computed');
+
+            domNode.style.zoom = 1;
+            domNode.style.border = 'medium solid #000';
+
+            var bw = (Y.UA.ie) ? 4 : 3;
+            var h = node.get('offsetHeight') - 20 - 2 * bw;
+            Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
+            Assert.areEqual(h, Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            domNode.style.padding = '1em';
+            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 10em");
+            domNode.style.margin = 'auto';
+            Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
+            Assert.areEqual('500px', node.getComputedStyle('width'), "percent width (from CSS)");
+            Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
+            domNode.parentNode.style.visibility = 'hidden';
+            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility");
+            domNode.parentNode.style.visibility = 'visible';
+            Assert.areEqual(2, node.getComputedStyle('zIndex'), 'node.getComputedStyle("zIndex")');
+        },
+
+        test_setStyles: function() {
+            var node = byId('set-style');
+            var element = Y.Node.get(node);
+            element.setStyles({
+                'top': '5px',
+                'right': '10em'
+            });
+            Assert.isTrue( (node.style.top == '5px' && node.style.right == '10em'), "setStyles()");
+       },
+
+        test_rootNode: function() {
+            var element = byId('test-prop');
+            var node = Y.Node.get(element, null, true);
+            Assert.isNull(node.get('parentNode'), "node.get('parentNode')");
+            Assert.isNull(node.get('offsetParent'), "node.get('offsetParent')");
+            Assert.isNull(node.get('previousSibling'), "node.get('previousSibling')");
+            Assert.isNull(node.get('previousSibling'), "node.get('previousSibling')");
+            Assert.isTrue(node.get('firstChild').compareTo(node.firstChild), "node.firstChild() (is textNode)");
+            Assert.isTrue(node.get('lastChild').compareTo(node.lastChild), "node.lastChild()");
+        },
+
+        test_selector: function() {
+            var id = 'test-prop',
+                element = byId(id),
+                node = Y.get('#' + id),
+                parent = Y.Node.get(element.parentNode),
+                nodes = Y.all('#test-nodes *');
+
+            // Selector methods
+            Assert.isNull(Y.Node.get(document.body).query("#fake-id"), 'body.query("#fake-id")');
+            Assert.isTrue(Y.Node.get(node).test('#' + id), 'node.test( "#id")');
+            Assert.isNull(parent.query("#fake-id"), 'parent.query("#fake-id")');
+            Assert.areEqual(id, parent.query('#' + id).get('id'), 'parent.query("#id")');
+            Assert.areEqual(id, parent.query('#' + id).get('id'), 'parent.query("#id")');
+            Assert.isNull(parent.query('#text-xy'), 'parent.query("test-xy")');
+
+            Assert.areEqual(id, parent.queryAll('#' + id).item(0).get('id'), 'parent.queryAll(node, "#id")');
+        },
+
+        test_window: function() {
+            var win = Y.get(window);
+            Assert.areEqual(window, Y.Node[win._yuid]()[0], 'Y.get(window)');
+            Assert.areEqual(document, Y.Node[win.get('document')._yuid]()[0], 'win.get(document)');
+            //Assert.areEqual(window, Y.Node[Y.get('document').get('defaultView')._yuid]()[0], 'win.get(document)');
+        }
+    }));
+
+    suite.add( new tool.TestCase({
+        name: 'Document Node',
+
+        test_props: function() {
+            var mask = document.createElement('div');
+            mask.className = 'mask';
+            document.body.appendChild(mask);
+            var doc = Y.Node.get('document');
+            mask.style.height = doc.get('docHeight') + 'px';
+            mask.style.width = doc.get('docWidth') + 'px';
+            Y.DOM.setStyle(mask, 'opacity', 0.4); 
+            Assert.areEqual(document.documentElement.scrollLeft, doc.get('docScrollX'), 'doc.get("docScrollX")');
+            Assert.areEqual(document.documentElement.scrollTop, doc.get('docScrollY'), 'doc.get("docScrollY")');
+
+            Assert.areEqual('DIV', Y.Node.get('#test-prop').get('nodeName'), 'query("test-prop")');
+
+            Assert.areEqual('test-xy', doc.query('#test-xy').get('id'), 'doc.query("#test-xy")');
+            Assert.isNull(doc.query('fake-id'), 'doc.query("#fake-id")');
+            Assert.areEqual(document.documentElement.scrollHeight, mask.offsetHeight, 'get("height")');
+            Assert.areEqual(document.documentElement.scrollWidth, mask.offsetWidth, 'get("width")');
+
+        }
+    })); 
+
+    suite.add( new tool.TestCase({
+        name: 'Instance Y.NodeExtras',
+
+        test_methods: function() {
+            var node = byId('test-extras');
+            var element = Y.Node.get('#test-extras');
+        }
+
+    })); 
+    tool.TestRunner.add(suite);
+
+    tool.TestRunner.run();
+});
+</script>
+</body>
+</html>

@@ -36,12 +36,11 @@ methods to add the rounded corners <code>&#60;div&#62;</code>s to the bounding b
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
 //	Call the "use" method, passing in "node-menunav".  This will load the 
 //	script and CSS for the MenuNav Node Plugin and all of the required 
 //	dependencies.
 
-YUI().use("node-menunav", function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
 
 	//	Use the "contentready" event to initialize the menu when the subtree of 
 	//	element representing the root menu (<div id="productsandservices">) is ready to 
@@ -72,7 +71,6 @@ YUI().use("node-menunav", function(Y) {
 	}, "#productsandservices");
 
 });
-</script>
 </textarea>
 
 <h3>Create the Rounded Corner Background Image</h3>

@@ -1,7 +1,5 @@
 //Use loader to grab the modules needed
-YUI(yuiConfig).use('dd', 'anim', 'slider', 'css', 'io', 'cookie', 'json', function(Y) {
-    //Y.DD.DDM._debugShim = true;
-
+YUI(yuiConfig).use('dd', 'anim', 'io', 'cookie', 'json', function(Y) {
     //Make this an Event Target so we can bubble to it
     var Portal = function() {
         Portal.superclass.constructor.apply(this, arguments);

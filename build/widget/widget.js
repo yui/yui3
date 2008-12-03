@@ -1,6 +1,12 @@
 YUI.add('widget', function(Y) {
 
 /**
+ * Provides the base Widget class along with an augmentable PluginHost interface
+ *
+ * @module widget
+ */
+
+/**
  * An augmentable class, which when added to a "Base" based class, allows 
  * the class to support Plugins, providing plug and unplug methods and performing
  * instantiation and cleanup during the init and destroy lifecycle phases respectively.
@@ -215,7 +221,7 @@ var _instances = {};
  *    <li>The render lifecycle method, in addition to the init and destroy 
  *        lifecycle methods provide by Base</li>
  *    <li>Abstract methods to support consistent MVC structure across 
- *        widgets: renderer, initUI, syncUI</li>
+ *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
  *        disabled, hasFocus, strings</li>
  *    <li>Plugin registration and activation support</li>
@@ -539,6 +545,7 @@ Y.extend(Widget, Y.Base, {
      * widget instance, and runs through the Widget's HTML_PARSER definition. 
      *
      * @method initializer
+     * @protected
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
@@ -577,6 +584,7 @@ Y.extend(Widget, Y.Base, {
      * list of registered widgets.
      *
      * @method destructor
+     * @protected
      */
     destructor: function() {
 
@@ -605,7 +613,6 @@ Y.extend(Widget, Y.Base, {
      * </p>
      *
      * @method render
-     * @public
      * @chainable
      * @final 
      * @param  parentNode {Object | String} Optional. The Node under which the 
@@ -679,6 +686,7 @@ Y.extend(Widget, Y.Base, {
      * so it should be chained manually for subclasses if required.
      * 
      * @method renderer
+     * @protected
      */
     renderer: function() {
         this.renderUI();
@@ -693,6 +701,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      * 
      * @method bindUI
+     * @protected
      */
     bindUI: function() {},
 
@@ -703,6 +712,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      * 
      * @method renderUI
+     * @protected
      */
     renderUI: function() {},
 
@@ -713,6 +723,7 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      *
      * @method syncUI
+     * 
      */
     syncUI: function(){},
 
