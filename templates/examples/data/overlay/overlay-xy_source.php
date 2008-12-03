@@ -38,6 +38,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     var xInput = Y.Node.get("#x");
     var yInput = Y.Node.get("#y");
 
+    xInput.set("value", overlay.get("x"));
+    yInput.set("value", overlay.get("y"));
+
     Y.on("click", function(e) {
         var x = parseInt(xInput.get("value"));
         var y = parseInt(yInput.get("value"));
