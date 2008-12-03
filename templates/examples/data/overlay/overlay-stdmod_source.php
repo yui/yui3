@@ -47,7 +47,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             points:["tl", "tl"]
         }
     });
-    overlay.render("#overlay-stdmod");
+    overlay.render();
 
     var content = Y.Node.get("#content");
     var where = Y.Node.get("#where");
