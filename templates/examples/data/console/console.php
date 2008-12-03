@@ -3,7 +3,7 @@
 $modules["console"] = array(
 	"name" => "Console",
 	"type" => "widget",
-	"description" => "",
+	"description" => "The Console control is a window for viewing messages logged within a YUI instance.",
 	"cheatsheet" => false
 );	
 
@@ -13,7 +13,7 @@ $examples["console_basic"] = array(
 	description => "The basics of setting up a Console",
 	sequence => array(1),
 	newWindow => "default",
-	requires => array("slider"),
+	requires => array("console"),
 	highlightSyntax => true
 );
 
@@ -23,7 +23,7 @@ $examples["console_filter"] = array(
 	description => "Using your YUI instance configuration to filter which messages are reported in the Console",
 	sequence => array(2),
 	newWindow => "default",
-	requires => array("slider"),
+	requires => array("console"),
 	highlightSyntax => true
 );
 
