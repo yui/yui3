@@ -639,7 +639,7 @@ Y.extend(Console,Y.Widget,{
         this.buffer    = [];
 
         if (!this.get(ENTRY_TEMPLATE)) {
-            this.set(ENTRY_TEMPLATE,Console.EMTRY_TEMPLATE);
+            this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
         }
 
         Y.on(this.get('logEvent'),Y.bind(this._onLogEvent,this));
