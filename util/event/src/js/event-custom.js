@@ -4,6 +4,7 @@
  * @module event
  */
 YUI.add("event-custom", function(Y) {
+
     var onsubscribeType = "_event:onsub",
         AFTER = 'after', 
         CONFIGS = [
@@ -242,6 +243,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.signature = YUI3_SIGNATURE;
 
+        /**
+         * If set to true, the custom event will deliver an Event.Facade object
+         * that is similar to a DOM event object.
+         * @property emitFacade
+         * @type boolean
+         * @default false
+         */
         this.emitFacade = false;
 
         this.applyConfig(o, true);
@@ -425,7 +433,7 @@ YUI.add("event-custom", function(Y) {
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret;
+            var ret, c, ct;
 
             // emit an Event.Facade if this is that sort of event
             // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -440,8 +448,11 @@ YUI.add("event-custom", function(Y) {
                 }
 
             }
-             
-            ret = s.notify(this.context, args, this);
+
+            // The default context should be the object/element that
+            // the listener was bound to.
+            ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+            ret = s.notify(ct || this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 this.log(this.type + " cancelled by subscriber");

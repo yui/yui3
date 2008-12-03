@@ -243,6 +243,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.signature = YUI3_SIGNATURE;
 
+        /**
+         * If set to true, the custom event will deliver an Event.Facade object
+         * that is similar to a DOM event object.
+         * @property emitFacade
+         * @type boolean
+         * @default false
+         */
         this.emitFacade = false;
 
         this.applyConfig(o, true);

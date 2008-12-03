@@ -26,7 +26,7 @@
         remove(window, "load", onLoad);
     },
 
-    EVENT_READY = 'event:ready',
+    EVENT_READY = 'domready',
 
     COMPAT_ARG = '~yui|2|compat~',
 
