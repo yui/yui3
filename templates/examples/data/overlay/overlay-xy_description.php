@@ -2,7 +2,7 @@
 
 <h4>Setting Up The YUI Instance</h4>
 
-<p>To create an instance of an Overlay on you page, the only module you need to request is the <code>overlay</code> module. The <code>overlay</code> module will pull in the <code>widget</code>, <code>widget-stack</code>, <code>widget-position</code> and <code>widget-position</code> dependencies it has.</p>
+<p>To create an instance of an Overlay on you page, the only module you need to request is the <code>overlay</code> module. The <code>overlay</code> module will pull in the <code>widget</code>, <code>widget-stack</code>, <code>widget-position</code>, <code>widget-position-ext</code> and <code>widget-stdmod</code> dependencies it has.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
 YUI({...}).use("overlay", function(Y) {
@@ -69,7 +69,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <p>The overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
 
-<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header, body and footer sections.</p>
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header, body and footer sections:</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 /* Overlay Look/Feel */

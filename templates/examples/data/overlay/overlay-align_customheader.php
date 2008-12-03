@@ -60,7 +60,7 @@
 
 #align2 {
     position:relative;
-    top:-100px;
+    top:-130px;
     left:250px;
     background-color:#00cc00;
 }
