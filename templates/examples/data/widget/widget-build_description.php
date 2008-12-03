@@ -70,12 +70,12 @@ These extensions are used to build the basic <code>Overlay</code> widget, but ca
     }, "#tryMove");
 </textarea>
 
-<p>Note that <code>Base.build</code> adds an <code>hasImpl</code> method to the built class, which allows you to query whether or not it has a partiular extension applied.</p>
+<p>Note that <code>Base.build</code> adds a <code>hasImpl</code> method to the built class, which allows you to query whether or not it has a partiular extension applied.</p>
 
 <h4>CSS Considerations</h4>
 
-<p>We need to define the CSS which goes with this new StandardModule widget class we have created. The only rule really required out of the box is the rule which handles visibility (<code>yui-standardmodule-hidden</code>). The "standardmodule" used in the class name comes from the <code>NAME</code> property we set up for the new class, and is used to prefix all state related classes added to the widgets bounding box.
-Since the StandardModule class is not positionable, we use <code>display:none</code> to define the <code>hidden</code> state.</p>
+<p>We need to define the CSS which goes with this new <code>StandardModule</code> class we have created. The only rule really required out of the box is the rule which handles visibility (<code>yui-standardmodule-hidden</code>). The "standardmodule" used in the class name comes from the <code>NAME</code> property we set up for the new class, and is used to prefix all state related classes added to the widgets bounding box.
+Since the <code>StandardModule</code> class is not positionable, we use <code>display:none</code> to define the <code>hidden</code> state.</p>
 
 <textarea name="code" class="CSS" rows="1" cols="60">
 
@@ -89,7 +89,7 @@ Since the StandardModule class is not positionable, we use <code>display:none</c
 
 <h3>Widget with WidgetPosition and WidgetStack support</h3>
 
-<p>As with the <code>StandardModule</code>, we use <code>Base.build</code> to create the new widget class. This time we add <code>WidgetPosition</code> and <code>WidgetStack</code> support to the base Widget class to create a basic XY positionable widget, with shimming and z-index support.</p>
+<p>As with <code>StandardModule</code>, we use <code>Base.build</code> to create the new <code>Positionable</code> widget class. This time we add <code>WidgetPosition</code> and <code>WidgetStack</code> support to the base <code>Widget</code> class to create a basic XY positionable widget, with shimming and z-index support.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var Positionable = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack]);
@@ -161,7 +161,7 @@ Since the StandardModule class is not positionable, we use <code>display:none</c
 
 <p>Lastly, we'll attempt to create a new widget class, which, in addition to basic positioning and stacking support, also has extended positioning support, allowing us to align it with other elements on the page.</p>
 
-<p>Again, we use <code>Base.build</code> to create our new <code>Alignable</code> widget class, by combining <code>WidgetPosition</code>, <code>WidgetStack</code> and <code>PositionExt</code> with the base widget class:</p>
+<p>Again, we use <code>Base.build</code> to create our new <code>Alignable</code> widget class, by combining <code>WidgetPosition</code>, <code>WidgetStack</code> and <code>WidgetPositionExt</code> with the base widget class:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var Alignable = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetPositionExt, Y.WidgetStack]);

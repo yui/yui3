@@ -26,7 +26,7 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
     <li>Providing prototype implementations for anything we want executed during initialization and destruction using the <code>initializer</code> and <code>destructor</code> lifecycle methods</li>
 </ul>
     
-<p>Additionally, since this is a Plugin, we provide a <code>NS</code> property for the class, which defines the property which will refer to the AnimPlugin instance on the host class (e.g. <code>overlay.fx</code> will be an instance of <code>AnimPlugin</code></p>.
+<p>Additionally, since this is a plugin, we provide a <code>NS</code> property for the class, which defines the property which will refer to the <code>AnimPlugin</code> instance on the host class (e.g. <code>overlay.fx</code> will be an instance of <code>AnimPlugin</code>)</p>.
 
 <p>This basic structure is shown below:</p>
 
@@ -99,7 +99,7 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 
 <p>The <code>animVisible</code> and <code>animHidden</code> attributes use Attribute's <code>valueFn</code> support to setup instance based default values for the attributes.</p>
 
-<p>animHidden is pretty straight forward, and simply returns the Animation instance, bound to the boundingBox of the Overlay to provide a fade-out animation:</p>
+<p><code>animHidden</code> is pretty straight forward, and simply returns the Animation instance, bound to the bounding box of the Overlay to provide a fade-out animation:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     animHidden : {
@@ -113,7 +113,7 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
     }
 </textarea>
 
-<p>animVisible is a little more interesting:</p>
+<p><code>animVisible</code> is a little more interesting:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     animVisible : {
@@ -147,11 +147,11 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
         }
 </textarea>
 
-<p>It essentially does the same thing as <code>animHidden</code> - sets up an Animation instance, providing an opacity based fade-in animation. However it also sets up a listener which will attempt to cleanup the opacity state of the Overlay, when the plugin is unplugged from the Overlay.</p>
+<p>It essentially does the same thing as <code>animHidden</code> - sets up an Animation instance, providing an opacity based fade-in animation. However it also sets up a listener which will attempt to cleanup the opacity state of the Overlay, when the plugin is unplugged from the Overlay. When a plugin is unplugged, it is destroyed.</p>
 
 <h4>Lifecycle Methods: initializer, destructor</h4>
 
-<p>In the initializer, we setup listeners on the animation instances (using <code>_bindAnimVisible, _bindAnimHidden</code>), which invoke the original visibility handling to make the Overlay visible before starting the "animVisible" animation and hide it after the "animHidden" animation is complete.</p>
+<p>In the <code>initializer</code>, we set up listeners on the animation instances (using <code>_bindAnimVisible, _bindAnimHidden</code>), which invoke the original visibility handling to make the Overlay visible before starting the <code>animVisible</code> animation and hide it after the <code>animHidden</code> animation is complete.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     initializer : function(config) {
@@ -187,13 +187,15 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 </textarea>
 
 <p>
-However the key part of the <code>initializer</code> method is the call to <code>this.before("_uiSetVisible", this._uiAnimSetVisible)</code> <em>(line 9)</em>. Plugin's <code>before</code> and <code>after</code> methods, will let you setup both before/after event listeners, as well as inject code to be executed before or after a given method on the object which hosts the plugin (in this case the Overlay) is invoked.
+However the key part of the <code>initializer</code> method is the call to <code>this.before("_uiSetVisible", this._uiAnimSetVisible)</code> <em>(line 9)</em>. <code>Plugin</code>'s <code>before</code> and <code>after</code> methods, will let you set up both before/after event listeners, as well as inject code to be executed before or after a given method on the object which hosts the plugin (in this case the Overlay) is invoked.
+</p>
+<p>
 For the animation plugin, we want to change how the Overlay updates it's UI in response to changes to the <code>visible</code> attribute. Instead of simply flipping visibility (through the application of the <code>yui-overlay-hidden</code> class), we want to fade the Overlay in/out. Therefore we inject (using YUI's aop infrastructure) our custom animation method, <code>_uiSetAnimVisible</code>, before the Overlay's <code>_uiSetVisible</code> is invoked.
 </p>
 
-<p>Using Plugin's before/after methods to setup any event listeners and method injection code on the host object (Overlay), ensures that the custom behavior is removed when the plugin is unplugged from the host, restoring it's original behavior.</p>
+<p>Using <code>Plugin</code>'s <code>before/after</code> methods to setup any event listeners and method injection code on the host object (Overlay), ensures that the custom behavior is removed when the plugin is unplugged from the host, restoring it's original behavior.</p>
 
-<p>The destructor simply calls destroy on the animation instances used, and lets them perform their own cleanup (as defined in the discussion on attributes):</p>
+<p>The <code>destructor</code> simply calls <code>destroy</code> on the animation instances used, and lets them perform their own cleanup (as defined in the discussion on attributes):</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     destructor : function() {
@@ -225,7 +227,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
 
 <h4>The Original Visibility Method</h4>
 
-<p>The original visiblity handling for Overlay is replicated in the AnimPlugins <code>_uiSetVisible</code> method and is invoked before starting the animVisible animation and after completing the animHidden animation as described above.</p>
+<p>The original visiblity handling for Overlay is replicated in the <code>AnimPlugin</code>'s <code>_uiSetVisible</code> method and is invoked before starting the <code>animVisible</code> animation and after completing the <code>animHidden</code> animation as described above.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     _uiSetVisible : function(val) {
@@ -238,7 +240,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
     }
 </textarea>
 
-<p><strong>NOTE:</strong> We're evaluating whether or not <code>Y.Do</code> may provide access to the original method for a future release, which would make this replicated code unneccessary.</p>
+<p><strong>NOTE:</strong> We're evaluating whether or not <code>Y.Do</code> may provide access to the original method for a future release, which would make this replicated code unnecessary.</p>
 
 <h4>Using The Plugin</h4>
 

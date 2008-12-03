@@ -1,6 +1,6 @@
 <div id="widget-extend-example">
     A basic spinner widget: <div id="numberField"><input type="text" class="yui-spinner-value" value="20" /></div>
-    <p class="hint">Use the arrow buttons, or the arrow up/down, page up/down keys on your keyboard to modify the value</p>
+    <p class="hint">Click the buttons, or the arrow up/down and page up/down keys on your keyboard to change the spinner's value</p>
 </div>
 
 <script type="text/javascript">

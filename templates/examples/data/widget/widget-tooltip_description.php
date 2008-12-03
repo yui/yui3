@@ -125,7 +125,7 @@ to create a completely new class, hence we set the <code>dynamic</code> configur
 
 <h4>Lifecycle Methods: initializer, destructor</h4>
 
-<p>The <code>initializer</code> method is invoked during the <code>init</code> lifecycle phase, after the attribute are configured for each class. Tooltip uses it 
+<p>The <code>initializer</code> method is invoked during the <code>init</code> lifecycle phase, after the attributes are configured for each class. <code>Tooltip</code> uses it 
 to setup the private state variables it will use to store the trigger node currently being serviced by the tooltip instance, event handles and show/hide timers.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
@@ -165,7 +165,7 @@ to setup the private state variables it will use to store the trigger node curre
     }
 </textarea>
 
-<p>The destructor is used to clear out stored state, detach any event handles and clear out the show/hide timers:</p>
+<p>The <code>destructor</code> is used to clear out stored state, detach any event handles and clear out the show/hide timers:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     destructor : function() {
@@ -246,7 +246,7 @@ and invokes <code>_bindDelegate</code> to set up the listeners when a new delega
 
 <h4>DOM Event Handlers</h4>
 
-<p>Tooltips are based on <code>mouseover, mousemove and mouseout</code>. The mouseover event listener is the only listener set up initially, on the <code>delegate</code> node:</p>
+<p>Tooltips interaction revolves around the <code>mouseover</code>, <code>mousemove</code> and <code>mouseout</code> DOM events. The mouseover listener is the only listener set up initially, on the <code>delegate</code> node:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     _onDelegateMouseOver : function(e) {
@@ -257,8 +257,8 @@ and invokes <code>_bindDelegate</code> to set up the listeners when a new delega
     }
 </textarea>
 
-<p>The delegate mouseover listener attempts to determine if the mouse is entering a triggerNode. It ignores mouseover events generated from elements 
-inside the current trigger node (for example when mousing out of a child element of a triggerNode). If it determines that the mouse is entering a trigger node,
+<p>It attempts to determine if the mouse is entering a trigger node. It ignores mouseover events generated from elements 
+inside the current trigger node (for example when mousing out of a child element of a trigger node). If it determines that the mouse is entering a trigger node,
 the delegates to the <code>_enterTrigger</code> method to setup the current trigger state and attaches mousemove and mouseout listeners on the current trigger node.</p>
 
 <p>The mouse out listener delegates to the <code>_leaveTrigger</code> method, if it determines the mouse is leaving the trigger node:</p>
@@ -288,7 +288,7 @@ the delegates to the <code>_enterTrigger</code> method to setup the current trig
 Tooltip state based on the currently active trigger node.</p>
 
 <p>The <code>_enterTrigger</code> method sets the current trigger state (which node is the current tooltip trigger, 
-what the current mouse XY position is etc.). The method also fires the <code>triggerEnter</code> event, whose default function actually handle
+what the current mouse XY position is, etc.). The method also fires the <code>triggerEnter</code> event, whose default function actually handles 
 showing the tooltip after the configured <code>showDelay</code> period. The <code>triggerEnter</code> event can be prevented by listeners, allowing 
 users to prevent the tooltip from being shown if required. (<code>triggerEnter</code> listeners are passed the current trigger node and x,y mouse co-ordinates as arguments):</p>
 
@@ -308,7 +308,7 @@ users to prevent the tooltip from being shown if required. (<code>triggerEnter</
 </textarea>
 
 <p>Similarly the <code>_leaveTrigger</code> method is invoked when the mouse leaves a trigger node, and clears any stored state, timers and listeners before setting up
-the <code>hideDelay</code> timer. It fires a triggerLeave event, but cannot be prevented:</p>
+the <code>hideDelay</code> timer. It fires a <code>triggerLeave</code> event, but cannot be prevented, and has no default behavior to prevent:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     _leaveTrigger : function(node) {
@@ -332,7 +332,7 @@ the <code>hideDelay</code> timer. It fires a triggerLeave event, but cannot be p
 
 <h4>Setting Tooltip Content</h4>
 
-<p>Since the content for the tooltip is usually a function of the trigger node and not constant, Tooltip provides a number of ways to set the content.</p>
+<p>Since the content for a tooltip is usually a function of the trigger node and not constant, <code>Tooltip</code> provides a number of ways to set the content.</p>
 
 <ol>
     <li>Setting the <code>content</code> attribute to a string or node. In this case, the value of the <code>content</code> attribute is used
@@ -371,11 +371,11 @@ the <code>hideDelay</code> timer. It fires a triggerLeave event, but cannot be p
     }
 </textarea>
 
-<p>Calling the public <code>setTriggerContent</code> in a triggerEvent listener will over-ride content set using the <code>content</code> attribute or trigger node title value.</p>
+<p>Calling the public <code>setTriggerContent</code> in a <code>triggerEvent</code> listener will over-ride content set using the <code>content</code> attribute or the trigger node's title value.</p>
 
 <h4>Using Tooltip</h4>
 
-<p>For this example, we set up 4 DIV elements which will act as tooltip triggers. They are all marked using a <code>yui-hastooltip</code> class, so that they can be queried using a simple selector, passed as the value for the <code>triggerNodes</code> attribute in the tooltip's contructor. Also all 4 trigger nodes are containing a wrapper DIV with <code>id="delegate"</code> which will act as the <code>delegate</code> node.</p>
+<p>For this example, we set up 4 DIV elements which will act as tooltip triggers. They are all marked using a <code>yui-hastooltip</code> class, so that they can be queried using a simple selector, passed as the value for the <code>triggerNodes</code> attribute in the tooltip's contructor. Also all 4 trigger nodes are contained in a wrapper DIV with <code>id="delegate"</code> which will act as the <code>delegate</code> node.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var tt = new Tooltip({
