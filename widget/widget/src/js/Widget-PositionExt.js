@@ -45,15 +45,15 @@
              * @attribute align
              * @type Object, with the following properties
              * <dl>
-             *     <dd>node</dd>
-             *     <dt>The node to which the Widget is to be aligned. If set to null, the Widget is aligned to the Viewport</dt>
-             *     <dd>points</dd>
-             *     <dt>The 2 points to align. Supported alignment points are defined 
+             *     <dt>node</dt>
+             *     <dd>The node to which the Widget is to be aligned. If set to null, the Widget is aligned to the Viewport</dd>
+             *     <dt>points</dt>
+             *     <dd>The 2 points to align. Supported alignment points are defined 
              *     as static properties on WidgetPositionExt, e.g. <code>WidgetPositionExt.TR</code>.
              *     e.g. <code>[WidgetPositionExt.TR, WidgetPositionExt.TL]</code> aligns the Top Right of the Widget with the
-             *     Top Left of the node/viewport, and <code>[WidgetPositionExt.CC, WidgetPositionExt.TC] aligns the center of the 
+             *     Top Left of the node/viewport, and <code>[WidgetPositionExt.CC, WidgetPositionExt.TC]</code> aligns the center of the 
              *     Widget with the Top Center of the node/viewport.  
-             *     </dt>
+             *     </dd>
              * </dl>
              * @default null
              * @description Extended positioning support to align the Widget with a node on the page, or with the viewport
