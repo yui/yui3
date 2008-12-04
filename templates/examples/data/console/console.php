@@ -18,7 +18,7 @@ $examples["console_basic"] = array(
 );
 
 $examples["console_filter"] = array(
-	name => "Filtering Console messages",
+	name => "Filtering log messages",
 	modules => array("console"),
 	description => "Using your YUI instance configuration to filter which messages are reported in the Console",
 	sequence => array(2),
