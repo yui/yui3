@@ -874,7 +874,6 @@ MenuNav.prototype = {
 			oParentMenu = getParentMenu(menu),
 			oLI = menu.get(PARENT_NODE),
 			aXY = oLI.getXY(),
-			oIFrame,
 			oItem;
 
 
