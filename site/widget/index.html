@@ -317,38 +317,89 @@ include "../inc/header.inc";
             <p>The <code>Widget</code> class establishes a common markup format for all widgets, through it's <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
             <a href="../api/Widget.html#config_contentBox"><code>contentBox</code></a> attributes.</p>
 
-            <p>All widgets will have a bounding box, wrapping a content box (both DIVs by default, which can be customized), inside which the individual widgets will insert the nodes they need to render their UI.</p>
+            <p>All widgets will have a bounding box, wrapping a content box (which are both DIVs by default, but can be customized for a widget, by setting the <code>BOUNDING_TEMPLATE</code>, <code>CONTENT_TEMPLATE</code> prototype properties), inside which the individual widgets will insert the nodes they need to render their UI.</p>
 
-            <h5>Why 2 Containers?</h5>
+            <h5>The Bounding Box</h5>
 
-            <dt><a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a></dt>
-            <dd>The bounding box is the outermost element owned by the widget.
-                <ul>
-                    <li>Marker class names identifying the widget (e.g. yui-overlay) and also state class names (e.g. yui-overlay-hidden) are applied to the bounding box.</li>
-                    <li>The widget's width/height are applied to this box if set, as is XY positioning, for positioned widgets.</li>
-                    <li>The nested structure allows us to use nesting to define css application, as a replacement for mutliple class rules which cannot be used reliably on IE6.</li>
-                    <li>The bounding box also acts as a container for any additional decorator elements which need to be added for the widget, for example, 
-                    elements to support rounded corners, shadows, or shimming.</li>
-                    <li>Establishing the 2 container format for all widgets, allows developers to write generic plugins for the above decoration features, knowing that they can 
-                    rely on the 2 box structure to position elements.</li>
-                    <li>The  bounding box should not have any visual treatment applied to it (e.g. borders, padding, background-colors etc.). Visual treatments are applied to the contentBox.</li>
-                    <li>Avoiding border and padding on the bounding box allows for consistent width/height application across browers.</li>
-                    <li>The absence of visual styling on the bounding box also lets us add skin class names (yui-skin-sam) to the bounding box as opposed to having them reside on an arbitrary ancestor.</li>
-                </ul>
-            </dd>
+            <p>The bounding box is the outer most element owned by the widget, and is used for functional, rather than visual purposes.<p></p>
 
-            <dt><a href="../api/Widget.html#config_contentBox"><code>contentBox</code></a></dt>
-            <dd>The content box is a child of the bounding box (the only child for the base <code>Widget</code> class)
-                <ul>
-                    <li>It also has a widget specific marker class name applied (e.g. yui-overlay-content).</li>
-                    <li>Any visual treatment (e.g. borders, background colors) for the widget is applied to the content box, and it's children.</li>
-                    <li>Generally the content box will the element users specify when instantiating the widget from markup</li>
-                </ul>
-            </dd>
+            <ul>
+                <li>A class name identifying the widget type is added to the bounding box. The default format is yui-[widgetname] (e.g. For Slider, the "yui-slider" class name is added to the bounding box).</li>
+                <li>Additionally, class names for all widget classes in the class heirarchy are also used to tag the bounding box (e.g. For a MultiThumbSlider, which may extend Slider, the bounding box is marked with the classes "yui-widget", "yui-slider" and "yui-multithumbslider").
+                (this is the only place where we mark an element with class names for all widget classes in the heirarchy).</li>
+                <li>Class names used for state management by the widget instance are also applied to the bounding box. The general format is yui-[widgetname]-[state] (e.g. "yui-slider-hidden", "yui-slider-disabled").</li>
+                <li>The widget's width and height values are applied to the bounding box if set, as are top/left (xy) positioning values, for positioned widgets.</li>
+                <li>The bounding box is not expected to have any visual propert (e.g. borders, padding etc.) applied to it. However it will have CSS defining the type of bounding box it is (e.g. display:inline, display:inline-block).</li>
+                <li>Generally, for progressively enhanced solutions, the content box is provided on the page (and passed to the widget constructor), rather than the bounding box. 
+                The bounding box is added dynamically when the widget is instantiated. This maintains semantic value (the content box contains the content), and avoids unneccessary markup on the page upfront.</li>
+            </ul>
+
+            <h5>The Content Box</h5>
+
+            <p>The content box is a child of the bounding box. The content box-bounding box parent-child relationship is set up during the render phase (which as mentioned previously, is when dom modification occurs).<p></p>
+
+            <ul>
+                <li>The content box also has an identifying class name applied to it. The default format is yui-[widgetname]-content (e.g. "yui-slider-content").</li>
+                <li>Visual treatment for the widget is applied to the content (e.g. borders, padding etc.).</li>
+                <li>enerally the content box will the element users specify when instantiating the widget from markup</li>
+            </ul>
+
+            <h5>Why Two Nested Boxes?</h5>
+
+            <p>Providing nested boxes for all widgets provides benefits for css application, decorative element support, bounding box dimension handling and skinning. These are detailed below:</p>
+
+            <ul>
+                <li>The nested structure provides an extra hook for us to use nested CSS rules, as a replacement for "mutliple class" rules which cannot be used reliably with IE6.</li>
+                <li>The nested structure allows the bounding box to act as a container for any additional decorator elements which need to be added for the widget. For example, elements to support rounded corners, shadows, or shimming. These can live as siblings of the content box, and can be positioned, and sized more efficiently since they have a common parent container.</li>
+                <li>Additionally, due to the consistent structure across all widgets, generic plugins can be written to provide the above decorator support.</li>
+                <li>Having a box without border and padding applied (the bounding box) allows for consistent width and height application across brower box model differences.</li>
+                <li>The absence of visual styling on the bounding box also lets us add skin class names (yui-skin-sam) to the bounding box as opposed to having them reside on an arbitrary ancestors allowing more flexible skin application.</li>
+            </ul>
+
+            <p>TODO: Image</p>
 
             <h4 id="css">Class Names and CSS</h4>
 
-            <p>TODO this.getClassName, Widget.getClassName, ClassNameManager.getClassName</p>
+            <p>In order to provide consistent class names for use across all widgets, the <code>Widget</code> class provides two methods which are simple wrappers for the <code>ClassNameManager</code> utility, and leverage the <code>NAME</code> property defined for widget classes.</p>
+
+            <dl>
+                <dt>The <code>getClassName(arg1, arg2, arg3 ...)</code> method (instance)</dt>
+                <dd>
+                    <p>This method can be used to create class names which begin with the configured prefix for application ("yui-") by default and the name of the widget (the <code>NAME</code> propery, lowercased) For example:</p>
+
+                    <textarea name="code" class="JScript" cols="60" rows="1">
+                        // A method on a Spinner widget instance, with Spinner.NAME = "spinner";
+                        renderSpinnerButton: function() {
+                            // generates the class name "yui-spinner-increment-major"
+                            var btnClassName = this.getClassName("increment", "major");
+                        }
+                    </textarea>
+
+                <p><strong>Note:</strong> The static <code>ClassNameManager.getClassName(arg1, arg2, arg3 ...)</code> method can be used as a replacement for the above method, when class names need to be generated in a static context, by passing in the widget's <code>NAME</code> property as the first argument. For example:</p>
+
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    // Generates the class name "yui-spinner-button"
+                    Spinner.BUTTON_TEMPLATE = Y.ClassNameManager.getClassName(Spinner.NAME, "button");
+                </textarea>
+
+                </dd>
+
+                <dt>The <code>Widget.getClassName(arg1, arg2, arg3 ....)</code> method (static)</dt>
+
+                <dd>
+                    <p>
+                    This static version of method (invoked directly on the widget class, as opposed the "this") can be used to create class names which begin with a constant widget prefix ("yui-widget"). This maybe useful for plugins, which need to ship with CSS which targets a fixed class name, regardless of the widget instance to which they are applied.
+                    For example:
+                    </p>
+
+                    <textarea name="code" class="JScript" cols="60" rows="1">
+                        // generates the class name "yui-widget-shim"
+                        Widget.getClassName("shim");
+                    </textarea>
+                <dd>
+            </dl>
+
+            <p>The <a href="../api/ClassNameManager.html"><code>ClassNameManager</code></a> API documentation has details about how to configure the application prefix ("yui") and the default separator ("-") if required.</p>
 
             <h4 id="extending">Extending Widget</h4>
 
