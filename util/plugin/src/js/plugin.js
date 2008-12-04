@@ -1,3 +1,8 @@
+/**
+ * Provides the base Plugin class for building widget plugins. 
+ *
+ * @module plugin
+ */
 
         /**
          * Plugin provides a base class for all Plugin classes.
@@ -10,6 +15,7 @@
         function Plugin(config) {
             Plugin.superclass.constructor.apply(this, arguments);
         }
+
 
         /**
          * Static property provides a string to identify the class.
@@ -64,15 +70,22 @@
                 // remove all handles
                 if (this._handles) {
                     for (var i = 0, l = this._handles.length; i < l; i++) {
-                       this.detach(this._handles[i]);
+                       this._handles[i].detach();
                     }
                 }
             },
 
             /**
-             * 
+             * Listens for events and methods fired by the owner widget.
+             * The handler is called before the event handler or method is called.
+             * @method doBefore
+             * @param sFn The event of method to listen for.
+             * @param fn The handler function to call when the listener fires.
+             * @param context An optional context to call the handler with.
+             * Default context is the plugin instance.
+             * @return Handle A handle that can be used to detach the handler (e.g. "handle.detach()").
              */
-            before: function(sFn, fn, context) {
+            doBefore: function(sFn, fn, context) {
                 var owner = this._owner,
                     handle;
 
@@ -88,7 +101,17 @@
                 return handle;
             },
 
-            after: function(sFn, fn, context) {
+            /**
+             * Listens for events and methods fired by the owner widget.
+             * The handler is called after the event handler or method is called.
+             * @method doAfter
+             * @param sFn The event of method to listen for.
+             * @param fn The handler function to call when the listener fires.
+             * @param context An optional context to call the handler with.
+             * Default context is the plugin instance.
+             * @return Handle A handle that can be used to detach the handler (e.g. "handle.detach()").
+             */
+            doAfter: function(sFn, fn, context) {
                 var owner = this._owner,
                     handle;
 
@@ -102,14 +125,6 @@
 
                 this._handles.push(handle);
                 return handle;
-            },
-
-            detach: function(handle) {
-                if (handle.detach) { // event
-                    handle.detach(handle);
-                } else { // method
-                    Y.Do.detach.apply(Y.Do, arguments);
-                }
             },
 
             toString: function() {
