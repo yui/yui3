@@ -74,11 +74,11 @@ include "../inc/header.inc";
 
             <h4 id="plugintemplate">Plugin Template</h4>
 
-            <p>In order to build a plugin, first you will build a simple class to use as a template for all instances of the plugin.  When plugins are added to a host Node, the node instance is automatically added to the config as the <code>owner</code>.  Widgets instances receive the widget itself as the <code>owner</code>.  You will probably want to refer to this node throughout your plugin, so you'll want to keep a reference to it.  As with any class you build, methods should live on the class's prototype.</p>
+            <p>In order to build a plugin, first you will build a simple class to use as a template for all instances of the plugin.  When plugins are added to a host Node, the node instance is automatically added to the config as the <code>owner</code>.  Widgets instances receive the widget itself as the <code>owner</code>.  For Node plugins you will probably want to keep a reference to the owner bound to your plugin for later reference.  Plugins that inherit from the base <code>Plugin</code> class get this reference set up automatically.  As with any class you build, methods should live on the class's prototype.</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
             function MyPlugin(config) {
-                this.owner = config.owner;
+                this._owner = config.owner;
             }
 
             MyPlugin.prototype = {
@@ -110,7 +110,7 @@ include "../inc/header.inc";
             Putting it all together, a basic plugin template looks like:
             <textarea name="code" class="JScript" cols="60" rows="1">
             function MyPlugin(config) {
-                this.owner = config.owner;
+                this._owner = config.owner;
             }
 
             MyPlugin.NAME = 'myplugin';
@@ -130,7 +130,7 @@ include "../inc/header.inc";
             <textarea name="code" class="JScript" cols="60" rows="1">
             YUI().use('node', function(Y) {
                 function MyPlugin(config) {
-                    this.owner = config.owner;
+                    this._owner = config.owner;
                 }
 
                 MyPlugin.NAME = 'myplugin';
@@ -152,7 +152,7 @@ include "../inc/header.inc";
             <textarea name="code" class="JScript" cols="60" rows="1">
             YUI().use('node', function(Y) {
                 function MyPlugin(config) {
-                    this.owner = config.owner;
+                    this._owner = config.owner;
                 }
 
                 MyPlugin.NAME = 'myplugin';
@@ -182,7 +182,7 @@ include "../inc/header.inc";
 
             YUI().use('node', function(Y) {
                 function MyPlugin(config) {
-                    this.owner = config.owner;
+                    this._owner = config.owner;
                 }
 
                 MyPlugin.NAME = 'myplugin';
