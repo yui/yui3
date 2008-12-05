@@ -22,6 +22,7 @@
    include($dataroot."/overlay/overlay.php");
    include($dataroot."/widget/widget.php");
    include($dataroot."/yui/yui.php");
+   include($dataroot."/plugin/plugin.php");
    include($dataroot."/node-menunav/node-menunav.php");
 
 ?>
