@@ -190,9 +190,9 @@
 
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label .yui-menu-toggle {
 	
-	padding: 0 10px 0 0;	/* Overide padding applied by the preceeding rule. */
+	padding: 0;	/* Overide padding applied by the preceeding rule. */
 	border-left: solid 1px #ccc; 
-	width: 5px;
+	width: 15px;
 	overflow: hidden;
 	text-indent: -1000px;
     background: url(horizontal-menu-submenu-indicator.png) 3px center no-repeat;	

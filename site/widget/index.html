@@ -39,7 +39,7 @@ include "../inc/header.inc";
                                             <li><a href="#progressive">Progressive Enhancement</a></li>
                                             <li><a href="#plugin">Plugin Support</a></li>
                                             <li><a href="#markup">Markup Structure</a></li>
-                                            <li><a href="#css">Class Names and CSS</a></li>
+                                            <li><a href="#CSS">Class Names and CSS</a></li>
                                             <li><a href="#extending">Extending Widget</a></li>
                                         </ul></li>
                                     <li><a href="#support">Support &amp; Community</a></li>
@@ -74,7 +74,7 @@ include "../inc/header.inc";
                     <li><a href="#progressive">Progressive Enhancement</a></li>
                     <li><a href="#plugin">Plugin Support</a></li>
                     <li><a href="#markup">Markup Structure</a></li>
-                    <li><a href="#css">Class Names and CSS</a></li>
+                    <li><a href="#CSS">Class Names and CSS</a></li>
                     <li><a href="#extending">Extending Widget</a></li>
                 </ul>
 
@@ -314,8 +314,9 @@ include "../inc/header.inc";
 
             <h4 id="markup">Rendered Markup</h4>
 
-            <p>The <code>Widget</code> class establishes a common markup format for all widgets, through it's <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
+            <p>The <code>Widget</code> class establishes a common markup format for all widgets, through its <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
             <a href="../api/Widget.html#config_contentBox"><code>contentBox</code></a> attributes.</p>
+
 
             <p>
                 All widgets will have a bounding box, wrapping a content box. They are both <code>DIV</code>s by default, but can be customized for a widget, by over-riding the <code>BOUNDING_TEMPLATE</code>, <code>CONTENT_TEMPLATE</code> prototype properties. References 
@@ -387,7 +388,7 @@ include "../inc/header.inc";
                 <li>The nested structure provides an extra hook for widget developers to use nested CSS rules, as a replacement for "mutliple class" rules which cannot be used reliably with IE6.</li>
             </ul>
 
-            <h4 id="css">Class Names and CSS</h4>
+            <h4 id="CSS">Class Names and CSS</h4>
 
             <p>In order to provide consistent class names for use across all widgets, the <code>Widget</code> class provides two methods which are simple wrappers for the <code>ClassNameManager</code> utility, and leverage the <code>NAME</code> property defined for widget classes.</p>
 
