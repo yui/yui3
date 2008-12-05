@@ -6,6 +6,7 @@
 
    include($dataroot."/anim/animation.php");
    include($dataroot."/attribute/attribute.php");
+   include($dataroot."/console/console.php");
    include($dataroot."/dd/dd.php");
    include($dataroot."/get/get.php");
    include($dataroot."/cssfonts/cssfonts.php");
@@ -16,10 +17,12 @@
    include($dataroot."/io/io.php");
    include($dataroot."/json/json.php");
    include($dataroot."/queue/queue.php");
+   include($dataroot."/slider/slider.php");
    include($dataroot."/node/node.php");
    include($dataroot."/overlay/overlay.php");
    include($dataroot."/widget/widget.php");
    include($dataroot."/yui/yui.php");
+   include($dataroot."/plugin/plugin.php");
    include($dataroot."/node-menunav/node-menunav.php");
 
 ?>

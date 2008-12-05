@@ -158,11 +158,11 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
         this._bindAnimVisible();
         this._bindAnimHidden();
 
-        this.on("animVisibleChange", this._bindAnimVisible);
-        this.on("animHiddenChange", this._bindAnimHidden);
+        this.after("animVisibleChange", this._bindAnimVisible);
+        this.after("animHiddenChange", this._bindAnimHidden);
 
         // Override default _uiSetVisible method, with custom animated method
-        this.before("_uiSetVisible", this._uiAnimSetVisible);
+        this.doBefore("_uiSetVisible", this._uiAnimSetVisible);
     }
 
     ...
@@ -187,13 +187,13 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 </textarea>
 
 <p>
-However the key part of the <code>initializer</code> method is the call to <code>this.before("_uiSetVisible", this._uiAnimSetVisible)</code> <em>(line 9)</em>. <code>Plugin</code>'s <code>before</code> and <code>after</code> methods, will let you set up both before/after event listeners, as well as inject code to be executed before or after a given method on the object which hosts the plugin (in this case the Overlay) is invoked.
+However the key part of the <code>initializer</code> method is the call to <code>this.doBefore("_uiSetVisible", this._uiAnimSetVisible)</code> <em>(line 9)</em>. <code>Plugin</code>'s <code>doBefore</code> and <code>doAfter</code> methods, will let you set up both before/after event listeners, as well as inject code to be executed before or after a given method on the object which hosts the plugin (in this case the Overlay) is invoked.
 </p>
 <p>
 For the animation plugin, we want to change how the Overlay updates it's UI in response to changes to the <code>visible</code> attribute. Instead of simply flipping visibility (through the application of the <code>yui-overlay-hidden</code> class), we want to fade the Overlay in/out. Therefore we inject (using YUI's aop infrastructure) our custom animation method, <code>_uiSetAnimVisible</code>, before the Overlay's <code>_uiSetVisible</code> is invoked.
 </p>
 
-<p>Using <code>Plugin</code>'s <code>before/after</code> methods to setup any event listeners and method injection code on the host object (Overlay), ensures that the custom behavior is removed when the plugin is unplugged from the host, restoring it's original behavior.</p>
+<p>Using <code>Plugin</code>'s <code>doBefore/doAfter</code> methods to setup any event listeners and method injection code on the host object (Overlay), ensures that the custom behavior is removed when the plugin is unplugged from the host, restoring it's original behavior.</p>
 
 <p>The <code>destructor</code> simply calls <code>destroy</code> on the animation instances used, and lets them perform their own cleanup (as defined in the discussion on attributes):</p>
 
@@ -223,7 +223,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
     }
 </textarea>
 
-<p>Since this method is injected before default method which handles visibility changes for Overlay (<code>_uiSetVisibility</code>), we invoke <code>Y.Do.Halt()</code> to prevent the original method from being invoked, since we'd like to invoke it in response to the animation starting or completing. <code>Y.Do</code> is YUI's aop infrastructure and is used under the hood by Plugins <code>before</code> and <code>after</code> methods when injecting code</p>.
+<p>Since this method is injected before default method which handles visibility changes for Overlay (<code>_uiSetVisibility</code>), we invoke <code>Y.Do.Halt()</code> to prevent the original method from being invoked, since we'd like to invoke it in response to the animation starting or completing. <code>Y.Do</code> is YUI's aop infrastructure and is used under the hood by Plugins <code>doBefore</code> and <code>doAfter</code> methods when injecting code</p>.
 
 <h4>The Original Visibility Method</h4>
 

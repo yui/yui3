@@ -78,4 +78,14 @@ $examples["node-menunav-7"] = array(
 	highlightSyntax => true
 );
 
+$examples["node-menunav-8"] = array(
+	name => "Adding Submenus On The Fly",
+	modules => array("node-menunav"),
+	description => "Building Submenus On The Fly Using the MenuNav Node Plugin with the IO Utility",
+	sequence => array(8),
+	newWindow => "require",
+	requires => array("node-menunav", "io"),
+	highlightSyntax => true
+);
+
 ?>

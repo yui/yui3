@@ -70,6 +70,11 @@ YUI.add('node-base', function(Y) {
         return  node || null;
     };
 
+    /** 
+     * This class provides an abstraction for manipulating DOM nodes.
+     * @class Drag
+     * @constructor
+     */
     var Node = function() {
         this.init.apply(this, arguments);
     };
@@ -553,7 +558,7 @@ YUI.add('node-base', function(Y) {
             return node === refNode;
         },
 
-       /*
+       /**
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
          * @param {String | Function} fn A selector or boolean method for testing elements.

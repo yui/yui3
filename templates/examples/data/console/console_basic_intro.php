@@ -1,0 +1,1 @@
+<p>This example walks through the basics of setting up and logging messages to a YUI Console instance.  Three Console instances are created with slightly different configurations.  All calls to <code>Y.log(..)</code> will be broadcast to every Console.</p>

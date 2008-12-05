@@ -1,0 +1,511 @@
+<?php 
+$title="The Widget Class";
+$section="widget";
+$component="Widget";
+$highlightSyntax = true;
+$releasenotes = true;
+include "../inc/header.inc";
+?>
+<div id="yui-main">
+    <div class="yui-b">
+        <div class="yui-ge">
+            <div class="yui-u first" id="main">
+            <!-- main column -->
+
+                <h2><?php echo $component;?></h2>
+
+                <div id="promo" class="component">
+                    <p>Widget is the foundation class from which all YUI 3 widgets are derived. It provides the following core pieces of functionality:</p>
+
+                    <ul>
+                        <li>The render lifecycle method, in addition to the init and destroy lifecycle methods provide by Base</li>
+                        <li>Abstract rendering methods to support a consistent MVC structure across widgets</li>
+                        <li>A common set of base widget attributes</li>
+                        <li>Consistent class name generation support</li>
+                        <li>Plugin support</li>
+                    </ul>
+
+                    <div class="yui-g">
+                        <div class="yui-u first">
+                            <div id="jumps">
+                                <h4>On This Page</h4>
+                                <ul>
+                                    <li><a href="#start">Getting Started</a></li>
+                                    <li><a href="#using">Working With <?php echo $component;?></a>
+                                        <ul class="topspace">
+                                            <li><a href="#structure">Class Structure And Responsibilities</a></li>
+                                            <li><a href="#attributes">Basic Attributes</a></li>
+                                            <li><a href="#rendering">Rendering Methods</a></li>
+                                            <li><a href="#progressive">Progressive Enhancement</a></li>
+                                            <li><a href="#plugin">Plugin Support</a></li>
+                                            <li><a href="#markup">Markup Structure</a></li>
+                                            <li><a href="#CSS">Class Names and CSS</a></li>
+                                            <li><a href="#extending">Extending Widget</a></li>
+                                        </ul></li>
+                                    <li><a href="#support">Support &amp; Community</a></li>
+                                    <li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="yui-u">
+                            <?php
+                            include('../inc/quicklinks.inc');
+                            ?>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div><!-- /promo -->
+
+                <?php
+                    $componentShort = "Widget";
+                    $requiredModules = array("widget");
+                    include("../inc/gettingStarted.inc");
+                ?>
+
+                <h3 id="using">Working With <?php echo $component;?></h3>
+
+                <p>This section describes the functionality <?php echo $component;?> provides in further detail.
+                It contains these subsections:</p>
+
+                <ul class="topspace">
+                    <li><a href="#structure">Class Structure And Responsibilities</a></li>
+                    <li><a href="#attributes">Basic Attributes</a></li>
+                    <li><a href="#rendering">Rendering Methods</a></li>
+                    <li><a href="#progressive">Progressive Enhancement</a></li>
+                    <li><a href="#plugin">Plugin Support</a></li>
+                    <li><a href="#markup">Markup Structure</a></li>
+                    <li><a href="#CSS">Class Names and CSS</a></li>
+                    <li><a href="#extending">Extending Widget</a></li>
+                </ul>
+
+            <h4 id="structure">Class Structure And Responsibilities</h4>
+
+            <p><code>Widget</code> provides the foundation class on which all YUI 3 widgets will be built. 
+            Although instantiable and usable by itself, it is designed to be extended, to create widgets which address
+            specific user interaction patterns.</p>
+
+            <p>The <code>Widget</code> class:</p>
+            <ul>
+                <li>Extends <a href="../api/Base.html"><code>Base</code></a></li>
+                <li>Is Augmented with <a href="../api/PluginHost.html"><code>PluginHost</code></a></li>
+            </ul>
+
+            <p>Therefore it provides the same <code>Attribute</code> and <code>Event.Provider</code> support 
+            as <a href="../base/index.html#extendbase">Base</a>. <code>PluginHost</code> adds the ability to 
+            add/remove plugins to Widget.</p>
+
+            <p>The <code>Widget</code> class provides the following core functionality:</p>
+
+            <dl>
+                <dt><strong>Basic Attributes</strong></dt> 
+                <dd>It introduces the base set of attributes, which will be available on any widget. 
+                For example, <code>boundingBox, contentBox, width, height, visible</code> and <code>disabled</code>.</dd>
+
+                <dt><strong>Render Lifecycle Phase</strong></dt>
+                <dd>It adds the <code>render</code> lifecycle method (and event) to the <code>init</code> and <code>destroy</code> 
+                lifecycle methods provided by <code>Base</code>.</dd>
+
+                <dt><strong>Abstract Rendering Methods</strong></dt> 
+                <dd>It establishes abstract methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to 
+                provide consistent entry points for rendering across all widgets.</dd>
+
+                <dt><strong>Standard Progressive Enhancement</strong></dt>
+                <dd>It establishes a common entry point for progressive enhancement during widget initialization.</dd>
+
+                <dt><strong>Plugin Support</strong></dt>
+                <dd>Introduces methods and properties for Plugin support, through the <code>PluginHost</code> augmentation.</dd>
+
+                <dt><strong>String Localization</strong></dt>
+                <dd>Through the <code>strings</code> and <code>locale</code> attributes, provides client side string 
+                localization support.</dd>
+            </ul>
+
+            <h4 id="attributes">Basic Attributes</h4>
+
+            <p>Widget establishes the basic set of attributes which will be available in all YUI 3 widgets. The key attributes are discussed below:</p>
+
+            <table>
+                <tr><th>Attribute</th><th>Description</th></tr>
+                <tr><td><code>boundingBox</code></td><td>The outermost node for the Widget, used for sizing and positioning of a Widget as well as a containing element for any decorator elements used for skinning.</td></tr>
+                <tr><td><code>contentBox</code></td><td>A node that is a direct descendent of a Widget's bounding box that houses its content. This node will generally be the node which establishes the look/feel for the widget, and will usually be set during construction for widgets built from markup.</td></tr>
+                <tr><td><code>tabIndex</code></td><td>The tabIndex, applied to the bounding box.</td></tr>
+                <tr><td><code>hasFocus</code></td><td>Flag, indicating if the Widget currently has focus. Widget marks the bounding box with a "focus" class, but other than that the focus implementation is left to the specific widget class.</td></tr>
+                <tr><td><code>disabled</code></td><td>Flag, indicating if the Widget is disabled. Widget marks the bounding box with a "disabled" class, but other than that the disabled implementation is left to the specific widget class.</td></tr>
+                <tr><td><code>visible</code></td><td>Flag, indicating whether or not the Widget is visible. Widget marks the bounding box with a "hidden" class. The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
+                <tr><td><code>height</code></td><td>String with units, or a number, representing the height of the Widget. If a number is provided, the default unit, defined by Widgets DEF_UNIT, property is used. The height is applied to the bounding box.</td></tr>
+                <tr><td><code>width</code></td><td>String with units, or a number, representing the width of the Widget. If a number is provided, the default unit, defined by Widgets DEF_UNIT, property is used. The width is applied to the bounding box.</td></tr>
+                <tr><td><code>strings</code></td><td>Localizable collection of strings used to label elements of the Widget's UI.</td></tr>
+                <tr><td><code>locale</code></td><td>The current locale in which strings should be displayed. NOTE: Using get/set on the "strings" attribute will return/set strings for this locale.</td></tr>
+            </table>
+
+            <h4 id="rendering">Rendering Methods</h4>
+
+            <p><code>Widget</code> adds the <code>render</code> method/lifecycle phase to the 
+            <code>init</code> and <code>destroy</code> phases established by <code>Base</code>.</p>
+
+            <p>
+            The <code>render</code> method establishes the point at which the Widget lays down its UI, by adding elements to (or modifying) the DOM and 
+            setting up listeners to activate that UI. Having a distinct rendering phase promotes Widget classes which separate state and corresponding logic, 
+            from the way the Widget UI is displayed allowing the Widget's state to be safely modified and queried before it is displayed or rendered to the DOM.
+            </p>
+
+            <p>Additionally it leads to methods being split into methods which manipulate the widget's state or handle core "app" logic, vs. methods which work with the DOM, 
+            making it easier to customize (and test) one area or the other.</p>
+
+            <h5>The Lifecycle Methods : <code>init, destroy, render</code></h5>
+            
+            <p>As with <code>init</code> and <code>destroy</code>, the <code>render</code> method on <code>Widget</code> is final, and delegates to the 
+            widget's <code>renderer</code> method to perform the actual rendering work:</p>
+
+            <dl>
+                <dt><a href="../api/Base.html#method_init"><code>init</code></a> <em>(inherited from <code>Base</code>)</em>:</dt>
+                <dd>
+                    <p>
+                    The init method loops through the class hierarchy, top down (Base first, sub-class last) and:
+                    </p>
+                    <ul>
+                        <li>Configures attributes for each class, based on the class' <code>ATTRS</code> static property.</li>
+                        <li>Then, invokes the <code>initializer</code> method for the class.</li>
+                    </ul>
+                    <p>The <code>init</code> method fires an <code>init</code> event, which can be prevented to stop initialization from proceeding.</p>
+                </dd>
+            </dl>
+            <dl>
+                <dt><a href="../api/Base.html#method_destroy"><code>destroy</code></a> <em>(inherited from <code>Base</code>)</em>:</dt>
+                <dd>
+                    <p>Invokes the <code>destructor</code> method for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</p>
+                    <p>The <code>destroy</code> method fires a <code>destroy</code> event, which can be prevented to stop destruction from proceeding.</p>
+                </dd>
+            </dl>
+            <dl>
+                <dt><a href="../api/Widget.html#method_render"><code>render</code></a>:</dt>
+                <dd>
+                    <p>Invokes the <code>renderer</code> method for the Widget instance. Unlike the <code>initializer</code> and <code>destructor</code>, this method is not chained automatically for the widget class hierarchy.</p>
+                    <p>
+                    The <code>render</code> method accepts a node argument, which can be used to define where in the document the widget should be appended.
+                    If the widget's contentBox or boundingBox don't already exist in the document, and this argument is not provided, the widget is 
+                    rendered to the document's body element.
+                    </p>
+                    <p>The render method fires a <code>render</code> event, which can be prevented to stop rendering from proceeding.</p>
+                </dd>
+            </dl>
+
+            <h5>Widget's <code>renderer</code> Method</h5>
+
+            <p>Widget provides a <a href="../api/Widget.html#method_renderer"><code>renderer</code></a> method implementation, which for most simple widgets, will not need to be over-ridden.
+            This <code>renderer</code> method is shown below:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                renderer: function() {
+                    this.renderUI();
+                    this.bindUI();
+                    this.syncUI();
+                }
+            </textarea>
+
+            <p>
+            The <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> are abstract (empty) methods in the <code>Widget</code> class which attempt to establish a common pattern for widget development.
+            The intended role of each of these methods is described below, and most widgets will simply implement these methods, based on their expected roles:
+            </p>
+
+            <dl>
+                <dt><a href="../api/Widget.html#method_renderUI"><code>renderUI</code></a></dt>
+                <dd>This method is responsible for creating and adding the nodes which the widget needs to the document (or modifiying existing nodes, in the case of progressive enhancement).
+                It is usually the point at which the DOM is first modified by the Widget.</dd>
+            </dl>
+            <dl>
+                <dt><a href="../api/Widget.html#method_bindUI"><code>bindUI</code></a></dt>
+                <dd>This method is responsible for attaching event listeners which bind the UI to the widget state. 
+                These listeners are generally attribute change listeners - used to update the state of the UI, in response to changes in the attribute's value.
+                It also attaches DOM event listeners to the nodes making up the UI, to map user interactions to the Widget's API.</dd>
+            </dl>
+            <dl>
+                <dt><a href="../api/Widget.html#method_syncUI"><code>syncUI</code></a></dt>
+                <dd>This method is responsible for setting the initial state of the UI, based on the current state of the widget at the time of rendering.</dd>
+            </dl>
+
+            <h4 id="progressive">Progressive Enhancement</h4>
+
+            <p>The <code>Widget</code> class establishes a standard entry point for widgets which need to provide progressive enhancement support, through the <code>HTML_PARSER</code> property on each class.</p>
+
+            <p><a href="../api/Widget.html#property_HTML_PARSER"><code>HTML_PARSER</code></a> is a static property, used to define an object (used as an associative array) of selectors or functions which are responsible for parsing content for the widget which may already be on the page,
+            and extracting attribute configuration values for use during initialization:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                MyWidget.HTML_PARSER = {
+
+                     // Set attributes which are Node references using selector syntax (uses node.query())
+                     titleNode: "span.yui-title",
+
+                     // Set attributes which are multipe Node references using selector syntax (uses node.queryAll()) 
+                     itemNodes: ["li.yui-listitem"],
+
+                     // Set attributes using a parse function. Execution context is set to the widget instance
+                     label: function(contentBox) {    
+                        return contentBox.query("input.yui-title").get("innerHTML");
+                     },
+
+                     xValue: function(contentBox) {
+                         return contentBox.query("input.yui-slider-xvalue").get("value");
+                     },
+
+                     yValue: function(contentBox) {
+                         return contentBox.query("input.yui-slider-yvalue").get("value");
+                     }
+                };
+            </textarea>
+
+            <p>The <code>HTML_PARSER</code> property is evaluated when the Widget class' <code>initializer</code> method is invoked (so before Widget sub-classes recieve the configuration
+            object passed in to the constructor). The object is iterated, to create a filled out configuration object for the Widget, based on the content found on the page. For example
+            the parser defintion above, may lead to the following object literal when evaluated:
+<code><pre>
+    {
+        titleNode: NodeRef,
+        itemNodes: NodeRef (multiple nodes),
+        label: "My Widget",
+        xValue: "10",
+        yValue: "20"
+    }
+
+</pre></code>
+</p>
+
+            <p>This object is merged with the user configuration object passed into the constructor (markup can be thought of as alternate source/format for configuration data), with the configuration object passed to the widget constructor taking precedence if a value for an attribute is found in both the configuration object passed to the contructor and from markup.</p>
+
+            <h4 id="plugin">Plugin Support</h4>
+
+            <p>
+            As mentioned in the class structure overview, <code>Widget</code> is augmented with <code>PluginHost</code> providing the ability plug Plugins into widget
+            instances (and unplug them). Plugins can be used to add atomic pieces of functionality or features to the widget instance, without having to bake support, or even
+            knowledge of the feature into the core widget code. <code>PluginHost</code> adds the following key methods to the <code>Widget</code> class:
+            </p>
+
+            <dl>
+                <dt><code><a href="../api/PluginHost.html#method_plug">plug({fn:pluginClass, cfg:pluginConfig})</a></code></dt>
+                <dd>
+                <p>Adds a plugin to the widget instance, with the configuration specified. The <code>plug</code>, will create a new instance of the plugin,
+                and attach it to widget instance on the namespace (property) defined by the plugin class' <code>NS</code> property.</p>
+                <p>The <code>plug</code> method also allow multiple plugins to be added in a single call, but passing in an array with the above object format.</p>
+                </dd>
+                <dt><code><a href="../api/PluginHost.html#method_unplug">unplug(namespace)</a></code></dt>
+                <dd>Removes the plugin at the attached namespace from the widget instance and destroys it.</dd>
+            </dl>
+
+            <p>The above 2 methods are designed to be used after an instance of the widget has already been created. 
+            Plugins can also be added using the <code>Widget</code> constructor, using the <code>plugins</code> 
+            configuration key. For example:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                var overlay = new Y.Overlay({
+                    contentBox: "#module",
+                    plugins : [{fn:AnimPlugin, cfg:{duration:2}}]
+                });
+            </textarea>
+
+            <p>
+            Additionally, if the widget developer wants a certain set of plugins added to the widget by default, a static, class level <a href="../api/Widget.html#property_PLUGINS"><code>PLUGINS</code></a>
+            property is also supported, allowing the developer to define the list of plugins to be added as part of the class definition.
+            </p>
+
+            <p>
+            The <a href="../plugin/index.html">Plugin landing page</a> discusses plugin development in detail. The <a href="../examples/overlay/overlay-io-plugin.html">Overlay IO Plugin</a> and
+            <a href="../examples/overlay/overlay-anim-plugin.html">Overlay Anim Plugin</a> examples also provide a concrete look at plugin development.
+            </p>
+
+            <h4 id="markup">Rendered Markup</h4>
+
+            <p>The <code>Widget</code> class establishes a common markup format for all widgets, through its <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
+            <a href="../api/Widget.html#config_contentBox"><code>contentBox</code></a> attributes.</p>
+
+
+            <p>
+                All widgets will have a bounding box, wrapping a content box. They are both <code>DIV</code>s by default, but can be customized for a widget, by over-riding the <code>BOUNDING_TEMPLATE</code>, <code>CONTENT_TEMPLATE</code> prototype properties. References 
+                to existing nodes in the document (or a selector string which can be used to obtain them) can be passed to the constructor using the <code>contentBox</code> and <code>boundingBox</code> attributes, as can references to newly created nodes, not currently in the document.
+            </p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                var slider = new Y.Slider({
+                    contentBox: "#myForm > div.numberField"
+                });
+
+                // Render the widget under the "#parentNode" node.
+                overlay.render("#parentNode");
+            </textarea>
+
+            <p>
+                The widget will create either of the nodes if they are not provided in the constructor, and add them to the document when the widget's <code>render</code> method is called. 
+                As mentioned previously, if the <code>render</code> method is passed a node reference(<code>"#parentNode</code> in the snippet above), the widget's bounding box is appended to that node if it is not already a child.
+            </p>
+
+            <h5>The Bounding Box</h5>
+
+            <p>The bounding box is the outer most element owned by the widget and is used for functional, rather than visual, purposes.</p>
+
+            <ul class="topiclist">
+                <li><p class="topic">A class name identifying the widget type is added to the bounding box.</p>
+                    <p>The default format for the class name is "yui-[widgetname]". For example, for Slider, the "yui-slider" class name is added to the bounding box.</p>
+                </li>
+                <li><p class="topic">Additionally, class names for all widget classes in the class heirarchy are also used to tag the bounding box.</p>
+                    <p>For example, for a MultiThumbSlider, which may extend Slider, the bounding box is marked with the classes "yui-widget", "yui-slider" and "yui-multithumbslider" (this is the only place where we mark an element with class names for all widget classes in the heirarchy).</p>
+                </li>
+                <li>
+                    <p class="topic">Class names used for state management by the widget instance are also applied to the bounding box.</p>
+                    <p>The general format is "yui-[widgetname]-[state]". For example "yui-slider-hidden", "yui-slider-disabled".</p>
+                </li>
+                <li>
+                    <p class="topic">The widget's width and height values are applied to the bounding box if set, as are top/left (xy) positioning values, for positioned widgets.</p>
+                </li>
+                <li>
+                    <p class="topic">The bounding box is not expected to have any visual properties (e.g. borders, padding etc.) applied to it.</p>
+                    <p>However it will have CSS defining how the widget impacts the document flow. For example, the bounding box type ("display:inline", "display:inline-block", "display:block") and the positioning scheme ("position:absolute", "position:relative")</p>
+                </li>
+            </ul>
+
+            <h5>The Content Box</h5>
+
+            <p>The content box is a child of the bounding box. The widget will add the elements which make up its core UI inside the content box.</p>
+
+            <ul class="topiclist">
+                <li>
+                    <p class="topic">The content box also has an identifying class name applied to it.</p>
+                    <p>The default format is "yui-[widgetname]-content". For example "yui-slider-content".</p>
+                </li>
+                <li><p class="topic">Visual treatment for the widget is applied to the content box (e.g. borders, padding, background-color etc.).</p></li>
+                <li>
+                    <p class="topic">For progressively enhanced solutions, generally the user will only provide what will be the content box on the page and pass it into the constructor as the <code>contentBox</code> (rather than the bounding box).</p> 
+                    <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unneccessary markup on the page upfront.</p>
+                </li>
+            </ul>
+
+            <h5>Why Two Nested Boxes?</h5>
+
+            <p>Providing nested boxes for all widgets provides benefits for css application, decorative element support and bounding box dimension handling. These are detailed below:</p>
+
+            <ul>
+                <li>The nested structure allows the bounding box to act as a container for any additional decorator elements which need to be added for the widget. For example, elements to support rounded corners, shadows, or shimming. These can live as siblings of the content box, and can be positioned, and sized more efficiently since they have a common parent container.</li>
+                <li>Additionally, due to the consistent structure across all widgets, generic plugins can be written to provide the above decorator support, which are re-usable across all widgets.</li>
+                <li>Having a box without border and padding applied (the bounding box) allows for consistent width and height application across brower box model differences.</li>
+                <li>The nested structure provides an extra hook for widget developers to use nested CSS rules, as a replacement for "mutliple class" rules which cannot be used reliably with IE6.</li>
+            </ul>
+
+            <h4 id="CSS">Class Names and CSS</h4>
+
+            <p>In order to provide consistent class names for use across all widgets, the <code>Widget</code> class provides two methods which are simple wrappers for the <code>ClassNameManager</code> utility, and leverage the <code>NAME</code> property defined for widget classes.</p>
+
+            <dl>
+                <dt><code>getClassName(arg1, arg2, arg3 ...)</code> method (instance)</dt>
+                <dd>
+                    <p>This method can be used to create class names which begin with the configured prefix for application ("yui-") by default and the name of the widget (the <code>NAME</code> propery, lowercased) For example:</p>
+
+                    <textarea name="code" class="JScript" cols="60" rows="1">
+                        // A method on a Spinner widget instance, with Spinner.NAME = "spinner";
+                        renderSpinnerButton: function() {
+                            // generates the class name "yui-spinner-increment-major"
+                            var btnClassName = this.getClassName("increment", "major");
+                        }
+                    </textarea>
+
+                    <p><strong>Note:</strong> The static <code>ClassNameManager.getClassName(arg1, arg2, arg3 ...)</code> method can be used as a replacement for the above method, when class names need to be generated in a static context, by passing in the widget's <code>NAME</code> property as the first argument. For example:</p>
+    
+                    <textarea name="code" class="JScript" cols="60" rows="1">
+                        // Generates the class name "yui-spinner-button"
+                        Spinner.BUTTON_TEMPLATE = Y.ClassNameManager.getClassName(Spinner.NAME, "button");
+                    </textarea>
+                </dd>
+
+                <dt><code>Widget.getClassName(arg1, arg2, arg3 ....)</code> method (static)</dt>
+
+                <dd>
+                    <p>
+                    This static version of method (invoked directly on the widget class, as opposed the "this") can be used to create class names which begin with a constant widget prefix ("yui-widget"). This maybe useful for plugins, which need to ship with CSS which targets a fixed class name, regardless of the widget instance to which they are applied.
+                    For example:
+                    </p>
+
+                    <textarea name="code" class="JScript" cols="60" rows="1">
+                        // generates the class name "yui-widget-shim"
+                        Widget.getClassName("shim");
+                    </textarea>
+                <dd>
+            </dl>
+
+            <p>The <a href="../api/ClassNameManager.html"><code>ClassNameManager</code></a> API documentation has details about how to configure the application prefix ("yui") and the default separator ("-") if required.</p>
+
+            <h5>CSS Implications</h5>
+
+            <p>Class names generated to reflect state will generally use the widget's name as a prefix. Widget does that for the classes it adds to the bounding box:</p>
+
+            <table>
+                <tr>
+                    <th>Attribute/State</th>
+                    <th>CSS Class Applied</th>
+                </tr>
+                <tr>
+                    <td>visible</td>
+                    <td>yui-[widgetname]-hidden</td>
+                </tr>
+                <tr>
+                    <td>disabled</td>
+                    <td>yui-[widgetname]-disabled</td>
+                </tr>
+                <tr>
+                    <td>hasFocus</td>
+                    <td>yui-[widgetname]-focus</td>
+                </tr>
+            </table>
+            
+            <p>Where, "[widgetname]" is the name of the widget instance (e.g. "menu", "overlay", "slider"). 
+
+            The widget name is combined with the state identifier so that different widgets can customize the way they handle visibility differently, and still work with IE6, 
+            where multiple class name rules, like <code>.yui-menu.yui-hidden</code> are not well supported. For example:
+            </p>
+
+            <textarea name="code" class="CSS" cols="60" rows="1">
+                /* Hide by positioning off-screen */
+                .yui-menu-hidden {
+                    top:-10000em;
+                    left:-10000em;
+                }
+
+                /* Hide by flipping visibility */
+                .yui-overlay-hidden {
+                    visibility:hidden;
+                }
+
+                /* Hide by flipping display */
+                .yui-slider-hidden {
+                    display:none;
+                }
+            </textarea>
+
+            <p>
+                However what providing this IE6 compatible format means, is that each widget needs to ship with the CSS rules defined for states which it needs handled.
+                Of the state based rules above, all widgets will definately end up providing a "yui-[widgetname]-hidden" implementation to control visibility.
+                Whether or not the other two are provided, is usually a function of whether or not the widget needs special UI handled for the "disabled" and "focus" states.
+            </p>
+
+            <h4 id="extending">Extending Widget</h4>
+
+            <p>The <a href="../examples/widget/widget-extend.html">"Extending The Widget Class"</a> example uses a concrete Spinner widget, to cover the above concepts with functional code.
+            It walks the developer through the step-by-step process involved in creating widget classes, using a working Spinner as an example. This example provides the jumping off point 
+            for developing your own widgets.</p>
+
+            <?php # include "../inc/mobileSection.inc";?>
+            <?php include "../inc/support.inc"; ?>
+
+        </div>
+        <div class="yui-u sidebar">
+
+            <div id="examples">
+                <?php include("../inc/examplesNav/".$section.".inc"); ?>
+            </div>
+
+            <!-- delicious module -->
+            <?php require('../inc/mod-delicious.inc'); ?>
+            <!-- /delicious module -->
+
+        </div>
+      </div>
+</div>
+</div>
+<?php include "../inc/side.inc" ?>
+<?php include "../inc/footer.inc" ?>
