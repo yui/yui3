@@ -39,7 +39,7 @@ include "../inc/header.inc";
                                             <li><a href="#progressive">Progressive Enhancement</a></li>
                                             <li><a href="#plugin">Plugin Support</a></li>
                                             <li><a href="#markup">Markup Structure</a></li>
-                                            <li><a href="#css">Class Names and CSS</a></li>
+                                            <li><a href="#CSS">Class Names and CSS</a></li>
                                             <li><a href="#extending">Extending Widget</a></li>
                                         </ul></li>
                                     <li><a href="#support">Support &amp; Community</a></li>
@@ -74,7 +74,7 @@ include "../inc/header.inc";
                     <li><a href="#progressive">Progressive Enhancement</a></li>
                     <li><a href="#plugin">Plugin Support</a></li>
                     <li><a href="#markup">Markup Structure</a></li>
-                    <li><a href="#css">Class Names and CSS</a></li>
+                    <li><a href="#CSS">Class Names and CSS</a></li>
                     <li><a href="#extending">Extending Widget</a></li>
                 </ul>
 
@@ -314,7 +314,7 @@ include "../inc/header.inc";
 
             <h4 id="markup">Rendered Markup</h4>
 
-            <p>The <code>Widget</code> class establishes a common markup format for all widgets, through it's <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
+            <p>The <code>Widget</code> class establishes a common markup format for all widgets, through its <a href="../api/Widget.html#config_boundingBox"><code>boundingBox</code></a> and 
             <a href="../api/Widget.html#config_contentBox"><code>contentBox</code></a> attributes.</p>
 
             <p>All widgets will have a bounding box, wrapping a content box (both DIVs by default, which can be customized), inside which the individual widgets will insert the nodes they need to render their UI.</p>
@@ -326,13 +326,12 @@ include "../inc/header.inc";
                 <ul>
                     <li>Marker class names identifying the widget (e.g. yui-overlay) and also state class names (e.g. yui-overlay-hidden) are applied to the bounding box.</li>
                     <li>The widget's width/height are applied to this box if set, as is XY positioning, for positioned widgets.</li>
-                    <li>The nested structure allows us to use nesting to define css application, as a replacement for mutliple class rules which cannot be used reliably on IE6.</li>
+                    <li>The nested structure allows us to use nesting to define CSS application, as a replacement for mutliple class rules which cannot be used reliably on IE6.</li>
                     <li>The bounding box also acts as a container for any additional decorator elements which need to be added for the widget, for example, 
                     elements to support rounded corners, shadows, or shimming.</li>
                     <li>Establishing the 2 container format for all widgets, allows developers to write generic plugins for the above decoration features, knowing that they can 
                     rely on the 2 box structure to position elements.</li>
                     <li>The  bounding box should not have any visual treatment applied to it (e.g. borders, padding, background-colors etc.). Visual treatments are applied to the contentBox.</li>
-                    <li>Avoiding border and padding on the bounding box allows for consistent width/height application across browers.</li>
                     <li>The absence of visual styling on the bounding box also lets us add skin class names (yui-skin-sam) to the bounding box as opposed to having them reside on an arbitrary ancestor.</li>
                 </ul>
             </dd>
@@ -341,12 +340,12 @@ include "../inc/header.inc";
             <dd>The content box is a child of the bounding box (the only child for the base <code>Widget</code> class)
                 <ul>
                     <li>It also has a widget specific marker class name applied (e.g. yui-overlay-content).</li>
-                    <li>Any visual treatment (e.g. borders, background colors) for the widget is applied to the content box, and it's children.</li>
-                    <li>Generally the content box will the element users specify when instantiating the widget from markup</li>
+                    <li>Any visual treatment (e.g. borders, background colors) for the widget is applied to the content box, and its children.</li>
+                    <li>Generally the content box will be the element users specify when instantiating the widget from markup</li>
                 </ul>
             </dd>
 
-            <h4 id="css">Class Names and CSS</h4>
+            <h4 id="CSS">Class Names and CSS</h4>
 
             <p>TODO this.getClassName, Widget.getClassName, ClassNameManager.getClassName</p>
 
