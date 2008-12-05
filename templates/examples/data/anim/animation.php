@@ -102,7 +102,7 @@ $examples["scroll"] = array(
 
 $examples["reverse"] = array(
 	name => "Reversing an Animation",
-	modules => array("anim"),
+	modules => array("anim", "plugin"),
 	description => "The <code>reverse</code> attribute allows you to change the run direction of an animation.",
 	sequence => array(8),
 	logger => array("anim", "example"),
