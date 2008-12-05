@@ -21,7 +21,7 @@ $examples["simple-drag"] = array(
 
 $examples["drag-plugin"] = array(
 	name => "Drag Node Plugin",
-	modules => array("dd"),
+	modules => array("dd", "plugin"),
 	description => "This example shows using the Drag Node Plugin.",
 	sequence => array(2),
 	newWindow => "default",
