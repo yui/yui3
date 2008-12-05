@@ -35,7 +35,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>debug:
      *  Turn debug statements on or off</li>
-     *  <li>useConsole:
+     *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
      *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
@@ -154,7 +154,7 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it

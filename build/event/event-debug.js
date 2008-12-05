@@ -1923,6 +1923,10 @@ var Env = YUI.Env,
 
         Env.windowLoaded = false;
 
+        var _ready = function(e) {
+            YUI.Env._ready();
+        };
+
         Env._ready = function() {
             if (!Env.DOMReady) {
                 Env.DOMReady=true;
@@ -1932,10 +1936,6 @@ var Env = YUI.Env,
                     D.removeEventListener("DOMContentLoaded", _ready, false);
                 }
             }
-        };
-
-        var _ready = function(e) {
-            YUI.Env._ready();
         };
 
         // create custom event
@@ -2000,7 +2000,7 @@ var Env = YUI.Env,
              *
              *
              * @event domready
-             * @for Event
+             * @for YUI
              *
              * @param {function} fn what to execute when the element is found.
              * @optional context execution context
@@ -2014,7 +2014,7 @@ var Env = YUI.Env,
             /**
              * Use domready event instead. @see domready
              * @event event:ready
-             * @for Event
+             * @for YUI
              * @deprecated use 'domready' instead
              */
             'event:ready': {
