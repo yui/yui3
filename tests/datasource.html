@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>DataSource Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>DataSource Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/datasource/datasource-debug.js" id="src_ds"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../build/",
+        //filter: "debug",
+        useConsole: true,
+        insertBefore: "src_ds"
+    }).use("yuitest", "console", "base", "datasource", function(Y) {
+        YUI.Y = Y;
+        var myConsole = new Y.Console();
+
+        var testCase = new Y.Test.Case({
+            name: "Constructor Tests",
+        
+            testConstructorEmpty: function(){
+                var ds = new Y.DataSource.Base();
+                Y.Assert.areEqual((ds instanceof Y.DataSource.Base), true);
+            }
+        });
+        
+        Y.Test.Runner.add(testCase);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>
