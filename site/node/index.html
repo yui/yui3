@@ -130,18 +130,24 @@ include "../inc/header.inc";
 
 
 				<h4 id="nodelist">Using NodeList</h4>
-                                <p>The <code>Y.NodeList</code> provides a node-like interface for manipulating multiple nodes through a single interface.</p>
+                                <p>The <code>Y.NodeList</code> provides a node-like interface for manipulating multiple nodes through a single interface.  A zero length collection will return <code>null</code>.  This, coupled with the fact that all Node instances have the NodeList api applies allows return values from <code>Y.get</code> and <code>Y.all</code> to be consumed by the same code transparently.</p>
                                 <p>The <code>Y.all</code> method is the simplest way to get a <code>NodeList</code>.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
                                 YUI().use('node', function(Y) {
-                                    Y.all('#demo li').addClass('bar');
+                                    var nodes = Y.all('#demo li');
+                                    if (nodes) { // might be null
+                                        nodes.addClass('bar');
+                                    }
                                 });
 				</textarea>
 
-                                <p><code>Y.Node</code> api returns <code>Y.NodeList</code> instances when the DOM would normally return a collection of elements.</p>
+                                <p>The <code>Y.Node</code> api returns <code>NodeList</code> instances when the DOM would normally return a collection of elements. For symmetry with the <code>Y.Node</code> api, zero length collections return <code>null</code>.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
                                 YUI().use('node', function(Y) {
-                                    Y.get('#demo').get('children').addClass('bar');
+                                    var nodes = Y.get('#demo').get('children');
+                                    if (nodes) { // might be null
+                                        nodes.addClass('bar');
+                                    }
                                 });
 				</textarea>
 
@@ -152,10 +158,14 @@ include "../inc/header.inc";
                                     var node = Y.get('#demo');
 
                                     var node2 = node.query('p');
-                                    node2.addClass('bar'); // adds "bar" to the first P descendant of #demo
+                                    if (node2) { // might be null
+                                        node2.addClass('bar'); // adds "bar" to the first P descendant of #demo
+                                    }
 
                                     var nodeList = node.queryAll('p');
-                                    nodeList.addClass('bar'); // adds "bar" to all P descendants of #demo
+                                    if (nodeList) { // might be null
+                                        nodeList.addClass('bar'); // adds "bar" to all P descendants of #demo
+                                    }
 
                                     if (node.test('.foo.bar')) { // "if node has both foo and bar classNames"
                                         node.removeClass('bar');

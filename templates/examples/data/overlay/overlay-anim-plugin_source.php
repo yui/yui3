@@ -103,11 +103,11 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             this._bindAnimVisible();
             this._bindAnimHidden();
 
-            this.on("animVisibleChange", this._bindAnimVisible);
-            this.on("animHiddenChange", this._bindAnimHidden);
+            this.after("animVisibleChange", this._bindAnimVisible);
+            this.after("animHiddenChange", this._bindAnimHidden);
 
             // Override default _uiSetVisible method, with custom animated method
-            this.before("_uiSetVisible", this._uiAnimSetVisible);
+            this.doBefore("_uiSetVisible", this._uiAnimSetVisible);
         },
 
         /*
