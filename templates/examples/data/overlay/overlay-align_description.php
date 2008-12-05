@@ -41,7 +41,7 @@ YUI({...}).use("overlay", function(Y) {
 <dl>
     <dt>node</dt>
     <dd>
-      The node to which the Widget is to be aligned. If set to null, or node provided, the Overlay is aligned to the viewport
+      The node to which the Widget is to be aligned. If set to null, or not provided, the Overlay is aligned to the viewport
     </dd>
     <dt>points</dt>
     <dd>
