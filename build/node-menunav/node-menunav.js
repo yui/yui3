@@ -119,12 +119,35 @@ var UA = Y.UA,
 var getPreviousSibling = function (node) {
 
 	var oPrevious = node.previous(),
-		oChildren;
+		oParentNode,
+		oChildren,
+		oULs,
+		oUL;
 	
 
 	if (!oPrevious) {
-		oChildren = node.get(PARENT_NODE).get(CHILDREN);
+	
+		oParentNode = node.get(PARENT_NODE);
+		oULs = oParentNode.get(PARENT_NODE).get(CHILDREN);
+
+		if (oULs.size() > 1) {
+			
+			oUL = oParentNode.previous();
+			
+			if (oUL) {
+				oChildren = oUL.get(CHILDREN);
+			}
+			else {
+				oChildren = oULs.item(oULs.size() - 1).get(CHILDREN);
+			}
+			
+		}
+		else {
+			oChildren = oParentNode.get(CHILDREN);
+		}
+
 		oPrevious = oChildren.item(oChildren.size() - 1);
+		
 	}
 	
 	return oPrevious;
@@ -136,12 +159,35 @@ var getPreviousSibling = function (node) {
 var getNextSibling = function (node) {
 
 	var oNext = node.next(),
-		oChildren;
+		oParentNode,
+		oChildren,
+		oULs,
+		oUL;
 	
 
 	if (!oNext) {
-		oChildren = node.get(PARENT_NODE).get(CHILDREN);
+
+		oParentNode = node.get(PARENT_NODE);
+		oULs = oParentNode.get(PARENT_NODE).get(CHILDREN);
+
+		if (oULs.size() > 1) {
+			
+			oUL = oParentNode.next();
+			
+			if (oUL) {
+				oChildren = oUL.get(CHILDREN);
+			}
+			else {
+				oChildren = oULs.item(0).get(CHILDREN);
+			}
+			
+		}		
+		else {
+			oChildren = node.get(PARENT_NODE).get(CHILDREN);
+		}
+
 		oNext = oChildren.item(0);		
+
 	}
 	
 	return oNext;
@@ -358,26 +404,38 @@ var getActiveClass = function (node) {
 
 var blurItem = function (item) {
 
-	var oAnchor = getItemAnchor(item);
+	var oAnchor;
 
-	//	TO DO:  Remove once implemented in Node
-	try {
-		oAnchor.blur();
+	if (item) {
+
+		oAnchor = getItemAnchor(item);
+
+		//	TO DO:  Remove once implemented in Node
+		try {
+			oAnchor.blur();
+		}
+		catch (ex) { }
+
 	}
-	catch (ex) { }
 
 };
 	
 
 var focusItem = function (item) {
 
-	var oAnchor = getItemAnchor(item);
+	var oAnchor;
 
-	//	TO DO:  Remove once implemented in Node
-	try {
-		oAnchor.focus();
+	if (item) {
+
+		oAnchor = getItemAnchor(item);
+	
+		//	TO DO:  Remove once implemented in Node
+		try {
+			oAnchor.focus();
+		}
+		catch (ex) { }
+	
 	}
-	catch (ex) { }
 
 };
 
@@ -406,17 +464,10 @@ var MenuNav = function (config) {
 	var menuNav = this,
 		oRootMenu = config.owner,
 		oDocument,
-		oSubmenu,
-		sID,
 		bUseARIA,
 		bAutoSubmenuDisplay,
 		nMouseOutHideDelay,
-		oMenuLabel,
-		oMenuToggle,
-		oListNodes,
 		oMenuNodes,
-		oMenuItemContentNodes,
-		oMenuLabelNodes,
 		oFirstItem,
 		oULs;
 		
@@ -483,87 +534,18 @@ var MenuNav = function (config) {
 
 		if (menuNav._useARIA) {
 
-			setARIARole(oRootMenu, "menubar");
-
-
-			oListNodes = oRootMenu.queryAll("ul,li");
-			
-			if (oListNodes) {
-
-				oListNodes.each(function (node) {
-				
-					setARIAPresentation(node);
-				
-				});
-
-			}
-			
-
-			oMenuItemContentNodes = oRootMenu.queryAll((PERIOD + getClassName(MENUITEM, "content")));
-
-			if (oMenuItemContentNodes) {
-
-				oMenuItemContentNodes.each(function (node) {
-	
-					removeFromTabIndex(node);
-					setARIARole(node, MENUITEM);
-	
-				});
-
-			}
-			
-
-			oMenuLabelNodes = oRootMenu.queryAll((PERIOD + CSS_MENU_LABEL));
-
-			if (oMenuLabelNodes) {
-
-				oMenuLabelNodes.each(function (node) {
-	
-					oMenuLabel = node;
-					oMenuToggle = node.query((PERIOD + getClassName(MENU, "toggle")));
-					
-					if (oMenuToggle) {
-	
-						setARIAPresentation(oMenuToggle);
-						removeFromTabIndex(oMenuToggle);
-						
-						oMenuLabel = oMenuToggle.previous();
-					
-					}
-	
-					setARIARole(oMenuLabel, MENUITEM);
-					setARIAProperty(oMenuLabel, "haspopup", TRUE);
-					removeFromTabIndex(oMenuLabel);
-
-
-					sID = oMenuLabel.get(ID);
-					
-					if (!sID) {
-						sID = Y.guid();
-						oMenuLabel.set(ID, sID);
-					}
-					
-					oSubmenu = node.next();
-	
-					setARIARole(oSubmenu, MENU);
-					setARIAProperty(oSubmenu, "labelledby", sID);
-					setARIAProperty(oSubmenu, HIDDEN, TRUE);
-					
-				});
-			
-			}
-
+			menuNav._applyARIA(oRootMenu);
 
 			oFirstItem = getFirstItem(oRootMenu);
-
+	
 			if (oFirstItem) {
-
+	
 				placeInDefaultTabIndex(getItemAnchor(oFirstItem));
-
+	
 				menuNav._firstItem = oFirstItem;
-
-			}
-
+	
+			}		
+		
 		}
 
 	}
@@ -828,18 +810,22 @@ MenuNav.prototype = {
 	* @param {Node} item Node instance representing a menuitem or menu label.
 	*/
 	_setActiveItem: function (item) {
-	
+
 		var menuNav = this;
+	
+		if (item) {
+			
+			menuNav._clearActiveItem();
+	
+			item.addClass(getActiveClass(item));
+	
+			if (menuNav._useARIA) {
+				placeInDefaultTabIndex(getItemAnchor(item));
+			}
+			
+			menuNav._activeItem = item;
 		
-		menuNav._clearActiveItem();
-
-		item.addClass(getActiveClass(item));
-
-		if (menuNav._useARIA) {
-			placeInDefaultTabIndex(getItemAnchor(item));
 		}
-		
-		menuNav._activeItem = item;
 	
 	},
 
@@ -852,13 +838,118 @@ MenuNav.prototype = {
 	*/
 	_focusItem: function (item) {
 	
-		if (this._hasFocus) {
+		if (item && this._hasFocus) {
 		
 			//	Need to focus using a zero-second timeout to get Apple's VoiceOver to 
 			//	recognize that the focused item has changed
 
 			later(0, null, focusItem, item);
 
+		}
+	
+	},
+
+
+	/**
+	* @method _applyARIA
+	* @description Applies the ARIA Roles, States and Properties to the supplied menu.
+	* @protected
+	* @param {Node} menu Node instance representing a menu.
+	*/
+	_applyARIA: function (menu) {
+
+		var menuNav = this,
+			bIsRoot = menuNav._isRoot(menu),
+			oMenuLabel,
+			oMenuToggle,
+			oListNodes,
+			oMenuItemContentNodes,
+			oMenuLabelNodes,
+			oSubmenu,
+			sID;
+
+
+		setARIARole(menu, (bIsRoot ? "menubar" : MENU));
+
+		if (!bIsRoot) {
+
+			oMenuLabel = menu.previous();
+			oMenuToggle = oMenuLabel.query(PERIOD + getClassName(MENU, "toggle"));
+			
+			if (oMenuToggle) {
+				oMenuLabel = oMenuToggle;
+			}
+			
+			sID = oMenuLabel.get(ID);
+			
+			if (!sID) {
+				sID = Y.guid();
+				oMenuLabel.set(ID, sID);
+			}
+
+			setARIAProperty(menu, "labelledby", sID);
+			setARIAProperty(menu, HIDDEN, TRUE);
+		
+		}
+
+
+		oListNodes = menu.queryAll("ul,li");
+		
+		if (oListNodes) {
+
+			oListNodes.each(function (node) {
+			
+				setARIAPresentation(node);
+			
+			});
+
+		}
+		
+
+		oMenuItemContentNodes = menu.queryAll((PERIOD + getClassName(MENUITEM, "content")));
+
+		if (oMenuItemContentNodes) {
+
+			oMenuItemContentNodes.each(function (node) {
+
+				removeFromTabIndex(node);
+				setARIARole(node, MENUITEM);
+
+			});
+
+		}
+		
+
+		oMenuLabelNodes = menu.queryAll((PERIOD + CSS_MENU_LABEL));
+
+		if (oMenuLabelNodes) {
+
+			oMenuLabelNodes.each(function (node) {
+
+				oMenuLabel = node;
+				oMenuToggle = node.query((PERIOD + getClassName(MENU, "toggle")));
+				
+				if (oMenuToggle) {
+
+					setARIAPresentation(oMenuToggle);
+					removeFromTabIndex(oMenuToggle);
+					
+					oMenuLabel = oMenuToggle.previous();
+				
+				}
+
+				setARIARole(oMenuLabel, MENUITEM);
+				setARIAProperty(oMenuLabel, "haspopup", TRUE);
+				removeFromTabIndex(oMenuLabel);
+				
+				oSubmenu = node.next();
+				
+				if (oSubmenu) {
+					menuNav._applyARIA(oSubmenu);
+				}
+				
+			});
+		
 		}
 	
 	},
@@ -878,6 +969,9 @@ MenuNav.prototype = {
 			aXY = oLI.getXY(),
 			oItem;
 
+		if (menuNav._useARIA) {
+			setARIAProperty(menu, HIDDEN, FALSE);
+		}
 
 		if (isHorizontalMenu(oParentMenu)) {
 			aXY[1] = aXY[1] + oLI.get(OFFSET_HEIGHT);
@@ -916,10 +1010,6 @@ MenuNav.prototype = {
 
 		menu.previous().addClass(CSS_MENU_LABEL_MENUVISIBLE);
 		menu.removeClass(CSS_MENU_HIDDEN);
-		
-		if (menuNav._useARIA) {
-			setARIAProperty(menu, HIDDEN, FALSE);
-		}
 
 		oItem = getFirstItem(menu);
 
@@ -1315,6 +1405,12 @@ MenuNav.prototype = {
 								menuNav._setActiveItem(getFirstItem(oSubmenu));
 
 							}
+							else {
+	
+								menuNav._setActiveItem(oItem);
+								focusItem(oItem);
+	
+							}
 						
 						}
 						else {	//	MenuItem
@@ -1367,6 +1463,12 @@ MenuNav.prototype = {
 								menuNav._showMenu(oSubmenu);
 								menuNav._setActiveItem(getFirstItem(oSubmenu));
 
+							}
+							else {
+	
+								menuNav._setActiveItem(oItem);
+								focusItem(oItem);
+	
 							}
 						
 						}
@@ -1775,7 +1877,8 @@ MenuNav.prototype = {
 		var menuNav = this,
 			oActiveItem = menuNav._activeItem,
 			oTarget = event.target,
-			oActiveMenu = getParentMenu(oTarget);
+			oActiveMenu = getParentMenu(oTarget),
+			oSubmenu;
 
 		if (oActiveMenu) {
 
@@ -1800,8 +1903,21 @@ MenuNav.prototype = {
 				}
 				else if (oActiveItem) {
 
-					blurItem(oTarget);
-					menuNav._clearActiveItem();
+					if (isMenuLabel(oActiveItem) && hasVisibleSubmenu(oActiveItem)) {
+					
+						oSubmenu = oActiveItem.next();
+
+						if (oSubmenu) {
+							menuNav._hideMenu(oSubmenu);
+						}
+
+					}
+					else {
+
+						blurItem(oTarget);
+						menuNav._clearActiveItem();
+					
+					}
 
 				}
 			

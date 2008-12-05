@@ -35,7 +35,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>debug:
      *  Turn debug statements on or off</li>
-     *  <li>useConsole:
+     *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
      *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
@@ -154,7 +154,7 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
@@ -583,7 +583,7 @@ YUI.add("log", function(instance) {
     /**
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
-     * can consume.  If the 'useConsole' config is true, it will
+     * can consume.  If the 'useBrowserConsole' config is true, it will
      * write to the browser console if available.
      *
      * @method log
@@ -624,7 +624,7 @@ YUI.add("log", function(instance) {
 
             if (!bail) {
 
-                if (c.useConsole) {
+                if (c.useBrowserConsole) {
                     var m = (src) ? src + ': ' + msg : msg;
                     if (typeof console != 'undefined') {
                         var f = (cat && console[cat]) ? cat : 'log';

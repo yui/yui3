@@ -35,7 +35,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>debug:
      *  Turn debug statements on or off</li>
-     *  <li>useConsole:
+     *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
      *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
@@ -154,7 +154,7 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
@@ -583,7 +583,7 @@ YUI.add("log", function(instance) {
     /**
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
-     * can consume.  If the 'useConsole' config is true, it will
+     * can consume.  If the 'useBrowserConsole' config is true, it will
      * write to the browser console if available.
      *
      * @method log
@@ -624,7 +624,7 @@ YUI.add("log", function(instance) {
 
             if (!bail) {
 
-                if (c.useConsole) {
+                if (c.useBrowserConsole) {
                     var m = (src) ? src + ': ' + msg : msg;
                     if (typeof console != 'undefined') {
                         var f = (cat && console[cat]) ? cat : 'log';
@@ -1586,39 +1586,6 @@ Y.Get = function() {
             }, win);
     };
 
-    /*
-     * The request failed, execute fail handler with whatever
-     * was accomplished.  There isn't a failure case at the
-     * moment unless you count aborted transactions
-     * @method _fail
-     * @param id {string} the id of the request
-     * @private
-     */
-    var _fail = function(id, msg) {
-
-
-        var q = queues[id];
-        if (q.timer) {
-            q.timer.cancel();
-        }
-
-        // execute failure callback
-        if (q.onFailure) {
-            var sc=q.context || q;
-            q.onFailure.call(sc, _returnData(q, msg));
-        }
-    };
-
-    var _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
-    };
-
     /**
      * Removes the nodes for the specified queue
      * @method _purge
@@ -1660,6 +1627,39 @@ Y.Get = function() {
                     _purge(this.tId);
                 }
             };
+    };
+
+    /*
+     * The request failed, execute fail handler with whatever
+     * was accomplished.  There isn't a failure case at the
+     * moment unless you count aborted transactions
+     * @method _fail
+     * @param id {string} the id of the request
+     * @private
+     */
+    var _fail = function(id, msg) {
+
+
+        var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
+        // execute failure callback
+        if (q.onFailure) {
+            var sc=q.context || q;
+            q.onFailure.call(sc, _returnData(q, msg));
+        }
+    };
+
+    var _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
     };
 
 

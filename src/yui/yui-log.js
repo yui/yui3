@@ -8,7 +8,7 @@ YUI.add("log", function(instance) {
     /**
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
-     * can consume.  If the 'useConsole' config is true, it will
+     * can consume.  If the 'useBrowserConsole' config is true, it will
      * write to the browser console if available.
      *
      * @method log
@@ -49,7 +49,7 @@ YUI.add("log", function(instance) {
 
             if (!bail) {
 
-                if (c.useConsole) {
+                if (c.useBrowserConsole) {
                     var m = (src) ? src + ': ' + msg : msg;
                     if (typeof console != 'undefined') {
                         var f = (cat && console[cat]) ? cat : 'log';
