@@ -859,6 +859,7 @@ YUI.add('node-base', function(Y) {
 /**
  * Extended Node interface for managing classNames.
  * @module node
+ * @submodule node
  * @for Node
  */
 

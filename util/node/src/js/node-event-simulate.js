@@ -1,7 +1,8 @@
 /*
  * Functionality to simulate events.
  * @submodule node-event-simulate
- * @module node-event
+ * @module node
+ * @for Node
  */
 
     /**

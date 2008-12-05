@@ -44,4 +44,16 @@ $examples["event-ce"] = array(
 	highlightSyntax => true
 );
 
+
+$examples["event-focus-blur"] = array(
+	name => "Using the 'focus' and 'blur' custom events",
+	modules => array("event"),
+	description => "Using the ClassNameManager Utility and the Event Utility's <code>focus</code> and <code>blur</code> custom events to skin checkboxes.",
+	sequence => array(5),
+	newWindow => "default",
+	requires => array("node", "classnamemanager"),
+	logger => array("event", "example"),
+	highlightSyntax => true
+);
+
 ?>
