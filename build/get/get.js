@@ -113,39 +113,6 @@ Y.Get = function() {
             }, win);
     };
 
-    /*
-     * The request failed, execute fail handler with whatever
-     * was accomplished.  There isn't a failure case at the
-     * moment unless you count aborted transactions
-     * @method _fail
-     * @param id {string} the id of the request
-     * @private
-     */
-    var _fail = function(id, msg) {
-
-
-        var q = queues[id];
-        if (q.timer) {
-            q.timer.cancel();
-        }
-
-        // execute failure callback
-        if (q.onFailure) {
-            var sc=q.context || q;
-            q.onFailure.call(sc, _returnData(q, msg));
-        }
-    };
-
-    var _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
-    };
-
     /**
      * Removes the nodes for the specified queue
      * @method _purge
@@ -187,6 +154,39 @@ Y.Get = function() {
                     _purge(this.tId);
                 }
             };
+    };
+
+    /*
+     * The request failed, execute fail handler with whatever
+     * was accomplished.  There isn't a failure case at the
+     * moment unless you count aborted transactions
+     * @method _fail
+     * @param id {string} the id of the request
+     * @private
+     */
+    var _fail = function(id, msg) {
+
+
+        var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
+        // execute failure callback
+        if (q.onFailure) {
+            var sc=q.context || q;
+            q.onFailure.call(sc, _returnData(q, msg));
+        }
+    };
+
+    var _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
     };
 
 
