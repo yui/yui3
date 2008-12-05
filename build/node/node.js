@@ -901,6 +901,7 @@ Y.Node.addDOMMethods([
 /**
  * Extended Node interface for managing classNames.
  * @module node
+ * @submodule node
  * @for Node
  */
 
