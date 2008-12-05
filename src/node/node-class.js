@@ -1,7 +1,7 @@
 /**
  * Extended Node interface for managing classNames.
  * @module node
- * @submodule node-screen
+ * @submodule node
  * @for Node
  */
 
