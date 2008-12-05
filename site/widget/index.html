@@ -341,22 +341,22 @@ include "../inc/header.inc";
 
             <p>The bounding box is the outer most element owned by the widget and is used for functional, rather than visual, purposes.</p>
 
-            <ul>
-                <li><p>A class name identifying the widget type is added to the bounding box.</p>
+            <ul class="topiclist">
+                <li><p class="topic">A class name identifying the widget type is added to the bounding box.</p>
                     <p>The default format for the class name is "yui-[widgetname]". For example, for Slider, the "yui-slider" class name is added to the bounding box.</p>
                 </li>
-                <li><p>Additionally, class names for all widget classes in the class heirarchy are also used to tag the bounding box.</p>
+                <li><p class="topic">Additionally, class names for all widget classes in the class heirarchy are also used to tag the bounding box.</p>
                     <p>For example, for a MultiThumbSlider, which may extend Slider, the bounding box is marked with the classes "yui-widget", "yui-slider" and "yui-multithumbslider" (this is the only place where we mark an element with class names for all widget classes in the heirarchy).</p>
                 </li>
                 <li>
-                    <p>Class names used for state management by the widget instance are also applied to the bounding box.</p>
+                    <p class="topic">Class names used for state management by the widget instance are also applied to the bounding box.</p>
                     <p>The general format is "yui-[widgetname]-[state]". For example "yui-slider-hidden", "yui-slider-disabled".</p>
                 </li>
                 <li>
-                    <p>The widget's width and height values are applied to the bounding box if set, as are top/left (xy) positioning values, for positioned widgets.</p>
+                    <p class="topic">The widget's width and height values are applied to the bounding box if set, as are top/left (xy) positioning values, for positioned widgets.</p>
                 </li>
                 <li>
-                    <p>The bounding box is not expected to have any visual properties (e.g. borders, padding etc.) applied to it.</p>
+                    <p class="topic">The bounding box is not expected to have any visual properties (e.g. borders, padding etc.) applied to it.</p>
                     <p>However it will have CSS defining how the widget impacts the document flow. For example, the bounding box type ("display:inline", "display:inline-block", "display:block") and the positioning scheme ("position:absolute", "position:relative")</p>
                 </li>
             </ul>
@@ -365,14 +365,14 @@ include "../inc/header.inc";
 
             <p>The content box is a child of the bounding box. The widget will add the elements which make up its core UI inside the content box.</p>
 
-            <ul>
+            <ul class="topiclist">
                 <li>
-                    <p>The content box also has an identifying class name applied to it.</p>
+                    <p class="topic">The content box also has an identifying class name applied to it.</p>
                     <p>The default format is "yui-[widgetname]-content". For example "yui-slider-content".</p>
                 </li>
-                <li><p>Visual treatment for the widget is applied to the content box (e.g. borders, padding, background-color etc.).</p></li>
+                <li><p class="topic">Visual treatment for the widget is applied to the content box (e.g. borders, padding, background-color etc.).</p></li>
                 <li>
-                    <p>For progressively enhanced solutions, generally the user will only provide what will be the content box on the page and pass it into the constructor as the <code>contentBox</code> (rather than the bounding box).</p> 
+                    <p class="topic">For progressively enhanced solutions, generally the user will only provide what will be the content box on the page and pass it into the constructor as the <code>contentBox</code> (rather than the bounding box).</p> 
                     <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unneccessary markup on the page upfront.</p>
                 </li>
             </ul>
