@@ -555,7 +555,7 @@ YUI.add('node', function(Y) {
             return node === refNode;
         },
 
-       /*
+       /**
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
          * @param {String | Function} fn A selector or boolean method for testing elements.
