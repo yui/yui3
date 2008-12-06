@@ -26,6 +26,8 @@ $nav[]=array('event','/yui/3/event/','Event', 'Event');
 $nav[]=array('', '', 'YUI 3 Component Infrastructure', '');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
+$nav[]=array('plugin','/yui/3/plugin','Plugin', 'Plugin');
+$nav[]=array('widget','/yui/3/widget','Widget', 'Widget');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
 $nav[]=array('anim','/yui/3/animation/','Animation', 'Animation');
@@ -35,6 +37,18 @@ $nav[]=array('get','/yui/3/get/','Get', 'Get');
 $nav[]=array('io','/yui/3/io/','IO', 'IO');
 $nav[]=array('json','/yui/3/json/','JSON', 'JSON (JavaScript Object Notation)');
 $nav[]=array('queue','/yui/3/queue/','Queue', 'Queue');
+
+$nav[]=array('', '', 'YUI 3 Widgets', '');
+$nav[]=array('overlay','/yui/3/examples/overlay/','Overlay', 'Overlay - Functional Examples');
+$nav[]=array('slider','/yui/3/examples/slider/','Slider', 'Slider - Functional Examples');
+
+$nav[]=array('', '', 'YUI 3 Node Plugins', '');
+$nav[]=array('nodemenunav','/yui/3/examples/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
+
+$nav[]=array('', '', 'YUI 3 Developer Tools - Examples', '');
+$nav[]=array('console','/yui/3/examples/console/index.html','Console', 'Console');
+$nav[]=array('profiler','/yui/3/examples/profiler/index.html','Profiler', 'Profiler');
+$nav[]=array('yuitest','/yui/3/examples/yuitest/index.html','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
 $nav[]=array('cssreset','/yui/3/cssreset/','CSS Reset', 'CSS Reset');

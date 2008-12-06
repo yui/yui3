@@ -308,14 +308,15 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #promo p, .promo p {margin-bottom:1em;}
 /*#promo ul, .promo ul {margin:0 0 1em 0;padding:0;}
 #promo ul ul, .promo ul ul {margin:0;padding:0;}*/
-#promo .yui-u ul {margin:0;padding:0;}
+#promo .yui-u ul {margin:0 0 1em 0;padding:0;}
 /*#promo ul li, .promo ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}*/
 #promo .yui-u ul li, .promo .yui-u ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}
 
 #main .yui-g {width:100%;}
 #promo #quicklinks {}
 #promo #jumps {}
-#promo h4, .promo h4 {font-size:100%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:10px;}
+#promo h4, .promo h4 {font-size:100%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:10px;margin-right:10px;}
+#promo code {color:inherit;font-weight:bold;}
 
 #utilityboxes {}
 #utilityboxes .mod {border:1px solid #D9D9D9;}
