@@ -376,6 +376,10 @@ include "../inc/header.inc";
                     <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unneccessary markup on the page upfront.</p>
                 </li>
             </ul>
+            
+            <h5>Widget Markup Diagram</h5>            
+			<p>The following illustration demonstrates how the markup and class names for a widget's bounding box and content box come together.</p>
+			<img src="assets/widget-dom.png" height="294" width="513" alt="Illustration of the DOM layout for a widget.">
 
             <h5>Why Two Nested Boxes?</h5>
 
@@ -385,7 +389,6 @@ include "../inc/header.inc";
                 <li>The nested structure allows the bounding box to act as a container for any additional decorator elements which need to be added for the widget. For example, elements to support rounded corners, shadows, or shimming. These can live as siblings of the content box, and can be positioned, and sized more efficiently since they have a common parent container.</li>
                 <li>Additionally, due to the consistent structure across all widgets, generic plugins can be written to provide the above decorator support, which are re-usable across all widgets.</li>
                 <li>Having a box without border and padding applied (the bounding box) allows for consistent width and height application across brower box model differences.</li>
-                <li>The nested structure provides an extra hook for widget developers to use nested CSS rules, as a replacement for "mutliple class" rules which cannot be used reliably with IE6.</li>
             </ul>
 
             <h4 id="CSS">Class Names and CSS</h4>
