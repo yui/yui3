@@ -20,6 +20,7 @@
    include($dataroot."/slider/slider.php");
    include($dataroot."/node/node.php");
    include($dataroot."/overlay/overlay.php");
+   include($dataroot."/profiler/profiler.php");
    include($dataroot."/widget/widget.php");
    include($dataroot."/yui/yui.php");
    include($dataroot."/plugin/plugin.php");
