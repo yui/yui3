@@ -6,6 +6,7 @@
 
    include($dataroot."/anim/animation.php");
    include($dataroot."/attribute/attribute.php");
+   include($dataroot."/console/cookie.php");
    include($dataroot."/console/console.php");
    include($dataroot."/dd/dd.php");
    include($dataroot."/get/get.php");

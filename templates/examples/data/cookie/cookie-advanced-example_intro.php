@@ -1,0 +1,1 @@
+<p>This example shows how to get, set, and remove cookies using the YUI Cookie utility.</p>
