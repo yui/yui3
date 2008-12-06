@@ -55,9 +55,7 @@ include "../inc/header.inc";
 									<li><a href="#onavailable">Using the <code>available</code> and <code>contentready</code> Events (Formerly the <code>onAvailable</code> and <code>onContentReady</code> methods)</a></li>
 									<li><a href="#ondomready">Using the <code>domready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
 									<li><a href="#keylistener">Using the <code>key</code> Event</a></li>
-                                    <!--
 									<li><a href="#focusblur">Using the <code>focus</code> and <code>blur</code> Events</a></li>
-                                    -->
 									<li><a href="#customevent">Using the CustomEvent Object</a></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -443,6 +441,35 @@ specified, all must be detected in order for the listener to fire ('+shift+ctrl+
 </ol>
 <p>So, the following specification will fire only if keyCode 65 or 66 is detected during a keypress event while shift and control
 are held down: 'press:65,66+shift+ctrl'</p>
+
+
+<h3 id="focusblur">Using the <code>focus</code> and <code>blur</code> Events</h3>
+<p>
+Since the DOM <code>focus</code> and <code>blur</code> events do not bubble, use the Event Utility's 
+<code>focus</code> and <code>blur</code> custom events as an alternative to 
+attaching discrete DOM <code>focus</code> and <code>blur</code> event handlers to focusable 
+elements.  The <code>focus</code> and <code>blur</code> custom events leverage capture-phase DOM 
+event listeners (<code>focusin</code> and <code>focusout</code> for IE), making it possible to 
+attach a single listener to an element and listen for the <code>focus</code> and <code>blur</code>
+events fired by all its focusable descendents.
+</p>
+
+<h4 id="creatingfocuslistener">Creating a <code>focus</code> Listener</h4>
+<p>
+The following will attach a <code>focus</code> listener to an element with the id of "container".
+</p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+YUI().use("node", function(Y) {
+
+    var handle = Y.on("focus", function(e, arg1, arg2, etc) {
+
+		Y.log("target: " + e.target + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
+
+    // Attach to the element with the id of "container", make Y the context, add arguments
+    }, "#container", Y, "arg1", "arg2", "etc");
+
+});
+</textarea>
 
 
 <h3 id="customevent">Using the CustomEvent Object </h3>
