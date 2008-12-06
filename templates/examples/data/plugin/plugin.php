@@ -2,7 +2,7 @@
 
 $modules["plugin"] = array(
 		"name" => "Plugin Utility",
-		"type" => "utility",
+		"type" => "infra",
         /*this description appears on the component's examples index page*/
 		"description" => "Plugin Examples", 
 		"cheatsheet" => false 
