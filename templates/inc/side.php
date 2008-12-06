@@ -17,6 +17,7 @@ $nav[]=array('node',$docroot.'examples/node/index.html','Node', 'Node - Function
 $nav[]=array('', '', 'YUI 3 Component Infrastructure - Examples', ' YUI 3 Utilities - Functional Examples');
 $nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
 $nav[]=array('base',$docroot.'examples/base/index.html','Base', 'Base - Functional Examples');
+$nav[]=array('plugin',$docroot.'examples/plugin/index.html','Plugin', 'Plugin - Functional Examples');
 $nav[]=array('widget',$docroot.'examples/widget/index.html','Widget', 'Widget - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Utilities - Examples', ' YUI 3 Utilities - Functional Examples');
@@ -40,6 +41,11 @@ $nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YU
 $nav[]=array('cssfonts',$docroot.'examples/cssfonts/index.html','CSS Fonts', 'YUI Fonts - Functional Examples');
 $nav[]=array('cssgrids',$docroot.'examples/cssgrids/index.html','CSS Grids', 'YUI Grids - Functional Examples');
 $nav[]=array('cssbase',$docroot.'examples/cssbase/index.html','CSS Base', 'YUI Base - Functional Examples');
+
+$nav[]=array('', '', 'YUI 3 Developer Tools - Examples', ' YUI 3 Developer Tools - Functional Examples');
+$nav[]=array('console',$docroot.'examples/console/index.html','Console', 'Console - Functional Examples');
+$nav[]=array('profiler',$docroot.'examples/profiler/index.html','Profiler', 'Profiler - Functional Examples');
+$nav[]=array('yuitest',$docroot.'examples/yuitest/index.html','YUI Test', 'YUI Test - Functional Examples');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog (external)', 'The Yahoo! User Interface Blog');
