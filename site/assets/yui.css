@@ -97,7 +97,7 @@ html>body #ygunav {overflow:hidden;}
 #bd ol.getstarted li { font-weight:bold; color:#668AA8; margin-bottom:1em; padding-left:20px; list-style-type:none;}
 #bd ol.getstarted li p { color:#000; font-weight:normal; margin:0 0 0 20px; padding:0 }
 
-code {font-family:"Courier New"; font-size: 100%; font-weight:bold;}
+code {font-family:"Courier New", monospace; font-size: 100%;color:#000;}
 
 /*div.apisummary {height:auto; margin:10px 0; width:auto; zoom:1;}
 div.apisummary table {font-size:inherit;font:100%; border-collapse:separate; border:1px solid #666666; border-left:none;}
@@ -294,8 +294,9 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #main h1, #main h2, #main h3, #main h4, #main h5, #main h6 {margin:0;}
 #main h2 {font-size:212%;color:#89B31F;font-weight:normal;margin:0 0 12px 0;padding:0;}
 #main h3 {font-size:153.9%;color:#FF8800;font-weight:normal;margin:0 0 12px 0;padding:0;}
-#main h4 {font-size:108%;font-weight:normal;color:#FF8800;;margin-bottom:10px;}	
+#main h4 {font-size:123.1%;font-weight:normal;color:#FF8800;;margin-bottom:10px;}	
 #main h5 {font-size:93%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:12px;}
+#main h5 code {text-transform:none;}
 #main h6 {font-size:93%;font-weight:normal;color:#FF8800;margin-bottom:10px;font-weight:bold;}
 #main p,
 #main form {margin-bottom:1em;}
@@ -305,9 +306,12 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 
 #promo, .example .promo {background:#f2fbff url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:13px;margin-bottom:13px;}
 #promo p, .promo p {margin-bottom:1em;}
-#promo ul, .promo ul {margin:0 0 1em 0;padding:0;}
-#promo ul ul, .promo ul ul {margin:0;padding:0;}
-#promo ul li, .promo ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}
+/*#promo ul, .promo ul {margin:0 0 1em 0;padding:0;}
+#promo ul ul, .promo ul ul {margin:0;padding:0;}*/
+#promo .yui-u ul {margin:0;padding:0;}
+/*#promo ul li, .promo ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}*/
+#promo .yui-u ul li, .promo .yui-u ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}
+
 #main .yui-g {width:100%;}
 #promo #quicklinks {}
 #promo #jumps {}
@@ -426,7 +430,7 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 	dl dt {
 		/*giving UL's LIs generated numbers*/
 		font-weight:bold;}
-	dl dd {margin:.5em 0 1.5em 1em;}
+	dl dd {margin:1em 0 1.5em 1em;}
 	.dp-highlighter table tr, .dp-highlighter table td {border:0;padding:0;background-color:#FFF;}
 	table tr {background-color:#fff;}
 	table td dl {margin:1em 0;}
@@ -585,4 +589,12 @@ ul.srchOptns li{margin-top:.3em;}
 #infra.yui-u {
     *width:31%;
 }
+
+
+/* updates for pr2 */
+
+#main ul.topiclist p.topic {margin:0 0 1em 0;font-weight:bold;}
+#main ul.topiclist p {margin:0 0 1em 0;}
+#main dl dt code {font-weight:bold;color:#333;}
+
 
