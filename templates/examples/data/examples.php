@@ -26,5 +26,6 @@
    include($dataroot."/yui/yui.php");
    include($dataroot."/plugin/plugin.php");
    include($dataroot."/node-menunav/node-menunav.php");
+   include($dataroot."/yuitest/yuitest.php");
 
 ?>

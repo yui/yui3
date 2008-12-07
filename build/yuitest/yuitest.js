@@ -782,14 +782,14 @@ YUI.add('yuitest', function(Y) {
                                 
                                 //if it's a string, check the error message
                                 if (thrown.message != shouldError){
-                                    error = new YAHOO.util.UnexpectedError(thrown);
+                                    error = new Y.Assert.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             } else if (Y.Lang.isFunction(shouldError)){
                             
                                 //if it's a function, see if the error is an instance of it
                                 if (!(thrown instanceof shouldError)){
-                                    error = new YAHOO.util.UnexpectedError(thrown);
+                                    error = new Y.Assert.UnexpectedError(thrown);
                                     failed = true;
                                 }
                             
@@ -798,7 +798,7 @@ YUI.add('yuitest', function(Y) {
                                 //if it's an object, check the instance and message
                                 if (!(thrown instanceof shouldError.constructor) || 
                                         thrown.message != shouldError.message){
-                                    error = new YAHOO.util.UnexpectedError(thrown);
+                                    error = new Y.Assert.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             

@@ -1,0 +1,2 @@
+<p>This example shows how to use the <a href="/yui/yuitest/#arrayassert"><code>ArrayAssert</code></a> object, which
+  contains assertions designed to be used specifically with JavaScript Arrays and array-like objects.</p>
