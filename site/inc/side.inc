@@ -39,16 +39,16 @@ $nav[]=array('json','/yui/3/json/','JSON', 'JSON (JavaScript Object Notation)');
 $nav[]=array('queue','/yui/3/queue/','Queue', 'Queue');
 
 $nav[]=array('', '', 'YUI 3 Widgets', '');
-$nav[]=array('overlay','/yui/3/examples/overlay/','Overlay', 'Overlay - Functional Examples');
-$nav[]=array('slider','/yui/3/examples/slider/','Slider', 'Slider - Functional Examples');
+$nav[]=array('overlay','/yui/3/overlay/','Overlay', 'Overlay - Functional Examples');
+$nav[]=array('slider','/yui/3/slider/','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Node Plugins', '');
-$nav[]=array('nodemenunav','/yui/3/examples/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
+$nav[]=array('nodemenunav','/yui/3/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
 
 $nav[]=array('', '', 'YUI 3 Developer Tools - Examples', '');
-$nav[]=array('console','/yui/3/examples/console/index.html','Console', 'Console');
-$nav[]=array('profiler','/yui/3/examples/profiler/index.html','Profiler', 'Profiler');
-$nav[]=array('yuitest','/yui/3/examples/yuitest/index.html','YUI Test', 'YUI Test');
+$nav[]=array('console','/yui/3/console/index.html','Console', 'Console');
+$nav[]=array('profiler','/yui/3/profiler/index.html','Profiler', 'Profiler');
+$nav[]=array('yuitest','/yui/3/yuitest/index.html','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
 $nav[]=array('cssreset','/yui/3/cssreset/','CSS Reset', 'CSS Reset');
