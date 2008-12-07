@@ -15,13 +15,13 @@ include "../inc/header.inc";
                 <h2><?php echo $component;?></h2>
 
                 <div id="promo" class="component">
-                    <p>Widget is the foundation class from which all YUI 3 widgets are derived. It provides the following core pieces of functionality:</p>
+                    <p>Widget is the foundation class from which all YUI 3 widgets are derived. It provides the following pieces of core functionality:</p>
 
                     <ul>
-                        <li>The render lifecycle method, in addition to the init and destroy lifecycle methods provide by Base</li>
+                        <li>The <code>render</code> lifecycle method, in addition to the <code>init</code> and <code>destroy</code> lifecycle methods provided by <a href="../base/">Base</a></li>
                         <li>Abstract rendering methods to support a consistent MVC structure across widgets</li>
                         <li>A common set of base widget attributes</li>
-                        <li>Consistent class name generation support</li>
+                        <li>Consistent class-name generation support</li>
                         <li>Plugin support</li>
                     </ul>
 
@@ -91,14 +91,14 @@ include "../inc/header.inc";
             </ul>
 
             <p>Therefore it provides the same <code>Attribute</code> and <code>Event.Provider</code> support 
-            as <a href="../base/index.html#extendbase">Base</a>. <code>PluginHost</code> adds the ability to 
-            add/remove plugins to Widget.</p>
+            as <a href="../base/index.html#extendbase">Base</a>. The <code>PluginHost</code> class adds the ability to 
+            add/remove plugins from Widgets.</p>
 
             <p>The <code>Widget</code> class provides the following core functionality:</p>
 
             <dl>
                 <dt><strong>Basic Attributes</strong></dt> 
-                <dd>It introduces the base set of attributes, which will be available on any widget. 
+                <dd>It introduces the base set of attributes that will be available on any widget. 
                 For example, <code>boundingBox, contentBox, width, height, visible</code> and <code>disabled</code>.</dd>
 
                 <dt><strong>Render Lifecycle Phase</strong></dt>
@@ -126,14 +126,14 @@ include "../inc/header.inc";
 
             <table>
                 <tr><th>Attribute</th><th>Description</th></tr>
-                <tr><td><code>boundingBox</code></td><td>The outermost node for the Widget, used for sizing and positioning of a Widget as well as a containing element for any decorator elements used for skinning.</td></tr>
-                <tr><td><code>contentBox</code></td><td>A node that is a direct descendent of a Widget's bounding box that houses its content. This node will generally be the node which establishes the look/feel for the widget, and will usually be set during construction for widgets built from markup.</td></tr>
+                <tr><td><code>boundingBox</code></td><td>The outermost node for the Widget, used for sizing and positioning of a Widget; this element can also serve as a containing element for any decorator elements used for skinning.</td></tr>
+                <tr><td><code>contentBox</code></td><td>A node that is a direct descendent of a Widget's bounding box that houses its content. This node will generally be the node that establishes the look/feel for the widget and it will usually be set during construction for widgets built from markup.</td></tr>
                 <tr><td><code>tabIndex</code></td><td>The tabIndex, applied to the bounding box.</td></tr>
                 <tr><td><code>hasFocus</code></td><td>Flag, indicating if the Widget currently has focus. Widget marks the bounding box with a "focus" class, but other than that the focus implementation is left to the specific widget class.</td></tr>
                 <tr><td><code>disabled</code></td><td>Flag, indicating if the Widget is disabled. Widget marks the bounding box with a "disabled" class, but other than that the disabled implementation is left to the specific widget class.</td></tr>
                 <tr><td><code>visible</code></td><td>Flag, indicating whether or not the Widget is visible. Widget marks the bounding box with a "hidden" class. The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
-                <tr><td><code>height</code></td><td>String with units, or a number, representing the height of the Widget. If a number is provided, the default unit, defined by Widgets DEF_UNIT, property is used. The height is applied to the bounding box.</td></tr>
-                <tr><td><code>width</code></td><td>String with units, or a number, representing the width of the Widget. If a number is provided, the default unit, defined by Widgets DEF_UNIT, property is used. The width is applied to the bounding box.</td></tr>
+                <tr><td><code>height</code></td><td>String with units, or a number, representing the height of the Widget. If a number is provided, the default unit, defined by Widget's <code>DEF_UNIT</code>, property is used. The height is applied to the bounding box.</td></tr>
+                <tr><td><code>width</code></td><td>String with units, or a number, representing the width of the Widget. If a number is provided, the default unit, defined by Widget's <code>DEF_UNIT</code>, property is used. The width is applied to the bounding box.</td></tr>
                 <tr><td><code>strings</code></td><td>Localizable collection of strings used to label elements of the Widget's UI.</td></tr>
                 <tr><td><code>locale</code></td><td>The current locale in which strings should be displayed. NOTE: Using get/set on the "strings" attribute will return/set strings for this locale.</td></tr>
             </table>
@@ -144,24 +144,23 @@ include "../inc/header.inc";
             <code>init</code> and <code>destroy</code> phases established by <code>Base</code>.</p>
 
             <p>
-            The <code>render</code> method establishes the point at which the Widget lays down its UI, by adding elements to (or modifying) the DOM and 
-            setting up listeners to activate that UI. Having a distinct rendering phase promotes Widget classes which separate state and corresponding logic, 
-            from the way the Widget UI is displayed allowing the Widget's state to be safely modified and queried before it is displayed or rendered to the DOM.
+            The <code>render</code> method establishes the point at which the Widget lays down its UI by adding elements to (or modifying existing elements in) the DOM and 
+            setting up listeners to activate that UI. Having a distinct rendering phase promotes Widget classes that separate state and corresponding logic 
+            from the way the Widget UI is displayed. This separation tends to allow the Widget's state to be safely modified and queried before it is displayed or rendered to the DOM.
             </p>
 
-            <p>Additionally it leads to methods being split into methods which manipulate the widget's state or handle core "app" logic, vs. methods which work with the DOM, 
-            making it easier to customize (and test) one area or the other.</p>
+            <p>Additionally, this separation of concerns leads to code being split into methods that manipulate the widget's state or handle core "app" logic versus methods which work with the DOM.  Following this practice makes it easier to customize (and test) one area or the other.</p>
 
-            <h5>The Lifecycle Methods : <code>init, destroy, render</code></h5>
+            <h5>The Lifecycle Methods: <code>init, destroy, render</code></h5>
             
-            <p>As with <code>init</code> and <code>destroy</code>, the <code>render</code> method on <code>Widget</code> is final, and delegates to the 
+            <p>As with <code>init</code> and <code>destroy</code>, the <code>render</code> method on <code>Widget</code> is final and delegates to the 
             widget's <code>renderer</code> method to perform the actual rendering work:</p>
 
             <dl>
                 <dt><a href="../api/Base.html#method_init"><code>init</code></a> <em>(inherited from <code>Base</code>)</em>:</dt>
                 <dd>
                     <p>
-                    The init method loops through the class hierarchy, top down (Base first, sub-class last) and:
+                    The <code>init</code> method loops through the class hierarchy, top down (Base first, sub-class last) and:
                     </p>
                     <ul>
                         <li>Configures attributes for each class, based on the class' <code>ATTRS</code> static property.</li>
