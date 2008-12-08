@@ -57,6 +57,7 @@ var SLIDER = 'slider',
  * maximum.
  *
  * @class Slider
+ * @extends Widget
  * @param config {Object} Configuration object
  * @constructor
  */
