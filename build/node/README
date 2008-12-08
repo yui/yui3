@@ -1,8 +1,8 @@
 **** version 3.0.0 PR2 ***
 
-* Deprecated NodeList
+* Node instances now have NodeList api
 
-* Y.get now returns null for non-matching queries or zero length collections
+* Y.all now returns null for non-matching queries (symmetry with "Y.get")
 
 * deep setters/getters now supported (Y.get('#foo').get('firstSibling.innerHTML'))
 
