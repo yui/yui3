@@ -2,7 +2,7 @@
 $docroot = ""; //path to distribution's yui root
 require($docroot."inc/common.php");
 
-$title = "The Yahoo! User Interface Library (YUI) 3.0 PR1";
+$title = "The Yahoo! User Interface Library (YUI) 3.0 PR2";
 $prepend = "<style type='text/css'>
 #components:after {content:'.';visibility:hidden;clear:both;height:0;display:block;}
 #components {zoom:1;}
@@ -15,11 +15,11 @@ include($docroot."inc/header.php");
 		
 		<div class="yui-g">
 			
-            <h2>YUI 3.x Preview Release 1</h2>
+            <h2>YUI 3.x Preview Release 2</h2>
 
-			<p>The YUI team is pleased to announce the YUI 3.0 Preview Release 1. This preview is an early look at what we're working on for the next generation of YUI Library. Please <a href="api/">review the API</a>, play with <a href="examples/">the examples</a>, and read the documentation on the <a href="http://developer.yahoo.com/yui/3/">3.x web site</a> for details; you can find us with questions or comments on the <a href="http://tech.groups.yahoo.com/group/yui3/">YUI 3.x discussion group</a>.</p>		
+			<p>The YUI team is pleased to announce the YUI 3.0 Preview Release 2. This preview is an early look at what we're working on for the next generation of YUI Library. Please <a href="api/">review the API</a>, play with <a href="examples/">the examples</a>, and read the documentation on the <a href="http://developer.yahoo.com/yui/3/">3.x web site</a> for details; you can find us with questions or comments on the <a href="http://tech.groups.yahoo.com/group/yui3/">YUI 3.x discussion group</a>.</p>		
 			<p>Please keep in mind that this is an early <em>preview</em>, not a production-quality (or even a beta) release. Things will change. Optimization and refactoring will continue. But we didn't want to wait to get feedback from the community.</p>
-			<p>This YUI 3.x PR1 is part of the broader <a href="http://developer.yahoo.com/yui">YUI Library</a> project, which is a coherent collection of JavaScript and CSS resources that make it easier to build richly interactive applications in web browsers. They have been released as open source under a <a href="license.html">BSD license</a> and are free for all uses.</p>
+			<p>This YUI 3.x PR2 is part of the broader <a href="http://developer.yahoo.com/yui">YUI Library</a> project, which is a coherent collection of JavaScript and CSS resources that make it easier to build richly interactive applications in web browsers. They have been released as open source under a <a href="license.html">BSD license</a> and are free for all uses.</p>
 
 			<h3 id="start" class="first">Getting Started</h3>
 
