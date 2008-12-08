@@ -117,7 +117,7 @@ yconsole.render();
                 
                 <h5 id="order">Set <code>newestOnTop</code> to control message order</h5>
 
-                <p>Messages are rendered into the body of the Console either at the top or bottom, based on the <code>newestOnTop</code> configuration.  By default, new messages are added to the top (<code>newestOnTop = true</code>).  Setting this to <code>false</code> will cause new messages to be appended to the body below previous messages.</p>
+                <p>Messages are rendered into the body of the Console either at the top or bottom, based on the value of the <code>newestOnTop</code> configuration.  By default, new messages are added to the top.  Setting <code>newestOnTop</code> to <code>false</code> will cause new messages to be appended to the body below previous messages.</p>
                 
                 <p>By default, Console will scroll the body to view the latest message.  To disable this, set the <code>scrollIntoView</code> configuration to false.</p>
 
@@ -178,7 +178,7 @@ var Y = new YUI({ debug : true });
 Y.log("Hello world!", "info",  "myapp");
 </textarea>
 
-                <p>If the YUI instance is configured with debug set to true (the default), any calls to <code>Y.log(..)</code> will be broadcast through the <code>yui:log</code> event with the message, category, and source information passed along.</p>
+                <p>If the YUI instance is configured with <code>debug</code> set to true (the default), any calls to <code>Y.log(..)</code> will be broadcast through the <code>yui:log</code> event with the message, category, and source information passed along.</p>
                 
                 <p>Additionally, if your browser supports a native <code>console</code> object, the message will be output there as well.  Native console logging can be disabled with the YUI configuration <code>useBrowserConsole</code> set to <code>false</code>.  <em>This is the recommended setting when using Console</em>.</p>
 
