@@ -11,10 +11,10 @@ $nav[]=array('home','/yui/3/','YUI 3 Home', 'The Yahoo! User Interface Library (
 // $nav[]=array('faq','/yui/articles/3.x/overview/','YUI 3 Goals &amp; Philosophy', 'Introduction to YUI ');
 $nav[]=array('examples','/yui/3/examples/','YUI 3 Examples', 'Examples of every YUI utility and control in action');
 $nav[]=array('docs','/yui/3/api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
-$nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source Code', 'The YUI Library can be downloaded from SourceForge');
+// $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','Download YUI 3', 'The YUI Library can be downloaded from SourceForge');
 // $nav[]=array('faq','/yui/3/articles/faq/','YUI 3 FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('yui3configurator','/yui/3/configurator/','YUI Dependency Configurator', 'Choose the optimal YUI configuraton for your implementation, with files hosted by Yahoo! or on your own servers.');
-$nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
+$nav[]=array('yui3configurator','/yui/3/configurator/','Dependency Configurator', 'Choose the optimal YUI configuration for your implementation, with files hosted by Yahoo! or on your own servers.');
+$nav[]=array('license','/yui/license.html','YUI is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
 
@@ -43,12 +43,12 @@ $nav[]=array('overlay','/yui/3/overlay/','Overlay', 'Overlay - Functional Exampl
 $nav[]=array('slider','/yui/3/slider/','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Node Plugins', '');
-$nav[]=array('nodemenunav','/yui/3/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
+$nav[]=array('node-menunav','/yui/3/node-menunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
 
-$nav[]=array('', '', 'YUI 3 Developer Tools - Examples', '');
-$nav[]=array('console','/yui/3/console/index.html','Console', 'Console');
-$nav[]=array('profiler','/yui/3/profiler/index.html','Profiler', 'Profiler');
-$nav[]=array('yuitest','/yui/3/yuitest/index.html','YUI Test', 'YUI Test');
+$nav[]=array('', '', 'YUI 3 Developer Tools', '');
+$nav[]=array('console','/yui/3/console/','Console', 'Console');
+$nav[]=array('profiler','/yui/3/profiler/','Profiler', 'Profiler');
+$nav[]=array('yuitest','/yui/3/yuitest/','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
 $nav[]=array('cssreset','/yui/3/cssreset/','CSS Reset', 'CSS Reset');
@@ -81,6 +81,60 @@ $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature
 <div class="yui-b toc3" id="tocWrapper">
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
+	<!-- <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" /> -->
+	<style type="text/css" media="screen">
+	.yui-skin-sam .yui-button {
+/*	background:transparent url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0pt 0pt;*/
+/*	border-color:#808080;*/
+	background-color:#fff;
+	border-color:#89B31F;
+	border-style:solid;
+	border-width:1px 0pt;
+	margin:auto 0.25em;
+	}
+	.yui-button {
+	display:inline-block;
+	vertical-align:text-bottom;
+	}
+
+
+	.yui-skin-sam .yui-button .first-child {
+/*	border-color:#808080;*/
+	border-color:#89B31F;
+	border-style:solid;
+	border-width:0pt 1px;
+	margin:0pt -1px;
+	}
+	.yui-button .first-child {
+	display:block;
+	}
+
+	.yui-skin-sam .yui-button a, .yui-skin-sam .yui-button:hover a {
+	color:#004C6D;
+	}
+	.yui-skin-sam .yui-button:hover a {
+	color:#004C6D;
+	text-decoration:underline;
+	}
+	.yui-skin-sam .yui-button button, .yui-skin-sam .yui-button a {
+	font-size:93%;
+	line-height:2;
+	min-height:2em;
+	padding:0pt 10px;
+	}
+	.yui-button a {
+	text-decoration:none;
+	}
+	.yui-button button, .yui-button a {
+	border:medium none;
+	display:block;
+	margin:0pt;
+	}
+</style>
+	<div id="downloadbtn">
+		<span class="yui-skin-sam"><span class="yui-button yui-link-button"><em class="first-child"><a href="http://sourceforge.net/projects/yui/">Download YUI 3</a></em></span></span>
+	</div>
+
 <ul>
 <?php
 for ($i=0; $i<count($nav); $i++)
