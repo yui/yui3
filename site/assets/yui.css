@@ -97,7 +97,9 @@ html>body #ygunav {overflow:hidden;}
 #bd ol.getstarted li { font-weight:bold; color:#668AA8; margin-bottom:1em; padding-left:20px; list-style-type:none;}
 #bd ol.getstarted li p { color:#000; font-weight:normal; margin:0 0 0 20px; padding:0 }
 
-code {font-family:"Courier New", monospace; font-size: 100%;color:#000;}
+code {font-family:"Courier New", monospace; font-size: 100%;color:inherit;}
+p code {color:#000;}
+a code {color:inherit;}
 
 /*div.apisummary {height:auto; margin:10px 0; width:auto; zoom:1;}
 div.apisummary table {font-size:inherit;font:100%; border-collapse:separate; border:1px solid #666666; border-left:none;}
@@ -309,6 +311,7 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 /*#promo ul, .promo ul {margin:0 0 1em 0;padding:0;}
 #promo ul ul, .promo ul ul {margin:0;padding:0;}*/
 #promo .yui-u ul {margin:0 0 1em 0;padding:0;}
+#promo .yui-u ul ul {margin:0 0 0 0;padding:0;}
 /*#promo ul li, .promo ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}*/
 #promo .yui-u ul li, .promo .yui-u ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}
 
@@ -317,6 +320,7 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #promo #jumps {}
 #promo h4, .promo h4 {font-size:100%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:10px;margin-right:10px;}
 #promo code {color:inherit;font-weight:bold;}
+#promo .yui-gb {float: left; width: 100%; margin-bottom: 16px;}
 
 #utilityboxes {}
 #utilityboxes .mod {border:1px solid #D9D9D9;}
