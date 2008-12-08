@@ -19,7 +19,7 @@ include "../inc/header.inc";
                     <p>Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.
 
                     The overlay is built by extending <a href="../api/Widget.html"><code>Widget</code></a> and adding the <a href="../api/WidgetPosition.html"><code>WidgetPosition</code></a>, <a href="../api/WidgetStack.html"><code>WidgetStack</code></a>, <a href="../api/WidgetPositionExt.html"><code>WidgetPositionExt</code></a> and <a href="../api/WidgetStdMod.html"><code>WidgetStdMod</code></a> extensions, 
-                    and doesn't actually need to add any implementation code of it's own. The <a href="../examples/widget/widget-build.html">"Building Custom Widget Classes"</code></a> example shows how you can use these extensions to build classes which mix and match the above features.</p>
+                    and doesn't actually need to add any implementation code of its own. The <a href="../examples/widget/widget-build.html">"Building Custom Widget Classes"</code></a> example shows how you can use these extensions to build classes which mix and match the above features.</p>
 
                     <p>
                         For the 3.0.0 PR2 release, the Overlay supports basic XY page positioning, alignment and centering relative to a node or the viewport, header, body, footer section support with progressive enhancement and zIndex with shimming support. Future versions will introduce support for event triggers to maintain alignment/centering, managed stacking (bring to top), constrained positioning.
@@ -174,7 +174,7 @@ include "../inc/header.inc";
             
             <h5>Basic XY Positioning</h5>
 
-            <p>Overlay provides basic XY positioning support through it's <code>x</code>, <code>y</code> and <code>xy</code> attributes as well as a convenience <code>move</code> method which wraps the <code>xy</code> attribute.</p>
+            <p>Overlay provides basic XY positioning support through its <code>x</code>, <code>y</code> and <code>xy</code> attributes as well as a convenience <code>move</code> method which wraps the <code>xy</code> attribute.</p>
 
             <p>The xy position of the overlay can be set in the constructor, as with any attribute value:</p>
 
@@ -366,7 +366,7 @@ include "../inc/header.inc";
 
             <h4 id="content">Setting Section Content</h4>
 
-            <p>Overlay uses the standard module format for it's rendering. It provides a header, body and footer section as described above (through the <code>WidgetStdMod</code> extension).</p>
+            <p>Overlay uses the standard module format for its rendering. It provides a header, body and footer section as described above (through the <code>WidgetStdMod</code> extension).</p>
 
             <h5>Replacing Content</h5>
 
@@ -480,7 +480,7 @@ include "../inc/header.inc";
 
             <h4 id="css">CSS</h4>
 
-            <p>Overlay is a generic, foundation widget and doesn't ship with a default look/feel out of the box. It's Sam Skin (build/overlay/assets/skins/sam/overlay.css) implementation consists only of core functional rules, to control how it's positioned and how it is hidden:</p>
+            <p>Overlay is a generic, foundation widget and doesn't ship with a default look/feel out of the box. Its Sam Skin (build/overlay/assets/skins/sam/overlay.css) implementation consists only of core functional rules, to control how it is positioned and how it is hidden:</p>
 
             <textarea name="code" class="CSS" cols="60" rows="1">
                 .yui-overlay {
