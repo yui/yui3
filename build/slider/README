@@ -1,0 +1,5 @@
+The Slider control
+    The Slider control creates an input UI involving a draggable thumb, representing a value, sliding along a rail, representing the finite value range.
+
+3.0.0pr2
+    Initial release
