@@ -2,7 +2,7 @@
 
 $modules["console"] = array(
 	"name" => "Console",
-	"type" => "widget",
+	"type" => "tool",
 	"description" => "The Console control is a window for viewing messages logged within a YUI instance.",
 	"cheatsheet" => false
 );	
