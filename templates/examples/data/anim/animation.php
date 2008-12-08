@@ -16,7 +16,7 @@ $examples["basic"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-base"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -29,7 +29,7 @@ $examples["easing"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-base", "anim-easing"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -42,7 +42,7 @@ $examples["colors"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-color"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -55,7 +55,7 @@ $examples["alt-iterations"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-color"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -68,7 +68,7 @@ $examples["anim-xy"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-xy", "anim-easing"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -81,7 +81,7 @@ $examples["curve"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-curve", "anim-easing"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -95,7 +95,7 @@ $examples["scroll"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-scroll", "anim-easing"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -108,7 +108,7 @@ $examples["reverse"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("node-base", "anim-node-plugin", "anim-easing"),
+	requires => array("node", "anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -121,7 +121,7 @@ $examples["end-event"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-base"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -134,7 +134,7 @@ $examples["anim-chaining"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "default", 
 	newWindow => "default",
-	requires => array("anim-base", "anim-easing"),
+	requires => array("anim"),
 	highlightSyntax => true,
 	bodyclass => false
 );

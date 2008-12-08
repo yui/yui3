@@ -25,7 +25,7 @@
         <style type="text/css">
 
 			/*
-				Overide the values for border and padding specificed for the content box of each 
+				Overide the values for border and padding specified for the content box of each 
 				submenu in the Sam skin CSS.  The top and bottom borders are set to 0, since both 
 				borders will be drawn by the background image used to create the rounded corners.  
 				The top and bottom padding will be created by setting the height of each <div> 
