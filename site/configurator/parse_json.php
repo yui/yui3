@@ -32,34 +32,6 @@ $out->categories = $manual->categories;
 $modules = $loader->data;
 
 foreach ($modules as $mod => $config) {
-    // Setup submodule structure, and mark submodules with
-    // isSubMod flag.
-    if (isset($config->submodules)) {
-        foreach($config->submodules as $submod => $subConfig) {
-            if (!isset($modules->$submod)) {
-                $modules->$submod = $subConfig;
-            }
-            $modules->$submod->isSubMod = true;
-            if (isset($api->modules->$mod->subdata->$submod->description)) {
-                if (!isset($modules->$submod->info)) {
-                    $modules->$submod->info = new stdclass();
-                }
-                $modules->$submod->info->desc = $api->modules->$mod->subdata->$submod->description;
-            }
-        }
-    }
-
-    if (isset($config->plugins)) {
-        foreach($config->plugins as $plugin => $pluginConfig) {
-            if (!isset($modules->$plugin)) {
-                $modules->$plugin = $pluginConfig;
-            }
-            $modules->$plugin->isPlugin = true;
-        }
-    }
-}
-
-foreach ($modules as $mod => $config) {
 
     if (!isset($config->info)) {
         $config->info = new stdclass();
@@ -110,9 +82,8 @@ foreach ($modules as $mod => $config) {
 
     // Setup submodule structure, and mark submodules with
     // isSubMod flag.
-    /*
     if (isset($config->submodules)) {
-        foreach($config->submodules as $submod => $config) {
+        foreach($config->submodules as $submod => $subConfig) {
             if (!isset($modules->$submod)) {
                 $modules->$submod = new stdclass();
             }
@@ -125,7 +96,15 @@ foreach ($modules as $mod => $config) {
             }
         }
     }
-    */
+
+    if (isset($config->plugins)) {
+        foreach($config->plugins as $plugin => $pluginConfig) {
+            if (!isset($modules->$plugin)) {
+                $modules->$plugin = new stdclass();
+            }
+            $modules->$plugin->isPlugin = true;
+        }
+    }
 
     // YUI submodule hack
     if ($mod == "get" || $mod == "loader") {
