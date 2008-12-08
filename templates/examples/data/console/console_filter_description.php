@@ -12,8 +12,8 @@ YUI({
         attribute : true, // or the attribute module
         widget : true     // or the widget module
     },
-    logLevel : 'error',   // Show only errors in the Console
-    useConsole : false    // Don't use the browser's native console
+    logLevel : 'error',       // Show only errors in the Console
+    useBrowserConsole : false // Don't use the browser's native console
 }).use('console', function (Y) {
 
 /* Console instances will default to logLevel = Y.Console.LOG_LEVEL_ERROR */
@@ -195,7 +195,7 @@ Y.log(&quot;This is a log message!&quot;, &quot;info&quot;, &quot;sourceA&quot;)
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // To eliminate duplicate reporting in native console in supporting browsers
-Y.config.useConsole = false;
+Y.config.useBrowserConsole = false;
 
 // Add the default filtering of sourceC messages
 Y.config.logExclude = {

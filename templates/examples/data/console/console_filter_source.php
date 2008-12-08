@@ -85,7 +85,7 @@ Y.log(&quot;This is a log message!&quot;, &quot;info&quot;, &quot;sourceA&quot;)
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // To eliminate duplicate reporting in native console in supporting browsers
-Y.config.useConsole = false;
+Y.config.useBrowserConsole = false;
 
 // Add the default filtering of sourceC messages
 Y.config.logExclude = {
