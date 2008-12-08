@@ -10,7 +10,7 @@
     margin: 0;
 }
 
-#sitesearch {
+#searchArea {
     z-index: 40;
 }
 </style>
