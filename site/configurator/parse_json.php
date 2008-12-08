@@ -3,7 +3,7 @@
 #!/usr/bin/php
 
 //This path may need to be changed
-$gzip = '/usr/bin/gzip';
+$gzip = '/bin/gzip';
 $builddir = '../../build/';
 
 define("UNKNOWN_CAT", "other");
@@ -30,6 +30,34 @@ $out->modules = new stdclass();
 $out->categories = $manual->categories;
 
 $modules = $loader->data;
+
+foreach ($modules as $mod => $config) {
+    // Setup submodule structure, and mark submodules with
+    // isSubMod flag.
+    if (isset($config->submodules)) {
+        foreach($config->submodules as $submod => $subConfig) {
+            if (!isset($modules->$submod)) {
+                $modules->$submod = $subConfig;
+            }
+            $modules->$submod->isSubMod = true;
+            if (isset($api->modules->$mod->subdata->$submod->description)) {
+                if (!isset($modules->$submod->info)) {
+                    $modules->$submod->info = new stdclass();
+                }
+                $modules->$submod->info->desc = $api->modules->$mod->subdata->$submod->description;
+            }
+        }
+    }
+
+    if (isset($config->plugins)) {
+        foreach($config->plugins as $plugin => $pluginConfig) {
+            if (!isset($modules->$plugin)) {
+                $modules->$plugin = $pluginConfig;
+            }
+            $modules->$plugin->isPlugin = true;
+        }
+    }
+}
 
 foreach ($modules as $mod => $config) {
 
@@ -62,7 +90,7 @@ foreach ($modules as $mod => $config) {
     } else if(isset($api->modules->$mod->name)) {
         $config->info->name = $api->modules->$mod->name;
     } else {
-        $config->info->name = tolowercase($mod);
+        $config->info->name = strtolower($mod);
     }
 
     // Calculate file sizes
@@ -82,6 +110,7 @@ foreach ($modules as $mod => $config) {
 
     // Setup submodule structure, and mark submodules with
     // isSubMod flag.
+    /*
     if (isset($config->submodules)) {
         foreach($config->submodules as $submod => $config) {
             if (!isset($modules->$submod)) {
@@ -96,6 +125,7 @@ foreach ($modules as $mod => $config) {
             }
         }
     }
+    */
 
     // YUI submodule hack
     if ($mod == "get" || $mod == "loader") {

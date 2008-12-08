@@ -1,501 +1,1 @@
-{
-	"version": "3.0.0pr1", 
-	"modules": {
-		"node": {
-			"description": "Extended Node interface for managing classNames.", 
-			"submodules": [
-				"node-screen", 
-				"node-style", 
-				"node-base"
-			], 
-			"classlist": [
-				"Node", 
-				"NodeList"
-			], 
-			"filelist": [
-				"node-screen.js", 
-				"node-style.js", 
-				"node.js"
-			], 
-			"subdata": {
-				"node-base": {
-					"name": "NodeList", 
-					"description": "A wrapper for manipulating multiple DOM elements"
-				}, 
-				"node-style": {
-					"name": "Node", 
-					"description": "Extended Node interface for managing node styles."
-				}, 
-				"node-screen": {
-					"name": "Node", 
-					"description": "Extended Node interface for managing regions and screen positioning.\nAdds support for positioning elements and normalizes window size and scroll detection."
-				}
-			}, 
-			"name": "node"
-		}, 
-		"queue": {
-			"description": "Mechanism to execute a series of callbacks in a non-blocking queue.  Each\ncallback is executed via setTimout unless configured with a negative\ntimeout, in which case it is run in blocking mode in the same execution\nthread as the previous callback.  Callbacks can be function references or\nobject literals with the following keys:\n<ul>\n<li><code>fn</code> - {Function} REQUIRED the callback function.</li>\n<li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>\n<li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>\n<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>\n</ul>", 
-			"submodules": [
-			], 
-			"classlist": [
-				"Queue"
-			], 
-			"filelist": [
-				"Queue.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "queue"
-		}, 
-		"anim": {
-			"description": "The Animation Utility provides an API for creating advanced transitions between property values", 
-			"submodules": [
-				"anim-color", 
-				"anim-curve", 
-				"anim-easing", 
-				"anim-node-plugin", 
-				"anim-scroll", 
-				"anim-xy"
-			], 
-			"classlist": [
-				"Easing", 
-				"Anim"
-			], 
-			"filelist": [
-				"anim-color.js", 
-				"anim-curve.js", 
-				"anim-easing.js", 
-				"anim-node-plugin.js", 
-				"anim-scroll.js", 
-				"anim-xy.js", 
-				"anim.js"
-			], 
-			"subdata": {
-				"anim-node-plugin": {
-					"name": "Easing", 
-					"description": "Binds an Anim instance to a Node instance"
-				}, 
-				"anim-scroll": {
-					"name": "Anim", 
-					"description": "Adds support for the <code>scroll</code> property in <code>to</code>\nand <code>from</code> attributes."
-				}, 
-				"anim-xy": {
-					"name": "Anim", 
-					"description": "Adds support for the <code>xy</code> property in <code>from</code> and \n<code>to</code> attributes."
-				}, 
-				"anim-color": {
-					"name": "Anim", 
-					"description": "Adds support for color properties in <code>to</code>\nand <code>from</code> attributes."
-				}, 
-				"anim-curve": {
-					"name": "Anim", 
-					"description": "Adds support for the <code>curve</code> property for the <code>to</code> \nattribute.  A curve is zero or more control points and an end point."
-				}, 
-				"anim-easing": {
-					"name": "Easing", 
-					"description": "The easing module provides methods for customizing\nhow an animation behaves during each run."
-				}
-			}, 
-			"guessedname": "NUM", 
-			"guessedtype": "property", 
-			"name": "anim"
-		}, 
-		"dump": {
-			"description": "Returns a simple string representation of the object or array.\nOther types of objects will be returned unprocessed.  Arrays\nare expected to be indexed.  Use object notation for\nassociative arrays.\nIf included, the dump method is added to the YUI instance.", 
-			"submodules": [
-			], 
-			"classlist": [
-				"YUI~dump"
-			], 
-			"filelist": [
-				"dump.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "dump"
-		}, 
-		"dom": {
-			"description": "Adds position and region management functionality to DOM.", 
-			"submodules": [
-				"dom-screen", 
-				"dom-style", 
-				"dom-base", 
-				"selector"
-			], 
-			"classlist": [
-				"DOM", 
-				"Selector"
-			], 
-			"filelist": [
-				"dom-screen.js", 
-				"dom-style.js", 
-				"dom.js", 
-				"selector.js"
-			], 
-			"subdata": {
-				"dom-base": {
-					"name": "DOM", 
-					"description": "Provides DOM helper methods."
-				}, 
-				"selector": {
-					"name": "Selector", 
-					"description": "Provides helper methods for collecting and filtering DOM elements."
-				}, 
-				"dom-style": {
-					"name": "DOM", 
-					"description": "Add style management functionality to DOM."
-				}, 
-				"dom-screen": {
-					"name": "DOM", 
-					"description": "Adds position and region management functionality to DOM."
-				}
-			}, 
-			"guessedname": "OFFSET_TOP", 
-			"guessedtype": "property", 
-			"name": "dom"
-		}, 
-		"attribute": {
-			"description": "The Attribute Utility allows you to add attributes to any class through an augmentable Attribute interface. The interface adds get and set methods to your class for attribute access, as well as support for change events that can be used to listen for changes in attribute values.", 
-			"submodules": [
-			], 
-			"classlist": [
-				"Attribute", 
-				"State"
-			], 
-			"filelist": [
-				"Attribute.js", 
-				"State.js"
-			], 
-			"subdata": {
-			}, 
-			"guessedname": "O", 
-			"guessedtype": "property", 
-			"name": "attribute"
-		}, 
-		"dd": {
-			"description": "The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.", 
-			"submodules": [
-				"dd-constrain", 
-				"dd-ddm-base", 
-				"dd-ddm-drop", 
-				"dd-ddm", 
-				"dd-drag", 
-				"dd-drop", 
-				"dd-proxy"
-			], 
-			"classlist": [
-				"DragConstained", 
-				"DDM", 
-				"Drag", 
-				"Drop", 
-				"Proxy"
-			], 
-			"filelist": [
-				"constrain.js", 
-				"ddm-base.js", 
-				"ddm-drop.js", 
-				"ddm.js", 
-				"drag.js", 
-				"drop.js", 
-				"proxy.js"
-			], 
-			"subdata": {
-				"dd-ddm-drop": {
-					"name": "DDM", 
-					"description": "Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions."
-				}, 
-				"dd-constrain": {
-					"name": "DragConstained", 
-					"description": "This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also\nsupports tick based moves and XY axis constraints."
-				}, 
-				"dd-drop": {
-					"name": "Drop", 
-					"description": "This class provides the ability to create a Drop Target."
-				}, 
-				"dd-ddm": {
-					"name": "DDM", 
-					"description": "Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.\nIt is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets."
-				}, 
-				"dd-drag": {
-					"name": "Drag", 
-					"description": "This class provides the ability to drag a Node."
-				}, 
-				"dd-proxy": {
-					"name": "Proxy", 
-					"description": "This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node."
-				}, 
-				"dd-ddm-base": {
-					"name": "DDM", 
-					"description": "Provides the base Drag Drop Manger required for making a Node draggable."
-				}
-			}, 
-			"name": "dd"
-		}, 
-		"yuitest": {
-			"classlist": [
-				"ArrayAssert", 
-				"Assert", 
-				"Assert.Error", 
-				"ComparisonFailure", 
-				"UnexpectedValue", 
-				"ShouldFail", 
-				"ShouldError", 
-				"UnexpectedError", 
-				"DateAssert", 
-				"Mock", 
-				"ObjectAssert", 
-				"Test.Case", 
-				"Test.Wait", 
-				"Test.Manager", 
-				"Test.Reporter", 
-				"Test.Runner", 
-				"TestNode", 
-				"Test.Suite", 
-				"UserAction"
-			], 
-			"subdata": {
-			}, 
-			"name": "yuitest", 
-			"filelist": [
-				"ArrayAssert.js", 
-				"Assert.js", 
-				"DateAssert.js", 
-				"Mock.js", 
-				"ObjectAssert.js", 
-				"TestCase.js", 
-				"TestConsoleLogger.js", 
-				"TestFormat.js", 
-				"TestManager.js", 
-				"TestReporter.js", 
-				"TestRunner.js", 
-				"TestSuite.js", 
-				"UserAction.js", 
-				"YuiTestRollup.js"
-			], 
-			"submodules": [
-			]
-		}, 
-		"yui": {
-			"description": "YUI core", 
-			"submodules": [
-				"get", 
-				"loader"
-			], 
-			"classlist": [
-				"YUI~array", 
-				"Lang", 
-				"YUI~object", 
-				"UA", 
-				"YUI", 
-				"Get", 
-				"Loader"
-			], 
-			"filelist": [
-				"yui-array.js", 
-				"yui-core.js", 
-				"yui-dump.js", 
-				"yui-init.js", 
-				"yui-lang.js", 
-				"yui-later.js", 
-				"yui-log.js", 
-				"yui-object.js", 
-				"yui-ua.js", 
-				"yui.js", 
-				"get.js", 
-				"loader.js"
-			], 
-			"subdata": {
-				"loader": {
-					"name": "Loader", 
-					"description": "Loader dynamically loads script and css files.  It includes the dependency\ninfo for the version of the library in use, and will automatically pull in\ndependencies for the modules requested.  It supports rollup files and will\nautomatically use these when appropriate in order to minimize the number of\nhttp connections required to load all of the dependencies.  It can load the\nfiles from the Yahoo! CDN, and it can utilize the combo service provided on\nthis network to reduce the number of http connections required to download \nYUI files."
-				}, 
-				"get": {
-					"name": "Get", 
-					"description": "Fetches and inserts one or more script or link nodes into the document"
-				}
-			}, 
-			"name": "yui"
-		}, 
-		"json": {
-			"description": "The JSON Utility provides methods to serialize JavaScript objects into\nJSON strings and parse JavaScript objects from strings containing JSON data.\nThree modules are available for inclusion:\n<ol>\n<li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>\n<li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>\n<li>3. <code>json</code> for both parsing and stringification</li>\n</ol>\nBoth <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).", 
-			"submodules": [
-				"json-parse", 
-				"json-stringify"
-			], 
-			"classlist": [
-				"JSON"
-			], 
-			"filelist": [
-				"json-parse.js", 
-				"json-stringify.js"
-			], 
-			"subdata": {
-				"json-stringify": {
-					"name": "JSON", 
-					"description": "Provides Y.JSON.stringify method for converting objects to JSON strings."
-				}, 
-				"json-parse": {
-					"name": "JSON", 
-					"description": "Provides Y.JSON.parse method to take JSON strings and return native\nJavaScript objects."
-				}
-			}, 
-			"static": "", 
-			"guessedname": "JSON", 
-			"guessedtype": "property", 
-			"name": "json"
-		}, 
-		"base": {
-			"description": "Provides a common base class for objects requiring\nmanaged attributes and acting as event targets. The foundation class on which user configurable component classes across the YUI library are based.", 
-			"submodules": [
-			], 
-			"classlist": [
-				"Base"
-			], 
-			"filelist": [
-				"Base.js"
-			], 
-			"subdata": {
-			}, 
-			"guessedname": "L", 
-			"guessedtype": "property", 
-			"name": "base"
-		}, 
-		"cookie": {
-			"description": "Utilities for cookie management", 
-			"submodules": [
-			], 
-			"classlist": [
-				"Cookie"
-			], 
-			"filelist": [
-				"Cookie.js"
-			], 
-			"subdata": {
-			}, 
-			"beta": "", 
-			"name": "cookie"
-		}, 
-		"dd-plugin": {
-			"description": "This is a simple Drop plugin that can be attached to a Node via the plug method.", 
-			"submodules": [
-				"dd-drop-plugin", 
-				"dd-plugin"
-			], 
-			"classlist": [
-				"DropPlugin", 
-				"DragPlugin"
-			], 
-			"filelist": [
-				"dd-drop-plugin.js", 
-				"dd-plugin.js"
-			], 
-			"subdata": {
-				"dd-drop-plugin": {
-					"name": "DropPlugin", 
-					"description": "This is a simple Drop plugin that can be attached to a Node via the plug method."
-				}, 
-				"dd-plugin": {
-					"name": "DragPlugin", 
-					"description": "This is a simple Drag plugin that can be attached to a Node via the plug method."
-				}
-			}, 
-			"name": "dd-plugin"
-		}, 
-		"io": {
-			"description": "HTTP communications module.", 
-			"submodules": [
-			], 
-			"classlist": [
-				"io"
-			], 
-			"filelist": [
-				"io.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "io"
-		}, 
-		"event": {
-			"description": "The YUI event system", 
-			"submodules": [
-			], 
-			"classlist": [
-				"Event.Handle", 
-				"Event.Custom", 
-				"Event.Subscriber", 
-				"Do", 
-				"Do.Method", 
-				"Do.Error", 
-				"Do.AlterArgs", 
-				"Do.AlterReturn", 
-				"Event", 
-				"Event.Facade", 
-				"Event.Target"
-			], 
-			"filelist": [
-				"event-custom.js", 
-				"event-do.js", 
-				"event-dom.js", 
-				"event-facade.js", 
-				"event-ready.js", 
-				"event-target.js", 
-				"event.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "event"
-		}, 
-		"substitute": {
-			"description": "String variable substitution and string formatting.\nIf included, the substitute method is added to the YUI instance.", 
-			"submodules": [
-			], 
-			"classlist": [
-				"YUI~substitute"
-			], 
-			"filelist": [
-				"substitute.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "substitute"
-		}, 
-		"oop": {
-			"description": "OOP utils.  If included, the OOP methods are added to the YUI instance", 
-			"submodules": [
-			], 
-			"classlist": [
-				"YUI~oop"
-			], 
-			"filelist": [
-				"oop.js"
-			], 
-			"subdata": {
-			}, 
-			"name": "oop"
-		},
-        "cssreset" : {
-            "description" : "The foundational CSS Reset removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset loaded, write explicit CSS your project needs"
-        },
-        "cssreset-context" : {
-            "description" : "This module provides functionality similar to cssrest but can be applied to specific sections (or contexts) in your page"
-        },
-        "cssfonts" : {
-            "description" : "The foundational CSS Fonts provides cross-browser typographical normalization and control while still allowing users to choose and adjust their font size. Both Standards and Quirks modes are supported in A-grade browsers"
-        },
-        "cssfonts-context" : {
-            "description" : "This module provides functionality similar to cssfonts but can be applied to specific sections (or contexts) in your page"
-        },
-        "cssbase" : {
-            "description" : "CSS Base is an optional CSS file that complements YUI's core CSS foundation (CSS Reset, CSS Fonts, and CSS Grids). CSS Base applies a style foundation for HTML elements that is consistent for A-grade browsers"
-        },
-        "cssbase-context" : {
-            "description" : "This module provides functionality similar to cssbase but can be applied to specific sections (or contexts) in your page"
-        },
-        "cssgrids" : {
-            "description" : "The foundational CSS Grids offers four preset page widths, six preset two-column source-order-independent content templates, and the ability to stack and nest subdivided regions of two, three, or four columns. The file provides over 1000 page layout combinations"
-        },
-        "cssgrids-context" : {
-            "description" : "This module provides functionality similar to cssgrids but can be applied to specific sections (or contexts) in your page"
-        }
-	}
-}
+{	"modules": {		"dump": {			"description": "Returns a simple string representation of the object or array.\nOther types of objects will be returned unprocessed.  Arrays\nare expected to be indexed.  Use object notation for\nassociative arrays.\nIf included, the dump method is added to the YUI instance.", 			"submodules": [			], 			"classlist": [				"YUI~dump"			], 			"filelist": [				"dump.js"			], 			"subdata": {			}, 			"name": "dump"		}, 		"attribute": {			"description": "Managed Attribute Provider", 			"submodules": [			], 			"classlist": [				"Attribute", 				"State"			], 			"filelist": [				"Attribute.js", 				"State.js"			], 			"subdata": {			}, 			"guessedname": "O", 			"guessedtype": "property", 			"name": "attribute"		}, 		"widget-stack": {			"description": "Provides stackable (z-index) support for Widgets through an extension.", 			"submodules": [			], 			"classlist": [				"WidgetStack"			], 			"filelist": [				"Widget-Stack.js"			], 			"subdata": {			}, 			"guessedname": "L", 			"guessedtype": "property", 			"name": "widget-stack"		}, 		"io": {			"description": "HTTP communications module.", 			"submodules": [			], 			"classlist": [				"io"			], 			"filelist": [				"io.js"			], 			"subdata": {			}, 			"name": "io"		}, 		"event": {			"description": "The YUI event system", 			"submodules": [			], 			"classlist": [				"Event", 				"Event.Facade", 				"Event.Target", 				"Do", 				"Do.Method", 				"Do.AlterArgs", 				"Do.AlterReturn", 				"Do.Halt", 				"Do.Halt", 				"Do.Error", 				"Event.Handle", 				"Event.Custom", 				"Event.Subscriber"			], 			"filelist": [				"event-ready.js", 				"event.js", 				"event-dom.js", 				"event-facade.js", 				"event-target.js", 				"event-do.js", 				"event-simulate.js", 				"event-custom.js"			], 			"subdata": {			}, 			"name": "event"		}, 		"substitute": {			"description": "String variable substitution and string formatting.\nIf included, the substitute method is added to the YUI instance.", 			"submodules": [			], 			"classlist": [				"YUI~substitute"			], 			"filelist": [				"StyleSheet.js", 				"substitute.js"			], 			"subdata": {			}, 			"name": "substitute"		}, 		"yui": {			"description": "YUI core", 			"submodules": [				"get", 				"loader"			], 			"classlist": [				"YUI~object", 				"YUI", 				"YUI~array", 				"UA", 				"Lang", 				"Get", 				"Loader"			], 			"filelist": [				"yui-object.js", 				"yui.js", 				"yui-core.js", 				"yui-later.js", 				"yui-array.js", 				"yui-init.js", 				"yui-log.js", 				"yui-ua.js", 				"yui-dump.js", 				"yui-lang.js", 				"get.js", 				"loader.js"			], 			"subdata": {				"loader": {					"name": "Loader", 					"description": "Loader dynamically loads script and css files.  It includes the dependency\ninfo for the version of the library in use, and will automatically pull in\ndependencies for the modules requested.  It supports rollup files and will\nautomatically use these when appropriate in order to minimize the number of\nhttp connections required to load all of the dependencies.  It can load the\nfiles from the Yahoo! CDN, and it can utilize the combo service provided on\nthis network to reduce the number of http connections required to download \nYUI files."				}, 				"get": {					"name": "Get", 					"description": "Fetches and inserts one or more script or link nodes into the document"				}			}, 			"name": "yui"		}, 		"console": {			"description": "A user interface for viewing log messages.", 			"submodules": [			], 			"classlist": [				"Console"			], 			"filelist": [				"console.js"			], 			"subdata": {			}, 			"guessedname": "getCN", 			"guessedtype": "property", 			"name": "console"		}, 		"overlay": {			"description": "Provides a basic Overlay widget, with Standard Module content support. The Overlay widget\nprovides Page XY positioning support, alignment and centering support along with basic \nstackable support (z-index and shimming).", 			"submodules": [			], 			"classlist": [				"Overlay"			], 			"filelist": [				"Overlay.js"			], 			"subdata": {			}, 			"name": "overlay"		}, 		"widget-position": {			"description": "Provides basic XY positioning support for Widgets, though an extension", 			"submodules": [			], 			"classlist": [				"WidgetPosition"			], 			"filelist": [				"Widget-Position.js"			], 			"subdata": {			}, 			"guessedname": "Lang", 			"guessedtype": "property", 			"name": "widget-position"		}, 		"json": {			"description": "The JSON Utility provides methods to serialize JavaScript objects into\nJSON strings and parse JavaScript objects from strings containing JSON data.\nThree modules are available for inclusion:\n<ol>\n<li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>\n<li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>\n<li>3. <code>json</code> for both parsing and stringification</li>\n</ol>\nBoth <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).", 			"submodules": [				"json-stringify", 				"json-parse"			], 			"classlist": [				"JSON"			], 			"filelist": [				"json-stringify.js", 				"json-parse.js"			], 			"subdata": {				"json-stringify": {					"name": "JSON", 					"description": "Provides Y.JSON.stringify method for converting objects to JSON strings."				}, 				"json-parse": {					"name": "JSON", 					"description": "Provides Y.JSON.parse method to take JSON strings and return native\nJavaScript objects."				}			}, 			"static": "", 			"guessedname": "isA", 			"guessedtype": "property", 			"name": "json"		}, 		"dd-plugin": {			"description": "This is a simple Drop plugin that can be attached to a Node via the plug method.", 			"submodules": [				"dd-drop-plugin", 				"dd-plugin"			], 			"classlist": [				"DropPlugin", 				"DragPlugin"			], 			"filelist": [				"dd-drop-plugin.js", 				"dd-plugin.js"			], 			"subdata": {				"dd-drop-plugin": {					"name": "DropPlugin", 					"description": "This is a simple Drop plugin that can be attached to a Node via the plug method."				}, 				"dd-plugin": {					"name": "DragPlugin", 					"description": "This is a simple Drag plugin that can be attached to a Node via the plug method."				}			}, 			"name": "dd-plugin"		}, 		"node-menunav": {			"description": "<p>The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, \ndrop down navigational menus that are both accessible and easy to customize, and only require \na small set of dependencies.</p>\n<p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a Node instance's \n<code>plug</code> method.</p>\n<p>\n<code>\nvar oMenuNav = Y.Node.get(\"#productsandservices\");<br>\noMenuNav.plug(Y.plugin.NodeMenuNav);\n</code>\n<p>\n<p>The MenuNav Node Plugin has several configuration properties that can be set via an \nobject literal that is passed as a second argument to a Node instance's <code>plug</code> method.\n</p>\n<p>\n<code>\nvar oMenuNav = Y.Node.get(\"#productsandservices\");<br>\noMenuNav.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });\n</code>\n</p>\n<p> The complete list of the MenuNav Node Plugin configuration properties are:</p>\n<dl>\n<dt>useARIA</dt>\n<dd>Boolean indicating if use of the WAI-ARIA Roles and States should be enabled for the \nMenuNav.  Set to true by default for Firefox 3 and Internet Explorer 8 as currently only \nthese browsers have support for ARIA, and are supported by several screen readers for \nWindows that also offer support for ARIA.</dd>\n<dt>autoSubmenuDisplay</dt>\n<dd>Boolean indicating if submenus are automatically made visible when the user mouses over \nthe menu's items.  Set to true by default.</dd>\n<dt>submenuShowDelay</dt>\n<dd>Number indicating the time (in milliseconds) that should expire before a submenu is \nmade visible when the user mouses over the menu's label.  Set to 250 by default.</dd>\n<dt>submenuHideDelay</dt>\n<dd>Number indicating the time (in milliseconds) that should expire before a submenu is \nhidden when the user mouses out of a menu label heading in the direction of a submenu.  \nSet to 250 by default.</dd>\n<dt>mouseOutHideDelay</dt>\n<dd>Number indicating the time (in milliseconds) that should expire before a submenu is \nhidden when the user mouses out of it.  Set to 750 by default.</dd>\n</dl>", 			"submodules": [			], 			"classlist": [				"Y.plugin.NodeMenuNav"			], 			"filelist": [				"node-menunav.js"			], 			"subdata": {			}, 			"name": "node-menunav"		}, 		"mock": {			"description": "Mock objects for JavaScript and YUI Test.", 			"submodules": [			], 			"classlist": [				"YAHOO.tool.TestFormat.Mock", 				"Y.Test.Case", 				"Y.Test.Wait", 				"Y.Test.Runner", 				"Y.Test.TestNode", 				"Y.DateAssert", 				"Y.Test.Reporter", 				"Y.Test.ArrayAssert"			], 			"filelist": [				"TestCase.js", 				"TestRunner.js", 				"DateAssert.js", 				"TestReporter.js", 				"ArrayAssert.js"			], 			"subdata": {			}, 			"name": "mock"		}, 		"node": {			"description": "The Node Utility provides a DOM-like interface for interacting with DOM nodes.", 			"submodules": [				"node-base", 				"node-style", 				"node-screen", 				"node", 				"node-screen"			], 			"classlist": [				"Node", 				"Drag"			], 			"filelist": [				"node-event-simulate.js", 				"node.js", 				"node-style.js", 				"node-screen.js", 				"node-class.js", 				"node-region.js"			], 			"subdata": {				"node": {					"name": "Node", 					"description": "Extended Node interface for managing classNames."				}, 				"node-base": {					"name": "Drag", 					"description": "This class provides an abstraction for manipulating DOM nodes."				}, 				"node-screen": {					"name": "Node", 					"description": "Extended Node interface for managing regions and screen positioning.\nAdds support for positioning elements and normalizes window size and scroll detection."				}, 				"node-style": {					"name": "Node", 					"description": "Extended Node interface for managing node styles."				}			}, 			"name": "node"		}, 		"widget": {			"description": "Provides the base Widget class along with an augmentable PluginHost interface", 			"submodules": [			], 			"classlist": [				"PluginHost", 				"Widget"			], 			"filelist": [				"PluginHost.js", 				"Widget.js"			], 			"subdata": {			}, 			"name": "widget"		}, 		"anim": {			"description": "Y.Animation Utility.", 			"submodules": [				"anim-scroll", 				"anim-curve", 				"anim-easing", 				"anim-xy", 				"anim-node-plugin", 				"anim-color"			], 			"classlist": [				"Easing", 				"Anim"			], 			"filelist": [				"anim-scroll.js", 				"anim-curve.js", 				"anim-easing.js", 				"anim-xy.js", 				"anim-node-plugin.js", 				"anim-color.js", 				"anim.js"			], 			"subdata": {				"anim-node-plugin": {					"name": "Anim", 					"description": "Binds an Anim instance to a Node instance"				}, 				"anim-scroll": {					"name": "Anim", 					"description": "Adds support for the <code>scroll</code> property in <code>to</code>\nand <code>from</code> attributes."				}, 				"anim-xy": {					"name": "Anim", 					"description": "Adds support for the <code>xy</code> property in <code>from</code> and \n<code>to</code> attributes."				}, 				"anim-color": {					"name": "Anim", 					"description": "Adds support for color properties in <code>to</code>\nand <code>from</code> attributes."				}, 				"anim-curve": {					"name": "Anim", 					"description": "Adds support for the <code>curve</code> property for the <code>to</code> \nattribute.  A curve is zero or more control points and an end point."				}, 				"anim-easing": {					"name": "Easing", 					"description": "The easing module provides methods for customizing\nhow an animation behaves during each run."				}			}, 			"guessedname": "NUM", 			"guessedtype": "property", 			"name": "anim"		}, 		"dd": {			"description": "Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.", 			"submodules": [				"dd-ddm-drop", 				"dd-constrain", 				"dd-drag", 				"dd-ddm", 				"dd-drop", 				"dd-ddm-base", 				"dd-proxy"			], 			"classlist": [				"DragConstrained", 				"Drag", 				"Drop", 				"DDM", 				"Proxy"			], 			"filelist": [				"ddm-drop.js", 				"constrain.js", 				"drag.js", 				"ddm.js", 				"drop.js", 				"ddm-base.js", 				"proxy.js"			], 			"subdata": {				"dd-ddm-drop": {					"name": "DDM", 					"description": "Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions."				}, 				"dd-constrain": {					"name": "DragConstrained", 					"description": "This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also\nsupports tick based moves and XY axis constraints."				}, 				"dd-drop": {					"name": "Drop", 					"description": "This class provides the ability to create a Drop Target."				}, 				"dd-ddm": {					"name": "DDM", 					"description": "Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.\nIt is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets."				}, 				"dd-drag": {					"name": "Drag", 					"description": "This class provides the ability to drag a Node."				}, 				"dd-proxy": {					"name": "Proxy", 					"description": "This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node."				}, 				"dd-ddm-base": {					"name": "DDM", 					"description": "Provides the base Drag Drop Manger required for making a Node draggable."				}			}, 			"name": "dd"		}, 		"assert": {			"description": "Assertion library for JavaScript and YUI Test.", 			"submodules": [			], 			"classlist": [				"Y.Assert", 				"Y.Error", 				"Y.ComparisonFailure", 				"Y.UnexpectedValue", 				"Y.ShouldFail", 				"Y.ShouldError", 				"Y.UnexpectedError", 				"Y.ObjectAssert", 				"Y.Test.Suite"			], 			"filelist": [				"Assert.js", 				"ObjectAssert.js", 				"TestSuite.js", 				"TestFormat.js", 				"Mock.js"			], 			"subdata": {			}, 			"name": "assert"		}, 		"slider": {			"description": "Create a sliding value range input visualized as a draggable thumb on a\nbackground element.", 			"submodules": [			], 			"classlist": [				"Slider"			], 			"filelist": [				"slider.js"			], 			"subdata": {			}, 			"guessedname": "SLIDER", 			"guessedtype": "property", 			"name": "slider"		}, 		"base": {			"description": "Base class support for objects requiring\nmanaged attributes and acting as event targets", 			"submodules": [			], 			"classlist": [				"Base"			], 			"filelist": [				"Base.js"			], 			"subdata": {			}, 			"guessedname": "L", 			"guessedtype": "property", 			"name": "base"		}, 		"cookie": {			"description": "Utilities for cookie management", 			"submodules": [			], 			"classlist": [				"Cookie"			], 			"filelist": [				"Cookie.js"			], 			"subdata": {			}, 			"beta": "", 			"name": "cookie"		}, 		"oop": {			"description": "OOP utils.  If included, the OOP methods are added to the YUI instance", 			"submodules": [			], 			"classlist": [				"YUI~oop"			], 			"filelist": [				"oop.js"			], 			"subdata": {			}, 			"name": "oop"		}, 		"widget-stdmod": {			"description": "Provides standard module support for Widgets through an extension.", 			"submodules": [			], 			"classlist": [				"WidgetStdMod"			], 			"filelist": [				"Widget-StdMod.js"			], 			"subdata": {			}, 			"guessedname": "L", 			"guessedtype": "property", 			"name": "widget-stdmod"		}, 		"widget-position-ext": {			"description": "Provides extended/advanced XY positioning support for Widgets, through an extension.\nIt builds on top of the widget-position module, to provide alignmentment and centering support.\nFuture releases aim to add constrained and fixed positioning support.", 			"submodules": [			], 			"classlist": [				"WidgetPositionExt"			], 			"filelist": [				"Widget-PositionExt.js"			], 			"subdata": {			}, 			"guessedname": "L", 			"guessedtype": "property", 			"name": "widget-position-ext"		}, 		"dom": {			"description": "Add style management functionality to DOM.", 			"submodules": [				"dom-style", 				"dom-style", 				"dom-screen", 				"dom-screen", 				"dom-base", 				"dom-style", 				"selector", 				"dom-base"			], 			"classlist": [				"Selector", 				"DOM"			], 			"filelist": [				"dom-style.js", 				"color.js", 				"dom-region.js", 				"dom-screen.js", 				"dom-class.js", 				"dom-ie-style.js", 				"selector.js", 				"dom.js"			], 			"subdata": {				"dom-base": {					"name": "DOM", 					"description": "Provides DOM helper methods."				}, 				"selector": {					"name": "Selector", 					"description": "Provides helper methods for collecting and filtering DOM elements."				}, 				"dom-style": {					"name": "DOM", 					"description": "Add style management functionality to DOM."				}, 				"dom-screen": {					"name": "DOM", 					"description": "Adds position and region management functionality to DOM."				}			}, 			"guessedname": "DOCUMENT_ELEMENT", 			"guessedtype": "property", 			"name": "dom"		}, 		"plugin": {			"description": "Provides the base Plugin class for building widget plugins.", 			"submodules": [			], 			"classlist": [				"Plugin"			], 			"filelist": [				"plugin.js"			], 			"subdata": {			}, 			"name": "plugin"		}, 		"classnamemanager": {			"description": "Contains a singleton (ClassNameManager) that enables easy creation and caching of \nprefixed class names.", 			"submodules": [			], 			"classlist": [				"ClassNameManager"			], 			"filelist": [				"classnamemanager.js"			], 			"subdata": {			}, 			"name": "classnamemanager"		}, 		"profiler": {			"description": "The YUI JavaScript profiler.", 			"submodules": [			], 			"classlist": [				"Y.Profiler"			], 			"filelist": [				"Profiler.js"			], 			"subdata": {			}, 			"requires": "yahoo", 			"name": "profiler"		}, 		"queue": {			"description": "Mechanism to execute a series of callbacks in a non-blocking queue.  Each\ncallback is executed via setTimout unless configured with a negative\ntimeout, in which case it is run in blocking mode in the same execution\nthread as the previous callback.  Callbacks can be function references or\nobject literals with the following keys:\n<ul>\n<li><code>fn</code> - {Function} REQUIRED the callback function.</li>\n<li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>\n<li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>\n<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>\n</ul>", 			"submodules": [			], 			"classlist": [				"Queue"			], 			"filelist": [				"Queue.js"			], 			"subdata": {			}, 			"name": "queue"		}	}}
