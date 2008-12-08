@@ -10,7 +10,7 @@
 
         moduleData = configData.modules,
         categoryData = configData.categories,
-        categoryOrder = ["core", "utils", "infra", "css", "tools", "other"],
+        categoryOrder = ["core", "util", "infra", "widget", "nodeplugin", "css", "tool"],
 
         current = {
             initialLoad : true,
@@ -77,21 +77,31 @@
 
     function getIncludes(loader) {
 
-        var s = loader.sorted, l = s.length, m, url, out = [], combourl = [], i, cssPushed = false, jsPushed = false;
+        var s = loader.sorted, l = s.length, m, url, out = [], comboJsUrl = [], comboCssUrl = [], i, cssPushed = false, jsPushed = false;
 
         if (l) {
             for (i=0; i < l; i++)  {
                 m = loader.moduleInfo[s[i]];
                 if (m.type == 'css') {
-                    
+
                     if (!cssPushed) {
                         out.push('<!-- CSS -->');
                         cssPushed = true;
                     }
 
-                    url = m.fullpath || loader._url(m.path);
-                    out.push('<link rel="stylesheet" type="text/css" href="' + url + '">');
+                    if(current.combo) {
+                        comboCssUrl.push(loader.root + m.path);
+                    } else {
+                        url = m.fullpath || loader._url(m.path);
+                        out.push('<link rel="stylesheet" type="text/css" href="' + url + '">');
+                    }
                 }
+            }
+            
+
+            if(current.combo && comboCssUrl.length) {
+                var cssSrc = loader.comboBase + comboCssUrl.join("&");
+                out.push('<link rel="stylesheet" type="text/css" href="' + cssSrc + '">');
             }
 
             for (i=0; i <l; i=i+1)  {
@@ -106,7 +116,7 @@
                     if(current.combo) {
                         var filter = loader.FILTERS[current.filter.toUpperCase()];
                         var filteredPath = (filter) ? m.path.replace(new RegExp(filter.searchExp), filter.replaceStr) : m.path; 
-                        combourl.push(loader.root + filteredPath);
+                        comboJsUrl.push(loader.root + filteredPath);
                     } else {
                         url = m.fullpath || loader._url(m.path);
                         out.push('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>');
@@ -114,9 +124,9 @@
                 }
             }
 
-            if(current.combo && combourl.length) {
-                var src = loader.comboBase + combourl.join("&");
-                out.push('<script type="text/javascript" src="' + src + '"></scr' + 'ipt>');
+            if(current.combo && comboJsUrl.length) {
+                var jsSrc = loader.comboBase + comboJsUrl.join("&");
+                out.push('<script type="text/javascript" src="' + jsSrc + '"></scr' + 'ipt>');
             }
         }
 
@@ -683,7 +693,7 @@
 
     function addModules() {
 
-        var split = {}, i, cfg, name, cat;
+        var split = {}, i, l, cfg, name, cat;
 
         for (name in moduleData) {
             if (Lang.hasOwnProperty(moduleData, name)) {
@@ -695,7 +705,8 @@
             }
         }
 
-        for (cat in split) {
+        for (i = 0, l = categoryOrder.length; i < l; i++) {
+            cat = categoryOrder[i];
             if (Lang.hasOwnProperty(split, cat)) {
                 split[cat].sort();
                 if (cat == "core") {

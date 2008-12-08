@@ -62,8 +62,8 @@ include "../inc/header.inc";
 						<dd>
 							The MenuNav Node Plugin is easy to configure.  The visual presentation 
 							of menus is controlled completely via CSS.  A handful of 
-							straightforward configuration options can be used to make common 
-							modifications to a menu's behavior.
+							straightforward <a href="#configuration-properties">configuration properties</a> 
+							can be used to make common modifications to a menu's behavior.
 						</dd>
 						
 						<dt><code>&#60;iframe&#62;</code> Shim for IE 6</dt>
@@ -348,7 +348,7 @@ to the node representing the root menu's bounding box, as illustrated in the fol
 <p>
 As a final, optional step, use the <code>autoSubmenuDisplay</code> and <code>mouseOutHideDelay</code> 
 configuration properties to configure the menu labels to behave like menu buttons.  Set the 
-<code>autoSubmenuDisplay</code> to <code>fale</code>, so that each menu label's submenu isn't 
+<code>autoSubmenuDisplay</code> to <code>false</code>, so that each menu label's submenu isn't 
 made visible until the label is clicked.  Set the <code>mouseOutHideDelay</code> to 
 <code>0</code> so that a label's submenu is only hidden when the user mouses down on an area 
 outside of the submenu.
@@ -414,7 +414,7 @@ of <code>yui-menu-label</code> applied.  Inside the <code>&#60;span&#62;</code>,
 Each <code>&#60;a&#62;</code> has separate, but related responsibilities:  The first 
 <code>&#60;a&#62;</code> represents the label's default action.  The second <code>&#60;a&#62;</code>
 toggles the display of a submenu whose content contains other options related to, or in the same 
-category of the default action.  Therefore to configure the first <code>&#60;a&#62;</code>, 
+category as the default action.  Therefore to configure the first <code>&#60;a&#62;</code>, 
 simply set its <code>href</code> attribute to any URL.  For the second <code>&#60;a&#62;</code>,
 apply a class name of <code>yui-menu-toggle</code>, and set the value of the <code>href</code> 
 attribute to the id of the label's corresponding submenu.  Lastly, the text node of the second 
@@ -450,7 +450,7 @@ attribute to the id of the label's corresponding submenu.  Lastly, the text node
 </textarea>
 
 <p>
-Lastly, use the <code>autoSubmenuDisplay</code> and <code>mouseOutHideDelay</code> 
+Use the <code>autoSubmenuDisplay</code> and <code>mouseOutHideDelay</code> 
 configuration properties to configure the menu labels to behave like split buttons.  Set the 
 <code>autoSubmenuDisplay</code> to <code>fale</code>, so that each menu label's submenu isn't 
 made visible until the menu trigger is clicked.  Set the <code>mouseOutHideDelay</code> to 
@@ -493,13 +493,16 @@ outside of the submenu.
 <p>
 The MenuNav Node Plugin makes it easy to create separators between items in a menu.  Simply group
 related items together using the <code>&#60;ul&#62;</code> element and apply a class name of 
-<code>first-of-type</code> to the first <code>&#60;ul&#62;</code>.  For example:
+<code>first-of-type</code> to the first <code>&#60;ul&#62;</code>.  (If the 
+<code>first-of-type</code> class name is not applied to the first <code>&#60;ul&#62;</code> of a 
+submenu, it will automatically be applied by the MeuNav's constructor.)  The follow example 
+illustrates a submenu with two separators:
 </p>
 <textarea name="code" class="HTML" cols="60" rows="1">
 <div id="pim" class="yui-menu">
 	<div class="yui-menu-content">	
 
-		<ul>
+		<ul class="first-of-type">
 			<li class="yui-menuitem"><a class="yui-menuitem-content" href="http://mail.yahoo.com">Mail</a></li>
 			<li class="yui-menuitem"><a class="yui-menuitem-content" href="http://www.zimbra.com">Zimbra</a></li>
 		</ul>
@@ -542,7 +545,7 @@ menu labels are considered active when the user is interacting with them via the
 mouse.  The active class name applied to menuitems and menu labels has two benefits:  It provides
 a single entry point for styling state that would otherwise require the use of multiple CSS 
 pseudo classes (<code>:hover</code> and <code>:focus</code>).  The second benefit to the use of 
-the active class name is that it provides consistent styling of state across all types elements in 
+the active class name is that it provides consistent styling of state across all types of elements in 
 all <a href="http://developer.yahoo.com/yui/articles/gbs/">A-Grade browsers</a>.  
 (IE 6 only supports the <code>:hover</code> and <code>:focus</code> pseudo classes on
 <code>&#60;a&#62;</code> elements.  And while IE 7 supports <code>:hover</code> on all elements, it 
@@ -561,9 +564,11 @@ and a class <code>yui-menu-label-menuvisible</code> is applied to the submenu's 
 <h4 id="configuration-properties">Configuration properties</h4>
 
 <p>
-The MenuNav Node Plugin has several configuration properties that can be set via an 
-object literal that is passed as a second argument to a Node instance's 
-<a href="../api/Node.html#method_plug"><code>plug</code></a> method.
+The MenuNav Node Plugin has several configuration properties that can be set via an object literal 
+that is passed as a second argument to a Node instance's 
+<a href="../api/Node.html#method_plug"><code>plug</code></a> method.  (<em>Note:</em>  These 
+properties are <em>case sensitive</em>.)  In the following example, the value of the 
+<code>mouseOutHideDelay</code> property is set to 1000.
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -582,27 +587,27 @@ oMenuNav.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr id="usearia">
 			<td>useARIA</td>
 			<td>True</td>
 			<td>Boolean indicating if use of the WAI-ARIA Roles and States should be enabled for the MenuNav.  Set to true by default for Firefox 3 and Internet Explorer 8 as currently only these browsers have support for ARIA, and are supported by several screen readers for Windows that also offer support for ARIA.</td>
 		</tr>
-		<tr>
+		<tr id="autosubmenudisplay">
 			<td>autoSubmenuDisplay</td>
 			<td>True</td>
 			<td>Boolean indicating if submenus are automatically made visible when the user mouses over the menu's items.</td>
 		</tr>
-		<tr>
+		<tr id="submenushowdelay">
 			<td>submenuShowDelay</td>
 			<td>250</td>
 			<td>Number indicating the time (in milliseconds) that should expire before a submenu is made visible when the user mouses over the menu's label.  </td>
 		</tr>
-		<tr>
+		<tr id="submenuhidedelay">
 			<td>submenuHideDelay</td>
 			<td>250</td>
 			<td>Number indicating the time (in milliseconds) that should expire before a submenu is hidden when the user mouses out of a menu label heading in the direction of a submenu.</td>
 		</tr>
-		<tr>
+		<tr id="mouseouthidedelay">
 			<td>mouseOutHideDelay</td>
 			<td>750</td>
 			<td>Number indicating the time (in milliseconds) that should expire before a submenu is hidden when the user mouses out of it.</td>
@@ -616,7 +621,7 @@ oMenuNav.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
 The MenuNav Node Plugin publishes no custom events of its own.  To listen for any DOM-related 
 events for a menu built using the MenuNav Node Plugin, use the <a href="../api/Node.html#method_on"><code>on</code></a> method of the 
 plugin's host Node instance.  The following example illustrates how to listen for the 
-<code>click</code> event of menu built using the MenuNav Node Plugin:
+<code>click</code> event of menu a built using the MenuNav Node Plugin:
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
