@@ -379,7 +379,9 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 
 
 	#bd .toc3 {border:1px solid #D9D9D9;background-color:#F5F5F5;}
-	#bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;}
+	#bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;border-top:none;}
+	#bd .toc3 #downloadbtn {border:1px solid #fff;border-bottom:none;padding:8px 8px 0 8px;}
+	
 	#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 7px;}
 	#bd .toc3 li.sect {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;
 		border-bottom:1px solid #D9D9D9;margin:6px 6px 6px 6px;padding:4px 5px 4px 0;background:none;}
