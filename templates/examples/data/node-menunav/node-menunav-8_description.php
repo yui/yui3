@@ -75,7 +75,7 @@ approach:
 		Even if the <code>:hover</code> and <code>:focus</code> pseudo classes were supported 
 		consistently across all
 		<a href="http://developer.yahoo.com/yui/articles/gbs/#a-grade">A-grade browsers</a>, it 
-		would be a solution that would work, <em>but wouldn't work well<em>.  Use of 
+		would be a solution that would work, <em>but wouldn't work well</em>.  Use of 
 		the <code>:focus</code> pseudo class to enable keyboard support for a menu results in an 
 		unfamiliar, potentially cumbersome experience for keyboard users.  Having a menu 
 		appear in response to its label simply being focused isn't an established interaction 
@@ -122,7 +122,8 @@ Start by providing the markup for the root horizontal menu, following the patter
 <code>yui-splitbuttonnav</code> class to the menu's bounding box, the markup for the submenus, 
 and the <code>&#60;a href="&#8230;" class="yui-menu-toggle"&#62;</code> elements inside each label 
 that toggle each submenu's display.  Include the MenuNav Node Plugin CSS in the 
-<code>&#60;head&#62;</code> so that menu is styled even if JS is disabled.
+<code>&#60;head&#62;</code> so that menu is styled even if JS is disabled.  The following 
+illustrates what the initial menu markup:
 </p>
 
 <textarea name="code" class="HTML" cols="60" rows="1">

@@ -9,13 +9,13 @@ colors, borders, padding, etc.
 
 <p>
 Skinning can be accomplished by either overriding the styles defined in the node-menunav-skin.css 
-file, or by creating an entirely new skin file.  In either case place custom styles in a separate 
+file, or by creating an entirely new skin file.  In either case, place custom styles in a separate 
 file to simplify integrating with YUI updates.
 </p>
 
 <p>
 When creating a custom skin, use the node-menunav-core.css and node-menunav-skin.css files as a 
-reference.  Also consult the <a href="../../nodemenunav#css-reference">CSS reference</a> 
+reference.  Also consult the <a href="../../node-menunav#css-reference">CSS reference</a> 
 section of the MenuNav Node Plugin landing page, as it provides a complete list of all of the class 
 names used by the MenuNav Node Plugin along with when and to what element(s) they are applied.
 </p>
