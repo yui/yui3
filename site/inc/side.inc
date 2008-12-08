@@ -43,7 +43,7 @@ $nav[]=array('overlay','/yui/3/overlay/','Overlay', 'Overlay - Functional Exampl
 $nav[]=array('slider','/yui/3/slider/','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Node Plugins', '');
-$nav[]=array('nodemenunav','/yui/3/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
+$nav[]=array('node-menunav','/yui/3/node-menunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
 
 $nav[]=array('', '', 'YUI 3 Developer Tools - Examples', '');
 $nav[]=array('console','/yui/3/console/index.html','Console', 'Console');
