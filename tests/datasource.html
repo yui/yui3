@@ -19,7 +19,7 @@
         insertBefore: "src_ds"
     }).use("yuitest", "console", "base", "datasource", function(Y) {
         YUI.Y = Y;
-        var myConsole = new Y.Console();
+        var myConsole = new Y.Console().render();
 
         var testCase = new Y.Test.Case({
             name: "Constructor Tests",
