@@ -86,7 +86,7 @@ background image, but only reveals the relevant section of the image via the
 <p>
 With the rounded corner elements appended to each submenu, the next step is to define 
 the styles that create the rounded corner effect.  Start by overriding the values for 
-<code>border</code> and <code>padding</code> specificed for the content box of each submenu in the 
+<code>border</code> and <code>padding</code> specified for the content box of each submenu in the 
 Sam skin CSS.  The top and bottom borders are set to 0, since both borders will be drawn by the 
 background image used to create the rounded corners.  The top and bottom padding will be created by 
 setting the height of each <code>&#60;div&#62;</code> inside the 
@@ -95,7 +95,7 @@ setting the height of each <code>&#60;div&#62;</code> inside the
 
 <textarea name="code" class="CSS" cols="60" rows="1">
 /*
-	Overide the values for border and padding specificed for the content box of each submenu in 
+	Overide the values for border and padding specified for the content box of each submenu in 
 	the Sam skin CSS.  The top and bottom borders are set to 0, since both borders will be drawn 
 	by the background image used to create the rounded corners.  The top and bottom padding 
 	will be created by setting the height of each <div> inside the 

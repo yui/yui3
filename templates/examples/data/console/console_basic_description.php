@@ -56,12 +56,12 @@ customStrings = new Y.Console({
 <h3>Log some messages</h3>
 <p>In your code, inserting calls to <code>Y.log(..)</code> will cause the content of those log messages to be broadcast to every Console instance present in the YUI instance.  We'll illustrate this by creating some buttons to log various types of messages.</p>
 
-<textarea name="code" class="HTML" cols="60" rows="1">
+<textarea name="code" class="JScript" cols="60" rows="1">
 // Create a YUI instance and request the console module and its dependencies
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // To eliminate duplicate reporting in native console in supporting browsers
-Y.config.useConsole = false;
+Y.config.useBrowserConsole = false;
 
 // Create and render the three Console instances
 var basic, newOnBottom, customStrings;
@@ -132,7 +132,7 @@ Y.get('#error').on('click', function () {
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // To eliminate duplicate reporting in native console in supporting browsers
-Y.config.useConsole = false;
+Y.config.useBrowserConsole = false;
 
 // Create and render the three Console instances
 var basic, newOnBottom, customStrings;

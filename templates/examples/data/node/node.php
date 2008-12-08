@@ -15,7 +15,7 @@ $examples["basic-node"] = array(
 	description => "Using selectors and property accessors with Node.",
 	sequence => array(1),
 	newWindow => "default",
-	requires => array("node-base"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -25,7 +25,7 @@ $examples["dom-node"] = array(
 	description => "Using DOM methods.",
 	sequence => array(2),
 	newWindow => "default",
-	requires => array("node-base"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -35,7 +35,7 @@ $examples["event-node"] = array(
 	description => "Using events with Node instances.",
 	sequence => array(3),
 	newWindow => "default",
-	requires => array("node-base"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -45,7 +45,7 @@ $examples["nodelist"] = array(
 	description => "NodeList provides Node functionality for multiple nodes.",
 	sequence => array(4),
 	newWindow => "default",
-	requires => array("node-style"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -55,7 +55,7 @@ $examples["node-evt-delegation"] = array(
 	description => "Using a single event listener to handle events on multiple nodes.",
 	sequence => array(5),
 	newWindow => "default",
-	requires => array("node-base"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -65,7 +65,7 @@ $examples["node-screen"] = array(
 	description => "This example demonstrates how to measure the window and document.",
 	sequence => array(6),
 	newWindow => "default",
-	requires => array("node-screen"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -75,7 +75,7 @@ $examples["node-xy"] = array(
 	description => "This example demonstrates how to position an element in page coordinates.",
 	sequence => array(7),
 	newWindow => "default",
-	requires => array("node-screen"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -85,7 +85,7 @@ $examples["node-style"] = array(
 	description => "This example demonstrates how to set styles and get style information.",
 	sequence => array(8),
 	newWindow => "default",
-	requires => array("node-style"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 ?>
