@@ -68,11 +68,6 @@
         return  node || null;
     };
 
-    /** 
-     * This class provides an abstraction for manipulating DOM nodes.
-     * @class Drag
-     * @constructor
-     */
     var Node = function() {
         this.init.apply(this, arguments);
     };

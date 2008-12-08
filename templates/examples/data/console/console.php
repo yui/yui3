@@ -2,8 +2,8 @@
 
 $modules["console"] = array(
 	"name" => "Console",
-	"type" => "widget",
-	"description" => "The Console control is a window for viewing messages logged within a YUI instance.",
+	"type" => "tool",
+	"description" => "The Console tool is a display for viewing messages logged within a YUI instance.",
 	"cheatsheet" => false
 );	
 

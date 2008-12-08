@@ -18,11 +18,27 @@
         "widget" : {
             "name" : "Widgets"
         },
+        "nodeplugin" : {
+            "name" : "Node Plugins"
+        },
         "other" : {
             "name" : "Other"
         }
     },
     "modules" : {
+        "classnamemanager" : {"cat": "util", "name":""},
+        "console" : {"cat": "tool", "name":""},
+        "node-menunav" : {"cat": "nodeplugin", "name":""},
+        "overlay" : {"cat": "widget", "name":""},
+        "plugin" : {"cat": "infra", "name":""},
+        "profiler" : {"cat": "tool", "name":""},
+        "slider" : {"cat": "widget", "name":""},
+        "widget" : {"cat": "infra", "name":""},
+        "yuitest" : {"cat": "tool", "name":""},
+        "widget-stack" : {"cat": "infra", "name":""},
+        "widget-stdmod" : {"cat": "infra", "name":""},
+        "widget-position" : {"cat": "infra", "name":""},
+        "widget-position-ext" : {"cat": "infra", "name":""},
         "dom-base" : {"cat": "util", "name":""},
         "dom-style" : {"cat": "util", "name":""},
         "dom-screen" : {"cat": "util", "name":""},
@@ -65,14 +81,14 @@
         "queue" : {"cat": "util", "name":""},
         "substitute" : {"cat": "util", "name":""},
         "yui" : {"cat": "core", "name":""},
-        "yui-base" : {"cat": "core", "name":"", "description":"The YUI core, without get or loader built in. You can use this lighter version of YUI if you're manually including all required files on the page and don't require YUI to pull in missing file dependencies dynamically."},
-        "cssreset" : {"cat": "css", "name":""},
-        "cssreset-context" : {"cat": "css", "name":""},
-        "cssfonts" : {"cat": "css", "name":""},
-        "cssfonts-context" : {"cat": "css", "name":""},
-        "cssgrids" : {"cat": "css", "name":""},
-        "cssgrids-context" : {"cat": "css", "name":""},
-        "cssbase" : {"cat": "css", "name":""},
-        "cssbase-context" : {"cat": "css", "name":""}
+        "yui-base" : {"cat": "core", "name":"", "description":"The YUI core, without get or loader built in. You can use this lighter version of YUI if you're manually including all required files on the page and don't require YUI to pull in missing file dependencies dynamically"},
+        "cssreset" : {"cat": "css", "name":"", "description":"The foundational CSS Reset removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset loaded, write explicit CSS your project needs"},
+        "cssreset-context" : {"cat": "css", "name":"", "description":"This module provides functionality similar to cssrest but can be applied to specific sections (or contexts) in your page"},
+        "cssfonts" : {"cat": "css", "name":"", "description":"The foundational CSS Fonts provides cross-browser typographical normalization and control while still allowing users to choose and adjust their font size. Both Standards and Quirks modes are supported in A-grade browsers"},
+        "cssfonts-context" : {"cat": "css", "name":"", "description":"This module provides functionality similar to cssfonts but can be applied to specific sections (or contexts) in your page"},
+        "cssgrids" : {"cat": "css", "name":"", "description":"The foundational CSS Grids offers four preset page widths, six preset two-column source-order-independent content templates, and the ability to stack and nest subdivided regions of two, three, or four columns. The file provides over 1000 page layout combinations"},
+        "cssgrids-context" : {"cat": "css", "name":"", "description":"This module provides functionality similar to cssgrids but can be applied to specific sections (or contexts) in your page"},
+        "cssbase" : {"cat": "css", "name":"", "description":"CSS Base is an optional CSS file that complements YUI's core CSS foundation (CSS Reset, CSS Fonts, and CSS Grids). CSS Base applies a style foundation for HTML elements that is consistent for A-grade browsers"},
+        "cssbase-context" : {"cat": "css", "name":"", "description":"This module provides functionality similar to cssbase but can be applied to specific sections (or contexts) in your page"}
     }
 }

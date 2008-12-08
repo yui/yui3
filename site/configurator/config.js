@@ -10,7 +10,7 @@
 
         moduleData = configData.modules,
         categoryData = configData.categories,
-        categoryOrder = ["core", "utils", "infra", "css", "tools", "other"],
+        categoryOrder = ["core", "util", "infra", "widget", "nodeplugin", "css", "tool"],
 
         current = {
             initialLoad : true,
@@ -683,7 +683,7 @@
 
     function addModules() {
 
-        var split = {}, i, cfg, name, cat;
+        var split = {}, i, l, cfg, name, cat;
 
         for (name in moduleData) {
             if (Lang.hasOwnProperty(moduleData, name)) {
@@ -695,7 +695,8 @@
             }
         }
 
-        for (cat in split) {
+        for (i = 0, l = categoryOrder.length; i < l; i++) {
+            cat = categoryOrder[i];
             if (Lang.hasOwnProperty(split, cat)) {
                 split[cat].sort();
                 if (cat == "core") {
