@@ -8,7 +8,7 @@ of the next major revision to the library.
 There are several new additions in this release.
 
 PR2 includes the debut of the Widget infrastructure for 3.0.0.  There are also several
-components make use of Widget: Overlay, Slider, and Console.
+components that make use of Widget: Overlay, Slider, and Console.
 	 
 The Plugin Infrastructure has also been included in PR2 along with the MenuNav Node Plugin.
 
