@@ -11,15 +11,12 @@ allow the YUI instance to download any additional files which may be required:</
 &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 </textarea>
 
-<p>The YUI instance will automatically pull down <?php echo $componentShort; ?>'s source files, along 
-with any dependent files missing from the page, when the <code><?php echo $section; ?></code> 
-module is used in your code. This helps you avoid having to manually manage the 
-list of files which needs to be included on your page to support multiple components  
-while also optimizing your initial page weight by loading files only when they are 
-required.</p>
+<p>The YUI instance will automatically pull down <?php echo $componentShort; ?>'s source files and any missing dependencies when the <code><?php echo $section; ?></code> module is <code>use</code>d. This helps you avoid having to manually manage the list of files needed on your page to support multiple components while also optimizing your initial page weight by loading files only when they are required.</p>
 
-<p>If you do want to include file dependencies manually on your page, the <a href="/3/configurator/">YUI Dependency Configurator</a> can be used to determine the list of files you need 
-to include in order to use <?php echo $componentShort; ?>.</p>
+<p>If you do want to include file dependencies manually on your page, the
+<a href="../configurator/?modules=<?php echo($section); ?>">YUI Dependency
+Configurator</a> can be used to determine the list of files you need to include
+in order to use <?php echo $componentShort; ?>.</p>
 
 <h4 id="yui">The YUI Instance</h4>
 
