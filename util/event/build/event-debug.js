@@ -845,7 +845,7 @@ YUI.add("event-custom", function(Y) {
              * already fired has a new subscriber.  
              *
              * @event subscribeEvent
-             * @type Y.Event.Custom
+             * @type Event.Custom
              * @param {Function} fn The function to execute
              * @param {Object}   obj An object to be passed along when the event 
              *                       fires
@@ -1923,6 +1923,10 @@ var Env = YUI.Env,
 
         Env.windowLoaded = false;
 
+        var _ready = function(e) {
+            YUI.Env._ready();
+        };
+
         Env._ready = function() {
             if (!Env.DOMReady) {
                 Env.DOMReady=true;
@@ -1932,10 +1936,6 @@ var Env = YUI.Env,
                     D.removeEventListener("DOMContentLoaded", _ready, false);
                 }
             }
-        };
-
-        var _ready = function(e) {
-            YUI.Env._ready();
         };
 
         // create custom event
@@ -2000,7 +2000,7 @@ var Env = YUI.Env,
              *
              *
              * @event domready
-             * @for Event
+             * @for YUI
              *
              * @param {function} fn what to execute when the element is found.
              * @optional context execution context
@@ -2014,7 +2014,7 @@ var Env = YUI.Env,
             /**
              * Use domready event instead. @see domready
              * @event event:ready
-             * @for Event
+             * @for YUI
              * @deprecated use 'domready' instead
              */
             'event:ready': {
@@ -3240,7 +3240,7 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method click
              * @static   
-             * @for Y.Event
+             * @for Event
              */        
             "click", 
             
@@ -3250,7 +3250,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method dblclick
              * @static
-             * @for Y.Event
              */            
             "dblclick", 
             
@@ -3266,7 +3265,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseover
              * @static
-             * @for Y.Event
              */             
             "mouseover", 
             
@@ -3282,7 +3280,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseout
              * @static
-             * @for Y.Event
              */            
             "mouseout", 
             
@@ -3292,7 +3289,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mousedown
              * @static
-             * @for Y.Event
              */            
             "mousedown", 
             
@@ -3302,7 +3298,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseup
              * @static
-             * @for Y.Event
              */            
             "mouseup", 
             
@@ -3312,7 +3307,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mousemove
              * @static
-             * @for Y.Event
              */           
             "mousemove"
         ],
@@ -3326,7 +3320,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keydown
              * @static
-             * @for Y.Event
              */        
             "keydown", 
             
@@ -3336,7 +3329,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keyup
              * @static
-             * @for Y.Event
              */            
             "keyup", 
             
@@ -3346,7 +3338,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keypress
              * @static
-             * @for Y.Event
              */            
             "keypress"
         ];
@@ -3790,7 +3781,6 @@ YUI.add("event-simulate", function(Y) {
      * @return {void}
      * @method simulate
      * @static
-     * @for Y.Event
      */
     Y.Event.simulate = function(target, type, options){
         if (isFunction(Y.Event[type])){
