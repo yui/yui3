@@ -10,7 +10,7 @@
 				<form method="get" action="http://groups.yahoo.com/subscribe/yui3">
 				<table cellspacing="0" cellpadding="2">
 					<tr>
-						<td align="right" width="50%"><input type="text" name="user" value="enter email address" size="20"></td>
+						<td align="right" width="50%"><input type="text" name="user" value="enter email address" size="15"></td>
 						<td align="left">&nbsp;<input type="image" border="0" alt="Click here to join yui3" name="Click here to join yui3" src="http://us.i1.yimg.com/us.yimg.com/i/ydn/yuiweb/img/joinbtn.gif"></td>
 					</tr>
 				</table>

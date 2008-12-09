@@ -380,7 +380,6 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 
 	#bd .toc3 {border:1px solid #D9D9D9;background-color:#F5F5F5;}
 	#bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;border-top:none;}
-	#bd .toc3 #downloadbtn {border:1px solid #fff;border-bottom:none;padding:8px 8px 0 8px;}
 	
 	#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 7px;}
 	#bd .toc3 li.sect {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;
@@ -528,7 +527,6 @@ ul.srchOptns li{margin-top:.3em;}
 	/* begin footer area */
 	#footermainCont{width:100%;}
 	#footerMaxCont {width:100%;clear:both;background-color:#eaeaea;border-top:1px solid #fff;}
-	#footerContainer{}
 	#footerInternal{float:left;text-align:left;}
 	#footerBotMainCont{width:100%;}
 	#footerBotMaxCont {width:100%;clear:both;background-color:#fff;border-top:1px solid #fff;}
@@ -570,23 +568,13 @@ ul.srchOptns li{margin-top:.3em;}
 	#boxmid2{float:left;border-right:1px solid #fff;padding:13px;width:655px;}
 	#boxmid3{float:left;padding:1em 0 1em .3em;}
 
-	/* begin footer area */
-	#JSfooterMain{width:100%;border-top:1px solid #d0d0d0;border-bottom:1px solid #d0d0d0;padding:0;margin:0;display:block;float:left;}
-	#JSfooterMax{width:100%;clear:both;background-color:#f5f5f5;border:0;padding:0;margin:0;border-top:1px solid #fff;border-bottom:1px solid #fff;display:block;float:left;}
-	#JSfooter{padding:0;margin:0;margin-left:auto;margin-right:auto;width:75em;display:block;}
-	#footerBotMainCont{width:100%;}
-	#footerBotMaxCont{width:100%;clear:both;background-color:#fff;border-top:0px;}
-	#footerBotMainCont a{color:#28b;text-decoration:none;}
-	#footerBotMainCont a:hover{color:#28b;text-decoration:underline;}
-	#footerBotContainer{margin-left:200px;background:#fff;}
-	#footerBotInternal{width:74.8em;float:left;text-align:left;}
-	#ydnfoot_bot{width:100%;padding:1.2em 0 2em 0;color:#bbb;font-size:93%;}
-	#footerLinks li { font-weight: bold; display: inline; list-style: none; padding-left: 8px; margin-left: 5px; border-left: 1px solid #bbbbbb; }
-	#footerLinks li.first { padding-left: 0px; margin-left: 0px; border-left: none; }
-	div#footerLegal{margin-top:1em;background:url('http://l.yimg.com/a/i/ydn/this-is-yahoo.gif') no-repeat top right;height:2.5em;}
-	div#footerLegal p{color:#666;margin:0;padding:0;font-size:93%;}
 
 
+	#footer3 {clear:both;background:url('http://l.yimg.com/a/i/ydn/this-is-yahoo.gif') no-repeat top right;margin:20px 10px 10px 0;height:20px;}
+	#footer3legal {padding-left:190px;padding-right:136px;padding-top:5px;}
+	#footer3legal p {color:#BBB;font-size:93%;}
+	#footer3legal a {color:#28b;text-decoration:none;}
+	#footer3legal a:hover {text-decoration:underline;}
 
 	/* end footer area*/
 
@@ -604,5 +592,24 @@ ul.srchOptns li{margin-top:.3em;}
 #main ul.topiclist p {margin:0 0 1em 0;}
 #main dl dt code {font-weight:bold;color:#333;}
 div.wideimage {margin-bottom:1em;}
+#downloadbtn {
+	border:1px solid #fff;border-bottom:none;
+}
+#downloadbtn a {
+	margin:10px;
+	border:1px solid #89B31F;
+	background-color:#fff;
+	display:block;
+	font-size:93%;
+	color:#004C6D;
+	line-height:2em;
+	padding:0 10px;
+	text-decoration:none;
+	text-align:center;
+}
+#downloadbtn a:hover {
+	text-decoration:underline;
+}
+
 
 

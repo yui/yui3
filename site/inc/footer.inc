@@ -3,22 +3,12 @@
 </div>
 
 
-<div>
-    <div id="footerBotMainCont">
-    <div id="footerBotMaxCont">
-    <div id="footerBotContainer">
-    <div id="footerBotInternal">
-    <div id="ydnfoot_bot">
-    <div id="footerLegal">
-        <p>Copyright &copy; <?php print strftime("%Y"); ?> Yahoo! Inc. All rights reserved. <a href="http://info.yahoo.com/copyright/details.html" rel="nofollow">Copyright</a> | <a href="http://info.yahoo.com/privacy/us/yahoo/devel/details.html" rel="nofollow">Privacy Policy</a> | <a href="http://developer.yahoo.com/terms/" rel="nofollow">Terms of Use</a> | <a href="http://careers.yahoo.com/">Job Openings</a></p>
-    </div>
-    </div>
-    </div> <!-- end id="ydnfoot" -->
-    </div>
-    </div>
-    </div>
-
+<div id="footer3">
+	<div id="footer3legal">
+		<p>Copyright &copy; <?php print strftime("%Y"); ?> Yahoo! Inc. All rights reserved. <a href="http://info.yahoo.com/copyright/details.html" rel="nofollow">Copyright</a> | <a href="http://info.yahoo.com/privacy/us/yahoo/devel/details.html" rel="nofollow">Privacy Policy</a> | <a href="http://developer.yahoo.com/terms/" rel="nofollow">Terms of Use</a> | <a href="http://careers.yahoo.com/">Job Openings</a></p>
+	</div>
 </div>
+
 
 
 <?php

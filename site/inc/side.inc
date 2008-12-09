@@ -81,60 +81,9 @@ $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature
 <div class="yui-b toc3" id="tocWrapper">
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
-	<!-- <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" /> -->
-	<style type="text/css" media="screen">
-	.yui-skin-sam .yui-button {
-/*	background:transparent url(http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/sprite.png) repeat-x scroll 0pt 0pt;*/
-/*	border-color:#808080;*/
-	background-color:#fff;
-	border-color:#89B31F;
-	border-style:solid;
-	border-width:1px 0pt;
-	margin:auto 0.25em;
-	}
-	.yui-button {
-	display:inline-block;
-	vertical-align:text-bottom;
-	}
-
-
-	.yui-skin-sam .yui-button .first-child {
-/*	border-color:#808080;*/
-	border-color:#89B31F;
-	border-style:solid;
-	border-width:0pt 1px;
-	margin:0pt -1px;
-	}
-	.yui-button .first-child {
-	display:block;
-	}
-
-	.yui-skin-sam .yui-button a, .yui-skin-sam .yui-button:hover a {
-	color:#004C6D;
-	}
-	.yui-skin-sam .yui-button:hover a {
-	color:#004C6D;
-	text-decoration:underline;
-	}
-	.yui-skin-sam .yui-button button, .yui-skin-sam .yui-button a {
-	font-size:93%;
-	line-height:2;
-	min-height:2em;
-	padding:0pt 10px;
-	}
-	.yui-button a {
-	text-decoration:none;
-	}
-	.yui-button button, .yui-button a {
-	border:medium none;
-	display:block;
-	margin:0pt;
-	}
-</style>
 	<div id="downloadbtn">
-		<span class="yui-skin-sam"><span class="yui-button yui-link-button"><em class="first-child"><a href="http://sourceforge.net/projects/yui/">Download YUI 3</a></em></span></span>
+		<a href="http://sourceforge.net/projects/yui/">Download YUI 3</a>
 	</div>
-
 <ul>
 <?php
 for ($i=0; $i<count($nav); $i++)
