@@ -1,9 +1,8 @@
    /*
    	* Extends the IO base class to enable file uploads, with HTML forms,
    	* using an iframe as the transport medium.
-	* @module io-base
+	* @module io
 	* @submodule io-upload-iframe
- 	* @for IO
 	*/
 
 	var w = Y.config.win;
