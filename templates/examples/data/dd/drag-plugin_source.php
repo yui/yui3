@@ -25,8 +25,8 @@
 <script>
 
 YUI(<?php echo $yuiConfig ?>).use('dd-plugin', function(Y) {
-    var node = Y.Node.get('#demo');
-    node.plug(Y.Plugin.Drag);
+    var node = Y.get('#demo');
+    node.plug(Y.plugin.Drag);
     node.dd.addHandle('h2');
 });
 </script>
