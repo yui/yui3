@@ -397,10 +397,56 @@ Y.extend(Slider, Y.Widget, {
 
         this.after('railSizeChange', this._afterRailSizeChange);
 
+        /**
+         * Signals the beginning of a thumb drag operation.  Payload includes
+         * the DD.Drag instance's drag:start event under key ddEvent.
+         *
+         * @event slideStart
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:start</code> event from the managed DD.Drag instance</dd>
+         *  </dl>
+         */
         this.publish(SLIDE_START);
+
+        /**
+         * Signals the end of a thumb drag operation.  Payload includes
+         * the DD.Drag instance's drag:end event under key ddEvent.
+         *
+         * @event slideEnd
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:end</code> event from the managed DD.Drag instance</dd>
+         *  </dl>
+         */
         this.publish(SLIDE_END);
 
+        /**
+         * Communicates a request to synchronize the Slider UI with the
+         * attribute state.  Links the sync request with the default sync
+         * logic in the default function _defSyncUI.
+         *
+         * @event sync
+         * @param event {Event.Facade} Event Facade object
+         * @preventable _defSyncUI
+         */
         this.publish(SYNC,       {defaultFn: this._defSyncUI});
+
+        /**
+         * Signals a value change via API, requiring the thumb position to be
+         * updated.  Triggers the thumb placement logic in the default function
+         * _defSetThumbPosition.
+         *
+         * @event valueSet
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>changeEv</dt>
+         *          <dd><code>valueChange</code> event fired in response to the change in the value attribute</dd>
+         *  </dl>
+         * @preventable _defSetThumbPosition
+         */
         this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
     },
 
@@ -508,6 +554,18 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     bindUI : function () {
+        /**
+         * Communicates user interaction with the thumb.  Triggers the logic
+         * to update the value via the default function _defUpdateValueFromDD.
+         *
+         * @event thumbDrag
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:drag</code> event from the managed DD.Drag instance</dd>
+         *  </dl>
+         * @preventable _defUpdateValueFromDD
+         */
         this.publish(THUMB_DRAG, {defaultFn: this._defUpdateValueFromDD});
 
         this._bindThumbDD();
