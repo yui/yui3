@@ -93,7 +93,7 @@ include($docroot."inc/header.php");
 			        ?>
 				</ul>
 
-    			<h4>CSS Resources</h4>
+    			<h4>YUI 3 CSS Resources</h4>
         		<ul>
 		            <?php
 		                //Going to print out the CSS Modules by hand to enforce the logical ordering:
@@ -107,6 +107,17 @@ include($docroot."inc/header.php");
 		            <li><a href='examples/cssgrids/index.html'>CSS Grids</a></li>
 		            <li><a href='examples/cssbase/index.html'>CSS Base</a></li>
         		</ul>
+
+			<h4>YUI 3 Developer Tools</h4>
+			<ul>
+			<?php
+			    $aTools = getModulesByType("tool",$modules);
+			    foreach($aTools as $key=>$aTool) {
+				echo "<li><a href='examples/$key/index.html'>".$aTool[name]."</a></li>\n";
+			    }
+			?>
+			</ul>
+
 			</div> <!-- /div.yui-u -->
 		</div> <!-- /div.yui-gb	 -->
 	</div>

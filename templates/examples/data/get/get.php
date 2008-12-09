@@ -2,7 +2,7 @@
 
 /*Get Utility Module:*/
 $modules["get"] = array(
-    "name" => "Get Utility", 
+    "name" => "Get", 
     "type" => "utility",
     "description" => "The Get Utility provides a convenient API for appending script nodes and CSS files to an existing DOM.  This can be useful when loading functionality on-demand; it's also useful when retrieving JSON data feeds across trusted but non-identical domains.",
     "cheatsheet" => true

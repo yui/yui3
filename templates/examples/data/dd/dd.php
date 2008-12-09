@@ -1,7 +1,7 @@
 <?php
 
 $modules["dd"] = array(
-		"name" => "Drag &amp; Drop Utility",
+		"name" => "Drag &amp; Drop",
 		"type" => "utility",
         /*this description appears on the component's examples index page*/
 		"description" => "Drag &amp; Drop Examples", 

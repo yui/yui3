@@ -2,7 +2,7 @@
 
 /* Test Module: */
 $modules["event"] = array(
-		"name" => "Event Utility",
+		"name" => "Event",
 		"type" => "core",
         /*this description appears on the component's examples index page*/
 		"description" => "The YUI Event Utility supports DOM events and Custom Events.", 
