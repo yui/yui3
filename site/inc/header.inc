@@ -22,7 +22,7 @@ if (!isset($bodyclass)) { $bodyclass=" yui-skin-sam"; }
 
 //this global affects versioning where it appears in documentation;
 //it does not affect the version used across the site:
-$yuiCurrentVersion = "3.0.0pr1";
+$yuiCurrentVersion = "3.0.0pr2";
 
 //this global changes the version of YUI we're using throughout
 //the website; this only affects pages that have the site chrome --
