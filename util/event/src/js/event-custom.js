@@ -267,7 +267,7 @@ YUI.add("event-custom", function(Y) {
              * already fired has a new subscriber.  
              *
              * @event subscribeEvent
-             * @type Y.Event.Custom
+             * @type Event.Custom
              * @param {Function} fn The function to execute
              * @param {Object}   obj An object to be passed along when the event 
              *                       fires
