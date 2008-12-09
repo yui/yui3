@@ -79,7 +79,7 @@ include "../inc/header.inc";
 
             <h4 id="instantiating">Instantiating The Overlay</h4>
 
-            <p>The Overlay widget extends the <code>Widget</code> class, and hence the Overlay contructor follows the same pattern as any Widget constructor, accepting a configration object to set the intial configuration for the widget.</p>
+            <p>The Overlay widget extends the <code>Widget</code> class, and hence the Overlay constructor follows the same pattern as any Widget constructor, accepting a configuration object to set the initial configuration for the widget.</p>
 
             <h5>Instantiating From Markup: Progressive Enhancement</h5>
 
@@ -148,7 +148,7 @@ include "../inc/header.inc";
 
             <p>Content can be strings containing markup (innerHTML will be used to set the content), or <code>Node</code> references, in which case they will be appended to the section (header, body or footer) node.</p>
 
-            <p>The <code>render</code> method can be passed a node reference (or a selector string) as shown above, to sepecify the node
+            <p>The <code>render</code> method can be passed a node reference (or a selector string) as shown above, to specify the node
             under which the overlay's bounding box should be added to the DOM. When rendering an overlay instance which has not been created from markup 
             (so it does not have a position in the DOM) if this argument is not provided the overlay will be added to the document's body element (inserted as the first child to avoid the potential for "operation aborted" errors in IE6).
             </p>
@@ -161,8 +161,8 @@ include "../inc/header.inc";
                 <tr><th>Attribute</th><th>Description</th></tr>
                 <tr><td><code>x</code>, <code>y</code> and <code>xy</code></td><td>Positioning attributes, to set the XY position in page co-ordinates on the Overlay's bounding box. Set to [0,0] by default</td></tr>
                 <tr><td><code>zIndex</code></td><td>Sets the z-index on the Overlay's bounding box. Set to 0 by default.</td></tr>
-                <tr><td><code>shim</code></td><td>Boolean, indicating whether or not an iframe shim should be added to the Overaly to protect against select box bleedthrough. It is only enabled by default for IE6.</td></tr>
-                <tr><td><code>align</code></td><td>Used to align a specific point on the Overlay's bounding box to a specifc point on another node, or the viewport. Set to null by default.</td></tr>
+                <tr><td><code>shim</code></td><td>Boolean, indicating whether or not an iframe shim should be added to the Overlay to protect against select box bleed through. It is only enabled by default for IE6.</td></tr>
+                <tr><td><code>align</code></td><td>Used to align a specific point on the Overlay's bounding box to a specific point on another node, or the viewport. Set to null by default.</td></tr>
                 <tr><td><code>centered</code></td><td>Used to center the Overlay inside another node, or inside the viewport. Set to false by default.</td></tr>
                 <tr><td><code>headerContent</code></td><td>Used to set the content of the Overlay's header section. No default value set.</td></tr>
                 <tr><td><code>bodyContent</code></td><td>Used to set the content of the Overlay's body section. No default value set.</td></tr>
@@ -206,7 +206,7 @@ include "../inc/header.inc";
             <p>The overlay's default position, if xy values are not provided, will be 0,0. Note that xy are page co-ordinates, not relative co-ordinates.</p>
 
             <p>Changes in the overlay's position (when set programmatically through the API) can monitored by listening for the attribute <code>xyChange</code> event. Listeners
-            to this event will recieve an event facade, which contains previous and new xy values:</p>
+            to this event will receive an event facade, which contains previous and new xy values:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 // Listen to the "on" moment, if you're interested in
@@ -231,7 +231,7 @@ include "../inc/header.inc";
             </textarea>
 
             <p>Note that changing just the <code>x</code> or <code>y</code> attribute value, individually, will still fire the <code>xy</code> change event. The <code>x</code> and 
-            <code>y</code> attribute values are simply convience wrappers which end up setting the <code>xy</code> attribute.</p>
+            <code>y</code> attribute values are simply convenience wrappers which end up setting the <code>xy</code> attribute.</p>
 
             <p>XY position can also be set after construction, as with any attribute, using <code>set</code> to change the attribute value directly, or using the <code>move</code> method:</p>
 
@@ -296,7 +296,7 @@ include "../inc/header.inc";
                 overlay.align("#okBtn", [WidgetPostionExt.CC, WidgetPositionExt.TL]);
             </textarea>
 
-            <p>The <code>centered</code> properrty can either by set to <code>true</code> to center the Overlay in the viewport, or set to a selector string or node reference to center the Overlay in a particular node.</p>
+            <p>The <code>centered</code> property can either by set to <code>true</code> to center the Overlay in the viewport, or set to a selector string or node reference to center the Overlay in a particular node.</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 // Center the overlay in the node with id = "module"
@@ -318,10 +318,10 @@ include "../inc/header.inc";
             <h4 id="stacking">Stacking</h4>
 
             <p>
-            The Overlay provides basic stacking support in the form of a <code>zIndex</code> attribute and a <code>shim</code> attribute. The shimming support protects against &lt;select&gt; box bleedthrough on 
+            The Overlay provides basic stacking support in the form of a <code>zIndex</code> attribute and a <code>shim</code> attribute. The shimming support protects against &lt;select&gt; box bleed through on 
             IE6 (It is enabled by default for IE6) by adding an iframe shim to the overlay's bounding box (positioned underneath the content box). The default value of the <code>zIndex</code> attribute is 0.</p>
             
-            <p>Using the <code>zIndex</code> and <code>shim</code> attributes is that same as any other attribute, with the ability to set values in the contructor, or at a later point in time:</p>
+            <p>Using the <code>zIndex</code> and <code>shim</code> attributes is that same as any other attribute, with the ability to set values in the constructor, or at a later point in time:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 // Disable shim for all browsers, set zIndex to 10
@@ -337,7 +337,7 @@ include "../inc/header.inc";
                 });
             </textarea>
 
-            <p>Stacking support also provides support to protect against scrollbar bleedthrough in older Gecko browsers on the Mac (Firefox 2 for example), by the application "overflow:auto" to the bounding box,
+            <p>Stacking support also provides support to protect against scroll bar bleed through in older Gecko browsers on the Mac (Firefox 2 for example), by the application "overflow:auto" to the bounding box,
             using the following rules:</p>
 
             <textarea name="code" class="CSS" cols="60" rows="1">
@@ -372,7 +372,7 @@ include "../inc/header.inc";
 
             <p>The content for each of these sections is settable either through the <code>headerContent</code>, <code>bodyContent</code> and <code>footerContent</code> attributes. Setting the content
             through these properties will replace any existing content in the section. The content can either be specified as a string, in which case innerHTML will be used to set the new content, or 
-            specified as a <code>Node</code> instance, in which case the content will be added to the respective section using <code>appendChild</code> after clearing exsiting content.</p>
+            specified as a <code>Node</code> instance, in which case the content will be added to the respective section using <code>appendChild</code> after clearing existing content.</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 var overlay = new Y.Overlay({
@@ -441,7 +441,7 @@ include "../inc/header.inc";
 
             <ul>
                 <li>The <code>section</code> argument specifies which section is to be updated. The constants <code>WidgetStdMod.HEADER</code>, <code>WidgetStdMod.BODY</code> and <code>WidgetStdMod.FOOTER</code></p> define valid values.</li>
-                <li>The <code>content</code> argument specifies the new content to be added, which, as with the the attributes can be a string HTML value or a node reference.</li>
+                <li>The <code>content</code> argument specifies the new content to be added, which, as with the attributes can be a string HTML value or a node reference.</li>
                 <li>The <code>where</code> argument specifies whether the content should be added before, after or replace existing content. The constants <code>WidgetStdMod.BEFORE</code>, <code>WidgetStdMod.AFTER</code> and <code>WidgetStdMod.REPLACE</code></p> define valid values.</li>
             </ul>
 
@@ -449,7 +449,7 @@ include "../inc/header.inc";
 
             <p>The content change events mentioned above, will be fired when content is set through the <code>setStdModContent</code> method just as they would when setting the content using the attribute.</p>
 
-            <p>The <a href="../examples/overlay/overlay-stdmod.html">Standard Module</a> example provides a way to excercise the above content attributes and methods.</p>
+            <p>The <a href="../examples/overlay/overlay-stdmod.html">Standard Module</a> example provides a way to exercise the above content attributes and methods.</p>
 
             <h4 id="markup">Markup Structure</h4>
 
@@ -473,7 +473,7 @@ include "../inc/header.inc";
 
             <p>The bounding box is absolutely positioned by default, and top/left positioning and z-index values are applied to it. The nested bounding box/content box structure is discussed in detail on the <a href="../widget/Widget.html#markup">Widget markup discussion</a>.</p>
 
-            <p>In addition to the default classes applied to the bounding box and content box for all widgets ("yui-overlay", "yui-overlay-content", "yui-widget"), the <code>WidgetStdMod</code>, <code>WidgetPositioned</code> and <code>WidgetStack</code> extensions also mark the approriate boxes with 
+            <p>In addition to the default classes applied to the bounding box and content box for all widgets ("yui-overlay", "yui-overlay-content", "yui-widget"), the <code>WidgetStdMod</code>, <code>WidgetPositioned</code> and <code>WidgetStack</code> extensions also mark the appropriate boxes with 
             "yui-widget-stdmod", "yui-widget-positioned" and "yui-widget-stacked" classes as shown above.</p>
 
             <p>The iframe shim, added if <code>shim</code> is enabled, is added to the bounding box, as sibling to the content box and stacked underneath it (using a -ve z-index).</p>
@@ -493,7 +493,7 @@ include "../inc/header.inc";
             </textarea>
 
             <p>Since it includes the <code>WidgetStack</code> extension, the following functional CSS is also provided (through build/widget/assets/skins/sam/widget-stack.css) to handle the shim element,
-            (along with the Gecko/Mac scrollbar support CSS mentioned above)</p>
+            (along with the Gecko/Mac scroll bar support CSS mentioned above)</p>
 
             <textarea name="code" class="CSS" cols="60" rows="1">
                 .yui-widget-stacked .yui-widget-shim {
