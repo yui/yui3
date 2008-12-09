@@ -35,8 +35,8 @@ YUI().use('dd-plugin');
 <p>Now that we have a YUI instance with the <code>dd-plugin</code> module, we need to instantiate a <code>Node</code> instance on this Node.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-plugin', function(Y) {
-    var node = Y.Node.get('#demo');
-    node.plug(Y.Plugin.Drag);
+    var node = Y.get('#demo');
+    node.plug(Y.plugin.Drag);
 });
 </textarea>
 
@@ -44,8 +44,8 @@ YUI().use('dd-plugin', function(Y) {
 <p>Now that we have a draggable Node, you can get access to the Drag Instance from the <code>dd</code> namespace on the <code>Node</code> instance.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-plugin', function(Y) {
-    var node = Y.Node.get('#demo');
-    node.plug(Y.Plugin.Drag);
+    var node = Y.get('#demo');
+    node.plug(Y.plugin.Drag);
     
     //Now you can only drag it from the x in the corner
     node.dd.addHandle('h2'); 
