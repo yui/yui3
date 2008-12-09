@@ -3,7 +3,7 @@
 Begin by including the <a href="../../cssgrids/#dependencies">CSS Grids dependencies</a> and placing 
 the markup for the two-column Grid on the page (this example uses the 
 <a href="../../cssgrids/#page_width">100% Centered Page Width</a> with the 
-<a href=".../cssgrids/#preset_templates">Preset Template 1</a> that provides a 160px left column).
+<a href="../cssgrids/#preset_templates">Preset Template 1</a> that provides a 160px left column).
 Add the markup for the menu to the left column of the grid, and the class <code>yui-skin-sam</code>
 to the <code>&#60;body&#62;</code>.
 </p>
