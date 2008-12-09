@@ -16,13 +16,13 @@
 * 		YUI().use("node-menunav", function(Y) {<br>
 * <br>
 * 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
-* 			//	element representing the root menu (<div id="menu-1">) is ready to <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
 * 			//	be scripted.<br>
 * <br>
 * 			Y.on("contentready", function () {<br>
 * <br>
 * 				//	The scope of the callback will be a Node instance representing <br>
-* 				//	the root menu (<div id="menu-1">).  Therefore, since "this"<br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
 * 				//	represents a Node instance, it is possible to just call "this.plug"<br>
 * 				//	passing in a reference to the MenuNav Node Plugin.<br>
 * <br>
@@ -32,9 +32,9 @@
 * <br>		
 * 		}); <br>
 * <br>	
-* 	&#60;/script&#62;
+* 	&#60;/script&#62;<br>
 * </code>
-* <p>
+* </p>
 *
 * <p>The MenuNav Node Plugin has several configuration properties that can be set via an 
 * object literal that is passed as a second argument to a Node instance's <code>plug</code> method.
@@ -51,13 +51,13 @@
 * 		YUI().use("node-menunav", function(Y) {<br>
 * <br>
 * 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
-* 			//	element representing the root menu (<div id="menu-1">) is ready to <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
 * 			//	be scripted.<br>
 * <br>
 * 			Y.on("contentready", function () {<br>
 * <br>
 * 				//	The scope of the callback will be a Node instance representing <br>
-* 				//	the root menu (<div id="menu-1">).  Therefore, since "this"<br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
 * 				//	represents a Node instance, it is possible to just call "this.plug"<br>
 * 				//	passing in a reference to the MenuNav Node Plugin.<br>
 * <br>
@@ -67,9 +67,9 @@
 * <br>		
 * 		}); <br>
 * <br>	
-* 	&#60;/script&#62;
+* 	&#60;/script&#62;<br>
 * </code>
-* <p>
+* </p>
 * 
 * <p> The complete list of the MenuNav Node Plugin configuration properties are:</p>
 * <dl>
