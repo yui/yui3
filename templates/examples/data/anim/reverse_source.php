@@ -14,7 +14,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var module = Y.get('#demo');
 
     // add fx plugin to module body
-    var content = module.query('.yui-bd').plug(Y.Plugin.NodeFX, {
+    var content = module.query('.yui-bd').plug(Y.plugin.NodeFX, {
         from: { height: 0 },
         to: {
             height: function(node) { // dynamic in case of change
