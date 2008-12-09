@@ -1,8 +1,8 @@
 /*
  * Functionality to simulate events.
- * @submodule node-event-simulate
  * @module node
  * @for Node
+ * @submodule node-event-simulate
  */
 
     /**
@@ -12,7 +12,6 @@
      * @return {void}
      * @method simulate
      * @static
-     * @for Y.Node
      */     
     Y.Node.prototype.simulate = function(type, options){
         Y.Event.simulate(Y.Node.getDOMNode(this), type, options);

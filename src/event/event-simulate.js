@@ -23,7 +23,7 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method click
              * @static   
-             * @for Y.Event
+             * @for Event
              */        
             "click", 
             
@@ -33,7 +33,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method dblclick
              * @static
-             * @for Y.Event
              */            
             "dblclick", 
             
@@ -49,7 +48,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseover
              * @static
-             * @for Y.Event
              */             
             "mouseover", 
             
@@ -65,7 +63,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseout
              * @static
-             * @for Y.Event
              */            
             "mouseout", 
             
@@ -75,7 +72,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mousedown
              * @static
-             * @for Y.Event
              */            
             "mousedown", 
             
@@ -85,7 +81,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mouseup
              * @static
-             * @for Y.Event
              */            
             "mouseup", 
             
@@ -95,7 +90,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method mousemove
              * @static
-             * @for Y.Event
              */           
             "mousemove"
         ],
@@ -109,7 +103,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keydown
              * @static
-             * @for Y.Event
              */        
             "keydown", 
             
@@ -119,7 +112,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keyup
              * @static
-             * @for Y.Event
              */            
             "keyup", 
             
@@ -129,7 +121,6 @@ YUI.add("event-simulate", function(Y) {
              * @param {Object} options Additional event options (use DOM standard names).
              * @method keypress
              * @static
-             * @for Y.Event
              */            
             "keypress"
         ];
@@ -573,7 +564,6 @@ YUI.add("event-simulate", function(Y) {
      * @return {void}
      * @method simulate
      * @static
-     * @for Y.Event
      */
     Y.Event.simulate = function(target, type, options){
         if (isFunction(Y.Event[type])){
