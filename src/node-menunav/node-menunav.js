@@ -502,8 +502,7 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 
 
 /** 
-* @namespace plugin
-* @class NodeMenuNav
+* @for Node
 */
 var MenuNav = function (config) {
 
