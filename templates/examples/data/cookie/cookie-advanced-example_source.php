@@ -1,7 +1,3 @@
-<h3>Note:</h3>
-
-<p>Keep an eye on the Logger console at right to view the log messages associated with this example.</p>
-
 <p>Click the buttons to interact with the cookie:</p>
 <input type="button" value="Get Value" id="yui-cookie-btn1" />
 <input type="button" value="Set Random Value" id="yui-cookie-btn2" />
