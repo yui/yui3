@@ -18,13 +18,13 @@ YUI.add('node-menunav', function(Y) {
 * 		YUI().use("node-menunav", function(Y) {<br>
 * <br>
 * 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
-* 			//	element representing the root menu (<div id="menu-1">) is ready to <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
 * 			//	be scripted.<br>
 * <br>
 * 			Y.on("contentready", function () {<br>
 * <br>
 * 				//	The scope of the callback will be a Node instance representing <br>
-* 				//	the root menu (<div id="menu-1">).  Therefore, since "this"<br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
 * 				//	represents a Node instance, it is possible to just call "this.plug"<br>
 * 				//	passing in a reference to the MenuNav Node Plugin.<br>
 * <br>
@@ -53,13 +53,13 @@ YUI.add('node-menunav', function(Y) {
 * 		YUI().use("node-menunav", function(Y) {<br>
 * <br>
 * 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
-* 			//	element representing the root menu (<div id="menu-1">) is ready to <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
 * 			//	be scripted.<br>
 * <br>
 * 			Y.on("contentready", function () {<br>
 * <br>
 * 				//	The scope of the callback will be a Node instance representing <br>
-* 				//	the root menu (<div id="menu-1">).  Therefore, since "this"<br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
 * 				//	represents a Node instance, it is possible to just call "this.plug"<br>
 * 				//	passing in a reference to the MenuNav Node Plugin.<br>
 * <br>
