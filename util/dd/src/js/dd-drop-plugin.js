@@ -8,6 +8,7 @@
         * @class DropPlugin
         * @extends Drop
         * @constructor
+        * @namespace plugin
         */
 
 
