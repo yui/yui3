@@ -225,7 +225,7 @@ attribute. It invokes the <code>_uiSetNodes</code> method, which marks all trigg
     },
 </textarea>
 
-<p>Similarly the <code>_afterSetDelegate</code> method is the default atttribute change listener for the <code>delegate</code> attribute,
+<p>Similarly the <code>_afterSetDelegate</code> method is the default attributechange listener for the <code>delegate</code> attribute,
 and invokes <code>_bindDelegate</code> to set up the listeners when a new delegate node is set.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
@@ -375,7 +375,7 @@ the <code>hideDelay</code> timer. It fires a <code>triggerLeave</code> event, bu
 
 <h4>Using Tooltip</h4>
 
-<p>For this example, we set up 4 DIV elements which will act as tooltip triggers. They are all marked using a <code>yui-hastooltip</code> class, so that they can be queried using a simple selector, passed as the value for the <code>triggerNodes</code> attribute in the tooltip's contructor. Also all 4 trigger nodes are contained in a wrapper DIV with <code>id="delegate"</code> which will act as the <code>delegate</code> node.</p>
+<p>For this example, we set up 4 DIV elements which will act as tooltip triggers. They are all marked using a <code>yui-hastooltip</code> class, so that they can be queried using a simple selector, passed as the value for the <code>triggerNodes</code> attribute in the tooltip's cconstructor Also all 4 trigger nodes are contained in a wrapper DIV with <code>id="delegate"</code> which will act as the <code>delegate</code> node.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var tt = new Tooltip({

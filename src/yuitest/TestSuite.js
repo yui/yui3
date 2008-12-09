@@ -6,7 +6,7 @@
      * A test suite that can contain a collection of TestCase and TestSuite objects.
      * @param {String||Object} data The name of the test suite or an object containing
      *      a name property as well as setUp and tearDown methods.
-     * @namespace Y.Test
+     * @namespace Test
      * @class Suite
      * @constructor
      */

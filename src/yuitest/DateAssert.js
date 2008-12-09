@@ -4,7 +4,6 @@
      * The DateAssert object provides functions to test JavaScript Date objects
      * for a variety of cases.
      *
-     * @namespace Y
      * @class DateAssert
      * @static
      */

@@ -42,7 +42,7 @@ foreach ($modules as $mod => $config) {
         $config->info->desc = $manual->modules->$mod->description;
     } else if(isset($api->modules->$mod->description)) {
         $config->info->desc = $api->modules->$mod->description;
-    } else {
+    } else if (!isset($config->info->desc)) {
         $config->info->desc = UNKNOWN_DESC;
     }
 

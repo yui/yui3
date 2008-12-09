@@ -1,5 +1,11 @@
 YUI.add('yuitest', function(Y) {
 
+    /**
+     * YUI JavaScript Testing Framework
+     *
+     * @module yuitest
+     */
+
     
     Y.namespace("Test");
     
@@ -8,7 +14,7 @@ YUI.add('yuitest', function(Y) {
      * @param template An object containing any number of test methods, other methods,
      *                 an optional name, and anything else the test case needs.
      * @class Case
-     * @namespace Y.Test
+     * @namespace Test
      * @constructor
      */
     Y.Test.Case = function (template /*:Object*/) {
@@ -96,7 +102,7 @@ YUI.add('yuitest', function(Y) {
      * @param {Function} segment A function to run when the wait is over.
      * @param {int} delay The number of milliseconds to wait before running the code.
      * @class Wait
-     * @namespace Y.Test
+     * @namespace Test
      * @constructor
      *
      */
@@ -125,7 +131,7 @@ YUI.add('yuitest', function(Y) {
      * A test suite that can contain a collection of TestCase and TestSuite objects.
      * @param {String||Object} data The name of the test suite or an object containing
      *      a name property as well as setUp and tearDown methods.
-     * @namespace Y.Test
+     * @namespace Test
      * @class Suite
      * @constructor
      */
@@ -195,10 +201,10 @@ YUI.add('yuitest', function(Y) {
     };
 
     
-    /**
+    /*
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace Y.Test
+     * @namespace Test
      * @class Runner
      * @static
      */
@@ -293,6 +299,13 @@ YUI.add('yuitest', function(Y) {
             }       
         };
     
+        /**
+         * Runs test suites and test cases, providing events to allowing for the
+         * interpretation of test results.
+         * @namespace Test
+         * @class Runner
+         * @static
+         */
         function TestRunner(){
         
             //inherit from EventProvider
@@ -302,6 +315,7 @@ YUI.add('yuitest', function(Y) {
              * Suite on which to attach all TestSuites and TestCases to be run.
              * @type Y.Test.Suite
              * @property masterSuite
+             * @static
              * @private
              */
             this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("YUI Test Results");        
@@ -311,6 +325,7 @@ YUI.add('yuitest', function(Y) {
              * @type TestNode
              * @private
              * @property _cur
+             * @static
              */
             this._cur = null;
             
@@ -319,6 +334,7 @@ YUI.add('yuitest', function(Y) {
              * @type TestNode
              * @private
              * @property _root
+             * @static
              */
             this._root = null;
             
@@ -327,6 +343,7 @@ YUI.add('yuitest', function(Y) {
              * @type Boolean
              * @property _log
              * @private
+             * @static
              */
             this._log = true;
             
@@ -358,12 +375,14 @@ YUI.add('yuitest', function(Y) {
              * Fires when a test case is opened but before the first 
              * test is executed.
              * @event testcasebegin
+             * @static
              */         
             TEST_CASE_BEGIN_EVENT /*:String*/ : "testcasebegin",
             
             /**
              * Fires when all tests in a test case have been executed.
              * @event testcasecomplete
+             * @static
              */        
             TEST_CASE_COMPLETE_EVENT /*:String*/ : "testcasecomplete",
             
@@ -371,6 +390,7 @@ YUI.add('yuitest', function(Y) {
              * Fires when a test suite is opened but before the first 
              * test is executed.
              * @event testsuitebegin
+             * @static
              */        
             TEST_SUITE_BEGIN_EVENT /*:String*/ : "testsuitebegin",
             
@@ -378,36 +398,42 @@ YUI.add('yuitest', function(Y) {
              * Fires when all test cases in a test suite have been
              * completed.
              * @event testsuitecomplete
+             * @static
              */        
             TEST_SUITE_COMPLETE_EVENT /*:String*/ : "testsuitecomplete",
             
             /**
              * Fires when a test has passed.
              * @event pass
+             * @static
              */        
             TEST_PASS_EVENT /*:String*/ : "pass",
             
             /**
              * Fires when a test has failed.
              * @event fail
+             * @static
              */        
             TEST_FAIL_EVENT /*:String*/ : "fail",
             
             /**
              * Fires when a test has been ignored.
              * @event ignore
+             * @static
              */        
             TEST_IGNORE_EVENT /*:String*/ : "ignore",
             
             /**
              * Fires when all test suites and test cases have been completed.
              * @event complete
+             * @static
              */        
             COMPLETE_EVENT /*:String*/ : "complete",
             
             /**
              * Fires when the run() method is called.
              * @event begin
+             * @static
              */        
             BEGIN_EVENT /*:String*/ : "begin",    
             
@@ -421,6 +447,7 @@ YUI.add('yuitest', function(Y) {
              * TestRunner events are subscribed to.
              * @return {Void}
              * @method disableLogging
+             * @static
              */
             disableLogging: function(){
                 this._log = false;
@@ -431,6 +458,7 @@ YUI.add('yuitest', function(Y) {
              * logreader.
              * @return {Void}
              * @method enableLogging
+             * @static
              */
             enableLogging: function(){
                 this._log = true;
@@ -442,6 +470,7 @@ YUI.add('yuitest', function(Y) {
              * @return {Void}
              * @method _logEvent
              * @private
+             * @static
              */
             _logEvent: function(event){
                 
@@ -985,18 +1014,12 @@ YUI.add('yuitest', function(Y) {
         
     })();
 
-    /**
-     * Assertion library for JavaScript and YUI Test.
-     *
-     * @module assert
-     */
-    
+  
     /**
      * The Assert object provides functions to test JavaScript values against
      * known and expected results. Whenever a comparison (assertion) fails,
      * an error is thrown.
      *
-     * @namespace Y
      * @class Assert
      * @static
      */
@@ -1931,12 +1954,10 @@ YUI.add('yuitest', function(Y) {
     };
 
 
-
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
      * for a variety of cases.
      *
-     * @namespace Y
      * @class ObjectAssert
      * @static
      */
@@ -2015,7 +2036,6 @@ YUI.add('yuitest', function(Y) {
      * The DateAssert object provides functions to test JavaScript Date objects
      * for a variety of cases.
      *
-     * @namespace Y
      * @class DateAssert
      * @static
      */
@@ -2067,7 +2087,7 @@ YUI.add('yuitest', function(Y) {
      * Returns test results formatted as a JSON string. Requires JSON utility.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} A JSON-formatted string of results.
-     * @namespace Y.Test.Format
+     * @namespace Test.Format
      * @method JSON
      * @static
      */
@@ -2079,7 +2099,7 @@ YUI.add('yuitest', function(Y) {
      * Returns test results formatted as an XML string.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} An XML-formatted string of results.
-     * @namespace YAHOO.tool.TestFormat
+     * @namespace Test.Format
      * @method XML
      * @static
      */
@@ -2114,7 +2134,7 @@ YUI.add('yuitest', function(Y) {
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
      *      Default is Y.Test.Format.XML.
      * @constructor
-     * @namespace Y.Test
+     * @namespace Test
      * @class Reporter
      */
     Y.Test.Reporter = function(url /*:String*/, format /*:Function*/) {
@@ -2271,12 +2291,6 @@ YUI.add('yuitest', function(Y) {
         }
     
     };
-
-    /**
-     * Mock objects for JavaScript and YUI Test.
-     *
-     * @module mock
-     */
 
     /**
      * Creates a new mock object.

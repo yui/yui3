@@ -10,7 +10,7 @@ $modules["overlay"] = array(
 $examples["overlay-xy"] = array(
     name => "Basic XY Positioning",
     modules => array("overlay"),
-    description => "Shows how to instantiate a basic Overlay intance, and use the Overlay's basic XY positioning support.",
+    description => "Shows how to instantiate a basic Overlay instance, and use the Overlay's basic XY positioning support.",
     sequence => array(0),
     newWindow => "default",
     requires => array("overlay"),
@@ -18,7 +18,7 @@ $examples["overlay-xy"] = array(
 );
 
 $examples["overlay-align"] = array(
-    name => "Entended XY Positioning",
+    name => "Extended XY Positioning",
     modules => array("overlay"),
     description => "Shows how to use the Overlay's extended XY positioning support, to align the Overlay relative to another element, or the viewport.",
     sequence => array(1),
