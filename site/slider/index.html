@@ -1,7 +1,7 @@
 <?php 
 $title="The Slider widget";
 $section="slider";
-$component="Slider widget";
+$component="Slider";
 $highlightSyntax = true;
 $releasenotes = true;
 include "../inc/header.inc";
@@ -87,7 +87,7 @@ include "../inc/header.inc";
                 <h4 id="axis">Horizontal and vertical Sliders</h4>
 
                 <h5>Specify the Slider <code>axis</code> at construction</h5>
-                <p>By Default, Sliders are horizontal.  For a vertical Slider, set the <code>axis</code> attribute to &quot;y&quot; during construction.</p>
+                <p>The orientation of a Slider is controlled by the <code>axis</code> configuration.  By default, Sliders are horizontal (<code>axis : &quot;x&quot;</code>).  For a vertical Slider, set the <code>axis</code> attribute to &quot;y&quot; during construction.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 // Horizontal Slider
@@ -104,7 +104,7 @@ var v_slider = new Y.Slider({
 });
 </textarea>
 
-                <p>These would be rendered like this:</p>
+                <p>These would be rendered like this (without the drop-shadow):</p>
 
                 <img src="assets/images/horiz_slider.png" alt="Horizontal Sliderwith default Sam skin">
                 <img src="assets/images/vert_slider.png" alt="Vertical Slider with default Sam skin">
@@ -224,7 +224,7 @@ var slider = new Y.Slider({
 
                 <h5>Setting and getting Slider values</h5>
 
-                <p>Like any input interface, the most important thing about the Slider is the <code>value</code>.  Though <code>value</code> is managed as an attribute, Slider provided two convenience methods for accessing it:</p>
+                <p>Like any input element, the most important thing about a Slider is its <code>value</code>.  Though <code>value</code> is managed as an attribute, Slider provides two convenience methods for accessing it:</p>
                 <ul>
                     <li><code>getValue()</code></li>
                     <li><code>setValue(newVal)</code></li>
