@@ -843,6 +843,7 @@ Y.extend(Console,Y.Widget,{
      *
      * @method _addToConsole
      * @param node {Node} the node to insert into the console body
+     * @protected
      */
     _addToConsole : function (node) {
         var toTop = this.get('newestOnTop'),
@@ -912,6 +913,7 @@ Y.extend(Console,Y.Widget,{
      * @method _encodeHTML
      * @param s {String} the raw string
      * @return String the encoded string
+     * @protected
      */
     _encodeHTML : function (s) {
         return isString(s) ?

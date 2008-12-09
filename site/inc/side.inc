@@ -43,7 +43,7 @@ $nav[]=array('overlay','/yui/3/overlay/','Overlay', 'Overlay - Functional Exampl
 $nav[]=array('slider','/yui/3/slider/','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Node Plugins', '');
-$nav[]=array('nodemenunav','/yui/3/nodemenunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
+$nav[]=array('nodemenunav','/yui/3/node-menunav/','MenuNav Node Plugin', 'MenuNav Node Plugin');
 
 $nav[]=array('', '', 'YUI 3 Developer Tools', '');
 $nav[]=array('console','/yui/3/console/','Console', 'Console');
@@ -82,7 +82,7 @@ $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
 	<div id="downloadbtn">
-		<a href="http://sourceforge.net/projects/yui/">Download YUI 3</a>
+		<a href="http://yuilibrary.com/downloads/">Download YUI 3</a>
 	</div>
 <ul>
 <?php
