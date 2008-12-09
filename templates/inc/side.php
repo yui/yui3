@@ -34,7 +34,7 @@ $nav[]=array('overlay',$docroot.'examples/overlay/index.html','Overlay', 'Overla
 $nav[]=array('slider',$docroot.'examples/slider/index.html','Slider', 'Slider - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Node Plugins - Examples', ' YUI 3 Node Plugins - Functional Examples');
-$nav[]=array('nodemenunav',$docroot.'examples/nodemenunav/index.html','MenuNav Node Plugin', 'MenuNav Node Plugin - Functional Examples');
+$nav[]=array('nodemenunav',$docroot.'examples/node-menunav/index.html','MenuNav Node Plugin', 'MenuNav Node Plugin - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');
 $nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YUI CSS Reset - Functional Examples');

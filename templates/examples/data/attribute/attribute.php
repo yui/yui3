@@ -1,7 +1,7 @@
 <?php
 
 $modules["attribute"] = array(
-		"name" => "Attribute Utility",
+		"name" => "Attribute",
 		"type" => "infra",
 		"description" => "The YUI Attribute Utility adds managed attribute support to classes which get augmented with it.", 
 		"cheatsheet" => false 
