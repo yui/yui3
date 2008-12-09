@@ -82,7 +82,7 @@ $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
 	<div id="downloadbtn">
-		<a href="http://sourceforge.net/projects/yui/">Download YUI 3</a>
+		<a href="http://yuilibrary.com/downloads/">Download YUI 3</a>
 	</div>
 <ul>
 <?php
