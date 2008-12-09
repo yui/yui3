@@ -20,9 +20,9 @@ The results are logged to <code>&lt;div id="container"&gt;</code>.
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-//Get a reference to the Node that we are using
+//Get a reference to the DIV we are using
 //to report results.
-var d = Y.Node.get('#container');
+var d = document.getElementById('container');
 
 /* global listener object */
 var gH = {
