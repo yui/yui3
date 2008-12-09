@@ -172,7 +172,7 @@ include "../inc/header.inc";
             <dl>
                 <dt><a href="../api/Base.html#method_destroy"><code>destroy</code></a> <em>(inherited from <code>Base</code>)</em>:</dt>
                 <dd>
-                    <p>Invokes the <code>destructor</code> method for all classes in the widget hierarcy, bottom up (subclass first, Base last).</p>
+                    <p>Invokes the <code>destructor</code> method for all classes in the widget hierarchy, bottom up (subclass first, Base last).</p>
                     <p>The <code>destroy</code> method fires a <code>destroy</code> event, which can be prevented to stop destruction from proceeding.</p>
                 </dd>
             </dl>
@@ -209,7 +209,7 @@ include "../inc/header.inc";
 
             <dl>
                 <dt><a href="../api/Widget.html#method_renderUI"><code>renderUI</code></a></dt>
-                <dd>This method is responsible for creating and adding the nodes which the widget needs to the document (or modifiying existing nodes, in the case of progressive enhancement).
+                <dd>This method is responsible for creating and adding the nodes which the widget needs to the document (or modifying existing nodes, in the case of progressive enhancement).
                 It is usually the point at which the DOM is first modified by the Widget.</dd>
             </dl>
             <dl>
@@ -235,7 +235,7 @@ include "../inc/header.inc";
                      // Set attributes which are Node references using selector syntax (uses node.query())
                      titleNode: "span.yui-title",
 
-                     // Set attributes which are multipe Node references using selector syntax (uses node.queryAll()) 
+                     // Set attributes which are multiple Node references using selector syntax (uses node.queryAll()) 
                      itemNodes: ["li.yui-listitem"],
 
                      // Set attributes using a parse function. Execution context is set to the widget instance
@@ -253,9 +253,9 @@ include "../inc/header.inc";
                 };
             </textarea>
 
-            <p>The <code>HTML_PARSER</code> property is evaluated when the Widget class' <code>initializer</code> method is invoked (so before Widget sub-classes recieve the configuration
+            <p>The <code>HTML_PARSER</code> property is evaluated when the Widget class' <code>initializer</code> method is invoked (so before Widget sub-classes receive the configuration
             object passed in to the constructor). The object is iterated, to create a filled out configuration object for the Widget, based on the content found on the page. For example
-            the parser defintion above, may lead to the following object literal when evaluated:
+            the parser definition above, may lead to the following object literal when evaluated:
 <code><pre>
     {
         titleNode: NodeRef,
@@ -343,8 +343,8 @@ include "../inc/header.inc";
                 <li><p class="topic">A class name identifying the widget type is added to the bounding box.</p>
                     <p>The default format for the class name is "yui-[widgetname]". For example, for Slider, the "yui-slider" class name is added to the bounding box.</p>
                 </li>
-                <li><p class="topic">Additionally, class names for all widget classes in the class heirarchy are also used to tag the bounding box.</p>
-                    <p>For example, for a MultiThumbSlider, which may extend Slider, the bounding box is marked with the classes "yui-widget", "yui-slider" and "yui-multithumbslider" (this is the only place where we mark an element with class names for all widget classes in the heirarchy).</p>
+                <li><p class="topic">Additionally, class names for all widget classes in the class hierarchy are also used to tag the bounding box.</p>
+                    <p>For example, for a MultiThumbSlider, which may extend Slider, the bounding box is marked with the classes "yui-widget", "yui-slider" and "yui-multithumbslider" (this is the only place where we mark an element with class names for all widget classes in the hierarchy).</p>
                 </li>
                 <li>
                     <p class="topic">Class names used for state management by the widget instance are also applied to the bounding box.</p>
@@ -371,7 +371,7 @@ include "../inc/header.inc";
                 <li><p class="topic">Visual treatment for the widget is applied to the content box (e.g. borders, padding, background-color etc.).</p></li>
                 <li>
                     <p class="topic">For progressively enhanced solutions, generally the user will only provide what will be the content box on the page and pass it into the constructor as the <code>contentBox</code> (rather than the bounding box).</p> 
-                    <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unneccessary markup on the page upfront.</p>
+                    <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unnecessary markup on the page up front.</p>
                 </li>
             </ul>
             
@@ -386,7 +386,7 @@ include "../inc/header.inc";
             <ul>
                 <li>The nested structure allows the bounding box to act as a container for any additional decorator elements which need to be added for the widget. For example, elements to support rounded corners, shadows, or shimming. These can live as siblings of the content box, and can be positioned, and sized more efficiently since they have a common parent container.</li>
                 <li>Additionally, due to the consistent structure across all widgets, generic plugins can be written to provide the above decorator support, which are re-usable across all widgets.</li>
-                <li>Having a box without border and padding applied (the bounding box) allows for consistent width and height application across brower box model differences.</li>
+                <li>Having a box without border and padding applied (the bounding box) allows for consistent width and height application across browser box model differences.</li>
             </ul>
 
             <h4 id="CSS">Class Names and CSS</h4>
@@ -396,7 +396,7 @@ include "../inc/header.inc";
             <dl>
                 <dt><code>getClassName(arg1, arg2, arg3 ...)</code> method (instance)</dt>
                 <dd>
-                    <p>This method can be used to create class names which begin with the configured prefix for application ("yui-") by default and the name of the widget (the <code>NAME</code> propery, lowercased) For example:</p>
+                    <p>This method can be used to create class names which begin with the configured prefix for application ("yui-") by default and the name of the widget (the <code>NAME</code> property, lowercase) For example:</p>
 
                     <textarea name="code" class="JScript" cols="60" rows="1">
                         // A method on a Spinner widget instance, with Spinner.NAME = "spinner";
