@@ -3,6 +3,7 @@
     * in the transaction's configuration object.
 	* @module io-base
 	* @submodule io-form
+ 	* @for IO
 	*/
 
     Y.mix(Y.io, {

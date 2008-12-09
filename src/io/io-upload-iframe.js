@@ -3,6 +3,7 @@
    	* using an iframe as the transport medium.
 	* @module io-base
 	* @submodule io-upload-iframe
+ 	* @for IO
 	*/
 
 	var w = Y.config.win;
