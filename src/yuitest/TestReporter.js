@@ -7,7 +7,7 @@
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
      *      Default is Y.Test.Format.XML.
      * @constructor
-     * @namespace Y.Test
+     * @namespace Test
      * @class Reporter
      */
     Y.Test.Reporter = function(url /*:String*/, format /*:Function*/) {

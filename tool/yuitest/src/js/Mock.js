@@ -1,10 +1,4 @@
     /**
-     * Mock objects for JavaScript and YUI Test.
-     *
-     * @module mock
-     */
-
-    /**
      * Creates a new mock object.
      * @class Mock
      * @constructor

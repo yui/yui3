@@ -1,8 +1,8 @@
     
-    /**
+    /*
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace Y.Test
+     * @namespace Test
      * @class Runner
      * @static
      */
@@ -97,6 +97,13 @@
             }       
         };
     
+        /**
+         * Runs test suites and test cases, providing events to allowing for the
+         * interpretation of test results.
+         * @namespace Test
+         * @class Runner
+         * @static
+         */
         function TestRunner(){
         
             //inherit from EventProvider
@@ -106,6 +113,7 @@
              * Suite on which to attach all TestSuites and TestCases to be run.
              * @type Y.Test.Suite
              * @property masterSuite
+             * @static
              * @private
              */
             this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("YUI Test Results");        
@@ -115,6 +123,7 @@
              * @type TestNode
              * @private
              * @property _cur
+             * @static
              */
             this._cur = null;
             
@@ -123,6 +132,7 @@
              * @type TestNode
              * @private
              * @property _root
+             * @static
              */
             this._root = null;
             
@@ -131,6 +141,7 @@
              * @type Boolean
              * @property _log
              * @private
+             * @static
              */
             this._log = true;
             
@@ -162,12 +173,14 @@
              * Fires when a test case is opened but before the first 
              * test is executed.
              * @event testcasebegin
+             * @static
              */         
             TEST_CASE_BEGIN_EVENT /*:String*/ : "testcasebegin",
             
             /**
              * Fires when all tests in a test case have been executed.
              * @event testcasecomplete
+             * @static
              */        
             TEST_CASE_COMPLETE_EVENT /*:String*/ : "testcasecomplete",
             
@@ -175,6 +188,7 @@
              * Fires when a test suite is opened but before the first 
              * test is executed.
              * @event testsuitebegin
+             * @static
              */        
             TEST_SUITE_BEGIN_EVENT /*:String*/ : "testsuitebegin",
             
@@ -182,36 +196,42 @@
              * Fires when all test cases in a test suite have been
              * completed.
              * @event testsuitecomplete
+             * @static
              */        
             TEST_SUITE_COMPLETE_EVENT /*:String*/ : "testsuitecomplete",
             
             /**
              * Fires when a test has passed.
              * @event pass
+             * @static
              */        
             TEST_PASS_EVENT /*:String*/ : "pass",
             
             /**
              * Fires when a test has failed.
              * @event fail
+             * @static
              */        
             TEST_FAIL_EVENT /*:String*/ : "fail",
             
             /**
              * Fires when a test has been ignored.
              * @event ignore
+             * @static
              */        
             TEST_IGNORE_EVENT /*:String*/ : "ignore",
             
             /**
              * Fires when all test suites and test cases have been completed.
              * @event complete
+             * @static
              */        
             COMPLETE_EVENT /*:String*/ : "complete",
             
             /**
              * Fires when the run() method is called.
              * @event begin
+             * @static
              */        
             BEGIN_EVENT /*:String*/ : "begin",    
             
@@ -225,6 +245,7 @@
              * TestRunner events are subscribed to.
              * @return {Void}
              * @method disableLogging
+             * @static
              */
             disableLogging: function(){
                 this._log = false;
@@ -235,6 +256,7 @@
              * logreader.
              * @return {Void}
              * @method enableLogging
+             * @static
              */
             enableLogging: function(){
                 this._log = true;
@@ -246,6 +268,7 @@
              * @return {Void}
              * @method _logEvent
              * @private
+             * @static
              */
             _logEvent: function(event){
                 

@@ -3,7 +3,7 @@
 
     /**
      * Runs pages containing test suite definitions.
-     * @namespace Y.Test
+     * @namespace Test
      * @class Manager
      * @static
      */

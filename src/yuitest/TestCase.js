@@ -1,3 +1,9 @@
+    /**
+     * YUI JavaScript Testing Framework
+     *
+     * @module yuitest
+     */
+
     
     Y.namespace("Test");
     
@@ -6,7 +12,7 @@
      * @param template An object containing any number of test methods, other methods,
      *                 an optional name, and anything else the test case needs.
      * @class Case
-     * @namespace Y.Test
+     * @namespace Test
      * @constructor
      */
     Y.Test.Case = function (template /*:Object*/) {
@@ -94,7 +100,7 @@
      * @param {Function} segment A function to run when the wait is over.
      * @param {int} delay The number of milliseconds to wait before running the code.
      * @class Wait
-     * @namespace Y.Test
+     * @namespace Test
      * @constructor
      *
      */

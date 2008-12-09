@@ -5,7 +5,7 @@
      * Returns test results formatted as a JSON string. Requires JSON utility.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} A JSON-formatted string of results.
-     * @namespace Y.Test.Format
+     * @namespace Test.Format
      * @method JSON
      * @static
      */
@@ -17,7 +17,7 @@
      * Returns test results formatted as an XML string.
      * @param {Object} result The results object created by TestRunner.
      * @return {String} An XML-formatted string of results.
-     * @namespace YAHOO.tool.TestFormat
+     * @namespace Test.Format
      * @method XML
      * @static
      */

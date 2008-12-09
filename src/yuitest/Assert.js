@@ -1,15 +1,9 @@
-    /**
-     * Assertion library for JavaScript and YUI Test.
-     *
-     * @module assert
-     */
-    
+  
     /**
      * The Assert object provides functions to test JavaScript values against
      * known and expected results. Whenever a comparison (assertion) fails,
      * an error is thrown.
      *
-     * @namespace Y
      * @class Assert
      * @static
      */
