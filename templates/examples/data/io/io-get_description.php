@@ -12,63 +12,63 @@ YUI({base:"../../build/", timeout: 10000}).use("io-base", function(Y) {
 } );
 </textarea>
 
-<h3>Create a Handlers for Global and Transaction Events.</h3>
+<h3>Create Handlers for Global and Transaction Events.</h3>
 
 <p>
 We will create one object to handle the Global Events, and one object to handle Transaction Events.  Each object defines methods to handle the events in a transction's lifecycles.
-The results are logged to <div id="container">.
+The results are logged to <code>&lt;div id="container"&gt;</code>.
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 //Get a reference to the Node that we are using
 //to report results.
-var d = Y.Node.get('#container ul');
+var d = Y.Node.get('#container');
 
 /* global listener object */
 var gH = {
 	write: function(str, args) {
-			 d.set('innerHTML', "ID: " + str);
+			 d.innerHTML += "ID: " + str;
 			 if (args) {
-			   d.set('innerHTML', " The arguments are: " + args;
+			 	d.innerHTML += " " + "The arguments are: " + args;
 			 }
 			 d.innerHTML += "<br>";
-		   },
+	},
 	start: function(id, args) {
 			 this.write(id + ": Global Event Start.", args);
-		   },
+	},
 	complete: function(id, o, args) {
 				this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
-		   },
+    },
 	success: function(id, o, args) {
 			   this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
-			 },
+    },
 	failure: function(id, o, args) {
 			   this.write(o + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
-			 }
+    }
 }
 /* end global listener object */
 
 /* transaction event object */
 var tH = {
 	write: function(str, args) {
-			 d.set('innerHTML', "ID: " + str);
+			 d.innerHTML += "ID: " + str;
 			 if (args) {
-			   d.set('innerHTML', " The arguments are: " + args;
+			   d.innerHTML += " " + "The arguments are: " + args;
 			 }
 			 d.innerHTML += "<br>";
-		   },
+	},
 	start: function(id, args) {
 			 this.write(id + ": Transaction Event Start.", args.start);
-		   },
+	},
 	complete: function(id, o, args) {
 				this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
-		   },
+	},
 	success: function(id, o, args) {
 			   this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
-			 },
+	},
 	failure: function(id, o, args) {
 			   this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
-			 }
+	}
 }
 /* end transaction event object */
 </textarea>
@@ -129,8 +129,8 @@ function call(e, b) {
 	}
 }
 
-Y.get('#get1').on("click", call);
-Y.get('#get2').on("click", call, true);
+Y.on('click', call, "#get1", this, false);
+Y.on('click', call, "#get2", this, true);
 </textarea>
 
 <h3>Full Code</h3>
@@ -151,7 +151,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			write: function(str, args) {
 					 d.set('innerHTML', "ID: " + str);
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args;
+					   d.set('innerHTML', " The arguments are: " + args);
 					 }
 					 d.innerHTML += "<br>";
 				   },
