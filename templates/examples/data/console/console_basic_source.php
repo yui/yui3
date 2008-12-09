@@ -36,7 +36,7 @@
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
 
 // To eliminate duplicate reporting in native console in supporting browsers
-Y.config.useConsole = false;
+Y.config.useBrowserConsole = false;
 
 // Create and render the three Console instances
 var basic, newOnBottom, customStrings;

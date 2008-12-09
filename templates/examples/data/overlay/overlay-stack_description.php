@@ -14,7 +14,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <h4>Instantiating The Overlay</h4>
 
-<p>For this example, we'll instantiate Overlays, as we did for the <a href="overlay-align.html">"Extended XY Positioning"</a> example from script. However we'll create 6 overlay intances and give them increasing zIndex and xy attribute values:</p>
+<p>For this example, we'll instantiate Overlays, as we did for the <a href="overlay-align.html">"Extended XY Positioning"</a> example from script. However we'll create 6 overlay instances and give them increasing zIndex and xy attribute values:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     function getOverlayXY(xy, i) {

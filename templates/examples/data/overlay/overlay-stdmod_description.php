@@ -26,7 +26,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <h4>Instantiating The Overlay</h4>
 
-<p>To create an overlay instance, we use the overlay contructor <code>Y.Overlay</code>, and pass it the <code>contentBox</code> node reference for the existing markup on the page:</p>
+<p>To create an overlay instance, we use the overlay constructor <code>Y.Overlay</code>, and pass it the <code>contentBox</code> node reference for the existing markup on the page:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     var overlay = new Y.Overlay({
@@ -65,7 +65,7 @@ Additionally the new content can be converted to a node instance before being ad
         var newContent = content.get("value");
 
         // If the "Set content as string" checkbox is checked, we pass new content into the 
-        // setStdModContent method as as string (innerHTML will be used to set the new content).
+        // setStdModContent method as string (innerHTML will be used to set the new content).
         
         // If it's not checked, we create a node reference from the string,
         // and pass the new content into the setStdModContent as a node reference.

@@ -3,7 +3,7 @@
 $modules["slider"] = array(
 	"name" => "Slider",
 	"type" => "widget",
-	"description" => "The Slider component is a UI control that enables the user to adjust values in a finite range along a horizontal or vertical axis.",
+	"description" => "The Slider widget is a UI control that enables the user to adjust values in a finite range along a horizontal or vertical axis.",
 	"cheatsheet" => false
 );	
 

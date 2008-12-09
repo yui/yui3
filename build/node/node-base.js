@@ -70,11 +70,6 @@ YUI.add('node-base', function(Y) {
         return  node || null;
     };
 
-    /** 
-     * This class provides an abstraction for manipulating DOM nodes.
-     * @class Drag
-     * @constructor
-     */
     var Node = function() {
         this.init.apply(this, arguments);
     };
@@ -646,7 +641,7 @@ YUI.add('node-base', function(Y) {
     /**
      * Retrieves a Node instance for the given query or nodes. 
      * Note: Use 'document' string to retrieve document Node instance from string
-     * @method get
+     * @method Y.get
      * @static
      * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
@@ -692,7 +687,7 @@ YUI.add('node-base', function(Y) {
 
     /**
      * Retrieves a NodeList instance for the given object/string. 
-     * @method all
+     * @method Y.all
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.

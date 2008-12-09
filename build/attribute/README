@@ -1,3 +1,14 @@
+3.0.0PR2
+
+* Added valueFn support, to allowing static 
+  attribute values configuration to set instance
+  based values.
+  
+* Added reset method.
+
+* Added private setter for use by class implementation
+  code to set readOnly, writeOnce values.
+
 3.0.0PR1 - Initial release
 
 Module Name: "attribute"
