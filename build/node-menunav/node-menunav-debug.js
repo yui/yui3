@@ -34,9 +34,9 @@ YUI.add('node-menunav', function(Y) {
 * <br>		
 * 		}); <br>
 * <br>	
-* 	&#60;/script&#62;
+* 	&#60;/script&#62;<br>
 * </code>
-* <p>
+* </p>
 *
 * <p>The MenuNav Node Plugin has several configuration properties that can be set via an 
 * object literal that is passed as a second argument to a Node instance's <code>plug</code> method.
@@ -69,9 +69,9 @@ YUI.add('node-menunav', function(Y) {
 * <br>		
 * 		}); <br>
 * <br>	
-* 	&#60;/script&#62;
+* 	&#60;/script&#62;<br>
 * </code>
-* <p>
+* </p>
 * 
 * <p> The complete list of the MenuNav Node Plugin configuration properties are:</p>
 * <dl>
