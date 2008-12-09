@@ -452,7 +452,7 @@ attribute to the id of the label's corresponding submenu.  Lastly, the text node
 <p>
 Use the <code>autoSubmenuDisplay</code> and <code>mouseOutHideDelay</code> 
 configuration properties to configure the menu labels to behave like split buttons.  Set the 
-<code>autoSubmenuDisplay</code> to <code>fale</code>, so that each menu label's submenu isn't 
+<code>autoSubmenuDisplay</code> to <code>false</code>, so that each menu label's submenu isn't 
 made visible until the menu trigger is clicked.  Set the <code>mouseOutHideDelay</code> to 
 <code>0</code> so that a label's submenu is only hidden when the user mouses down on an area 
 outside of the submenu.
@@ -495,7 +495,7 @@ The MenuNav Node Plugin makes it easy to create separators between items in a me
 related items together using the <code>&#60;ul&#62;</code> element and apply a class name of 
 <code>first-of-type</code> to the first <code>&#60;ul&#62;</code>.  (If the 
 <code>first-of-type</code> class name is not applied to the first <code>&#60;ul&#62;</code> of a 
-submenu, it will automatically be applied by the MeuNav's constructor.)  The follow example 
+submenu, it will automatically be applied by the MenuNav's constructor.)  The follow example 
 illustrates a submenu with two separators:
 </p>
 <textarea name="code" class="HTML" cols="60" rows="1">
@@ -556,7 +556,7 @@ only supports <code>:focus</code> pseudo class on <code>&#60;a&#62;</code> eleme
 <p>
 By default all submenus are hidden and that state is reflected by the application of the 
 <code>yui-menu-hidden</code> class name.  If the <code>yui-menu-hidden</code> class name is not 
-applied to the bounding box node of all submenus, it will automatically be applied by the MeuNav's
+applied to the bounding box node of all submenus, it will automatically be applied by the MenuNav's
 constructor.  When a submenu is visible, the <code>yui-menu-hidden</code> class name is removed 
 and a class <code>yui-menu-label-menuvisible</code> is applied to the submenu's corresponding label.
 </p>
