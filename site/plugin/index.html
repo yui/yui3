@@ -15,7 +15,7 @@ include "../inc/header.inc";
                 <h2><?php echo $component;?></h2>
 
                 <div id="promo" class="component">
-                <p>The Plugin Utility allows you to unobtrusively add functionality to nodes and widgets.  Plugins can inherit from an optional Plugin base class, but this is primarily targeted at widget plugins, as Node plugins should be relatively simple, standalone classes.</p> 
+                	<p>The Plugin Utility allows you to unobtrusively add functionality to nodes and widgets.  Plugins can inherit from an optional Plugin base class, but this is primarily targeted at widget plugins, as Node plugins should be relatively simple, standalone classes.</p> 
                     <div class="yui-g">
                         <div class="yui-u first">
                             <div id="jumps">
@@ -53,15 +53,16 @@ include "../inc/header.inc";
                 </div><!-- /promo -->
 
                 <?php
-                    $componentShort = "Base";
-                    $requiredModules = array("base");
+                    $componentShort = "Plugin";
+                    $requiredModules = array("plugin");
                     include("../inc/gettingStarted.inc");
                 ?>
 
                 <h3 id="using">Using the <?php echo $component;?></h3>
 
                 <p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-                <ul class="topspace">
+                
+				<ul class="topspace">
                     <li><a href="#staticprops">Static Properties</a>
                         <ul>
                             <li><a href="#nameprop">The NAME Property</a></li>
@@ -72,21 +73,21 @@ include "../inc/header.inc";
                     <li><a href="#buildcreate">Build and Create</a></li>
                 </ul>
 
-            <h4 id="plugintemplate">Plugin Template</h4>
+            	<h4 id="plugintemplate">Plugin Template</h4>
 
-            <p>In order to build a plugin, first you will build a simple class to use as a template for all instances of the plugin.  When plugins are added to a host Node, the node instance is automatically added to the config as the <code>owner</code>.  Widgets instances receive the widget itself as the <code>owner</code>.  For Node plugins you will probably want to keep a reference to the owner bound to your plugin for later reference.  Plugins that inherit from the base <code>Plugin</code> class get this reference set up automatically.  As with any class you build, methods should live on the class's prototype.</p>
+            	<p>In order to build a plugin, first you will build a simple class to use as a template for all instances of the plugin.  When plugins are added to a host Node, the node instance is automatically added to the config as the <code>owner</code>.  Widgets instances receive the widget itself as the <code>owner</code>.  For Node plugins you will probably want to keep a reference to the owner bound to your plugin for later reference.  Plugins that inherit from the base <code>Plugin</code> class get this reference set up automatically.  As with any class you build, methods should live on the class's prototype.</p>
 
-            <textarea name="code" class="JScript" cols="60" rows="1">
-            function MyPlugin(config) {
-                this._owner = config.owner;
-            }
+           	 	<textarea name="code" class="JScript" cols="60" rows="1">
+	            function MyPlugin(config) {
+	                this._owner = config.owner;
+	            }
 
-            MyPlugin.prototype = {
-                doSomething: function() {
+	            MyPlugin.prototype = {
+	                doSomething: function() {
 
-                }
-            };
-            </textarea>
+	                }
+	            };
+	            </textarea>
 
             <h4 id="staticprops">Static Properties</h4>
 
@@ -172,7 +173,7 @@ include "../inc/header.inc";
             </textarea>
 
             <h4 id="pluginclass">The Plugin Base Class</h4>
-            <p>A base <code>Plugin</code> class is provided to enable widget plugins to unobtrusively wire behaviors around widget behavior.  <code>Plugin is a subclass of <code>Base</code>, providing managed attributes, lifecycle methods, and listeners to wire plugin functionality around <code>Widget</code> events and methods.</p>
+            <p>A base <code>Plugin</code> class is provided to enable widget plugins to unobtrusively wire behaviors around widget behavior.  <code>Plugin</code> is a subclass of <code>Base</code>, providing managed attributes, lifecycle methods, and listeners to wire plugin functionality around <code>Widget</code> events and methods.</p>
 
             <h5 id="extendingplugin">Extending Plugin</h5>
 
@@ -258,6 +259,8 @@ include "../inc/header.inc";
 
                 Y.extend(Y.Plugin, MyPlugin); // inherit from Plugin
             });
+			</textarea>
+			
             <?php # include "../inc/mobileSection.inc";?>
             <?php include "../inc/support.inc"; ?>
 
