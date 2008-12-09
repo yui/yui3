@@ -15,14 +15,14 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 
 		//Get a reference to the Node that we are using
 		//to report results.
-		var d = Y.Node.get('#container ul');
+		var d = Y.Node.get('#container');
 
 		/* global listener object */
 		var gH = {
 			write: function(str, args) {
-					 d.set('innerHTML', "ID: " + str);
+					 d.innerHTML += "ID: " + str;
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args);
+					 	d.innerHTML += " " + "The arguments are: " + args;
 					 }
 					 d.innerHTML += "<br>";
 				   },
@@ -47,9 +47,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 		/* transaction event object */
 		var tH = {
 			write: function(str, args) {
-					 d.set('innerHTML', "ID: " + str);
+					 d.innerHTML += "ID: " + str;
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args);
+					 	d.innerHTML += " " + "The arguments are: " + args;
 					 }
 					 d.innerHTML += "<br>";
 				   },
