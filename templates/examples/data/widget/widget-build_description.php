@@ -70,7 +70,7 @@ These extensions are used to build the basic <code>Overlay</code> widget, but ca
     }, "#tryMove");
 </textarea>
 
-<p>Note that <code>Base.build</code> adds a <code>hasImpl</code> method to the built class, which allows you to query whether or not it has a partiular extension applied.</p>
+<p>Note that <code>Base.build</code> adds a <code>hasImpl</code> method to the built class, which allows you to query whether or not it has a particular extension applied.</p>
 
 <h4>CSS Considerations</h4>
 

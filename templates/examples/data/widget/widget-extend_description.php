@@ -2,7 +2,7 @@
 
 <h4>Basic Class Structure</h4>
 
-<p>Widgets classes follow the general pattern impemented by the <code>Spinner</code> class, shown in the code snippet below. The basic pattern for setting up a new widget class involves:</p>
+<p>Widgets classes follow the general pattern implemented by the <code>Spinner</code> class, shown in the code snippet below. The basic pattern for setting up a new widget class involves:</p>
 
 <ol>
     <li>Defining the constructor function for the new widget class, which invokes the superclass constructor to kick of the initialization chain <em>(line 2)</em></li>
@@ -153,7 +153,7 @@ a value for the attribute from the markup on the page. Markup is essentially tho
 
 <p>Widget adds a <code>render</code> method to the <code>init</code> and <code>destroy</code> lifecycle methods provided by Base. The <code>init</code> and <code>destroy</code> methods invoke the corresponding <code>initializer</code> and <code>destructor</code> implementations for the widget. Similarly, the <code>render</code> method invokes the <code>renderer</code> implementation for the widget. Note that the <code>renderer</code> method is not chained automatically, unlike the <code>initializer</code> and <code>destructor</code> methods.</p>
 
-<p>The <code>Widget</code> class already provides a default <code>renderer</code> implementation, which invokes the following abstract methods in the order shown <em>(with their respective responsiblities)</em>:</p>
+<p>The <code>Widget</code> class already provides a default <code>renderer</code> implementation, which invokes the following abstract methods in the order shown <em>(with their respective responsibilities)</em>:</p>
 
 <ol>
     <li><code>renderUI()</code> : responsible for creating/adding elements to the DOM to render the widget.</li>
@@ -187,7 +187,7 @@ a value for the attribute from the markup on the page. Markup is essentially tho
 
         var boundingBox = this.get("boundingBox");
 
-        // Looking for a key event which will fire continously across browsers while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
+        // Looking for a key event which will fire continuously across browsers while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
         var keyEventSpec = (!Y.UA.opera) ? "down:" : "press:";
         keyEventSpec += "38, 40, 33, 34";
 
@@ -212,9 +212,9 @@ a value for the attribute from the markup on the page. Markup is essentially tho
 <p>The PR2 release adds basic support for <code>"key"</code> events, which are used by <code>Spinner</code> to setup a listener for arrow up/down and page up/down keys on the spinner's bounding box (line 30).</p>
 
 <p>Event's <code>"key"</code> support allows <code>Spinner</code> to define a single listener, which is only invoked for the key specification provided. The key specification in the above use case is <code>"down:38, 40, 33, 34"</code> for most browsers, indicating that 
-the <code>_onDirectionKey</code> method should only be called if the bounding box recieves a keydown event with a character code which is either 38, 40, 33 or 34. <code>"key"</code> specifications can also contain more <a href="../../api/YUI.html#event_key">advanced filter criteria</a>, involving modifiers such as CTRL and SHIFT.</p>
+the <code>_onDirectionKey</code> method should only be called if the bounding box receives a keydown event with a character code which is either 38, 40, 33 or 34. <code>"key"</code> specifications can also contain more <a href="../../api/YUI.html#event_key">advanced filter criteria</a>, involving modifiers such as CTRL and SHIFT.</p>
 
-<p>For the Spinner widget, we're looking for a key event which fires repeatedly while the key is held down. This differs for Opera, so we need to fork for the key event we're intereted in. Future versions of <code>"key"</code> support will aim to provide this type of higher level cross-browser abstraction also.</p>
+<p>For the Spinner widget, we're looking for a key event which fires repeatedly while the key is held down. This differs for Opera, so we need to fork for the key event we're interested in. Future versions of <code>"key"</code> support will aim to provide this type of higher level cross-browser abstraction also.</p>
 
 <h4>Attribute Supporting Methods</h4>
 
@@ -315,12 +315,12 @@ the <code>_onDirectionKey</code> method should only be called if the bounding bo
 
 <h4>DOM Event Listeners</h4>
 
-<p>The DOM event listeners attached during <code>bindUI</code> are straightfoward event listeners, which recieve the event facade for the DOM event, and update the spinner state accordingly.</p>
+<p>The DOM event listeners attached during <code>bindUI</code> are straightforward event listeners, which receive the event facade for the DOM event, and update the spinner state accordingly.</p>
 
 <p>A couple of interesting points worth noting: In the <code>"key"</code> listener we set up, we can call <code>e.preventDefault()</code> without having to check the character code, since the <code>"key"</code> event specifier will only invoke the listener 
 if one of the specified keys is pressed (arrow/page up/down)</p>
 
-<p>Also, to allow the spinner to update it's value while the mouse button is held down, we setup a timer, which gets cleard out when we recieve a mouseup event on the document.</p>
+<p>Also, to allow the spinner to update it's value while the mouse button is held down, we setup a timer, which gets cleared out when we receive a mouseup event on the document.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     /*

@@ -28,7 +28,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <h4>Instantiating The Overlay</h4>
 
-<p>To create an overlay instance, we use the overlay contructor <code>Y.Overlay</code>, and pass it the <code>contentBox</code> node reference for the existing markup on the page. We also set a height/width for the overlay, specify the initial visibile state (false), and the intial position for the Overlay (which otherwise defaults to 0,0):</p>
+<p>To create an overlay instance, we use the overlay constructor <code>Y.Overlay</code>, and pass it the <code>contentBox</code> node reference for the existing markup on the page. We also set a height/width for the overlay, specify the initial visible state (false), and the initial position for the Overlay (which otherwise defaults to 0,0):</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     // Create an overlay from markup, using an existing contentBox.
@@ -63,7 +63,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <p>Overlay can be moved by invoking the <code>move</code> method, with either seperate x and y arguments (<code>move(100,200)</code>), or as an array (<code>move([100,200])</code>). The <code>x, y and xy</code> attributes can also be used to move the overlay, and are equivalent to the move method (<code>overlay.set("x", 200);overlay.set("xy", [100,200])</code>)</p>
 
-<p>A select dropdown is added to the example page, along with additional content, to demonstrate the Overlay's ability to provide stacking and shimming support (to block select dropdown bleedthrough in IE6).</p>
+<p>A select dropdown is added to the example page, along with additional content, to demonstrate the Overlay's ability to provide stacking and shimming support (to block select dropdown bleed through in IE6).</p>
 
 <h4>CSS: Overlay Look/Feel</h4>
 

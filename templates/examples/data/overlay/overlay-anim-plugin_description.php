@@ -206,7 +206,7 @@ For the animation plugin, we want to change how the Overlay updates it's UI in r
 
 <h4>The Animated Visibility Method</h4>
 
-<p>The <code>_uiAnimSetVisible</code> method is the method we use to over-ride the default visiblity handling for the Overlay. Instead of simply adding or removing the <code>yui-overlay-hidden</code> class, it starts the appropriate animation depending on whether or not visible is being set to true or false:</p>
+<p>The <code>_uiAnimSetVisible</code> method is the method we use to over-ride the default visibility handling for the Overlay. Instead of simply adding or removing the <code>yui-overlay-hidden</code> class, it starts the appropriate animation depending on whether or not visible is being set to true or false:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     _uiAnimSetVisible : function(val) {
