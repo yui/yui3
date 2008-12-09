@@ -1,27 +1,23 @@
 YUI 3.0.0 PR2
 
-This is the second preview release of the components under development for YUI 3.0.0.    
+This is the second preview release of the components in development for YUI 3.0.0.    
 This is not production quality software.  It is an early distribution to allow the
 team can get community feedback on the direction we are taking in the development 
 of the next major revision to the library.
 
-There are several new additions to this release.
+There are several new additions in this release.
 
 PR2 includes the debut of the Widget infrastructure for 3.0.0.  There are also several
-components make use of Widget:
-    - Overlay
-    - Slider 
-    - Console
-	
+components that make use of Widget: Overlay, Slider, and Console.
+	 
 The Plugin Infrastructure has also been included in PR2 along with the MenuNav Node Plugin.
 
-In addition the PR2 release includes updated versions of the tools that are included in the
-2.x YUI Library
-    - YUI Test
-    - Profiler
+In addition, the PR2 release includes updated versions of the YUI Test and Profiler tools 
+that are included with the 2.x YUI Library, along with a new Console widget that can be
+used for the display of log information.
 
-This release also includes updates and bug fixes to the components previously released 
-as part of YUI 3.0.0 PR1.  
+This release also includes updates to Event, IO, and Node, along with bug fixes in all 
+of the components previously released as part of YUI 3.0.0 PR1.  
 
 The YUI 3.x website is located at  http://developer.yahoo.com/yui/3/.  You will find 
 more detailed documentation of these components there as well as number of examples 

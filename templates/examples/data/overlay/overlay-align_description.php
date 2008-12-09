@@ -1,4 +1,4 @@
-<h3>Entended XY Overlay Positioning - Align, Center Support</h3>
+<h3>Extended XY Overlay Positioning - Align, Center Support</h3>
 
 <h4>Setting Up The YUI Instance</h4>
 
@@ -57,7 +57,7 @@ YUI({...}).use("overlay", function(Y) {
     </dd>
 </dl>
 
-<p>The <code>centered</code> proeprty can either by set to <code>true</code> to center the Overlay in the viewport, or set to a selector string or node reference to center the Overlay in a particular node.</p>
+<p>The <code>centered</code> property can either by set to <code>true</code> to center the Overlay in the viewport, or set to a selector string or node reference to center the Overlay in a particular node.</p>
 
 <p>The example loops around a list of 6 alignment configurations, as the "Align Next" button is clicked:</p>
 

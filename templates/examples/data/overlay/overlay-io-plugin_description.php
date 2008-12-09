@@ -85,7 +85,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
     <dt>uri</dt>
     <dd>The uri to use for the io request</dd>
     <dt>cfg</dt>
-    <dd>The io configuration object, to pass to io when intiating a transaction</dd>
+    <dd>The io configuration object, to pass to io when initiating a transaction</dd>
     <dt>formatter</dt>
     <dd>The formatter to use to formatting response data. The default implementation simply passes back the response data passed in, unchanged.</dd>
     <dt>section</dt>
@@ -108,7 +108,7 @@ YUI({...}).use("overlay", "substitute", "io", "json", "plugin", function(Y) {
         },
 
         /*
-         * The io configuration object, to pass to io when intiating a transaction
+         * The io configuration object, to pass to io when initiating a transaction
          */
         cfg : {
             value:null
@@ -318,12 +318,12 @@ var pipes = {
     ...
 </textarea>
 
-<p>The data structure also holds the default formatter (<code>pipes.formatter</code>) required to convert the JSON responses from the above URIs, to HTML. The JSON utility is first used to parse the json response string, and the resulting object is iterated around, using Y.each, and substribute is used to generate the list markup:</p>
+<p>The data structure also holds the default formatter (<code>pipes.formatter</code>) required to convert the JSON responses from the above URIs, to HTML. The JSON utility is first used to parse the json response string, and the resulting object is iterated around, using Y.each, and substitute is used to generate the list markup:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     ...
 
-    // The default formatter, responsible for converting the JSON responses recieved,
+    // The default formatter, responsible for converting the JSON responses received,
     // into HTML. JSON is used for the parsing step, and substitute for some basic 
     // templating functionality
 
