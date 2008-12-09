@@ -4,20 +4,21 @@
     */
 
    /**
-    * Base IO functionality. Provides basic XHR transport support
-    * @module io
-    * @submodule io-base
-    */
-
-   /**
     * The io class is a utility that brokers HTTP requests through a simplified
     * interface.  Specifically, it allows JavaScript to make HTTP requests to
     * a resource without a page reload.  The underlying transport for making
     * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
     * Flash, if specified as a transport, for cross-domain requests.
     *
-	* @class io
-	*/
+    * @class io
+    */
+
+   /**
+    * Base IO functionality. Provides basic XHR transport support
+    * @module io
+    * @submodule io-base
+    */
+
 
    /**
 	* @event io:start
