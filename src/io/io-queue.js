@@ -1,9 +1,9 @@
-   /*
+   /**
     * Extends the IO base class to include basic queue interfaces for transaction
     * queuing.
-	* @module io
-	* @submodule io-queue
-	*/
+    * @module io
+    * @submodule io-queue
+    */
 
    /**
 	* @description Array of transactions queued for processing

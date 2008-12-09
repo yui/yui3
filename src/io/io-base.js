@@ -1,7 +1,13 @@
    /**
-	* HTTP communications module.
-	* @module io
-	*/
+    * HTTP communications module.
+    * @module io
+    */
+
+   /**
+    * Base IO functionality. Provides basic XHR transport support
+    * @module io
+    * @submodule io-base
+    */
 
    /**
     * The io class is a utility that brokers HTTP requests through a simplified
