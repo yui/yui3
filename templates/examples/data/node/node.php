@@ -1,7 +1,7 @@
 <?php
 
 $modules["node"] = array(
-		"name" => "Node Utility",
+		"name" => "Node",
 		"type" => "core",
         /*this description appears on the component's examples index page*/
 		"description" => "Node Examples", 

@@ -2,7 +2,7 @@
 
 /*YUI Cookie Module:*/
 $modules["cookie"] = array(
-  "name" => "Cookie Utility",
+  "name" => "Cookie",
   "type" => "utility",
   "description" => "<p>A utility for reading and writing cookies via JavaScript.  The Cookie Utility includes a facility for rolling up data into subcookies, effectively increasing the total number of cookies that it's possible to store on a single client.</p>",
   "cheatsheet" => false

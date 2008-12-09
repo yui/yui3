@@ -1,7 +1,7 @@
 <?php
 
 $modules["plugin"] = array(
-		"name" => "Plugin Utility",
+		"name" => "Plugin",
 		"type" => "infra",
         /*this description appears on the component's examples index page*/
 		"description" => "Plugin Examples", 
