@@ -15,7 +15,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
 
     // add fx plugin to module body
     var content = module.query('.yui-bd').plug(Y.plugin.NodeFX, {
-        from: { height: 0 },
+        from: { height: 1 },
         to: {
             height: function(node) { // dynamic in case of change
                 return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
