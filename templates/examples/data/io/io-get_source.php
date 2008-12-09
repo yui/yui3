@@ -22,7 +22,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			write: function(str, args) {
 					 d.set('innerHTML', "ID: " + str);
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args;
+					   d.set('innerHTML', " The arguments are: " + args);
 					 }
 					 d.innerHTML += "<br>";
 				   },
@@ -49,7 +49,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			write: function(str, args) {
 					 d.set('innerHTML', "ID: " + str);
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args;
+					   d.set('innerHTML', " The arguments are: " + args);
 					 }
 					 d.innerHTML += "<br>";
 				   },
