@@ -1,9 +1,8 @@
    /*
     * Extends the IO base class to enable HTML form data serialization, when specified
     * in the transaction's configuration object.
-	* @module io-base
+	* @module io
 	* @submodule io-form
- 	* @for IO
 	*/
 
     Y.mix(Y.io, {
