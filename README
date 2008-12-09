@@ -11,14 +11,14 @@ PR2 includes the debut of the Widget infrastructure for 3.0.0.  There are also s
 components make use of Widget:
     - Overlay
     - Slider 
-	- Console
+    - Console
 	
 The Plugin Inrastructure has also been included in PR2 along with the MenuNav Node Plugin.
 
 The PR2 release also includes updated versions of the tools that had been included in the
 2.x YUI Library
     - YUI Test
-	- Profiler
+    - Profiler
 
 This release also includes updates and bug fixes to the components previously released 
 as part of YUI 3.0.0 PR1.  
