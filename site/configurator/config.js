@@ -287,7 +287,7 @@
         var bd = ["<ol>"], ft = [], className, m, sm, submodsHTML, sizeHTML, sizes, size, sizegz, totals = {selected:{s:0,gz:0}, dependency:{s:0,gz:0}};
 
         for (m in required) {
-            if (Lang.hasOwnProperty(required, m)) {
+            if (Lang.hasOwnProperty(required, m) && m.indexOf("skin-sam-") !== 0) {
                 submodsHTML = "";
                 className = (selected[m]) ? "selected" : "dependency";
 
@@ -635,7 +635,7 @@
         div = document.createElement("div");
         div.className = "modGroupHd";
         div.innerHTML = categoryData[cat].name;
-        
+
         ul = document.createElement("ul");
         ul.id = listId;
         ul.className = "modList";
@@ -716,7 +716,6 @@
             createCategory(cat, split[cat]);
         }
     }
-
 
     hackYuiConfigData();
 
