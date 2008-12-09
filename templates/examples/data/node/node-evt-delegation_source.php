@@ -11,13 +11,18 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
 
     var onClick = function(e) {
         var target = e.target,
-            html = 'Dont forget to click me...';
+            html = 'Dont forget to click me...',
+            filtered;
 
         if (target.test('#demo li')) {
             target.addClass('yui-pass');
             target.set('innerHTML', 'thanks for the click!');
         }
-        nodes.filter(':not(.yui-pass)').set('innerHTML', html);
+
+        filtered = nodes.filter(':not(.yui-pass)');
+        if (filtered.set) {
+            filtered.set('innerHTML', html);
+        }
     };
 
     Y.get('#demo').on('click', onClick);

@@ -29,7 +29,7 @@ if (!isset($append)) { $append=""; }
     /*Supplemental CSS for the YUI distribution*/
     #custom-doc { width: 95%; min-width: 950px; }
     #pagetitle {background-image: url(<?php echo $docroot ?>assets/bg_hd.gif);}
-    #pagetitle h1 {background-image: url(<?php echo $docroot ?>assets/title_h_bg.gif);}
+/*    #pagetitle h1 {background-image: url(<?php echo $docroot ?>assets/title_h_bg.gif);}*/
 </style>
 
 <?php

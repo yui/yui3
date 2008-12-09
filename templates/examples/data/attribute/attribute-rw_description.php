@@ -60,7 +60,7 @@
 
 <h3>Setting The State Of ReadOnly Values Internally</h3>
 
-<p>Although the user cannot update the value of <code>readOnly</code> attributes, it maybe neccessary for the host object to update it's value internally. The example shows how this can be done, using the private <code>_conf</code> state property on the host:</p>
+<p>Although the user cannot update the value of <code>readOnly</code> attributes, it maybe neccessary for the host object to update it's value internally. The example shows how this can be done, using the private <code>_set</code> property on the host:</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
     MyClass.prototype.doSomething = function() {
@@ -70,10 +70,8 @@
 
         // Host code can reset value of
         // readOnly attributes interally,
-        // by working with the private state
-        // property
+        // by working with the private _set property
 
-        this._conf.remove("foo");
-        this.set("foo", "New Default Foo");
+        this._set("foo", "New Default Foo");
     };
 </textarea>

@@ -28,14 +28,13 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
         // ... Do something which requires
         // MyClass to change the value
         // of foo ...
-        
+
         // Host code can reset value of 
         // readOnly attributes interally,
-        // by working with the private state
+        // by working with the private _set
         // property
 
-        this._conf.remove("foo");
-        this.set("foo", "New Default Foo");
+        this._set("foo", "New Default Foo");
     };
 
     Y.augment(MyClass, Y.Attribute);

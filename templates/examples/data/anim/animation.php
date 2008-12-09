@@ -2,7 +2,7 @@
 
 /*Animation Module:*/
 $modules["anim"] = array(
-        "name" => "Animation Utility",
+        "name" => "Animation",
         "type" => "utility",
         "description" => "The Animation Utility allows properties to animate the transition between values.",
         "cheatsheet" => false
