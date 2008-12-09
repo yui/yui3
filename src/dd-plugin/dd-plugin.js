@@ -8,6 +8,7 @@
         * @class DragPlugin
         * @extends Drag
         * @constructor
+        * @namespace plugin
         */
 
 
