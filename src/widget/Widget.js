@@ -326,9 +326,15 @@ Widget.getByNode = function(node) {
  * markup contained in the widget's content box. e.g.:
  * <pre>
  *   {
- *       titleNode: "span.yui-title"      // Set single Node references using selector syntax (selector is run through node.query)
- *       listNodes: ["li.yui-item"]       // Set NodeList references using selector syntax (array indicates selector is to be run through node.queryAll)
- *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
+ *       // Set single Node references using selector syntax 
+ *       // (selector is run through node.query)
+ *       titleNode: "span.yui-title",
+ *       // Set NodeList references using selector syntax 
+ *       // (array indicates selector is to be run through node.queryAll)
+ *       listNodes: ["li.yui-item"],
+ *       // Set other attribute types, using a parse function. 
+ *       // Context is set to the widget instance.
+ *       label: function(contentBox) {
  *           return contentBox.query("span.title").get("innerHTML");
  *       }
  *   }
