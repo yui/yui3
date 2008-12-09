@@ -2,7 +2,7 @@
 
 /*YUI Test Module:*/
 $modules["yuitest"] = array(
-  "name" => "YUI Test Utility",
+  "name" => "YUI Test",
   "type" => "tool",
   "description" => "<p>YUI Test is a JavaScript testing framework with a comprehensive assertion syntax. It is suitable for testing YUI-based code, of course, but it is expressly designed to support test-driven development across any JavaScript project, regardless of whether YUI is involved.",
   "cheatsheet" => false

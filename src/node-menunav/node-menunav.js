@@ -501,8 +501,12 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 };
 
 
-/** 
-* @for Node
+/**
+* The NodeMenuNav class is a plugin for a Node instance.  The class is used via the 
+* <a href="Node.html#method_plug"><code>plug</code></a> method of Node and should not be 
+* instantiated directly.
+* @namespace plugin
+* @class NodeMenuNav
 */
 var MenuNav = function (config) {
 

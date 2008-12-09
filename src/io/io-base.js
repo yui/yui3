@@ -1,7 +1,7 @@
    /**
-	* HTTP communications module.
-	* @module io
-	*/
+    * HTTP communications module.
+    * @module io
+    */
 
    /**
     * The io class is a utility that brokers HTTP requests through a simplified
@@ -10,8 +10,15 @@
     * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
     * Flash, if specified as a transport, for cross-domain requests.
     *
-	* @class io
-	*/
+    * @class io
+    */
+
+   /**
+    * Base IO functionality. Provides basic XHR transport support
+    * @module io
+    * @submodule io-base
+    */
+
 
    /**
 	* @event io:start
