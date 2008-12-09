@@ -98,4 +98,4 @@ YUI({...}).use("overlay", function(Y) {
 }
 </textarea>
 
-<p><strong>NOTE:</strong> As discussed on the Widget landing page, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models, plus provides the ability to apply a skin class to the boundingBox.</p>
+<p><strong>NOTE:</strong> As discussed on the Widget landing page, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>
