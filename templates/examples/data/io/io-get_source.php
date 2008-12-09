@@ -13,9 +13,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 
 	function(Y) {
 
-		//Get a reference to the Node that we are using
+		//Get a reference to the DIV that we are using
 		//to report results.
-		var d = Y.Node.get('#container');
+		var d = document.getElementById('container');
 
 		/* global listener object */
 		var gH = {
