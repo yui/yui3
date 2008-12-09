@@ -96,8 +96,8 @@ include "../inc/header.inc";
             <p>The header, body and footer sections provided in markup need to be marked with the class name which <code>Overlay</code> (or more accurately, <code>WidgetStdMod</code>) expects for the section ("yui-widget-hd", "yui-widget-bd" and "yui-widget-ft") as shown above. 
             All of these sections are optional, and if content is set via the API at a later point will be created dynamically.</p>
 
-            <p>When instantiating from markup, a reference to the <code>contentBox</code> is provided in the configuration object. This reference can be node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
-            An example which targets the markup shown above, is shown below:</p>
+            <p>When instantiating from markup, a reference to the <code>contentBox</code> is provided in the configuration object. This reference can be a node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
+            The following code targets the markup shown above:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 YUI({...}).use("overlay", function(Y) {
@@ -126,8 +126,8 @@ include "../inc/header.inc";
                 overlay.render();
             </textarea>
 
-            <p>Note that you could set the state of the Overlay multiple times (modifying content, changing dimensions etc.) before rendering. At the point the <code>render</code> method is invoked,
-            the state of the Overlay at that point in time will be reflected in the DOM.</p>
+            <p>Note that you could set the state of the Overlay multiple times (modifying content, changing dimensions etc.) before rendering. 
+            When the <code>render</code> method is invoked, the state of the Overlay at that point in time will be reflected in the DOM.</p>
 
             <p>When <code>render</code> is invoked, the overlay's content box will be wrapped by the bounding box (another DIV), to provide the <a href="../widget/index.html#markup">nested box structure</a> common to all widgets.</p>
 
@@ -155,7 +155,7 @@ include "../inc/header.inc";
 
             <h4 id="attributes">Attributes</h4>
             
-            <p>On top of the attributes provided by <a href="../widget/index.html#attributes">Widget</a>, overlay adds the following key attributes (through the extensions mentioned above)</p>
+            <p>On top of the attributes provided by <a href="../widget/index.html#attributes">Widget</a>, Overlay adds the following key attributes (through the extensions mentioned above)</p>
 
             <table>
                 <tr><th>Attribute</th><th>Description</th></tr>
@@ -205,7 +205,7 @@ include "../inc/header.inc";
 
             <p>The overlay's default position, if xy values are not provided, will be 0,0. Note that xy are page co-ordinates, not relative co-ordinates.</p>
 
-            <p>Changes in the overlay's position (when set programmatically through the API) can monitored by listening for the attribute <code>xyChange</code> event. Listeners
+            <p>Changes in the overlay's position (when set programmatically through the API) can be monitored by listening for the attribute <code>xyChange</code> event. Listeners
             to this event will receive an event facade, which contains previous and new xy values:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
@@ -321,7 +321,7 @@ include "../inc/header.inc";
             The Overlay provides basic stacking support in the form of a <code>zIndex</code> attribute and a <code>shim</code> attribute. The shimming support protects against &lt;select&gt; box bleed through on 
             IE6 (It is enabled by default for IE6) by adding an iframe shim to the overlay's bounding box (positioned underneath the content box). The default value of the <code>zIndex</code> attribute is 0.</p>
             
-            <p>Using the <code>zIndex</code> and <code>shim</code> attributes is that same as any other attribute, with the ability to set values in the constructor, or at a later point in time:</p>
+            <p>Using the <code>zIndex</code> and <code>shim</code> attributes is the same as any other attribute, with the ability to set values in the constructor, or at a later point in time:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
                 // Disable shim for all browsers, set zIndex to 10
@@ -361,8 +361,8 @@ include "../inc/header.inc";
                 }
             </textarea>
 
-            <p>The <a href="../examples/overlay/overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the <code>zIndex</code> attribute. Future release aim to
-            provide this support as part of Overlay itself (or more precisely, as part of <code>WidgetStack</code>).</p>
+            <p>The <a href="../examples/overlay/overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the <code>zIndex</code> attribute. 
+            This support will be provided as part of Overlay itself (or more precisely, as part of <code>WidgetStack</code>) in a future release.</p>
 
             <h4 id="content">Setting Section Content</h4>
 
@@ -412,7 +412,7 @@ include "../inc/header.inc";
                 });
             </textarea>
 
-            <p>Setting content in any of the sections will fire widget's <code>contentUpdate</code> event, which can be monitored if you want to be notified of changes to any section, however this event is purely a catch-all notification
+            <p>Setting content in any of the sections will fire Widget's <code>contentUpdate</code> event, which can be monitored if you want to be notified of changes to any section, however this event is purely a catch-all notification
             event. It cannot be prevented to stop the content change from occuring:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
@@ -440,12 +440,12 @@ include "../inc/header.inc";
             </textarea>
 
             <ul>
-                <li>The <code>section</code> argument specifies which section is to be updated. The constants <code>WidgetStdMod.HEADER</code>, <code>WidgetStdMod.BODY</code> and <code>WidgetStdMod.FOOTER</code></p> define valid values.</li>
+                <li>The <code>section</code> argument specifies which section is to be updated. The constants <code>WidgetStdMod.HEADER</code>, <code>WidgetStdMod.BODY</code> and <code>WidgetStdMod.FOOTER</code> define valid values.</li>
                 <li>The <code>content</code> argument specifies the new content to be added, which, as with the attributes can be a string HTML value or a node reference.</li>
                 <li>The <code>where</code> argument specifies whether the content should be added before, after or replace existing content. The constants <code>WidgetStdMod.BEFORE</code>, <code>WidgetStdMod.AFTER</code> and <code>WidgetStdMod.REPLACE</code></p> define valid values.</li>
             </ul>
 
-            <p><em>Note, the above <code>WidgetStdMod</code> constants define the set of valid values where ever the API expects a "section" or "where" argument.</em></p>
+            <p><em>Note, the above <code>WidgetStdMod</code> constants define the set of valid values wherever the API expects a "section" or "where" argument.</em></p>
 
             <p>The content change events mentioned above, will be fired when content is set through the <code>setStdModContent</code> method just as they would when setting the content using the attribute.</p>
 
