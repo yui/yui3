@@ -7,19 +7,67 @@
 * 
 * <p>
 * <code>
-* var oMenuNav = Y.Node.get("#productsandservices");<br>
-* oMenuNav.plug(Y.plugin.NodeMenuNav);
+* &#60;script type="text/javascript"&#62;<br>
+* <br>
+* 		//	Call the "use" method, passing in "node-menunav".  This will load the <br>
+* 		//	script and CSS for the MenuNav Node Plugin and all of the required <br>
+* 		//	dependencies.<br>
+* <br>
+* 		YUI().use("node-menunav", function(Y) {<br>
+* <br>
+* 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
+* 			//	be scripted.<br>
+* <br>
+* 			Y.on("contentready", function () {<br>
+* <br>
+* 				//	The scope of the callback will be a Node instance representing <br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
+* 				//	represents a Node instance, it is possible to just call "this.plug"<br>
+* 				//	passing in a reference to the MenuNav Node Plugin.<br>
+* <br>
+* 				this.plug(Y.plugin.NodeMenuNav);<br>
+* <br>
+* 			}, "#menu-1");<br>
+* <br>		
+* 		}); <br>
+* <br>	
+* 	&#60;/script&#62;<br>
 * </code>
-* <p>
+* </p>
 *
 * <p>The MenuNav Node Plugin has several configuration properties that can be set via an 
 * object literal that is passed as a second argument to a Node instance's <code>plug</code> method.
 * </p>
-* 
+*
 * <p>
 * <code>
-* var oMenuNav = Y.Node.get("#productsandservices");<br>
-* oMenuNav.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });
+* &#60;script type="text/javascript"&#62;<br>
+* <br>
+* 		//	Call the "use" method, passing in "node-menunav".  This will load the <br>
+* 		//	script and CSS for the MenuNav Node Plugin and all of the required <br>
+* 		//	dependencies.<br>
+* <br>
+* 		YUI().use("node-menunav", function(Y) {<br>
+* <br>
+* 			//	Use the "contentready" event to initialize the menu when the subtree of <br>
+* 			//	element representing the root menu (&#60;div id="menu-1"&#62;) is ready to <br>
+* 			//	be scripted.<br>
+* <br>
+* 			Y.on("contentready", function () {<br>
+* <br>
+* 				//	The scope of the callback will be a Node instance representing <br>
+* 				//	the root menu (&#60;div id="menu-1"&#62;).  Therefore, since "this"<br>
+* 				//	represents a Node instance, it is possible to just call "this.plug"<br>
+* 				//	passing in a reference to the MenuNav Node Plugin.<br>
+* <br>
+* 				this.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });<br>
+* <br>
+* 			}, "#menu-1");<br>
+* <br>		
+* 		}); <br>
+* <br>	
+* 	&#60;/script&#62;<br>
 * </code>
 * </p>
 * 
@@ -454,7 +502,7 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 
 
 /** 
-* @namespace Y.plugin
+* @namespace plugin
 * @class NodeMenuNav
 */
 var MenuNav = function (config) {

@@ -2341,6 +2341,7 @@ YUI.add('dd-plugin', function(Y) {
         * @class DragPlugin
         * @extends Drag
         * @constructor
+        * @namespace plugin
         */
 
 
@@ -2369,7 +2370,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-constrain', 'dd-proxy']});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2817,6 +2818,7 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @class DropPlugin
         * @extends Drop
         * @constructor
+        * @namespace plugin
         */
 
 

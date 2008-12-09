@@ -14,7 +14,7 @@
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var anim = new Y.Anim({
         node: '#demo .yui-bd',
-        to: { height: 0 },
+        to: { height: 1 },
         easing: Y.Easing.backIn
     });
 

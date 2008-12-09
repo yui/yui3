@@ -1,7 +1,7 @@
    /*
     * Extends the IO base class to include basic queue interfaces for transaction
     * queuing.
-	* @module io-base
+	* @module io
 	* @submodule io-queue
 	*/
 

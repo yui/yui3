@@ -101,7 +101,7 @@ Node Plugin.
 <p>
 Use the <code>autoSubmenuDisplay</code> and <code>mouseOutHideDelay</code> 
 configuration properties to configure the menu labels to behave like split buttons.  Set the 
-<code>autoSubmenuDisplay</code> to <code>fale</code>, so that each menu label's submenu isn't 
+<code>autoSubmenuDisplay</code> to <code>false</code>, so that each menu label's submenu isn't 
 made visible until the menu trigger is clicked.  Set the <code>mouseOutHideDelay</code> to 
 <code>0</code> so that a label's submenu is only hidden when the user mouses down on an area 
 outside of the submenu.

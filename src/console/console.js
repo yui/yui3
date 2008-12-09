@@ -644,7 +644,27 @@ Y.extend(Console,Y.Widget,{
 
         Y.on(this.get('logEvent'),Y.bind(this._onLogEvent,this));
 
+        /**
+         * Triggers the processing of an incoming message via the default logic
+         * in _defEntryFn.
+         *
+         * @event entry
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>message</dt>
+         *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
+         *  </dl>
+         * @preventable _defEntryFn
+         */
         this.publish(ENTRY, { defaultFn: this._defEntryFn });
+
+        /**
+         * Triggers the reset behavior via the default logic in _defResetFn.
+         *
+         * @event reset
+         * @param event {Event.Facade} Event Facade object
+         * @preventable _defResetFn
+         */
         this.publish(RESET, { defaultFn: this._defResetFn });
     },
 
