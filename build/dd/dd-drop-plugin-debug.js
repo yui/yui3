@@ -10,6 +10,7 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @class DropPlugin
         * @extends Drop
         * @constructor
+        * @namespace plugin
         */
 
 
