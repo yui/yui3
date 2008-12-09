@@ -108,7 +108,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			}
 		}
 
-		Y.get('#get1').on("click", call);
-		Y.get('#get2').on("click", call, true);
+		Y.on('click', call, "#get1", this, false);
+		Y.on('click', call, "#get2", this, true);
 	});
 </script>

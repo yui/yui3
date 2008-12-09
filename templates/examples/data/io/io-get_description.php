@@ -129,8 +129,8 @@ function call(e, b) {
 	}
 }
 
-Y.get('#get1').on("click", call);
-Y.get('#get2').on("click", call, true);
+Y.on('click', call, "#get1", this, false);
+Y.on('click', call, "#get2", this, true);
 </textarea>
 
 <h3>Full Code</h3>
