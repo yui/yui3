@@ -9,11 +9,24 @@ $modules["io"] = array(
 						);
 
 
+$examples["io-get"] = array(
+	name => "GET Transaction",
+	modules => array("io"),
+	description => "Explores the use of HTTP GET to send data to the server, and handling the transaction lifecycle using events.",
+	sequence => array(1),
+	logger => array("io", "example"),
+	loggerInclude => "default",
+	newWindow => "default",
+	requires => array("io"),
+	highlightSyntax => true,
+	bodyclass => false
+);
+
 $examples["io-post"] = array(
 	name => "POST Transaction",
 	modules => array("io"),
 	description => "Explores the use of HTTP POST to send data to the server and retrieve the server's response.",
-	sequence => array(1),
+	sequence => array(2),
 	logger => array("io", "example"),
 	loggerInclude => "default",
 	newWindow => "default",
@@ -26,7 +39,7 @@ $examples["io-weather"] = array(
 	name => "XML Transaction &mdash; Retrieving a Yahoo! Weather RSS (XML) Feed via a Server-Side Proxy",
 	modules => array("io"),
 	description => "Demonstrates how to retrieve XML data from a web service and make use of that information within the page.",
-	sequence => array(4),
+	sequence => array(3),
 	logger => array("io", "example"),
 	loggerInclude => "default",
 	newWindow => "default",
@@ -39,7 +52,7 @@ $examples["io-xdr"] = array(
 	name => "Cross-Domain JSON Transaction &mdash; Retrieving a News Feed from Yahoo! Pipes",
 	modules => array("io"),
 	description => "Fetch a cross-domain, JSON-formatted RSS news feed directly from <a href='http://pipes.yahoo.com'>Yahoo! Pipes</a>.",
-	sequence => array(10),
+	sequence => array(4),
 	logger => array("io", "example"),
 	loggerInclude => "default",
 	newWindow => "default",
