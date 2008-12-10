@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>Cache Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>Cache Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/cache/cache-debug.js" id="buildsrc"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../build/",
+        //filter: "debug",
+        useConsole: true,
+        insertBefore: "buildsrc"
+    }).use("console", "yuitest", "dump", "cache", function(Y) {
+        
+        // Set up the page
+        var btnRun = Y.get("#btnRun");
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+        //var myConsole = new Y.Console().render();
+        
+
+        var testClass = new Y.Test.Case({
+            name: "Class Tests",
+        
+            testDefaults: function() {
+                var cache = new Y.Cache();
+                cache.cache(1, "a");
+                Y.Assert.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
+                Y.Assert.areSame(0, cache.get("maxEntries"), "Expected default maxEntries of 0.");
+                Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array.");
+            },
+
+            testDestructor: function() {
+                var cache = new Y.Cache();
+                cache.destroy();
+                Y.Assert.isNull(cache.getEntries(), "Expected null array.");
+            }
+        });
+        
+        var testBasic = new Y.Test.Case({
+            name: "Basic Tests",
+
+            testMaxEntries2: function() {
+                var cache = new Y.Cache({maxEntries:2});
+                Y.Assert.areSame(2, cache.get("maxEntries"), "Expected maxEntries to be 2.");
+                
+                cache.cache(1, "a");
+                Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry.");
+                cache.cache(2, "b");
+                Y.Assert.areSame(2, cache.getEntries().length, "Expected 2 entries.");
+                cache.cache(3, "c");
+                Y.Assert.areSame(2, cache.getEntries().length, "Expected 2 entries (still).");
+            },
+        
+            testMaxEntries2to1: function() {
+                var cache = new Y.Cache({maxEntries:2});
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cache.set("maxEntries", 1);
+                Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry.");
+
+                cache.cache(3, "c");
+                Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry (still).");
+            },
+
+            testMaxEntries2to0: function() {
+                var cache = new Y.Cache({maxEntries:2});
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cache.set("maxEntries", 0);
+                Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array.");
+                cache.cache(3, "c");
+                Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array (still).");
+            },
+
+            testRetrieve: function() {
+                var cache = new Y.Cache({maxEntries:2}),
+                    entry;
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cachedresponse = cache.retrieve(1);
+                Y.Assert.areSame("a", cachedresponse, "Expected first cached response.");
+
+                cachedresponse = cache.retrieve(2);
+                Y.Assert.areSame("b", cachedresponse, "Expected second cached response.");
+            },
+
+            testFlush: function() {
+                var cache = new Y.Cache({maxEntries:2});
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cache.flush();
+                Y.Assert.areSame(0, cache.getEntries().length, "Expected empty cache.");
+            }
+        });
+    
+        var testEntryManagement = new Y.Test.Case({
+            name: "Entry Management Tests",
+
+            testAllowDuplicateEntries: function() {
+                var cache = new Y.Cache({maxEntries:3});
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cache.cache(1, "a");
+                Y.Assert.areSame(3, cache.getEntries().length, "Expected 3 entries.");
+            },
+        
+            testFreshness: function() {
+                var cache = new Y.Cache({maxEntries:3});
+                cache.cache(1, "a");
+                cache.cache(2, "b");
+                cache.cache(3, "c");
+                cache.retrieve(1);
+                Y.Assert.areSame(3, cache.getEntries().length, "Expected 3 entries.");
+                Y.Assert.areSame(1, cache.getEntries()[2].request, "Expected entry to be refreshed.");
+            }
+        });
+    
+        
+        Y.Test.Runner.add(testClass);
+        Y.Test.Runner.add(testBasic);
+        Y.Test.Runner.add(testEntryManagement);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>
