@@ -65,17 +65,19 @@
 YUI(<?php echo $yuiConfig ?>).use('dd', 'anim', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
-    d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
+    d.plug(Y.plugin.Drag, { dragMode: 'intersect' });
     
     //Get all the div's with the class anim
     var anims = Y.Node.all('div.anim');
-    anims.each(function(v, k, items) {
+    var counter = 0;
+    anims.each(function(v, k) {
         //Get a reference to the Node instance
-        var a = v; 
+        var a = v;
+        counter++;
         //Add the FX plugin
-        a.plug(Y.Plugin.NodeFX);
+        a.plug(Y.plugin.NodeFX);
         //Add the Drop plugin
-        a.plug(Y.Plugin.Drop);
+        a.plug(Y.plugin.Drop);
 
         //Set the attributes on the animation
         a.fx.setAtts({
@@ -101,7 +103,7 @@ YUI(<?php echo $yuiConfig ?>).use('dd', 'anim', function(Y) {
             //Alternate it so it "bounces" across the screen
             direction: 'alternate',
             //Give all of them a different duration so we get different speeds.
-            duration: ((k * 1.75) + 1)
+            duration: ((counter * 1.75) + 1)
         });
 
         //When this drop is entered, pause the fx
