@@ -227,7 +227,7 @@ Y.extend(Cache, Y.Base, {
         if((this.get("maxEntries") > 0) && (length > 0)) {   
             this.fire("request", {request:request});
     
-            // Loop through each cached entry
+            // Loop through each cached entry starting from the newest
             for(; i >= 0; i--) {
                 entry = entries[i];
     
