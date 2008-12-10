@@ -94,7 +94,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     //Get all the nodes with the class of .slot under #workarea
     var slots = Y.Node.get('#workarea').queryAll('.slot');
     //Loop through them
-    Y.each(slots, function(v, k, items) {
+    Y.each(slots, function(v, k) {
         var id = v.get('id'), groups = ['two'];
         //Assign them to different groups
         switch (id) {
@@ -105,7 +105,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
         }
         //Create the Drop object
         var drop = new Y.DD.Drop({
-            node: items.item(k),
+            node: v,
             //With the new groups array as a config option
             groups: groups
         });
@@ -119,7 +119,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     //Snipped
     var players = Y.Node.get('#workarea').queryAll('.player');
-    Y.each(players, function(v, k, items) {
+    Y.each(players, function(v, k) {
         var id = v.get('id'), groups = ['one', 'two'];
         switch (id) {
             case 'pt1':
@@ -132,7 +132,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
                 break;
         }
         var drag = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             //This makes it a Proxy Drag
             proxy: true,
             //Assign the Groups
@@ -190,7 +190,7 @@ drag.on('drag:dropmiss', function(e) {
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');
-    Y.each(slots, function(v, k, items) {
+    Y.each(slots, function(v, k) {
         var id = v.get('id'), groups = ['two'];
         switch (id) {
             case 't1':
@@ -199,13 +199,13 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
                 break;
         }
         var drop = new Y.DD.Drop({
-            node: items.item(k),
+            node: v,
             groups: groups
         });
     });
 
     var players = Y.Node.get('#workarea').queryAll('.player');
-    Y.each(players, function(v, k, items) {
+    Y.each(players, function(v, k) {
         var id = v.get('id'), groups = ['one', 'two'];
         switch (id) {
             case 'pt1':
@@ -218,7 +218,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
                 break;
         }
         var drag = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             proxy: true,
             groups: groups,
             dragMode: 'intersect',
