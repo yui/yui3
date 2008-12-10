@@ -18,9 +18,15 @@
         useConsole: true,
         insertBefore: "src_ds"
     }).use("yuitest", "console", "base", "datasource", function(Y) {
-        YUI.Y = Y;
-        var myConsole = new Y.Console().render();
 
+        // Set up the page
+        var btnRun = Y.get("#btnRun");
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+        //var myConsole = new Y.Console().render();
+ 
         var testCase = new Y.Test.Case({
             name: "Constructor Tests",
         
