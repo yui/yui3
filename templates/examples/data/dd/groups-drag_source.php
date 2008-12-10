@@ -81,7 +81,7 @@
 YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');
-    Y.each(slots, function(v, k, items) {
+    Y.each(slots, function(v, k) {
         var id = v.get('id'), groups = ['two'];
         switch (id) {
             case 't1':
@@ -90,13 +90,13 @@ YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-proxy', 'dd-constrain', functio
                 break;
         }
         var drop = new Y.DD.Drop({
-            node: items.item(k),
+            node: v,
             groups: groups
         });
     });
 
     var players = Y.Node.get('#workarea').queryAll('.player');
-    Y.each(players, function(v, k, items) {
+    Y.each(players, function(v, k) {
         var id = v.get('id'), groups = ['one', 'two'];
         switch (id) {
             case 'pt1':
@@ -109,7 +109,7 @@ YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-proxy', 'dd-constrain', functio
                 break;
         }
         var drag = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             proxy: true,
             groups: groups,
             dragMode: 'intersect',
