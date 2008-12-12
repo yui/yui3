@@ -2326,7 +2326,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                         handles.push(E.attach.apply(E, args));
                     });
 
-                    return handles;
+                    return (handles.length === 1) ? handles[0] : handles;
 
 
                 } else if (Y.Lang.isString(el)) {
