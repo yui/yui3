@@ -1,33 +1,32 @@
-YUI.add('datasource', function(Y) {
+YUI.add('datasource-local', function(Y) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
- * @module datasource
- * @requires base
- * @optional json, get, connection 
- * @title DataSource Utility
+ * @module datasource-local
+ * @requires datasource-base
+ * @title DataSource Local Submodule
  */
-    var lang = Y.Lang,
+    var LANG = Y.Lang,
     
     /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSourceBase
-     * @extends Base
+     * Local subclass for the YUI DataSource utility.
+     * @class DataSource.Local
+     * @extends DataSource.Base
      * @constructor
      */    
-    DataSourceBase = function() {
-        DataSourceBase.superclass.constructor.apply(this, arguments);
+    LocalDataSource = function() {
+        LocalDataSource.superclass.constructor.apply(this, arguments);
     };
     
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceBase static properties
+    // LocalDataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DataSourceBase, {    
+Y.mix(LocalDataSource, {    
     /**
      * Class name.
      *
@@ -182,7 +181,7 @@ Y.mix(DataSourceBase, {
          */
         string: function(oData) {
             // Special case null and undefined
-            if(!lang.isValue(oData)) {
+            if(!LANG.isValue(oData)) {
                 return null;
             }
             
@@ -190,7 +189,7 @@ Y.mix(DataSourceBase, {
             var string = oData + "";
         
             // Validate
-            if(lang.isString(string)) {
+            if(LANG.isString(string)) {
                 return string;
             }
             else {
@@ -212,7 +211,7 @@ Y.mix(DataSourceBase, {
             var number = oData * 1;
             
             // Validate
-            if(lang.isNumber(number)) {
+            if(LANG.isNumber(number)) {
                 return number;
             }
             else {
@@ -251,7 +250,7 @@ Y.mix(DataSourceBase, {
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceBase Attributes
+    // LocalDataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -275,10 +274,10 @@ Y.mix(DataSourceBase, {
                 <li>TYPE_JSFUNCTION</li>
             </ul>
         * @type Number
-        * @default DataSourceBase.TYPE_UNKNOWN        
+        * @default LocalDataSource.TYPE_UNKNOWN        
         */
         dataType: {
-            value: DataSourceBase.TYPE_UNKNOWN
+            value: LocalDataSource.TYPE_UNKNOWN
         },
 
         /**
@@ -293,10 +292,10 @@ Y.mix(DataSourceBase, {
                 <li>TYPE_HTMLTABLE</li>
             </ul>
         * @type Number
-        * @default DataSourceBase.TYPE_UNKNOWN
+        * @default LocalDataSource.TYPE_UNKNOWN
         */
         responseType: {
-            value: DataSourceBase.TYPE_UNKNOWN
+            value: LocalDataSource.TYPE_UNKNOWN
         },
 
         /**
@@ -314,7 +313,7 @@ Y.mix(DataSourceBase, {
                     <dd>Field delimiter (text data only)</dd>
                 <dt>fields {String[] | Object []}</dt>
                     <dd>Array of field names (aka keys), or array of object literals such as:
-                    {key:"fieldname", parser:DataSourceBase.parseDate}</dd>
+                    {key:"fieldname", parser:LocalDataSource.parseDate}</dd>
                 <dt>metaFields {Object}</dt>
                     <dd>Hash of field names (aka keys) to include in the 
                     oParsedResponse.meta collection</dd>
@@ -352,7 +351,7 @@ Y.mix(DataSourceBase, {
     }
 });
     
-Y.extend(DataSourceBase, Y.Base, {
+Y.extend(LocalDataSource, Y.DataSource.Base, {
         /**
         * @property _queue
         * @description Object literal to manage asynchronous request/response
@@ -428,9 +427,14 @@ Y.extend(DataSourceBase, Y.Base, {
 });
     
     Y.namespace('DataSource');    
-    Y.DataSource.Base = DataSourceBase;
+    Y.DataSource.Local = LocalDataSource;
     
 
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@' ,{requires:['datasource-base']});
+
+
+
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-local']});
+

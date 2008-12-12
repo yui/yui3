@@ -4,14 +4,13 @@
  *
  * @module datasource
  * @requires base
- * @optional json, get, connection 
- * @title DataSource Utility
+ * @title DataSource Base Submodule
  */
     var lang = Y.Lang,
     
     /**
      * Base class for the YUI DataSource utility.
-     * @class DataSourceBase
+     * @class DataSource.Base
      * @extends Base
      * @constructor
      */    
