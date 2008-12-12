@@ -25,7 +25,7 @@
         Y.on("click", function(){
             Y.Test.Runner.run();
         }, btnRun);
-        //var myConsole = new Y.Console().render();
+        var myConsole = new Y.Console().render();
         
 
         var testClass = new Y.Test.Case({
@@ -48,6 +48,15 @@
         
         var testBasic = new Y.Test.Case({
             name: "Basic Tests",
+
+            testMaxEntries0: function() {
+                var cache = new Y.Cache();
+                Y.Assert.areSame(0, cache.get("maxEntries"), "Expected maxEntries to be 0.");
+                
+                cache.cache(1, "a");
+                Y.Assert.areSame(0, cache.getEntries().length, "Expected 0 entries.");
+                Y.Assert.isNull(cache.retrieve(1), "Expected null cached response.");
+            },
 
             testMaxEntries2: function() {
                 var cache = new Y.Cache({maxEntries:2});
