@@ -46,13 +46,13 @@ Y.mix(Cache, {
         /////////////////////////////////////////////////////////////////////////////
         
         /**
-        * @attribute maxEntries
+        * @attribute size
         * @description Max number of entries the Cache will hold.
         * Set to 0 to turn off caching.
         * @type Number
         * @default 0
         */
-        maxEntries: {
+        size: {
             value: 0,
             validator: function(value) {
                 return (LANG.isNumber(value) && (value >= 0));
@@ -189,7 +189,7 @@ Y.extend(Cache, Y.Base, {
     cache : function(request, response) {
         var entries = this._entries,
             entry = {request:request, response:response},
-            max = this.get("maxEntries");
+            max = this.get("size");
             
         if(!entries || (max === 0)) {
             return;
@@ -222,7 +222,7 @@ Y.extend(Cache, Y.Base, {
             entry = null,
             i = length-1;
             
-        if((this.get("maxEntries") > 0) && (length > 0)) {   
+        if((this.get("size") > 0) && (length > 0)) {   
             this.fire("request", {request:request});
     
             // Loop through each cached entry starting from the newest

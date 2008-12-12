@@ -35,7 +35,7 @@
                 var cache = new Y.Cache();
                 cache.cache(1, "a");
                 Y.Assert.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
-                Y.Assert.areSame(0, cache.get("maxEntries"), "Expected default maxEntries of 0.");
+                Y.Assert.areSame(0, cache.get("size"), "Expected default size of 0.");
                 Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array.");
             },
 
@@ -49,18 +49,18 @@
         var testBasic = new Y.Test.Case({
             name: "Basic Tests",
 
-            testMaxEntries0: function() {
+            testsize0: function() {
                 var cache = new Y.Cache();
-                Y.Assert.areSame(0, cache.get("maxEntries"), "Expected maxEntries to be 0.");
+                Y.Assert.areSame(0, cache.get("size"), "Expected size to be 0.");
                 
                 cache.cache(1, "a");
                 Y.Assert.areSame(0, cache.getEntries().length, "Expected 0 entries.");
                 Y.Assert.isNull(cache.retrieve(1), "Expected null cached response.");
             },
 
-            testMaxEntries2: function() {
-                var cache = new Y.Cache({maxEntries:2});
-                Y.Assert.areSame(2, cache.get("maxEntries"), "Expected maxEntries to be 2.");
+            testsize2: function() {
+                var cache = new Y.Cache({size:2});
+                Y.Assert.areSame(2, cache.get("size"), "Expected size to be 2.");
                 
                 cache.cache(1, "a");
                 Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry.");
@@ -70,29 +70,29 @@
                 Y.Assert.areSame(2, cache.getEntries().length, "Expected 2 entries (still).");
             },
         
-            testMaxEntries2to1: function() {
-                var cache = new Y.Cache({maxEntries:2});
+            testsize2to1: function() {
+                var cache = new Y.Cache({size:2});
                 cache.cache(1, "a");
                 cache.cache(2, "b");
-                cache.set("maxEntries", 1);
+                cache.set("size", 1);
                 Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry.");
 
                 cache.cache(3, "c");
                 Y.Assert.areSame(1, cache.getEntries().length, "Expected 1 entry (still).");
             },
 
-            testMaxEntries2to0: function() {
-                var cache = new Y.Cache({maxEntries:2});
+            testsize2to0: function() {
+                var cache = new Y.Cache({size:2});
                 cache.cache(1, "a");
                 cache.cache(2, "b");
-                cache.set("maxEntries", 0);
+                cache.set("size", 0);
                 Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array.");
                 cache.cache(3, "c");
                 Y.ArrayAssert.isEmpty(cache.getEntries(), "Expected empty array (still).");
             },
 
             testRetrieve: function() {
-                var cache = new Y.Cache({maxEntries:2}),
+                var cache = new Y.Cache({size:2}),
                     entry;
                 cache.cache(1, "a");
                 cache.cache(2, "b");
@@ -104,7 +104,7 @@
             },
 
             testFlush: function() {
-                var cache = new Y.Cache({maxEntries:2});
+                var cache = new Y.Cache({size:2});
                 cache.cache(1, "a");
                 cache.cache(2, "b");
                 cache.flush();
@@ -116,7 +116,7 @@
             name: "Entry Management Tests",
 
             testAllowDuplicateEntries: function() {
-                var cache = new Y.Cache({maxEntries:3});
+                var cache = new Y.Cache({size:3});
                 cache.cache(1, "a");
                 cache.cache(2, "b");
                 cache.cache(1, "a");
@@ -124,7 +124,7 @@
             },
         
             testFreshness: function() {
-                var cache = new Y.Cache({maxEntries:3});
+                var cache = new Y.Cache({size:3});
                 cache.cache(1, "a");
                 cache.cache(2, "b");
                 cache.cache(3, "c");
