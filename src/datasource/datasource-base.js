@@ -4,42 +4,32 @@
  *
  * @module datasource
  * @requires base
- * @title DataSource Base Submodule
+ * @title DataSource Utility
  */
-    var lang = Y.Lang,
+    Y.namespace("DataSource");
     
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource.Base
-     * @extends Base
-     * @constructor
-     */    
-    DataSourceBase = function() {
-        DataSourceBase.superclass.constructor.apply(this, arguments);
-    };
-    
-
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceBase static properties
+    // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DataSourceBase, {    
+    
+Y.mix(Y.DataSource, { 
     /**
-     * Class name.
+     * Global transaction counter.
      *
-     * @property NAME
-     * @type String
+     * @property DataSource._tId
+     * @type Number
      * @static     
-     * @final
-     * @value 'datasource'
+     * @private
+     * @default 0     
      */
-    NAME: 'datasource',
-
+    _tId: 0,
+    
     /**
      * Type is unknown.
      *
-     * @property TYPE_UNKNOWN
+     * @property DataSource.TYPE_UNKNOWN
      * @type Number
      * @static     
      * @final
@@ -50,7 +40,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is a JavaScript Array.
      *
-     * @property TYPE_JSARRAY
+     * @property DataSource.TYPE_JSARRAY
      * @type Number
      * @static     
      * @final
@@ -61,7 +51,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is a JavaScript Function.
      *
-     * @property TYPE_JSFUNCTION
+     * @property DataSource.TYPE_JSFUNCTION
      * @type Number
      * @static     
      * @final
@@ -72,7 +62,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is hosted on a server via an XHR connection.
      *
-     * @property TYPE_XHR
+     * @property DataSource.TYPE_XHR
      * @type Number
      * @static     
      * @final
@@ -83,7 +73,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is JSON.
      *
-     * @property TYPE_JSON
+     * @property DataSource.TYPE_JSON
      * @type Number
      * @static     
      * @final
@@ -94,7 +84,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is XML.
      *
-     * @property TYPE_XML
+     * @property DataSource.TYPE_XML
      * @type Number
      * @static     
      * @final
@@ -105,7 +95,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is plain text.
      *
-     * @property TYPE_TEXT
+     * @property DataSource.TYPE_TEXT
      * @type Number
      * @static     
      * @final
@@ -117,7 +107,7 @@ Y.mix(DataSourceBase, {
      * Type is an HTML TABLE element. Data is parsed out of TR elements from all
      * TBODY elements.
      *
-     * @property TYPE_HTMLTABLE
+     * @property DataSource.TYPE_HTMLTABLE
      * @type Number
      * @static     
      * @final
@@ -128,7 +118,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is hosted on a server via a dynamic script node.
      *
-     * @property TYPE_SCRIPTNODE
+     * @property DataSource.TYPE_SCRIPTNODE
      * @type Number
      * @static     
      * @final
@@ -139,18 +129,7 @@ Y.mix(DataSourceBase, {
     /**
      * Type is local.
      *
-     * @property TYPE_LOCAL
-     * @type Number
-     * @static     
-     * @final
-     * @default 8
-     */
-    TYPE_LOCAL: 8,
-    
-    /**
-     * Type is local.
-     *
-     * @property TYPE_LOCAL
+     * @property DataSource.TYPE_LOCAL
      * @type Number
      * @static     
      * @final
@@ -159,99 +138,59 @@ Y.mix(DataSourceBase, {
     TYPE_LOCAL: 8,
 
     /**
-     * Registry of parsing functions.
-     *
-     * @property Parser
-     * @type Object
+     * Executes a given callback.  For object literal callbacks, the third
+     * param determines whether to execute the success handler or failure handler.
+     *  
+     * @method issueCallback
+     * @param callback {Function|Object} the callback to execute
+     * @param params {Array} params to be passed to the callback method
+     * @param error {Boolean} whether an error occurred
      * @static     
      */
-    Parser: {
-    
-        /**
-         * Converts data to type String.
-         *
-         * @method DS.Parser.parseString
-         * @param oData {String | Number | Boolean | Date | Array | Object}
-         * Data to parse.
-         * The special values null and undefined will return null.
-         * @return {String} A string, or null.
-         * @static
-         */
-        string: function(oData) {
-            // Special case null and undefined
-            if(!lang.isValue(oData)) {
-                return null;
-            }
-            
-            //Convert to string
-            var string = oData + "";
-        
-            // Validate
-            if(lang.isString(string)) {
-                return string;
-            }
-            else {
-                Y.log("Could not convert data " + Y.dump(oData) + " to type String", "warn", this.toString());
-                return null;
-            }
-        },
-        
-        /**
-         * Converts data to type Number.
-         *
-         * @method DS.Parser.parseNumber
-         * @param oData {String | Number | Boolean | Null} Data to convert.
-         * Beware, null returns as 0.
-         * @return {Number} A number, or null if NaN.
-         * @static
-         */
-        number: function(oData) {
-            //Convert to number
-            var number = oData * 1;
-            
-            // Validate
-            if(lang.isNumber(number)) {
-                return number;
-            }
-            else {
-                Y.log("Could not convert data " + lang.dump(oData) + " to type Number", "warn", this.toString());
-                return null;
-            }
-        },
-        
-        /**
-         * Converts data to type Date.
-         *
-         * @method DS.Parser.parseDate
-         * @param oData {Date | String | Number} Data to convert.
-         * @return {Date} A Date instance.
-         * @static
-         */
-        date: function(oData) {
-            var date = null;
-            
-            //Convert to date
-            if(!(oData instanceof Date)) {
-                date = new Date(oData);
-            }
-            else {
-                return oData;
-            }
-            
-            // Validate
-            if(date instanceof Date) {
-                return date;
-            }
-            else {
-                Y.log("Could not convert data " + lang.dump(oData) + " to type Date", "warn", this.toString());
-                return null;
+    issueCallback: function (callback,params,error) {
+        if(callback) {
+            var scope = callback.scope || window,
+                callbackFunc = (error) ? callback.failure : callback.success;
+            if (callbackFunc) {
+                callbackFunc.apply(scope, params.concat([callback.argument]));
             }
         }
-    },
+    }
+});
+    
+    var LANG = Y.Lang,
+    
+    /**
+     * Base class for the YUI DataSource utility.
+     * @class DataSource.Base
+     * @extends Base
+     * @constructor
+     */    
+    Base = function() {
+        Base.superclass.constructor.apply(this, arguments);
+    };
+    
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceBase Attributes
+    // Base static properties
+    //
+    /////////////////////////////////////////////////////////////////////////////
+Y.mix(Base, {    
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static     
+     * @final
+     * @value "DataSource.Base"
+     */
+    NAME: "DataSource.Base",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // Base Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -275,10 +214,10 @@ Y.mix(DataSourceBase, {
                 <li>TYPE_JSFUNCTION</li>
             </ul>
         * @type Number
-        * @default DataSourceBase.TYPE_UNKNOWN        
+        * @default DataSource.TYPE_UNKNOWN        
         */
         dataType: {
-            value: DataSourceBase.TYPE_UNKNOWN
+            value: Y.DataSource.TYPE_UNKNOWN
         },
 
         /**
@@ -293,10 +232,10 @@ Y.mix(DataSourceBase, {
                 <li>TYPE_HTMLTABLE</li>
             </ul>
         * @type Number
-        * @default DataSourceBase.TYPE_UNKNOWN
+        * @default DataSource.TYPE_UNKNOWN
         */
         responseType: {
-            value: DataSourceBase.TYPE_UNKNOWN
+            value: Y.DataSource.TYPE_UNKNOWN
         },
 
         /**
@@ -314,7 +253,7 @@ Y.mix(DataSourceBase, {
                     <dd>Field delimiter (text data only)</dd>
                 <dt>fields {String[] | Object []}</dt>
                     <dd>Array of field names (aka keys), or array of object literals such as:
-                    {key:"fieldname", parser:DataSourceBase.parseDate}</dd>
+                    {key:"fieldname", parser:Date.parse}</dd>
                 <dt>metaFields {Object}</dt>
                     <dd>Hash of field names (aka keys) to include in the 
                     oParsedResponse.meta collection</dd>
@@ -352,82 +291,467 @@ Y.mix(DataSourceBase, {
     }
 });
     
-Y.extend(DataSourceBase, Y.Base, {
-        /**
-        * @property _queue
-        * @description Object literal to manage asynchronous request/response
-        * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
-            <dl>
-                <dt>interval {Number}</dt>
-                    <dd>Interval ID of in-progress queue.</dd>
-                <dt>conn</dt>
-                    <dd>In-progress connection identifier (if applicable).</dd>
-                <dt>requests {Object[]}</dt>
-                    <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
-            </dl>
-        * @type Object
-        * @default {interval:null, conn:null, requests:[]}    
-        * @private     
-        */
-        _queue: null,
+Y.extend(Base, Y.Base, {
+    /**
+    * @property _queue
+    * @description Object literal to manage asynchronous request/response
+    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+        <dl>
+            <dt>interval {Number}</dt>
+                <dd>Interval ID of in-progress queue.</dd>
+            <dt>conn</dt>
+                <dd>In-progress connection identifier (if applicable).</dd>
+            <dt>requests {Object[]}</dt>
+                <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+        </dl>
+    * @type Object
+    * @default {interval:null, conn:null, requests:[]}    
+    * @private     
+    */
+    _queue: null,
 
-        /**
-        * @property _intervals
-        * @description Array of polling interval IDs that have been enabled,
-        * stored here to be able to clear all intervals.
-        * @private        
-        */
-        _intervals: null,
+    /**
+    * @property _intervals
+    * @description Array of polling interval IDs that have been enabled,
+    * stored here to be able to clear all intervals.
+    * @private        
+    */
+    _intervals: null,
 
-        /**
-        * @method _createEvents
-        * @description This method creates all the events for this Event
-        * Target and publishes them so we get Event Bubbling.
-        * @private        
-        */
-        _initEvents: function() {
-            var events = [
-                "dataErrorEvent",
-                "requestEvent",
-                "responseEvent",
-                "responseParseEvent"
-            ];
-            
-            Y.each(events, function(v, k) {
-                this.publish(v, {
-                    type: v,
-                    emitFacade: true,
-                    bubbles: true,
-                    preventable: false,
-                    queuable: true
-                });
-            }, this);
-    
-            /*if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }*/           
-        },
+    /**
+    * @method _createEvents
+    * @description This method creates all the events for this Event
+    * Target and publishes them so we get Event Bubbling.
+    * @private        
+    */
+    _initEvents: function() {
+        var events = [
+            "dataErrorEvent",
+            "requestEvent",
+            "responseEvent",
+            "responseParseEvent"
+        ];
+        
+        Y.each(events, function(v, k) {
+            this.publish(v, {
+                type: v,
+                emitFacade: true,
+                bubbles: true,
+                preventable: false,
+                queuable: true
+            });
+        }, this);
 
-        /**
-        * @method initializer
-        * @description Internal init() handler.
-        * @private        
-        */
-        initializer: function() {
-            this._queue = {interval:null, conn:null, requests:[]};
-            this._intervals = [];
-            Y.log("DataSource initialized", "info", this.toString());
-        },
+        /*if (this.get('bubbles')) {
+            this.addTarget(this.get('bubbles'));
+        }*/           
+    },
 
-        /**
-        * @method destructor
-        * @description Internal destroy() handler.
-        * @private        
-        */
-        destructor: function() {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private        
+    */
+    initializer: function() {
+        this._queue = {interval:null, conn:null, requests:[]};
+        this._intervals = [];
+        Y.log("DataSource initialized", "info", this.toString());
+    },
+
+    /**
+    * @method destructor
+    * @description Internal destroy() handler.
+    * @private        
+    */
+    destructor: function() {
+    },
+
+    /**
+     * Sets up a polling mechanism to send requests at set intervals and forward
+     * responses to given callback.
+     *
+     * @method setInterval
+     * @param msec {Number} Length of interval in milliseconds.
+     * @param request {Object} Request object.
+     * @param callback {Object} An object literal with the following properties:
+     *     <dl>
+     *     <dt><code>success</code></dt>
+     *     <dd>The function to call when the data is ready.</dd>
+     *     <dt><code>failure</code></dt>
+     *     <dd>The function to call upon a response failure condition.</dd>
+     *     <dt><code>scope</code></dt>
+     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
+     *     <dt><code>argument</code></dt>
+     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
+     *     </dl> 
+     * @return {Number} Interval ID.
+     */
+    setInterval : function(msec, request, callback) {
+        if(LANG.isNumber(msec) && (msec >= 0)) {
+            Y.log("Enabling polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
+            var self = this,
+                id = setInterval(function() {
+                self.makeConnection(request, callback);
+            }, msec);
+            this._intervals.push(id);
+            return id;
         }
-});
+        else {
+            Y.log("Could not enable polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
+        }
+    },
     
-    Y.namespace('DataSource');    
-    Y.DataSource.Base = DataSourceBase;
+    /**
+     * Disables polling mechanism associated with the given interval ID.
+     *
+     * @method clearInterval
+     * @param id {Number} Interval ID.
+     */
+    clearInterval : function(id) {
+        // Remove from tracker if there
+        var tracker = this._intervals || [],
+            i = tracker.length-1;
+            
+        for(; i>-1; i--) {
+            if(tracker[i] === id) {
+                tracker.splice(i,1);
+                clearInterval(id);
+            }
+        }
+    },
+
+    /**
+     * First looks for cached response, then sends request to live data.
+     *
+     * @method sendRequest
+     * @param request {MIXED} Request.
+     * @param callback {Object} An object literal with the following properties:
+     *     <dl>
+     *     <dt><code>success</code></dt>
+     *     <dd>The function to call when the data is ready.</dd>
+     *     <dt><code>failure</code></dt>
+     *     <dd>The function to call upon a response failure condition.</dd>
+     *     <dt><code>scope</code></dt>
+     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
+     *     <dt><code>argument</code></dt>
+     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
+     *     </dl> 
+     * @return {Number} Transaction ID, or null if response found in cache.
+     */
+    sendRequest : function(request, callback) {
+        // Forward request to live data
+        Y.log("Making connection to live data for \"" + request + "\"", "info", this.toString());
+        return this.makeConnection(request, callback);
+    },
+
+/**
+ * Overridable default method generates a unique transaction ID and passes 
+ * the live data reference directly to the  handleResponse function. This
+ * method should be implemented by subclasses to achieve more complex behavior
+ * or to access remote data.          
+ *
+ * @method makeConnection
+ * @param request {MIXED} Request object.
+ * @param callback {Object} Callback object literal.
+ * @return {Number} Transaction ID.
+ */
+makeConnection : function(request, callback) {
+    var tId = Y.DataSource._tId++;
+    this.fire("requestEvent", {tId:tId, request:request,callback:callback});
+
+    /* accounts for the following cases:
+    DataSource.TYPE_UNKNOWN
+    DataSource.TYPE_JSARRAY
+    DataSource.TYPE_JSON
+    DataSource.TYPE_HTMLTABLE
+    DataSource.TYPE_XML
+    DataSource.TYPE_TEXT
+    */
+    var rawresponse = this.get("liveData");
+    
+    this.handleResponse(request, rawresponse, callback, tId);
+    return tId;
+},
+
+/**
+ * Receives raw data response and type converts to XML, JSON, etc as necessary.
+ * Forwards oFullResponse to appropriate parsing function to get turned into
+ * oParsedResponse. Calls doBeforeCallback() and adds oParsedResponse to 
+ * the cache when appropriate before calling issueCallback().
+ * 
+ * The oParsedResponse object literal has the following properties:
+ * <dl>
+ *     <dd><dt>tId {Number}</dt> Unique transaction ID</dd>
+ *     <dd><dt>results {Array}</dt> Array of parsed data results</dd>
+ *     <dd><dt>meta {Object}</dt> Object literal of meta values</dd> 
+ *     <dd><dt>error {Boolean}</dt> (optional) True if there was an error</dd>
+ *     <dd><dt>cached {Boolean}</dt> (optional) True if response was cached</dd>
+ * </dl>
+ *
+ * @method handleResponse
+ * @param oRequest {Object} Request object
+ * @param oRawResponse {Object} The raw response from the live database.
+ * @param oCallback {Object} Callback object literal.
+ * @param tId {Number} Transaction ID.
+ */
+handleResponse : function(oRequest, oRawResponse, oCallback, tId) {
+    this.fire("responseEvent", {tId:tId, request:oRequest, response:oRawResponse,
+            callback:oCallback});
+    Y.log("Received live data response for \"" + oRequest + "\"", "info", this.toString());
+    var xhr = (this.dataType == Y.DataSource.TYPE_XHR) ? true : false;
+    var oParsedResponse = null;
+    var oFullResponse = oRawResponse;
+    
+    // Try to sniff data type if it has not been defined
+    if(this.responseType === Y.DataSource.TYPE_UNKNOWN) {
+        var ctype = (oRawResponse && oRawResponse.getResponseHeader) ? oRawResponse.getResponseHeader["Content-Type"] : null;
+        if(ctype) {
+             // xml
+            if(ctype.indexOf("text/xml") > -1) {
+                this.responseType = Y.DataSource.TYPE_XML;
+            }
+            else if(ctype.indexOf("application/json") > -1) { // json
+                this.responseType = Y.DataSource.TYPE_JSON;
+            }
+            else if(ctype.indexOf("text/plain") > -1) { // text
+                this.responseType = Y.DataSource.TYPE_TEXT;
+            }
+        }
+        else {
+            if(LANG.isArray(oRawResponse)) { // array
+                this.responseType = Y.DataSource.TYPE_JSARRAY;
+            }
+             // xml
+            else if(oRawResponse && oRawResponse.nodeType && oRawResponse.nodeType == 9) {
+                this.responseType = Y.DataSource.TYPE_XML;
+            }
+            else if(oRawResponse && oRawResponse.nodeName && (oRawResponse.nodeName.toLowerCase() == "table")) { // table
+                this.responseType = Y.DataSource.TYPE_HTMLTABLE;
+            }    
+            else if(LANG.isObject(oRawResponse)) { // json
+                this.responseType = Y.DataSource.TYPE_JSON;
+            }
+            else if(LANG.isString(oRawResponse)) { // text
+                this.responseType = Y.DataSourec.TYPE_TEXT;
+            }
+        }
+    }
+
+    switch(this.responseType) {
+        case Y.DataSource.TYPE_JSARRAY:
+            if(xhr && oRawResponse && oRawResponse.responseText) {
+                oFullResponse = oRawResponse.responseText; 
+            }
+            try {
+                // Convert to JS array if it's a string
+                if(LANG.isString(oFullResponse)) {
+                    // Check for YUI JSON Util
+                    if(LANG.JSON) {
+                        oFullResponse = LANG.JSON.parse(oFullResponse);
+                    }
+                    // Look for JSON parsers using an API similar to json2.js
+                    else if(window.JSON && JSON.parse) {
+                        oFullResponse = JSON.parse(oFullResponse);
+                    }
+                    // Look for JSON parsers using an API similar to json.js
+                    else if(oFullResponse.parseJSON) {
+                        oFullResponse = oFullResponse.parseJSON();
+                    }
+                    // No JSON lib found so parse the string
+                    else {
+                        // Trim leading spaces
+                        while (oFullResponse.length > 0 &&
+                                (oFullResponse.charAt(0) != "{") &&
+                                (oFullResponse.charAt(0) != "[")) {
+                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
+                        }
+    
+                        if(oFullResponse.length > 0) {
+                            // Strip extraneous stuff at the end
+                            var arrayEnd = Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
+                            oFullResponse = oFullResponse.substring(0,arrayEnd+1);
+    
+                            // Turn the string into an object literal...
+                            // ...eval is necessary here
+                            oFullResponse = eval("(" + oFullResponse + ")");
+    
+                        }
+                    }
+                }
+            }
+            catch(e) {
+            }
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseArrayData(oRequest, oFullResponse);
+            break;
+        case Y.DataSource.TYPE_JSON:
+            if(xhr && oRawResponse && oRawResponse.responseText) {
+                oFullResponse = oRawResponse.responseText;
+            }
+            try {
+                // Convert to JSON object if it's a string
+                if(LANG.isString(oFullResponse)) {
+                    // Check for YUI JSON Util
+                    if(LANG.JSON) {
+                        oFullResponse = LANG.JSON.parse(oFullResponse);
+                    }
+                    // Look for JSON parsers using an API similar to json2.js
+                    else if(window.JSON && JSON.parse) {
+                        oFullResponse = JSON.parse(oFullResponse);
+                    }
+                    // Look for JSON parsers using an API similar to json.js
+                    else if(oFullResponse.parseJSON) {
+                        oFullResponse = oFullResponse.parseJSON();
+                    }
+                    // No JSON lib found so parse the string
+                    else {
+                        // Trim leading spaces
+                        while (oFullResponse.length > 0 &&
+                                (oFullResponse.charAt(0) != "{") &&
+                                (oFullResponse.charAt(0) != "[")) {
+                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
+                        }
+    
+                        if(oFullResponse.length > 0) {
+                            // Strip extraneous stuff at the end
+                            var objEnd = Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
+                            oFullResponse = oFullResponse.substring(0,objEnd+1);
+    
+                            // Turn the string into an object literal...
+                            // ...eval is necessary here
+                            oFullResponse = eval("(" + oFullResponse + ")");
+    
+                        }
+                    }
+                }
+            }
+            catch(e) {
+            }
+
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseJSONData(oRequest, oFullResponse);
+            break;
+        case Y.DataSource.TYPE_HTMLTABLE:
+            if(xhr && oRawResponse.responseText) {
+                oFullResponse = oRawResponse.responseText;
+            }
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseHTMLTableData(oRequest, oFullResponse);
+            break;
+        case Y.DataSource.TYPE_XML:
+            if(xhr && oRawResponse.responseXML) {
+                oFullResponse = oRawResponse.responseXML;
+            }
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseXMLData(oRequest, oFullResponse);
+            break;
+        case Y.DataSource.TYPE_TEXT:
+            if(xhr && LANG.isString(oRawResponse.responseText)) {
+                oFullResponse = oRawResponse.responseText;
+            }
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseTextData(oRequest, oFullResponse);
+            break;
+        default:
+            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
+            oParsedResponse = this.parseData(oRequest, oFullResponse);
+            break;
+    }
+
+
+    // Clean up for consistent signature
+    oParsedResponse = oParsedResponse || {};
+    if(!oParsedResponse.results) {
+        oParsedResponse.results = [];
+    }
+    if(!oParsedResponse.meta) {
+        oParsedResponse.meta = {};
+    }
+
+    // Success
+    if(oParsedResponse && !oParsedResponse.error) {
+        // Last chance to touch the raw response or the parsed response
+        oParsedResponse = this.doBeforeCallback(oRequest, oFullResponse, oParsedResponse, oCallback);
+        this.fire("responseParseEvent", {request:oRequest,
+                response:oParsedResponse, callback:oCallback});
+        // Cache the response
+        //TODO: REINSTATE
+        //this.addToCache(oRequest, oParsedResponse);
+    }
+    // Error
+    else {
+        // Be sure the error flag is on
+        oParsedResponse.error = true;
+        this.fire("dataErrorEvent", {request:oRequest, response: oRawResponse, callback:oCallback, 
+                message:this.get("ERROR_DATANULL")});
+        Y.log(this.get("ERROR_DATANULL"), "error", this.toString());
+    }
+
+    // Send the response back to the callback
+    oParsedResponse.tId = tId;
+    Y.DataSource.issueCallback(oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+},
+
+/**
+ * Overridable method gives implementers access to the original full response
+ * before the data gets parsed. Implementers should take care not to return an
+ * unparsable or otherwise invalid response.
+ *
+ * @method doBeforeParseData
+ * @param oRequest {Object} Request object.
+ * @param oFullResponse {Object} The full response from the live database.
+ * @param oCallback {Object} The callback object.  
+ * @return {Object} Full response for parsing.
+  
+ */
+doBeforeParseData : function(oRequest, oFullResponse, oCallback) {
+    return oFullResponse;
+},
+
+/**
+ * Overridable method gives implementers access to the original full response and
+ * the parsed response (parsed against the given schema) before the data
+ * is added to the cache (if applicable) and then sent back to callback function.
+ * This is your chance to access the raw response and/or populate the parsed
+ * response with any custom data.
+ *
+ * @method doBeforeCallback
+ * @param oRequest {Object} Request object.
+ * @param oFullResponse {Object} The full response from the live database.
+ * @param oParsedResponse {Object} The parsed response to return to calling object.
+ * @param oCallback {Object} The callback object. 
+ * @return {Object} Parsed response object.
+ */
+doBeforeCallback : function(oRequest, oFullResponse, oParsedResponse, oCallback) {
+    return oParsedResponse;
+},
+
+/**
+ * Overridable method parses data of generic RESPONSE_TYPE into a response object.
+ *
+ * @method parseData
+ * @param oRequest {Object} Request object.
+ * @param oFullResponse {Object} The full Array from the live database.
+ * @return {Object} Parsed response object with the following properties:<br>
+ *     - results {Array} Array of parsed data results<br>
+ *     - meta {Object} Object literal of meta values<br>
+ *     - error {Boolean} (optional) True if there was an error<br>
+ */
+parseData : function(oRequest, oFullResponse) {
+    if(LANG.isValue(oFullResponse)) {
+        var oParsedResponse = {results:oFullResponse,meta:{}};
+        Y.log("Parsed generic data is " +
+                Y.dump(oParsedResponse), "info", this.toString());
+        return oParsedResponse;
+
+    }
+    Y.log("Generic data could not be parsed: " + Y.dump(oFullResponse), 
+            "error", this.toString());
+    return null;
+}
+
+
+    });
+    
+    Y.DataSource.Base = Base;
     

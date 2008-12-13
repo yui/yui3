@@ -17,7 +17,7 @@
         //filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("yuitest", "console", "base", "datasource", function(Y) {
+    }).use("dump", "yuitest", "console", "base", "datasource", function(Y) {
 
         // Set up the page
         var btnRun = Y.get("#btnRun");
@@ -25,18 +25,38 @@
         Y.on("click", function(){
             Y.Test.Runner.run();
         }, btnRun);
-        //var myConsole = new Y.Console().render();
+        var myConsole = new Y.Console().render();
  
-        var testCase = new Y.Test.Case({
-            name: "Constructor Tests",
+        var testClass = new Y.Test.Case({
+            name: "Class Tests",
         
-            testConstructorEmpty: function(){
+            testConstructorBase: function(){
                 var ds = new Y.DataSource.Base();
+                Y.Assert.areEqual((ds instanceof Y.DataSource.Base), true);
+            },
+            
+            testConstructorLocal: function(){
+                var ds = new Y.DataSource.Local();
+                Y.Assert.areEqual((ds instanceof Y.DataSource.Local), true);
                 Y.Assert.areEqual((ds instanceof Y.DataSource.Base), true);
             }
         });
         
-        Y.Test.Runner.add(testCase);
+        var testLocal = new Y.Test.Case({
+            name: "DataSource.Local Tests",
+
+            testDefaults: function(){
+                var ds = new Y.DataSource.Local({
+                    liveData: ["a","b","c","d"]
+                }),
+                    response = ds.sendRequest();
+                    
+                Y.ArrayAssert.itemsAreSame(["a","b","c","d"], response, "Expected live array.");
+            }                    
+        });
+
+        Y.Test.Runner.add(testClass);
+        Y.Test.Runner.add(testLocal);
         Y.Test.Runner.run();
     });
 })();

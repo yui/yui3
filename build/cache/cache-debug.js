@@ -187,10 +187,11 @@ Y.extend(Cache, Y.Base, {
      * @method cache
      * @param request {Object} Request object.
      * @param response {Object} Response object.
+     * @param payload {Object} Arbitrary data payload.     
      */
-    cache : function(request, response) {
+    cache : function(request, response, payload) {
         var entries = this._entries,
-            entry = {request:request, response:response},
+            entry = {request:request, response:response, payload:payload},
             max = this.get("size");
             
         if(!entries || (max === 0)) {
@@ -214,7 +215,8 @@ Y.extend(Cache, Y.Base, {
      *
      * @method retrieve
      * @param request {Object} Request object.
-     * @return {Object} Cached entry or null.
+     * @return {Object} Cached entry object with the following properties:
+     * {request:request, response:response, payload:payload},  or null.
      */
     retrieve : function(request) {
         // If cache is enabled...
@@ -233,26 +235,23 @@ Y.extend(Cache, Y.Base, {
     
                 // Execute matching function
                 if(this.isMatch(request,entry)) {
-                    // The cache returned match!
-                    // Grab the cached entry
-                    response = entry.response;
                     this.fire("retrieve", {request:request, entry: entry});
                     
                     // Refresh the position of the cache hit
                     if(i < length-1) {
                         // Remove element from its original location
                         entries.splice(i,1);
-                        Y.log("Remove-to-refresh cache entry: " + Y.dump(entry) + 
-                                " for request: " +  Y.dump(request), "info", this.toString());
                         // Add as newest
-                        this.cache(request, response);
-                    }
-                    break;
+                        entries[entries.length] = entry;
+                        Y.log("Refreshed cache entry: " + Y.dump(entry) + 
+                                " for request: " +  Y.dump(request), "info", this.toString());
+                        break;
+                    } 
                 }
             }
             Y.log("Retrieved cached response: " + Y.dump(response) +
                     " for request: " + Y.dump(request), "info", this.toString());
-            return response;
+            return entry;
 
         }
         return null;

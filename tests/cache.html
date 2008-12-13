@@ -93,13 +93,13 @@
 
             testRetrieve: function() {
                 var cache = new Y.Cache({size:2}),
-                    entry;
+                    cachedresponse;
                 cache.cache(1, "a");
                 cache.cache(2, "b");
-                cachedresponse = cache.retrieve(1);
+                cachedresponse = cache.retrieve(1).response;
                 Y.Assert.areSame("a", cachedresponse, "Expected first cached response.");
 
-                cachedresponse = cache.retrieve(2);
+                cachedresponse = cache.retrieve(2).response;
                 Y.Assert.areSame("b", cachedresponse, "Expected second cached response.");
             },
 
@@ -131,6 +131,10 @@
                 cache.retrieve(1);
                 Y.Assert.areSame(3, cache.getEntries().length, "Expected 3 entries.");
                 Y.Assert.areSame(1, cache.getEntries()[2].request, "Expected entry to be refreshed.");
+            },
+            
+            testPayload: function() {
+                //TODO
             }
         });
     
