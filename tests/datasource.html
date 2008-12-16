@@ -8,6 +8,7 @@
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
 <script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/cache/cache-debug.js"></script>
 <script type="text/javascript" src="../build/datasource/datasource-debug.js" id="src_ds"></script>
 <script type="text/javascript">
 
@@ -17,14 +18,17 @@
         //filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("dump", "yuitest", "console", "base", "datasource", function(Y) {
+    }).use("dump", "yuitest", "console", "cache", "base", "datasource", function(Y) {
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            BTNRUN = Y.get("#btnRun");
 
         // Set up the page
-        var btnRun = Y.get("#btnRun");
-        btnRun.set("disabled", false);
+        
+        BTNRUN.set("disabled", false);
         Y.on("click", function(){
             Y.Test.Runner.run();
-        }, btnRun);
+        }, BTNRUN);
         var myConsole = new Y.Console().render();
  
         var testClass = new Y.Test.Case({
@@ -32,13 +36,13 @@
         
             testConstructorBase: function(){
                 var ds = new Y.DataSource.Base();
-                Y.Assert.areEqual((ds instanceof Y.DataSource.Base), true);
+                ASSERT.areEqual((ds instanceof Y.DataSource.Base), true);
             },
             
             testConstructorLocal: function(){
                 var ds = new Y.DataSource.Local();
-                Y.Assert.areEqual((ds instanceof Y.DataSource.Local), true);
-                Y.Assert.areEqual((ds instanceof Y.DataSource.Base), true);
+                ASSERT.areEqual((ds instanceof Y.DataSource.Local), true);
+                ASSERT.areEqual((ds instanceof Y.DataSource.Base), true);
             }
         });
         
@@ -48,15 +52,43 @@
             testDefaults: function(){
                 var ds = new Y.DataSource.Local({
                     liveData: ["a","b","c","d"]
-                }),
-                    response = ds.sendRequest();
-                    
-                Y.ArrayAssert.itemsAreSame(["a","b","c","d"], response, "Expected live array.");
+                });
+
+                ds.sendRequest("a", {success:function(request,response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                }});                
             }                    
+        });
+
+        var testCache = new Y.Test.Case({
+            name: "DataSource Cache Tests",
+
+            testDefaultSize: function(){
+                var ds = new Y.DataSource.Base();
+                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areEqual(ds.get("maxCacheEntries"), 0, "Expected 0 size in DataSource.");
+                ASSERT.areEqual(ds._cache.get("size"), 0, "Expected 0 size in Cache.");
+            },
+
+            testInitSize: function(){
+                var ds = new Y.DataSource.Base({maxCacheEntries:3});
+                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areEqual(ds.get("maxCacheEntries"), 3, "Expected 3 size in DataSource.");
+                ASSERT.areEqual(ds._cache.get("size"), 3, "Expected 3 size in Cache.");
+            },
+
+            testSetSize: function(){
+                var ds = new Y.DataSource.Base();
+                ds.set("maxCacheEntries",5);
+                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areEqual(ds.get("maxCacheEntries"), 5, "Expected 5 size in DataSource.");
+                ASSERT.areEqual(ds._cache.get("size"), 5, "Expected 5 size in Cache.");
+            }
         });
 
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
+        Y.Test.Runner.add(testCache);
         Y.Test.Runner.run();
     });
 })();

@@ -4,9 +4,7 @@
     YUI({
         base: "../../../build/"
     }).use("base", "datasource", function(Y) {
-        var myDataSource = new Y.DataSource.Base();
-        
-    
+        var myDataSource = new Y.DataSource.Base();   
     });
 })();
 </script>
