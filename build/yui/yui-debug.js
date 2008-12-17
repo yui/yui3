@@ -17,6 +17,7 @@
         };
         
 
+// reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
     /**
@@ -117,6 +118,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
+    // Make a function, disallow direct instantiation
     YUI = function(o) {
         var Y = this;
 
@@ -146,10 +148,11 @@ YUI.prototype = {
      */
     _init: function(o) {
         
-
         o = o || {};
 
-        // find targeted window and @TODO create facades
+        // find targeted window
+        // @TODO create facades
+        // @TODO resolve windowless environments
         var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
         o.win = w;
         o.doc = w.document;
@@ -673,13 +676,26 @@ YUI.add("lang", function(Y) {
 
     var L = Y.Lang, 
 
-    ARRAY_TOSTRING = '[object Array]',
-    FUNCTION_TOSTRING = '[object Function]',
+    ARRAY = 'array',
+    DATE = 'date',
+    FUNCTION= 'function',
+    NUMBER = 'number',
     STRING = 'string',
     OBJECT = 'object',
     BOOLEAN = 'boolean',
     UNDEFINED = 'undefined',
-    OP = Object.prototype;
+    TOSTRING = Object.prototype.toString,
+    TYPES = {
+        'undefined'         : UNDEFINED,
+        'number'            : NUMBER,
+        'boolean'           : BOOLEAN,
+        'string'            : STRING,
+        '[object Function]' : FUNCTION,
+        '[object RegExp]'   : 'regexp',
+        '[object Array]'    : ARRAY,
+        '[object Date]'     : DATE,
+        '[object Error]'    : 'error'
+    };
 
     /**
      * Determines whether or not the provided object is an array.
@@ -695,7 +711,7 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is an array
      */
     L.isArray = function(o) { 
-        return OP.toString.apply(o) === ARRAY_TOSTRING;
+        return L.type(o) === ARRAY;
     };
 
     /**
@@ -728,7 +744,7 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
-        return OP.toString.apply(o) === FUNCTION_TOSTRING;
+        return L.type(o) === FUNCTION;
     };
         
     /**
@@ -761,7 +777,7 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is a number
      */
     L.isNumber = function(o) {
-        return typeof o === 'number' && isFinite(o);
+        return typeof o === NUMBER && isFinite(o);
     };
       
     /**
@@ -826,8 +842,21 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
      */
     L.isValue = function(o) {
 // return (o || o === false || o === 0 || o === ''); // Infinity fails
-return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
+// return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
+        return L.type(o);
     };
+
+    /**
+     * Returns a string representing the type of the item passed in.
+     * @method type
+     * @param o the item to test
+     * @return {string} the detected type
+     */
+    L.type = function (o) {
+        return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    };
+
+    
 
 }, "@VERSION@");
 
@@ -872,7 +901,7 @@ YUI.add("array", function(Y) {
      *   can be used to avoid multiple array.test calls.
      *   @return {Array} the resulting array
      */
-    Y.Array = function(o, i, al) {
+    var A = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
 
         // switch (t) {
@@ -892,7 +921,7 @@ YUI.add("array", function(Y) {
 
     };
 
-    var A = Y.Array;
+    Y.Array = A;
     
     /** 
      * Evaluates the input to determine if it is an array, array-like, or 
@@ -965,7 +994,7 @@ YUI.add("array", function(Y) {
      * @static
      * @return {boolean} true if the 
      */
-     A.some = (Native.forEach) ?
+     A.some = (Native.some) ?
         function (a, f, o) { 
             Native.some.call(a, f, o || Y);
             return Y;
@@ -1203,6 +1232,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Y.Object(o) returns a new object based upon the supplied object.  
+     * @TODO Use native Object.create() when available
      * @method Object
      * @static
      * @param o the supplier object
@@ -1225,7 +1255,7 @@ YUI.add("object", function(Y) {
      * wrapper for the native implementation.  Use the native implementation
      * directly instead.
      *
-     * @TODO Remove in PR2
+     * @TODO Remove in B1
      *
      * @method Object.owns
      * @static
@@ -1239,6 +1269,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Returns an array containing the object's keys
+     * @TODO use native Object.keys() if available
      * @method Object.keys
      * @static
      * @param o an object
@@ -2304,16 +2335,20 @@ var BASE = 'base',
        dom: {
             requires: ['event'],
             submodules: {
+
                 'dom-base': {
                     requires: ['event']
                 },
+
                 'dom-style': {
                     requires: ['dom-base']
 
                 },
+
                 'dom-screen': {
                     requires: ['dom-base', 'dom-style']
                 },
+
                 selector: {
                     requires: ['dom-base']
                 }
@@ -2323,15 +2358,19 @@ var BASE = 'base',
         node: {
             requires: ['dom'],
             submodules: {
+
                 'node-base': {
                     requires: ['dom-base', 'selector']
                 },
+
                 'node-style': {
                     requires: ['dom-style', 'node-base']
                 },
+
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
                 },
+
                 'node-event-simulate': {
                     requires: ['node-base']
                 }
@@ -2341,23 +2380,30 @@ var BASE = 'base',
         anim: {
             requires: [BASE, 'node'],
             submodules: {
+
                 'anim-base': {
                     requires: ['base', 'node-style']
                 },
+
                 'anim-color': {
                     requires: ['anim-base']
                 },
+
                 'anim-curve': {
                     requires: ['anim-xy']
                 },
+
                 'anim-easing': {
                 },
+
                 'anim-scroll': {
                     requires: ['anim-base']
                 },
+
                 'anim-xy': {
                     requires: ['anim-base', 'node-screen']
                 },
+
                 'anim-node-plugin': {
                      requires: ['node', 'anim-base']
                 }
@@ -3421,8 +3467,11 @@ Y.Env.meta = META;
 
                         // there can be only one
                         if (!r[i] && !this.loaded[i]) {
-                            m =this.getModule(i); s = m.supersedes ||[]; roll=false;
+                            m = this.getModule(i); 
+                            s = m.supersedes || []; 
+                            roll = false;
 
+                            // @TODO remove continue
                             if (!m.rollup) {
                                 continue;
                             }
@@ -3892,8 +3941,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                         };
                         
                     url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
-
-                    self = this; 
 
                     fn(url, {
                         data: s[i],

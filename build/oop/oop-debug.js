@@ -249,20 +249,20 @@ YUI.add("oop", function(Y) {
         if (!L.isObject(o)) {
             return o;
         }
-        
-        if (L.isDate(o)) {
-            return new Date(o);
-        }
 
-        var func = L.isFunction(o), o2;
+        var o2;
 
-        if (func) {
-            if (o instanceof RegExp) {
-                return new RegExp(o.source);
-            }
-            o2 = Y.bind(o, owner);
-        } else {
-            o2 = (safe) ? {} : Y.Object(o);
+        switch (L.type(o)) {
+            case 'date':
+                return new Date(o);
+            case 'function':
+                o2 = Y.bind(o, owner);
+                break;
+            case 'array':
+                o2 = [];
+                break;
+            default:
+                o2 = (safe) ? {} : Y.Object(o);
         }
 
         Y.each(o, function(v, k) {
