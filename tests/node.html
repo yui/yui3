@@ -311,7 +311,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
 
             Assert.isTrue(node.inDoc(), 'node.inDoc()');
 
-            Assert.areEqual(byId('test-contains'), Y.Node[node.byId('test-contains')._yuid]()[0], 'node.byId("test-contains")');
+            Assert.areEqual(byId('test-contains'), Y.Node[node.getById('test-contains')._yuid]()[0], 'node.getById("test-contains")');
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
             Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
             Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
