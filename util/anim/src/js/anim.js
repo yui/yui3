@@ -122,7 +122,7 @@
                 node = Y.Node.get(node);
                 this._node = node;
                 if (!node) {
-                    Y.fail('Y.Anim: invalid node: ' + node);
+                    Y.log(node + ' is not a valid node', 'warn', 'Anim');
                 }
                 return node;
             }
