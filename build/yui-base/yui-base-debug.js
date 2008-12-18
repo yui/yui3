@@ -1280,6 +1280,7 @@ YUI.add("object", function(Y) {
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
+        Y.message('Object.owns is deprecated, use the native method');
         return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
     };
 
