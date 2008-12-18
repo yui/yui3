@@ -10,37 +10,51 @@ YUI.add("lang", function(Y) {
      * @class Lang
      * @static
      */
-    Y.Lang = Y.Lang || {};
+    Y.Lang    = Y.Lang || {};
 
-    var L = Y.Lang, 
+    var L     = Y.Lang, 
 
-    ARRAY_TOSTRING = '[object Array]',
-    FUNCTION_TOSTRING = '[object Function]',
-    STRING = 'string',
-    OBJECT = 'object',
-    BOOLEAN = 'boolean',
+    ARRAY     = 'array',
+    BOOLEAN   = 'boolean',
+    DATE      = 'date',
+    ERROR     = 'error',
+    FUNCTION  = 'function',
+    NUMBER    = 'number',
+    OBJECT    = 'object',
+    REGEX     = 'regexp',
+    STRING    = 'string',
+    TOSTRING  = Object.prototype.toString,
     UNDEFINED = 'undefined',
-    OP = Object.prototype;
+
+    TYPES     = {
+        'undefined'         : UNDEFINED,
+        'number'            : NUMBER,
+        'boolean'           : BOOLEAN,
+        'string'            : STRING,
+        '[object Function]' : FUNCTION,
+        '[object RegExp]'   : REGEX,
+        '[object Array]'    : ARRAY,
+        '[object Date]'     : DATE,
+        '[object Error]'    : ERROR 
+    };
 
     /**
-     * Determines whether or not the provided object is an array.
-     * Testing typeof/instanceof/constructor of arrays across frame 
-     * boundaries isn't possible in Safari unless you have a reference
-     * to the other frame to test against its Array prototype.  To
-     * handle this case, we test well-known array properties instead.
-     * properties.
-     * @TODO can we kill this cross frame hack?
+     * Determines whether or not the provided item is an array.
+     * Returns false for array-like collections such as the
+     * function arguments collection or HTMLElement collection
+     * will return false.  You can use @see Array.test if you 
+     * want to
      * @method isArray
      * @static
      * @param o The object to test
      * @return {boolean} true if o is an array
      */
     L.isArray = function(o) { 
-        return OP.toString.apply(o) === ARRAY_TOSTRING;
+        return L.type(o) === ARRAY;
     };
 
     /**
-     * Determines whether or not the provided object is a boolean
+     * Determines whether or not the provided item is a boolean
      * @method isBoolean
      * @static
      * @param o The object to test
@@ -51,7 +65,7 @@ YUI.add("lang", function(Y) {
     };
     
     /**
-     * Determines whether or not the provided object is a function
+     * Determines whether or not the provided item is a function
      * Note: Internet Explorer thinks certain functions are objects:
      *
      * var obj = document.createElement("object");
@@ -69,11 +83,11 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
-        return OP.toString.apply(o) === FUNCTION_TOSTRING;
+        return L.type(o) === FUNCTION;
     };
         
     /**
-     * Determines whether or not the supplied object is a date instance
+     * Determines whether or not the supplied item is a date instance
      * @method isDate
      * @static
      * @param o The object to test
@@ -84,7 +98,7 @@ YUI.add("lang", function(Y) {
     };
 
     /**
-     * Determines whether or not the provided object is null
+     * Determines whether or not the provided item is null
      * @method isNull
      * @static
      * @param o The object to test
@@ -95,18 +109,18 @@ YUI.add("lang", function(Y) {
     };
         
     /**
-     * Determines whether or not the provided object is a legal number
+     * Determines whether or not the provided item is a legal number
      * @method isNumber
      * @static
      * @param o The object to test
      * @return {boolean} true if o is a number
      */
     L.isNumber = function(o) {
-        return typeof o === 'number' && isFinite(o);
+        return typeof o === NUMBER && isFinite(o);
     };
       
     /**
-     * Determines whether or not the provided object is of type object
+     * Determines whether or not the provided item is of type object
      * or function
      * @method isObject
      * @static
@@ -119,7 +133,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is a string
+     * Determines whether or not the provided item is a string
      * @method isString
      * @static
      * @param o The object to test
@@ -130,7 +144,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is undefined
+     * Determines whether or not the provided item is undefined
      * @method isUndefined
      * @static
      * @param o The object to test
@@ -166,8 +180,18 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
-// return (o || o === false || o === 0 || o === ''); // Infinity fails
-return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
+        var t = L.type(o);
+        return (t && t !== UNDEFINED) || false;
+    };
+
+    /**
+     * Returns a string representing the type of the item passed in.
+     * @method type
+     * @param o the item to test
+     * @return {string} the detected type
+     */
+    L.type = function (o) {
+        return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
     };
 
 }, "@VERSION@");
