@@ -624,13 +624,16 @@ YUI.add("history", function (Y) {
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
             // contained special characters...
-            i = top.location.href.indexOf("#");
-            h = i >= 0 ? top.location.href.substr(i + 1) : top.location.href;
+            h = top.location.href;
+            i = h.indexOf("#");
 
-            REGEXP.lastIndex = 0;
-            while ((m = REGEXP.exec(h))) {
-                if (m[1] === moduleId) {
-                    return decodeURIComponent(m[2]);
+            if (i >= 0) {
+                h = h.substr(i + 1);
+                REGEXP.lastIndex = 0;
+                while ((m = REGEXP.exec(h))) {
+                    if (m[1] === moduleId) {
+                        return decodeURIComponent(m[2]);
+                    }
                 }
             }
 
