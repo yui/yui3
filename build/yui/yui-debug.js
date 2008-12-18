@@ -175,7 +175,12 @@ YUI.prototype = {
             _uidx: 0
         };
 
-        this.version = '@VERSION@';
+        var v = '@VERSION@';
+        if (v.indexOf('@') > -1) {
+            v = 'test';
+        }
+
+        this.version = v;
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
