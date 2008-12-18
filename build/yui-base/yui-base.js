@@ -175,6 +175,13 @@ YUI.prototype = {
             _uidx: 0
         };
 
+        var v = '@VERSION@';
+        if (v.indexOf('@') > -1) {
+            v = 'test';
+        }
+
+        this.version = v;
+
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
             this.id = this.stamp(this);
@@ -521,7 +528,7 @@ YUI.prototype = {
      */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
-        return p +'-' + e._yidx + '-' + e._uidx++;
+        return p +'-' + this.version + '-' + e._yidx + '-' + e._uidx++;
     },
 
     /**
@@ -1266,6 +1273,7 @@ YUI.add("object", function(Y) {
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
+        Y.message('Object.owns is deprecated, use the native method');
         return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
     };
 

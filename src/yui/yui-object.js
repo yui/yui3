@@ -12,6 +12,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Y.Object(o) returns a new object based upon the supplied object.  
+     * @TODO Use native Object.create() when available
      * @method Object
      * @static
      * @param o the supplier object
@@ -34,7 +35,7 @@ YUI.add("object", function(Y) {
      * wrapper for the native implementation.  Use the native implementation
      * directly instead.
      *
-     * @TODO Remove in PR2
+     * @TODO Remove in B1
      *
      * @method Object.owns
      * @static
@@ -43,11 +44,13 @@ YUI.add("object", function(Y) {
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
+        Y.message('Object.owns is deprecated, use the native method');
         return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
     };
 
     /**
      * Returns an array containing the object's keys
+     * @TODO use native Object.keys() if available
      * @method Object.keys
      * @static
      * @param o an object
