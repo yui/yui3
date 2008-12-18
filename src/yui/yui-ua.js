@@ -1,12 +1,22 @@
 /*
- * YUI user agent detection
+ * YUI user agent detection. 
+ * Do not fork for a browser if it can be avoided.  Use feature detection when
+ * you can.  Use the user agent as a last resort.  UA stores a version
  * @module yui
  * @submodule ua
  */
 YUI.add("ua", function(Y) {
 
     /**
-     * Browser/platform detection
+     * YUI user agent detection.
+     * Do not fork for a browser if it can be avoided.  Use feature detection when
+     * you can.  Use the user agent as a last resort.  UA stores a version
+     * number for the browser engine, 0 otherwise.  This value may or may not map
+     * to the version number of the browser using the engine.  The value is 
+     * presented as a float so that it can easily be used for boolean evaluation 
+     * as well as for looking for a particular range of versions.  Because of this, 
+     * some of the granularity of the version info may be lost (e.g., Gecko 1.8.0.9 
+     * reports 1.8).
      * @class UA
      * @static
      */
@@ -48,7 +58,7 @@ YUI.add("ua", function(Y) {
 
             /**
              * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
-             * will evaluate to 1, other browsers 0.  Example: 418.9.1
+             * will evaluate to 1, other browsers 0.  Example: 418.9
              * <pre>
              * Safari 1.3.2 (312.6): 312.8.1 <-- Reports 312.8 -- currently the 
              *                                   latest available for Mac OSX 10.3.

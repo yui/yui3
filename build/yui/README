@@ -8,6 +8,9 @@ The YUI Global
         get
         loader
 
+3.0.0next
+    - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
+    - Deprecated Lang.isValue because Lang.type can provide the same functionality.
 
 3.0.0pr2
     - The initial dependency calculation should not allow automatic rollup.
@@ -18,4 +21,4 @@ The YUI Global
     - 'useConsole' config changed to useBrowserConsole
 
 3.0.0pr1
-    Inital release
+    Initial release

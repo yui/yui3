@@ -9,7 +9,9 @@ YUI.add("log", function(instance) {
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
      * can consume.  If the 'useBrowserConsole' config is true, it will
-     * write to the browser console if available.
+     * write to the browser console if available.  YUI-specific log
+     * messages will only be present in the -debug versions of the
+     * JS files.
      *
      * @method log
      * @for YUI
@@ -66,6 +68,23 @@ YUI.add("log", function(instance) {
         }
 
         return Y;
+    };
+
+    /**
+     * Write a system message.  This message will be preserved in the
+     * minified and raw versions of the YUI files.
+     * @method log
+     * @for YUI
+     * @param  {String}  msg  The message to log.
+     * @param  {String}  cat  The log category for the message.  Default
+     *                        categories are "info", "warn", "error", time".
+     *                        Custom categories can be used as well. (opt)
+     * @param  {String}  src  The source of the the message (opt)
+     * @param  {boolean} silent If true, the log event won't fire
+     * @return {YUI}      YUI instance
+     */
+    instance.message = function() {
+        return instance.log.apply(instance, arguments);
     };
 
 }, "@VERSION@");
