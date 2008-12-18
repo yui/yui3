@@ -250,6 +250,8 @@ YUI.add("oop", function(Y) {
         switch (L.type(o)) {
             case 'date':
                 return new Date(o);
+            case 'regexp':
+                return new RegExp(o.source);
             case 'function':
                 o2 = Y.bind(o, owner);
                 break;

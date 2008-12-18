@@ -17,6 +17,7 @@
         };
         
 
+// reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
     /**
@@ -117,6 +118,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
+    // Make a function, disallow direct instantiation
     YUI = function(o) {
         var Y = this;
 
@@ -146,10 +148,11 @@ YUI.prototype = {
      */
     _init: function(o) {
         
-
         o = o || {};
 
-        // find targeted window and @TODO create facades
+        // find targeted window
+        // @TODO create facades
+        // @TODO resolve windowless environments
         var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
         o.win = w;
         o.doc = w.document;
@@ -517,8 +520,7 @@ YUI.prototype = {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
-            var instance = this;
-            instance.log(msg, "error"); // don't scrub this one
+            this.message(msg, "error"); // don't scrub this one
         }
 
         return this;

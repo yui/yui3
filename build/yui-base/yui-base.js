@@ -507,8 +507,7 @@ YUI.prototype = {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
-            var instance = this;
-            instance.log(msg, "error"); // don't scrub this one
+            this.message(msg, "error"); // don't scrub this one
         }
 
         return this;
@@ -587,7 +586,9 @@ YUI.add("log", function(instance) {
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
      * can consume.  If the 'useBrowserConsole' config is true, it will
-     * write to the browser console if available.
+     * write to the browser console if available.  YUI-specific log
+     * messages will only be present in the -debug versions of the
+     * JS files.
      *
      * @method log
      * @for YUI
@@ -646,6 +647,23 @@ YUI.add("log", function(instance) {
         return Y;
     };
 
+    /**
+     * Write a system message.  This message will be preserved in the
+     * minified and raw versions of the YUI files.
+     * @method log
+     * @for YUI
+     * @param  {String}  msg  The message to log.
+     * @param  {String}  cat  The log category for the message.  Default
+     *                        categories are "info", "warn", "error", time".
+     *                        Custom categories can be used as well. (opt)
+     * @param  {String}  src  The source of the the message (opt)
+     * @param  {boolean} silent If true, the log event won't fire
+     * @return {YUI}      YUI instance
+     */
+    instance.message = function() {
+        return instance.log.apply(instance, arguments);
+    };
+
 }, "@VERSION@");
 /*
  * YUI lang utils
@@ -659,39 +677,40 @@ YUI.add("lang", function(Y) {
      * @class Lang
      * @static
      */
-    Y.Lang = Y.Lang || {};
+    Y.Lang    = Y.Lang || {};
 
-    var L = Y.Lang, 
+    var L     = Y.Lang, 
 
-    ARRAY = 'array',
-    DATE = 'date',
-    FUNCTION= 'function',
-    NUMBER = 'number',
-    STRING = 'string',
-    OBJECT = 'object',
-    BOOLEAN = 'boolean',
+    ARRAY     = 'array',
+    BOOLEAN   = 'boolean',
+    DATE      = 'date',
+    ERROR     = 'error',
+    FUNCTION  = 'function',
+    NUMBER    = 'number',
+    OBJECT    = 'object',
+    REGEX     = 'regexp',
+    STRING    = 'string',
+    TOSTRING  = Object.prototype.toString,
     UNDEFINED = 'undefined',
-    TOSTRING = Object.prototype.toString,
-    TYPES = {
+
+    TYPES     = {
         'undefined'         : UNDEFINED,
         'number'            : NUMBER,
         'boolean'           : BOOLEAN,
         'string'            : STRING,
         '[object Function]' : FUNCTION,
-        '[object RegExp]'   : 'regexp',
+        '[object RegExp]'   : REGEX,
         '[object Array]'    : ARRAY,
         '[object Date]'     : DATE,
-        '[object Error]'    : 'error'
+        '[object Error]'    : ERROR 
     };
 
     /**
-     * Determines whether or not the provided object is an array.
-     * Testing typeof/instanceof/constructor of arrays across frame 
-     * boundaries isn't possible in Safari unless you have a reference
-     * to the other frame to test against its Array prototype.  To
-     * handle this case, we test well-known array properties instead.
-     * properties.
-     * @TODO can we kill this cross frame hack?
+     * Determines whether or not the provided item is an array.
+     * Returns false for array-like collections such as the
+     * function arguments collection or HTMLElement collection
+     * will return false.  You can use @see Array.test if you 
+     * want to
      * @method isArray
      * @static
      * @param o The object to test
@@ -702,7 +721,7 @@ YUI.add("lang", function(Y) {
     };
 
     /**
-     * Determines whether or not the provided object is a boolean
+     * Determines whether or not the provided item is a boolean
      * @method isBoolean
      * @static
      * @param o The object to test
@@ -713,7 +732,7 @@ YUI.add("lang", function(Y) {
     };
     
     /**
-     * Determines whether or not the provided object is a function
+     * Determines whether or not the provided item is a function
      * Note: Internet Explorer thinks certain functions are objects:
      *
      * var obj = document.createElement("object");
@@ -735,7 +754,7 @@ YUI.add("lang", function(Y) {
     };
         
     /**
-     * Determines whether or not the supplied object is a date instance
+     * Determines whether or not the supplied item is a date instance
      * @method isDate
      * @static
      * @param o The object to test
@@ -746,7 +765,7 @@ YUI.add("lang", function(Y) {
     };
 
     /**
-     * Determines whether or not the provided object is null
+     * Determines whether or not the provided item is null
      * @method isNull
      * @static
      * @param o The object to test
@@ -757,7 +776,7 @@ YUI.add("lang", function(Y) {
     };
         
     /**
-     * Determines whether or not the provided object is a legal number
+     * Determines whether or not the provided item is a legal number
      * @method isNumber
      * @static
      * @param o The object to test
@@ -768,7 +787,7 @@ YUI.add("lang", function(Y) {
     };
       
     /**
-     * Determines whether or not the provided object is of type object
+     * Determines whether or not the provided item is of type object
      * or function
      * @method isObject
      * @static
@@ -781,7 +800,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is a string
+     * Determines whether or not the provided item is a string
      * @method isString
      * @static
      * @param o The object to test
@@ -792,7 +811,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is undefined
+     * Determines whether or not the provided item is undefined
      * @method isUndefined
      * @static
      * @param o The object to test
@@ -828,9 +847,8 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
-// return (o || o === false || o === 0 || o === ''); // Infinity fails
-// return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
-        return L.type(o);
+        var t = L.type(o);
+        return (t && t !== UNDEFINED) || false;
     };
 
     /**
@@ -842,8 +860,6 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     L.type = function (o) {
         return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
     };
-
-    
 
 }, "@VERSION@");
 
@@ -1296,14 +1312,24 @@ YUI.add("object", function(Y) {
     };
 }, "@VERSION@");
 /*
- * YUI user agent detection
+ * YUI user agent detection. 
+ * Do not fork for a browser if it can be avoided.  Use feature detection when
+ * you can.  Use the user agent as a last resort.  UA stores a version
  * @module yui
  * @submodule ua
  */
 YUI.add("ua", function(Y) {
 
     /**
-     * Browser/platform detection
+     * YUI user agent detection.
+     * Do not fork for a browser if it can be avoided.  Use feature detection when
+     * you can.  Use the user agent as a last resort.  UA stores a version
+     * number for the browser engine, 0 otherwise.  This value may or may not map
+     * to the version number of the browser using the engine.  The value is 
+     * presented as a float so that it can easily be used for boolean evaluation 
+     * as well as for looking for a particular range of versions.  Because of this, 
+     * some of the granularity of the version info may be lost (e.g., Gecko 1.8.0.9 
+     * reports 1.8).
      * @class UA
      * @static
      */
@@ -1345,7 +1371,7 @@ YUI.add("ua", function(Y) {
 
             /**
              * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
-             * will evaluate to 1, other browsers 0.  Example: 418.9.1
+             * will evaluate to 1, other browsers 0.  Example: 418.9
              * <pre>
              * Safari 1.3.2 (312.6): 312.8.1 <-- Reports 312.8 -- currently the 
              *                                   latest available for Mac OSX 10.3.
