@@ -175,6 +175,8 @@ YUI.prototype = {
             _uidx: 0
         };
 
+        this.version = '@VERSION@';
+
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
             this.id = this.stamp(this);
@@ -534,7 +536,7 @@ YUI.prototype = {
      */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
-        return p +'-' + e._yidx + '-' + e._uidx++;
+        return p +'-' + this.version + '-' + e._yidx + '-' + e._uidx++;
     },
 
     /**
@@ -1280,6 +1282,7 @@ YUI.add("object", function(Y) {
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
+        Y.message('Object.owns is deprecated, use the native method');
         return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
     };
 
@@ -1546,7 +1549,8 @@ YUI.add("later", function(Y) {
 YUI.add("get", function(Y) {
     
         var ua=Y.UA, 
-        L=Y.Lang;
+        L=Y.Lang,
+        PREFIX = Y.guid('yui_');
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -1585,10 +1589,6 @@ Y.Get = function() {
      */
         nidx=0, 
 
-        // ridx=0,
-
-        // sandboxFrame=null,
-
     /**
      * interal property used to prevent multiple simultaneous purge 
      * processes
@@ -1612,7 +1612,7 @@ Y.Get = function() {
         var w = win || Y.config.win, d=w.document, n=d.createElement(type);
 
         for (var i in attr) {
-            if (attr[i] && Y.Object.owns(attr, i)) {
+            if (attr[i] && attr.hasOwnProperty(i)) {
                 n.setAttribute(i, attr[i]);
             }
         }
@@ -1631,7 +1631,7 @@ Y.Get = function() {
     var _linkNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("link", {
-                "id":      "yui__dyn_" + (nidx++),
+                "id":      PREFIX + (nidx++),
                 "type":    "text/css",
                 "charset": c,
                 "rel":     "stylesheet",
@@ -1650,7 +1650,7 @@ Y.Get = function() {
     var _scriptNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("script", {
-                "id":      "yui__dyn_" + (nidx++),
+                "id":      PREFIX + (nidx++),
                 "type":    "text/javascript",
                 "charset": c,
                 "src":     url
