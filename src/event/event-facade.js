@@ -315,4 +315,4 @@ YUI.add("event-facade", function(Y) {
 
     };
 
-}, "3.0.0");
+}, "@VERSION@");

@@ -277,7 +277,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
     };
 
 
-}, "3.0.0", {
+}, "@VERSION@", {
     use: [
           "aop", 
           "event-custom", 
@@ -575,7 +575,7 @@ YUI.add("aop", function(Y) {
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * YUI Custom Events
  * @submodule event-custom
@@ -1469,7 +1469,7 @@ YUI.add("event-custom", function(Y) {
         }
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * Configures an object to be able to be targeted for events, and to publish events
  * @submodule event-target
@@ -1904,7 +1904,7 @@ YUI.add("event-target", function(Y) {
     ET.call(Y);
 
 
-}, "3.0.0");
+}, "@VERSION@");
 
 /*
  * DOMReady
@@ -2049,7 +2049,7 @@ var Env = YUI.Env,
             Y.before(yready, Env, "_ready");
         }
 
-    }, "3.0.0");
+    }, "@VERSION@");
 
 })();
 /*
@@ -2894,7 +2894,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
     E._tryPreloadAttach();
 
-}, "3.0.0");
+}, "@VERSION@");
 
 })();
 /*
@@ -3214,7 +3214,7 @@ YUI.add("event-facade", function(Y) {
 
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * Functionality to simulate events.
  * @submodule event-simulate

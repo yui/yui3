@@ -432,4 +432,4 @@ YUI.add("event-target", function(Y) {
     ET.call(Y);
 
 
-}, "3.0.0");
+}, "@VERSION@");
