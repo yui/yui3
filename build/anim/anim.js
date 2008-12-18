@@ -124,7 +124,6 @@ YUI.add('anim', function(Y) {
                 node = Y.Node.get(node);
                 this._node = node;
                 if (!node) {
-                    Y.fail('Y.Anim: invalid node: ' + node);
                 }
                 return node;
             }
@@ -533,8 +532,8 @@ YUI.add('anim', function(Y) {
                 var mTo = Y.Anim.RE_UNITS.exec(val);
 
                 begin = mFrom ? mFrom[1] : begin;
-                var end = mTo ? mTo[1] : val,
-                    unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
+                end = mTo ? mTo[1] : val;
+                unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
                 if (!unit && Y.Anim.RE_DEFAULT_UNIT.test(name)) {
                     unit = Y.Anim.DEFAULT_UNIT;
@@ -1083,7 +1082,7 @@ Y.Anim.getBezier = function(points, t) {
  */
 
 var NodeFX = function(config) {
-    var config = Y.merge(config);
+    config = (config) ? Y.merge(config) : {};
     config.node = config.owner;
     NodeFX.superclass.constructor.apply(this, arguments);
 };

@@ -82,7 +82,7 @@ YUI().use('dd-drop', 'dd-constrain', function(Y) {
     //Get all the divs with the class drag
     var drags = Y.Node.all('#play div.drag');
     //Walk through each one
-    drags.each(function(v, k, items) {
+    drags.each(function(v, k) {
         //scope a local var for the data
         var thisData = {};
         //Using Y.mix to break this data from the data above
@@ -91,7 +91,7 @@ YUI().use('dd-drop', 'dd-constrain', function(Y) {
         //Create the new Drag Instance
         var dd = new Y.DD.Drag({
             //Give it the node
-            node: items.item(k),
+            node: v,
             //Keep it inside the work area
             constrain2node: '#play',
             //Set the dragMode to intersect

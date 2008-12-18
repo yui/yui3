@@ -34,7 +34,7 @@ YUI({...}).use("overlay", function(Y) {
 
 <h4>Aligning the overlay</h4>
 
-<p>The <a href="../widget/widget-build.html"><code>WidgetPositionExt</code></a> extension used to create the overlay class add <code>align</code> and <code>centered</code> attributes to the Overlay, which can be used to align or center the Overlay relative to another element on the page (or the viewport).</p>
+<p>The <a href="../../api/WidgetPositionExt.html"><code>WidgetPositionExt</code></a> extension used to create the overlay class add <code>align</code> and <code>centered</code> attributes to the Overlay, which can be used to align or center the Overlay relative to another element on the page (or the viewport).</p>
 
 <p>The <code>align</code> attribute accepts as a value an object literal with the following properties:</p>
 

@@ -13,16 +13,16 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 
 	function(Y) {
 
-		//Get a reference to the Node that we are using
+		//Get a reference to the DIV that we are using
 		//to report results.
-		var d = Y.Node.get('#container ul');
+		var d = document.getElementById('container');
 
 		/* global listener object */
 		var gH = {
 			write: function(str, args) {
-					 d.set('innerHTML', "ID: " + str);
+					 d.innerHTML += "ID: " + str;
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args;
+					 	d.innerHTML += " " + "The arguments are: " + args;
 					 }
 					 d.innerHTML += "<br>";
 				   },
@@ -47,9 +47,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 		/* transaction event object */
 		var tH = {
 			write: function(str, args) {
-					 d.set('innerHTML', "ID: " + str);
+					 d.innerHTML += "ID: " + str;
 					 if (args) {
-					   d.set('innerHTML', " The arguments are: " + args;
+					 	d.innerHTML += " " + "The arguments are: " + args;
 					 }
 					 d.innerHTML += "<br>";
 				   },
@@ -108,7 +108,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			}
 		}
 
-		Y.get('#get1').on("click", call);
-		Y.get('#get2').on("click", call, true);
+		Y.on('click', call, "#get1", this, false);
+		Y.on('click', call, "#get2", this, true);
 	});
 </script>

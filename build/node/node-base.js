@@ -74,7 +74,27 @@ YUI.add('node-base', function(Y) {
         this.init.apply(this, arguments);
     };
 
-    Node.PLUGINS = {};
+    /**
+     * @property PLUGINS
+     * Registry for statically configured plugins.
+     * Default plugins added to all Node instances. 
+     * @static
+     * Plugins are registered as objects with "fn" and "cfg" fields:
+     * Y.Node.PLUGINS.push({ fn: Y.plugin.NodeFX, cfg: {easing: 'easeOut'} });
+     */
+    Node.PLUGINS = [];
+
+    /**
+     * @method Node.plug
+     * Add a default plugin to be plugged into all instances. 
+     * @static
+     * @param {Function || String} p The plugin class. String assumes Y.plugin[p]
+     * @param {Object} config A default plugin configuration applied to all instances.
+     * 
+     */
+    Node.plug = function(p, config) {
+        Node.PLUGINS.push({fn: p, cfg: config}); 
+    };
 
     Node._deepGet = function (path, val) {
         var pl = path.length,
@@ -193,6 +213,7 @@ YUI.add('node-base', function(Y) {
                 var getValue = function(node) {
                     args[0] = node;
                     val = Node.scrubVal(fn.apply(instance, args), instance);
+
                     if (getAll) {
                         ret[ret.length] = val;
                     } else {
@@ -212,6 +233,12 @@ YUI.add('node-base', function(Y) {
 
     };
 
+    /** 
+     *   @method getDOMNode
+     *   @static
+     *   @param node A Node instance
+     * @return DOMNode The DOM node bound to the Node instance
+     */
     Node.getDOMNode = _getDOMNode;
     
     Node.wrapDOMMethod = function(name) {
@@ -278,14 +305,14 @@ YUI.add('node-base', function(Y) {
                 _instances[uid] = this;
             }
 
-            this.initPlugins();
+            this._initPlugins();
         },
 
-        initPlugins: function() {
-            Y.each(Node.PLUGINS, function(config, fn) {
-                this.plug(fn, config);
-            });
-        },
+        _initPlugins: function(config) { 
+            if (Y.Node.PLUGINS) { 
+                this.plug(Y.Node.PLUGINS); 
+            } 
+        }, 
 
         /**
          * Filters the NodeList instance down to only nodes matching the given selector.
@@ -390,22 +417,48 @@ YUI.add('node-base', function(Y) {
          * @param {Object} config An optional config to pass to the constructor
          * @chainable
          */
-        plug: function(PluginClass, config) {
-            config = config || {};
-            config.owner = this;
-            if (PluginClass && PluginClass.NS) {
-                this[PluginClass.NS] = new PluginClass(config);
+        plug: function(p, cfg) {
+            if (p) {
+                if (typeof p === 'string' && Y.plugin) {
+                    this._plug(Y.plugin[p], cfg);
+                } else if (p.fn) {
+                    this.plug(p.fn, p.cfg);
+                } else if (Y.Lang.isFunction(p)) {
+                    this._plug(p, cfg);
+                } else {
+                    for (var i = 0, len = p.length; i < len; ++i) {
+                        this.plug(p[i]);
+                    }
+                }
             }
             return this;
+        },
+
+        _plug: function(PluginClass, config) {
+            if (PluginClass && PluginClass.NS) {
+                var ns = PluginClass.NS;
+
+                // TODO: configurable plugin nodeType?
+                if (PluginClass.ALLOW_LISTS === true || Node[this._yuid]().length === 1) {
+                    config = config || {};
+                    config.owner = this;
+
+                    this[ns] = new PluginClass(config);
+                } else {
+                    this[ns] = null;
+                }
+            }
         },
 
         //normalize: function() {},
         //isSupported: function(feature, version) {},
         toString: function() {
-            var str = '', 
-            node = Node[this._yuid]()[0] || {};
+            var str = this._yuid + ': ', 
+                errorMsg = this._yuid + ': not bound to any nodes',
+                nodes = Node[this._yuid]() || {};
 
-            if (node) {
+            if (nodes) {
+                var node = nodes[0];
                 str += node[NODE_NAME];
                 if (node.id) {
                     str += '#' + node.id; 
@@ -414,10 +467,12 @@ YUI.add('node-base', function(Y) {
                 if (node.className) {
                     str += '.' + node.className.replace(' ', '.'); 
                 }
-            } else {
-                'no nodes for ' + this._yuid;
+
+                if (nodes.length > 1) {
+                    str += '...[' + nodes.length + ' items]';
+                }
             }
-            return str;
+            return str || errorMsg;
         }
     };
 
@@ -460,20 +515,22 @@ YUI.add('node-base', function(Y) {
          * @return {any} Current value of the property
          */
         get: function(node, prop) {
-            var val;
-            if (prop.indexOf('.') < 0) {
-                if (prop in Node.getters) { // use custom getter
-                    val = Node.getters[prop].call(this, node, prop);
-                } else {
-                    val = node[prop];
-                }
+            var val = null;
+            if (prop) {
+                if (prop.indexOf('.') < 0) {
+                    if (prop in Node.getters) { // use custom getter
+                        val = Node.getters[prop].call(this, node, prop);
+                    } else {
+                        val = node[prop];
+                    }
 
-                // method wrapper uses undefined in chaining test
-                if (val === undefined) {
-                    val = null;
+                    // method wrapper uses undefined in chaining test
+                    if (val === undefined) {
+                        val = null;
+                    }
+                } else {
+                    val = Node._deepGet(prop.split('.'), node);
                 }
-            } else {
-                val = Node._deepGet(prop.split('.'), node);
             }
 
             return val;
@@ -614,7 +671,7 @@ YUI.add('node-base', function(Y) {
             }
         },
 
-        byId: function(node, id) {
+        getById: function(node, id) {
             var ret = node[OWNER_DOCUMENT].getElementById(id);
             if (!ret || !Y.DOM.contains(node, ret)) {
                 ret = null;
@@ -652,37 +709,48 @@ YUI.add('node-base', function(Y) {
     Node.get = function(node, doc, isRoot, getAll) {
         var instance;
 
+
+        if (node && node.size) { // return existing Node instance
+            return node;
+        } else if (typeof node === 'string') {
+            node = Node._getByString(node, doc, getAll);
+        }
+
         if (node) {
-            if (typeof node === 'string') {
-                if (node === 'document') { // TODO: allow 'doc'? 'window'?
-                    node = [Y.config.doc];
-                } else {
-                    node = Selector.query(node, doc, !getAll); // Selector arg is getFirst
+            if (!getAll) { // reuse single element node instances
+                if (node._yuid) {
+                    // verify IE's uniqueID in case the node was cloned
+                    if (!node.uniqueID || (node.uniqueID === node._yuid)) {
+                        instance = _instances[node._yuid];
+                    }
                 }
             }
 
-            if (node) {
-                if (!getAll) { // reuse single element node instances
-                    if (node._yuid) {
-                        // verify IE's uniqueID in case the node was cloned
-                        if (!node.uniqueID || (node.uniqueID === node._yuid)) {
-                            instance = _instances[node._yuid];
-                        }
-                    }
-                }
+            if (!instance) {
+                instance = new Node(node, doc, isRoot, getAll);
+            }
 
-                if (!instance) {
-                    instance = new Node(node, doc, isRoot, getAll);
-                }
-
-                if (instance && isRoot && !getAll) {
-                    _restrict[instance._yuid] = true;
-                }
+            if (instance && isRoot && !getAll) {
+                _restrict[instance._yuid] = true;
             }
         }
 
         // zero length collection returns null
         return (instance && instance.size()) ? instance : null;
+    };
+
+    Node._getByString = function(str, doc, getAll) {
+        var node;
+
+        if (/^win(?:dow)?/.test(str)) {
+                node = Y.config.win;
+        } else if (/^doc(?:ument)?/.test(str)) {
+                node = Y.config.doc;
+        } else {
+            node = Selector.query(str, doc, !getAll);
+        }
+
+        return node;
     };
 
     /**

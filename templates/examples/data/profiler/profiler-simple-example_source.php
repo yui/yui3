@@ -1,7 +1,3 @@
-<h3>Note:</h3>
-<p>Keep an eye on the Logger console at right to see the profiling information being reported.</p>
-
-
 <script type="text/javascript">
 
 YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>,function (Y) {

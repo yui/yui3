@@ -34,9 +34,9 @@ Using this selector syntax we will be able to add new list markup to the <code>#
 <textarea name="code" class="JScript">
 //Get the list of li's in the lists and make them draggable
 var lis = Y.Node.all('#play ul li');
-lis.each(function(v, k, items) {
+lis.each(function(v, k) {
     var dd = new Y.DD.Drag({
-        node: items.item(k),
+        node: v,
         proxy: true,
         //Don't move the node at the end of the drag
         moveOnEnd: false,
@@ -56,9 +56,9 @@ Using this selector syntax we will be able to add new list markup to the <code>#
 <textarea name="code" class="JScript">
 //Create simple targets for the 2 lists..
 var uls = Y.Node.all('#play ul');
-uls.each(function(v, k, items) {
+uls.each(function(v, k) {
     var tar = new Y.DD.Drop({
-        node: items.item(k)
+        node: v
     });
 });
 </textarea>
@@ -233,9 +233,9 @@ YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
 
     //Get the list of li's in the lists and make them draggable
     var lis = Y.Node.all('#play ul li');    
-    lis.each(function(v, k, items) {
+    lis.each(function(v, k) {
         var dd = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             proxy: true,
             moveOnEnd: false,
             constrain2node: '#play',
@@ -247,9 +247,9 @@ YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
 
     //Create simple targets for the 2 lists..
     var uls = Y.Node.all('#play ul');    
-    uls.each(function(v, k, items) {
+    uls.each(function(v, k) {
         var tar = new Y.DD.Drop({
-            node: items.item(k)
+            node: v
         });
     });
     

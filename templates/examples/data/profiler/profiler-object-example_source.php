@@ -1,7 +1,3 @@
-<h3>Note:</h3>
-<p>Keep an eye on the Logger console at right to see the profiling information being reported.</p>
-
-
 <div class="bar">div class="bar"</div>
 <div class="bar-baz">div class="bar-baz"</div>
 <div class="bar ">div class="bar "</div>
