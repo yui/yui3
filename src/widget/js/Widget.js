@@ -58,6 +58,7 @@ var _instances = {};
  * @class Widget
  * @constructor
  * @extends Base
+ * @uses PluginHost
  */
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');

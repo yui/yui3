@@ -233,6 +233,7 @@ var _instances = {};
  * @class Widget
  * @constructor
  * @extends Base
+ * @uses PluginHost
  */
 function Widget(config) {
 
