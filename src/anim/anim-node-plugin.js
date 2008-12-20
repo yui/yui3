@@ -6,7 +6,7 @@
  */
 
 var NodeFX = function(config) {
-    var config = Y.merge(config);
+    config = (config) ? Y.merge(config) : {};
     config.node = config.owner;
     NodeFX.superclass.constructor.apply(this, arguments);
 };

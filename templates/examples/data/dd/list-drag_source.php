@@ -131,9 +131,9 @@ YUI(<?php echo $yuiConfig ?>).use('dd-constrain', 'dd-proxy', 'dd-drop', functio
 
     //Get the list of li's in the lists and make them draggable
     var lis = Y.Node.all('#play ul li');
-    lis.each(function(v, k, items) {
+    lis.each(function(v, k) {
         var dd = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             proxy: true,
             moveOnEnd: false,
             constrain2node: '#play',
@@ -145,9 +145,9 @@ YUI(<?php echo $yuiConfig ?>).use('dd-constrain', 'dd-proxy', 'dd-drop', functio
 
     //Create simple targets for the 2 lists..
     var uls = Y.Node.all('#play ul');
-    uls.each(function(v, k, items) {
+    uls.each(function(v, k) {
         var tar = new Y.DD.Drop({
-            node: items.item(k)
+            node: v
         });
     });
     

@@ -56,11 +56,11 @@ YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-constrain', function(Y) {
         'drag5': { color: 'purple', size: 'x-large', price: '$15.00' }
     };
     var drags = Y.Node.all('#play div.drag');
-    drags.each(function(v, k, items) {
+    drags.each(function(v, k) {
         var thisData = {};
         Y.mix(thisData, data[v.get('id')]);
         var dd = new Y.DD.Drag({
-            node: items.item(k),
+            node: v,
             constrain2node: '#play',
             dragMode: 'intersect',
             data: thisData

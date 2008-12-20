@@ -2359,7 +2359,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                         handles.push(E.attach.apply(E, args));
                     });
 
-                    return handles;
+                    return (handles.length === 1) ? handles[0] : handles;
 
 
                 } else if (Y.Lang.isString(el)) {

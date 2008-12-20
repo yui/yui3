@@ -10,7 +10,7 @@
  */
 YUI.add("dump", function(Y) {
 
-    var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ',
+    var L=Y.Lang, OBJ='{...}', FUN='f(){...}', COMMA=', ', ARROW=' => ',
 
     /**
      * The following methods are added to the YUI instance
@@ -35,8 +35,7 @@ YUI.add("dump", function(Y) {
      * @return {string} the dump result
      */
     dump = function(o, d) {
-        var i, len, s = [];
-
+        var i, len, s = [], type = L.type(o);
 
         // Cast non-objects to string
         // Skip dates because the std toString is what we want
@@ -44,9 +43,9 @@ YUI.add("dump", function(Y) {
         // an element will cause an unhandled exception in FF 2.x
         if (!L.isObject(o)) {
             return o + "";
-        } else if (o instanceof Date || ("nodeType" in o && "tagName" in o)) {
+        } else if (type == "date" || ("nodeType" in o && "tagName" in o)) {
             return o;
-        } else if  (L.isFunction(o)) {
+        } else if (type == "function") {
             return FUN;
         }
 
@@ -54,7 +53,7 @@ YUI.add("dump", function(Y) {
         d = (L.isNumber(d)) ? d : 3;
 
         // arrays [1, 2, 3]
-        if (L.isArray(o)) {
+        if (type == "array") {
             s.push("[");
             for (i=0,len=o.length;i<len;i=i+1) {
                 if (L.isObject(o[i])) {
@@ -68,11 +67,14 @@ YUI.add("dump", function(Y) {
                 s.pop();
             }
             s.push("]");
+        // regexp /foo/
+        } else if (type == "regexp") {
+            s.push(o.toString());
         // objects {k1 => v1, k2 => v2}
         } else {
             s.push("{");
             for (i in o) {
-                if (Y.Object.owns(o, i)) {
+                if (o.hasOwnProperty(i)) {
                     s.push(i + ARROW);
                     if (L.isObject(o[i])) {
                         s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);

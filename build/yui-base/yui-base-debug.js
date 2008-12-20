@@ -17,6 +17,7 @@
         };
         
 
+// reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
     /**
@@ -117,6 +118,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
+    // Make a function, disallow direct instantiation
     YUI = function(o) {
         var Y = this;
 
@@ -146,10 +148,11 @@ YUI.prototype = {
      */
     _init: function(o) {
         
-
         o = o || {};
 
-        // find targeted window and @TODO create facades
+        // find targeted window
+        // @TODO create facades
+        // @TODO resolve windowless environments
         var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
         o.win = w;
         o.doc = w.document;
@@ -171,6 +174,13 @@ YUI.prototype = {
             _yidx: 0,
             _uidx: 0
         };
+
+        var v = '@VERSION@';
+        if (v.indexOf('@') > -1) {
+            v = 'test';
+        }
+
+        this.version = v;
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
@@ -517,8 +527,7 @@ YUI.prototype = {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
-            var instance = this;
-            instance.log(msg, "error"); // don't scrub this one
+            this.message(msg, "error"); // don't scrub this one
         }
 
         return this;
@@ -532,7 +541,7 @@ YUI.prototype = {
      */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
-        return p +'-' + e._yidx + '-' + e._uidx++;
+        return p +'-' + this.version + '-' + e._yidx + '-' + e._uidx++;
     },
 
     /**
@@ -597,7 +606,9 @@ YUI.add("log", function(instance) {
      * If the 'debug' config is true, a 'yui:log' event will be
      * dispatched, which the logger widget and anything else
      * can consume.  If the 'useBrowserConsole' config is true, it will
-     * write to the browser console if available.
+     * write to the browser console if available.  YUI-specific log
+     * messages will only be present in the -debug versions of the
+     * JS files.
      *
      * @method log
      * @for YUI
@@ -656,6 +667,23 @@ YUI.add("log", function(instance) {
         return Y;
     };
 
+    /**
+     * Write a system message.  This message will be preserved in the
+     * minified and raw versions of the YUI files.
+     * @method log
+     * @for YUI
+     * @param  {String}  msg  The message to log.
+     * @param  {String}  cat  The log category for the message.  Default
+     *                        categories are "info", "warn", "error", time".
+     *                        Custom categories can be used as well. (opt)
+     * @param  {String}  src  The source of the the message (opt)
+     * @param  {boolean} silent If true, the log event won't fire
+     * @return {YUI}      YUI instance
+     */
+    instance.message = function() {
+        return instance.log.apply(instance, arguments);
+    };
+
 }, "@VERSION@");
 /*
  * YUI lang utils
@@ -669,37 +697,51 @@ YUI.add("lang", function(Y) {
      * @class Lang
      * @static
      */
-    Y.Lang = Y.Lang || {};
+    Y.Lang    = Y.Lang || {};
 
-    var L = Y.Lang, 
+    var L     = Y.Lang, 
 
-    ARRAY_TOSTRING = '[object Array]',
-    FUNCTION_TOSTRING = '[object Function]',
-    STRING = 'string',
-    OBJECT = 'object',
-    BOOLEAN = 'boolean',
+    ARRAY     = 'array',
+    BOOLEAN   = 'boolean',
+    DATE      = 'date',
+    ERROR     = 'error',
+    FUNCTION  = 'function',
+    NUMBER    = 'number',
+    OBJECT    = 'object',
+    REGEX     = 'regexp',
+    STRING    = 'string',
+    TOSTRING  = Object.prototype.toString,
     UNDEFINED = 'undefined',
-    OP = Object.prototype;
+
+    TYPES     = {
+        'undefined'         : UNDEFINED,
+        'number'            : NUMBER,
+        'boolean'           : BOOLEAN,
+        'string'            : STRING,
+        '[object Function]' : FUNCTION,
+        '[object RegExp]'   : REGEX,
+        '[object Array]'    : ARRAY,
+        '[object Date]'     : DATE,
+        '[object Error]'    : ERROR 
+    };
 
     /**
-     * Determines whether or not the provided object is an array.
-     * Testing typeof/instanceof/constructor of arrays across frame 
-     * boundaries isn't possible in Safari unless you have a reference
-     * to the other frame to test against its Array prototype.  To
-     * handle this case, we test well-known array properties instead.
-     * properties.
-     * @TODO can we kill this cross frame hack?
+     * Determines whether or not the provided item is an array.
+     * Returns false for array-like collections such as the
+     * function arguments collection or HTMLElement collection
+     * will return false.  You can use @see Array.test if you 
+     * want to
      * @method isArray
      * @static
      * @param o The object to test
      * @return {boolean} true if o is an array
      */
     L.isArray = function(o) { 
-        return OP.toString.apply(o) === ARRAY_TOSTRING;
+        return L.type(o) === ARRAY;
     };
 
     /**
-     * Determines whether or not the provided object is a boolean
+     * Determines whether or not the provided item is a boolean
      * @method isBoolean
      * @static
      * @param o The object to test
@@ -710,7 +752,7 @@ YUI.add("lang", function(Y) {
     };
     
     /**
-     * Determines whether or not the provided object is a function
+     * Determines whether or not the provided item is a function
      * Note: Internet Explorer thinks certain functions are objects:
      *
      * var obj = document.createElement("object");
@@ -728,11 +770,11 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
-        return OP.toString.apply(o) === FUNCTION_TOSTRING;
+        return L.type(o) === FUNCTION;
     };
         
     /**
-     * Determines whether or not the supplied object is a date instance
+     * Determines whether or not the supplied item is a date instance
      * @method isDate
      * @static
      * @param o The object to test
@@ -743,7 +785,7 @@ YUI.add("lang", function(Y) {
     };
 
     /**
-     * Determines whether or not the provided object is null
+     * Determines whether or not the provided item is null
      * @method isNull
      * @static
      * @param o The object to test
@@ -754,18 +796,18 @@ YUI.add("lang", function(Y) {
     };
         
     /**
-     * Determines whether or not the provided object is a legal number
+     * Determines whether or not the provided item is a legal number
      * @method isNumber
      * @static
      * @param o The object to test
      * @return {boolean} true if o is a number
      */
     L.isNumber = function(o) {
-        return typeof o === 'number' && isFinite(o);
+        return typeof o === NUMBER && isFinite(o);
     };
       
     /**
-     * Determines whether or not the provided object is of type object
+     * Determines whether or not the provided item is of type object
      * or function
      * @method isObject
      * @static
@@ -778,7 +820,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is a string
+     * Determines whether or not the provided item is a string
      * @method isString
      * @static
      * @param o The object to test
@@ -789,7 +831,7 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
-     * Determines whether or not the provided object is undefined
+     * Determines whether or not the provided item is undefined
      * @method isUndefined
      * @static
      * @param o The object to test
@@ -825,8 +867,18 @@ return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
-// return (o || o === false || o === 0 || o === ''); // Infinity fails
-return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
+        var t = L.type(o);
+        return (t && t !== UNDEFINED) || false;
+    };
+
+    /**
+     * Returns a string representing the type of the item passed in.
+     * @method type
+     * @param o the item to test
+     * @return {string} the detected type
+     */
+    L.type = function (o) {
+        return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
     };
 
 }, "@VERSION@");
@@ -872,7 +924,7 @@ YUI.add("array", function(Y) {
      *   can be used to avoid multiple array.test calls.
      *   @return {Array} the resulting array
      */
-    Y.Array = function(o, i, al) {
+    var A = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
 
         // switch (t) {
@@ -892,7 +944,7 @@ YUI.add("array", function(Y) {
 
     };
 
-    var A = Y.Array;
+    Y.Array = A;
     
     /** 
      * Evaluates the input to determine if it is an array, array-like, or 
@@ -965,7 +1017,7 @@ YUI.add("array", function(Y) {
      * @static
      * @return {boolean} true if the 
      */
-     A.some = (Native.forEach) ?
+     A.some = (Native.some) ?
         function (a, f, o) { 
             Native.some.call(a, f, o || Y);
             return Y;
@@ -1203,6 +1255,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Y.Object(o) returns a new object based upon the supplied object.  
+     * @TODO Use native Object.create() when available
      * @method Object
      * @static
      * @param o the supplier object
@@ -1225,7 +1278,7 @@ YUI.add("object", function(Y) {
      * wrapper for the native implementation.  Use the native implementation
      * directly instead.
      *
-     * @TODO Remove in PR2
+     * @TODO Remove in B1
      *
      * @method Object.owns
      * @static
@@ -1234,11 +1287,13 @@ YUI.add("object", function(Y) {
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
+        Y.message('Object.owns is deprecated, use the native method');
         return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
     };
 
     /**
      * Returns an array containing the object's keys
+     * @TODO use native Object.keys() if available
      * @method Object.keys
      * @static
      * @param o an object
@@ -1279,14 +1334,24 @@ YUI.add("object", function(Y) {
     };
 }, "@VERSION@");
 /*
- * YUI user agent detection
+ * YUI user agent detection. 
+ * Do not fork for a browser if it can be avoided.  Use feature detection when
+ * you can.  Use the user agent as a last resort.  UA stores a version
  * @module yui
  * @submodule ua
  */
 YUI.add("ua", function(Y) {
 
     /**
-     * Browser/platform detection
+     * YUI user agent detection.
+     * Do not fork for a browser if it can be avoided.  Use feature detection when
+     * you can.  Use the user agent as a last resort.  UA stores a version
+     * number for the browser engine, 0 otherwise.  This value may or may not map
+     * to the version number of the browser using the engine.  The value is 
+     * presented as a float so that it can easily be used for boolean evaluation 
+     * as well as for looking for a particular range of versions.  Because of this, 
+     * some of the granularity of the version info may be lost (e.g., Gecko 1.8.0.9 
+     * reports 1.8).
      * @class UA
      * @static
      */
@@ -1328,7 +1393,7 @@ YUI.add("ua", function(Y) {
 
             /**
              * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
-             * will evaluate to 1, other browsers 0.  Example: 418.9.1
+             * will evaluate to 1, other browsers 0.  Example: 418.9
              * <pre>
              * Safari 1.3.2 (312.6): 312.8.1 <-- Reports 312.8 -- currently the 
              *                                   latest available for Mac OSX 10.3.
