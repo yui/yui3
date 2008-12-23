@@ -155,7 +155,7 @@
             var drops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
-                    drops[drops.length] = v
+                    drops[drops.length] = v;
                 }
             });
 
@@ -271,13 +271,13 @@
                     activeDrop = tmp[0];
                     other = tmp[1];
                 }
-                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 if (activeDrop) {
                     activeDrop.fire('drop:hit', { drag: activeDrag, drop: activeDrop, others: other });
                     activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: activeDrop, others: other });
                 }
             } else if (activeDrag) {
-                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
@@ -363,7 +363,7 @@
             var vdrops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
-                    vdrops[vdrops.length] = v
+                    vdrops[vdrops.length] = v;
                 }
             });
 

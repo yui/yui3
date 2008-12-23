@@ -291,6 +291,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
         //stickY: true
         foo: true
     });
+    dd4.on('drag:end', function() {
+        dd4.set('proxy', !dd4.get('proxy'));
+    });
     
     /*
     dd4.addInvalid('strong.no').on('drag:beforeMouseDown', function(e) {
@@ -337,7 +340,6 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
 });
 
 YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function(Y) {
-    console.log(Y);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 //Y.on('event:ready', function() {
     Y.DD.DDM._debugShim = true;
