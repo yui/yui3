@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>YUI: DragDrop: Animated Drop</title>
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
-    <link rel="stylesheet" href="http://blog.davglass.com/wp-content/themes/davglass/style.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="http://us.js2.yimg.com/us.js.yimg.com/i/ydn/yuiweb/css/dpsyntax-min-11.css">
+    <link rel="stylesheet" type="text/css" href="../yui-dev/build/reset-fonts-grids/reset-fonts-grids.css"> 
+        <link rel="stylesheet" type="text/css" href="../yui-dev/build/assets/skins/sam/logger.css"> 
+    <link rel="stylesheet" href="../css/davglass.css" type="text/css">
+    <!--link rel="stylesheet" type="text/css" href="dd.css"-->
     <style type="text/css" media="screen">
         p, h2 {
             margin: 1em;
@@ -15,7 +16,7 @@
             width: 100px;
             border: 1px solid black;
             background-color: #ccc;
-            top: 200px;
+            top: 100px;
         }
         #drag1 {
             height: 50px;
@@ -64,23 +65,27 @@
     </div>
     <div id="ft">&nbsp;</div>
 </div>
+    <script type="text/javascript" src="../3.x/build/yui/yui.js?bust=<?php echo(mktime()); ?>"></script>
+
+    <!-- needed until built into a module -->
+    <script type="text/javascript" src="../3.x/build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="../3.x/build/base/base.js?bust=<?php echo(mktime()); ?>"></script>
+
+    <!-- needed until new node.js is built into yui.js -->
+    <script type="text/javascript" src="../3.x/build/dom/dom.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="../3.x/build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
+
+    <script type="text/javascript" src="../3.x/build/animation/animation.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 
-
-<script type="text/javascript" src="../../../../build/yui/yui-min.js?bust=<?php echo(mktime()); ?>"></script>
-
-<!-- needed until built into a module -->
-<script type="text/javascript" src="../../../../build/attribute/attribute-min.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/base/base-min.js?bust=<?php echo(mktime()); ?>"></script>
-
-<!-- needed until new node.js is built into yui.js -->
-<script type="text/javascript" src="../../../../build/dom/dom-min.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/node/node-min.js?bust=<?php echo(mktime()); ?>"></script>
-
-<script type="text/javascript" src="../../../../build/animation/animation-min.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all-min.js?bust=<?php echo(mktime()); ?>"></script>
-    
+    <script type="text/javascript" src="ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="ddm.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="drag.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="drop.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -109,14 +114,16 @@ Y.on('event:ready', function() {
 
         a.fx.setAtts({
             from: {
-                left: 0
+                left: 0,
+                from: 50
             },
             to: {
                 left: function() {
                     var dW = Y.Node.get('#bd').get('offsetWidth');
                     var aW = a.get('offsetWidth');
                     return ((dW - aW) - 75); //Minus 75 for the dock
-                }
+                },
+                height: 100
             },
             iterations: 10,
             direction: 'alternate',
@@ -131,6 +138,7 @@ Y.on('event:ready', function() {
         });
         a.drop.on('drop:hit', function() {
             a.fx.stop();
+            a.fx.unsubscribeAll('tween');
             a.fx.setAtts({
                 from: {
                     opacity: 1
@@ -146,10 +154,11 @@ Y.on('event:ready', function() {
                     opacity: .5
                 },
                 iterations: 1,
-                duration: 1
+                duration: .5
             });
             a.fx.on('end', function() {
                 this.get('node').addClass('done');
+                a.drop.destroy();
             });
             a.fx.run();
 
@@ -158,7 +167,9 @@ Y.on('event:ready', function() {
         a.fx.on('tween', function() {
             if (Y.DD.DDM.activeDrag) {
                 a.drop.sizeShim();
-                Y.DD.DDM._dropMove();
+                Y.Lang.later(0, a, function() {
+                    this.drop._handleTargetOver();
+                });
             }
         });
 
