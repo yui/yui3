@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for json, stringify</description>
+    <description>Rollup build file for DD</description>
     <property environment="env" />
 
-    <property file="build.dd.properties" />
+    <property file="build.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />
