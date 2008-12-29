@@ -8,8 +8,9 @@
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
 <script type="text/javascript" src="../build/yui/yui.js"></script>
-<script type="text/javascript" src="../build/cache/cache-debug.js"></script>
-<script type="text/javascript" src="../build/datasource/datasource-debug.js" id="src_ds"></script>
+<script type="text/javascript" src="../build/cache/cache.js"></script>
+<script type="text/javascript" src="../build/dataparser/dataparser.js"></script>
+<script type="text/javascript" src="../build/datasource/datasource.js" id="src_ds"></script>
 <script type="text/javascript">
 
 (function() {
@@ -18,9 +19,10 @@
         //filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("dump", "yuitest", "console", "cache", "base", "datasource", function(Y) {
+    }).use("dump", "yuitest", "console", "io-base", "cache", "base", "dataparser", "datasource", function(Y) {
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
+            OBJECTASSERT = Y.ObjectAssert,
             BTNRUN = Y.get("#btnRun");
 
         // Set up the page
@@ -36,13 +38,13 @@
         
             testConstructorBase: function(){
                 var ds = new Y.DataSource.Base();
-                ASSERT.areEqual((ds instanceof Y.DataSource.Base), true);
+                ASSERT.areSame((ds instanceof Y.DataSource.Base), true);
             },
             
             testConstructorLocal: function(){
                 var ds = new Y.DataSource.Local();
-                ASSERT.areEqual((ds instanceof Y.DataSource.Local), true);
-                ASSERT.areEqual((ds instanceof Y.DataSource.Base), true);
+                ASSERT.areSame((ds instanceof Y.DataSource.Local), true);
+                ASSERT.areSame((ds instanceof Y.DataSource.Base), true);
             }
         });
         
@@ -60,34 +62,63 @@
             }                    
         });
 
+        var testXHR = new Y.Test.Case({
+            name: "DataSource.XHR Tests",
+
+            testDefaults: function(){
+                var ds = new Y.DataSource.XHR({
+                    liveData: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    responseType: Y.DataSource.TYPE_JSON,
+                    responseSchema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                });
+
+                ds.sendRequest(null, {
+                    success: function(request,response) {
+                        this.resume(function() {
+                            ASSERT.isNull(request, "Expected null request.");
+                            ASSERT.isObject(response, "Expected response object.");
+                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, response, "Expected tId property.");
+                        });
+                    },
+                    scope: this
+                });                
+
+                this.wait(1000);
+            }                    
+        });
+
         var testCache = new Y.Test.Case({
             name: "DataSource Cache Tests",
 
             testDefaultSize: function(){
                 var ds = new Y.DataSource.Base();
-                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areEqual(ds.get("maxCacheEntries"), 0, "Expected 0 size in DataSource.");
-                ASSERT.areEqual(ds._cache.get("size"), 0, "Expected 0 size in Cache.");
+                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("maxCacheEntries"), 0, "Expected 0 size in DataSource.");
+                ASSERT.areSame(ds._cache.get("size"), 0, "Expected 0 size in Cache.");
             },
 
             testInitSize: function(){
                 var ds = new Y.DataSource.Base({maxCacheEntries:3});
-                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areEqual(ds.get("maxCacheEntries"), 3, "Expected 3 size in DataSource.");
-                ASSERT.areEqual(ds._cache.get("size"), 3, "Expected 3 size in Cache.");
+                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("maxCacheEntries"), 3, "Expected 3 size in DataSource.");
+                ASSERT.areSame(ds._cache.get("size"), 3, "Expected 3 size in Cache.");
             },
 
             testSetSize: function(){
                 var ds = new Y.DataSource.Base();
                 ds.set("maxCacheEntries",5);
-                ASSERT.areEqual((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areEqual(ds.get("maxCacheEntries"), 5, "Expected 5 size in DataSource.");
-                ASSERT.areEqual(ds._cache.get("size"), 5, "Expected 5 size in Cache.");
+                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("maxCacheEntries"), 5, "Expected 5 size in DataSource.");
+                ASSERT.areSame(ds._cache.get("size"), 5, "Expected 5 size in Cache.");
             }
         });
 
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
+        Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testCache);
         Y.Test.Runner.run();
     });

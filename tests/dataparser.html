@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>DataParser Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>DataParser Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/dataparser/dataparser-debug.js" id="buildsrc"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../build/",
+        //filter: "debug",
+        useConsole: true,
+        insertBefore: "buildsrc"
+    }).use("console", "yuitest", "dump", "dataparser", function(Y) {
+        
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            btnRun = Y.get("#btnRun"),
+            myConsole = new Y.Console().render();
+            
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+
+        
+
+        var testJSON = new Y.Test.Case({
+            name: "JSON Tests",
+        
+            testBasic: function() {
+                var data_in = {
+                        response: [
+                            {name: "alpha", number: 1, letter: "a"},
+                            {name: "beta", number: 2, letter: "b"},
+                            {name: "gamma", number: 3, letter: "c"}
+                        ]
+                    },
+                    schema = {
+                        resultsList: "response",
+                        fields: ["name", "number", "letter"]
+                    },
+                    data_out = Y.DataParser.JSON(data_in, schema);
+                    
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("alpha", data_out.results[0].name, "Expected first result.");
+                ASSERT.areSame("gamma", data_out.results[2].name, "Expected last result.");
+            }
+        });
+            
+        
+        Y.Test.Runner.add(testJSON);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>
