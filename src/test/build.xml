@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YuiBase" default="local">
+    <description>Component Build File</description>
+
+    <property environment="env" />
+
+    <property file="build.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>
+<!--
+
+<project name="YuiBuild" default="local">
+
+    <description>Component Build File</description>
+
+    <dirname property="buildfile.dir" file="${ant.file}" />
+    <property environment="env" />
+    <property name="srcdir" value="../../" />
+    <property name="builddir" value="${env.YUI_BUILD_DIR}" />
+    <property name="cvs.root" value="${env.CVSROOT}" />
+    <property name="cvs.rsh" value="${env.CVS_RSH}" />
+    
+    <property file="${buildfile.dir}/build.properties" />
+
+    <import file="${builddir}/buildproperties.xml" description="Shared Build Properties - tools, build paths etc." />
+    <import file="${builddir}/targetlib.xml" description="Component Build Targets" />
+
+    <target name="customlocal">
+       <ant antfile="${buildfile.dir}/buildcore.xml" target="yuitest_local_subtask" inheritAll="false" />
+    </target>
+
+    <macrodef name="registerversion">
+        <attribute name="module" />
+        <attribute name="classname" />
+        <attribute name="file" />
+        <sequential>
+        </sequential>
+    </macrodef>
+
+</project>
+-->

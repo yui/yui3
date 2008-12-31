@@ -1,0 +1,13 @@
+YUI Library - Test - Release Notes
+
+**** version 3.0.0 PR3 ***
+
+* Changed component name to "test" from "yuitest".
+* Fixed bug in Y.Mock.Value() where omitting second argument caused an error.
+
+
+**** version 3.0.0 PR2 ***
+
+* Initial port from 2.x version
+* Introduction of mock objects (Y.Mock())
+* Event simulation moved to Y.Event.simulate() (no longer part of Test component)
