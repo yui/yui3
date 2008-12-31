@@ -840,6 +840,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
     E._tryPreloadAttach();
 
-}, "3.0.0");
+}, "@VERSION@");
 
 })();

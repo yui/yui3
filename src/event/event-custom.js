@@ -891,4 +891,4 @@ YUI.add("event-custom", function(Y) {
         }
     };
 
-}, "3.0.0");
+}, "@VERSION@");

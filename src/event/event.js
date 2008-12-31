@@ -277,7 +277,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
     };
 
 
-}, "3.0.0", {
+}, "@VERSION@", {
     use: [
           "aop", 
           "event-custom", 
