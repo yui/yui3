@@ -2578,7 +2578,7 @@ var BASE = 'base',
 
         'yui-base': { },
 
-        yuitest: {                                                                                                                                                        
+        test: {                                                                                                                                                        
             requires: ['substitute', 'node', 'json']                                                                                                                     
         }  
 

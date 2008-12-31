@@ -277,7 +277,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
     };
 
 
-}, "3.0.0", {
+}, "@VERSION@", {
     use: [
           "aop", 
           "event-custom", 
@@ -575,7 +575,7 @@ YUI.add("aop", function(Y) {
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * YUI Custom Events
  * @submodule event-custom
@@ -1469,7 +1469,7 @@ YUI.add("event-custom", function(Y) {
         }
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * Configures an object to be able to be targeted for events, and to publish events
  * @submodule event-target
@@ -1477,7 +1477,8 @@ YUI.add("event-custom", function(Y) {
  */
 YUI.add("event-target", function(Y) {
 
-    var SILENT = { 'yui:log': true };
+    var SILENT = { 'yui:log': true },
+        L = Y.Lang;
 
     /**
      * Event.Target is designed to be used with Y.augment to wrap 
@@ -1492,7 +1493,7 @@ YUI.add("event-target", function(Y) {
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        var o = (Y.Lang.isObject(opts)) ? opts : {};
+        var o = (L.isObject(opts)) ? opts : {};
 
         this._yuievt = {
 
@@ -1528,7 +1529,7 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context) {
 
-            if (Y.Lang.isObject(type)) {
+            if (L.isObject(type)) {
 
                 var f = fn, c = context, args = Y.Array(arguments, 0, true),
                     ret = {};
@@ -1582,7 +1583,7 @@ YUI.add("event-target", function(Y) {
         unsubscribe: function(type, fn, context) {
 
             // If this is an event handle, use it to detach
-            if (Y.Lang.isObject(type) && type.detach) {
+            if (L.isObject(type) && type.detach) {
                 return type.detach();
             }
 
@@ -1596,7 +1597,7 @@ YUI.add("event-target", function(Y) {
             } else {
                 var ret = true;
                 for (var i in evts) {
-                    if (Y.Object.owns(evts, i)) {
+                    if (evts.hasOwnProperty(i)) {
                         ret = ret && evts[i].unsubscribe(fn, context);
                     }
                 }
@@ -1672,7 +1673,7 @@ YUI.add("event-target", function(Y) {
          */
         publish: function(type, opts) {
 
-            if (Y.Lang.isObject(type)) {
+            if (L.isObject(type)) {
                 var ret = {};
                 Y.each(type, function(v, k) {
                     ret[k] = this.publish(k, v || opts); 
@@ -1752,7 +1753,7 @@ YUI.add("event-target", function(Y) {
          */
         fire: function(type) {
 
-            var typeIncluded = Y.Lang.isString(type),
+            var typeIncluded = L.isString(type),
                 t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
@@ -1873,7 +1874,7 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            if (Y.Lang.isFunction(type)) {
+            if (L.isFunction(type)) {
                 return Y.Do.after.apply(Y.Do, arguments);
             } else {
                 var ce = this._yuievt.events[type] || 
@@ -1888,7 +1889,7 @@ YUI.add("event-target", function(Y) {
         },
 
         before: function(type, fn) {
-            if (Y.Lang.isFunction(type)) {
+            if (L.isFunction(type)) {
                 return Y.Do.after.apply(Y.Do, arguments);
             } else {
                 return this.subscribe.apply(this, arguments);
@@ -1904,7 +1905,7 @@ YUI.add("event-target", function(Y) {
     ET.call(Y);
 
 
-}, "3.0.0");
+}, "@VERSION@");
 
 /*
  * DOMReady
@@ -2049,7 +2050,7 @@ var Env = YUI.Env,
             Y.before(yready, Env, "_ready");
         }
 
-    }, "3.0.0");
+    }, "@VERSION@");
 
 })();
 /*
@@ -2894,7 +2895,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
     E._tryPreloadAttach();
 
-}, "3.0.0");
+}, "@VERSION@");
 
 })();
 /*
@@ -3214,7 +3215,7 @@ YUI.add("event-facade", function(Y) {
 
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 /*
  * Functionality to simulate events.
  * @submodule event-simulate
