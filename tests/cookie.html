@@ -10,8 +10,9 @@
 <script type="text/javascript">  
     
 YUI({
-    base: '../build/'
-}).use('yuitest', 'cookie', 'console', function (Y) {
+    base: '../build/',
+    filter: 'debug'
+}).use('test', 'cookie', 'console', function (Y) {
 
     Y.namespace("Tests");
     

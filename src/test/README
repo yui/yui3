@@ -4,7 +4,7 @@ YUI Library - Test - Release Notes
 
 * Changed component name to "test" from "yuitest".
 * Fixed bug in Y.Mock.Value() where omitting second argument caused an error.
-
+* Removed dependencies on Y.Object.owns().
 
 **** version 3.0.0 PR2 ***
 
