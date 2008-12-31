@@ -380,4 +380,4 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});

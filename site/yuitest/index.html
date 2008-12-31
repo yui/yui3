@@ -769,9 +769,9 @@ include("../inc/header.inc");
                   access to <code>this.data</code> just as the original part of the test does. Timed waits are helpful in situations when
                   there are no events to indicate when the test should resume.</p>
                 <p>If you want a test to wait until a specific event occurs before resuming, the <code>wait()</code> method can be called
-                  without any arguments. At that point, testing will resume only when the <code>resume()</code> method is called. The 
+                  with a timeout argument (the number of milliseconds to wait before considering the test a failure). At that point, testing will resume only when the <code>resume()</code> method is called. The 
                   <code>resume()</code> method accepts a single argument, which is a function to run when the test resumes. This function
-                  should specify additional assertions. The following tests to see if the <code>Anim</code> object has performed its
+                  should specify additional assertions. If <code>resume()</code> isn't called before the timeout expires, then the test fails. The following tests to see if the <code>Anim</code> object has performed its
                   animation completely:</p>
                 <textarea name="code" class="JScript" cols="60" rows="1">
                 <script type="text/javascript">

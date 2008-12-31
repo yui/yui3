@@ -1,4 +1,4 @@
-/*global YUI, escape, unescape*/
+/*global YUI*/
 
 /**
  * The Browser History Utility provides the ability to use the back/forward
@@ -388,7 +388,7 @@ YUI.add("history", function (Y) {
 
             var module;
 
-            if (typeof moduleId !== "string" || L.trim(moduleId) === "" || typeof initialState !== "string") {
+            if (!L.isString(moduleId) || L.trim(moduleId) === "" || !L.isString(initialState)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -407,8 +407,8 @@ YUI.add("history", function (Y) {
             }
 
             // Make sure the strings passed in do not contain our separators "," and "|"
-            moduleId = escape(moduleId);
-            initialState = escape(initialState);
+            moduleId = encodeURIComponent(moduleId);
+            initialState = encodeURIComponent(initialState);
 
             module = new H.Module(moduleId, initialState);
             G._modules[moduleId] = module;
@@ -427,27 +427,32 @@ YUI.add("history", function (Y) {
          */
         initialize: function (stateField, historyIFrame) {
 
+            var tagName, type;
+
             if (G.ready) {
                 // The browser history utility has already been initialized.
                 return true;
             }
 
-            if (typeof stateField === "string") {
+            if (L.isString(stateField)) {
                 stateField = document.getElementById(stateField);
             }
 
-            if (!stateField ||
-                stateField.tagName.toUpperCase() !== "TEXTAREA" &&
-                (stateField.tagName.toUpperCase() !== "INPUT" ||
-                 stateField.type !== "hidden" &&
-                 stateField.type !== "text")) {
+            if (!stateField) {
+                throw new Error(E_MISSING_OR_INVALID_ARG);
+            }
+
+            tagName = stateField.tagName.toUpperCase();
+            type = stateField.type;
+
+            if (tagName !== "TEXTAREA" && (tagName !== "INPUT" || type !== "hidden" && type !== "text")) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
             if (A.ie && (A.ie < 8 || document.documentMode < 8)) {
 
-                if (typeof historyIFrame === "string") {
+                if (L.isString(historyIFrame)) {
                     historyIFrame = document.getElementById(historyIFrame);
                 }
 
@@ -456,7 +461,7 @@ YUI.add("history", function (Y) {
                 }
             }
 
-            if (A.opera && typeof history.navigationMode !== "undefined") {
+            if (A.opera && !L.isUndefined(history.navigationMode)) {
 
                 // Disable Opera's fast back/forward navigation mode and puts
                 // it in compatible mode. This makes anchor-based history
@@ -485,7 +490,7 @@ YUI.add("history", function (Y) {
 
             var states;
 
-            if (typeof moduleId !== "string" || typeof state !== "string") {
+            if (!L.isString(moduleId) || !L.isString(state)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -525,14 +530,14 @@ YUI.add("history", function (Y) {
                 var currentState;
 
                 if (states[moduleId]) {
-                    currentState = states[unescape(moduleId)];
+                    currentState = states[decodeURIComponent(moduleId)];
                 } else {
-                    currentState = unescape(module.currentState);
+                    currentState = decodeURIComponent(module.currentState);
                 }
 
                 // Make sure the strings passed in do not contain our separators "," and "|"
-                moduleId = escape(moduleId);
-                currentState = escape(currentState);
+                moduleId = encodeURIComponent(moduleId);
+                currentState = encodeURIComponent(currentState);
 
                 currentStates.push(moduleId + "=" + currentState);
             });
@@ -581,7 +586,7 @@ YUI.add("history", function (Y) {
 
             var module;
 
-            if (typeof moduleId !== "string") {
+            if (!L.isString(moduleId)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -596,7 +601,7 @@ YUI.add("history", function (Y) {
                 return null;
             }
 
-            return unescape(module.currentState);
+            return decodeURIComponent(module.currentState);
         },
 
         /**
@@ -612,20 +617,23 @@ YUI.add("history", function (Y) {
 
             var m, i, h;
 
-            if (typeof moduleId !== "string") {
+            if (!L.isString(moduleId)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
             // contained special characters...
-            i = top.location.href.indexOf("#");
-            h = i >= 0 ? top.location.href.substr(i + 1) : top.location.href;
+            h = top.location.href;
+            i = h.indexOf("#");
 
-            REGEXP.lastIndex = 0;
-            while ((m = REGEXP.exec(h))) {
-                if (m[1] === moduleId) {
-                    return unescape(m[2]);
+            if (i >= 0) {
+                h = h.substr(i + 1);
+                REGEXP.lastIndex = 0;
+                while ((m = REGEXP.exec(h))) {
+                    if (m[1] === moduleId) {
+                        return decodeURIComponent(m[2]);
+                    }
                 }
             }
 
@@ -661,7 +669,7 @@ YUI.add("history", function (Y) {
             REGEXP.lastIndex = 0;
             while ((m = REGEXP.exec(q))) {
                 if (m[1] === paramName) {
-                    return unescape(m[2]);
+                    return decodeURIComponent(m[2]);
                 }
             }
 
@@ -669,12 +677,11 @@ YUI.add("history", function (Y) {
         }
     };
 
+
     // Make Y.History an event target
     Y.mix(H, ET.prototype);
     ET.call(H);
 
-    H.publish(EV_HISTORY_READY, { fireOnce: true });
-    H.publish(EV_HISTORY_GLOBAL_STATE_CHANGE);
 
     /**
      * This class represents a browser history module.
@@ -704,8 +711,6 @@ YUI.add("history", function (Y) {
          * @type String
          */
         this.currentState = initialState;
-
-        this.publish(EV_HISTORY_MODULE_STATE_CHANGE);
     };
 
     Y.mix(H.Module, ET, false, null, 1);
