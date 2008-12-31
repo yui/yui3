@@ -53,7 +53,7 @@
          * @static
          */    
         owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            if (!Y.Object.owns(object, propertyName)){
+            if (!object.hasOwnProperty(propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
         },
@@ -68,7 +68,7 @@
          */    
         ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
             Y.Object.each(refObject, function(value, name){
-                if (!Y.Object.owns(object, name)){
+                if (!object.hasOwnProperty(name)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
                 }     
             });

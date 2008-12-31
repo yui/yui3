@@ -142,15 +142,15 @@
             this._fields.timestamp = (new Date()).toLocaleString();
     
             //add fields to the form
-            for (var prop in this._fields){
-                if (Y.Object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
+            Y.Object.each(this._fields, function(value, prop){
+                if (typeof value != "function"){
                     var input = document.createElement("input");
                     input.type = "hidden";
                     input.name = prop;
-                    input.value = this._fields[prop];
+                    input.value = value;
                     this._form.appendChild(input);
                 }
-            }
+            });
     
             //remove default fields
             delete this._fields.results;

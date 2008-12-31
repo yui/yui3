@@ -30,11 +30,11 @@
             xml += " result=\"" + results.result + "\" message=\"" + results.message + "\">";
         } else {
             xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
-            for (var prop in results) {
-                if (Y.Object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
-                    xml += arguments.callee(results[prop]);
+            Y.Object.each(results, function(value, prop){
+                if (l.isObject(value) && !l.isArray(value)){
+                    xml += arguments.callee(value);
                 }
-            }        
+            });        
         }
     
         xml += "</" + results.type + ">";

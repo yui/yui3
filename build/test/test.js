@@ -1,4 +1,4 @@
-YUI.add('yuitest', function(Y) {
+YUI.add('test', function(Y) {
 
     /**
      * YUI JavaScript Testing Framework
@@ -2007,7 +2007,7 @@ YUI.add('yuitest', function(Y) {
          * @static
          */    
         owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            if (!Y.Object.owns(object, propertyName)){
+            if (!object.hasOwnProperty(propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
         },
@@ -2022,7 +2022,7 @@ YUI.add('yuitest', function(Y) {
          */    
         ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
             Y.Object.each(refObject, function(value, name){
-                if (!Y.Object.owns(object, name)){
+                if (!object.hasOwnProperty(name)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
                 }     
             });
@@ -2111,11 +2111,11 @@ YUI.add('yuitest', function(Y) {
             xml += " result=\"" + results.result + "\" message=\"" + results.message + "\">";
         } else {
             xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
-            for (var prop in results) {
-                if (Y.Object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
-                    xml += arguments.callee(results[prop]);
+            Y.Object.each(results, function(value, prop){
+                if (l.isObject(value) && !l.isArray(value)){
+                    xml += arguments.callee(value);
                 }
-            }        
+            });        
         }
     
         xml += "</" + results.type + ">";
@@ -2268,15 +2268,15 @@ YUI.add('yuitest', function(Y) {
             this._fields.timestamp = (new Date()).toLocaleString();
     
             //add fields to the form
-            for (var prop in this._fields){
-                if (Y.Object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
+            Y.Object.each(this._fields, function(value, prop){
+                if (typeof value != "function"){
                     var input = document.createElement("input");
                     input.type = "hidden";
                     input.name = prop;
-                    input.value = this._fields[prop];
+                    input.value = value;
                     this._form.appendChild(input);
                 }
-            }
+            });
     
             //remove default fields
             delete this._fields.results;
@@ -2423,7 +2423,7 @@ YUI.add('yuitest', function(Y) {
     Y.Mock.Value = function(method, args, message){
         if (this instanceof Y.Mock.Value){
             this.verify = function(value){
-                args = [].concat(args);
+                args = [].concat(args || []);
                 args.push(value);
                 args.push(message);
                 method.apply(null, args);
@@ -2433,12 +2433,12 @@ YUI.add('yuitest', function(Y) {
         }
     };
     
-    Y.Mock.Value.Any = Y.Mock.Value(function(){},[]);
-    Y.Mock.Value.Boolean = Y.Mock.Value(Y.Assert.isBoolean,[]);
-    Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber,[]);
-    Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString,[]);
-    Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
-    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);
+    Y.Mock.Value.Any = Y.Mock.Value(function(){});
+    Y.Mock.Value.Boolean = Y.Mock.Value(Y.Assert.isBoolean);
+    Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber);
+    Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString);
+    Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject);
+    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction);
 
 
 
