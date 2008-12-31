@@ -36,7 +36,7 @@ Cacheable.ATTRS = {
      * @type Number
      * @default 0
      */
-    maxCacheEntries : {
+    maxCacheEntries: {
         value: 0,
         set: function(value) {
             return this._cache.set("size", value).get("size");
@@ -61,38 +61,40 @@ Cacheable.prototype = {
     */
     _initCacheable: function() {
         this._cache = new Y.Cache();
+        this.subscribe("requestEvent", this._onRequestEvent, this);
     },
 
     /**
-     * Overwrites DataSource's sendRequest method to first look for cached
-     * response, then send request to live data.
+     * First look for cached response, then send request to live data.
      *
-     * @method sendRequest
-     * @param request {MIXED} Request.
-     * @param callback {Object} An object literal with the following properties:
-     *     <dl>
-     *     <dt><code>success</code></dt>
-     *     <dd>The function to call when the data is ready.</dd>
-     *     <dt><code>failure</code></dt>
-     *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
-     *     <dt><code>argument</code></dt>
-     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
-     *     </dl> 
-     * @return {Number} Transaction ID, or null if response found in cache.
+     * @method _onRequestEvent
+     * @private
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.     
+     * @param e.tId {Number} Transaction ID.     
+     * @param e.request {MIXED} Request.     
+     * @param e.callback {Object} Callback object.
      */
-    sendRequest: function(request, callback) {
+    _onRequestEvent: function(e) {
         // First look in cache
-        var cachedresponse = this._cache.retrieve(request, callback);
-        if(cachedresponse) {
-            Y.DataSource.issueCallback(callback,[request,cachedresponse],false);
-            return cachedresponse.payload.id;
+        var cachedresponse = this._cache.retrieve(e.request, e.callback);
+        if(cachedresponse && cachedresponse.entry) {
+            e.preventDefault();
+            Y.DataSource.issueCallback(e.callback,[e.request,cachedresponse.entry],false);
+            //return false;
         }  
 
         // Not in cache, so forward request to live data
-        return this.makeConnection(request, callback);
-    }
+        return true;
+    },
+    
+    /**
+     * Overwrites DataSource's returnData method to first cache then return data
+     *
+     */
+    returnData: function(callback, params, error) {
+        this._cache.cache(params[0], params[1]);
+        Y.DataSource.issueCallback(callback, params, error);
+   }
 };
     
 Y.Base.build(BASE, [Cacheable], {

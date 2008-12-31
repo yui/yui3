@@ -9,6 +9,7 @@ YUI.add('datasource-base', function(Y) {
  * @title DataSource Utility
  */
     Y.namespace("DataSource");
+    var DS = Y.DataSource;
     
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -16,7 +17,7 @@ YUI.add('datasource-base', function(Y) {
     //
     /////////////////////////////////////////////////////////////////////////////
     
-Y.mix(Y.DataSource, { 
+Y.mix(DS, { 
     /**
      * Global transaction counter.
      *
@@ -29,115 +30,26 @@ Y.mix(Y.DataSource, {
     _tId: 0,
     
     /**
-     * Type is unknown.
+     * Indicates null data response.
      *
-     * @property DataSource.TYPE_UNKNOWN
+     * @property DataSource.ERROR_DATANULL
      * @type Number
      * @static     
      * @final
-     * @default -1
+     * @default 0     
      */
-    TYPE_UNKNOWN: -1,
-    
+    ERROR_DATANULL: 0,
+
     /**
-     * Type is a JavaScript Array.
+     * Indicates invalid data response.
      *
-     * @property DataSource.TYPE_JSARRAY
+     * @property DataSource.ERROR_DATAINVALID
      * @type Number
      * @static     
      * @final
-     * @default 0
+     * @default 1    
      */
-    TYPE_JSARRAY: 0,
-    
-    /**
-     * Type is a JavaScript Function.
-     *
-     * @property DataSource.TYPE_JSFUNCTION
-     * @type Number
-     * @static     
-     * @final
-     * @default 1
-     */
-    TYPE_JSFUNCTION: 1,
-    
-    /**
-     * Type is hosted on a server via an XHR connection.
-     *
-     * @property DataSource.TYPE_XHR
-     * @type Number
-     * @static     
-     * @final
-     * @default 2
-     */
-    TYPE_XHR: 2,
-    
-    /**
-     * Type is JSON.
-     *
-     * @property DataSource.TYPE_JSON
-     * @type Number
-     * @static     
-     * @final
-     * @default 3
-     */
-    TYPE_JSON: 3,
-    
-    /**
-     * Type is XML.
-     *
-     * @property DataSource.TYPE_XML
-     * @type Number
-     * @static     
-     * @final
-     * @default 4
-     */
-    TYPE_XML: 4,
-    
-    /**
-     * Type is plain text.
-     *
-     * @property DataSource.TYPE_TEXT
-     * @type Number
-     * @static     
-     * @final
-     * @default 5
-     */
-    TYPE_TEXT: 5,
-    
-    /**
-     * Type is an HTML TABLE element. Data is parsed out of TR elements from all
-     * TBODY elements.
-     *
-     * @property DataSource.TYPE_HTMLTABLE
-     * @type Number
-     * @static     
-     * @final
-     * @default 6
-     */
-    TYPE_HTMLTABLE: 6,
-    
-    /**
-     * Type is hosted on a server via a dynamic script node.
-     *
-     * @property DataSource.TYPE_SCRIPTNODE
-     * @type Number
-     * @static     
-     * @final
-     * @default 7
-     */
-    TYPE_SCRIPTNODE: 7,
-    
-    /**
-     * Type is local.
-     *
-     * @property DataSource.TYPE_LOCAL
-     * @type Number
-     * @static     
-     * @final
-     * @default 8
-     */
-    TYPE_LOCAL: 8,
+    ERROR_DATAINVALID: 1,
 
     /**
      * Executes a given callback.  For object literal callbacks, the third
@@ -149,7 +61,7 @@ Y.mix(Y.DataSource, {
      * @param error {Boolean} whether an error occurred
      * @static     
      */
-    issueCallback: function (callback,params,error) {
+    issueCallback: function (callback, params, error) {
         if(callback) {
             var scope = callback.scope || window,
                 callbackFunc = (error) ? callback.failure : callback.success;
@@ -198,46 +110,50 @@ Y.mix(Base, {
 
     ATTRS: {
         /**
-        * @attribute liveData
-        * @description Pointer to live database.
+        * @attribute source
+        * @description Pointer to live data.
         * @type MIXED
+        * @default null        
         */
-        liveData: {
+        source: {
+            value: null
         },
         
         /**
         * @attribute dataType
         * @description Where the live data is held:
             <ul>
-                <li>TYPE_UNKNOWN</li>
-                <li>TYPE_LOCAL</li>
-                <li>TYPE_XHR</li>
-                <li>TYPE_SCRIPTNODE</li>
-                <li>TYPE_JSFUNCTION</li>
+                <li>"LOCAL" (in-memory data, such as an Array or object literal)</li>
+                <li>"XHR" (remote data accessed via Connection Manager)</li>
+                <li>"SCRIPTNODE" (remote data accessed via the Get Utility)</li>
+                <li>"FUNCTION" (data accessed via a pre-defined JavaScript function)</li>
             </ul>
-        * @type Number
-        * @default DataSource.TYPE_UNKNOWN        
+        * @type String
+        * @default null
         */
         dataType: {
-            value: Y.DataSource.TYPE_UNKNOWN
+            value: null
         },
 
         /**
         * @attribute responseType
         * @description Format of response:
             <ul>
-                <li>TYPE_UNKNOWN</li>
-                <li>TYPE_JSARRAY</li>
-                <li>TYPE_JSON</li>
-                <li>TYPE_XML</li>
-                <li>TYPE_TEXT</li>
-                <li>TYPE_HTMLTABLE</li>
+                <li>"ARRAY"</li>
+                <li>"JSON"</li>
+                <li>"XML"</li>
+                <li>"TEXT"</li>
+                <li>"HTMLTABLE"</li>
             </ul>
-        * @type Number
-        * @default DataSource.TYPE_UNKNOWN
+        * @type String
+        * @default null
         */
         responseType: {
-            value: Y.DataSource.TYPE_UNKNOWN
+            value: null,
+            set: function(value) {
+                this._parser = Y.DataParser[value] ||
+                        function(x) {return x;};
+            }
         },
 
         /**
@@ -321,35 +237,6 @@ Y.extend(Base, Y.Base, {
     _intervals: null,
 
     /**
-    * @method _createEvents
-    * @description This method creates all the events for this Event
-    * Target and publishes them so we get Event Bubbling.
-    * @private        
-    */
-    _initEvents: function() {
-        var events = [
-            "dataErrorEvent",
-            "requestEvent",
-            "responseEvent",
-            "responseParseEvent"
-        ];
-        
-        Y.each(events, function(v, k) {
-            this.publish(v, {
-                type: v,
-                emitFacade: true,
-                bubbles: true,
-                preventable: false,
-                queuable: true
-            });
-        }, this);
-
-        /*if (this.get('bubbles')) {
-            this.addTarget(this.get('bubbles'));
-        }*/           
-    },
-
-    /**
     * @method initializer
     * @description Internal init() handler.
     * @private        
@@ -357,7 +244,7 @@ Y.extend(Base, Y.Base, {
     initializer: function() {
         this._queue = {interval:null, conn:null, requests:[]};
         this._intervals = [];
-        Y.log("DataSource initialized", "info", this.toString());
+        this._initEvents();
     },
 
     /**
@@ -366,6 +253,150 @@ Y.extend(Base, Y.Base, {
     * @private        
     */
     destructor: function() {
+    },
+
+    /**
+    * @method _createEvents
+    * @description This method creates all the events for this Event
+    * Target and publishes them so we get Event Bubbling.
+    * @private        
+    */
+    _initEvents: function() {
+        /**
+         * Fired when an error is encountered.
+         *
+         * @event errorEvent
+         * @param args {Object} Object literal data payload.         
+         * @param args.request {MIXED} The request.
+         * @param args.response {Object} The response object.
+         * @param args.callback {Object} The callback object.
+         */
+         
+        /**
+         * Fired when a request is sent to the live data source.
+         *
+         * @event requestEvent
+         * @param e {Event.Facade} Event Facade.         
+         * @param e.tId {Number} Unique transaction ID.             
+         * @param e.request {MIXED} The request.
+         * @param e.callback {Object} The callback object.
+         */
+        this.publish("requestEvent", {
+            //emitFacade: false,
+            defaultFn: this._makeConnection
+        });
+         
+        /**
+         * Fired when a response is received from the live data source.
+         *
+         * @event responseEvent
+         * @param e {Event.Facade} Event Facade.         
+         * @param e.tId {Number} Unique transaction ID.             
+         * @param e.request {MIXED} The request.
+         * @param e.callback {Object} The callback object.
+         * @param e.response {Object} The raw response data.         
+         */
+        this.publish("responseEvent", {
+            //emitFacade: false,
+            defaultFn: this._handleResponse
+        });
+    },
+
+    /**
+     * Overridable default requestEvent handler manages request/response
+     * transaction. Must fire responseEvent when response is received. This
+     * method should be implemented by subclasses to achieve more complex
+     * behavior such as accessing remote data.
+     *
+     * @method _makeConnection
+     * @protected
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e.tId {Number} Transaction ID.
+     * @param e.request {MIXED} Request.
+     * @param e.callback {Object} Callback object.
+     */
+    _makeConnection: function(e) {
+        this.fire("responseEvent", Y.mix(e, {response:this.get("source")}));
+        Y.log("Transaction " + e.tId + " complete. Request: " + Y.dump(e.request) + " . Response: " Y.dump(e.response), "info", this.toString());
+    },
+
+    /**
+     * Overridable default responseEvent handler receives raw data response and
+     * by default, passes it as-is to returnData
+     *
+     * @method _handleResponse
+     * @protected
+     * @param args.tId {Number} Transaction ID.
+     * @param args.request {MIXED} Request.
+     * @param args.callback {Object} Callback object.
+     * @param args.response {MIXED} Raw data response.
+     */
+    _handleResponse: function(args) {
+        var tId = args.tId,
+            oRequest = args.request,
+            oFullResponse = args.response,
+            oCallback = args.callback;
+
+        //this.fire("responseEvent", {tId:tId, request:oRequest, response:oFullResponse, callback:oCallback});
+
+
+
+        var oParsedResponse = this.parseData(oRequest, oFullResponse, tId);
+
+        // Clean up for consistent signature
+        oParsedResponse = oParsedResponse || {};
+        if(!oParsedResponse.results) {
+            oParsedResponse.results = [];
+        }
+        if(!oParsedResponse.meta) {
+            oParsedResponse.meta = {};
+        }
+
+        // Success
+        if(oParsedResponse && !oParsedResponse.error) {
+            this.fire("responseParseEvent", {request:oRequest,
+                    response:oParsedResponse, callback:oCallback});
+            // Cache the response
+            //TODO: REINSTATE
+            //this.addToCache(oRequest, oParsedResponse);
+        }
+        // Error
+        else {
+            // Be sure the error flag is on
+            oParsedResponse.error = true;
+            this.fire("errorEvent", {request:oRequest, response:oRawResponse, callback:oCallback});
+            Y.log("Error in parsed response", "error", this.toString());
+        }
+
+        // Send the response back to the callback
+        oParsedResponse.tId = tId;
+        this.returnData(oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+
+    },
+
+    /**
+     * Generates a unique transaction ID and fires requestEvent.
+     *
+     * @method sendRequest
+     * @param request {MIXED} Request.
+     * @param callback {Object} An object literal with the following properties:
+     *     <dl>
+     *     <dt><code>success</code></dt>
+     *     <dd>The function to call when the data is ready.</dd>
+     *     <dt><code>failure</code></dt>
+     *     <dd>The function to call upon a response failure condition.</dd>
+     *     <dt><code>scope</code></dt>
+     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
+     *     <dt><code>argument</code></dt>
+     *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+     *     </dl>
+     * @return {Number} Transaction ID.
+     */
+    sendRequest: function(request, callback) {
+        var tId = DS._tId++;
+        this.fire("requestEvent", {tId:tId, request:request,callback:callback});
+        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
+        return tId;
     },
 
     /**
@@ -388,12 +419,12 @@ Y.extend(Base, Y.Base, {
      *     </dl> 
      * @return {Number} Interval ID.
      */
-    setInterval : function(msec, request, callback) {
+    setInterval: function(msec, request, callback) {
         if(LANG.isNumber(msec) && (msec >= 0)) {
             Y.log("Enabling polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
             var self = this,
                 id = setInterval(function() {
-                self.makeConnection(request, callback);
+                self._makeConnection(request, callback);
             }, msec);
             this._intervals.push(id);
             return id;
@@ -409,7 +440,7 @@ Y.extend(Base, Y.Base, {
      * @method clearInterval
      * @param id {Number} Interval ID.
      */
-    clearInterval : function(id) {
+    clearInterval: function(id) {
         // Remove from tracker if there
         var tracker = this._intervals || [],
             i = tracker.length-1;
@@ -423,339 +454,50 @@ Y.extend(Base, Y.Base, {
     },
 
     /**
-     * First looks for cached response, then sends request to live data.
+     * Overridable method parses data of generic RESPONSE_TYPE into a response object.
      *
-     * @method sendRequest
-     * @param request {MIXED} Request.
-     * @param callback {Object} An object literal with the following properties:
-     *     <dl>
-     *     <dt><code>success</code></dt>
-     *     <dd>The function to call when the data is ready.</dd>
-     *     <dt><code>failure</code></dt>
-     *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
-     *     <dt><code>argument</code></dt>
-     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
-     *     </dl> 
-     * @return {Number} Transaction ID, or null if response found in cache.
+     * @method parseData
+     * @param requst {Object} Request object.
+     * @param data {Object} The full Array from the live database.
+     * @return {Object} Parsed response object with the following properties:<br>
+     *     - results {Array} Array of parsed data results<br>
+     *     - meta {Object} Object literal of meta values<br>
+     *     - error {Boolean} (optional) True if there was an error<br>
      */
-    sendRequest : function(request, callback) {
-        // Forward request to live data
-        Y.log("Making connection to live data for \"" + request + "\"", "info", this.toString());
-        return this.makeConnection(request, callback);
+    parseData: function(request, data, id) {
+        var response = null;
+        
+        if(this._parser) {
+            response = {results:this._parser(data, this.get("responseSchema")),meta:{}, id: id};
+        }
+        
+        return response;
+        
+        
+        /*if(LANG.isValue(oFullResponse)) {
+            var oParsedResponse = {results:oFullResponse,meta:{}};
+            Y.log("Parsed generic data is " +
+                    Y.dump(oParsedResponse), "info", this.toString());
+            return oParsedResponse;
+    
+        }
+        Y.log("Generic data could not be parsed: " + Y.dump(oFullResponse), 
+                "error", this.toString());
+        return null;*/
     },
 
-/**
- * Overridable default method generates a unique transaction ID and passes 
- * the live data reference directly to the  handleResponse function. This
- * method should be implemented by subclasses to achieve more complex behavior
- * or to access remote data.          
- *
- * @method makeConnection
- * @param request {MIXED} Request object.
- * @param callback {Object} Callback object literal.
- * @return {Number} Transaction ID.
- */
-makeConnection : function(request, callback) {
-    var tId = Y.DataSource._tId++;
-    this.fire("requestEvent", {tId:tId, request:request,callback:callback});
-
-    /* accounts for the following cases:
-    DataSource.TYPE_UNKNOWN
-    DataSource.TYPE_JSARRAY
-    DataSource.TYPE_JSON
-    DataSource.TYPE_HTMLTABLE
-    DataSource.TYPE_XML
-    DataSource.TYPE_TEXT
-    */
-    var rawresponse = this.get("liveData");
-    
-    this.handleResponse(request, rawresponse, callback, tId);
-    return tId;
-},
-
-/**
- * Receives raw data response and type converts to XML, JSON, etc as necessary.
- * Forwards oFullResponse to appropriate parsing function to get turned into
- * oParsedResponse. Calls doBeforeCallback() and adds oParsedResponse to 
- * the cache when appropriate before calling issueCallback().
- * 
- * The oParsedResponse object literal has the following properties:
- * <dl>
- *     <dd><dt>tId {Number}</dt> Unique transaction ID</dd>
- *     <dd><dt>results {Array}</dt> Array of parsed data results</dd>
- *     <dd><dt>meta {Object}</dt> Object literal of meta values</dd> 
- *     <dd><dt>error {Boolean}</dt> (optional) True if there was an error</dd>
- *     <dd><dt>cached {Boolean}</dt> (optional) True if response was cached</dd>
- * </dl>
- *
- * @method handleResponse
- * @param oRequest {Object} Request object
- * @param oRawResponse {Object} The raw response from the live database.
- * @param oCallback {Object} Callback object literal.
- * @param tId {Number} Transaction ID.
- */
-handleResponse : function(oRequest, oRawResponse, oCallback, tId) {
-    this.fire("responseEvent", {tId:tId, request:oRequest, response:oRawResponse,
-            callback:oCallback});
-    Y.log("Received live data response for \"" + oRequest + "\"", "info", this.toString());
-    var xhr = (this.dataType == Y.DataSource.TYPE_XHR) ? true : false;
-    var oParsedResponse = null;
-    var oFullResponse = oRawResponse;
-    
-    // Try to sniff data type if it has not been defined
-    if(this.responseType === Y.DataSource.TYPE_UNKNOWN) {
-        var ctype = (oRawResponse && oRawResponse.getResponseHeader) ? oRawResponse.getResponseHeader["Content-Type"] : null;
-        if(ctype) {
-             // xml
-            if(ctype.indexOf("text/xml") > -1) {
-                this.responseType = Y.DataSource.TYPE_XML;
-            }
-            else if(ctype.indexOf("application/json") > -1) { // json
-                this.responseType = Y.DataSource.TYPE_JSON;
-            }
-            else if(ctype.indexOf("text/plain") > -1) { // text
-                this.responseType = Y.DataSource.TYPE_TEXT;
-            }
-        }
-        else {
-            if(LANG.isArray(oRawResponse)) { // array
-                this.responseType = Y.DataSource.TYPE_JSARRAY;
-            }
-             // xml
-            else if(oRawResponse && oRawResponse.nodeType && oRawResponse.nodeType == 9) {
-                this.responseType = Y.DataSource.TYPE_XML;
-            }
-            else if(oRawResponse && oRawResponse.nodeName && (oRawResponse.nodeName.toLowerCase() == "table")) { // table
-                this.responseType = Y.DataSource.TYPE_HTMLTABLE;
-            }    
-            else if(LANG.isObject(oRawResponse)) { // json
-                this.responseType = Y.DataSource.TYPE_JSON;
-            }
-            else if(LANG.isString(oRawResponse)) { // text
-                this.responseType = Y.DataSourec.TYPE_TEXT;
-            }
-        }
+    /**
+     * Overridable method returns data to callback.
+     *
+     * @method returnData
+     */
+    returnData: function(request, response, callback, params, error) {
+        DS.issueCallback(callback, params, error);
     }
 
-    switch(this.responseType) {
-        case Y.DataSource.TYPE_JSARRAY:
-            if(xhr && oRawResponse && oRawResponse.responseText) {
-                oFullResponse = oRawResponse.responseText; 
-            }
-            try {
-                // Convert to JS array if it's a string
-                if(LANG.isString(oFullResponse)) {
-                    // Check for YUI JSON Util
-                    if(LANG.JSON) {
-                        oFullResponse = LANG.JSON.parse(oFullResponse);
-                    }
-                    // Look for JSON parsers using an API similar to json2.js
-                    else if(window.JSON && JSON.parse) {
-                        oFullResponse = JSON.parse(oFullResponse);
-                    }
-                    // Look for JSON parsers using an API similar to json.js
-                    else if(oFullResponse.parseJSON) {
-                        oFullResponse = oFullResponse.parseJSON();
-                    }
-                    // No JSON lib found so parse the string
-                    else {
-                        // Trim leading spaces
-                        while (oFullResponse.length > 0 &&
-                                (oFullResponse.charAt(0) != "{") &&
-                                (oFullResponse.charAt(0) != "[")) {
-                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
-                        }
+});
     
-                        if(oFullResponse.length > 0) {
-                            // Strip extraneous stuff at the end
-                            var arrayEnd = Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
-                            oFullResponse = oFullResponse.substring(0,arrayEnd+1);
-    
-                            // Turn the string into an object literal...
-                            // ...eval is necessary here
-                            oFullResponse = eval("(" + oFullResponse + ")");
-    
-                        }
-                    }
-                }
-            }
-            catch(e) {
-            }
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseArrayData(oRequest, oFullResponse);
-            break;
-        case Y.DataSource.TYPE_JSON:
-            if(xhr && oRawResponse && oRawResponse.responseText) {
-                oFullResponse = oRawResponse.responseText;
-            }
-            try {
-                // Convert to JSON object if it's a string
-                if(LANG.isString(oFullResponse)) {
-                    // Check for YUI JSON Util
-                    if(LANG.JSON) {
-                        oFullResponse = LANG.JSON.parse(oFullResponse);
-                    }
-                    // Look for JSON parsers using an API similar to json2.js
-                    else if(window.JSON && JSON.parse) {
-                        oFullResponse = JSON.parse(oFullResponse);
-                    }
-                    // Look for JSON parsers using an API similar to json.js
-                    else if(oFullResponse.parseJSON) {
-                        oFullResponse = oFullResponse.parseJSON();
-                    }
-                    // No JSON lib found so parse the string
-                    else {
-                        // Trim leading spaces
-                        while (oFullResponse.length > 0 &&
-                                (oFullResponse.charAt(0) != "{") &&
-                                (oFullResponse.charAt(0) != "[")) {
-                            oFullResponse = oFullResponse.substring(1, oFullResponse.length);
-                        }
-    
-                        if(oFullResponse.length > 0) {
-                            // Strip extraneous stuff at the end
-                            var objEnd = Math.max(oFullResponse.lastIndexOf("]"),oFullResponse.lastIndexOf("}"));
-                            oFullResponse = oFullResponse.substring(0,objEnd+1);
-    
-                            // Turn the string into an object literal...
-                            // ...eval is necessary here
-                            oFullResponse = eval("(" + oFullResponse + ")");
-    
-                        }
-                    }
-                }
-            }
-            catch(e) {
-            }
-
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseJSONData(oRequest, oFullResponse);
-            break;
-        case Y.DataSource.TYPE_HTMLTABLE:
-            if(xhr && oRawResponse.responseText) {
-                oFullResponse = oRawResponse.responseText;
-            }
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseHTMLTableData(oRequest, oFullResponse);
-            break;
-        case Y.DataSource.TYPE_XML:
-            if(xhr && oRawResponse.responseXML) {
-                oFullResponse = oRawResponse.responseXML;
-            }
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseXMLData(oRequest, oFullResponse);
-            break;
-        case Y.DataSource.TYPE_TEXT:
-            if(xhr && LANG.isString(oRawResponse.responseText)) {
-                oFullResponse = oRawResponse.responseText;
-            }
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseTextData(oRequest, oFullResponse);
-            break;
-        default:
-            oFullResponse = this.doBeforeParseData(oRequest, oFullResponse, oCallback);
-            oParsedResponse = this.parseData(oRequest, oFullResponse);
-            break;
-    }
-
-
-    // Clean up for consistent signature
-    oParsedResponse = oParsedResponse || {};
-    if(!oParsedResponse.results) {
-        oParsedResponse.results = [];
-    }
-    if(!oParsedResponse.meta) {
-        oParsedResponse.meta = {};
-    }
-
-    // Success
-    if(oParsedResponse && !oParsedResponse.error) {
-        // Last chance to touch the raw response or the parsed response
-        oParsedResponse = this.doBeforeCallback(oRequest, oFullResponse, oParsedResponse, oCallback);
-        this.fire("responseParseEvent", {request:oRequest,
-                response:oParsedResponse, callback:oCallback});
-        // Cache the response
-        //TODO: REINSTATE
-        //this.addToCache(oRequest, oParsedResponse);
-    }
-    // Error
-    else {
-        // Be sure the error flag is on
-        oParsedResponse.error = true;
-        this.fire("dataErrorEvent", {request:oRequest, response: oRawResponse, callback:oCallback, 
-                message:this.get("ERROR_DATANULL")});
-        Y.log(this.get("ERROR_DATANULL"), "error", this.toString());
-    }
-
-    // Send the response back to the callback
-    oParsedResponse.tId = tId;
-    Y.DataSource.issueCallback(oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
-},
-
-/**
- * Overridable method gives implementers access to the original full response
- * before the data gets parsed. Implementers should take care not to return an
- * unparsable or otherwise invalid response.
- *
- * @method doBeforeParseData
- * @param oRequest {Object} Request object.
- * @param oFullResponse {Object} The full response from the live database.
- * @param oCallback {Object} The callback object.  
- * @return {Object} Full response for parsing.
-  
- */
-doBeforeParseData : function(oRequest, oFullResponse, oCallback) {
-    return oFullResponse;
-},
-
-/**
- * Overridable method gives implementers access to the original full response and
- * the parsed response (parsed against the given schema) before the data
- * is added to the cache (if applicable) and then sent back to callback function.
- * This is your chance to access the raw response and/or populate the parsed
- * response with any custom data.
- *
- * @method doBeforeCallback
- * @param oRequest {Object} Request object.
- * @param oFullResponse {Object} The full response from the live database.
- * @param oParsedResponse {Object} The parsed response to return to calling object.
- * @param oCallback {Object} The callback object. 
- * @return {Object} Parsed response object.
- */
-doBeforeCallback : function(oRequest, oFullResponse, oParsedResponse, oCallback) {
-    return oParsedResponse;
-},
-
-/**
- * Overridable method parses data of generic RESPONSE_TYPE into a response object.
- *
- * @method parseData
- * @param oRequest {Object} Request object.
- * @param oFullResponse {Object} The full Array from the live database.
- * @return {Object} Parsed response object with the following properties:<br>
- *     - results {Array} Array of parsed data results<br>
- *     - meta {Object} Object literal of meta values<br>
- *     - error {Boolean} (optional) True if there was an error<br>
- */
-parseData : function(oRequest, oFullResponse) {
-    if(LANG.isValue(oFullResponse)) {
-        var oParsedResponse = {results:oFullResponse,meta:{}};
-        Y.log("Parsed generic data is " +
-                Y.dump(oParsedResponse), "info", this.toString());
-        return oParsedResponse;
-
-    }
-    Y.log("Generic data could not be parsed: " + Y.dump(oFullResponse), 
-            "error", this.toString());
-    return null;
-}
-
-
-    });
-    
-    Y.DataSource.Base = Base;
+    DS.Base = Base;
     
 
 /**

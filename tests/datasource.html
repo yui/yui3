@@ -53,13 +53,27 @@
 
             testDefaults: function(){
                 var ds = new Y.DataSource.Local({
-                    liveData: ["a","b","c","d"]
+                    source: ["a","b","c","d"]
                 });
 
                 ds.sendRequest("a", {success:function(request,response) {
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});                
-            }                    
+            },
+            
+            testLocalCancelRequestEvent: function(){
+                var ds = new Y.DataSource.Local({
+                    source: ["a","b","c","d"]
+                });
+                
+                ds.subscribe("requestEvent", function(e) {
+                    e.preventDefault();
+                });
+
+                ds.sendRequest("a", {success:function(request,response) {
+                    ASSERT.fail("Request should not be sent.")
+                }});                
+            }            
         });
 
         var testXHR = new Y.Test.Case({
@@ -67,8 +81,8 @@
 
             testDefaults: function(){
                 var ds = new Y.DataSource.XHR({
-                    liveData: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    responseType: Y.DataSource.TYPE_JSON,
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    responseType: "JSON",
                     responseSchema: {
                         resultsList: "ResultSet.Result",
                         fields: ["Title"]
@@ -86,8 +100,36 @@
                     scope: this
                 });                
 
-                this.wait(1000);
-            }                    
+                this.wait(2000); // On a slow connection: this.wait(5000);
+            },
+
+            testXHRCancelRequestEvent: function(){
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    responseType: "JSON",
+                    responseSchema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                });
+
+                ds.subscribe("requestEvent", function(e) {
+                        e.preventDefault();
+                }, this);
+
+                ds.sendRequest(null, {
+                    success: function(request,response) {
+                        this.resume(function() {
+                            ASSERT.fail("Request should not be sent.")
+                        });
+                    },
+                    scope: this
+                });
+
+                this.wait(function(){
+                    // This function has been intentionally left blank.
+                }, 0);
+            }
         });
 
         var testCache = new Y.Test.Case({
@@ -113,6 +155,21 @@
                 ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.get("maxCacheEntries"), 5, "Expected 5 size in DataSource.");
                 ASSERT.areSame(ds._cache.get("size"), 5, "Expected 5 size in Cache.");
+            },
+            
+            testLocalCache: function(){
+                var ds = new Y.DataSource.Local({
+                    source: ["a","b","c","d"],
+                    maxCacheEntries: 5
+                });
+
+                ds.sendRequest("a", {success:function(request,response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                }});
+
+                ds.sendRequest("a", {success:function(request,response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                }});
             }
         });
 
