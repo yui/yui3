@@ -1,10 +1,7 @@
 /**
  * Utilities for cookie management
  * @module cookie
- * @beta
  */
-
-YUI.add("cookie", function(Y){ 
 
     //shortcuts
     var L       = Y.Lang,
@@ -421,4 +418,3 @@ YUI.add("cookie", function(Y){
         }     
     
     };
-}, "3.0.0");
