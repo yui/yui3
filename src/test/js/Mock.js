@@ -140,9 +140,9 @@
         }
     };
     
-    Y.Mock.Value.Any = Y.Mock.Value(function(){});
-    Y.Mock.Value.Boolean = Y.Mock.Value(Y.Assert.isBoolean);
-    Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber);
-    Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString);
-    Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject);
-    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction);
+    Y.Mock.Value.Any        = Y.Mock.Value(function(){});
+    Y.Mock.Value.Boolean    = Y.Mock.Value(Y.Assert.isBoolean);
+    Y.Mock.Value.Number     = Y.Mock.Value(Y.Assert.isNumber);
+    Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
+    Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
+    Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);

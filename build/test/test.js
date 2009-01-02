@@ -1025,6 +1025,14 @@ YUI.add('test', function(Y) {
      */
     Y.Assert = {
     
+        /**
+         * The number of assertions performed.
+         * @property _asserts
+         * @type int
+         * @private
+         */
+        _asserts: 0,
+    
         //-------------------------------------------------------------------------
         // Helper Methods
         //-------------------------------------------------------------------------
@@ -1046,6 +1054,36 @@ YUI.add('test', function(Y) {
             } else {
                 return defaultMessage;
             }        
+        },
+        
+        /**
+         * Returns the number of assertions that have been performed.
+         * @method _getCount
+         * @protected
+         * @static
+         */
+        _getCount: function(){
+            return this._asserts;
+        },
+        
+        /**
+         * Increments the number of assertions that have been performed.
+         * @method _increment
+         * @protected
+         * @static
+         */
+        _increment: function(){
+            this._asserts++;
+        },
+        
+        /**
+         * Resets the number of assertions that have been performed to 0.
+         * @method _reset
+         * @protected
+         * @static
+         */
+        _reset: function(){
+            this._asserts = 0;
         },
         
         //-------------------------------------------------------------------------
@@ -1076,6 +1114,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         areEqual : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (expected != actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal."), expected, actual);
             }
@@ -1092,6 +1131,7 @@ YUI.add('test', function(Y) {
          */
         areNotEqual : function (unexpected /*:Object*/, actual /*:Object*/, 
                              message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (unexpected == actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be equal."), unexpected);
             }
@@ -1107,6 +1147,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         areNotSame : function (unexpected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (unexpected === actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be the same."), unexpected);
             }
@@ -1122,6 +1163,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         areSame : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (expected !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be the same."), expected, actual);
             }
@@ -1140,6 +1182,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isFalse : function (actual /*:Boolean*/, message /*:String*/) {
+            Y.Assert._increment();
             if (false !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be false."), false, actual);
             }
@@ -1154,6 +1197,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isTrue : function (actual /*:Boolean*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (true !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be true."), true, actual);
             }
@@ -1172,6 +1216,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+            Y.Assert._increment();
             if (!isNaN(actual)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
             }    
@@ -1185,6 +1230,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNotNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+            Y.Assert._increment();
             if (isNaN(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be NaN."), NaN);
             }    
@@ -1199,6 +1245,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (Y.Lang.isNull(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
             }
@@ -1213,6 +1260,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
             }
@@ -1227,6 +1275,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isNull(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
             }
@@ -1241,6 +1290,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
             }
@@ -1258,6 +1308,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isArray(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
             }    
@@ -1271,6 +1322,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isBoolean(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
             }    
@@ -1284,6 +1336,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isFunction(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
             }    
@@ -1300,6 +1353,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isInstanceOf : function (expected /*:Function*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!(actual instanceof expected)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
             }
@@ -1313,6 +1367,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isNumber(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
             }    
@@ -1326,6 +1381,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isObject(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
             }
@@ -1339,6 +1395,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();
             if (!Y.Lang.isString(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
             }
@@ -1353,9 +1410,25 @@ YUI.add('test', function(Y) {
          * @static
          */
         isTypeOf : function (expectedType /*:String*/, actualValue /*:Object*/, message /*:String*/) /*:Void*/{
+            Y.Assert._increment();
             if (typeof actualValue != expectedType){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expected, typeof actualValue);
             }
+        }
+    };
+    
+    /**
+     * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown
+     * and the test fails.
+     * @method Y.assert
+     * @param {Boolean} condition The condition to test.
+     * @param {String} message The message to display if the assertion fails.
+     * @static
+     */
+    Y.assert = function(condition, message){
+        Y.Assert._increment();
+        if (!condition){
+            throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Assertion failed."));
         }
     };
     
@@ -1630,7 +1703,7 @@ YUI.add('test', function(Y) {
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
 
-    
+   
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
      * for a variety of cases.
@@ -1653,16 +1726,9 @@ YUI.add('test', function(Y) {
         contains : function (needle /*:Object*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (haystack[i] === needle) {
-                    found = true;
-                }
-            }
-            
-            if (!found){
+            Y.Assert._increment();               
+
+            if (Y.Array.indexOf(haystack, needle) == -1){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
             }
         },
@@ -1679,10 +1745,13 @@ YUI.add('test', function(Y) {
          */
         containsItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
     
             //begin checking values
             for (var i=0; i < needles.length; i++){
-                this.contains(needles[i], haystack, message);
+                if (Y.Array.indexOf(haystack, needles[i]) == -1){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
+                }
             }
         },
     
@@ -1698,21 +1767,13 @@ YUI.add('test', function(Y) {
         containsMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();               
             //check for valid matcher
             if (typeof matcher != "function"){
                 throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
             }
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (matcher(haystack[i])) {
-                    found = true;
-                }
-            }
-            
-            if (!found){
+            if (!Y.Array.some(matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
             }
         },
@@ -1730,16 +1791,9 @@ YUI.add('test', function(Y) {
         doesNotContain : function (needle /*:Object*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (haystack[i] === needle) {
-                    found = true;
-                }
-            }
-            
-            if (found){
+            Y.Assert._increment();               
+
+            if (Y.Array.indexOf(haystack, needle) > -1){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },
@@ -1757,8 +1811,12 @@ YUI.add('test', function(Y) {
         doesNotContainItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
     
+            Y.Assert._increment();               
+    
             for (var i=0; i < needles.length; i++){
-                this.doesNotContain(needles[i], haystack, message);
+                if (Y.Array.indexOf(haystack, needles[i]) > -1){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                }
             }
     
         },
@@ -1775,21 +1833,14 @@ YUI.add('test', function(Y) {
         doesNotContainMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();     
+          
             //check for valid matcher
             if (typeof matcher != "function"){
                 throw new TypeError("ArrayAssert.doesNotContainMatch(): First argument must be a function.");
             }
-    
-            var found /*:Boolean*/ = false;
             
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (matcher(haystack[i])) {
-                    found = true;
-                }
-            }
-            
-            if (found){
+            if (Y.Array.some(matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },
@@ -1806,10 +1857,14 @@ YUI.add('test', function(Y) {
          */
         indexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
         
+            Y.Assert._increment();     
+
             //try to find the value in the array
             for (var i=0; i < haystack.length; i++){
                 if (haystack[i] === needle){
-                    Y.Assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
+                    if (index != i){
+                        Y.Assert.fail(Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    }
                     return;
                 }
             }
@@ -1832,13 +1887,18 @@ YUI.add('test', function(Y) {
         itemsAreEqual : function (expected /*:Array*/, actual /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
+            Y.Assert._increment();     
+            
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
            
             //begin checking values
-            for (var i=0; i < len; i++){
-                Y.Assert.areEqual(expected[i], actual[i], 
-                    Y.Assert._formatMessage(message, "Values in position " + i + " are not equal."));
+            for (var i=0; i < expected.length; i++){
+                if (expected[i] != actual[i]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
+                }
             }
         },
         
@@ -1859,16 +1919,20 @@ YUI.add('test', function(Y) {
         itemsAreEquivalent : function (expected /*:Array*/, actual /*:Array*/, 
                                comparator /*:Function*/, message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();     
+
             //make sure the comparator is valid
             if (typeof comparator != "function"){
                 throw new TypeError("ArrayAssert.itemsAreEquivalent(): Third argument must be a function.");
             }
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
             
             //begin checking values
-            for (var i=0; i < len; i++){
+            for (var i=0; i < expected.length; i++){
                 if (!comparator(expected[i], actual[i])){
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
                 }
@@ -1883,6 +1947,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+            Y.Assert._increment();     
             if (actual.length > 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should be empty."));
             }
@@ -1896,6 +1961,7 @@ YUI.add('test', function(Y) {
          * @static
          */
         isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+            Y.Assert._increment();     
             if (actual.length === 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should not be empty."));
             }
@@ -1915,13 +1981,18 @@ YUI.add('test', function(Y) {
         itemsAreSame : function (expected /*:Array*/, actual /*:Array*/, 
                               message /*:String*/) /*:Void*/ {
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
-            
+            Y.Assert._increment();     
+
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
+                        
             //begin checking values
-            for (var i=0; i < len; i++){
-                Y.Assert.areSame(expected[i], actual[i], 
-                    Y.Assert._formatMessage(message, "Values in position " + i + " are not the same."));
+            for (var i=0; i < expected.length; i++){
+                if (expected[i] !== actual[i]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
+                }
             }
         },
         
@@ -1941,7 +2012,9 @@ YUI.add('test', function(Y) {
             //try to find the value in the array
             for (var i=haystack.length; i >= 0; i--){
                 if (haystack[i] === needle){
-                    Y.Assert.areEqual(index, i, Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
+                    if (index != i){
+                        Y.Assert.fail(Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    }
                     return;
                 }
             }
@@ -1963,8 +2036,11 @@ YUI.add('test', function(Y) {
     Y.ObjectAssert = {
     
         areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(expected, function(value, name){
-                Y.Assert.areEqual(expected[name], actual[name], Y.Assert._formatMessage(message, "Values should be equal for property " + name));
+                if (expected[name] != actual[name]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
+                }
             });            
         },
         
@@ -1977,6 +2053,7 @@ YUI.add('test', function(Y) {
          * @static
          */    
         has : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             if (!(propertyName in object)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
@@ -1991,6 +2068,7 @@ YUI.add('test', function(Y) {
          * @static
          */    
         hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(refObject, function(value, name){
                 if (!(name in object)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object."));
@@ -2007,6 +2085,7 @@ YUI.add('test', function(Y) {
          * @static
          */    
         owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
@@ -2021,6 +2100,7 @@ YUI.add('test', function(Y) {
          * @static
          */    
         ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(refObject, function(value, name){
                 if (!object.hasOwnProperty(name)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
@@ -2050,12 +2130,30 @@ YUI.add('test', function(Y) {
          * @static
          */
         datesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+            Y.Assert._increment();        
             if (expected instanceof Date && actual instanceof Date){
-                Y.AssertareEqual(expected.getFullYear(), actual.getFullYear(), Y.Assert_formatMessage(message, "Years should be equal."));
-                Y.AssertareEqual(expected.getMonth(), actual.getMonth(), Y.Assert_formatMessage(message, "Months should be equal."));
-                Y.AssertareEqual(expected.getDate(), actual.getDate(), Y.Assert_formatMessage(message, "Day of month should be equal."));
+                var msg = "";
+                
+                //check years first
+                if (expected.getFullYear() != actual.getFullYear()){
+                    msg = "Years should be equal.";
+                }
+                
+                //now check months
+                if (expected.getMonth() != actual.getMonth()){
+                    msg = "Months should be equal.";
+                }                
+                
+                //last, check the day of the month
+                if (expected.getDate() != actual.getDate()){
+                    msg = "Days of month should be equal.";
+                }                
+                
+                if (msg.length){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, msg), expected, actual);
+                }
             } else {
-                throw new TypeError("DateY.AssertdatesAreEqual(): Expected and actual values must be Date objects.");
+                throw new TypeError("Y.Assert.datesAreEqual(): Expected and actual values must be Date objects.");
             }
         },
     
@@ -2068,10 +2166,28 @@ YUI.add('test', function(Y) {
          * @static
          */
         timesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+            Y.Assert._increment();
             if (expected instanceof Date && actual instanceof Date){
-                Y.AssertareEqual(expected.getHours(), actual.getHours(), Y.Assert_formatMessage(message, "Hours should be equal."));
-                Y.AssertareEqual(expected.getMinutes(), actual.getMinutes(), Y.Assert_formatMessage(message, "Minutes should be equal."));
-                Y.AssertareEqual(expected.getSeconds(), actual.getSeconds(), Y.Assert_formatMessage(message, "Seconds should be equal."));
+                var msg = "";
+                
+                //check hours first
+                if (expected.getHours() != actual.getHours()){
+                    msg = "Hours should be equal.";
+                }
+                
+                //now check minutes
+                if (expected.getMinutes() != actual.getMinutes()){
+                    msg = "Minutes should be equal.";
+                }                
+                
+                //last, check the seconds
+                if (expected.getSeconds() != actual.getSeconds()){
+                    msg = "Seconds should be equal.";
+                }                
+                
+                if (msg.length){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, msg), expected, actual);
+                }
             } else {
                 throw new TypeError("DateY.AsserttimesAreEqual(): Expected and actual values must be Date objects.");
             }
@@ -2433,12 +2549,12 @@ YUI.add('test', function(Y) {
         }
     };
     
-    Y.Mock.Value.Any = Y.Mock.Value(function(){});
-    Y.Mock.Value.Boolean = Y.Mock.Value(Y.Assert.isBoolean);
-    Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber);
-    Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString);
-    Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject);
-    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction);
+    Y.Mock.Value.Any        = Y.Mock.Value(function(){});
+    Y.Mock.Value.Boolean    = Y.Mock.Value(Y.Assert.isBoolean);
+    Y.Mock.Value.Number     = Y.Mock.Value(Y.Assert.isNumber);
+    Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
+    Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
+    Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
 
 
 

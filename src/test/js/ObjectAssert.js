@@ -9,8 +9,11 @@
     Y.ObjectAssert = {
     
         areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(expected, function(value, name){
-                Y.Assert.areEqual(expected[name], actual[name], Y.Assert._formatMessage(message, "Values should be equal for property " + name));
+                if (expected[name] != actual[name]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
+                }
             });            
         },
         
@@ -23,6 +26,7 @@
          * @static
          */    
         has : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             if (!(propertyName in object)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
@@ -37,6 +41,7 @@
          * @static
          */    
         hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(refObject, function(value, name){
                 if (!(name in object)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object."));
@@ -53,6 +58,7 @@
          * @static
          */    
         owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
@@ -67,6 +73,7 @@
          * @static
          */    
         ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
             Y.Object.each(refObject, function(value, name){
                 if (!object.hasOwnProperty(name)){
                     Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
