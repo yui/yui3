@@ -136,57 +136,6 @@ Y.mix(Base, {
         },
 
         /**
-        * @attribute responseType
-        * @description Format of response:
-            <ul>
-                <li>"ARRAY"</li>
-                <li>"JSON"</li>
-                <li>"XML"</li>
-                <li>"TEXT"</li>
-                <li>"HTMLTABLE"</li>
-            </ul>
-        * @type String
-        * @default null
-        */
-        responseType: {
-            value: null,
-            set: function(value) {
-                this._parser = Y.DataParser[value] ||
-                        function(x) {return x;};
-            }
-        },
-
-        /**
-        * @attribute responseSchema
-        * @description Response schema object literal takes a combination of
-        * the following properties:
-            <dl>
-                <dt>resultsList {String}</dt>
-                    <dd>Pointer to array of tabular data</dd>
-                <dt>resultNode {String}</dt>
-                    <dd>Pointer to node name of row data (XML data only)</dl>
-                <dt>recordDelim {String}</dt>
-                    <dd>Record delimiter (text data only)</dd>
-                <dt>fieldDelim {String}</dt>
-                    <dd>Field delimiter (text data only)</dd>
-                <dt>fields {String[] | Object []}</dt>
-                    <dd>Array of field names (aka keys), or array of object literals such as:
-                    {key:"fieldname", parser:Date.parse}</dd>
-                <dt>metaFields {Object}</dt>
-                    <dd>Hash of field names (aka keys) to include in the 
-                    oParsedResponse.meta collection</dd>
-                <dt>metaNode {String}</dt>
-                    <dd>Name of the node under which to search for meta
-                    information in XML response data (XML data only)</dd>
-            </dl>
-        * @type Object
-        * @default {}        
-        */
-        responseSchema: {
-            value: {}
-        },
-
-        /**
         * @attribute ERROR_DATAINVALID
         * @description Error message for invalid data responses.
         * @type String
@@ -316,8 +265,9 @@ Y.extend(Base, Y.Base, {
      * @param e.callback {Object} Callback object.
      */
     _makeConnection: function(e) {
-        this.fire("responseEvent", Y.mix(e, {response:this.get("source")}));
-        Y.log("Transaction " + e.tId + " complete. Request: " + Y.dump(e.request) + " . Response: " Y.dump(e.response), "info", this.toString());
+        this.fire("responseEvent", Y.mix(e.details[0], {response:this.get("source")}));
+        Y.log("Transaction " + e.tId + " complete. Request: " +
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
     },
 
     /**
@@ -332,45 +282,7 @@ Y.extend(Base, Y.Base, {
      * @param args.response {MIXED} Raw data response.
      */
     _handleResponse: function(args) {
-        var tId = args.tId,
-            oRequest = args.request,
-            oFullResponse = args.response,
-            oCallback = args.callback;
-
-        //this.fire("responseEvent", {tId:tId, request:oRequest, response:oFullResponse, callback:oCallback});
-
-
-
-        var oParsedResponse = this.parseData(oRequest, oFullResponse, tId);
-
-        // Clean up for consistent signature
-        oParsedResponse = oParsedResponse || {};
-        if(!oParsedResponse.results) {
-            oParsedResponse.results = [];
-        }
-        if(!oParsedResponse.meta) {
-            oParsedResponse.meta = {};
-        }
-
-        // Success
-        if(oParsedResponse && !oParsedResponse.error) {
-            this.fire("responseParseEvent", {request:oRequest,
-                    response:oParsedResponse, callback:oCallback});
-            // Cache the response
-            //TODO: REINSTATE
-            //this.addToCache(oRequest, oParsedResponse);
-        }
-        // Error
-        else {
-            // Be sure the error flag is on
-            oParsedResponse.error = true;
-            this.fire("errorEvent", {request:oRequest, response:oRawResponse, callback:oCallback});
-            Y.log("Error in parsed response", "error", this.toString());
-        }
-
-        // Send the response back to the callback
-        oParsedResponse.tId = tId;
-        this.returnData(oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+        this.returnData(args.tId, args.callback,[args.request, {results: args.response}]);
 
     },
 
@@ -454,45 +366,43 @@ Y.extend(Base, Y.Base, {
     },
 
     /**
-     * Overridable method parses data of generic RESPONSE_TYPE into a response object.
-     *
-     * @method parseData
-     * @param requst {Object} Request object.
-     * @param data {Object} The full Array from the live database.
-     * @return {Object} Parsed response object with the following properties:<br>
-     *     - results {Array} Array of parsed data results<br>
-     *     - meta {Object} Object literal of meta values<br>
-     *     - error {Boolean} (optional) True if there was an error<br>
-     */
-    parseData: function(request, data, id) {
-        var response = null;
-        
-        if(this._parser) {
-            response = {results:this._parser(data, this.get("responseSchema")),meta:{}, id: id};
-        }
-        
-        return response;
-        
-        
-        /*if(LANG.isValue(oFullResponse)) {
-            var oParsedResponse = {results:oFullResponse,meta:{}};
-            Y.log("Parsed generic data is " +
-                    Y.dump(oParsedResponse), "info", this.toString());
-            return oParsedResponse;
-    
-        }
-        Y.log("Generic data could not be parsed: " + Y.dump(oFullResponse), 
-                "error", this.toString());
-        return null;*/
-    },
-
-    /**
      * Overridable method returns data to callback.
      *
      * @method returnData
      */
-    returnData: function(request, response, callback, params, error) {
-        DS.issueCallback(callback, params, error);
+    returnData: function(tId, callback, params, error) {
+        var request = params[0],
+            response = params[1];
+            
+        // Cache the response
+        //TODO: REINSTATE
+        //this.addToCache(oRequest, oParsedResponse);
+
+
+        // Success
+        if(response && !response.error) {
+            //this.fire("responseParseEvent", {request:oRequest,
+            //        response:response, callback:oCallback});
+        }
+        // Error
+        else {
+            // Be sure the error flag is on
+            response.error = true;
+            this.fire("errorEvent", {request:request, response:response, callback:callback});
+            Y.log("Error in response", "error", this.toString());
+        }
+
+        // Send the response back to the callback
+        response.tId = tId;
+        // Clean up for consistent signature
+        response = response || {};
+        if(!response.results) {
+            response.results = [];
+        }
+        if(!response.meta) {
+            response.meta = {};
+        }
+        DS.issueCallback(callback, [request, response, callback.argument], error);
     }
 
 });
@@ -1064,274 +974,4 @@ Y.extend(Base, Y.Base, {
 
 
 }, '@VERSION@' ,{requires:['base']});
-
-YUI.add('datasource-local', function(Y) {
-
-/**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
- *
- * @module datasource-local
- * @requires datasource-base
- * @title DataSource Local Submodule
- */
-    var LANG = Y.Lang,
-    
-    /**
-     * Local subclass for the YUI DataSource utility.
-     * @class DataSource.Local
-     * @extends DataSource.Base
-     * @constructor
-     */    
-    Local = function() {
-        Local.superclass.constructor.apply(this, arguments);
-    };
-    
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Local static properties
-    //
-    /////////////////////////////////////////////////////////////////////////////
-Y.mix(Local, {    
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static     
-     * @final
-     * @value "DataSource.Local"
-     */
-    NAME: "DataSource.Local",
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Local Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    ATTRS: {
-    }
-});
-    
-Y.extend(Local, Y.DataSource.Base, {
-});
-  
-    Y.DataSource.Local = Local;
-    
-
-
-
-}, '@VERSION@' ,{requires:['datasource-base']});
-
-YUI.add('datasource-xhr', function(Y) {
-
-/**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
- *
- * @module datasource-xhr
- * @requires datasource-base
- * @title DataSource XHR Submodule
- */
-    var LANG = Y.Lang,
-    
-    /**
-     * XHR subclass for the YUI DataSource utility.
-     * @class DataSource.XHR
-     * @extends DataSource.Base
-     * @constructor
-     */    
-    XHR = function() {
-        XHR.superclass.constructor.apply(this, arguments);
-    };
-    
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.XHR static properties
-    //
-    /////////////////////////////////////////////////////////////////////////////
-Y.mix(XHR, {    
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static     
-     * @final
-     * @value "DataSource.XHR"
-     */
-    NAME: "DataSource.XHR",
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.XHR Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    ATTRS: {
-        io: {
-            value: Y.io
-        }
-    }
-});
-    
-Y.extend(XHR, Y.DataSource.Base, {
-    /**
-     * Overriding requestEvent handler passes query string to IO. Fires
-     * responseEvent when response is received.     
-     *
-     * @method _makeConnection
-     * @protected     
-     * @param args.tId {Number} Transaction ID.     
-     * @param args.request {MIXED} Request.     
-     * @param args.callback {Object} Callback object.
-     */
-    _makeConnection: function(args) {
-        var uri = this.get("source"),
-            cfg = {
-                on: {
-                    complete: function (id, response, args) {
-                        this.fire("responseEvent", Y.mix(args, {response:response}));
-                        Y.log("Received XHR data response for \"" + oRequest + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
-                    }
-                },
-                context: this,
-                arguments: {
-                    tId: args.tId,
-                    request: args.request,
-                    callback: args.callback
-                }
-            };
-        
-        this.get("io")(uri, cfg);
-        return args.tId;
-    }
-});
-  
-    Y.DataSource.XHR = XHR;
-    
-
-
-
-}, '@VERSION@' ,{requires:['datasource-base']});
-
-YUI.add('datasource-cache', function(Y) {
-
-/**
- * Extends DataSource.Base with caching functionality.
- *
- * @module datasource-cache
- * @requires datasource-base,cache
- * @title DataSource Cache Extension
- */
-    var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
-    
-    /**
-     * Adds cacheability to the YUI DataSource utility.
-     * @class Cachable
-     * @constructor
-     */    
-    Cacheable = function() {
-        this._initCacheable();
-    };
-
-Cacheable.ATTRS = {    
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Base Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Max size of the local cache.  Set to 0 to turn off caching.  Caching is
-     * useful to reduce the number of server connections.  Recommended only for data
-     * sources that return comprehensive results for queries or when stale data is
-     * not an issue.
-     *
-     * @attribute maxCacheEntries
-     * @type Number
-     * @default 0
-     */
-    maxCacheEntries: {
-        value: 0,
-        set: function(value) {
-            return this._cache.set("size", value).get("size");
-        }
-    }
-};
-    
-Cacheable.prototype = {
-    /**
-     * Internal pointer to Cache instance.
-     *
-     * @attribute _cache
-     * @type YAHOO.util.Cache
-     * @private
-     */
-    _cache: null, 
-    
-    /**
-    * @method initializer
-    * @description Initializes cache.
-    * @private        
-    */
-    _initCacheable: function() {
-        this._cache = new Y.Cache();
-        this.subscribe("requestEvent", this._onRequestEvent, this);
-        Y.log("DataSource Cache initialized", "info", this.toString());
-    },
-
-    /**
-     * First look for cached response, then send request to live data.
-     *
-     * @method _onRequestEvent
-     * @private
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.     
-     * @param e.tId {Number} Transaction ID.     
-     * @param e.request {MIXED} Request.     
-     * @param e.callback {Object} Callback object.
-     */
-    _onRequestEvent: function(e) {
-        // First look in cache
-        var cachedresponse = this._cache.retrieve(e.request, e.callback);
-        if(cachedresponse && cachedresponse.entry) {
-            e.preventDefault();
-            Y.DataSource.issueCallback(e.callback,[e.request,cachedresponse.entry],false);
-            //return false;
-        }  
-
-        // Not in cache, so forward request to live data
-        Y.log("Making connection to live data for \"" + e.request + "\"", "info", this.toString());
-        return true;
-    },
-    
-    /**
-     * Overwrites DataSource's returnData method to first cache then return data
-     *
-     */
-    returnData: function(callback, params, error) {
-        this._cache.cache(params[0], params[1]);
-        Y.DataSource.issueCallback(callback, params, error);
-   }
-};
-    
-Y.Base.build(BASE, [Cacheable], {
-    dynamic: false
-});
-
-
-
-}, '@VERSION@' ,{requires:['datasource-base']});
-
-
-
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-local','datasource-xhr','datasource-cache']});
 

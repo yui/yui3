@@ -136,57 +136,6 @@ Y.mix(Base, {
         },
 
         /**
-        * @attribute responseType
-        * @description Format of response:
-            <ul>
-                <li>"ARRAY"</li>
-                <li>"JSON"</li>
-                <li>"XML"</li>
-                <li>"TEXT"</li>
-                <li>"HTMLTABLE"</li>
-            </ul>
-        * @type String
-        * @default null
-        */
-        responseType: {
-            value: null,
-            set: function(value) {
-                this._parser = Y.DataParser[value] ||
-                        function(x) {return x;};
-            }
-        },
-
-        /**
-        * @attribute responseSchema
-        * @description Response schema object literal takes a combination of
-        * the following properties:
-            <dl>
-                <dt>resultsList {String}</dt>
-                    <dd>Pointer to array of tabular data</dd>
-                <dt>resultNode {String}</dt>
-                    <dd>Pointer to node name of row data (XML data only)</dl>
-                <dt>recordDelim {String}</dt>
-                    <dd>Record delimiter (text data only)</dd>
-                <dt>fieldDelim {String}</dt>
-                    <dd>Field delimiter (text data only)</dd>
-                <dt>fields {String[] | Object []}</dt>
-                    <dd>Array of field names (aka keys), or array of object literals such as:
-                    {key:"fieldname", parser:Date.parse}</dd>
-                <dt>metaFields {Object}</dt>
-                    <dd>Hash of field names (aka keys) to include in the 
-                    oParsedResponse.meta collection</dd>
-                <dt>metaNode {String}</dt>
-                    <dd>Name of the node under which to search for meta
-                    information in XML response data (XML data only)</dd>
-            </dl>
-        * @type Object
-        * @default {}        
-        */
-        responseSchema: {
-            value: {}
-        },
-
-        /**
         * @attribute ERROR_DATAINVALID
         * @description Error message for invalid data responses.
         * @type String
@@ -316,7 +265,7 @@ Y.extend(Base, Y.Base, {
      * @param e.callback {Object} Callback object.
      */
     _makeConnection: function(e) {
-        this.fire("responseEvent", Y.mix(e, {response:this.get("source")}));
+        this.fire("responseEvent", Y.mix(e.details[0], {response:this.get("source")}));
     },
 
     /**
@@ -331,44 +280,7 @@ Y.extend(Base, Y.Base, {
      * @param args.response {MIXED} Raw data response.
      */
     _handleResponse: function(args) {
-        var tId = args.tId,
-            oRequest = args.request,
-            oFullResponse = args.response,
-            oCallback = args.callback;
-
-        //this.fire("responseEvent", {tId:tId, request:oRequest, response:oFullResponse, callback:oCallback});
-
-
-
-        var oParsedResponse = this.parseData(oRequest, oFullResponse, tId);
-
-        // Clean up for consistent signature
-        oParsedResponse = oParsedResponse || {};
-        if(!oParsedResponse.results) {
-            oParsedResponse.results = [];
-        }
-        if(!oParsedResponse.meta) {
-            oParsedResponse.meta = {};
-        }
-
-        // Success
-        if(oParsedResponse && !oParsedResponse.error) {
-            this.fire("responseParseEvent", {request:oRequest,
-                    response:oParsedResponse, callback:oCallback});
-            // Cache the response
-            //TODO: REINSTATE
-            //this.addToCache(oRequest, oParsedResponse);
-        }
-        // Error
-        else {
-            // Be sure the error flag is on
-            oParsedResponse.error = true;
-            this.fire("errorEvent", {request:oRequest, response:oRawResponse, callback:oCallback});
-        }
-
-        // Send the response back to the callback
-        oParsedResponse.tId = tId;
-        this.returnData(oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+        this.returnData(args.tId, args.callback,[args.request, {results: args.response}]);
 
     },
 
@@ -449,41 +361,42 @@ Y.extend(Base, Y.Base, {
     },
 
     /**
-     * Overridable method parses data of generic RESPONSE_TYPE into a response object.
-     *
-     * @method parseData
-     * @param requst {Object} Request object.
-     * @param data {Object} The full Array from the live database.
-     * @return {Object} Parsed response object with the following properties:<br>
-     *     - results {Array} Array of parsed data results<br>
-     *     - meta {Object} Object literal of meta values<br>
-     *     - error {Boolean} (optional) True if there was an error<br>
-     */
-    parseData: function(request, data, id) {
-        var response = null;
-        
-        if(this._parser) {
-            response = {results:this._parser(data, this.get("responseSchema")),meta:{}, id: id};
-        }
-        
-        return response;
-        
-        
-        /*if(LANG.isValue(oFullResponse)) {
-            var oParsedResponse = {results:oFullResponse,meta:{}};
-            return oParsedResponse;
-    
-        }
-        return null;*/
-    },
-
-    /**
      * Overridable method returns data to callback.
      *
      * @method returnData
      */
-    returnData: function(request, response, callback, params, error) {
-        DS.issueCallback(callback, params, error);
+    returnData: function(tId, callback, params, error) {
+        var request = params[0],
+            response = params[1];
+            
+        // Cache the response
+        //TODO: REINSTATE
+        //this.addToCache(oRequest, oParsedResponse);
+
+
+        // Success
+        if(response && !response.error) {
+            //this.fire("responseParseEvent", {request:oRequest,
+            //        response:response, callback:oCallback});
+        }
+        // Error
+        else {
+            // Be sure the error flag is on
+            response.error = true;
+            this.fire("errorEvent", {request:request, response:response, callback:callback});
+        }
+
+        // Send the response back to the callback
+        response.tId = tId;
+        // Clean up for consistent signature
+        response = response || {};
+        if(!response.results) {
+            response.results = [];
+        }
+        if(!response.meta) {
+            response.meta = {};
+        }
+        DS.issueCallback(callback, [request, response, callback.argument], error);
     }
 
 });

@@ -19,7 +19,7 @@
         //filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("dump", "test", "console", "io-base", "cache", "base", "dataparser", "datasource", function(Y) {
+    }).use("dump", "test", "console", "io-base", "cache", "base", "json", "dataparser", "datasource", function(Y) {
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
@@ -82,11 +82,18 @@
             testDefaults: function(){
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    responseType: "JSON",
-                    responseSchema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
-                    }
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+
+                    //responseType: "JSON",
+                    //responseSchema: {
+                    //    resultsList: "ResultSet.Result",
+                    //    fields: ["Title"]
+                    //}
                 });
 
                 ds.sendRequest(null, {
@@ -95,6 +102,11 @@
                             ASSERT.isNull(request, "Expected null request.");
                             ASSERT.isObject(response, "Expected response object.");
                             OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, response, "Expected tId property.");
+                        });
+                    },
+                    failure: function(request, response) {
+                        this.resume(function() {
+                            ASSERT.fail("XHR failure case.");
                         });
                     },
                     scope: this
@@ -136,31 +148,28 @@
             name: "DataSource Cache Tests",
 
             testDefaultSize: function(){
-                var ds = new Y.DataSource.Base();
-                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("maxCacheEntries"), 0, "Expected 0 size in DataSource.");
-                ASSERT.areSame(ds._cache.get("size"), 0, "Expected 0 size in Cache.");
+                var ds = new Y.DataSource.Base({cache: new Y.Cache()});
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
             },
 
             testInitSize: function(){
-                var ds = new Y.DataSource.Base({maxCacheEntries:3});
-                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("maxCacheEntries"), 3, "Expected 3 size in DataSource.");
-                ASSERT.areSame(ds._cache.get("size"), 3, "Expected 3 size in Cache.");
+                var ds = new Y.DataSource.Base({cache: new Y.Cache({size:3})});
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
             },
 
-            testSetSize: function(){
+            testSetCache: function(){
                 var ds = new Y.DataSource.Base();
-                ds.set("maxCacheEntries",5);
-                ASSERT.areSame((ds._cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("maxCacheEntries"), 5, "Expected 5 size in DataSource.");
-                ASSERT.areSame(ds._cache.get("size"), 5, "Expected 5 size in Cache.");
+                ds.set("cache",new Y.Cache({size:5}));
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
             },
             
             testLocalCache: function(){
                 var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"],
-                    maxCacheEntries: 5
+                    cache: new Y.Cache({size:3})
                 });
 
                 ds.sendRequest("a", {success:function(request,response) {

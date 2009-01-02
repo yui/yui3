@@ -16,7 +16,7 @@ YUI.add('datasource-cache', function(Y) {
      * @constructor
      */    
     Cacheable = function() {
-        this._initCacheable();
+        this.subscribe("requestEvent", this._onRequestEvent, this);
     };
 
 Cacheable.ATTRS = {    
@@ -36,34 +36,12 @@ Cacheable.ATTRS = {
      * @type Number
      * @default 0
      */
-    maxCacheEntries: {
-        value: 0,
-        set: function(value) {
-            return this._cache.set("size", value).get("size");
-        }
+    cache: {
+        value: null
     }
 };
     
 Cacheable.prototype = {
-    /**
-     * Internal pointer to Cache instance.
-     *
-     * @attribute _cache
-     * @type YAHOO.util.Cache
-     * @private
-     */
-    _cache: null, 
-    
-    /**
-    * @method initializer
-    * @description Initializes cache.
-    * @private        
-    */
-    _initCacheable: function() {
-        this._cache = new Y.Cache();
-        this.subscribe("requestEvent", this._onRequestEvent, this);
-    },
-
     /**
      * First look for cached response, then send request to live data.
      *
@@ -85,16 +63,17 @@ Cacheable.prototype = {
 
         // Not in cache, so forward request to live data
         return true;
-    },
+    }
     
     /**
      * Overwrites DataSource's returnData method to first cache then return data
      *
      */
-    returnData: function(callback, params, error) {
-        this._cache.cache(params[0], params[1]);
-        Y.DataSource.issueCallback(callback, params, error);
-   }
+     //TODO: hook into returndata event to add to cache
+    //returnData: function(tId, callback, params, error) {
+        //(this.get("cache") ? this.get("cache").cache(params[0], params[1]);)
+        //Y.DataSource.issueCallback(callback, params, error);
+   //}
 };
     
 Y.Base.build(BASE, [Cacheable], {
