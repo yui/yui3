@@ -36,6 +36,12 @@
             name: "JSON Tests",
         
             testBasic: function() {
+                var dp = new Y.DataParser.JSON({
+                    schema: {
+                        resultsList: "response",
+                        fields: ["name", "number", "letter"]
+                    }
+                });
                 var data_in = {
                         response: [
                             {name: "alpha", number: 1, letter: "a"},
@@ -43,11 +49,7 @@
                             {name: "gamma", number: 3, letter: "c"}
                         ]
                     },
-                    schema = {
-                        resultsList: "response",
-                        fields: ["name", "number", "letter"]
-                    },
-                    data_out = Y.DataParser.JSON(data_in, schema);
+                    data_out = dp.parse(data_in);
                     
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
                 ASSERT.isArray(data_out.results, "Expected results property.");
