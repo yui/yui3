@@ -19,12 +19,30 @@
          * @static
          */
         datesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+            Y.Assert._increment();        
             if (expected instanceof Date && actual instanceof Date){
-                Y.AssertareEqual(expected.getFullYear(), actual.getFullYear(), Y.Assert_formatMessage(message, "Years should be equal."));
-                Y.AssertareEqual(expected.getMonth(), actual.getMonth(), Y.Assert_formatMessage(message, "Months should be equal."));
-                Y.AssertareEqual(expected.getDate(), actual.getDate(), Y.Assert_formatMessage(message, "Day of month should be equal."));
+                var msg = "";
+                
+                //check years first
+                if (expected.getFullYear() != actual.getFullYear()){
+                    msg = "Years should be equal.";
+                }
+                
+                //now check months
+                if (expected.getMonth() != actual.getMonth()){
+                    msg = "Months should be equal.";
+                }                
+                
+                //last, check the day of the month
+                if (expected.getDate() != actual.getDate()){
+                    msg = "Days of month should be equal.";
+                }                
+                
+                if (msg.length){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, msg), expected, actual);
+                }
             } else {
-                throw new TypeError("DateY.AssertdatesAreEqual(): Expected and actual values must be Date objects.");
+                throw new TypeError("Y.Assert.datesAreEqual(): Expected and actual values must be Date objects.");
             }
         },
     
@@ -37,10 +55,28 @@
          * @static
          */
         timesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+            Y.Assert._increment();
             if (expected instanceof Date && actual instanceof Date){
-                Y.AssertareEqual(expected.getHours(), actual.getHours(), Y.Assert_formatMessage(message, "Hours should be equal."));
-                Y.AssertareEqual(expected.getMinutes(), actual.getMinutes(), Y.Assert_formatMessage(message, "Minutes should be equal."));
-                Y.AssertareEqual(expected.getSeconds(), actual.getSeconds(), Y.Assert_formatMessage(message, "Seconds should be equal."));
+                var msg = "";
+                
+                //check hours first
+                if (expected.getHours() != actual.getHours()){
+                    msg = "Hours should be equal.";
+                }
+                
+                //now check minutes
+                if (expected.getMinutes() != actual.getMinutes()){
+                    msg = "Minutes should be equal.";
+                }                
+                
+                //last, check the seconds
+                if (expected.getSeconds() != actual.getSeconds()){
+                    msg = "Seconds should be equal.";
+                }                
+                
+                if (msg.length){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, msg), expected, actual);
+                }
             } else {
                 throw new TypeError("DateY.AsserttimesAreEqual(): Expected and actual values must be Date objects.");
             }

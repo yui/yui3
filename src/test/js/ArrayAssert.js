@@ -1,4 +1,4 @@
-    
+   
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
      * for a variety of cases.
@@ -21,16 +21,9 @@
         contains : function (needle /*:Object*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (haystack[i] === needle) {
-                    found = true;
-                }
-            }
-            
-            if (!found){
+            Y.Assert._increment();               
+
+            if (Y.Array.indexOf(haystack, needle) == -1){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
             }
         },
@@ -47,10 +40,13 @@
          */
         containsItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();               
     
             //begin checking values
             for (var i=0; i < needles.length; i++){
-                this.contains(needles[i], haystack, message);
+                if (Y.Array.indexOf(haystack, needles[i]) == -1){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
+                }
             }
         },
     
@@ -66,21 +62,13 @@
         containsMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();               
             //check for valid matcher
             if (typeof matcher != "function"){
                 throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
             }
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (matcher(haystack[i])) {
-                    found = true;
-                }
-            }
-            
-            if (!found){
+            if (!Y.Array.some(matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
             }
         },
@@ -98,16 +86,9 @@
         doesNotContain : function (needle /*:Object*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            var found /*:Boolean*/ = false;
-            
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (haystack[i] === needle) {
-                    found = true;
-                }
-            }
-            
-            if (found){
+            Y.Assert._increment();               
+
+            if (Y.Array.indexOf(haystack, needle) > -1){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },
@@ -125,8 +106,12 @@
         doesNotContainItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
     
+            Y.Assert._increment();               
+    
             for (var i=0; i < needles.length; i++){
-                this.doesNotContain(needles[i], haystack, message);
+                if (Y.Array.indexOf(haystack, needles[i]) > -1){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                }
             }
     
         },
@@ -143,21 +128,14 @@
         doesNotContainMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();     
+          
             //check for valid matcher
             if (typeof matcher != "function"){
                 throw new TypeError("ArrayAssert.doesNotContainMatch(): First argument must be a function.");
             }
-    
-            var found /*:Boolean*/ = false;
             
-            //begin checking values
-            for (var i=0; i < haystack.length && !found; i++){
-                if (matcher(haystack[i])) {
-                    found = true;
-                }
-            }
-            
-            if (found){
+            if (Y.Array.some(matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },
@@ -174,10 +152,14 @@
          */
         indexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
         
+            Y.Assert._increment();     
+
             //try to find the value in the array
             for (var i=0; i < haystack.length; i++){
                 if (haystack[i] === needle){
-                    Y.Assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
+                    if (index != i){
+                        Y.Assert.fail(Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    }
                     return;
                 }
             }
@@ -200,13 +182,18 @@
         itemsAreEqual : function (expected /*:Array*/, actual /*:Array*/, 
                                message /*:String*/) /*:Void*/ {
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
+            Y.Assert._increment();     
+            
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
            
             //begin checking values
-            for (var i=0; i < len; i++){
-                Y.Assert.areEqual(expected[i], actual[i], 
-                    Y.Assert._formatMessage(message, "Values in position " + i + " are not equal."));
+            for (var i=0; i < expected.length; i++){
+                if (expected[i] != actual[i]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
+                }
             }
         },
         
@@ -227,16 +214,20 @@
         itemsAreEquivalent : function (expected /*:Array*/, actual /*:Array*/, 
                                comparator /*:Function*/, message /*:String*/) /*:Void*/ {
             
+            Y.Assert._increment();     
+
             //make sure the comparator is valid
             if (typeof comparator != "function"){
                 throw new TypeError("ArrayAssert.itemsAreEquivalent(): Third argument must be a function.");
             }
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
             
             //begin checking values
-            for (var i=0; i < len; i++){
+            for (var i=0; i < expected.length; i++){
                 if (!comparator(expected[i], actual[i])){
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
                 }
@@ -251,6 +242,7 @@
          * @static
          */
         isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+            Y.Assert._increment();     
             if (actual.length > 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should be empty."));
             }
@@ -264,6 +256,7 @@
          * @static
          */
         isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+            Y.Assert._increment();     
             if (actual.length === 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should not be empty."));
             }
@@ -283,13 +276,18 @@
         itemsAreSame : function (expected /*:Array*/, actual /*:Array*/, 
                               message /*:String*/) /*:Void*/ {
             
-            //one may be longer than the other, so get the maximum length
-            var len /*:int*/ = Math.max(expected.length, actual.length);
-            
+            Y.Assert._increment();     
+
+            //first check array length
+            if (expected.length != actual.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            }
+                        
             //begin checking values
-            for (var i=0; i < len; i++){
-                Y.Assert.areSame(expected[i], actual[i], 
-                    Y.Assert._formatMessage(message, "Values in position " + i + " are not the same."));
+            for (var i=0; i < expected.length; i++){
+                if (expected[i] !== actual[i]){
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
+                }
             }
         },
         
@@ -309,7 +307,9 @@
             //try to find the value in the array
             for (var i=haystack.length; i >= 0; i--){
                 if (haystack[i] === needle){
-                    Y.Assert.areEqual(index, i, Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
+                    if (index != i){
+                        Y.Assert.fail(Y.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    }
                     return;
                 }
             }
