@@ -49,27 +49,7 @@ Y.mix(DS, {
      * @final
      * @default 1    
      */
-    ERROR_DATAINVALID: 1,
-
-    /**
-     * Executes a given callback.  For object literal callbacks, the third
-     * param determines whether to execute the success handler or failure handler.
-     *  
-     * @method issueCallback
-     * @param callback {Function|Object} the callback to execute
-     * @param params {Array} params to be passed to the callback method
-     * @param error {Boolean} whether an error occurred
-     * @static     
-     */
-    issueCallback: function (callback, params, error) {
-        if(callback) {
-            var scope = callback.scope || window,
-                callbackFunc = (error && callback.failure) || callback.success;
-            if (callbackFunc) {
-                callbackFunc.apply(scope, params.concat([callback.argument]));
-            }
-        }
-    }
+    ERROR_DATAINVALID: 1
 });
     
     var LANG = Y.Lang,
@@ -154,6 +134,26 @@ Y.mix(Base, {
         */
         ERROR_DATANULL: {
             value: "Null data"
+        }
+    },
+
+    /**
+     * Executes a given callback.  For object literal callbacks, the third
+     * param determines whether to execute the success handler or failure handler.
+     *
+     * @method issueCallback
+     * @param callback {Function|Object} the callback to execute
+     * @param params {Array} params to be passed to the callback method
+     * @param error {Boolean} whether an error occurred
+     * @static
+     */
+    issueCallback: function (callback, params, error) {
+        if(callback) {
+            var scope = callback.scope || window,
+                callbackFunc = (error && callback.failure) || callback.success;
+            if (callbackFunc) {
+                callbackFunc.apply(scope, params.concat([callback.argument]));
+            }
         }
     }
 });
@@ -395,7 +395,7 @@ Y.extend(Base, Y.Base, {
         }
 
         // Send the response back to the callback
-        DS.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
+        Base.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
     }
 
 });
@@ -1220,7 +1220,7 @@ Cacheable.prototype = {
         // Is response already in the Cache?
         var entry = (this.get("cache") && this.get("cache").retrieve(request, callback)) || null;
         if(entry && entry.response) {
-            Y.DataSource.issueCallback(callback,[request,entry.response]);
+            BASE.issueCallback(callback,[request,entry.response]);
             return new Y.Do.Halt("msg", "newRetVal");
         }
     },
