@@ -35,7 +35,7 @@
         
             testDefaults: function() {
                 var cache = new Y.Cache();
-                cache.cache(1, "a");
+                cache.add(1, "a");
                 ASSERT.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
                 ASSERT.areSame(0, cache.get("size"), "Expected default size of 0.");
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
@@ -55,7 +55,7 @@
                 var cache = new Y.Cache();
                 ASSERT.areSame(0, cache.get("size"), "Expected size to be 0.");
                 
-                cache.cache(1, "a");
+                cache.add(1, "a");
                 ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
                 ASSERT.isNull(cache.retrieve(1), "Expected null cached response.");
             },
@@ -64,40 +64,40 @@
                 var cache = new Y.Cache({size:2});
                 ASSERT.areSame(2, cache.get("size"), "Expected size to be 2.");
                 
-                cache.cache(1, "a");
+                cache.add(1, "a");
                 ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
-                cache.cache(2, "b");
+                cache.add(2, "b");
                 ASSERT.areSame(2, cache.getEntries().length, "Expected 2 entries.");
-                cache.cache(3, "c");
+                cache.add(3, "c");
                 ASSERT.areSame(2, cache.getEntries().length, "Expected 2 entries (still).");
             },
         
             testsize2to1: function() {
                 var cache = new Y.Cache({size:2});
-                cache.cache(1, "a");
-                cache.cache(2, "b");
+                cache.add(1, "a");
+                cache.add(2, "b");
                 cache.set("size", 1);
                 ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
 
-                cache.cache(3, "c");
+                cache.add(3, "c");
                 ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry (still).");
             },
 
             testsize2to0: function() {
                 var cache = new Y.Cache({size:2});
-                cache.cache(1, "a");
-                cache.cache(2, "b");
+                cache.add(1, "a");
+                cache.add(2, "b");
                 cache.set("size", 0);
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
-                cache.cache(3, "c");
+                cache.add(3, "c");
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
             },
 
             testRetrieve: function() {
                 var cache = new Y.Cache({size:2}),
                     cachedresponse;
-                cache.cache(1, "a");
-                cache.cache(2, "b");
+                cache.add(1, "a");
+                cache.add(2, "b");
                 cachedresponse = cache.retrieve(1).response;
                 ASSERT.areSame("a", cachedresponse, "Expected first cached response.");
 
@@ -107,8 +107,8 @@
 
             testFlush: function() {
                 var cache = new Y.Cache({size:2});
-                cache.cache(1, "a");
-                cache.cache(2, "b");
+                cache.add(1, "a");
+                cache.add(2, "b");
                 cache.flush();
                 ASSERT.areSame(0, cache.getEntries().length, "Expected empty cache.");
             }
@@ -119,17 +119,17 @@
 
             testAllowDuplicateEntries: function() {
                 var cache = new Y.Cache({size:3});
-                cache.cache(1, "a");
-                cache.cache(2, "b");
-                cache.cache(1, "a");
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.add(1, "a");
                 ASSERT.areSame(3, cache.getEntries().length, "Expected 3 entries.");
             },
         
             testFreshness: function() {
                 var cache = new Y.Cache({size:3});
-                cache.cache(1, "a");
-                cache.cache(2, "b");
-                cache.cache(3, "c");
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.add(3, "c");
                 cache.retrieve(1);
                 ASSERT.areSame(3, cache.getEntries().length, "Expected 3 entries.");
                 ASSERT.areSame(1, cache.getEntries()[2].request, "Expected entry to be refreshed.");

@@ -13,11 +13,9 @@
      * @class Cachable
      * @constructor
      */    
-    Cacheable = function() {
-        this.subscribe("requestEvent", this._onRequestEvent, this);
-    };
+    Cacheable = {};
 
-Cacheable.ATTRS = {    
+Cacheable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataSource.Base Attributes
@@ -25,54 +23,89 @@ Cacheable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Max size of the local cache.  Set to 0 to turn off caching.  Caching is
-     * useful to reduce the number of server connections.  Recommended only for data
-     * sources that return comprehensive results for queries or when stale data is
-     * not an issue.
+     * Instance of Y.Cache. Caching is useful to reduce the number of server
+     * connections.  Recommended only for data sources that return comprehensive
+     * results for queries or when stale data is not an issue.
      *
-     * @attribute maxCacheEntries
-     * @type Number
-     * @default 0
+     * @attribute cache
+     * @type Y.Cache
+     * @default null
      */
     cache: {
-        value: null
+        value: null,
+        validator: function(value) {
+            return ((value instanceof Y.Cache) || (value === null));
+        },
+        set: function(value) {
+            var i=0,
+                handlers = this._cacheHandlers;
+            
+            // Enabling...
+            if(value !== null) {
+                // for the first time
+                if(handlers === null) {
+                    handlers = [];
+                    handlers.push(Y.before(this._beforeSendRequest, this, "sendRequest"));
+                    handlers.push(Y.before(this._beforeReturnData, this, "returnData"));
+                    this._cacheHandlers = handlers;
+                }
+            }
+            // Disabling
+            else if(handlers !== null){
+                for(;i<handlers; i++) {
+                    Y.detach(handlers[i]);
+                }
+                this._cacheHandlers = null;
+            }
+            
+            //TODO: Handle the destroy() case
+        }
     }
 };
     
 Cacheable.prototype = {
     /**
-     * First look for cached response, then send request to live data.
+     * Internal reference to AOP subscriptions, for detaching.
      *
-     * @method _onRequestEvent
+     * @property _cacheHandlers
      * @private
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.     
-     * @param e.tId {Number} Transaction ID.     
-     * @param e.request {MIXED} Request.     
-     * @param e.callback {Object} Callback object.
+     * @type Array
      */
-    _onRequestEvent: function(e) {
-        // First look in cache
-        var cachedresponse = this._cache.retrieve(e.request, e.callback);
-        if(cachedresponse && cachedresponse.entry) {
-            e.preventDefault();
-            Y.DataSource.issueCallback(e.callback,[e.request,cachedresponse.entry],false);
-            //return false;
-        }  
-
-        // Not in cache, so forward request to live data
-        Y.log("Making connection to live data for \"" + e.request + "\"", "info", this.toString());
-        return true;
-    }
+    _cacheHandlers: null,
     
     /**
-     * Overwrites DataSource's returnData method to first cache then return data
+     * First look for cached response, then send request to live data.
      *
+     * @method _beforeSendRequest
+     * @protected
+     * @param request {MIXED} Request.
+     * @param callback {Object} Callback object.
      */
-     //TODO: hook into returndata event to add to cache
-    //returnData: function(tId, callback, params, error) {
-        //(this.get("cache") ? this.get("cache").cache(params[0], params[1]);)
-        //Y.DataSource.issueCallback(callback, params, error);
-   //}
+    _beforeSendRequest: function(request, callback) {
+        // Is response already in the Cache?
+        var entry = (this.get("cache")) ? this.get("cache").retrieve(request, callback) : null;
+        if(entry && entry.response) {
+            Y.DataSource.issueCallback(callback,[request,entry.response]);
+            return new Y.Do.Halt("msg", "newRetVal");
+        }
+    },
+    
+    /**
+     * Adds data to cache before returning data.
+     *
+     * @method _beforeReturnData
+     * @protected
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e.tId {Number} Transaction ID.
+     * @param e.request {MIXED} Request.
+     * @param e.callback {Object} Callback object.
+     */
+     _beforeReturnData: function(tId, callback, params, error) {
+        // Add to Cache before returning
+        if(this.get("cache")) {
+            this.get("cache").add(params[0], params[1], params[2]);
+        }
+     }
 };
     
 Y.Base.build(BASE, [Cacheable], {

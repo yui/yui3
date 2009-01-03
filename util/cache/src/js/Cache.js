@@ -106,8 +106,8 @@ Y.extend(Cache, Y.Base, {
     */
     initializer: function() {
         /**
-        * @event cache
-        * @description Fired when a request/response object is cached.
+        * @event add
+        * @description Fired when a request/response object is added.
         * @param args {Object} Object literal data payload.
         * @param args.entry {Object} The cached entry.
         */
@@ -190,7 +190,7 @@ Y.extend(Cache, Y.Base, {
      * @param response {Object} Response object.
      * @param payload {Object} Arbitrary data payload.     
      */
-    cache: function(request, response, payload) {
+    add: function(request, response, payload) {
         var entries = this._entries,
             entry = {request:request, response:response, payload:payload},
             max = this.get("size");
@@ -206,7 +206,7 @@ Y.extend(Cache, Y.Base, {
     
         // Add entry to cache in the newest position, at the end of the array
         entries[entries.length] = entry;
-        this.fire("cache", {entry: entry});
+        this.fire("add", {entry: entry});
         Y.log("Cached entry: " + Y.dump(entry) + " for request: " +  Y.dump(request) + "", "info", this.toString());
     },
 

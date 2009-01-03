@@ -966,3 +966,405 @@ Y.extend(Base, Y.Base, {
 
 }, '@VERSION@' ,{requires:['base']});
 
+YUI.add('datasource-local', function(Y) {
+
+/**
+ * The DataSource utility provides a common configurable interface for widgets to
+ * access a variety of data, from JavaScript arrays to online database servers.
+ *
+ * @module datasource-local
+ * @requires datasource-base
+ * @title DataSource Local Submodule
+ */
+    var LANG = Y.Lang,
+    
+    /**
+     * Local subclass for the YUI DataSource utility.
+     * @class DataSource.Local
+     * @extends DataSource.Base
+     * @constructor
+     */    
+    Local = function() {
+        Local.superclass.constructor.apply(this, arguments);
+    };
+    
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.Local static properties
+    //
+    /////////////////////////////////////////////////////////////////////////////
+Y.mix(Local, {    
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static     
+     * @final
+     * @value "DataSource.Local"
+     */
+    NAME: "DataSource.Local",
+
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.Local Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+    }
+});
+    
+Y.extend(Local, Y.DataSource.Base, {
+});
+  
+    Y.DataSource.Local = Local;
+    
+
+
+
+}, '@VERSION@' ,{requires:['datasource-base']});
+
+YUI.add('datasource-xhr', function(Y) {
+
+/**
+ * The DataSource utility provides a common configurable interface for widgets to
+ * access a variety of data, from JavaScript arrays to online database servers.
+ *
+ * @module datasource-xhr
+ * @requires datasource-base
+ * @title DataSource XHR Submodule
+ */
+    var LANG = Y.Lang,
+    
+    /**
+     * XHR subclass for the YUI DataSource utility.
+     * @class DataSource.XHR
+     * @extends DataSource.Base
+     * @constructor
+     */    
+    XHR = function() {
+        XHR.superclass.constructor.apply(this, arguments);
+    };
+    
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.XHR static properties
+    //
+    /////////////////////////////////////////////////////////////////////////////
+Y.mix(XHR, {    
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static     
+     * @final
+     * @value "DataSource.XHR"
+     */
+    NAME: "DataSource.XHR",
+
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.XHR Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+        /**
+         * Pointer to IO Utility.
+         *
+         * @attribute io
+         * @type Y.io
+         * @default Y.io
+         */
+        io: {
+            value: Y.io
+        }
+    }
+});
+    
+Y.extend(XHR, Y.DataSource.Base, {
+    /**
+     * Overriding requestEvent handler passes query string to IO. Fires
+     * responseEvent when response is received.     
+     *
+     * @method _makeConnection
+     * @protected     
+     * @param args.tId {Number} Transaction ID.     
+     * @param args.request {MIXED} Request.     
+     * @param args.callback {Object} Callback object.
+     */
+    _makeConnection: function(args) {
+        var uri = this.get("source"),
+            cfg = {
+                on: {
+                    complete: function (id, response, args) {
+                        this.fire("responseEvent", Y.mix(args, {response:response}));
+                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
+                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                    }
+                },
+                context: this,
+                arguments: {
+                    tId: args.tId,
+                    request: args.request,
+                    callback: args.callback
+                }
+            };
+        
+        this.get("io")(uri, cfg);
+        return args.tId;
+    }
+});
+  
+    Y.DataSource.XHR = XHR;
+    
+
+
+
+}, '@VERSION@' ,{requires:['datasource-base']});
+
+YUI.add('datasource-cache', function(Y) {
+
+/**
+ * Extends DataSource.Base with caching functionality.
+ *
+ * @module datasource-cache
+ * @requires datasource-base,cache
+ * @title DataSource Cache Extension
+ */
+    var LANG = Y.Lang,
+        BASE = Y.DataSource.Base,
+    
+    /**
+     * Adds cacheability to the YUI DataSource utility.
+     * @class Cachable
+     * @constructor
+     */    
+    Cacheable = {};
+
+Cacheable.ATTRS = {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.Base Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Instance of Y.Cache. Caching is useful to reduce the number of server
+     * connections.  Recommended only for data sources that return comprehensive
+     * results for queries or when stale data is not an issue.
+     *
+     * @attribute cache
+     * @type Y.Cache
+     * @default null
+     */
+    cache: {
+        value: null,
+        validator: function(value) {
+            return ((value instanceof Y.Cache) || (value === null));
+        },
+        set: function(value) {
+            var i=0,
+                handlers = this._cacheHandlers;
+            
+            // Enabling...
+            if(value !== null) {
+                // for the first time
+                if(handlers === null) {
+                    handlers = [];
+                    handlers.push(Y.before(this.beforeSendRequest, this, "sendRequest"));
+                    handlers.push(Y.before(this.beforeReturnData, this, "returnData"));
+                }
+            }
+            // Disabling
+            else if(handlers !== null){
+                for(;i<handlers; i++) {
+                    Y.detach(handlers[i]);
+                }
+                handlers = null;
+            }
+        }
+    }
+};
+    
+Cacheable.prototype = {
+    /**
+     * Internal reference to AOP subscriptions, for detaching.
+     *
+     * @property _cacheHandlers
+     * @private
+     * @type Array
+     */
+    _cacheHandlers: null,
+    
+    /**
+     * First look for cached response, then send request to live data.
+     *
+     * @method _onRequestEvent
+     * @private
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e.tId {Number} Transaction ID.
+     * @param e.request {MIXED} Request.
+     * @param e.callback {Object} Callback object.
+     */
+    beforeSendRequest: function(e) {
+        // First look in cache
+        var cachedresponse = (this.get("cache")) ? this.get("cache").retrieve(e.request, e.callback): null;
+        if(cachedresponse && cachedresponse.entry) {
+            e.preventDefault();
+            Y.DataSource.issueCallback(e.callback,[e.request,cachedresponse.entry],false);
+            return new Y.Do.Halt("msg", "newRetVal");
+        }
+
+        // Not in cache, so forward request to live data
+    },
+    
+    /**
+     * Adds data to cache before returning data.
+     *
+     * @method _onBeforeReturnData
+     * @private
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e.tId {Number} Transaction ID.
+     * @param e.request {MIXED} Request.
+     * @param e.callback {Object} Callback object.
+     */
+     beforeReturnData: function(tId, callback, params, error) {
+        // Add to cache before returning
+        if(this.get("cache")) {
+            this.get("cache").add(params[0], params[1], params[2]);
+        }
+     }
+
+    /**
+     * First look for cached response, then send request to live data.
+     *
+     * @method sendRequest
+     * @private
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.     
+     * @param e.tId {Number} Transaction ID.     
+     * @param e.request {MIXED} Request.     
+     * @param e.callback {Object} Callback object.
+     */
+    /*sendRequest: function(request, callback) {
+        // First look in cache
+        var cachedresponse = (this.get("cache")) ? this.get("cache").retrieve(request, callback): null;
+        if(cachedresponse && cachedresponse.entry) {
+            Y.DataSource.issueCallback(callback,[request,cachedresponse.entry]);
+        }
+        // Not in cache, so forward request to live data
+        else {
+            return Cacheable.prototype.sendRequest.apply(this, arguments);
+        }
+    },*/
+    
+    /**
+     * Adds data to cache before returning data.
+     *
+     * @method _onBeforeReturnData
+     * @private
+     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e.tId {Number} Transaction ID.
+     * @param e.request {MIXED} Request.
+     * @param e.callback {Object} Callback object.
+     */
+     /*returnData: function(tId, callback, params, error) {
+        // Add to cache before returning
+        if(this.get("cache")) {
+            this.get("cache").add(params[0], params[1], params[2]);
+        }
+        
+        Cacheable.prototype.returnData.apply(this, arguments);
+     }*/
+};
+    
+Y.Base.build(BASE, [Cacheable], {
+    dynamic: false
+});
+
+
+
+}, '@VERSION@' ,{requires:['datasource-base']});
+
+YUI.add('datasource-dataparser', function(Y) {
+
+/**
+ * Extends DataSource.Base with schema-based parsing functionality.
+ *
+ * @module datasource-dataparser
+ * @requires datasource-base,dataparser-base
+ * @title DataSource DataParser Extension
+ */
+    var LANG = Y.Lang,
+        BASE = Y.DataSource.Base,
+    
+    /**
+     * Adds parsability to the YUI DataSource utility.
+     * @class Cachable
+     * @constructor
+     */    
+    Parsable = function() {
+    };
+
+Parsable.ATTRS = {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSource.Base Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Instance of DataParser.
+     *
+     * @attribute parser
+     * @type Y.DataParser.Base
+     * @default null
+     */
+    parser: {
+        value: null
+    }
+};
+    
+Parsable.prototype = {
+    /**
+     * Overriding responseEvent handler parses raw data response before sending
+     * to returnData().
+     *
+     * @method _handleResponse
+     * @protected
+     * @param args.tId {Number} Transaction ID.
+     * @param args.request {MIXED} Request.
+     * @param args.callback {Object} Callback object.
+     * @param args.response {MIXED} Raw data response.
+     */
+    _handleResponse: function(args) {
+        var tId = args.tId,
+            oRequest = args.request,
+            oCallback = args.callback,
+            oFullResponse = args.response;
+
+        var oParsedResponse = (this.get("parser")) ?
+                this.get("parser").parse(oFullResponse) : {results: oFullResponse};
+
+        this.returnData(tId, oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+    }
+};
+    
+Y.Base.build(BASE, [Parsable], {
+    dynamic: false
+});
+
+
+
+}, '@VERSION@' ,{requires:['datasource', 'dataparser']});
+
+
+
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-local','datasource-xhr','datasource-cache', 'datasource-dataparser']});
+

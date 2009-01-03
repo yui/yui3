@@ -93,7 +93,7 @@ Y.extend(Cache, Y.Base, {
      * @type Object[]
      * @private
      */
-    _entries : null,
+    _entries: null,
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -110,22 +110,25 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event cache
         * @description Fired when a request/response object is cached.
-        * @param oArgs.entry {Object} The cached entry.
+        * @param args {Object} Object literal data payload.
+        * @param args.entry {Object} The cached entry.
         */
 
         /**
         * @event request
         * @description Fired when an request/response object is requested from the cache.
-        * @param oArgs.request {Object} The request object.
-        * @param oArgs.callback {Object} The callback object.
+        * @param args {Object} Object literal data payload.        
+        * @param args.request {Object} The request object.
+        * @param args.callback {Object} The callback object.
         */
 
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
-        * @param oArgs.request {Object} The request object.
-        * @param oArgs.entry {Object} The retrieved entry.
-        * @param oArgs.callback {Object} The callback object.
+        * @param args {Object} Object literal data payload.
+        * @param args.request {Object} The request object.
+        * @param args.entry {Object} The retrieved entry.
+        * @param args.callback {Object} The callback object.
         */
 
         /**
@@ -189,7 +192,7 @@ Y.extend(Cache, Y.Base, {
      * @param response {Object} Response object.
      * @param payload {Object} Arbitrary data payload.     
      */
-    cache : function(request, response, payload) {
+    add: function(request, response, payload) {
         var entries = this._entries,
             entry = {request:request, response:response, payload:payload},
             max = this.get("size");
@@ -218,7 +221,7 @@ Y.extend(Cache, Y.Base, {
      * @return {Object} Cached entry object with the following properties:
      * {request:request, response:response, payload:payload},  or null.
      */
-    retrieve : function(request) {
+    retrieve: function(request) {
         // If cache is enabled...
         var entries = this._entries,     
             length = entries.length,
@@ -262,7 +265,7 @@ Y.extend(Cache, Y.Base, {
      *
      * @method flush
      */
-    flush : function() {
+    flush: function() {
         this._entries = [];
         this.fire("flush");
         Y.log("Cache flushed", "info", this.toString());

@@ -88,12 +88,6 @@
                             fields: ["Title"]
                         }
                     })
-
-                    //responseType: "JSON",
-                    //responseSchema: {
-                    //    resultsList: "ResultSet.Result",
-                    //    fields: ["Title"]
-                    //}
                 });
 
                 ds.sendRequest(null, {
@@ -112,7 +106,7 @@
                     scope: this
                 });                
 
-                this.wait(2000); // On a slow connection: this.wait(5000);
+                this.wait(5000); // On a slow connection: this.wait(5000);
             },
 
             testXHRCancelRequestEvent: function(){
@@ -167,18 +161,22 @@
             },
             
             testLocalCache: function(){
-                var ds = new Y.DataSource.Local({
-                    source: ["a","b","c","d"],
-                    cache: new Y.Cache({size:3})
-                });
+                var cache = new Y.Cache({size:3}),
+                    ds = new Y.DataSource.Local({
+                        source: ["a","b","c","d"],
+                        cache: cache
+                    });
 
                 ds.sendRequest("a", {success:function(request,response) {
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});
-
+                
+                ARRAYASSERT.itemsAreSame(["a","b","c","d"], cache.retrieve("a").response.results, "Expected cached entry.");
+                
                 ds.sendRequest("a", {success:function(request,response) {
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});
+
             }
         });
 
