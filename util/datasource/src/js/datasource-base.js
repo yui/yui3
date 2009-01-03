@@ -98,22 +98,6 @@ Y.mix(Base, {
         },
         
         /**
-        * @attribute dataType
-        * @description Where the live data is held:
-            <ul>
-                <li>"LOCAL" (in-memory data, such as an Array or object literal)</li>
-                <li>"XHR" (remote data accessed via Connection Manager)</li>
-                <li>"SCRIPTNODE" (remote data accessed via the Get Utility)</li>
-                <li>"FUNCTION" (data accessed via a pre-defined JavaScript function)</li>
-            </ul>
-        * @type String
-        * @default null
-        */
-        dataType: {
-            value: null
-        },
-
-        /**
         * @attribute ERROR_DATAINVALID
         * @description Error message for invalid data responses.
         * @type String
