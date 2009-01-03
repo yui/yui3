@@ -50,15 +50,11 @@ Parsable.prototype = {
      * @param args.response {MIXED} Raw data response.
      */
     _handleResponse: function(args) {
-        var tId = args.tId,
-            oRequest = args.request,
-            oCallback = args.callback,
-            oFullResponse = args.response;
+        var response = args.response;
 
-        var oParsedResponse = (this.get("parser")) ?
-                this.get("parser").parse(oFullResponse) : {results: oFullResponse};
+        response = (this.get("parser") && this.get("parser").parse(response)) || {results: response};
 
-        this.returnData(tId, oCallback,[oRequest,oParsedResponse],oParsedResponse.error);
+        this.returnData(args.tId, args.request, args.callback, response);
     }
 };
     

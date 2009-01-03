@@ -64,7 +64,7 @@ Y.mix(DS, {
     issueCallback: function (callback, params, error) {
         if(callback) {
             var scope = callback.scope || window,
-                callbackFunc = (error) ? callback.failure : callback.success;
+                callbackFunc = (error && callback.failure) || callback.success;
             if (callbackFunc) {
                 callbackFunc.apply(scope, params.concat([callback.argument]));
             }
@@ -270,7 +270,7 @@ Y.extend(Base, Y.Base, {
 
     /**
      * Overridable default responseEvent handler receives raw data response and
-     * by default, passes it as-is to returnData
+     * by default, passes it as-is to returnData.
      *
      * @method _handleResponse
      * @protected
@@ -280,7 +280,7 @@ Y.extend(Base, Y.Base, {
      * @param args.response {MIXED} Raw data response.
      */
     _handleResponse: function(args) {
-        this.returnData(args.tId, args.callback,[args.request, {results: args.response}]);
+        this.returnData(args.tId, args.request, args.callback, {results: args.response});
 
     },
 
@@ -364,34 +364,32 @@ Y.extend(Base, Y.Base, {
      * Overridable method returns data to callback.
      *
      * @method returnData
+     * @param tId {Number} Transaction ID.
+     * @param request {MIXED} Request.
+     * @param callback {Object} Callback object.
+     * @param response {MIXED} Raw data response.
      */
-    returnData: function(tId, callback, params, error) {
-        var request = params[0],
-            response = params[1];
-
-        // Success
-        if(response && !response.error) {
-            //this.fire("responseParseEvent", {request:oRequest,
-            //        response:response, callback:oCallback});
+    returnData: function(tId, request, callback, response) {
+        // Problemic response
+        if(!response) {
+            response = {error:true};
         }
-        // Error
-        else {
-            // Be sure the error flag is on
-            response.error = true;
-            this.fire("errorEvent", {request:request, response:response, callback:callback});
+        // Handle any error
+        if(response.error) {
+            this.fire("errorEvent", {tId:tId, request:request, callback:callback, response:response});
         }
 
-        // Send the response back to the callback
+        // Normalize
         response.tId = tId;
-        // Clean up for consistent signature
-        response = response || {};
         if(!response.results) {
             response.results = [];
         }
         if(!response.meta) {
             response.meta = {};
         }
-        DS.issueCallback(callback, [request, response, callback.argument], error);
+
+        // Send the response back to the callback
+        DS.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
     }
 
 });

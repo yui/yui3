@@ -76,7 +76,7 @@ Y.extend(JSON, Y.DataParser.Base, {
      * @param e.data {MIXED} Data to parse.
      */
     _parse: function(data) {
-        var data_in = (data.responseText) ? Y.JSON.parse(data.responseText) : data,
+        var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             schema = this.get("schema"),
             data_out = {results:[],meta:{}};
 

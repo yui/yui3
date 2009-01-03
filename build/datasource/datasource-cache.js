@@ -85,7 +85,7 @@ Cacheable.prototype = {
      */
     _beforeSendRequest: function(request, callback) {
         // Is response already in the Cache?
-        var entry = (this.get("cache")) ? this.get("cache").retrieve(request, callback) : null;
+        var entry = (this.get("cache") && this.get("cache").retrieve(request, callback)) || null;
         if(entry && entry.response) {
             Y.DataSource.issueCallback(callback,[request,entry.response]);
             return new Y.Do.Halt("msg", "newRetVal");
@@ -97,15 +97,15 @@ Cacheable.prototype = {
      *
      * @method _beforeReturnData
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.
-     * @param e.tId {Number} Transaction ID.
-     * @param e.request {MIXED} Request.
-     * @param e.callback {Object} Callback object.
+     * @param tId {Number} Transaction ID.
+     * @param request {MIXED} Request.
+     * @param callback {Object} Callback object.
+     * @param response {MIXED} Raw data response.
      */
-     _beforeReturnData: function(tId, callback, params, error) {
+     _beforeReturnData: function(tId, request, callback, response) {
         // Add to Cache before returning
         if(this.get("cache")) {
-            this.get("cache").add(params[0], params[1], params[2]);
+            this.get("cache").add(request, response, (callback && callback.argument));
         }
      }
 };
