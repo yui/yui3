@@ -14,7 +14,7 @@ YUI.add('datasource-cache', function(Y) {
      * Adds cacheability to the YUI DataSource utility.
      * @class Cacheable
      */    
-    Cacheable = {};
+    Cacheable = function() {};
 
 Cacheable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////

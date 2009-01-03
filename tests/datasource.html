@@ -16,10 +16,11 @@
 (function() {
     YUI({
         base: "../build/",
-        //filter: "debug",
+        filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
     }).use("dump", "test", "console", "io-base", "cache", "base", "json", "dataparser", "datasource", function(Y) {
+
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
@@ -112,11 +113,12 @@
             testXHRCancelRequestEvent: function(){
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    responseType: "JSON",
-                    responseSchema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
-                    }
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
                 });
 
                 ds.subscribe("requestEvent", function(e) {
@@ -181,30 +183,11 @@
             }
         });
 
-        //Y.Test.Runner.add(testClass);
-        //Y.Test.Runner.add(testLocal);
-        //Y.Test.Runner.add(testXHR);
-        //Y.Test.Runner.add(testCache);
-        //Y.Test.Runner.run();
-
-                var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    responseType: "JSON",
-                    responseSchema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
-                    }
-                });
-                ds.setInterval(500, null, {
-                    success: function(request,response) {
-                        Y.log("success");
-                    },
-                    failure: function(request, response) {
-                        Y.log("failure");
-                    },
-                    scope: this
-                });
-
+        Y.Test.Runner.add(testClass);
+        Y.Test.Runner.add(testLocal);
+        Y.Test.Runner.add(testXHR);
+        Y.Test.Runner.add(testCache);
+        Y.Test.Runner.run();
     });
 })();
 </script>

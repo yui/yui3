@@ -158,6 +158,7 @@ Y.extend(Base, Y.Base, {
     * @private     
     */
     _queue: null,
+    
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -165,7 +166,6 @@ Y.extend(Base, Y.Base, {
     */
     initializer: function() {
         this._queue = {interval:null, conn:null, requests:[]};
-        this._intervals = [];
         this._initEvents();
     },
 
