@@ -171,12 +171,13 @@
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});
                 
-                ARRAYASSERT.itemsAreSame(["a","b","c","d"], cache.retrieve("a").response.results, "Expected cached entry.");
-                
-                ds.sendRequest("a", {success:function(request,response) {
-                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
-                }});
+                ds.subscribe("requestEvent", function(){
+                    ASSERT.fail("Entry is cached -- requestEvent is unexpected");
+                });
 
+                ds.sendRequest("a", {success:function(request,response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected cached response.");
+                }});
             }
         });
 

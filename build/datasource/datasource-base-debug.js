@@ -373,11 +373,6 @@ Y.extend(Base, Y.Base, {
     returnData: function(tId, callback, params, error) {
         var request = params[0],
             response = params[1];
-            
-        // Cache the response
-        //TODO: REINSTATE
-        //this.addToCache(oRequest, oParsedResponse);
-
 
         // Success
         if(response && !response.error) {
