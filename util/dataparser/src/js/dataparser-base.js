@@ -111,14 +111,18 @@ Y.extend(Base, Y.Base, {
          * @param e {Event.Facade} Event Facade.
          * @param e.data {MIXED} Data to parse.
          */
-        this.publish("parseEvent", {
-            //defaultFn: this._parse
-        });
+
+        /**
+         * Fired upon parse error.
+         *
+         * @event error
+         * @param e {Event.Facade} Event Facade.
+         * @param e.data {MIXED} Data.
+         */
     },
 
     /**
-     * Abstract overridable default parseEvent handler receives data and parses
-     * according to provided schema.
+     * Abstract overridable parse method returns data as-is.
      *
      * @method _parse
      * @protected
@@ -126,6 +130,7 @@ Y.extend(Base, Y.Base, {
      * @param e.data {MIXED} Data to parse.
      */
     _parse: function(data) {
+        return data;
     },
 
     /**
@@ -137,7 +142,10 @@ Y.extend(Base, Y.Base, {
      * @param e.data {MIXED} Data to parse.
      */
     parse: function(data) {
-        return this._parse(data);
+        var ok = this.fire("parseEvent", {data:data});
+        if(ok) {
+            return this._parse(data);
+        }
     }
 });
 

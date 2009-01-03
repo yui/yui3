@@ -70,7 +70,7 @@ Y.mix(JSON, {
 
 Y.extend(JSON, Y.DataParser.Base, {
     /**
-     * Overriding parseEvent handler receives data and parses according to provided schema.
+     * Overriding parse method traverses JSON data according to given schema.
      *
      * @method _parse
      * @protected
@@ -78,7 +78,7 @@ Y.extend(JSON, Y.DataParser.Base, {
      * @param e.data {MIXED} Data to parse.
      */
     _parse: function(data) {
-        var data_in = (data.responseText) ? Y.JSON.parse(data.responseText) : data,
+        var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             schema = this.get("schema"),
             data_out = {results:[],meta:{}};
 
@@ -211,6 +211,7 @@ Y.extend(JSON, Y.DataParser.Base, {
                     results = resultsList;
                 }
 
+                // Step 3. Parse out meta data if identified
                 for (key in metaFields) {
                     if (LANG.hasOwnProperty(metaFields,key)) {
                         path = buildPath(metaFields[key]);

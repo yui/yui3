@@ -1146,8 +1146,7 @@ YUI.add('datasource-cache', function(Y) {
     
     /**
      * Adds cacheability to the YUI DataSource utility.
-     * @class Cachable
-     * @constructor
+     * @class Cacheable
      */    
     Cacheable = {};
 
@@ -1266,11 +1265,9 @@ YUI.add('datasource-dataparser', function(Y) {
     
     /**
      * Adds parsability to the YUI DataSource utility.
-     * @class Cachable
-     * @constructor
+     * @class Parsable
      */    
-    Parsable = function() {
-    };
+    Parsable = function() {};
 
 Parsable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
@@ -1287,7 +1284,10 @@ Parsable.ATTRS = {
      * @default null
      */
     parser: {
-        value: null
+        value: null,
+        validator: function(value) {
+            return ((value instanceof Y.DataParser.Base) || (value === null));
+        }
     }
 };
     
