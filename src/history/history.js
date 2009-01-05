@@ -222,13 +222,11 @@ YUI.add("history", function (Y) {
                     newHash = fqstate;
                 }
 
-                // Allow the state to be bookmarked by setting the top window's
+                // Allow the state to be bookmarked by setting the window's
                 // URL fragment identifier. Note that here, we are on IE, and
                 // IE does not touch the browser history when setting the hash
-                // (unlike all the other browsers). I used to write:
-                //     top.location.replace("#" + hash);
-                // but this had a side effect when the page was not the top frame.
-                top.location.hash = hash = newHash;
+                // (unlike other browsers)
+                location.hash = hash = newHash;
 
                 _storeStates();
 
@@ -559,7 +557,7 @@ YUI.add("history", function (Y) {
                 // and 2.0 but creates bigger problems on WebKit. So for now,
                 // we'll consider this an acceptable bug, and hope that Apple
                 // comes out with their next version of Safari very soon.
-                top.location.hash = fqstate;
+                location.hash = fqstate;
                 if (A.webkit) {
                     // The following two lines are only useful for Safari 1.x
                     // and 2.0. Recent nightly builds of WebKit do not require
@@ -624,7 +622,7 @@ YUI.add("history", function (Y) {
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
             // contained special characters...
-            h = top.location.href;
+            h = location.href;
             i = h.indexOf("#");
 
             if (i >= 0) {
@@ -657,7 +655,7 @@ YUI.add("history", function (Y) {
 
             var m, q, i;
 
-            url = url || top.location.href;
+            url = url || location.href;
 
             i = url.indexOf("?");
             q = i >= 0 ? url.substr(i + 1) : url;
