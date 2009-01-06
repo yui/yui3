@@ -18,8 +18,11 @@ YUI.add("history", function (Y) {
     var L = Y.Lang,
         A = Y.UA,
         ET = Y.Event.Target,
+        WH = Y.config.win.history,
+        WL = Y.config.win.location,
         H, G,
 
+        // YUI Compressor helper...
         E_MISSING_OR_INVALID_ARG = "Missing or invalid argument",
 
         // Regular expression used to parse query strings and such.
@@ -79,7 +82,7 @@ YUI.add("history", function (Y) {
      * @private
      */
     function _getHash() {
-        return location.hash.substr(1);
+        return WL.hash.substr(1);
     }
 
     /**
@@ -92,18 +95,20 @@ YUI.add("history", function (Y) {
      */
     function _storeStates() {
 
-        var initialStates = [], currentStates = [];
+        var initialStates = [], currentStates = [], s;
 
         Y.Object.each(G._modules, function (module, moduleId) {
             initialStates.push(moduleId + "=" + module.initialState);
             currentStates.push(moduleId + "=" + module.currentState);
         });
 
-        G._stateField.value = initialStates.join("&") + "|" + currentStates.join("&");
+        s = initialStates.join("&") + "|" + currentStates.join("&");
 
         if (A.webkit) {
-            G._stateField.value += "|" + G._fqstates.join(",");
+            s += "|" + G._fqstates.join(",");
         }
+
+        G._stateField.set("value", s);
     }
 
     /**
@@ -152,13 +157,14 @@ YUI.add("history", function (Y) {
 
         var html, doc;
 
-        html = '<html><body><div id="state">' + fqstate + '</div></body></html>';
+        html = '<html><body>' + fqstate + '</body></html>';
 
         try {
-            doc = G._historyIFrame.contentWindow.document;
-            doc.open();
-            doc.write(html);
-            doc.close();
+            doc = G._historyIFrame.get("contentWindow.document");
+            // TODO: The Node API should expose these methods in the very near future...
+            doc.invoke('open');
+            doc.invoke('write', html, '', '', '', ''); // see bug #2447937
+            doc.invoke('close');
             return true;
         } catch (e) {
             Y.log("Exception while storing a new browser history entry: " + e, "info", "history");
@@ -173,9 +179,9 @@ YUI.add("history", function (Y) {
      */
     function _checkIframeLoaded() {
 
-        var doc, elem, fqstate, hash;
+        var elem, fqstate, hash;
 
-        if (!G._historyIFrame.contentWindow || !G._historyIFrame.contentWindow.document) {
+        if (!G._historyIFrame.get("contentWindow.document")) {
             // Check again in 10 msec...
             setTimeout(_checkIframeLoaded, 10);
             return;
@@ -186,13 +192,11 @@ YUI.add("history", function (Y) {
         // requested on the main window. This will happen when
         // History.navigate has been called or after the user has
         // hit the back/forward button.
-
-        doc = G._historyIFrame.contentWindow.document;
-        elem = doc.getElementById("state");
+        elem = G._historyIFrame.get('contentWindow.document.body');
         // We must use innerText, and not innerHTML because our string contains
         // the "&" character (which would end up being escaped as "&amp;") and
         // the string comparison would fail...
-        fqstate = elem ? elem.innerText : null;
+        fqstate = elem ? elem.get("innerText") : null;
 
         hash = _getHash();
 
@@ -200,10 +204,9 @@ YUI.add("history", function (Y) {
 
             var newfqstate, states, newHash;
 
-            doc = G._historyIFrame.contentWindow.document;
-            elem = doc.getElementById("state");
+            elem = G._historyIFrame.get('contentWindow.document.body');
             // See my comment above about using innerText instead of innerHTML...
-            newfqstate = elem ? elem.innerText : null;
+            newfqstate = elem ? elem.get("innerText") : null;
 
             newHash = _getHash();
 
@@ -222,11 +225,11 @@ YUI.add("history", function (Y) {
                     newHash = fqstate;
                 }
 
-                // Allow the state to be bookmarked by setting the window's
-                // URL fragment identifier. Note that here, we are on IE, and
-                // IE does not touch the browser history when setting the hash
-                // (unlike other browsers)
-                location.hash = hash = newHash;
+                // Allow the state to be bookmarked by setting the top window's
+                // URL fragment identifier. Note that here, we are on IE < 8
+                // which does not touch the browser history when changing the
+                // hash (unlike all the other browsers).
+                WL.hash = hash = newHash;
 
                 _storeStates();
 
@@ -267,7 +270,7 @@ YUI.add("history", function (Y) {
         var m, parts, moduleId, module, initialState, currentState, counter, hash;
 
         // Decode the content of our storage field...
-        parts = G._stateField.value.split("|");
+        parts = G._stateField.get("value").split("|");
 
         if (parts.length > 1) {
 
@@ -299,7 +302,7 @@ YUI.add("history", function (Y) {
         if (A.ie) {
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie < 8 || document.documentMode < 8) {
+            if (A.ie < 8 || Y.config.doc.documentMode < 8) {
 
                 _checkIframeLoaded();
 
@@ -332,7 +335,7 @@ YUI.add("history", function (Y) {
             // because the hash thing will be fixed in the next major
             // version of Safari. So even if they fix the history.length
             // bug, all this will still work!
-            counter = history.length;
+            counter = WH.length;
 
             // On Gecko and Opera, we just need to watch the hash...
             hash = _getHash();
@@ -342,7 +345,7 @@ YUI.add("history", function (Y) {
                 var state, newHash, newCounter;
 
                 newHash = _getHash();
-                newCounter = history.length;
+                newCounter = WH.length;
                 if (newHash !== hash) {
                     hash = newHash;
                     counter = newCounter;
@@ -432,41 +435,35 @@ YUI.add("history", function (Y) {
                 return true;
             }
 
-            if (L.isString(stateField)) {
-                stateField = document.getElementById(stateField);
-            }
-
+            stateField = Y.get(stateField);
             if (!stateField) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
-            tagName = stateField.tagName.toUpperCase();
-            type = stateField.type;
+            tagName = stateField.get("tagName").toUpperCase();
+            type = stateField.get("type");
 
             if (tagName !== "TEXTAREA" && (tagName !== "INPUT" || type !== "hidden" && type !== "text")) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (A.ie < 8 || document.documentMode < 8)) {
+            if (A.ie && (A.ie < 8 || Y.config.doc.documentMode < 8)) {
 
-                if (L.isString(historyIFrame)) {
-                    historyIFrame = document.getElementById(historyIFrame);
-                }
-
-                if (!historyIFrame || historyIFrame.tagName.toUpperCase() !== "IFRAME") {
+                historyIFrame = Y.get(historyIFrame);
+                if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== "IFRAME") {
                     throw new Error(E_MISSING_OR_INVALID_ARG);
                 }
             }
 
-            if (A.opera && !L.isUndefined(history.navigationMode)) {
+            if (A.opera && !L.isUndefined(WH.navigationMode)) {
 
                 // Disable Opera's fast back/forward navigation mode and puts
                 // it in compatible mode. This makes anchor-based history
                 // navigation work after the page has been navigated away
                 // from and re-activated, at the cost of slowing down
                 // back/forward navigation to and from that page.
-                history.navigationMode = "compatible";
+                WH.navigationMode = "compatible";
             }
 
             G._stateField = stateField;
@@ -543,7 +540,7 @@ YUI.add("history", function (Y) {
             fqstate = currentStates.join("&");
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (A.ie < 8 || document.documentMode < 8)) {
+            if (A.ie && (A.ie < 8 || Y.config.doc.documentMode < 8)) {
 
                 return _updateIFrame(fqstate);
 
@@ -557,14 +554,14 @@ YUI.add("history", function (Y) {
                 // and 2.0 but creates bigger problems on WebKit. So for now,
                 // we'll consider this an acceptable bug, and hope that Apple
                 // comes out with their next version of Safari very soon.
-                location.hash = fqstate;
+                WL.hash = fqstate;
                 if (A.webkit) {
                     // The following two lines are only useful for Safari 1.x
                     // and 2.0. Recent nightly builds of WebKit do not require
                     // that, but unfortunately, it is not easy to differentiate
                     // between the two. Once Safari 2.0 departs the A-grade
                     // list, we can remove the following two lines...
-                    G._fqstates[history.length] = fqstate;
+                    G._fqstates[WH.length] = fqstate;
                     _storeStates();
                 }
 
@@ -622,7 +619,7 @@ YUI.add("history", function (Y) {
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
             // contained special characters...
-            h = location.href;
+            h = WL.href;
             i = h.indexOf("#");
 
             if (i >= 0) {
@@ -655,7 +652,7 @@ YUI.add("history", function (Y) {
 
             var m, q, i;
 
-            url = url || location.href;
+            url = url || WL.href;
 
             i = url.indexOf("?");
             q = i >= 0 ? url.substr(i + 1) : url;
@@ -715,4 +712,4 @@ YUI.add("history", function (Y) {
 
     Y.History = H;
 
-}, "3.0.0", { requires: ["event"], skinnable: false });
+}, "3.0.0", { requires: ["event", "node"], skinnable: false });
