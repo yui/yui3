@@ -72,7 +72,6 @@ function StyleSheet(seed, name) {
         Y.fail('HEAD element not found to append STYLE node');
     }
 
-    // TODO: use DOM?
     node = seed && (seed.nodeName ? seed :
             d.getElementById(seed.replace(/^#/,'')));
     if (seed && sheets[seed]) {
