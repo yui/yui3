@@ -2,12 +2,14 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <style type="text/css">
+        body {
+            padding: 0;
+        }
         #dd {
-            border: 1px solid red;
-            background: #9e9;
-            width: 400px;
+            background: #e99;
+            border: 5px solid red;
+            width: 125px;
         }
         #dd img {
             background: #fff;
@@ -16,7 +18,10 @@
 </head>
 <body>
 <div class="markup">
-    <div id="dd" style="border: 5px solid red; background: #e99; width: 125px;"><img src="http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-bar.gif">OK HERE</div>
+    <div id="dd">
+        <img src="http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-bar.gif">
+        OK HERE
+    </div>
 </div>
 
 <script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
@@ -29,7 +34,5 @@ new Y.DD.Drag({ node:'#dd' });
 
 });
 </script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js" ></script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
 </body>
 </html>
