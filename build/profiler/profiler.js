@@ -1,17 +1,16 @@
-YUI.add("profiler", function(Y){
+YUI.add('profiler', function(Y) {
+
 
     var L = Y.Lang;
 
     /**
      * The YUI JavaScript profiler.
      * @module profiler
-     * @namespace Y
-     * @requires yahoo
+     * @requires yui
      */
     
     /**
      * Profiles functions in JavaScript.
-     * @namespace Y
      * @class Profiler
      * @static
      */
@@ -373,5 +372,7 @@ YUI.add("profiler", function(Y){
              
     
     };
-}, "@VERSION@");
 
+
+
+}, '@VERSION@' ,{requires:['oop']});

@@ -142,6 +142,6 @@ var Env = YUI.Env,
             Y.before(yready, Env, "_ready");
         }
 
-    }, "3.0.0");
+    }, "@VERSION@");
 
 })();

@@ -542,7 +542,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             var drops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
-                    drops[drops.length] = v
+                    drops[drops.length] = v;
                 }
             });
 
@@ -658,13 +658,13 @@ YUI.add('dd-ddm-drop', function(Y) {
                     activeDrop = tmp[0];
                     other = tmp[1];
                 }
-                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 if (activeDrop) {
                     activeDrop.fire('drop:hit', { drag: activeDrag, drop: activeDrop, others: other });
                     activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: activeDrop, others: other });
                 }
             } else if (activeDrag) {
-                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
@@ -750,7 +750,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             var vdrops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
-                    vdrops[vdrops.length] = v
+                    vdrops[vdrops.length] = v;
                 }
             });
 
@@ -1844,7 +1844,10 @@ YUI.add('dd-proxy', function(Y) {
         * @type Boolean
         */
         proxy: {
-            value: false
+            value: false,
+            set: function(v) {
+                this._setProxy(v);
+            }
         },        
         /**
         * @attribute positionProxy
@@ -1865,6 +1868,21 @@ YUI.add('dd-proxy', function(Y) {
     };
 
     var proto = {
+        /**
+        * @private
+        * @method _setProxy
+        * @description Handler for the proxy config attribute
+        */
+        _setProxy: function(v) {
+            if (v) {
+                if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
+                    this._createFrame();
+                    this.set(DRAG_NODE, DDM._proxy);
+                }
+            } else {
+                this.set(DRAG_NODE, this.get(NODE));
+            }
+        },
         /**
         * @private
         * @method _createFrame
@@ -1932,6 +1950,7 @@ YUI.add('dd-proxy', function(Y) {
         */       
         start: function() {
             if (!this.get('lock')) {
+                /*
                 if (this.get(PROXY)) {
                     if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
                         this.set(DRAG_NODE, DDM._proxy);
@@ -1939,6 +1958,7 @@ YUI.add('dd-proxy', function(Y) {
                 } else {
                     this.set(DRAG_NODE, this.get(NODE));
                 }
+                */
             }
             Proxy.superclass.start.apply(this);
             if (this.get(PROXY)) {
@@ -2349,7 +2369,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
        /**
@@ -2391,7 +2411,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-constrain', 'dd-proxy']});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2871,5 +2891,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
 

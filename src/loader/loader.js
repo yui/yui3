@@ -150,16 +150,20 @@ var BASE = 'base',
        dom: {
             requires: ['event'],
             submodules: {
+
                 'dom-base': {
                     requires: ['event']
                 },
+
                 'dom-style': {
                     requires: ['dom-base']
 
                 },
+
                 'dom-screen': {
                     requires: ['dom-base', 'dom-style']
                 },
+
                 selector: {
                     requires: ['dom-base']
                 }
@@ -169,15 +173,19 @@ var BASE = 'base',
         node: {
             requires: ['dom'],
             submodules: {
+
                 'node-base': {
                     requires: ['dom-base', 'selector']
                 },
+
                 'node-style': {
                     requires: ['dom-style', 'node-base']
                 },
+
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
                 },
+
                 'node-event-simulate': {
                     requires: ['node-base']
                 }
@@ -187,23 +195,30 @@ var BASE = 'base',
         anim: {
             requires: [BASE, 'node'],
             submodules: {
+
                 'anim-base': {
                     requires: ['base', 'node-style']
                 },
+
                 'anim-color': {
                     requires: ['anim-base']
                 },
+
                 'anim-curve': {
                     requires: ['anim-xy']
                 },
+
                 'anim-easing': {
                 },
+
                 'anim-scroll': {
                     requires: ['anim-base']
                 },
+
                 'anim-xy': {
                     requires: ['anim-base', 'node-screen']
                 },
+
                 'anim-node-plugin': {
                      requires: ['node', 'anim-base']
                 }
@@ -381,7 +396,7 @@ var BASE = 'base',
 
         'yui-base': { },
 
-        yuitest: {                                                                                                                                                        
+        test: {                                                                                                                                                        
             requires: ['substitute', 'node', 'json']                                                                                                                     
         }  
 
@@ -1267,8 +1282,11 @@ Y.Env.meta = META;
 
                         // there can be only one
                         if (!r[i] && !this.loaded[i]) {
-                            m =this.getModule(i); s = m.supersedes ||[]; roll=false;
+                            m = this.getModule(i); 
+                            s = m.supersedes || []; 
+                            roll = false;
 
+                            // @TODO remove continue
                             if (!m.rollup) {
                                 continue;
                             }
@@ -1738,8 +1756,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                         };
                         
                     url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
-
-                    self = this; 
 
                     fn(url, {
                         data: s[i],
