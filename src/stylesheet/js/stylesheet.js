@@ -1,5 +1,3 @@
-YUI.add('stylesheet', function(Y) {
-
 var d = Y.config.doc,
     p = d.createElement('p'), // Have to hold on to the node (see notes)
     style  = p.style, // worker style collection
@@ -178,6 +176,7 @@ function StyleSheet(seed, name) {
 
             // Some selector values can cause IE to hang
             if (!StyleSheet.isValidSelector(sel)) {
+                Y.log("Invalid selector '"+sel+"' passed to set.  Ignoring.",'warn','StyleSheet');
                 return this;
             }
 
@@ -255,6 +254,8 @@ _toCssText = function (css,base) {
                 style[prop] = Y.Lang.trim(css[prop]);
             }
             catch (e) {
+                Y.log("Error assigning property '"+prop+"' to '"+css[prop]+
+                          "' (ignored):\n"+e.message,'warn','StyleSheet');
             }
         }
     }
@@ -372,6 +373,3 @@ NOTES
    ??? - unsetting font-size-adjust has the same effect as unsetting font-size
 */
 
-
-
-}, '@VERSION@' );

@@ -1,0 +1,8 @@
+Queue
+    The Queue module allows you create a chain of function callbacks executed in order via setTimeout.  Also supports timeout chained iterations for each item in the Queue.
+
+3.0.0pr1
+    Initial release
+
+3.0.0pr2
+    No changes
