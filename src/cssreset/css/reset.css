@@ -1,16 +1,16 @@
 /*
-	TODO: will need to remove settings on HTML since we can't namespace it.
-	TODO: with the prefix, should I group by selector or property for weight savings?
+	TODO will need to remove settings on HTML since we can't namespace it.
+	TODO with the prefix, should I group by selector or property for weight savings?
 */
-html {
+html{
 	color:#000;
 	background:#FFF;
 }
 /*
-	TODO: remove settings on BODY since we can't namespace it.
+	TODO remove settings on BODY since we can't namespace it.
 */
 /*
-	TODO: test putting a class on HEAD.
+	TODO test putting a class on HEAD.
 		- Fails on FF. 
 */
 body,
@@ -50,7 +50,7 @@ img {
 	border:0;
 }
 /*
-	TODO: think about hanlding inheritence differently, maybe letting IE6 fail a bit...
+	TODO think about hanlding inheritence differently, maybe letting IE6 fail a bit...
 */
 address,
 caption,
@@ -61,11 +61,11 @@ em,
 strong,
 th,
 var {
-	font-style:inherit;
-	font-weight:inherit;
+	font-style:normal;
+	font-weight:normal;
 }
 /*
-	TODO: Figure out where this list-style rule is best set. Hedger has a request to investigate.
+	TODO Figure out where this list-style rule is best set. Hedger has a request to investigate.
 */
 li {
 	list-style:none;
@@ -93,7 +93,7 @@ acronym {
 	border:0;
 	font-variant:normal;
 }
-/* preserves line-height and selector appearance */
+/* to preserve line-height and selector appearance */
 sup {
 	vertical-align:text-top;
 }
@@ -107,7 +107,7 @@ select {
 	font-size:inherit;
 	font-weight:inherit;
 }
-/* enables resizing for IE*/
+/*to enable resizing for IE*/
 input,
 textarea,
 select {
