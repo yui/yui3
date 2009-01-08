@@ -1,3 +1,0 @@
-<p>In the example below, IO is employed to make a cross-domain request to <a href="http://pipes.yahoo.com">Yahoo! Pipes</a>.  The output of the Pipe is an RSS-style feed formatted as JSON.  We pass that output to the JSON Utility's <code>parse</code> method for sanitization and then display the contents of the Pipe in a list.</p>
-
-<p>The cross-domain approach obviates the need for a server-side proxy, making it faster. And the use of IO in place of a script node allows us to retrieve the JSON data as a string and execute <code>JSON.parse</code> against it, making it safer to use; a script node would evaluate immediately in the global scope as soon as it was loaded.</p>

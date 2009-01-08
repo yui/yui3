@@ -1,1 +1,0 @@
-<p>CSS Fonts uses a combination of keywords, filters, percentages and pixels to set its baseline font size. This approach preserves the users' ability to resize fonts via browser controls. To maintain this user option, set non-baseline sizes using percentages. This example shows how.</p>

@@ -1,1 +1,0 @@
-<p>This example illustrates one method of serializing and recreating class instances by using the <code>replacer</code> and <code>reviver</code> parameters to <code>JSON.stringify</code> and <code>JSON.parse</code> respectively.</p>

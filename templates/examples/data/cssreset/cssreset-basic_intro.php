@@ -1,1 +1,0 @@
-<p>When CSS Reset is included in a page it removes the browser-provided style of HTML elements (by generally setting values to 0). This example shows what that looks like.</p>
