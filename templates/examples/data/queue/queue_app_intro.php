@@ -1,2 +1,0 @@
-<p>This example illustrates how to break up the initial rendering of an application UI into queued code chunks, yielding back to the browser regularly to draw portions of the UI as they are ready.</p>
-<p><em>Note</em>: This method is mostly useful for apps constructing complex DOM structures.  While the DOM structure contained in this example is not complex, some artificial delays were injected to simulate process intensive operations that would normally cause such delays.</p>

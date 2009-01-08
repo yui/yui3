@@ -1,1 +1,0 @@
-<p>CSS Fonts defines Arial as the base font on the page. You can change this as your normally would using CSS's <a href="http://www.w3.org/TR/CSS21/fonts.html#propdef-font-family"><code>font-family</code></a> property.</p>

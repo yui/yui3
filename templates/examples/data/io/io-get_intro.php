@@ -1,1 +1,0 @@
-<p>This example demonstrates how to send HTTP GET requests, using IO.  One transaction uses Global event listeners to handle the transaction lifecycles and response.  The other transaction uses both Global and Transaction events.</p>

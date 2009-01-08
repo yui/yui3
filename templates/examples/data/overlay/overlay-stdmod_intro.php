@@ -1,1 +1,0 @@
-<p>This example shows how you can work either the <code>headerContent, bodyContent, footerContent</code> attributes, to replace content in the Overlay's standard module sections, or use the <code>setStdModContent(section, content, where)</code> method to insert content <em>before</em>, or append it <em>after</em> existing content in the section.</p>

@@ -1,1 +1,0 @@
-<p>This example shows how you can work with the <code>zIndex</code> attribute which the Overlay supports, to implement a simple <code>bringToTop</code> function. The example code also listens for changes in the <code>zIndex</code> attribute, which is uses to update the content of the overlay, when it is brought to the top of the stack.</p>

@@ -1,3 +1,0 @@
-<style>
- #sample-one {}
-</style>

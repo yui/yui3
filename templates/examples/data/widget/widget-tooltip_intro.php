@@ -1,1 +1,0 @@
-This is an advanced example, in which we create a Tooltip widget, by extending the base <code>Widget</code> class, and adding <code>WidgetStack</code> and <code>WidgetPosition</code> extensions, through <code>Base.build</code>.

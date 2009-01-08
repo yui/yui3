@@ -1,1 +1,0 @@
-<p>This example shows basic usage of the YUI Cookie utility. The example checks the value of a cookie and then sets it to a new value.</p>
