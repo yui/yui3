@@ -1,6 +1,6 @@
 build_tmp/
 build_rollup_tmp/
-.DS_STORE
+.DS_Store
 .*.swp
 .svn
 CVS/
