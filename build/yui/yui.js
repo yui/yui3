@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {},
+    var _instances = {}, _startTime = new Date().getTime();
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -528,7 +528,11 @@ YUI.prototype = {
      */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
-        return p +'-' + this.version + '-' + e._yidx + '-' + e._uidx++;
+        return p +'-' + 
+                this.version + '-' + 
+                e._yidx + '-' + 
+                (e._uidx++) + '-' 
+                + _startTime;
     },
 
     /**
