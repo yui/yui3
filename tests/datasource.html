@@ -96,7 +96,7 @@
                         this.resume(function() {
                             ASSERT.isNull(request, "Expected null request.");
                             ASSERT.isObject(response, "Expected response object.");
-                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, response, "Expected tId property.");
+                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, response, "Expected all properties.");
                         });
                     },
                     failure: function(request, response) {
