@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime();
+    var _instances = {}, _startTime = new Date().getTime(),
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -484,7 +484,7 @@ YUI.prototype = {
     namespace: function() {
         var a=arguments, o=null, i, j, d;
         for (i=0; i<a.length; i=i+1) {
-            d = a[i].split(".");
+            d = ("" + a[i]).split(".");
             o = this;
             for (j=(d[0] == "YAHOO") ? 1 : 0; j<d.length; j=j+1) {
                 o[d[j]] = o[d[j]] || {};
@@ -528,11 +528,11 @@ YUI.prototype = {
      */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
-        return p +'-' + 
-                this.version + '-' + 
-                e._yidx + '-' + 
-                (e._uidx++) + '-' 
-                + _startTime;
+        return p            + '-' + 
+               this.version + '-' + 
+               e._yidx      + '-' + 
+               (e._uidx++)  + '-' + 
+               _startTime;
     },
 
     /**
