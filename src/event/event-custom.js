@@ -680,16 +680,17 @@ YUI.add("event-custom", function(Y) {
          * @return {int} The number of listeners unsubscribed
          */
         unsubscribeAll: function() {
-            var subs = this.subscribers, i;
+            var subs = this.subscribers, i, l=0;
             for (i in subs) {
                 if (subs.hasOwnProperty(i)) {
                     this._delete(subs[i]);
+                    l++;
                 }
             }
 
             this.subscribers={};
 
-            return i;
+            return l;
         },
 
         /**
