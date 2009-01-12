@@ -1,9 +1,9 @@
+YUI.add('get', function(Y) {
 
-YUI.add("get", function(Y) {
     
-        var ua=Y.UA, 
-        L=Y.Lang,
-        PREFIX = Y.guid('yui_');
+var ua=Y.UA, 
+    L=Y.Lang,
+    PREFIX = Y.guid('yui_');
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -564,6 +564,7 @@ Y.Get = function() {
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
          * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.5.2/build/event/event-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the context");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
@@ -629,7 +630,6 @@ Y.Get = function() {
          * <pre>
          * &nbsp;&nbsp;Y.Get.css(
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
-         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;insertBefore: 'custom-styles' // nodes will be inserted before the specified node
          * &nbsp;&nbsp;&#125;);
          * </pre>
@@ -641,4 +641,5 @@ Y.Get = function() {
     };
 }();
 
-}, "@VERSION@");
+
+}, '@VERSION@' );

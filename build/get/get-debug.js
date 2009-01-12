@@ -1,9 +1,9 @@
+YUI.add('get', function(Y) {
 
-YUI.add("get", function(Y) {
     
-        var ua=Y.UA, 
-        L=Y.Lang,
-        PREFIX = Y.guid('yui_');
+var ua=Y.UA, 
+    L=Y.Lang,
+    PREFIX = Y.guid('yui_');
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -661,4 +661,5 @@ Y.Get = function() {
     };
 }();
 
-}, "@VERSION@");
+
+}, '@VERSION@' );
