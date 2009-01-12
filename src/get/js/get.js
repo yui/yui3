@@ -1,8 +1,7 @@
-
-YUI.add("get", function(Y) {
     
-        var ua=Y.UA, 
-        L=Y.Lang;
+var ua=Y.UA, 
+    L=Y.Lang,
+    PREFIX = Y.guid('yui_');
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -41,10 +40,6 @@ Y.Get = function() {
      */
         nidx=0, 
 
-        // ridx=0,
-
-        // sandboxFrame=null,
-
     /**
      * interal property used to prevent multiple simultaneous purge 
      * processes
@@ -68,7 +63,7 @@ Y.Get = function() {
         var w = win || Y.config.win, d=w.document, n=d.createElement(type);
 
         for (var i in attr) {
-            if (attr[i] && Y.Object.owns(attr, i)) {
+            if (attr[i] && attr.hasOwnProperty(i)) {
                 n.setAttribute(i, attr[i]);
             }
         }
@@ -87,7 +82,7 @@ Y.Get = function() {
     var _linkNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("link", {
-                "id":      "yui__dyn_" + (nidx++),
+                "id":      PREFIX + (nidx++),
                 "type":    "text/css",
                 "charset": c,
                 "rel":     "stylesheet",
@@ -106,45 +101,11 @@ Y.Get = function() {
     var _scriptNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("script", {
-                "id":      "yui__dyn_" + (nidx++),
+                "id":      PREFIX + (nidx++),
                 "type":    "text/javascript",
                 "charset": c,
                 "src":     url
             }, win);
-    };
-
-    /*
-     * The request failed, execute fail handler with whatever
-     * was accomplished.  There isn't a failure case at the
-     * moment unless you count aborted transactions
-     * @method _fail
-     * @param id {string} the id of the request
-     * @private
-     */
-    var _fail = function(id, msg) {
-
-        Y.log("get failure: " + msg, "warn", "get");
-
-        var q = queues[id];
-        if (q.timer) {
-            q.timer.cancel();
-        }
-
-        // execute failure callback
-        if (q.onFailure) {
-            var sc=q.context || q;
-            q.onFailure.call(sc, _returnData(q, msg));
-        }
-    };
-
-    var _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
     };
 
     /**
@@ -188,6 +149,40 @@ Y.Get = function() {
                     _purge(this.tId);
                 }
             };
+    };
+
+    /*
+     * The request failed, execute fail handler with whatever
+     * was accomplished.  There isn't a failure case at the
+     * moment unless you count aborted transactions
+     * @method _fail
+     * @param id {string} the id of the request
+     * @private
+     */
+    var _fail = function(id, msg) {
+
+        Y.log("get failure: " + msg, "warn", "get");
+
+        var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
+        // execute failure callback
+        if (q.onFailure) {
+            var sc=q.context || q;
+            q.onFailure.call(sc, _returnData(q, msg));
+        }
+    };
+
+    var _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
     };
 
 
@@ -277,6 +272,14 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
+
+        // if the url is undefined, this is probably a trailing comma problem in IE
+        if (!url) {
+            q.url.shift(); 
+            Y.log('skipping empty url');
+            return _next(id);
+        }
+
         Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
@@ -402,7 +405,7 @@ Y.Get = function() {
 
         // IE supports the readystatechange event for script and css nodes
         // Opera only for script nodes.  Opera support onload for script
-        // nodes, but this doesn't fire when their is a load failure.
+        // nodes, but this doesn't fire when there is a load failure.
         // The onreadystatechange appears to be a better way to respond
         // to both success and failure.
         if (ua.ie) {
@@ -410,6 +413,7 @@ Y.Get = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
                     Y.log(id + " onreadstatechange " + url, "info", "get");
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };
@@ -455,6 +459,7 @@ Y.Get = function() {
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
+         * @static
          * @param id {string} the transaction id
          * @private
          */
@@ -466,6 +471,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
+         * @static
          * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
@@ -652,5 +658,3 @@ Y.Get = function() {
         }
     };
 }();
-
-}, "@VERSION@");
