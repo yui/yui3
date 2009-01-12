@@ -1,9 +1,5 @@
 YUI.add('get', function(Y) {
 
-    
-var ua=Y.UA, 
-    L=Y.Lang,
-    PREFIX = Y.guid('yui_');
 
 /**
  * Provides a mechanism to fetch remote resources and
@@ -11,6 +7,10 @@ var ua=Y.UA,
  * @module yui
  * @submodule get
  */
+
+var ua=Y.UA, 
+    L=Y.Lang,
+    PREFIX = Y.guid('yui_');
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
@@ -660,6 +660,7 @@ Y.Get = function() {
         }
     };
 }();
+
 
 
 }, '@VERSION@' );
