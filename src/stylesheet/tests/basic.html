@@ -45,14 +45,12 @@
     <input type="button" name="set" id="set" value="set">
     <input type="button" name="unset" id="unset" value="unset">
 
-    <script type="text/javascript" src="../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../build/oop/oop.js"></script>
-    <script type="text/javascript" src="../../build/event/event.js"></script>
-    <script type="text/javascript" src="../../build/dom/dom.js"></script>
-    <script type="text/javascript" src="../../build/node/node.js"></script>
-    <script type="text/javascript" src="../../build/stylesheet/stylesheet.js"></script>
+    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
     <script type="text/javascript">
-    YUI().use('node','stylesheet',function (Y) {
+    YUI({
+        base: '../../../build/',
+        filter: 'debug'
+    }).use('node','stylesheet',function (Y) {
         Y.on('click',function (e) {
             Y.StyleSheet('test').set('.foo', {
                 width: '4em',
