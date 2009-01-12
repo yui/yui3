@@ -5,7 +5,6 @@
  * is required for most YUI components.
  * @module oop
  */
-YUI.add("oop", function(Y) {
 
     var L  = Y.Lang, 
         A  = Y.Array,
@@ -293,5 +292,3 @@ YUI.add("oop", function(Y) {
     //     };
     // };
 
-
-}, "@VERSION@");

@@ -1,3 +1,5 @@
+YUI.add('oop', function(Y) {
+
 /**
  * Supplies object inheritance and manipulation utilities.  This adds
  * additional functionaity to what is provided in yui-base, and the
@@ -5,7 +7,6 @@
  * is required for most YUI components.
  * @module oop
  */
-YUI.add("oop", function(Y) {
 
     var L  = Y.Lang, 
         A  = Y.Array,
@@ -290,4 +291,5 @@ YUI.add("oop", function(Y) {
     // };
 
 
-}, "@VERSION@");
+
+}, '@VERSION@' );
