@@ -1,3 +1,5 @@
+YUI.add('loader', function(Y) {
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -43,7 +45,7 @@
  * <dl>
  *  <dt>DEBUG</dt>
  *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
- *      This option will automatically include the logger widget</dd>
+ *      This option will automatically include the Logger widget</dd>
  *  <dt>RAW</dt>
  *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
  * </dl>
@@ -113,7 +115,6 @@
 
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
-YUI.add("loader", function(Y) {
 
 var BASE = 'base', 
     CSS = 'css',
@@ -605,7 +606,7 @@ Y.Env.meta = META;
          * <dl>
          *  <dt>DEBUG</dt>
          *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
-         *      This option will automatically include the logger widget</dd>
+         *      This option will automatically include the Logger widget</dd>
          *  <dt>RAW</dt>
          *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
          * </dl>
@@ -1858,4 +1859,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     // Y.augment(Y.Loader, Y.Event.Target);
 
-}, "@VERSION@");
+
+
+}, '@VERSION@' );
