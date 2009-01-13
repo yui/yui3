@@ -4,7 +4,6 @@
  *
  * @module substitute
  */
-YUI.add("substitute", function(Y) {
 
     var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}',
 
@@ -121,6 +120,3 @@ YUI.add("substitute", function(Y) {
     Y.substitute = substitute;
     L.substitute = substitute;
 
-}, "@VERSION@", {
-    optional: ['dump']
-});
