@@ -29,6 +29,9 @@ var OFFSET_TOP = 'offsetTop',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
     GET_COMPUTED_STYLE = 'getComputedStyle',
+
+    // TODO: how about thead/tbody/tfoot/tr?
+    // TODO: does caption matter?
     RE_TABLE = /^t(?:able|d|h)$/i;
 
 Y.mix(Y.DOM, {
@@ -109,10 +112,6 @@ Y.mix(Y.DOM, {
      TODO: test inDocument/display
      */
     getXY: function() {
-
-
-
-
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
                 if (!node) {
@@ -145,9 +144,6 @@ Y.mix(Y.DOM, {
                             if (bTop !== MEDIUM) {
                                 off2 = parseInt(bTop, 10);
                             }
-
-
-
                         }
                         
                         xy[0] -= off1;
@@ -171,8 +167,10 @@ Y.mix(Y.DOM, {
                 //Calculate the Top and Left border sizes (assumes pixels)
                 var xy = [node[OFFSET_LEFT], node[OFFSET_TOP]],
                     parentNode = node,
-                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
+                    // TODO: refactor with !! or just falsey
+                    bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
 
+                // TODO: worth refactoring for TOP/LEFT only?
                 while ((parentNode = parentNode[OFFSET_PARENT])) {
                     xy[0] += parentNode[OFFSET_LEFT];
                     xy[1] += parentNode[OFFSET_TOP];
@@ -381,7 +379,6 @@ Y.mix(Y.DOM, {
 });
 
 
-
 /**
  * Adds position and region management functionality to DOM.
  * @module dom
@@ -541,5 +538,4 @@ Y.mix(DOM, {
 });
 
 
-
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});

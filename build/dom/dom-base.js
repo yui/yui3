@@ -9,7 +9,7 @@ YUI.add('dom-base', function(Y) {
  *
  */
 
-/** 
+/**
  * Provides DOM helper methods.
  * @class DOM
  *
@@ -167,8 +167,8 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    previous: function(element, fn) {
-        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn);
+    previous: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
     },
 
     /**
@@ -181,8 +181,8 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    next: function(element, fn) {
-        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn);
+    next: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
     },
 
     /**
@@ -195,8 +195,9 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    ancestor: function(element, fn) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn);
+     // TODO: optional stopAt node?
+    ancestor: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
     },
 
     /**
@@ -332,6 +333,7 @@ Y.DOM = {
         return Y.DOM.contains(doc.documentElement, element);
     },
 
+// TODO: dont return collection
     create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html);
@@ -377,6 +379,7 @@ Y.DOM = {
         return false;
     },
 
+// TODO: move to Lang?
     /**
      * Memoizes dynamic regular expressions to boost runtime performance. 
      * @method _getRegExp
@@ -394,6 +397,7 @@ Y.DOM = {
         return Y.DOM._regexCache[str + flags];
     },
 
+// TODO: make getDoc/Win true privates?
     /**
      * returns the appropriate document.
      * @method _getDoc
@@ -403,6 +407,7 @@ Y.DOM = {
      */
     _getDoc: function(element) {
         element = element || {};
+        // TODO: use nodeName instead of magic number
         return (element[NODE_TYPE] === 9) ? element : element[OWNER_DOCUMENT] ||
                                                 Y.config.doc;
     },
@@ -420,6 +425,7 @@ Y.DOM = {
                                         doc[PARENT_WINDOW] || Y.config.win;
     },
 
+    // TODO: document this
     _childBy: function(element, tag, fn, rev) {
         var ret = null,
             root, axis;
@@ -523,7 +529,6 @@ Y.DOM = {
         });
     }
 })();
-
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -607,5 +612,4 @@ Y.mix(Y.DOM, {
 
 
 
-
-}, '@VERSION@' ,{skinnable:false, requires:['event']});
+}, '@VERSION@' ,{requires:['event'], skinnable:false});

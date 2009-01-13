@@ -48,7 +48,7 @@ YUI.add('node-base', function(Y) {
         var doc = Y.config.doc;
 
         if (node) {
-            if (node[NODE_TYPE]) {
+            if (node[NODE_TYPE]) { // use nodeName: #document
                 if (node[NODE_TYPE] === 9) { // already a document node
                     doc = node;
                 } else {
@@ -148,7 +148,7 @@ YUI.add('node-base', function(Y) {
                 } else {
                     depth = (depth === undefined) ? 4 : depth;
                     if (depth > 0) {
-                        for (var i in val) {
+                        for (var i in val) { // TODO: test this and pull hasOwnProperty check if safe?
                             if (val.hasOwnProperty && val.hasOwnProperty(i)) {
                                 val[i] = Node.scrubVal(val[i], node, --depth);
                             }
@@ -248,6 +248,7 @@ YUI.add('node-base', function(Y) {
 
     };
 
+    // rename and mark as protected
     Node.addDOMMethods = function(methods) {
         var add = {}; 
         Y.each(methods, function(v, n) {
@@ -281,7 +282,7 @@ YUI.add('node-base', function(Y) {
             uid = Y.guid();
 
             if (nodes) { // zero length collection returns null
-                if (nodes[NODE_TYPE] || nodes.document) { // node or window
+                if (nodes[NODE_TYPE] || nodes.document) { // node or window TODO: move to helper fn
                     nodes = [nodes];
                 }
             } else {
@@ -455,7 +456,7 @@ YUI.add('node-base', function(Y) {
         //normalize: function() {},
         //isSupported: function(feature, version) {},
         toString: function() {
-            var str = this._yuid + ': ', 
+            var str = this._yuid + ': ',
                 errorMsg = this._yuid + ': not bound to any nodes',
                 nodes = Node[this._yuid]() || {};
 
@@ -496,6 +497,7 @@ YUI.add('node-base', function(Y) {
          * @chainable
          */
         // TODO: document.location.href
+        // TODO: blacklist?
         set: function(node, prop, val) {
             if (prop.indexOf('.') < 0) {
                 if (prop in Node.setters) { // use custom setter
@@ -517,6 +519,8 @@ YUI.add('node-base', function(Y) {
          * @param {String} prop Property to get 
          * @return {any} Current value of the property
          */
+
+        // TODO: blacklist?
         get: function(node, prop) {
             var val = null;
             if (prop) {
@@ -539,6 +543,7 @@ YUI.add('node-base', function(Y) {
             return val;
         },
 
+        // TODO: safe enough? 
         invoke: function(node, method, a, b, c, d, e) {
             var ret;
 
@@ -553,6 +558,7 @@ YUI.add('node-base', function(Y) {
             return ret;
         },
 
+// TODO: need this?  check for fn; document this
         hasMethod: function(node, method) {
             return !! node[method];
         },
@@ -590,6 +596,7 @@ YUI.add('node-base', function(Y) {
             return ret;
         },
 
+        // TODO: allow fn test
         /**
          * Test if the supplied node matches the supplied selector.
          * @method test
@@ -709,6 +716,8 @@ YUI.add('node-base', function(Y) {
      * aren't allowed to traverse outside their DOM tree.
      * @return {Node} A Node instance bound to the supplied node(s).
      */
+    // TODO: check restricted return
+    // rename isRoot to restricted
     Node.get = function(node, doc, isRoot, getAll) {
         var instance;
 
@@ -913,6 +922,7 @@ YUI.add('node-base', function(Y) {
     if (!document.documentElement.hasAttribute) {
         Node.methods({
             'hasAttribute': function(node, att) {
+                // TODO: falsey empty string val? foo in attributes?
                 return !! node.getAttribute(att);
             }
         });
