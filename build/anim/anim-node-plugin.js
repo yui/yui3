@@ -3,20 +3,23 @@ YUI.add('anim-node-plugin', function(Y) {
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
+ * @namespace plugin
  * @submodule anim-node-plugin
  */
 
-Y.namespace('Plugin');
-Y.Plugin.NodeFX = function(config) {
+var NodeFX = function(config) {
+    config = (config) ? Y.merge(config) : {};
     config.node = config.owner;
-    Y.Plugin.NodeFX.superclass.constructor.apply(this, arguments);
+    NodeFX.superclass.constructor.apply(this, arguments);
 };
 
-Y.Plugin.NodeFX.NAME = "nodefxplugin";
-Y.Plugin.NodeFX.NS = "fx";
+NodeFX.NAME = "nodefx";
+NodeFX.NS = "fx";
 
-Y.extend(Y.Plugin.NodeFX, Y.Anim);
+Y.extend(NodeFX, Y.Anim);
 
+Y.namespace('plugin');
+Y.plugin.NodeFX = NodeFX;
 
 
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});

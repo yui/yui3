@@ -9,7 +9,7 @@ YUI.add('dom', function(Y) {
  *
  */
 
-/** 
+/**
  * Provides DOM helper methods.
  * @class DOM
  *
@@ -167,8 +167,8 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    previous: function(element, fn) {
-        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn);
+    previous: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
     },
 
     /**
@@ -181,8 +181,8 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    next: function(element, fn) {
-        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn);
+    next: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
     },
 
     /**
@@ -195,8 +195,9 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    ancestor: function(element, fn) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn);
+     // TODO: optional stopAt node?
+    ancestor: function(element, fn, all) {
+        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
     },
 
     /**
@@ -332,6 +333,7 @@ Y.DOM = {
         return Y.DOM.contains(doc.documentElement, element);
     },
 
+// TODO: dont return collection
     create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html);
@@ -377,6 +379,7 @@ Y.DOM = {
         return false;
     },
 
+// TODO: move to Lang?
     /**
      * Memoizes dynamic regular expressions to boost runtime performance. 
      * @method _getRegExp
@@ -394,6 +397,7 @@ Y.DOM = {
         return Y.DOM._regexCache[str + flags];
     },
 
+// TODO: make getDoc/Win true privates?
     /**
      * returns the appropriate document.
      * @method _getDoc
@@ -403,6 +407,7 @@ Y.DOM = {
      */
     _getDoc: function(element) {
         element = element || {};
+        // TODO: use nodeName instead of magic number
         return (element[NODE_TYPE] === 9) ? element : element[OWNER_DOCUMENT] ||
                                                 Y.config.doc;
     },
@@ -420,6 +425,7 @@ Y.DOM = {
                                         doc[PARENT_WINDOW] || Y.config.win;
     },
 
+    // TODO: document this
     _childBy: function(element, tag, fn, rev) {
         var ret = null,
             root, axis;
@@ -523,7 +529,6 @@ Y.DOM = {
         });
     }
 })();
-
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -604,7 +609,6 @@ Y.mix(Y.DOM, {
         }
     }
 });
-
 
 /** 
  * Add style management functionality to DOM.
@@ -698,7 +702,7 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} node An HTMLElement to apply the styles to. 
      * @param {Object} hash An object literal of property:value pairs. 
      */
-    'setStyles': function(node, hash) {
+    setStyles: function(node, hash) {
         Y.each(hash, function(v, n) {
             Y.DOM.setStyle(node, n, v);
         }, Y.DOM);
@@ -722,13 +726,15 @@ Y.mix(Y.DOM, {
     }
 });
 
+// normalize reserved word float alternatives ("cssFloat" or "styleFloat")
 if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
     Y.DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
 } else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
     Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
-if (Y.UA.opera) { // opera defaults to hex instead of RGB
+// fix opera computedStyle default color unit (convert to rgb)
+if (Y.UA.opera) {
     Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
@@ -742,7 +748,8 @@ if (Y.UA.opera) { // opera defaults to hex instead of RGB
 
 }
 
-if (Y.UA.webkit) { // safari converts transparent to rgba()
+// safari converts transparent to rgba(), others use "transparent"
+if (Y.UA.webkit) {
     Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
@@ -755,7 +762,6 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
     };
 
 }
-
 
 
 /**
@@ -786,6 +792,9 @@ var OFFSET_TOP = 'offsetTop',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
     GET_COMPUTED_STYLE = 'getComputedStyle',
+
+    // TODO: how about thead/tbody/tfoot/tr?
+    // TODO: does caption matter?
     RE_TABLE = /^t(?:able|d|h)$/i;
 
 Y.mix(Y.DOM, {
@@ -862,10 +871,6 @@ Y.mix(Y.DOM, {
      TODO: test inDocument/display
      */
     getXY: function() {
-
-
-
-
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
                 if (!node) {
@@ -898,9 +903,6 @@ Y.mix(Y.DOM, {
                             if (bTop !== MEDIUM) {
                                 off2 = parseInt(bTop, 10);
                             }
-
-
-
                         }
                         
                         xy[0] -= off1;
@@ -924,8 +926,10 @@ Y.mix(Y.DOM, {
                 //Calculate the Top and Left border sizes (assumes pixels)
                 var xy = [node[OFFSET_LEFT], node[OFFSET_TOP]],
                     parentNode = node,
-                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
+                    // TODO: refactor with !! or just falsey
+                    bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
 
+                // TODO: worth refactoring for TOP/LEFT only?
                 while ((parentNode = parentNode[OFFSET_PARENT])) {
                     xy[0] += parentNode[OFFSET_LEFT];
                     xy[1] += parentNode[OFFSET_TOP];
@@ -1132,7 +1136,6 @@ Y.mix(Y.DOM, {
 });
 
 
-
 /**
  * Adds position and region management functionality to DOM.
  * @module dom
@@ -1290,7 +1293,6 @@ Y.mix(DOM, {
         return r;
     }
 });
-
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -1504,7 +1506,6 @@ if (!Y.config.win[GET_COMPUTED_STYLE]) {
 Y.namespace('DOM.IE');
 Y.DOM.IE.COMPUTED = IEComputed;
 Y.DOM.IE.ComputedStyle = ComputedStyle;
-
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
@@ -2065,7 +2066,6 @@ if (Y.UA.ie && Y.UA.ie < 8) { // rewrite class for IE (others use getAttribute('
 Y.Selector = Selector;
 Y.Selector.patterns = patterns;
 
-
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -2144,5 +2144,4 @@ Y.Color = {
 
 
 
-
-}, '@VERSION@' ,{skinnable:false});
+}, '@VERSION@' );
