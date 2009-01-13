@@ -32,11 +32,11 @@ echo "Building node-event-simulate"
 echo "****************************************"
 ant -q all
 
-ln -sf build.node-all.xml build.xml
+ln -sf build.node.xml build.xml
 wait
-ln -sf build.node-all.properties build.properties
+ln -sf build.node.properties build.properties
 echo "****************************************"
-echo "Building node-all"
+echo "Building node"
 echo "****************************************"
 ant -q all
 
@@ -44,9 +44,9 @@ echo "****************************************"
 echo "Cleaning Up"
 echo "****************************************"
 wait
-#rm -rRf build_tmp
+rm -rRf build_tmp
 wait
-#rm -rRf build_rollup_tmp
+rm -rRf build_rollup_tmp
 wait
 rm build.xml
 wait
