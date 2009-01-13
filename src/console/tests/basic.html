@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
     <title>Test Page</title>
@@ -25,24 +25,13 @@
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/console/console.js"></script>
-<script type="text/javascript" src="../../../build/widget/widget.js"></script>
 <script type="text/javascript">
-Y = YUI({
+YUI({
     base: '../../../build/',
     useBrowserConsole:false,
     //logLevel: 'warn',
     filter: 'debug'
-});
-
-/*
-Y.Env.meta.modules.console = {
-    requires : ['substitute','widget'],
-    skinnable : true
-};
-
-*/
-Y.use('console',function (Y) {
+}).use('console',function (Y) {
 
 var x = {
     foo : 0,

@@ -1,27 +1,28 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" id="locallink" rel="stylesheet" href="/2.x/build/logger/assets/logger.css">
-    <link type="text/css" rel="stylesheet" href="/2.x/build/yuitest/assets/testlogger.css">
+    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
             font: normal 125%/1.4 Arial, sans-serif;
         }
-        .yui-log {
-            display: inline;
-            float: right;
-            position: relative;
+        .yui-skin-sam .yui-console .yui-console-content {
+            font-size: 10px;
+            width: 32em;
         }
-        .yui-log-container {
-            width: 300px;
+        .yui-skin-sam .yui-console .yui-console-bd {
+            height: 50em;
         }
-        .yui-log .yui-log-bd {
-            height: 525px;
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background: #070;
+            color: #fff;
         }
-        .yui-log .yui-log-ft {
-            position: static;
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background: #700;
+            color: #fff;
         }
         .highlight-example {
             display: inline;
@@ -31,82 +32,65 @@
         .highlight-example h2 {
             display: none;
         }
-        .yui-log-bd h3 {
-            border-bottom: 1px solid #ccc;
-            color: #900;
-            margin: 0;
-            padding: 1em 0 0 1ex;
-        }
     </style>
 </head>
 <body class="yui-skin-sam">
 <h1>Tests</h1>
 <div id="testbed"></div>
 
-<script type="text/javascript" src="/2.x/build/yahoo/yahoo.js"></script>
-<script type="text/javascript" src="/2.x/build/dom/dom.js"></script>
-<script type="text/javascript" src="/2.x/build/event/event.js"></script>
-<script type="text/javascript" src="/2.x/build/logger/logger-min.js"></script>
-<script type="text/javascript" src="/2.x/build/yuitest/yuitest-min.js"></script>
-<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
-YUI({base:'../build/',filter:'debug'}).use('stylesheet',function (Y) {
+YUI({
+    base : '../../../build/',
+    filter : 'debug',
+    useBrowserConsole : false,
+    logInclude : { TestRunner: true }
+}).use('test','console','stylesheet',function (Y) {
 
 var d = document,
-    t = YAHOO.tool,
-    u = YAHOO.util,
-    w = YAHOO.widget,
-    TestSuite   = t.TestSuite,
-    TestCase    = t.TestCase,
-    TestLogger  = t.TestLogger,
-    TestRunner  = t.TestRunner,
-    Event       = u.Event,
-    Dom         = u.Dom,
-    Assert      = u.Assert,
-    StyleAssert = {},
-    testbed     = Dom.get('testbed'),
-    StyleSheet  = Y.StyleSheet,
-    suite;
+    testbed = Y.DOM.byId('testbed'),
+    suite,
+    StyleAssert = {
+        normalizeColor : function (c) {
+            return c && (c+'').
+                replace(/#([0-9a-f])([0-9a-f])([0-9a-f])(?![0-9a-f])/i,'#$1$1$2$2$3$3').
+                replace(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})(?![0-9a-f])/i,
+                    function (m,r,g,b) {
+                        return "rgb("+parseInt(r,16)+", "+
+                                      parseInt(g,16)+", "+
+                                      parseInt(b,16)+")" });
+        },
+        areEqual : function (a,b,msg) {
+            var aa = StyleAssert.normalizeColor(a),
+                bb = StyleAssert.normalizeColor(b);
+            if (aa !== bb) {
+                throw new Y.Assert.ComparisonFailure(
+                    Y.Assert._formatMessage(msg, "Values should be equal."), a, b);
+            }
+        }
+    };
 
-StyleAssert.normalizeColor = function (c) {
-    return c && (c+'').
-        replace(/#([0-9a-f])([0-9a-f])([0-9a-f])(?![0-9a-f])/i,'#$1$1$2$2$3$3').
-        replace(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})(?![0-9a-f])/i,
-            function (m,r,g,b) {
-                return "rgb("+parseInt(r,16)+", "+
-                              parseInt(g,16)+", "+
-                              parseInt(b,16)+")" });
-};
-StyleAssert.areEqual = function (a,b,msg) {
-    var aa = StyleAssert.normalizeColor(a),
-        bb = StyleAssert.normalizeColor(b);
-    if (aa !== bb) {
-        throw new u.ComparisonFailure(
-            Assert._formatMessage(msg, "Values should be equal."), a, b);
-    }
-};
-
-Dom.add = function (el,tag,conf) {
+function add(el,tag,conf) {
     var child = d.createElement(tag);
     if (conf) {
-        YAHOO.lang.augmentObject(child,conf,true);
+        Y.mix(child,conf);
     }
     return el.appendChild(child);
-};
-Dom.getNodeCount = function (tag,root) {
+}
+function getNodeCount (tag,root) {
     return (root||d).getElementsByTagName(tag||'*').length;
-};
+}
 
-suite = new TestSuite("Tests");
+suite = new Y.Test.Suite("Tests");
 
-suite.add(new TestCase({
+suite.add(new Y.Test.Case({
     name : "Test &lt;style&gt; node creation",
 
     setUp : function () {
-        this.styleNodeCount = Dom.getNodeCount('style');
-        this.linkNodeCount  = Dom.getNodeCount('link');
+        this.styleNodeCount = getNodeCount('style');
+        this.linkNodeCount  = getNodeCount('link');
 
-        this.testNode = Dom.add(testbed,'div',{id:'target'});
+        this.testNode = add(testbed,'div',{id:'target'});
     },
 
     tearDown : function () {
@@ -114,62 +98,62 @@ suite.add(new TestCase({
     },
 
     test_createNew : function () {
-        var s = new StyleSheet('test');
+        var s = new Y.StyleSheet('test');
 
-        Assert.areSame(this.styleNodeCount + 1, Dom.getNodeCount('style'));
+        Y.Assert.areSame(this.styleNodeCount + 1, getNodeCount('style'));
     },
 
     test_createFromExistingStyle : function () {
-        var s = new StyleSheet('styleblock');
+        var s = new Y.StyleSheet('styleblock');
 
-        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
+        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
     },
 
     test_createFromExistingLink : function () {
-        var s = new StyleSheet('locallink');
+        var s = new Y.StyleSheet('locallink');
 
-        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'),"style");
-        Assert.areSame(this.linkNodeCount, Dom.getNodeCount('link'),"link");
+        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'),"style");
+        Y.Assert.areSame(this.linkNodeCount, getNodeCount('link'),"link");
     },
 
     test_createEntireSheet : function () {
-        var s = new StyleSheet("#target { font-weight: bold; }");
+        var s = new Y.StyleSheet("#target { font-weight: bold; }");
 
-        Assert.areSame(this.styleNodeCount + 1, Dom.getNodeCount('style'));
+        Y.Assert.areSame(this.styleNodeCount + 1, getNodeCount('style'));
 
-        Assert.areEqual('bold',Dom.getStyle(this.testNode,'font-weight'));
+        Y.Assert.areEqual('bold',Y.DOM.getStyle(this.testNode,'font-weight'));
     },
 
     test_gettingFromCache : function () {
         // By name
-        var a = new StyleSheet('test'),
-            b = new StyleSheet('test');
+        var a = new Y.StyleSheet('test'),
+            b = new Y.StyleSheet('test');
 
-        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
-        Assert.areSame(a,b,"From cache by name");
+        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
+        Y.Assert.areSame(a,b,"From cache by name");
 
         // By generated id
-        b = new StyleSheet(a.getId());
+        b = new Y.StyleSheet(a.getId());
 
-        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
-        Assert.areSame(a,b,"From cache by yuiSSID");
+        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
+        Y.Assert.areSame(a,b,"From cache by yuiSSID");
 
         // By node
-        a = new StyleSheet(d.getElementById('styleblock'));
-        b = new StyleSheet('styleblock');
+        a = new Y.StyleSheet(d.getElementById('styleblock'));
+        b = new Y.StyleSheet('styleblock');
 
-        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
-        Assert.areSame(a,b,"From cache by node vs id");
+        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
+        Y.Assert.areSame(a,b,"From cache by node vs id");
     }
 }));
 
-suite.add(new TestCase({
+suite.add(new Y.Test.Case({
     name : "Test set",
 
     setUp : function () {
-        this.stylesheet = new StyleSheet('test');
+        this.stylesheet = new Y.StyleSheet('test');
 
-        this.testNode = Dom.add(testbed,'div',{
+        this.testNode = add(testbed,'div',{
             id:'target',
             innerHTML:'<p>1</p><p>2</p><pre>pre</pre>'
         });
@@ -190,29 +174,29 @@ suite.add(new TestCase({
         });
 
         StyleAssert.areEqual('#123456',
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color");
         StyleAssert.areEqual('#eef',
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor");
         StyleAssert.areEqual('1px',
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border");
     },
 
     test_descendantSelector : function () {
-        var before = Dom.getStyle(
+        var before = Y.DOM.getStyle(
                         testbed.getElementsByTagName('pre')[0],'textAlign');
 
         this.stylesheet.set('#target p', { textAlign: 'right' });
 
         StyleAssert.areEqual('right',
-                        Dom.getStyle(
+                        Y.DOM.getStyle(
                             testbed.getElementsByTagName('p')[0],'textAlign'),
                         "#target p { text-align: right; }");
 
         StyleAssert.areEqual(before,
-                        Dom.getStyle(
+                        Y.DOM.getStyle(
                             testbed.getElementsByTagName('pre')[0],'textAlign'),
                         "#target pre should not be set (maybe auto/inherit?)");
     },
@@ -232,42 +216,42 @@ suite.add(new TestCase({
 
         this.stylesheet.set('garbage in', { foo : 'bar' });
 
-        Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "garbage rule not added");
+        Y.Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "garbage rule not added");
 
         this.stylesheet.set('^*Q$(FUY(Q[{}_-',{ 'f*^$%{]@! \n\t' : 'boom' });
 
-        Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "syntax error rule added");
+        Y.Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "syntax error rule added");
     },
 
     test_commaSelector : function () {
         this.stylesheet.set('#target p, #target pre', { textAlign: 'right' });
 
         StyleAssert.areEqual('right',
-                        Dom.getStyle(
+                        Y.DOM.getStyle(
                             testbed.getElementsByTagName('p')[0],'textAlign'),
                         "#target p, #target pre { text-align: right }");
 
         StyleAssert.areEqual('right',
-                        Dom.getStyle(
+                        Y.DOM.getStyle(
                             testbed.getElementsByTagName('pre')[0],'textAlign'),
                         "#target p, #target pre { text-align: right }");
     }
 }));
 
-suite.add(new TestCase({
+suite.add(new Y.Test.Case({
     name : "Test Enable/Disable sheet",
 
     setUp : function () {
-        this.stylesheet = new StyleSheet('test');
+        this.stylesheet = new Y.StyleSheet('test');
 
         this.stylesheet.enable();
 
-        this.testNode = Dom.add(testbed,'div',{id:'target'});
+        this.testNode = add(testbed,'div',{id:'target'});
 
         this.before = {
-            color           : Dom.getStyle(this.testNode,'color'),
-            backgroundColor : Dom.getStyle(this.testNode,'backgroundColor'),
-            borderLeftWidth : Dom.getStyle(this.testNode,'borderLeftWidth')
+            color           : Y.DOM.getStyle(this.testNode,'color'),
+            backgroundColor : Y.DOM.getStyle(this.testNode,'backgroundColor'),
+            borderLeftWidth : Y.DOM.getStyle(this.testNode,'borderLeftWidth')
         };
 
     },
@@ -287,25 +271,25 @@ suite.add(new TestCase({
         });
 
         StyleAssert.areEqual('#123456',
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (enabled)");
         StyleAssert.areEqual('#eef',
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (enabled)");
         StyleAssert.areEqual('1px',
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (enabled)");
 
         this.stylesheet.disable();
 
         StyleAssert.areEqual(this.before.color,
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (disabled)");
         StyleAssert.areEqual(this.before.backgroundColor,
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (disabled)");
         StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (disabled)");
     },
 
@@ -319,45 +303,45 @@ suite.add(new TestCase({
         });
 
         StyleAssert.areEqual(this.before.color,
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (disabled)");
         StyleAssert.areEqual(this.before.backgroundColor,
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (disabled)");
         StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (disabled)");
 
         this.stylesheet.enable();
 
         StyleAssert.areEqual('#123456',
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (enabled)");
         StyleAssert.areEqual('#eef',
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (enabled)");
         StyleAssert.areEqual('1px',
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (enabled)");
     }
 }));
 
-suite.add(new TestCase({
+suite.add(new Y.Test.Case({
     name : "Test unset",
 
     setUp : function () {
-        this.stylesheet = new StyleSheet('test');
+        this.stylesheet = new Y.StyleSheet('test');
 
-        this.testNode = Dom.add(testbed,'div',{
+        this.testNode = add(testbed,'div',{
             id: 'target',
             innerHTML: 'This is a test'
         });
 
         this.before = {
-            color           : Dom.getStyle(this.testNode,'color'),
-            backgroundColor : Dom.getStyle(this.testNode,'backgroundColor'),
-            borderLeftWidth : Dom.getStyle(this.testNode,'borderLeftWidth'),
-            textAlign       : Dom.getStyle(this.testNode,'textAlign')
+            color           : Y.DOM.getStyle(this.testNode,'color'),
+            backgroundColor : Y.DOM.getStyle(this.testNode,'backgroundColor'),
+            borderLeftWidth : Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
+            textAlign       : Y.DOM.getStyle(this.testNode,'textAlign')
         };
 
     },
@@ -375,28 +359,28 @@ suite.add(new TestCase({
         });
 
         StyleAssert.areEqual('#f00',
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (before unset)");
         StyleAssert.areEqual('#eef',
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (before unset)");
         StyleAssert.areEqual('1px',
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (before unset)");
 
         this.stylesheet.unset('#target', 'color');
 
         StyleAssert.areEqual(this.before.color,
-                        Dom.getStyle(this.testNode,'color'),
+                        Y.DOM.getStyle(this.testNode,'color'),
                         "color (after unset)");
 
         this.stylesheet.unset('#target', ['backgroundColor','border']);
 
         StyleAssert.areEqual(this.before.backgroundColor,
-                        Dom.getStyle(this.testNode,'backgroundColor'),
+                        Y.DOM.getStyle(this.testNode,'backgroundColor'),
                         "backgroundColor (after unset)");
         StyleAssert.areEqual(this.before.borderLeftWidth,
-                        Dom.getStyle(this.testNode,'borderLeftWidth'),
+                        Y.DOM.getStyle(this.testNode,'borderLeftWidth'),
                         "border (after unset)");
     },
 
@@ -404,24 +388,24 @@ suite.add(new TestCase({
         this.stylesheet.set('#target', { textAlign: 'right' });
 
         StyleAssert.areEqual('right',
-                        Dom.getStyle(this.testNode,'textAlign'),
+                        Y.DOM.getStyle(this.testNode,'textAlign'),
                         "#target { text-align: right; }");
 
         this.stylesheet.unset('#target');
         StyleAssert.areEqual(this.before.textAlign,
-                        Dom.getStyle(this.testNode,'textAlign'),
+                        Y.DOM.getStyle(this.testNode,'textAlign'),
                         "#target text-align still in place");
     }
 }));
 
-suite.add(new TestCase({
+suite.add(new Y.Test.Case({
     name : "Test float/opacity",
 
     setUp : function () {
-        this.stylesheet = new StyleSheet('test');
+        this.stylesheet = new Y.StyleSheet('test');
 
-        if (!Dom.get('target')) {
-            this.testNode = Dom.add(testbed,'div',{
+        if (!Y.DOM.byId('target')) {
+            this.testNode = add(testbed,'div',{
                 id:'target',
                 innerHTML:'<p id="p1">1</p><p id="p2">2</p><p id="p3">3</p>'
             });
@@ -445,9 +429,9 @@ suite.add(new TestCase({
                         set('#p2',{ cssFloat: 'left' }).
                         set('#p3',{ styleFloat: 'left' });
 
-        Assert.areEqual('left', Dom.getStyle('p1','float'));
-        Assert.areEqual('left', Dom.getStyle('p2','float'));
-        Assert.areEqual('left', Dom.getStyle('p3','float'));
+        Y.Assert.areEqual('left', Y.DOM.getStyle('p1','float'));
+        Y.Assert.areEqual('left', Y.DOM.getStyle('p2','float'));
+        Y.Assert.areEqual('left', Y.DOM.getStyle('p3','float'));
     },
 
     test_opacity : function () {
@@ -455,32 +439,37 @@ suite.add(new TestCase({
                         set('#p2',{ opacity: .2 }).
                         set('#p3',{ opacity: 1 });
 
-        Assert.areEqual(0.5,Dom.getStyle('p1','opacity'));
-        Assert.areEqual(0.2,Dom.getStyle('p2','opacity'));
-        Assert.areEqual(1,Dom.getStyle('p3','opacity'));
+        Y.Assert.areEqual(0.5,Y.DOM.getStyle('p1','opacity'));
+        Y.Assert.areEqual(0.2,Y.DOM.getStyle('p2','opacity'));
+        Y.Assert.areEqual(1,Y.DOM.getStyle('p3','opacity'));
     }
 }));
 
-Event.onDOMReady(function () {
+var yconsole = new Y.Console({
+    contentBox:"log",
+    newestOnTop: false
+}).render();
 
-    var logger = new TestLogger("log");
-    logger.hideCategory('info');
-    logger.formatMsg = function (e) {
-        if (e.category === 'section') {
-            return "<h3>"+e.msg+"</h3>";
-        } else if (e.category === "break") {
-            return "<br>";
-        } else {
-            return TestLogger.prototype.formatMsg.call(this,e);
-        }
-    };
+//yconsole.hideCategory('info');
+yconsole.printLogEntry = function (m) {
+    if (m.category === 'section') {
+        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
+        return this;
+    } else if (m.category === "break") {
+        this._addToConsole(Y.Node.create("<br>"));
+        return this;
+    } else if (m.category === "info") {
+        return this;
+    } else {
+        return Y.Console.prototype.printLogEntry.call(this,m);
+    }
+};
 
-    YAHOO.log("Tests","section","TestRunner");
+Y.log("Tests","section","TestRunner");
 
-    TestRunner.add(suite);
+Y.Test.Runner.add(suite);
 
-    TestRunner.run();
-});
+Y.Test.Runner.run();
 
 });
 </script>

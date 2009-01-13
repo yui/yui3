@@ -3,7 +3,7 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="/3.x/build/slider/assets/skins/sam/slider.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/slider/assets/skins/sam/slider.css">
     <style type="text/css">
         .yui-slider {
             border: 1px solid red;
@@ -19,7 +19,7 @@
 <div class="markup">
     <div id="slider">
         <div class="yui-slider-rail">
-            <img class="yui-slider-thumb" src="/3.x/build/slider/assets/skins/sam/thumb-classic-x.png">
+            <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
         </div>
     </div>
 
@@ -29,24 +29,17 @@
     <div id="report">0</div>
 </div>
 
-<script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
-var Y = YUI({
-    base:'/3.x/build/',
+YUI({
+    base:'../../../build/',
     filter: 'debug',
     logExclude:{
         base:true,
         event:true,
         attribute:true
     }
-});
-
-Y.Env.meta.modules.slider = {
-    requires : ['widget','dd-constrain'],
-    skinnable : true
-}
-
-Y.use('slider',function (Y) {
+}).use('slider',function (Y) {
 
 var report = Y.get('#report');
 //Y.DD.DDM.useShim = true;
