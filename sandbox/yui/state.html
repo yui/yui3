@@ -8,7 +8,7 @@
 YUI({
         // logInclude: { 'Example': true },
         base: '../../build/'
-    }).use('dump', 'oop', 'attribute', function(Y) {
+    }).use('oop', 'dump', 'attribute', function(Y) {
     
     var newobj = {}, 
 
@@ -71,45 +71,43 @@ YUI({
     // Y.log("myprop list: " + Y.Lang.dump(configs.list()), 'info', 'Example');
 
 
-            var Y = YUI();
+    function Main() {
+    }
 
-            function Main() {
-            }
+    Main.NAME = "main";
 
-            Main.NAME = "main";
+    Main.ATTRS = {
+        mainA : {
+            value:"mainA"
+        },
+        mainB : {
+            value:"mainB"
+        }
+    }
 
-            Main.ATTRS = {
-                mainA : {
-                    value:"mainA"
-                },
-                mainB : {
-                    value:"mainB"
-                }
-            }
+    Main.PLUGINS = [
+        "mainplugin"
+    ];
 
-            Main.PLUGINS = [
-                "mainplugin"
-            ];
+    function Aggr() {
+    }
 
-            function Aggr() {
-            }
+    Aggr.NAME = "aggr";
 
-            Aggr.NAME = "aggr";
+    Aggr.ATTRS = {
+        aggrA : {
+            value:"aggrA"
+        }
+    };
+    
+    Aggr.PLUGINS = [
+        "aggplugin"
+    ];
 
-            Aggr.ATTRS = {
-                aggrA : {
-                    value:"aggrA"
-                }
-            };
-            
-            Aggr.PLUGINS = [
-                "aggplugin"
-            ];
+    Y.aggregate(Main, Aggr, false, ["ATTRS", "PLUGINS"]);
 
-            Y.aggregate(Main, Aggr, false, ["ATTRS", "PLUGINS"]);
-
-            Y.log(Main.ATTRS, 'info', 'Example');
-            Y.log(Main.PLUGINS, 'info', 'Example');
+    Y.log(Main.ATTRS, 'info', 'Example');
+    Y.log(Main.PLUGINS, 'info', 'Example');
 
 });
 
