@@ -1,11 +1,7 @@
 <html>
 <head>
 <title>substitute</title>
-<link type="text/css" rel="stylesheet" href="../../build/logger/assets/logger.css">
-<script type="text/javascript" src="../../build/yahoo/yahoo.js"></script>
-<script type="text/javascript" src="../../build/dom/dom.js"></script>
-<script type="text/javascript" src="../../build/event/event.js"></script>
-<script type="text/javascript" src="../../build/logger/logger.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 </head>
 <body>
 
@@ -13,18 +9,19 @@
 <div id="out"></div>
 
 <script type="text/javascript">
-(function() {
 
-    var Event=YAHOO.util.Event, Dom=YAHOO.util.Dom, l=YAHOO.lang;
-    var logger= new YAHOO.widget.LogWriter("(");
+YUI({
+    base: '../../build/'
+}).use('substitute', 'dump', 'node', function(Y) {
+
 
     function log(msg) {
-        logger.log(msg);
+        Y.log(msg);
     }
 
-    Event.onDOMReady(function() {
+    var Event=Y.Event, Dom=Y.DOM, l=Y.Lang;
 
-        new YAHOO.widget.LogReader(")");
+    Y.on('domready', function() {
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +146,7 @@
 
     });
             
-})();
+});
 
 </script>
 
