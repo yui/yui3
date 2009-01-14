@@ -1,0 +1,8 @@
+h2. Sandbox
+
+This sandbox is where I (<a href="http://github.com/davglass">Dav</a>) keep all my dev files while working on this component.
+
+The @sync.sh@ script copies my dev files to @/src/[modulename]/js@
+
+If the component requires CSS, the CSS is edited in @/src/[modulename]/assets@
+
