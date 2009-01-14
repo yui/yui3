@@ -2,7 +2,7 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -39,7 +39,7 @@ if (typeof loadFirebugConsole == 'function') {
 
 
 YUI({
-    base: '../../build3x/',
+    base: '../../build/',
     root: '2.5.2/build/',
     insertBefore: 'styleoverrides',
     //charset: 'utf-8',
@@ -126,7 +126,7 @@ YUI({
 
 
 Y.DD.DDM.on('drag:drop', function(e) {
-    console.log('DDM:drag:drag :: ', e.target);
+    Y.log('DDM:drag:drag :: ', e.target);
 });
 
 });
