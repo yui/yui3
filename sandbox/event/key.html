@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../build/node/node.js"></script>
+<script type="text/javascript" src="../../build/dump/dump.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+
+<body>
+
+
+<script>
+
+if (typeof loadFirebugConsole == 'function') {
+    loadFirebugConsole();
+}
+
+YUI({
+
+    base: '../../build/'
+
+}).use('node', 'dump', 'substitute', function(Y) {
+
+
+    var handle = Y.on('key', function(e) {
+        Y.log(e.type + ": " + e.charCode + ' -- ' + arguments[1]);
+        Y.log(this);
+        e.halt();
+        // handle.detach();
+
+    // }, '#text1', 'down:65', Y, 1, 2);
+    // }, '#text1', 'down:65,12,13', Y, 1, 2);
+    // }, '#text1', 'down:65,12,13+shift', Y, 1, 2);
+    // }, '#text1', 'press:65+ctrl+shift', Y, 1, 2);
+    // }, '#text1', 'down:shift', Y, 1, 2);
+    // }, '#text1', 'press:', Y, 1, 2);
+    }, '#text1', 'press:65');
+    // }, '#text1', 'down:13');
+    //}, '#text1');
+
+
+
+});
+
+</script>
+
+<form id="form1" name="form1">
+
+<input id="text1" type="text" value="keylistener" class="nothing" />
+
+</form>
+
+</body>
+</html>

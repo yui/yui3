@@ -1,5 +1,3 @@
-YUI.add('substitute', function(Y) {
-
 /**
  * String variable substitution and string formatting.
  * If included, the substitute method is added to the YUI instance.
@@ -122,6 +120,3 @@ YUI.add('substitute', function(Y) {
     Y.substitute = substitute;
     L.substitute = substitute;
 
-
-
-}, '@VERSION@' ,{optional:['dump']});

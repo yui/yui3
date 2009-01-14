@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/dump/dump.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
+<script type="text/javascript" src="../../build/node/node-debug.js"></script>
+<script type="text/javascript" src="../../build/compat/compat-debug.js"></script>
+
+<body>
+
+<input id="button1" type="button" value="Button 1" class="button" />
+<input id="button2" type="button" value="Button 2" class="button" />
+<input id="text1" type="text" value="something" class="nothing" />
+
+<script>
+
+if (typeof loadFirebugConsole == 'function') {
+    loadFirebugConsole();
+}
+
+var Y = YUI({
+    logExclude: ['Selector']
+}).use('dump', 'node', 'compat');
+
+YAHOO.example.addlistener = function() {
+
+    var EU = YAHOO.util.Event;
+    var DOM = YAHOO.util.Dom;
+
+    return {
+
+        onLinkClick: function(e, arg1, arg2) {
+            Y.log("Link click " + this.id + " : " + arg1 + " : " + arg2);
+        },
+
+        onPClick: function() {
+            Y.log("P click " + this);
+        },
+
+        onSpanClick: function() {
+            Y.log("Span click " + this.id);
+            // debugger;
+
+            EU.purgeElement(this);
+        },
+
+        onMouseOver: function() {
+            Y.log("Mouseover");
+        },
+
+        onLoad: function() {
+            Y.log("onLoad");
+
+// Bind by tag type
+EU.on(document.getElementsByTagName("A"), "click", this.onLinkClick, "foo");
+
+// Bind by css class
+EU.addListener(DOM.getElementsByClassName("hotspot"), "click", this.onSpanClick);
+
+        },
+
+        foo: 'bar',
+        
+        init: function() {
+
+            // Execute the onload handler in the scope of this object, not window
+            EU.on(window, "load", this.onLoad, this, true);
+
+            // Attach by id as soon as the element is accessible
+            EU.addListener("boundElement3", "mouseover", this.onMouseOver);
+
+            // Pass an array of ids and/or element refs
+            EU.addListener(["p1", "p2", "p3"], "click", this.onPClick);
+
+            EU.on('button1', "click", function(e) {
+                Y.log('button1 click');
+                EU.removeListener(["p1", "p2", "p3"], "click", this.onPClick);
+            }, this, true);
+
+            EU.onDOMReady(function() {
+                Y.log('onDOMReady: ' + this);
+            }, this, true);
+
+            EU.onAvailable("p1", function() {
+                Y.log('P1 is READY ' + this.foo);
+            }, this, true);
+
+            EU.onAvailable("p1", function(obj) {
+                Y.log('P1 is READY ' + this.foo + obj);
+            }, 'baz', this);
+
+        }
+
+    }
+}();
+
+YAHOO.example.addlistener.init();
+
+</script> 
+</head>
+
+<body id="yahoo">
+
+<div id="doc" class="yui-t7">
+
+    <div id="hd">
+        <h1>Lab 3: Observing browser events with the Event Utility</h1>
+    </div>
+
+    <div id="bd">
+        <div id="yui-main">
+            <div class="yui-b">
+
+                <div id="boundElement3">
+                   <p>This element will be responsive to mouseovers before the page is fully loaded.</p>
+                </div>
+
+                <div id="output"></div>
+
+                <p class="section">
+                <a id="link1" href="#">link1</a>
+                <a id="link2" href="#">link2</a>
+                <a id="link3" href="#">link3</a>
+                </p>
+
+                <p class="section">
+                <p id="p1">p1</p>
+                <p id="p2">p2</p>
+                <p id="p3">p3</p>
+                </p>
+
+                <p class="section">
+                <span id="span1" class="hotspot">span1</span>
+                <span id="span2" class="hotspot">span2</span>
+                <span id="span3" class="hotspot">span3</span>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

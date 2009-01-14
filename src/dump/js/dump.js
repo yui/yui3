@@ -1,5 +1,3 @@
-YUI.add('dump', function(Y) {
-
 /**
  * Returns a simple string representation of the object or array.
  * Other types of objects will be returned unprocessed.  Arrays
@@ -97,6 +95,3 @@ YUI.add('dump', function(Y) {
     Y.dump = dump;
     L.dump = dump;
 
-
-
-}, '@VERSION@' );

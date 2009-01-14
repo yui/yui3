@@ -1,10 +1,11 @@
+YUI.add('substitute', function(Y) {
+
 /**
  * String variable substitution and string formatting.
  * If included, the substitute method is added to the YUI instance.
  *
  * @module substitute
  */
-YUI.add("substitute", function(Y) {
 
     var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}',
 
@@ -121,6 +122,6 @@ YUI.add("substitute", function(Y) {
     Y.substitute = substitute;
     L.substitute = substitute;
 
-}, "@VERSION@", {
-    optional: ['dump']
-});
+
+
+}, '@VERSION@' ,{optional:['dump']});

@@ -1,3 +1,5 @@
+YUI.add('dump', function(Y) {
+
 /**
  * Returns a simple string representation of the object or array.
  * Other types of objects will be returned unprocessed.  Arrays
@@ -8,7 +10,6 @@
  *
  * @module dump
  */
-YUI.add("dump", function(Y) {
 
     var L=Y.Lang, OBJ='{...}', FUN='f(){...}', COMMA=', ', ARROW=' => ',
 
@@ -96,4 +97,6 @@ YUI.add("dump", function(Y) {
     Y.dump = dump;
     L.dump = dump;
 
-}, "@VERSION@");
+
+
+}, '@VERSION@' );

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Chaining Animations Using <code>onComplete</code></title>
+
+<style type="text/css"> body { margin:0; padding:0; } </style> 
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/fonts/fonts-min.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" />
+
+<script type="text/javascript">
+    if (typeof loadFirebugConsole == 'function') {
+        loadFirebugConsole();
+    }
+</script>
+
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/dump/dump.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
+<script type="text/javascript" src="../../build/node/node-debug.js"></script>
+<script type="text/javascript" src="../../build/compat/compat-debug.js"></script>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/element/element-beta.js"></script>
+
+</head>
+
+<body class=" yui-skin-sam">
+<script>
+
+//create a new instance of Element wrapping 
+//'foo', which isn' yet on the page
+var el = new YAHOO.util.Element('foo');
+
+//add a click event handler to 'foo'
+el.on('click', function(e) { alert('clicked'); });
+
+//when 'foo' is loaded on the page, we'll fire
+//an anonymous function that alerts the
+//number of list items in 'foo', which is a 
+//<ul> element:
+el.on('contentReady', function() {
+    var items = el.getElementsByTagName('li');
+    alert(items.length);
+});
+
+</script>
+
+<!--markup for foo-->
+<div id="foo">
+    <ul>
+        <li>lorem</li>
+        <li>ipsum</li>
+        <li>dolor</li>
+        <li>sit</li>
+    </ul>
+</div>
+
+</body>
+</html>
