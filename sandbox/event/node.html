@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../build/node/node.js"></script>
+<script type="text/javascript" src="../../build/dump/dump.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+
+<body>
+
+
+<script>
+
+if (typeof loadFirebugConsole == 'function') {
+    loadFirebugConsole();
+}
+
+YUI({
+
+    base: '../../build/'
+
+}).use('node', 'dump', 'substitute', function(Y) {
+
+    var d = Y.get(document);
+
+    d.on('somethinginteresting', function(e) {
+        Y.log(Y.dump(e));
+    });
+
+    var d2 = Y.get(document);
+
+    d2.fire('somethinginteresting');
+
+
+});
+
+</script>
+
+<form id="form1" name="form1">
+
+<input id="text1" type="text" value="keylistener" class="nothing" />
+
+</form>
+
+</body>
+</html>
