@@ -2,13 +2,13 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="/build3x/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <!--
-<script type="text/javascript" src="build3x/dump/dump-debug.js"></script>
-<script type="text/javascript" src="build3x/compat/compat-debug.js"></script>
-<script type="text/javascript" src="build3x/substitute/substitute-debug.js"></script>
-<script type="text/javascript" src="build3x/get/get-debug.js"></script>
-<script type="text/javascript" src="build3x/loader/loader-debug.js"></script>
+<script type="text/javascript" src="../../build/dump/dump-debug.js"></script>
+<script type="text/javascript" src="../../build/compat/compat-debug.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute-debug.js"></script>
+<script type="text/javascript" src="../../build/get/get-debug.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
 -->
 
 <body>
@@ -25,10 +25,12 @@ if (typeof loadFirebugConsole == 'function') {
 
 
 YUI({
-    base: '/build3x/'
+    base: '../../build/'
 }).use('*', function(Y) {
 
-    var loader = new Y.Loader({});
+    var loader = new Y.Loader({
+            base: '../../build/'
+        });
 
     loader.onSuccess = function() {
         Y.log('loader success');
