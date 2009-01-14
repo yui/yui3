@@ -12,11 +12,13 @@
 	</ul>
 </div>
 
-<script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <script language="javascript">
 
 //Create YUI instance:
-YUI().use("dump", function(Y) {
+YUI({
+    base: '../../build/'
+}).use("dump", function(Y) {
     Y.log(Y.dump(Y.Lang));
 });
 </script>
