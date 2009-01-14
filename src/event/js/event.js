@@ -1,3 +1,10 @@
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
 var FOCUS = Y.UA.ie ? "focusin" : "focus",
     BLUR = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",

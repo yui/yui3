@@ -1,3 +1,9 @@
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
 //shortcuts
 var L   = Y.Lang,
     array       = Y.Array,

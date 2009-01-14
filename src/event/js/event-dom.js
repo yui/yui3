@@ -1,4 +1,19 @@
 
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
+/**
+ * The event utility provides functions to add and remove event listeners,
+ * event cleansing.  It also tries to automatically remove listeners it
+ * registers during the unload event.
+ *
+ * @class Event
+ * @static
+ */
+
 var add = function(el, type, fn, capture) {
     if (el.addEventListener) {
             el.addEventListener(type, fn, !!capture);
@@ -32,14 +47,6 @@ COMPAT_ARG = '~yui|2|compat~',
 
 CAPTURE = "capture_";
 
-/**
- * The event utility provides functions to add and remove event listeners,
- * event cleansing.  It also tries to automatically remove listeners it
- * registers during the unload event.
- *
- * @class Event
- * @static
- */
 Y.Event = function() {
 
     /**

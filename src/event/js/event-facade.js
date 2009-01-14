@@ -1,3 +1,19 @@
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
+/**
+ * Wraps a DOM event, properties requiring browser abstraction are
+ * fixed here.  Provids a security layer when required.
+ * @class Event.Facade
+ * @param ev {Event} the DOM event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ */
+
 /*
  * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
  */
@@ -94,14 +110,6 @@ var ua = Y.UA,
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-/**
- * Wraps a DOM event, properties requiring browser abstraction are
- * fixed here.  Provids a security layer when required.
- * @class Event.Facade
- * @param ev {Event} the DOM event
- * @param currentTarget {HTMLElement} the element the listener was attached to
- * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
- */
 Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
 
     // @TODO the document should be the target's owner document

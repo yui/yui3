@@ -1,3 +1,18 @@
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
+/**
+ * Return value from all subscribe operations
+ * @class Event.Handle
+ * @constructor
+ * @param evt {Event.Custom} the custom event
+ * @param sub {Event.Subscriber} the subscriber
+ */
+
 var onsubscribeType = "_event:onsub",
     AFTER = 'after', 
     CONFIGS = [
@@ -22,13 +37,6 @@ var onsubscribeType = "_event:onsub",
 
     YUI3_SIGNATURE = 9;
 
-/**
- * Return value from all subscribe operations
- * @class Event.Handle
- * @constructor
- * @param evt {Event.Custom} the custom event
- * @param sub {Event.Subscriber} the subscriber
- */
 Y.EventHandle = function(evt, sub) {
 
     /**

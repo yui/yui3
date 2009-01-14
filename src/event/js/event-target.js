@@ -1,6 +1,9 @@
 
-var SILENT = { 'yui:log': true },
-    L = Y.Lang;
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
 
 /**
  * Event.Target is designed to be used with Y.augment to wrap 
@@ -11,6 +14,10 @@ var SILENT = { 'yui:log': true },
  *
  * @Class Event.Target
  */
+
+var SILENT = { 'yui:log': true },
+    L = Y.Lang;
+
 Y.EventTarget = function(opts) { 
 
     // console.log('Event.Target constructor executed: ' + this._yuid);
