@@ -2,14 +2,17 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/dump/dump-debug.js"></script>
 <script type="text/javascript">
 
 
 (function() {
 
-    // var Y = YUI().use('dump'), newobj = {};
-    var Y = YUI({core:['lang', 'array', 'core']}).use('*'), newobj = {};
+    var Y = YUI().use('*');
+
+    var newobj = {};
 
     var o = {
         str: "str",

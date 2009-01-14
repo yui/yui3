@@ -2,10 +2,7 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build3x/yui/yui-min.js"></script>
-<script type="text/javascript" src="../../build3x/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../build3x/base/base.js"></script>
-<script type="text/javascript" src="../../build3x/dd/dd-dragdrop-all-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -34,7 +31,9 @@ top: 200px;
 
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
+YUI({
+        base: '../../build/'
+    }).use('node', function(Y) {
     var node = Y.get('#demo');
     var used = [];
     Y.each(Y.Env._used, function(v, k) {

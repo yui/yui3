@@ -29,58 +29,57 @@
     </div>
     <div id="ft">&nbsp;</div>
 </div>
-<script type="text/javascript" src="../../build3x/yui/yui.js"></script>
-<script type="text/javascript" src="../../build3x/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../build3x/base/base.js"></script>
-<script type="text/javascript" src="../../build3x/dd/dd-drag-core-min.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <script type="text/javascript">
 
-var Y = new YUI().use('dd-drag');
-Y.on('event:ready', function() {
-    
-    Y.DD.DDM.on('drag:drag', function(e) {
-        if (e.target instanceof Y.DD.Drag) {
-            console.info('DDM: e.target is a Drag Instance');
-        } else {
-            console.warn('DDM: e.target is not a Drag Instance', e.target);
-        }
-        if (e.currentTarget === Y.DD.DDM) {
-            console.info('DDM: e.currentTarget is a DDM Instance');
-        } else {
-            console.warn('DDM: e.currentTarget is not a DDM Instance', e.currentTarget);
-        }
-    });
+YUI({
+    base: '../../build/'
+}).use('dd-drag', function(Y) {
+
+    Y.on('domready', function() {
         
+        Y.DD.DDM.on('drag:drag', function(e) {
+            if (e.target instanceof Y.DD.Drag) {
+                console.info('DDM: e.target is a Drag Instance');
+            } else {
+                console.warn('DDM: e.target is not a Drag Instance', e.target);
+            }
+            if (e.currentTarget === Y.DD.DDM) {
+                console.info('DDM: e.currentTarget is a DDM Instance');
+            } else {
+                console.warn('DDM: e.currentTarget is not a DDM Instance', e.currentTarget);
+            }
+        });
+            
+        var dd1 = new Y.DD.Drag({
+            node: '#drag1'
+        });
 
-    var dd1 = new Y.DD.Drag({
-        node: '#drag1'
+        var dd2 = new Y.DD.Drag({
+            node: '#drag2'
+        });
+
+        var dd3 = new Y.DD.Drag({
+            node: '#drag3'
+        });
+
+
+            var _checkTarget = function(e) {
+            if (e.target === e.currentTarget) {
+                console.log('Drag: Targets the same..');
+            } else {
+                console.warn('Drag: e.target !== e.currentTarget ', e);
+            }
+        };
+
+        dd1.on('drag:drag', _checkTarget);
+        dd2.on('drag:drag', _checkTarget);
+        dd3.on('drag:drag', _checkTarget);
+        
     });
-
-    var dd2 = new Y.DD.Drag({
-        node: '#drag2'
-    });
-
-    var dd3 = new Y.DD.Drag({
-        node: '#drag3'
-    });
-
-
-        var _checkTarget = function(e) {
-        if (e.target === e.currentTarget) {
-            console.log('Drag: Targets the same..');
-        } else {
-            console.warn('Drag: e.target !== e.currentTarget ', e);
-        }
-    };
-
-    dd1.on('drag:drag', _checkTarget);
-    dd2.on('drag:drag', _checkTarget);
-    dd3.on('drag:drag', _checkTarget);
-    
 });
 
 
 </script>
 </body>
 </html>
-<!-- lifeagree.corp.yahoo.com compressed/chunked Fri Jul 18 10:53:38 PDT 2008 -->

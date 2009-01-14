@@ -2,19 +2,15 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../build/yui.js"></script>
-<script type="text/javascript" src="../src/js/State.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <script type="text/javascript">
 
-
-// YUI({
-    // core: ['*']
-// }).use('state', function(Y) {
-
-
-// YUI({logExclude: {'Event': true}}).use('dump', 'state', function(Y) {
-YUI({logInclude: {'Example': true}}).use('dump', 'state', function(Y) {
-// YUI({logInclude: {}}).use('dump', 'state', function(Y) {
+YUI({
+        logInclude: {
+           'Example': true
+        },
+        base: '../../build/'
+    }).use('dump', 'attribute', function(Y) {
     
     var newobj = {}, 
 
@@ -74,7 +70,7 @@ YUI({logInclude: {'Example': true}}).use('dump', 'state', function(Y) {
         nada: null
     });
 
-    Y.log("myprop list: " + Y.Lang.dump(configs.list()), 'info', 'Example');
+    // Y.log("myprop list: " + Y.Lang.dump(configs.list()), 'info', 'Example');
 
 
             var Y = YUI();
