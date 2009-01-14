@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build3x/yui/yui-min.js"></script>
+<style>
+.dd {
+            padding-left: 20px;
+            padding: 5px;
+            margin: 2px;
+            cursor: move;
+            background-color: red;
+            width: 400px;
+            height: 100px;
+            zoom: 1;
+        }
+
+#ddtarg {
+top: 200px;
+}
+
+        </style>
+
+<body>
+
+<input id="addButton" type="button" value="Add link" />
+
+<div id="demo" class="dd"></div>
+<div id="ddtarg" class="dd"></div>
+
+
+
+<script type="text/javascript">
+YUI({
+
+    base: '/build3x/'
+
+}).use('node', 'dump', function(Y) {
+    var node = Y.get('#demo');
+    // var ua = [];
+    // Y.each(Y.UA, function(v, k) {
+        // ua[ua.length] = k;
+    // });
+    // ua.sort();
+    node.set('innerHTML', Y.dump(Y.UA));
+    Y.log(navigator.userAgent);
+});
+
+</script>
+
+</body>
+
+</html>
+

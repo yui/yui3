@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI: 3.x Event Halt</title>
+    <link rel="stylesheet" type="text/css" href="../yui-dev/build/reset-fonts-grids/reset-fonts-grids.css"> 
+    <style type="text/css" media="screen">
+        p, h2 {
+            margin: 1em;
+        }
+
+        #anim {
+            background-color: #ccc;
+            border: 1px solid black;
+            height: 100px;
+            width: 100px;
+        }
+        strong { font-weight: bold; }
+	</style>
+</head>
+<body class="yui-skin-sam">
+<div id="doc3" class="yui-t7">
+    <div id="hd">YUI: 3.x Event Halt</div>
+    <div id="bd">
+        <p>This test case shows that calling halt on an event will stop all events, not just those associated with the event.</p>
+                <p>If you click the <strong>[Click Me]</strong> link below, the animation will <strong>NOT</strong> run. It calls <strong>e.halt()</strong> before the animation.</p>
+        <p><a href="index.php">[Click here to see the working case]</a></p>
+                <a href="#" id="test">[Click Me]</a>
+        <div id="anim">
+            I am Animated
+        </div>
+    </div>
+    <div id="ft">&nbsp;</div>
+</div>
+<script type="text/javascript" src="../../build3x/yui/yui.js?bust=1216406682"></script>
+
+<!-- needed until built into a module -->
+<script type="text/javascript" src="../../build3x/attribute/attribute.js?bust=1216406682"></script>
+<script type="text/javascript" src="../../build3x/base/base.js?bust=1216406682"></script>
+
+<!-- needed until new node.js is built into yui.js -->
+<script type="text/javascript" src="../../build3x/animation/animation.js?bust=1216406682"></script>
+
+<script>
+var yConfig = {
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    debug: false
+};
+
+var Y = new YUI(yConfig).use('nodeextras', 'base', 'animation');
+
+Y.on('event:ready', function() {
+
+    Y.Node.get('#test').on('click', function(e) {
+        console.log('#test clicked..');
+                console.log('calling event.halt() before anim..');
+        e.halt();
+                var anim = new Y.Anim({
+            node: '#anim',
+            to: {
+                height: 200,
+                width: 200
+            },
+            from: {
+                height: 100,
+                width: 100
+            },
+            duration: 1,
+            iteration: 1
+        });
+        anim.run();
+
+            });
+    
+
+});
+</script>
+
+</body>
+</html>
+<!-- lifeagree.corp.yahoo.com compressed/chunked Fri Jul 18 11:44:42 PDT 2008 -->

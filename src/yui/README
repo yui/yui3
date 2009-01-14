@@ -1,0 +1,54 @@
+The YUI Global
+    Provides core YUI functionality, including module registration and consumption utils,
+    language/array/object utilities, browser detection, a setTimout/setInterval wrapper,
+    and dynamic loading of script and css files.
+
+    The yui module is a rollup of the following modules:
+        yui-base
+        get
+        loader
+
+3.0.0next
+
+    Lang: 
+    - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
+
+    Get:
+    - id attributes are globally unique
+
+    Loader:
+    - yuitest renamed to test
+
+
+3.0.0pr2
+
+    Core:
+
+    - The initial dependency calculation should not allow automatic rollup.
+    - Y.fail with throw/rethrow errors by default (throwFail is now true).
+    - Y.namespace reverted to scrub YAHOO out if included as the first
+      level of the namespace.
+    - 'useConsole' config changed to useBrowserConsole
+
+    Array:
+    - Added Array.some
+
+    Get:
+    - Protects against trailing commas in array of files to load.
+
+    Loader:
+    - get requires yui-base
+    - loader requires get
+    - combo url build process defends against undefined modules
+    - Added combo handler support for CSS
+    - Filters are correctly applied to combo and fullpath urls
+    - Added compat, profiler, yuitest, widget, stylesheet, classnamemanager,
+            overlay, plugin, slider, console
+    - Added io submodules
+    - queue requires event
+    - Added submodule metadata logic
+    - Added plugin metadata logic
+    - Added skin metadata logic
+
+3.0.0pr1
+    Initial release

@@ -662,5 +662,4 @@ Y.Get = function() {
 }();
 
 
-
 }, '@VERSION@' );
