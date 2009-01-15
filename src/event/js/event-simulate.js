@@ -1,3 +1,4 @@
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -573,3 +574,5 @@ Y.Event.simulate = function(target, type, options){
 /*
  * TODO: focus(), blur(), submit()
  */
+
+})();

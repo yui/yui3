@@ -260,7 +260,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          *  listener to.
          * @param {Object}   obj    An arbitrary object that will be 
          *                             passed as a parameter to the handler
-         * @param {Boolean|object}  args 1..n ar
+         * @param {Boolean|object}  args 0..n arguments to pass to the callback
          * @return {Boolean} True if the action was successful or defered,
          *                        false if one or more of the elements 
          *                        could not have the listener attached,

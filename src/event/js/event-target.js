@@ -54,7 +54,7 @@ ET.prototype = {
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
      * @param context The execution context
-     * @param args* 1..n params to supply to the callback
+     * @param args* 0..n params to supply to the callback
      */
     subscribe: function(type, fn, context) {
 
@@ -400,7 +400,7 @@ ET.prototype = {
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
      * @param context The execution context
-     * @param args* 1..n params to supply to the callback
+     * @param args* 0..n params to supply to the callback
      */
     after: function(type, fn) {
         if (L.isFunction(type)) {

@@ -1,4 +1,4 @@
-
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -286,3 +286,4 @@ Y.Do.Error = Y.Do.Halt;
 
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
+})();

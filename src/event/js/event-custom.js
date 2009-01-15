@@ -302,7 +302,7 @@ Y.CustomEvent.prototype = {
         }
     },
 
-    _subscribe: function(fn, obj, args, when) {
+    _subscribe: function(fn, context, args, when) {
 
         if (!fn) {
             Y.fail("Invalid callback for CE: " + this.type);
@@ -313,7 +313,7 @@ Y.CustomEvent.prototype = {
             se.fire.apply(se, args);
         }
 
-        var s = new Y.Subscriber(fn, obj, args, when);
+        var s = new Y.Subscriber(fn, context, args, when);
 
 
         if (this.fireOnce && this.fired) {
@@ -337,12 +337,13 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   obj       An object to be passed along when the event fires
-     * @param args* 1..n params to provide to the listener
+     * @param {Object}   context   Specifies the value of the 
+     * 'this' keyword in the listener.
+     * @param args* 0..n params to provide to the listener
      * @return {Event.Handle} unsubscribe handle
      */
-    subscribe: function(fn, obj) {
-        return this._subscribe(fn, obj, arguments, true);
+    subscribe: function(fn, context) {
+        return this._subscribe(fn, context, arguments, true);
     },
 
     /**
@@ -351,12 +352,13 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   obj       An object to be passed along when the event fires
-     * @param args* 1..n params to provide to the listener
+     * @param {Object}   context   Specifies the value of the 
+     * 'this' keyword in the listener.
+     * @param args* 0..n params to provide to the listener
      * @return {Event.Handle} unsubscribe handle
      */
-    after: function(fn, obj) {
-        return this._subscribe(fn, obj, arguments, AFTER);
+    after: function(fn, context) {
+        return this._subscribe(fn, context, arguments, AFTER);
     },
 
     /**
@@ -364,14 +366,10 @@ Y.CustomEvent.prototype = {
      * @method unsubscribe
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
-     * @param {Object}   obj  The custom object passed to subscribe.  This is
-     *                        optional, but if supplied will be used to
-     *                        disambiguate multiple listeners that are the same
-     *                        (e.g., you subscribe many object using a function
-     *                        that lives on the prototype)
+     * @param {Object}   context The context object passed to subscribe.
      * @return {boolean} True if the subscriber was found and detached.
      */
-    unsubscribe: function(fn, obj) {
+    unsubscribe: function(fn, context) {
 
         // if arg[0] typeof unsubscribe handle
         if (fn && fn.detach) {
@@ -386,7 +384,7 @@ Y.CustomEvent.prototype = {
         for (var i in subs) {
             if (subs.hasOwnProperty(i)) {
                 var s = subs[i];
-                if (s && s.contains(fn, obj)) {
+                if (s && s.contains(fn, context)) {
                     this._delete(s);
                     found = true;
                 }
@@ -703,7 +701,7 @@ Y.CustomEvent.prototype = {
 
         if (s) {
             delete s.fn;
-            delete s.obj;
+            delete s.context;
             delete this.subscribers[s.id];
             delete this.afters[s.id];
         }
@@ -765,13 +763,13 @@ Y.CustomEvent.prototype = {
 /**
  * Stores the subscriber information to be used when the event fires.
  * @param {Function} fn       The wrapped function to execute
- * @param {Object}   obj      An object to be passed along when the event fires
- * @param {Array} args        subscribe() additional arguments
+ * @param {Object}   context  The value of the keyword 'this' in the listener
+ * @param {Array} args*       0..n additional arguments to supply the listener
  *
  * @class Event.Subscriber
  * @constructor
  */
-Y.Subscriber = function(fn, obj, args) {
+Y.Subscriber = function(fn, context, args) {
 
     /**
      * The callback that will be execute when the event fires
@@ -782,12 +780,11 @@ Y.Subscriber = function(fn, obj, args) {
     this.fn = fn;
 
     /**
-     * An optional custom object that will passed to the callback when
-     * the event fires
-     * @property obj
+     * Optional 'this' keyword for the listener
+     * @property context
      * @type Object
      */
-    this.obj = obj;
+    this.context = context;
 
     /**
      * Unique subscriber id
@@ -812,10 +809,10 @@ Y.Subscriber = function(fn, obj, args) {
      */
     this.wrappedFn = fn;
     
-    if (obj) {
+    if (context) {
         /*
         var a = (args) ? Y.Array(args) : [];
-        a.unshift(fn, obj);
+        a.unshift(fn, context);
         // a.unshift(fn);
         m = Y.bind.apply(Y, a);
         */
@@ -837,15 +834,15 @@ Y.Subscriber.prototype = {
      * @param ce {Event.Custom} The custom event that sent the notification
      */
     notify: function(defaultContext, args, ce) {
-        var c = this.obj || defaultContext, ret = true,
+        var c = this.context || defaultContext, ret = true,
 
             f = function() {
                 switch (ce.signature) {
                     case 0:
-                        ret = this.fn.call(c, ce.type, args, this.obj);
+                        ret = this.fn.call(c, ce.type, args, this.context);
                         break;
                     case 1:
-                        ret = this.fn.call(c, args[0] || null, this.obj);
+                        ret = this.fn.call(c, args[0] || null, this.context);
                         break;
                     default:
                         ret = this.wrappedFn.apply(c, args || []);
@@ -873,13 +870,13 @@ Y.Subscriber.prototype = {
      *
      * @method contains
      * @param {Function} fn the function to execute
-     * @param {Object} obj an object to be passed along when the event fires
+     * @param {Object} context optional 'this' keyword for the listener
      * @return {boolean} true if the supplied arguments match this 
      *                   subscriber's signature.
      */
-    contains: function(fn, obj) {
-        if (obj) {
-            return ((this.fn == fn) && this.obj == obj);
+    contains: function(fn, context) {
+        if (context) {
+            return ((this.fn == fn) && this.context == context);
         } else {
             return (this.fn == fn);
         }
