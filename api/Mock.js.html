@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: yuitest   Mock.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052356.51" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052356.51" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052356.51"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052356.51"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>yuitest&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yuitest.html" title="yuitest">yuitest</a>
+                
+                 &gt; Mock.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * Creates a new mock object.</span>
+<span class="c">     * @class Mock</span>
+<span class="c">     * @constructor</span>
+<span class="c">     * @param {Object} template (Optional) An object whose methods</span>
+<span class="c">     *      should be stubbed out on the mock object.</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">template</span><span class="o">){</span>
+    
+        <span class="c">//use blank object is nothing is passed in</span>
+<span class="c"></span>        <span class="nx">template</span> <span class="o">=</span> <span class="nx">template</span> <span class="o">||</span> <span class="o">{};</span>
+        
+        <span class="k">var</span> <span class="nx">mock</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        
+        <span class="c">//try to create mock that keeps prototype chain intact</span>
+<span class="c"></span>        <span class="k">try</span> <span class="o">{</span>
+            <span class="nx">mock</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">template</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">mock</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Couldn&#39;t create mock with prototype.&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;Mock&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="c">//create new versions of the methods so that they don&#39;t actually do anything</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">template</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">){</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">template</span><span class="o">[</span><span class="nx">name</span><span class="o">])){</span>
+                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() was called but was not expected to be.&quot;</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+        
+        <span class="c">//return it</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">mock</span><span class="o">;</span>    
+    <span class="o">};</span>
+        
+    <span class="c">/**</span>
+<span class="c">     * Assigns an expectation to a mock object. This is used to create</span>
+<span class="c">     * methods and properties on the mock object that are monitored for</span>
+<span class="c">     * calls and changes, respectively.</span>
+<span class="c">     * @param {Object} mock The object to add the expectation to.</span>
+<span class="c">     * @param {Object} expectation An object defining the expectation. For</span>
+<span class="c">     *      a method, the keys &quot;method&quot; and &quot;args&quot; are required with</span>
+<span class="c">     *      an optional &quot;returns&quot; key available. For properties, the keys</span>
+<span class="c">     *      &quot;property&quot; and &quot;value&quot; are required.</span>
+<span class="c">     * @return {void}</span>
+<span class="c">     * @method expect</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span> 
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">expect</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">mock</span> <span class="c">/*:Object*/</span><span class="o">,</span> <span class="nx">expectation</span> <span class="c">/*:Object*/</span><span class="o">){</span>
+
+        <span class="c">//make sure there&#39;s a place to store the expectations</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="o">}</span>
+
+        <span class="c">//method expectation</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">){</span>
+            <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">,</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">args</span> <span class="o">||</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">||</span> <span class="o">[],</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">returns</span><span class="o">,</span>
+                <span class="nx">callCount</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span><span class="o">)</span> <span class="o">?</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span> <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+                <span class="nx">error</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">error</span><span class="o">,</span>
+                <span class="nx">run</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">run</span> <span class="o">||</span> <span class="k">function</span><span class="o">(){};</span>
+                
+            <span class="c">//save expectations</span>
+<span class="c"></span>            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">;</span>
+            <span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span> <span class="o">=</span> <span class="nx">callCount</span><span class="o">;</span>
+            <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+                
+            <span class="c">//process arguments</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">array</span><span class="o">){</span>
+                <span class="k">if</span> <span class="o">(!(</span><span class="nx">array</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">)){</span>
+                    <span class="nx">array</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areSame</span><span class="o">,</span> <span class="o">[</span><span class="nx">arg</span><span class="o">],</span> <span class="s2">&quot;Argument &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; of &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() is incorrect.&quot;</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        
+            <span class="c">//if the method is expected to be called</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">callCount</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">){</span>
+                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>   
+                    <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span><span class="o">++;</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() passed incorrect number of arguments.&quot;</span><span class="o">);</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="nx">i</span><span class="o">]){</span>
+                            <span class="nx">args</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">verify</span><span class="o">(</span><span class="nx">arguments</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Argument &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nx">arguments</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot;) was not expected to be used.&quot;</span><span class="o">);</span>
+                        <span class="o">}</span>
+                        
+                    <span class="o">}</span>                
+
+                    <span class="nx">run</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">error</span><span class="o">){</span>
+                        <span class="k">throw</span> <span class="nx">error</span><span class="o">;</span>
+                    <span class="o">}</span>
+                    
+                    <span class="k">return</span> <span class="nx">result</span><span class="o">;</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            
+                <span class="c">//method should fail if called when not expected</span>
+<span class="c"></span>                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() should not have been called.&quot;</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">){</span>
+            <span class="c">//save expectations</span>
+<span class="c"></span>            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Verifies that all expectations of a mock object have been met and</span>
+<span class="c">     * throws an assertion error if not.</span>
+<span class="c">     * @param {Object} mock The object to verify..</span>
+<span class="c">     * @return {void}</span>
+<span class="c">     * @method verify</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span> 
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">mock</span> <span class="c">/*:Object*/</span><span class="o">){</span>    
+        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">expectation</span><span class="o">){</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span><span class="o">,</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span><span class="o">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span> <span class="o">+</span> <span class="s2">&quot;() wasn&#39;t called the expected number of times.&quot;</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">){</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span> <span class="nx">mock</span><span class="o">[</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">],</span> <span class="s2">&quot;Property &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span> <span class="o">+</span> <span class="s2">&quot; wasn&#39;t set to the correct value.&quot;</span><span class="o">);</span> 
+            <span class="o">}</span>
+        <span class="o">});</span>    
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">message</span><span class="o">){</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">){</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="o">[].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">args</span> <span class="o">||</span> <span class="o">[]);</span>
+                <span class="nx">args</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
+                <span class="nx">args</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">message</span><span class="o">);</span>
+                <span class="nx">method</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="o">};</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">message</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nx">Any</span>        <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="k">function</span><span class="o">(){});</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Boolean</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Number</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">String</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isString</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Object</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isObject</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Function</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class="selected"><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Assert.html" title="Assert">Assert</a></li>
+                                <li class=""><a href="Assert.ComparisonFailure.html" title="Assert.ComparisonFailure">Assert.ComparisonFailure</a></li>
+                                <li class=""><a href="Assert.Error.html" title="Assert.Error">Assert.Error</a></li>
+                                <li class=""><a href="Assert.ObjectAssert.html" title="Assert.ObjectAssert">Assert.ObjectAssert</a></li>
+                                <li class=""><a href="Assert.ShouldError.html" title="Assert.ShouldError">Assert.ShouldError</a></li>
+                                <li class=""><a href="Assert.ShouldFail.html" title="Assert.ShouldFail">Assert.ShouldFail</a></li>
+                                <li class=""><a href="Assert.UnexpectedError.html" title="Assert.UnexpectedError">Assert.UnexpectedError</a></li>
+                                <li class=""><a href="Assert.UnexpectedValue.html" title="Assert.UnexpectedValue">Assert.UnexpectedValue</a></li>
+                                <li class=""><a href="Test.ArrayAssert.html" title="Test.ArrayAssert">Test.ArrayAssert</a></li>
+                                <li class=""><a href="Test.Case.html" title="Test.Case">Test.Case</a></li>
+                                <li class=""><a href="Test.DateAssert.html" title="Test.DateAssert">Test.DateAssert</a></li>
+                                <li class=""><a href="Test.Format.Mock.html" title="Test.Format.Mock">Test.Format.Mock</a></li>
+                                <li class=""><a href="Test.Manager.html" title="Test.Manager">Test.Manager</a></li>
+                                <li class=""><a href="Test.Reporter.html" title="Test.Reporter">Test.Reporter</a></li>
+                                <li class=""><a href="Test.Runner.html" title="Test.Runner">Test.Runner</a></li>
+                                <li class=""><a href="Test.Suite.html" title="Test.Suite">Test.Suite</a></li>
+                                <li class=""><a href="Test.TestNode.html" title="Test.TestNode">Test.TestNode</a></li>
+                                <li class=""><a href="Test.Wait.html" title="Test.Wait">Test.Wait</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="ArrayAssert.js.html" title="ArrayAssert.js">ArrayAssert.js</a></li>
+                                <li class=""><a href="Assert.js.html" title="Assert.js">Assert.js</a></li>
+                                <li class=""><a href="DateAssert.js.html" title="DateAssert.js">DateAssert.js</a></li>
+                                <li class="selected"><a href="Mock.js.html" title="Mock.js">Mock.js</a></li>
+                                <li class=""><a href="ObjectAssert.js.html" title="ObjectAssert.js">ObjectAssert.js</a></li>
+                                <li class=""><a href="TestCase.js.html" title="TestCase.js">TestCase.js</a></li>
+                                <li class=""><a href="TestFormat.js.html" title="TestFormat.js">TestFormat.js</a></li>
+                                <li class=""><a href="TestManager.js.html" title="TestManager.js">TestManager.js</a></li>
+                                <li class=""><a href="TestReporter.js.html" title="TestReporter.js">TestReporter.js</a></li>
+                                <li class=""><a href="TestRunner.js.html" title="TestRunner.js">TestRunner.js</a></li>
+                                <li class=""><a href="TestSuite.js.html" title="TestSuite.js">TestSuite.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Assert.ComparisonFailure", "name": "actual", "url": "Assert.ComparisonFailure.html#property_actual", "type": "property"}, {"access": "", "host": "Test.Suite", "name": "add", "url": "Test.Suite.html#method_add", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "add", "url": "Test.Runner.html#method_add", "type": "method"}, {"access": "", "host": "Test.Reporter", "name": "addField", "url": "Test.Reporter.html#method_addField", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_addTestCaseToTestTree", "url": "Test.Runner.html#method__addTestCaseToTestTree", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_addTestSuiteToTestTree", "url": "Test.Runner.html#method__addTestSuiteToTestTree", "type": "method"}, {"access": "", "host": "Test.TestNode", "name": "appendChild", "url": "Test.TestNode.html#method_appendChild", "type": "method"}, {"access": "", "host": "Assert", "name": "areEqual", "url": "Assert.html#method_areEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotEqual", "url": "Assert.html#method_areNotEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotSame", "url": "Assert.html#method_areNotSame", "type": "method"}, {"access": "", "host": "Assert", "name": "areSame", "url": "Assert.html#method_areSame", "type": "method"}, {"access": "private", "host": "Assert", "name": "_asserts", "url": "Assert.html#property__asserts", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "begin", "url": "Test.Runner.html#event_begin", "type": "event"}, {"access": "private", "host": "Test.Runner", "name": "_buildTestTree", "url": "Test.Runner.html#method__buildTestTree", "type": "method"}, {"access": "", "host": "Assert.UnexpectedError", "name": "cause", "url": "Assert.UnexpectedError.html#property_cause", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "clear", "url": "Test.Runner.html#method_clear", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "complete", "url": "Test.Runner.html#event_complete", "type": "event"}, {"access": "", "host": "Test.ArrayAssert", "name": "contains", "url": "Test.ArrayAssert.html#method_contains", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "containsItems", "url": "Test.ArrayAssert.html#method_containsItems", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "containsMatch", "url": "Test.ArrayAssert.html#method_containsMatch", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_cur", "url": "Test.Runner.html#property__cur", "type": "property"}, {"access": "private", "host": "Test.Manager", "name": "_curPage", "url": "Test.Manager.html#property__curPage", "type": "property"}, {"access": "", "host": "Test.DateAssert", "name": "datesAreEqual", "url": "Test.DateAssert.html#method_datesAreEqual", "type": "method"}, {"access": "", "host": "Test.Wait", "name": "delay", "url": "Test.Wait.html#property_delay", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "destroy", "url": "Test.Reporter.html#method_destroy", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "disableLogging", "url": "Test.Runner.html#method_disableLogging", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "doesNotContain", "url": "Test.ArrayAssert.html#method_doesNotContain", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "doesNotContainItems", "url": "Test.ArrayAssert.html#method_doesNotContainItems", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "doesNotContainMatch", "url": "Test.ArrayAssert.html#method_doesNotContainMatch", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "enableLogging", "url": "Test.Runner.html#method_enableLogging", "type": "method"}, {"access": "", "host": "Test.Format.Mock", "name": "expect", "url": "Test.Format.Mock.html#method_expect", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "expected", "url": "Assert.ComparisonFailure.html#property_expected", "type": "property"}, {"access": "", "host": "Assert", "name": "fail", "url": "Assert.html#method_fail", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "fail", "url": "Test.Runner.html#event_fail", "type": "event"}, {"access": "private", "host": "Test.Reporter", "name": "_fields", "url": "Test.Reporter.html#property__fields", "type": "property"}, {"access": "", "host": "Test.TestNode", "name": "firstChild", "url": "Test.TestNode.html#property_firstChild", "type": "property"}, {"access": "private", "host": "Test.Reporter", "name": "_form", "url": "Test.Reporter.html#property__form", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "format", "url": "Test.Reporter.html#property_format", "type": "property"}, {"access": "protected", "host": "Assert", "name": "_formatMessage", "url": "Assert.html#method__formatMessage", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_frame", "url": "Test.Manager.html#property__frame", "type": "property"}, {"access": "protected", "host": "Assert", "name": "_getCount", "url": "Assert.html#method__getCount", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "getMessage", "url": "Assert.Error.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "getMessage", "url": "Assert.UnexpectedValue.html#method_getMessage", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_handleTestObjectComplete", "url": "Test.Runner.html#method__handleTestObjectComplete", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_handleTestRunnerComplete", "url": "Test.Manager.html#method__handleTestRunnerComplete", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "has", "url": "Assert.ObjectAssert.html#method_has", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "hasAll", "url": "Assert.ObjectAssert.html#method_hasAll", "type": "method"}, {"access": "private", "host": "Test.Reporter", "name": "_iframe", "url": "Test.Reporter.html#property__iframe", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "ignore", "url": "Test.Runner.html#event_ignore", "type": "event"}, {"access": "protected", "host": "Assert", "name": "_increment", "url": "Assert.html#method__increment", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "indexOf", "url": "Test.ArrayAssert.html#method_indexOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isArray", "url": "Assert.html#method_isArray", "type": "method"}, {"access": "", "host": "Assert", "name": "isBoolean", "url": "Assert.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "isEmpty", "url": "Test.ArrayAssert.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Assert", "name": "isFalse", "url": "Assert.html#method_isFalse", "type": "method"}, {"access": "", "host": "Assert", "name": "isFunction", "url": "Assert.html#method_isFunction", "type": "method"}, {"access": "", "host": "Assert", "name": "isInstanceOf", "url": "Assert.html#method_isInstanceOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isNaN", "url": "Assert.html#method_isNaN", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "isNotEmpty", "url": "Test.ArrayAssert.html#method_isNotEmpty", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNaN", "url": "Assert.html#method_isNotNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNull", "url": "Assert.html#method_isNotNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotUndefined", "url": "Assert.html#method_isNotUndefined", "type": "method"}, {"access": "", "host": "Assert", "name": "isNull", "url": "Assert.html#method_isNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNumber", "url": "Assert.html#method_isNumber", "type": "method"}, {"access": "", "host": "Assert", "name": "isObject", "url": "Assert.html#method_isObject", "type": "method"}, {"access": "", "host": "Assert", "name": "isString", "url": "Assert.html#method_isString", "type": "method"}, {"access": "", "host": "Assert", "name": "isTrue", "url": "Assert.html#method_isTrue", "type": "method"}, {"access": "", "host": "Assert", "name": "isTypeOf", "url": "Assert.html#method_isTypeOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isUndefined", "url": "Assert.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "itemsAreEqual", "url": "Test.ArrayAssert.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "itemsAreEquivalent", "url": "Test.ArrayAssert.html#method_itemsAreEquivalent", "type": "method"}, {"access": "", "host": "Test.ArrayAssert", "name": "itemsAreSame", "url": "Test.ArrayAssert.html#method_itemsAreSame", "type": "method"}, {"access": "", "host": "Test.Suite", "name": "JSON", "url": "Test.Suite.html#method_JSON", "type": "method"}, {"access": "", "host": "Test.TestNode", "name": "lastChild", "url": "Test.TestNode.html#property_lastChild", "type": "property"}, {"access": "", "host": "Test.ArrayAssert", "name": "lastIndexOf", "url": "Test.ArrayAssert.html#method_lastIndexOf", "type": "method"}, {"access": "", "host": "Test.Manager", "name": "load", "url": "Test.Manager.html#method_load", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_log", "url": "Test.Runner.html#property__log", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_logEvent", "url": "Test.Runner.html#method__logEvent", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_logger", "url": "Test.Manager.html#property__logger", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "masterSuite", "url": "Test.Runner.html#property_masterSuite", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "name", "url": "Assert.Error.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "name", "url": "Assert.ComparisonFailure.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "name", "url": "Assert.UnexpectedValue.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldFail", "name": "name", "url": "Assert.ShouldFail.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldError", "name": "name", "url": "Assert.ShouldError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "name", "url": "Assert.UnexpectedError.html#property_name", "type": "property"}, {"access": "", "host": "Test.Suite", "name": "name", "url": "Test.Suite.html#property_name", "type": "property"}, {"access": "", "host": "Test.TestNode", "name": "next", "url": "Test.TestNode.html#property_next", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_next", "url": "Test.Runner.html#method__next", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "owns", "url": "Assert.ObjectAssert.html#method_owns", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "ownsAll", "url": "Assert.ObjectAssert.html#method_ownsAll", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_pages", "url": "Test.Manager.html#property__pages", "type": "property"}, {"access": "", "host": "Test.TestNode", "name": "parent", "url": "Test.TestNode.html#property_parent", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "pass", "url": "Test.Runner.html#event_pass", "type": "event"}, {"access": "private", "host": "Test.Manager", "name": "_processResults", "url": "Test.Manager.html#method__processResults", "type": "method"}, {"access": "", "host": "Test.Reporter", "name": "report", "url": "Test.Reporter.html#method_report", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_reset", "url": "Assert.html#method__reset", "type": "method"}, {"access": "", "host": "Test.TestNode", "name": "results", "url": "Test.TestNode.html#property_results", "type": "property"}, {"access": "private", "host": "Test.Manager", "name": "_results", "url": "Test.Manager.html#property__results", "type": "property"}, {"access": "", "host": "Test.Case", "name": "resume", "url": "Test.Case.html#method_resume", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "resume", "url": "Test.Runner.html#method_resume", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_root", "url": "Test.Runner.html#property__root", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_run", "url": "Test.Runner.html#method__run", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "run", "url": "Test.Runner.html#method_run", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_run", "url": "Test.Manager.html#method__run", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_runTest", "url": "Test.Runner.html#method__runTest", "type": "method"}, {"access": "", "host": "Test.Wait", "name": "segment", "url": "Test.Wait.html#property_segment", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "setPages", "url": "Test.Manager.html#method_setPages", "type": "method"}, {"access": "", "host": "Test.Suite", "name": "setUp", "url": "Test.Suite.html#method_setUp", "type": "method"}, {"access": "", "host": "Test.Case", "name": "setUp", "url": "Test.Case.html#method_setUp", "type": "method"}, {"access": "", "host": "Assert.UnexpectedError", "name": "stack", "url": "Assert.UnexpectedError.html#property_stack", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "start", "url": "Test.Manager.html#method_start", "type": "method"}, {"access": "", "host": "Test.Manager", "name": "stop", "url": "Test.Manager.html#method_stop", "type": "method"}, {"access": "", "host": "Test.Suite", "name": "tearDown", "url": "Test.Suite.html#method_tearDown", "type": "method"}, {"access": "", "host": "Test.Case", "name": "tearDown", "url": "Test.Case.html#method_tearDown", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "testcasebegin", "url": "Test.Runner.html#event_testcasebegin", "type": "event"}, {"access": "", "host": "Test.Runner", "name": "testcasecomplete", "url": "Test.Runner.html#event_testcasecomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "testmanagerbegin", "url": "Test.Manager.html#event_testmanagerbegin", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_MANAGER_BEGIN_EVENT", "url": "Test.Manager.html#property_TEST_MANAGER_BEGIN_EVENT", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testmanagercomplete", "url": "Test.Manager.html#event_testmanagercomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_MANAGER_COMPLETE_EVENT", "url": "Test.Manager.html#property_TEST_MANAGER_COMPLETE_EVENT", "type": "property"}, {"access": "", "host": "Test.TestNode", "name": "testObject", "url": "Test.TestNode.html#property_testObject", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testpagebegin", "url": "Test.Manager.html#event_testpagebegin", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_PAGE_BEGIN_EVENT", "url": "Test.Manager.html#property_TEST_PAGE_BEGIN_EVENT", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testpagecomplete", "url": "Test.Manager.html#event_testpagecomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_PAGE_COMPLETE_EVENT", "url": "Test.Manager.html#property_TEST_PAGE_COMPLETE_EVENT", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "testsuitebegin", "url": "Test.Runner.html#event_testsuitebegin", "type": "event"}, {"access": "", "host": "Test.Runner", "name": "testsuitecomplete", "url": "Test.Runner.html#event_testsuitecomplete", "type": "event"}, {"access": "private", "host": "Test.Manager", "name": "_timeoutId", "url": "Test.Manager.html#property__timeoutId", "type": "property"}, {"access": "", "host": "Test.DateAssert", "name": "timesAreEqual", "url": "Test.DateAssert.html#method_timesAreEqual", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "toString", "url": "Assert.Error.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "toString", "url": "Assert.ComparisonFailure.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "unexpected", "url": "Assert.UnexpectedValue.html#property_unexpected", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "url", "url": "Test.Reporter.html#property_url", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "valueOf", "url": "Assert.Error.html#method_valueOf", "type": "method"}, {"access": "", "host": "Test.Format.Mock", "name": "verify", "url": "Test.Format.Mock.html#method_verify", "type": "method"}, {"access": "", "host": "Test.Case", "name": "wait", "url": "Test.Case.html#method_wait", "type": "method"}, {"access": "", "host": "Test.Suite", "name": "XML", "url": "Test.Suite.html#method_XML", "type": "method"}, {"access": "", "host": "Assert", "name": "Y.assert", "url": "Assert.html#method_Y.assert", "type": "method"}];
+</script>
+</body>
+</html>

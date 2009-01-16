@@ -1,36 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: yui  YUI   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052357.13" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052357.13" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052357.13"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052357.13"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_yui.html">yui</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>yui&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html" title="yui">yui</a>
                  &gt; YUI 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -38,35 +48,36 @@
 
                         
                         
-                            Class <b>YUI</b>
+                            Class <b property="yui:name">YUI</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
+                            <span class="extends" rel="yui:extends">
                           - uses 
                             
-                                <a href="Event.Target.html">Event.Target</a>
+                                <span rel="extend" resource="Event.Target.html">
+                                <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>
+                                </span>
+                            
                             
                         </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
                 
   
 
-                    <div class="summary description">
+                    <div class="summary description" property="yui:description">
                         The YUI global namespace object.  If YUI is already defined, the
 existing YUI object will not be overwritten so that defined
 namespaces are preserved.
                     </div>
 
-                        <div class="section constructor details">
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong>YUI</strong>
+                                <strong property="yui:name">YUI</strong>
                                 <code>
                                     (
   
@@ -76,20 +87,20 @@ namespaces are preserved.
                                     )
                                 </code>
                                 <div class="description">
-                                        <dl>
+                                        <dl rel="yui:parameters">
                                             <dt>Parameters:</dt>
-                                                <dd>
-                                                    <code>o
-                                                    &lt;object&gt; 
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">o</span>
+                                                    &lt;<span property="yui:type">object</span>&gt;
                                                     </code>
-                                                     Optional configuration object.  Options:
+                                                    <span property="yui:description"> Optional configuration object.  Options:
 <ul>
 <li>------------------------------------------------------------------------</li>
 <li>Global:</li>
 <li>------------------------------------------------------------------------</li>
 <li>debug:
 Turn debug statements on or off</li>
-<li>useConsole:
+<li>useBrowserConsole:
 Log to the browser console if debug is on and the console is available</li>
 <li>logInclude:
 A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
@@ -127,7 +138,7 @@ filters are:
 <dl>
 <dt>DEBUG</dt>
 <dd>Selects the debug versions of the library (e.g., event-debug.js).
-This option will automatically include the logger widget</dd>
+This option will automatically include the Logger widget</dd>
 <dt>RAW</dt>
 <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
 </dl>
@@ -164,7 +175,7 @@ callback for the 'timeout' event</li>
 callback executed each time a script or css file is loaded</li>
 <li>modules:
 A list of module definitions.  See Loader.addModule for the supported module metadata</li>
-</ul>
+</ul></span>
                                                 </dd>
                                         </dl>
                                     
@@ -173,16 +184,17 @@ A list of module definitions.  See Loader.addModule for the supported module met
                             </div>
                         </div>
                     </div>
-
+                    
+                    <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private">
-                                    <h4><a name="property__iefix">_iefix</a>
-                                        <code>- private object</code>
+                                    <div class="private" rel="yui:property" resource="#property__iefix">
+                                    <h4><a name="property__iefix" property="yui:name">_iefix</a>
+                                        - <code>private <span property="yui:type">object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             IE will not enumerate native functions in a derived object even if the
 function was overridden.  This is a workaround for specific functions 
 we care about on the Object prototype.
@@ -194,25 +206,25 @@ we care about on the Object prototype.
 
                                     <hr />
                                     </div>
-
-
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__init">
                                     <h4>
                                         <a name="method__init">_init</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_init</strong>
+                                            <strong property="yui:name">_init</strong>
                                            (
                                                 
                                                         
@@ -222,26 +234,28 @@ we care about on the Object prototype.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Initialize this YUI instance
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             config options
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> config options</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -252,21 +266,21 @@ we care about on the Object prototype.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__setup">
                                     <h4>
                                         <a name="method__setup">_setup</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_setup</strong>
+                                            <strong property="yui:name">_setup</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Finishes the instance setup. Attaches whatever modules were defined
 when the yui modules was registered.
                                         </div>
@@ -276,10 +290,10 @@ when the yui modules was registered.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -290,24 +304,20 @@ when the yui modules was registered.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_add">
                                     <h4>
                                         <a name="method_add">add</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         YUI
-                                            <strong>add</strong>
+                                            <strong property="yui:name">add</strong>
                                            (
                                                 
                                                         
                                                          name
-                                                    
-                                                
-                                                        , 
-                                                         namespace
                                                     
                                                 
                                                         , 
@@ -321,39 +331,41 @@ when the yui modules was registered.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Register a module
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>name &lt;string&gt;</code>
-                                                              module name
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  module name</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>namespace &lt;string&gt;</code>
-                                                              name space for the module
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  entry point into the module that
+is used to bind module to the YUI instance</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                              entry point into the module that
-is used to bind module to the YUI instance
-                                                        </dd>
-                                                        <dd>
-                                                            <code>version &lt;string&gt;</code>
-                                                              version string
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">version</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  version string</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         YUI
                                                     </code></dt>
-                                                    <dd>the YUI instance
+                                                    <dd property="yui:returnInfo">the YUI instance
 requires   - features that should be present before loading
 optional   - optional features that should be present if load optional defined
 use  - features that should be attached automatically
@@ -370,24 +382,28 @@ omit - features that should not be loaded if this module is present</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_after">
                                     <h4>
                                         <a name="method_after">after</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>after</strong>
+                                        Event.Handle
+                                            <strong property="yui:name">after</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Executes the callback after a DOM event, custom event
 or method.  If the first argument is a function, it
 is assumed the target is a method.
+For DOM and custom events:
+type, callback, context, 1-n arguments
+For methods:
+callback, object (method host), methodName, context, 1-n arguments
                                         </div>
 
                                         <div class="description">
@@ -395,10 +411,10 @@ is assumed the target is a method.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Event.Handle
                                                     </code></dt>
-                                                    <dd>unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">unsubscribe handle</dd>
                                                 </dl>
 
 
@@ -409,16 +425,16 @@ is assumed the target is a method.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_applyTo">
                                     <h4>
                                         <a name="method_applyTo">applyTo</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         object
-                                            <strong>applyTo</strong>
+                                            <strong property="yui:name">applyTo</strong>
                                            (
                                                 
                                                         
@@ -436,36 +452,42 @@ is assumed the target is a method.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Executes a method on a YUI instance with
 the specified id if the specified method is whitelisted.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>id &lt;string&gt;</code>
-                                                              the YUI instance id
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the YUI instance id</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>method &lt;string&gt;</code>
-                                                              the name of the method to exectute.
-Ex: 'Object.keys'
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">method</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the name of the method to exectute.
+Ex: 'Object.keys'</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>args &lt;Array&gt;</code>
-                                                              the arguments to apply to the method
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the arguments to apply to the method</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         object
                                                     </code></dt>
-                                                    <dd>the return value from the applied method or null</dd>
+                                                    <dd property="yui:returnInfo">the return value from the applied method or null</dd>
                                                 </dl>
 
 
@@ -476,24 +498,25 @@ Ex: 'Object.keys'
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_before">
                                     <h4>
                                         <a name="method_before">before</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>before</strong>
+                                        
+                                            <strong property="yui:name">before</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Executes the callback before a DOM event, custom event
 or method.  If the first argument is a function, it
-is assumed the target is a method.
+is assumed the target is a method.  For DOM and custom
+events, this is an alias for Y.on.
 For DOM and custom events:
 type, callback, context, 1-n arguments
 For methods:
@@ -503,13 +526,6 @@ callback, object (method host), methodName, context, 1-n arguments
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>unsubscribe handle</dd>
-                                                </dl>
 
 
              
@@ -519,16 +535,16 @@ callback, object (method host), methodName, context, 1-n arguments
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_detach">
                                     <h4>
                                         <a name="method_detach">detach</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         YUI
-                                            <strong>detach</strong>
+                                            <strong property="yui:name">detach</strong>
                                            (
                                                 
                                                         
@@ -546,38 +562,44 @@ callback, object (method host), methodName, context, 1-n arguments
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Detach an event listener (either a custom event or a
 DOM event
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;object&gt;</code>
-                                                             the type of event, or a Event.Handle to
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the type of event, or a Event.Handle to
 for the subscription.  If the Event.Handle is passed
-in, the other parameters are not used.
+in, the other parameters are not used.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>f &lt;Function&gt;</code>
-                                                              the subscribed function
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the subscribed function</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the object or element the listener is subscribed
-to.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the object or element the listener is subscribed
+to.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         YUI
                                                     </code></dt>
-                                                    <dd>the YUI instance</dd>
+                                                    <dd property="yui:returnInfo">the YUI instance</dd>
                                                 </dl>
 
 
@@ -588,76 +610,16 @@ to.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_dump">dump</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        String
-                                            <strong>dump</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         d
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns a simple string representation of the object or array.
-Other types of objects will be returned unprocessed.  Arrays
-are expected to be indexed.  Use object notation for
-associative arrays.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;Object&gt;</code>
-                                                              The object to dump
-                                                        </dd>
-                                                        <dd>
-                                                            <code>d &lt;int&gt;</code>
-                                                              How deep to recurse child objects, default 3
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        String
-                                                    </code></dt>
-                                                    <dd>the dump result</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_fail">
                                     <h4>
                                         <a name="method_fail">fail</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         YUI
-                                            <strong>fail</strong>
+                                            <strong property="yui:name">fail</strong>
                                            (
                                                 
                                                         
@@ -671,34 +633,38 @@ associative arrays.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Report an error.  The reporting mechanism is controled by
 the 'throwFail' configuration attribute.  If throwFail is
-not specified, the message is written to the logger, otherwise
+not specified, the message is written to the Logger, otherwise
 a JS error is thrown
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>msg &lt;string&gt;</code>
-                                                              the failure message
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the failure message</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>e &lt;Error&gt;</code>
-                                                              Optional JS error that was caught.  If supplied
-and throwFail is specified, this error will be re-thrown.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Error</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Optional JS error that was caught.  If supplied
+and throwFail is specified, this error will be re-thrown.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         YUI
                                                     </code></dt>
-                                                    <dd>this YUI instance</dd>
+                                                    <dd property="yui:returnInfo">this YUI instance</dd>
                                                 </dl>
 
 
@@ -709,16 +675,16 @@ and throwFail is specified, this error will be re-thrown.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_guid">
                                     <h4>
                                         <a name="method_guid">guid</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         string
-                                            <strong>guid</strong>
+                                            <strong property="yui:name">guid</strong>
                                            (
                                                 
                                                         
@@ -728,26 +694,28 @@ and throwFail is specified, this error will be re-thrown.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Generate an id that is unique among all YUI instances
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>pre &lt;string&gt;</code>
-                                                              optional guid prefix
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pre</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional guid prefix</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         string
                                                     </code></dt>
-                                                    <dd>the guid</dd>
+                                                    <dd property="yui:returnInfo">the guid</dd>
                                                 </dl>
 
 
@@ -758,16 +726,16 @@ and throwFail is specified, this error will be re-thrown.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_later">
                                     <h4>
                                         <a name="method_later">later</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         object
-                                            <strong>later</strong>
+                                            <strong property="yui:name">later</strong>
                                            (
                                                 
                                                         
@@ -793,7 +761,7 @@ and throwFail is specified, this error will be re-thrown.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Executes the supplied function in the context of the supplied 
 object 'when' milliseconds later.  Executes the function a 
 single time unless periodic is set to true.
@@ -801,43 +769,53 @@ single time unless periodic is set to true.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>when &lt;int&gt;</code>
-                                                              the number of milliseconds to wait until the fn 
-is executed.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">when</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the number of milliseconds to wait until the fn 
+is executed.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the context object.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the context object.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>fn &lt;Function|String&gt;</code>
-                                                              the function to execute or the name of 
-the method in the 'o' object to execute.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function|String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute or the name of 
+the method in the 'o' object to execute.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>data &lt;object&gt;</code>
-                                                             [Array] data that is provided to the function.  This accepts
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">data</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> [Array] data that is provided to the function.  This accepts
 either a single item or an array.  If an array is provided, the
 function is executed with one parameter for each array item.  If
 you need to pass a single array parameter, it needs to be wrapped in
-an array [myarray].
+an array [myarray].</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>periodic &lt;boolean&gt;</code>
-                                                              if true, executes continuously at supplied 
-interval until canceled.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">periodic</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  if true, executes continuously at supplied 
+interval until canceled.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         object
                                                     </code></dt>
-                                                    <dd>a timer object. Call the cancel() method on this object to 
+                                                    <dd property="yui:returnInfo">a timer object. Call the cancel() method on this object to 
 stop the timer.</dd>
                                                 </dl>
 
@@ -849,16 +827,16 @@ stop the timer.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_log">
                                     <h4>
                                         <a name="method_log">log</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         YUI
-                                            <strong>log</strong>
+                                            <strong property="yui:name">log</strong>
                                            (
                                                 
                                                         
@@ -873,42 +851,56 @@ stop the timer.</dd>
                                                          src
                                                     
                                                 
+                                                        , 
+                                                         silent
+                                                    
+                                                
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            If the 'debug' config is true, a 'yui:log' event will be
-dispatched, which the logger widget and anything else
-can consume.  If the 'useConsole' config is true, it will
-write to the browser console if available.
+                                        <div class="description" property="yui:description">
+                                            Write a system message.  This message will be preserved in the
+minified and raw versions of the YUI files.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>msg &lt;String&gt;</code>
-                                                              The message to log.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The message to log.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>cat &lt;String&gt;</code>
-                                                              The log category for the message.  Default
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cat</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The log category for the message.  Default
 categories are "info", "warn", "error", time".
-Custom categories can be used as well. (opt)
+Custom categories can be used as well. (opt)</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>src &lt;String&gt;</code>
-                                                              The source of the the message (opt)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">src</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The source of the the message (opt)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">silent</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> If true, the log event won't fire</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         YUI
                                                     </code></dt>
-                                                    <dd>YUI instance</dd>
+                                                    <dd property="yui:returnInfo">YUI instance</dd>
                                                 </dl>
 
 
@@ -919,16 +911,16 @@ Custom categories can be used as well. (opt)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_merge">
                                     <h4>
                                         <a name="method_merge">merge</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         object
-                                            <strong>merge</strong>
+                                            <strong property="yui:name">merge</strong>
                                            (
                                                 
                                                         
@@ -938,7 +930,7 @@ Custom categories can be used as well. (opt)
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Returns a new object containing all of the properties of
 all the supplied objects.  The properties from later objects
 will overwrite those in earlier objects.  Passing in a
@@ -948,20 +940,22 @@ copy, use clone.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>arguments &lt;Object*&gt;</code>
-                                                              the objects to merge
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">arguments</span>
+                                                        &lt;<span property="yui:type">Object*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the objects to merge</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         object
                                                     </code></dt>
-                                                    <dd>the new merged object</dd>
+                                                    <dd property="yui:returnInfo">the new merged object</dd>
                                                 </dl>
 
 
@@ -972,16 +966,16 @@ copy, use clone.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_mix">
                                     <h4>
                                         <a name="method_mix">mix</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         object
-                                            <strong>mix</strong>
+                                            <strong property="yui:name">mix</strong>
                                            (
                                                 
                                                         
@@ -1011,7 +1005,7 @@ copy, use clone.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Applies the supplier's properties to the receiver.  By default
 all prototype and static propertes on the supplier are applied
 to the corresponding spot on the receiver.  By default all
@@ -1022,48 +1016,60 @@ be modified by supplying the appropriate parameters.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>r &lt;Function&gt;</code>
-                                                              the object to receive the augmentation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the object to receive the augmentation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>s &lt;Function&gt;</code>
-                                                              the object that supplies the properties to augment
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the object that supplies the properties to augment</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>ov &lt;boolean&gt;</code>
-                                                              if true, properties already on the receiver
-will be overwritten if found on the supplier.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ov</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  if true, properties already on the receiver
+will be overwritten if found on the supplier.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>wl &lt;string[]&gt;</code>
-                                                              a whitelist.  If supplied, only properties in 
-this list will be applied to the receiver.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">wl</span>
+                                                        &lt;<span property="yui:type">string[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  a whitelist.  If supplied, only properties in 
+this list will be applied to the receiver.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>mode &lt;int&gt;</code>
-                                                             what should be copies, and to where
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mode</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> what should be copies, and to where
 default(0): object to object
 1: prototype to prototype (old augment)
 2: prototype to prototype and object props (new augment)
 3: prototype to object
-4: object to prototype
+4: object to prototype</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>merge &lt;boolean&gt;</code>
-                                                              merge objects instead of overwriting/ignoring
-Used by Y.aggregate
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">merge</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  merge objects instead of overwriting/ignoring
+Used by Y.aggregate</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         object
                                                     </code></dt>
-                                                    <dd>the augmented object</dd>
+                                                    <dd property="yui:returnInfo">the augmented object</dd>
                                                 </dl>
 
 
@@ -1074,16 +1080,16 @@ Used by Y.aggregate
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_namespace">
                                     <h4>
                                         <a name="method_namespace">namespace</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         object
-                                            <strong>namespace</strong>
+                                            <strong property="yui:name">namespace</strong>
                                            (
                                                 
                                                         
@@ -1093,13 +1099,13 @@ Used by Y.aggregate
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Returns the namespace specified and creates it if it doesn't exist
 <pre>
 YUI.namespace("property.package");
-YUI.namespace("YUI.property.package");
+YUI.namespace("YAHOO.property.package");
 </pre>
-Either of the above would create YUI.property, then
+Either of the above would create YAHOO.property, then
 YUI.property.package
 Be careful when naming packages. Reserved words may work in some browsers
 and not others. For instance, the following will fail in Safari:
@@ -1111,20 +1117,22 @@ This fails because "long" is a future reserved word in ECMAScript
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>arguments &lt;string*&gt;</code>
-                                                             1-n namespaces to create
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">arguments</span>
+                                                        &lt;<span property="yui:type">string*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 1-n namespaces to create</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         object
                                                     </code></dt>
-                                                    <dd>A reference to the last namespace object created</dd>
+                                                    <dd property="yui:returnInfo">A reference to the last namespace object created</dd>
                                                 </dl>
 
 
@@ -1135,16 +1143,16 @@ This fails because "long" is a future reserved word in ECMAScript
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_on">
                                     <h4>
                                         <a name="method_on">on</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Event.Handle
-                                            <strong>on</strong>
+                                            <strong property="yui:name">on</strong>
                                            (
                                                 
                                                         
@@ -1170,44 +1178,54 @@ This fails because "long" is a future reserved word in ECMAScript
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Attach an event listener, either to a DOM object
 or to an Event.Target.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;string&gt;</code>
-                                                              the event type
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the event type</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>f &lt;Function&gt;</code>
-                                                              the function to execute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the Event.Target or element to attach to
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the Event.Target or element to attach to</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>context &lt;object&gt;</code>
-                                                             Optional execution context
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional execution context</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>args* &lt;object&gt;</code>
-                                                             0..n additional arguments to append
-to the signature provided when the event fires.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n additional arguments to append
+to the signature provided when the event fires.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Event.Handle
                                                     </code></dt>
-                                                    <dd>a handle object for 
+                                                    <dd property="yui:returnInfo">a handle object for 
 unsubscribing to this event.</dd>
                                                 </dl>
 
@@ -1219,46 +1237,57 @@ unsubscribing to this event.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_simulate">
                                     <h4>
-                                        <a name="method_stamp">stamp</a></h4>
-                                    <div class="detail">
+                                        <a name="method_simulate">simulate</a></h4>
+                                    <div class="detail" >
                                         <code>
                                         
+                                         static 
                                         
-                                        
-                                        string
-                                            <strong>stamp</strong>
+                                        void
+                                            <strong property="yui:name">simulate</strong>
                                            (
                                                 
                                                         
-                                                         o
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         options
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Stamps an object with a guid.  If the object already
-has one, a new one is not created
+                                        <div class="description" property="yui:description">
+                                            Simulates an event on the node.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             The object to stamp
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The type of event to simulate (i.e., "click").</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">options</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) Extra options to copy onto the event object.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        string
+                                                    <code property="yui:return">
+                                                        void
                                                     </code></dt>
-                                                    <dd>The object's guid</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1269,16 +1298,156 @@ has one, a new one is not created
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_stamp">
+                                    <h4>
+                                        <a name="method_stamp">stamp</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">stamp</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Stamps an object with a guid.  If the object already
+has one, a new one is not created
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The object to stamp</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The object's guid</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_substitute">
+                                    <h4>
+                                        <a name="method_substitute">substitute</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">substitute</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Does variable substitution on a string. It scans through the string 
+looking for expressions enclosed in { } braces. If an expression 
+is found, it is used a key on the object.  If there is a space in
+the key, the first word is used for the key and the rest is provided
+to an optional function to be used to programatically determine the
+value (the extra information might be used for this decision). If 
+the value for the key in the object, or what is returned from the
+function has a string value, number value, or object value, it is 
+substituted for the bracket expression and it repeats.  If this
+value is an object, it uses the Object's toString() if this has
+been overridden, otherwise it does a shallow dump of the key/value
+pairs if Y.dump is available (if dump isn't available, toString()
+is used).
+This method is included in the 'substitute' module.  It is not included
+in the YUI module.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The string that will be modified.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object containing the replacement values</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  An optional function that can be used to
+process each match.  It receives the key,
+value, and any extra metadata included with
+the key inside of the braces.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the substituted string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_use">
                                     <h4>
                                         <a name="method_use">use</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         YUI
-                                            <strong>use</strong>
+                                            <strong property="yui:name">use</strong>
                                            (
                                                 
                                                         
@@ -1292,32 +1461,36 @@ has one, a new one is not created
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Bind a module to a YUI instance
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>modules* &lt;string&gt;</code>
-                                                              1-n modules to bind (uses arguments array)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">modules*</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  1-n modules to bind (uses arguments array)</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>*callback &lt;function&gt;</code>
-                                                              callback function executed when 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">*callback</span>
+                                                        &lt;<span property="yui:type">function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  callback function executed when 
 the instance has the required functionality.  If included, it
-must be the last parameter.
+must be the last parameter.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         YUI
                                                     </code></dt>
-                                                    <dd>the YUI instance</dd>
+                                                    <dd property="yui:returnInfo">the YUI instance</dd>
                                                 </dl>
 
 
@@ -1331,158 +1504,480 @@ must be the last parameter.
                             </div>
                         </div>
 
-                            <div class="section field inheritance">
-                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
-                                <div class="content">
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
+                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                                <div class="content" rel="yui:methods">
                                     <code>
-                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <span rel="yui:method" resource="Event.Target.html#method_addTarget">                                        
+                                            <a class="" href="Event.Target.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_after">                                        
+                                            <a class="" href="Event.Target.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_bubble">                                        
+                                            <a class="" href="Event.Target.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_fire">                                        
+                                            <a class="" href="Event.Target.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_getEvent">                                        
+                                            <a class="" href="Event.Target.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_publish">                                        
+                                            <a class="" href="Event.Target.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_removeTarget">                                        
+                                            <a class="" href="Event.Target.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_subscribe">                                        
+                                            <a class="" href="Event.Target.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribe">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribeAll">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
                                     </code>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_available">
+                                    <h4>
+                                        <a name="event_available">available</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">available</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the callback as soon as the specified element 
+is detected in the DOM.
+                                        </div>
+
+                                        <div class="description">
 
 
 
 
+                                        </div>
 
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_blur">
+                                    <h4>
+                                        <a name="event_blur">blur</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">blur</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a DOM focus listener.  Uses the focusout event in IE,
+and the capture phase otherwise so that
+the event propagates properly.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_contentready">
+                                    <h4>
+                                        <a name="event_contentready">contentready</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">contentready</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the callback as soon as the specified element 
+is detected in the DOM with a nextSibling property
+(indicating that the element's children are available)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_domready">
+                                    <h4>
+                                        <a name="event_domready">domready</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">domready</strong>
+
+                                            (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied callback when the DOM is first usable.  This
+will execute immediately if called after the DOMReady event has
+fired.   @todo the DOMContentReady event does not fire when the
+script is dynamically injected into the page.  This means the
+DOMReady custom event will never fire in FireFox or Opera when the
+library is injected.  It _will_ fire in Safari, and the IE 
+implementation would allow for us to fire it if the defered script
+is not available.  We want this to behave the same in all browsers.
+Is there a way to identify when the script has been injected 
+instead of included inline?  Is there a way to know whether the 
+window onload event has fired without having had a listener attached 
+to it when it did so?
+<p>The callback is a Event.Custom, so the signature is:</p>
+<p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+<p>For DOMReady events, there are no fire argments, so the
+signature is:</p>
+<p>"DOMReady", [], obj</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">function</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> what to execute when the element is found.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class=" deprecated" rel="yui:event" resource="#event_event:ready">
+                                    <h4>
+                                        <a name="event_event:ready">event:ready</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">event:ready</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Use domready event instead. @see domready
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> use 'domready' instead
+                                            </div>        
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_focus">
+                                    <h4>
+                                        <a name="event_focus">focus</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">focus</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a DOM focus listener.  Uses the focusin event in IE,
+and the capture phase otherwise so that
+the event propagates properly.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_key">
+                                    <h4>
+                                        <a name="event_key">key</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">key</strong>
+
+                                            (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         spec
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Add a key listener.  The listener will only be notified if the
+keystroke detected meets the supplied specification.  The
+spec consists of the key event type, followed by a colon,
+followed by zero or more comma separated key codes, followed
+by zero or more modifiers delimited by a plus sign.  Ex:
+press:12,65+shift+ctrl
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">id</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the element(s) to bind</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">spec</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the keyCode and modifier specification</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">o</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional context object</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
+to the listener.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class="selected"><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Get.html">Get</a></li>
-                                <li class=""><a href="Lang.html">Lang</a></li>
-                                <li class=""><a href="Loader.html">Loader</a></li>
-                                <li class=""><a href="UA.html">UA</a></li>
-                                <li class="selected"><a href="YUI.html">YUI</a></li>
-                                <li class=""><a href="YUI~array.html">YUI~array</a></li>
-                                <li class=""><a href="YUI~object.html">YUI~object</a></li>
+                                <li class=""><a href="Get.html" title="Get">Get</a></li>
+                                <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
+                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                                <li class=""><a href="UA.html" title="UA">UA</a></li>
+                                <li class="selected"><a href="YUI.html" title="YUI">YUI</a></li>
+                                <li class=""><a href="YUI~object.html" title="YUI~object">YUI~object</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="get.js.html">get.js</a></li>
-                                <li class=""><a href="loader.js.html">loader.js</a></li>
-                                <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
-                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
-                                <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
-                                <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
-                                <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
-                                <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
-                                <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
-                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
-                                <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
-                                <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
-                                <li class=""><a href="yui.js.html">yui.js</a></li>
+                                <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
+                                <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
+                                <li class=""><a href="yui-lang.js.html" title="yui-lang.js">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html" title="yui-later.js">yui-later.js</a></li>
+                                <li class=""><a href="yui-object.js.html" title="yui-object.js">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html" title="yui-ua.js">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html" title="yui.js">yui.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__iefix">_iefix</a>
-                                        <!--<code>&lt;object&gt;</code>-->
-                                </li>
+                                <li class="private"><a href="#property__iefix" title="_iefix">_iefix</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__init">_init</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__setup">_setup</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_add">add</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_after">after</a>
-                                </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_applyTo">applyTo</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_before">before</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_detach">detach</a>
-                                </li>
-                                <li class=""><!--<code>String</code>-->
-                                <a href="#method_dump">dump</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_fail">fail</a>
-                                </li>
-                                <li class=""><!--<code>string</code>-->
-                                <a href="#method_guid">guid</a>
-                                </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_later">later</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_log">log</a>
-                                </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_merge">merge</a>
-                                </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_mix">mix</a>
-                                </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_namespace">namespace</a>
-                                </li>
-                                <li class=""><!--<code>Event.Handle</code>-->
-                                <a href="#method_on">on</a>
-                                </li>
-                                <li class=""><!--<code>string</code>-->
-                                <a href="#method_stamp">stamp</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_use">use</a>
-                                </li>
+                                <li class="private"><a href="#method__init" title="_init">_init</a></li>
+                                <li class="private"><a href="#method__setup" title="_setup">_setup</a></li>
+                                <li class=""><a href="#method_add" title="add">add</a></li>
+                                <li class=""><a href="#method_after" title="after">after</a></li>
+                                <li class=""><a href="#method_applyTo" title="applyTo">applyTo</a></li>
+                                <li class=""><a href="#method_before" title="before">before</a></li>
+                                <li class=""><a href="#method_detach" title="detach">detach</a></li>
+                                <li class=""><a href="#method_fail" title="fail">fail</a></li>
+                                <li class=""><a href="#method_guid" title="guid">guid</a></li>
+                                <li class=""><a href="#method_later" title="later">later</a></li>
+                                <li class=""><a href="#method_log" title="log">log</a></li>
+                                <li class=""><a href="#method_merge" title="merge">merge</a></li>
+                                <li class=""><a href="#method_mix" title="mix">mix</a></li>
+                                <li class=""><a href="#method_namespace" title="namespace">namespace</a></li>
+                                <li class=""><a href="#method_on" title="on">on</a></li>
+                                <li class=""><a href="#method_simulate" title="simulate">simulate</a></li>
+                                <li class=""><a href="#method_stamp" title="stamp">stamp</a></li>
+                                <li class=""><a href="#method_substitute" title="substitute">substitute</a></li>
+                                <li class=""><a href="#method_use" title="use">use</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_available" title="available">available</a></li>
+                                <li class=""><a href="#event_blur" title="blur">blur</a></li>
+                                <li class=""><a href="#event_contentready" title="contentready">contentready</a></li>
+                                <li class=""><a href="#event_domready" title="domready">domready</a></li>
+                                <li class=" deprecated"><a href="#event_event:ready" title="event:ready">event:ready</a></li>
+                                <li class=""><a href="#event_focus" title="focus">focus</a></li>
+                                <li class=""><a href="#event_key" title="key">key</a></li>
+                        </ul>
+                    </div>
 
 
             </div>
@@ -1490,8 +1985,11 @@ must be the last parameter.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "before", "url": "YUI.html#method_before", "type": "method"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "detach", "url": "YUI.html#method_detach", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "", "host": "YUI", "name": "fail", "url": "YUI.html#method_fail", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}];
+</script>
 </body>
 </html>

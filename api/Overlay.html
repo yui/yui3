@@ -1,0 +1,1082 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: overlay  Overlay   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052355.86" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052355.86" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052355.86"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052355.86"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>overlay&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_overlay.html" title="overlay">overlay</a>
+                 &gt; Overlay 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Overlay</b>
+                        <span class="extends">
+                           - extends <a href="Widget.html" title="Widget">Widget</a>
+                        </span>
+
+                            <span class="extends" rel="yui:extends">
+                          - uses 
+                            
+                                <span rel="extend" resource="WidgetPosition.html">
+                                <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>
+                                </span>
+                            , 
+                                <span rel="extend" resource="WidgetStack.html">
+                                <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>
+                                </span>
+                            , 
+                                <span rel="extend" resource="WidgetPositionExt.html">
+                                <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>
+                                </span>
+                            , 
+                                <span rel="extend" resource="WidgetStdMod.html">
+                                <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>
+                                </span>
+                            
+                            
+                        </span>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        A basic Overlay Widget, which can be positioned based on Page XY co-ordinates and is stackable (z-index support).
+It also provides alignment and centering support and uses a standard module format for it's content, with header,
+body and footer section support.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Overlay</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                object
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">object</span>
+                                                    &lt;<span property="yui:type">Object</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description"> The user configuration for the instance.</span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
+                            <h4>Properties inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Widget.html#property__strings">
+                                        <a class="private" href="Widget.html#property__strings" property="yui:name" title="_strings">_strings</a><span class="private">,</span>
+                                        </span>
+                                    
+                                        <span rel="yui:property" resource="Widget.html#property_BOUNDING_TEMPLATE">
+                                        <a class="" href="Widget.html#property_BOUNDING_TEMPLATE" property="yui:name" title="BOUNDING_TEMPLATE">BOUNDING_TEMPLATE</a><span class="">,</span>
+                                        </span>
+                                    
+                                        <span rel="yui:property" resource="Widget.html#property_CONTENT_TEMPLATE">
+                                        <a class="" href="Widget.html#property_CONTENT_TEMPLATE" property="yui:name" title="CONTENT_TEMPLATE">CONTENT_TEMPLATE</a><span class="">,</span>
+                                        </span>
+                                    
+                                        <span rel="yui:property" resource="Widget.html#property_DEF_UNIT">
+                                        <a class="" href="Widget.html#property_DEF_UNIT" property="yui:name" title="DEF_UNIT">DEF_UNIT</a><span class="">,</span>
+                                        </span>
+                                    
+                                        <span rel="yui:property" resource="Widget.html#property_WRAP_STYLES">
+                                        <a class="" href="Widget.html#property_WRAP_STYLES" property="yui:name" title="WRAP_STYLES">WRAP_STYLES</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
+                            <h4>Properties inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                            <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
+                            <h4>Properties inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class="" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
+                            <h4>Properties inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPosition.html">
+                            <h4>Properties inherited from <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
+                                <h4>Methods inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Widget.html#method__afterDisabledChange">                                        
+                                            <a class="protected" href="Widget.html#method__afterDisabledChange" property="yui:name" title="_afterDisabledChange">_afterDisabledChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__afterHasFocusChange">                                        
+                                            <a class="protected" href="Widget.html#method__afterHasFocusChange" property="yui:name" title="_afterHasFocusChange">_afterHasFocusChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__afterHeightChange">                                        
+                                            <a class="protected" href="Widget.html#method__afterHeightChange" property="yui:name" title="_afterHeightChange">_afterHeightChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__afterVisibleChange">                                        
+                                            <a class="protected" href="Widget.html#method__afterVisibleChange" property="yui:name" title="_afterVisibleChange">_afterVisibleChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__afterWidthChange">                                        
+                                            <a class="protected" href="Widget.html#method__afterWidthChange" property="yui:name" title="_afterWidthChange">_afterWidthChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__bindDOMListeners">                                        
+                                            <a class="protected" href="Widget.html#method__bindDOMListeners" property="yui:name" title="_bindDOMListeners">_bindDOMListeners</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__bindUI">                                        
+                                            <a class="protected" href="Widget.html#method__bindUI" property="yui:name" title="_bindUI">_bindUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__defRenderFn">                                        
+                                            <a class="protected" href="Widget.html#method__defRenderFn" property="yui:name" title="_defRenderFn">_defRenderFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__getHtmlParser">                                        
+                                            <a class="" href="Widget.html#method__getHtmlParser" property="yui:name" title="_getHtmlParser">_getHtmlParser</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__getStrings">                                        
+                                            <a class="protected" href="Widget.html#method__getStrings" property="yui:name" title="_getStrings">_getStrings</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__moveStyles">                                        
+                                            <a class="private" href="Widget.html#method__moveStyles" property="yui:name" title="_moveStyles">_moveStyles</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__onBlur">                                        
+                                            <a class="protected" href="Widget.html#method__onBlur" property="yui:name" title="_onBlur">_onBlur</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__onFocus">                                        
+                                            <a class="protected" href="Widget.html#method__onFocus" property="yui:name" title="_onFocus">_onFocus</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__parseHTML">                                        
+                                            <a class="private" href="Widget.html#method__parseHTML" property="yui:name" title="_parseHTML">_parseHTML</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__renderBox">                                        
+                                            <a class="private" href="Widget.html#method__renderBox" property="yui:name" title="_renderBox">_renderBox</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__renderBoxClassNames">                                        
+                                            <a class="protected" href="Widget.html#method__renderBoxClassNames" property="yui:name" title="_renderBoxClassNames">_renderBoxClassNames</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__renderUI">                                        
+                                            <a class="protected" href="Widget.html#method__renderUI" property="yui:name" title="_renderUI">_renderUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__setBoundingBox">                                        
+                                            <a class="private" href="Widget.html#method__setBoundingBox" property="yui:name" title="_setBoundingBox">_setBoundingBox</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__setBox">                                        
+                                            <a class="private" href="Widget.html#method__setBox" property="yui:name" title="_setBox">_setBox</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__setContentBox">                                        
+                                            <a class="private" href="Widget.html#method__setContentBox" property="yui:name" title="_setContentBox">_setContentBox</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__setStrings">                                        
+                                            <a class="protected" href="Widget.html#method__setStrings" property="yui:name" title="_setStrings">_setStrings</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__syncUI">                                        
+                                            <a class="protected" href="Widget.html#method__syncUI" property="yui:name" title="_syncUI">_syncUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetDisabled">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetDisabled" property="yui:name" title="_uiSetDisabled">_uiSetDisabled</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetHasFocus">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetHasFocus" property="yui:name" title="_uiSetHasFocus">_uiSetHasFocus</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetHeight">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetHeight" property="yui:name" title="_uiSetHeight">_uiSetHeight</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetTabIndex">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetTabIndex" property="yui:name" title="_uiSetTabIndex">_uiSetTabIndex</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetVisible">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetVisible" property="yui:name" title="_uiSetVisible">_uiSetVisible</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetWidth">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetWidth" property="yui:name" title="_uiSetWidth">_uiSetWidth</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_bindUI">                                        
+                                            <a class="protected" href="Widget.html#method_bindUI" property="yui:name" title="bindUI">bindUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_blur">                                        
+                                            <a class="" href="Widget.html#method_blur" property="yui:name" title="blur">blur</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_destructor">                                        
+                                            <a class="protected" href="Widget.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_disabled">                                        
+                                            <a class="" href="Widget.html#method_disabled" property="yui:name" title="disabled">disabled</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_enable">                                        
+                                            <a class="" href="Widget.html#method_enable" property="yui:name" title="enable">enable</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_focus">                                        
+                                            <a class="" href="Widget.html#method_focus" property="yui:name" title="focus">focus</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_getClassName">                                        
+                                            <a class="" href="Widget.html#method_getClassName" property="yui:name" title="getClassName">getClassName</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_getDefaultLocale">                                        
+                                            <a class="" href="Widget.html#method_getDefaultLocale" property="yui:name" title="getDefaultLocale">getDefaultLocale</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_getString">                                        
+                                            <a class="" href="Widget.html#method_getString" property="yui:name" title="getString">getString</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_getStrings">                                        
+                                            <a class="" href="Widget.html#method_getStrings" property="yui:name" title="getStrings">getStrings</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_hide">                                        
+                                            <a class="" href="Widget.html#method_hide" property="yui:name" title="hide">hide</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_initializer">                                        
+                                            <a class="protected" href="Widget.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_render">                                        
+                                            <a class="" href="Widget.html#method_render" property="yui:name" title="render">render</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_renderer">                                        
+                                            <a class="protected" href="Widget.html#method_renderer" property="yui:name" title="renderer">renderer</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_renderUI">                                        
+                                            <a class="protected" href="Widget.html#method_renderUI" property="yui:name" title="renderUI">renderUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_show">                                        
+                                            <a class="" href="Widget.html#method_show" property="yui:name" title="show">show</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_syncUI">                                        
+                                            <a class="" href="Widget.html#method_syncUI" property="yui:name" title="syncUI">syncUI</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_toString">                                        
+                                            <a class="" href="Widget.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
+                                <h4>Methods inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__addShimResizeHandlers">                                        
+                                            <a class="private" href="WidgetStack.html#method__addShimResizeHandlers" property="yui:name" title="_addShimResizeHandlers">_addShimResizeHandlers</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__afterShimChange">                                        
+                                            <a class="protected" href="WidgetStack.html#method__afterShimChange" property="yui:name" title="_afterShimChange">_afterShimChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__afterZIndexChange">                                        
+                                            <a class="protected" href="WidgetStack.html#method__afterZIndexChange" property="yui:name" title="_afterZIndexChange">_afterZIndexChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__bindUIStack">                                        
+                                            <a class="protected" href="WidgetStack.html#method__bindUIStack" property="yui:name" title="_bindUIStack">_bindUIStack</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__destroyShim">                                        
+                                            <a class="private" href="WidgetStack.html#method__destroyShim" property="yui:name" title="_destroyShim">_destroyShim</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__detachStackHandles">                                        
+                                            <a class="private" href="WidgetStack.html#method__detachStackHandles" property="yui:name" title="_detachStackHandles">_detachStackHandles</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__fixMacGeckoScrollbars">                                        
+                                            <a class="private" href="WidgetStack.html#method__fixMacGeckoScrollbars" property="yui:name" title="_fixMacGeckoScrollbars">_fixMacGeckoScrollbars</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__getShimTemplate">                                        
+                                            <a class="private" href="WidgetStack.html#method__getShimTemplate" property="yui:name" title="_getShimTemplate">_getShimTemplate</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__hideMacGeckoScrollbars">                                        
+                                            <a class="private" href="WidgetStack.html#method__hideMacGeckoScrollbars" property="yui:name" title="_hideMacGeckoScrollbars">_hideMacGeckoScrollbars</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__renderShim">                                        
+                                            <a class="private" href="WidgetStack.html#method__renderShim" property="yui:name" title="_renderShim">_renderShim</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__renderShimDeferred">                                        
+                                            <a class="private" href="WidgetStack.html#method__renderShimDeferred" property="yui:name" title="_renderShimDeferred">_renderShimDeferred</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__renderUIStack">                                        
+                                            <a class="protected" href="WidgetStack.html#method__renderUIStack" property="yui:name" title="_renderUIStack">_renderUIStack</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__setZIndex">                                        
+                                            <a class="protected" href="WidgetStack.html#method__setZIndex" property="yui:name" title="_setZIndex">_setZIndex</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__syncUIStack">                                        
+                                            <a class="protected" href="WidgetStack.html#method__syncUIStack" property="yui:name" title="_syncUIStack">_syncUIStack</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__toggleMacGeckoScrollbars">                                        
+                                            <a class="private" href="WidgetStack.html#method__toggleMacGeckoScrollbars" property="yui:name" title="_toggleMacGeckoScrollbars">_toggleMacGeckoScrollbars</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__uiSetShim">                                        
+                                            <a class="protected" href="WidgetStack.html#method__uiSetShim" property="yui:name" title="_uiSetShim">_uiSetShim</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method__uiSetZIndex">                                        
+                                            <a class="protected" href="WidgetStack.html#method__uiSetZIndex" property="yui:name" title="_uiSetZIndex">_uiSetZIndex</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStack.html#method_sizeShim">                                        
+                                            <a class="" href="WidgetStack.html#method_sizeShim" property="yui:name" title="sizeShim">sizeShim</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Attribute.html#method__cloneAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__cloneAttVal" property="yui:name" title="_cloneAttVal">_cloneAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttSet">                                        
+                                            <a class="private" href="Attribute.html#method__defAttSet" property="yui:name" title="_defAttSet">_defAttSet</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttChange" property="yui:name" title="_fireAttChange">_fireAttChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getSubAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__getSubAttVal" property="yui:name" title="_getSubAttVal">_getSubAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__initAtts">                                        
+                                            <a class="protected" href="Attribute.html#method__initAtts" property="yui:name" title="_initAtts">_initAtts</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__initAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__initAttVal" property="yui:name" title="_initAttVal">_initAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setSubAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__setSubAttVal" property="yui:name" title="_setSubAttVal">_setSubAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__splitAttrValues">                                        
+                                            <a class="private" href="Attribute.html#method__splitAttrValues" property="yui:name" title="_splitAttrValues">_splitAttrValues</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAtt">                                        
+                                            <a class="" href="Attribute.html#method_addAtt" property="yui:name" title="addAtt">addAtt</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAtts">                                        
+                                            <a class="" href="Attribute.html#method_getAtts" property="yui:name" title="getAtts">getAtts</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_on">                                        
+                                            <a class="" href="Attribute.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAtt">                                        
+                                            <a class="" href="Attribute.html#method_removeAtt" property="yui:name" title="removeAtt">removeAtt</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAtts">                                        
+                                            <a class="" href="Attribute.html#method_setAtts" property="yui:name" title="setAtts">setAtts</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
+                                <h4>Methods inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__afterAlignChange">                                        
+                                            <a class="protected" href="WidgetPositionExt.html#method__afterAlignChange" property="yui:name" title="_afterAlignChange">_afterAlignChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__bindUIStack">                                        
+                                            <a class="protected" href="WidgetPositionExt.html#method__bindUIStack" property="yui:name" title="_bindUIStack">_bindUIStack</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__doAlign">                                        
+                                            <a class="private" href="WidgetPositionExt.html#method__doAlign" property="yui:name" title="_doAlign">_doAlign</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__setAlignCenter">                                        
+                                            <a class="protected" href="WidgetPositionExt.html#method__setAlignCenter" property="yui:name" title="_setAlignCenter">_setAlignCenter</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__syncUIPosExtras">                                        
+                                            <a class="protected" href="WidgetPositionExt.html#method__syncUIPosExtras" property="yui:name" title="_syncUIPosExtras">_syncUIPosExtras</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__uiSetAlign">                                        
+                                            <a class="protected" href="WidgetPositionExt.html#method__uiSetAlign" property="yui:name" title="_uiSetAlign">_uiSetAlign</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method_align">                                        
+                                            <a class="" href="WidgetPositionExt.html#method_align" property="yui:name" title="align">align</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionExt.html#method_centered">                                        
+                                            <a class="" href="WidgetPositionExt.html#method_centered" property="yui:name" title="centered">centered</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__prefixEvtType">                                        
+                                            <a class="private" href="Base.html#method__prefixEvtType" property="yui:name" title="_prefixEvtType">_prefixEvtType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_after">                                        
+                                            <a class="" href="Base.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_fire">                                        
+                                            <a class="" href="Base.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_publish">                                        
+                                            <a class="" href="Base.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_subscribe">                                        
+                                            <a class="" href="Base.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_unsubscribe">                                        
+                                            <a class="" href="Base.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_unsubscribeAll">                                        
+                                            <a class="" href="Base.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="PluginHost.html">
+                                <h4>Methods inherited from <a href="PluginHost.html" property="yui:name" title="PluginHost">PluginHost</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="PluginHost.html#method__destroyPlugins">                                        
+                                            <a class="private" href="PluginHost.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method__initPlugins">                                        
+                                            <a class="private" href="PluginHost.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method__plug">                                        
+                                            <a class="private" href="PluginHost.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method__unplug">                                        
+                                            <a class="private" href="PluginHost.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method_hasPlugin">                                        
+                                            <a class="" href="PluginHost.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method_plug">                                        
+                                            <a class="" href="PluginHost.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="PluginHost.html#method_unplug">                                        
+                                            <a class="" href="PluginHost.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPosition.html">
+                                <h4>Methods inherited from <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__afterXYChange">                                        
+                                            <a class="protected" href="WidgetPosition.html#method__afterXYChange" property="yui:name" title="_afterXYChange">_afterXYChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__bindUIPosition">                                        
+                                            <a class="protected" href="WidgetPosition.html#method__bindUIPosition" property="yui:name" title="_bindUIPosition">_bindUIPosition</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__getX">                                        
+                                            <a class="" href="WidgetPosition.html#method__getX" property="yui:name" title="_getX">_getX</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__getY">                                        
+                                            <a class="" href="WidgetPosition.html#method__getY" property="yui:name" title="_getY">_getY</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__renderUIPosition">                                        
+                                            <a class="protected" href="WidgetPosition.html#method__renderUIPosition" property="yui:name" title="_renderUIPosition">_renderUIPosition</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__setX">                                        
+                                            <a class="" href="WidgetPosition.html#method__setX" property="yui:name" title="_setX">_setX</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__setY">                                        
+                                            <a class="" href="WidgetPosition.html#method__setY" property="yui:name" title="_setY">_setY</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__syncUIPosition">                                        
+                                            <a class="protected" href="WidgetPosition.html#method__syncUIPosition" property="yui:name" title="_syncUIPosition">_syncUIPosition</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__uiSetXY">                                        
+                                            <a class="protected" href="WidgetPosition.html#method__uiSetXY" property="yui:name" title="_uiSetXY">_uiSetXY</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method__validateXY">                                        
+                                            <a class="" href="WidgetPosition.html#method__validateXY" property="yui:name" title="_validateXY">_validateXY</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method_move">                                        
+                                            <a class="" href="WidgetPosition.html#method_move" property="yui:name" title="move">move</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPosition.html#method_syncXY">                                        
+                                            <a class="" href="WidgetPosition.html#method_syncXY" property="yui:name" title="syncXY">syncXY</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
+                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Event.Target.html#method_addTarget">                                        
+                                            <a class="" href="Event.Target.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_after">                                        
+                                            <a class="" href="Event.Target.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_bubble">                                        
+                                            <a class="" href="Event.Target.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_fire">                                        
+                                            <a class="" href="Event.Target.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_getEvent">                                        
+                                            <a class="" href="Event.Target.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_publish">                                        
+                                            <a class="" href="Event.Target.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_removeTarget">                                        
+                                            <a class="" href="Event.Target.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_subscribe">                                        
+                                            <a class="" href="Event.Target.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribe">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribeAll">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
+                                <h4>Methods inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__addNodeHTML">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__addNodeHTML" property="yui:name" title="_addNodeHTML">_addNodeHTML</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__addNodeRef">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__addNodeRef" property="yui:name" title="_addNodeRef">_addNodeRef</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__afterBodyChange">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__afterBodyChange" property="yui:name" title="_afterBodyChange">_afterBodyChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__afterFillHeightChange">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__afterFillHeightChange" property="yui:name" title="_afterFillHeightChange">_afterFillHeightChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__afterFooterChange">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__afterFooterChange" property="yui:name" title="_afterFooterChange">_afterFooterChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__afterHeaderChange">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__afterHeaderChange" property="yui:name" title="_afterHeaderChange">_afterHeaderChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__bindUIStdMod">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__bindUIStdMod" property="yui:name" title="_bindUIStdMod">_bindUIStdMod</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__fillHeight">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__fillHeight" property="yui:name" title="_fillHeight">_fillHeight</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__findStdModSection">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__findStdModSection" property="yui:name" title="_findStdModSection">_findStdModSection</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__getPreciseHeight">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__getPreciseHeight" property="yui:name" title="_getPreciseHeight">_getPreciseHeight</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__getStdModContent">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__getStdModContent" property="yui:name" title="_getStdModContent">_getStdModContent</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__getStdModTemplate">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__getStdModTemplate" property="yui:name" title="_getStdModTemplate">_getStdModTemplate</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__insertStdModSection">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__insertStdModSection" property="yui:name" title="_insertStdModSection">_insertStdModSection</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__parseStdModHTML">                                        
+                                            <a class="private" href="WidgetStdMod.html#method__parseStdModHTML" property="yui:name" title="_parseStdModHTML">_parseStdModHTML</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__renderStdMod">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__renderStdMod" property="yui:name" title="_renderStdMod">_renderStdMod</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__renderUIStdMod">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__renderUIStdMod" property="yui:name" title="_renderUIStdMod">_renderUIStdMod</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__syncUIStdMod">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__syncUIStdMod" property="yui:name" title="_syncUIStdMod">_syncUIStdMod</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__uiSetFillHeight">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__uiSetFillHeight" property="yui:name" title="_uiSetFillHeight">_uiSetFillHeight</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__uiSetStdMod">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__uiSetStdMod" property="yui:name" title="_uiSetStdMod">_uiSetStdMod</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method__validateFillHeight">                                        
+                                            <a class="protected" href="WidgetStdMod.html#method__validateFillHeight" property="yui:name" title="_validateFillHeight">_validateFillHeight</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method_fillHeight">                                        
+                                            <a class="" href="WidgetStdMod.html#method_fillHeight" property="yui:name" title="fillHeight">fillHeight</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method_getStdModNode">                                        
+                                            <a class="" href="WidgetStdMod.html#method_getStdModNode" property="yui:name" title="getStdModNode">getStdModNode</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetStdMod.html#method_setStdModContent">                                        
+                                            <a class="" href="WidgetStdMod.html#method_setStdModContent" property="yui:name" title="setStdModContent">setStdModContent</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
+                            <h4>Events inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Widget.html#event_boundingBoxChange">
+                                        <a class="" href="Widget.html#event_boundingBoxChange" property="yui:name" title="boundingBoxChange">boundingBoxChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_contentBoxChange">
+                                        <a class="" href="Widget.html#event_contentBoxChange" property="yui:name" title="contentBoxChange">contentBoxChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_disabledChange">
+                                        <a class="" href="Widget.html#event_disabledChange" property="yui:name" title="disabledChange">disabledChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_hasFocusChange">
+                                        <a class="" href="Widget.html#event_hasFocusChange" property="yui:name" title="hasFocusChange">hasFocusChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_heightChange">
+                                        <a class="" href="Widget.html#event_heightChange" property="yui:name" title="heightChange">heightChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_localeChange">
+                                        <a class="" href="Widget.html#event_localeChange" property="yui:name" title="localeChange">localeChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_moveStylesChange">
+                                        <a class="" href="Widget.html#event_moveStylesChange" property="yui:name" title="moveStylesChange">moveStylesChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_renderedChange">
+                                        <a class="" href="Widget.html#event_renderedChange" property="yui:name" title="renderedChange">renderedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_stringsChange">
+                                        <a class="" href="Widget.html#event_stringsChange" property="yui:name" title="stringsChange">stringsChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_tabIndexChange">
+                                        <a class="" href="Widget.html#event_tabIndexChange" property="yui:name" title="tabIndexChange">tabIndexChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_visibleChange">
+                                        <a class="" href="Widget.html#event_visibleChange" property="yui:name" title="visibleChange">visibleChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_widget:contentUpdate">
+                                        <a class="" href="Widget.html#event_widget:contentUpdate" property="yui:name" title="widget:contentUpdate">widget:contentUpdate</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_widget:render">
+                                        <a class="" href="Widget.html#event_widget:render" property="yui:name" title="widget:render">widget:render</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_widthChange">
+                                        <a class="" href="Widget.html#event_widthChange" property="yui:name" title="widthChange">widthChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
+                            <h4>Events inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="WidgetPositionExt.html#event_alignChange">
+                                        <a class="" href="WidgetPositionExt.html#event_alignChange" property="yui:name" title="alignChange">alignChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetPositionExt.html#event_centeredChange">
+                                        <a class="" href="WidgetPositionExt.html#event_centeredChange" property="yui:name" title="centeredChange">centeredChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
+                            <h4>Events inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="WidgetStack.html#event_shimChange">
+                                        <a class="" href="WidgetStack.html#event_shimChange" property="yui:name" title="shimChange">shimChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetStack.html#event_zIndexChange">
+                                        <a class="" href="WidgetStack.html#event_zIndexChange" property="yui:name" title="zIndexChange">zIndexChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
+                            <h4>Events inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="WidgetStdMod.html#event_bodyContentChange">
+                                        <a class="" href="WidgetStdMod.html#event_bodyContentChange" property="yui:name" title="bodyContentChange">bodyContentChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetStdMod.html#event_fillHeightChange">
+                                        <a class="" href="WidgetStdMod.html#event_fillHeightChange" property="yui:name" title="fillHeightChange">fillHeightChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetStdMod.html#event_footerContentChange">
+                                        <a class="" href="WidgetStdMod.html#event_footerContentChange" property="yui:name" title="footerContentChange">footerContentChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetStdMod.html#event_headerContentChange">
+                                        <a class="" href="WidgetStdMod.html#event_headerContentChange" property="yui:name" title="headerContentChange">headerContentChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPosition.html">
+                            <h4>Events inherited from <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="WidgetPosition.html#event_xChange">
+                                        <a class="" href="WidgetPosition.html#event_xChange" property="yui:name" title="xChange">xChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetPosition.html#event_xyChange">
+                                        <a class="" href="WidgetPosition.html#event_xyChange" property="yui:name" title="xyChange">xyChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetPosition.html#event_yChange">
+                                        <a class="" href="WidgetPosition.html#event_yChange" property="yui:name" title="yChange">yChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
+                            <h4>Configuration attributes inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Widget.html#config_boundingBox">                                        
+                                        <a class="" href="Widget.html#config_boundingBox" property="yui:name" title="boundingBox">boundingBox</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_contentBox">                                        
+                                        <a class="" href="Widget.html#config_contentBox" property="yui:name" title="contentBox">contentBox</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_disabled">                                        
+                                        <a class="" href="Widget.html#config_disabled" property="yui:name" title="disabled">disabled</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_hasFocus">                                        
+                                        <a class="" href="Widget.html#config_hasFocus" property="yui:name" title="hasFocus">hasFocus</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_height">                                        
+                                        <a class="" href="Widget.html#config_height" property="yui:name" title="height">height</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_locale">                                        
+                                        <a class="" href="Widget.html#config_locale" property="yui:name" title="locale">locale</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_moveStyles">                                        
+                                        <a class="" href="Widget.html#config_moveStyles" property="yui:name" title="moveStyles">moveStyles</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_rendered">                                        
+                                        <a class="" href="Widget.html#config_rendered" property="yui:name" title="rendered">rendered</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_strings">                                        
+                                        <a class="" href="Widget.html#config_strings" property="yui:name" title="strings">strings</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_tabIndex">                                        
+                                        <a class="" href="Widget.html#config_tabIndex" property="yui:name" title="tabIndex">tabIndex</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_visible">                                        
+                                        <a class="" href="Widget.html#config_visible" property="yui:name" title="visible">visible</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_width">                                        
+                                        <a class="" href="Widget.html#config_width" property="yui:name" title="width">width</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
+                            <h4>Configuration attributes inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="WidgetPositionExt.html#config_align">                                        
+                                        <a class="" href="WidgetPositionExt.html#config_align" property="yui:name" title="align">align</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetPositionExt.html#config_centered">                                        
+                                        <a class="" href="WidgetPositionExt.html#config_centered" property="yui:name" title="centered">centered</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
+                            <h4>Configuration attributes inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="WidgetStack.html#config_shim">                                        
+                                        <a class="" href="WidgetStack.html#config_shim" property="yui:name" title="shim">shim</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetStack.html#config_zIndex">                                        
+                                        <a class="" href="WidgetStack.html#config_zIndex" property="yui:name" title="zIndex">zIndex</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
+                            <h4>Configuration attributes inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="WidgetStdMod.html#config_bodyContent">                                        
+                                        <a class="" href="WidgetStdMod.html#config_bodyContent" property="yui:name" title="bodyContent">bodyContent</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetStdMod.html#config_fillHeight">                                        
+                                        <a class="" href="WidgetStdMod.html#config_fillHeight" property="yui:name" title="fillHeight">fillHeight</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetStdMod.html#config_footerContent">                                        
+                                        <a class="" href="WidgetStdMod.html#config_footerContent" property="yui:name" title="footerContent">footerContent</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetStdMod.html#config_headerContent">                                        
+                                        <a class="" href="WidgetStdMod.html#config_headerContent" property="yui:name" title="headerContent">headerContent</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPosition.html">
+                            <h4>Configuration attributes inherited from <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="WidgetPosition.html#config_x">                                        
+                                        <a class="" href="WidgetPosition.html#config_x" property="yui:name" title="x">x</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetPosition.html#config_xy">                                        
+                                        <a class="" href="WidgetPosition.html#config_xy" property="yui:name" title="xy">xy</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetPosition.html#config_y">                                        
+                                        <a class="" href="WidgetPosition.html#config_y" property="yui:name" title="y">y</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class="selected"><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Overlay.html" title="Overlay">Overlay</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Overlay.js.html" title="Overlay.js">Overlay.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [];
+</script>
+</body>
+</html>

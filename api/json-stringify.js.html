@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: json   json-stringify.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052355.92" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052355.92" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052355.92"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052355.92"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>json&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_json.html" title="json">json</a>
+                
+                 &gt; json-stringify.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Provides Y.JSON.stringify method for converting objects to JSON strings.</span>
+<span class="c"> * @module json</span>
+<span class="c"> * @submodule json-stringify</span>
+<span class="c"> * @for JSON</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="k">var</span> <span class="nx">isA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">||</span> <span class="o">{};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">,{</span>
+    <span class="c">/**</span>
+<span class="c">     * Regex used to capture characters that need escaping before enclosing</span>
+<span class="c">     * their containing string in quotes.</span>
+<span class="c">     * @property _SPECIAL_CHARS</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">_SPECIAL_CHARS</span> <span class="o">:</span> <span class="sr">/[\\\&quot;\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Character substitution map for common escapes and special characters.</span>
+<span class="c">     * @property _CHARS</span>
+<span class="c">     * @type {Object}</span>
+<span class="c">     * @static</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">_CHARS</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="s1">&#39;\b&#39;</span><span class="o">:</span> <span class="s1">&#39;\\b&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;\t&#39;</span><span class="o">:</span> <span class="s1">&#39;\\t&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;\n&#39;</span><span class="o">:</span> <span class="s1">&#39;\\n&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;\f&#39;</span><span class="o">:</span> <span class="s1">&#39;\\f&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;\r&#39;</span><span class="o">:</span> <span class="s1">&#39;\\r&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;&quot;&#39;</span> <span class="o">:</span> <span class="s1">&#39;\\&quot;&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;\\&#39;</span><span class="o">:</span> <span class="s1">&#39;\\\\&#39;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Serializes a Date instance as a UTC date string.  Used internally by</span>
+<span class="c">     * stringify.  Override this method if you need Dates serialized in a</span>
+<span class="c">     * different format.</span>
+<span class="c">     * @method dateToString</span>
+<span class="c">     * @param d {Date} The Date to serialize</span>
+<span class="c">     * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">dateToString</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">function</span> <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">v</span> <span class="o">&lt;</span> <span class="m">10</span> <span class="o">?</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">v</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="o">.</span><span class="nx">getUTCFullYear</span><span class="o">()</span>   <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span>
+            <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">getUTCMonth</span><span class="o">()</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span>
+            <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">getUTCDate</span><span class="o">())</span>      <span class="o">+</span> <span class="s1">&#39;T&#39;</span> <span class="o">+</span>
+            <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">getUTCHours</span><span class="o">())</span>     <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span>
+            <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">getUTCMinutes</span><span class="o">())</span>   <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span>
+            <span class="nx">_zeroPad</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">getUTCSeconds</span><span class="o">())</span>   <span class="o">+</span> <span class="s1">&#39;Z&quot;&#39;</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Converts an arbitrary value to a JSON string representation.</span>
+<span class="c">     * Cyclical object or array references are replaced with null.</span>
+<span class="c">     * If a whitelist is provided, only matching object keys will be included.</span>
+<span class="c">     * If a depth limit is provided, objects and arrays at that depth will</span>
+<span class="c">     * be stringified as empty.</span>
+<span class="c">     * @method stringify</span>
+<span class="c">     * @param o {MIXED} any arbitrary object to convert to JSON string</span>
+<span class="c">     * @param w {Array|Function} (optional) whitelist of acceptable object</span>
+<span class="c">     *                  keys to include, or a replacer function to modify the</span>
+<span class="c">     *                  raw value before serialization</span>
+<span class="c">     * @param d {number} (optional) depth limit to recurse objects/arrays</span>
+<span class="c">     *                   (practical minimum 1)</span>
+<span class="c">     * @return {string} JSON string representation of the input</span>
+<span class="c">     * @static</span>
+<span class="c">     * @public</span>
+<span class="c">     */</span>
+    <span class="nx">stringify</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">w</span><span class="o">,</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">m</span>      <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">_CHARS</span><span class="o">,</span>
+            <span class="nx">str_re</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">_SPECIAL_CHARS</span><span class="o">,</span>
+            <span class="nx">rep</span>    <span class="o">=</span> <span class="k">typeof</span> <span class="nx">w</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">pstack</span> <span class="o">=</span> <span class="o">[];</span> <span class="c">// Processing stack used for cyclical ref protection</span>
+<span class="c"></span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">rep</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">w</span> <span class="o">!==</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">w</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="c">// escape encode special characters</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">_char</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">m</span><span class="o">[</span><span class="nx">c</span><span class="o">])</span> <span class="o">{</span>
+                <span class="nx">m</span><span class="o">[</span><span class="nx">c</span><span class="o">]=</span><span class="s1">&#39;\\u&#39;</span><span class="o">+(</span><span class="s1">&#39;0000&#39;</span><span class="o">+(+(</span><span class="nx">c</span><span class="o">.</span><span class="nx">charCodeAt</span><span class="o">(</span><span class="m">0</span><span class="o">))).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">)).</span><span class="nx">slice</span><span class="o">(-</span><span class="m">4</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">m</span><span class="o">[</span><span class="nx">c</span><span class="o">];</span>
+        <span class="o">};</span>
+
+        <span class="c">// Enclose the escaped string in double quotes</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">_string</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">str_re</span><span class="o">,</span> <span class="nx">_char</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="o">;</span>
+        <span class="o">};</span>
+
+        <span class="c">// Use the configured date conversion</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">_date</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">dateToString</span><span class="o">;</span>
+    
+        <span class="c">// Worker function.  Fork behavior on data type and recurse objects and</span>
+<span class="c"></span>        <span class="c">// arrays per the configured depth.</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">_stringify</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">h</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">rep</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">rep</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">h</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">:</span> <span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">],</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span><span class="nx">len</span><span class="o">,</span><span class="nx">j</span><span class="o">,</span> <span class="c">// array iteration</span>
+<span class="c"></span>                <span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">,</span>     <span class="c">// object iteration</span>
+<span class="c"></span>                <span class="nx">a</span><span class="o">;</span>       <span class="c">// composition array for performance over string concat</span>
+<span class="c"></span>
+            <span class="c">// String</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">_string</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// native boolean and Boolean instance</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;boolean&#39;</span> <span class="o">||</span> <span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">Boolean</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nb">String</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// native number and Number instance</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span> <span class="o">||</span> <span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">Number</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nb">isFinite</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nb">String</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">:</span> <span class="s1">&#39;null&#39;</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="c">// Date</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">_date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// Object types</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="s1">&#39;null&#39;</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="c">// Check for cyclical references</span>
+<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">pstack</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">pstack</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="s1">&#39;null&#39;</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="c">// Add the object to the processing stack</span>
+<span class="c"></span>                <span class="nx">pstack</span><span class="o">[</span><span class="nx">pstack</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+
+                <span class="nx">a</span> <span class="o">=</span> <span class="o">[];</span>
+
+                <span class="c">// Only recurse if we&#39;re above depth config</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// Array</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">isA</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_stringify</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">i</span><span class="o">,</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">||</span> <span class="s1">&#39;null&#39;</span><span class="o">;</span>
+                        <span class="o">}</span>
+
+                    <span class="c">// Object</span>
+<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="c">// If whitelist provided, take only those keys</span>
+<span class="c"></span>                        <span class="nx">k</span> <span class="o">=</span> <span class="nx">isA</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">w</span><span class="o">||</span><span class="nx">o</span><span class="o">);</span>
+
+                        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">v</span> <span class="o">=</span> <span class="nx">_stringify</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">);</span>
+                                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                                    <span class="nx">a</span><span class="o">[</span><span class="nx">j</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">_string</span><span class="o">(</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
+                                <span class="o">}</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+
+                        <span class="nx">a</span><span class="o">.</span><span class="nx">sort</span><span class="o">();</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="c">// remove the array from the stack</span>
+<span class="c"></span>                <span class="nx">pstack</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
+
+                <span class="k">return</span> <span class="nx">isA</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;[&#39;</span><span class="o">+</span><span class="nx">a</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">)+</span><span class="s1">&#39;]&#39;</span> <span class="o">:</span> <span class="s1">&#39;{&#39;</span><span class="o">+</span><span class="nx">a</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">)+</span><span class="s1">&#39;}&#39;</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="kc">undefined</span><span class="o">;</span> <span class="c">// invalid input</span>
+<span class="c"></span>        <span class="o">};</span>
+
+        <span class="c">// Default depth to POSITIVE_INFINITY</span>
+<span class="c"></span>        <span class="nx">d</span> <span class="o">=</span> <span class="nx">d</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">?</span> <span class="nx">d</span> <span class="o">:</span> <span class="m">1</span><span class="o">/</span><span class="m">0</span><span class="o">;</span>
+
+        <span class="c">// process the input</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">_stringify</span><span class="o">({</span><span class="s1">&#39;&#39;</span><span class="o">:</span><span class="nx">o</span><span class="o">},</span><span class="s1">&#39;&#39;</span><span class="o">,</span><span class="nx">d</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class="selected"><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="JSON.html" title="JSON">JSON</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="json-parse.js.html" title="json-parse.js">json-parse.js</a></li>
+                                <li class="selected"><a href="json-stringify.js.html" title="json-stringify.js">json-stringify.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+</script>
+</body>
+</html>

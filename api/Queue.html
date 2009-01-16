@@ -1,36 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: queue  Queue   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052355.69" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052355.69" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052355.69"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052355.69"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>queue&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_queue.html">queue</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>queue&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_queue.html" title="queue">queue</a>
                  &gt; Queue 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -38,21 +48,17 @@
 
                         
                         
-                            Class <b>Queue</b>
+                            Class <b property="yui:name">Queue</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
-                        </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
                 
   
 
-                    <div class="summary description">
+                    <div class="summary description" property="yui:description">
                         Mechanism to execute a series of callbacks in a non-blocking queue.  Each
 callback is executed via setTimout unless configured with a negative
 timeout, in which case it is run in blocking mode in the same execution
@@ -62,15 +68,15 @@ object literals with the following keys:
 <li><code>fn</code> - {Function} REQUIRED the callback function.</li>
 <li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
 <li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
-<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
+<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>
 </ul>
                     </div>
 
-                        <div class="section constructor details">
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong>Queue</strong>
+                                <strong property="yui:name">Queue</strong>
                                 <code>
                                     (
   
@@ -80,13 +86,13 @@ object literals with the following keys:
                                     )
                                 </code>
                                 <div class="description">
-                                        <dl>
+                                        <dl rel="yui:parameters">
                                             <dt>Parameters:</dt>
-                                                <dd>
-                                                    <code>callback*
-                                                    &lt;Function|Object&gt; 
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">callback*</span>
+                                                    &lt;<span property="yui:type">Function|Object</span>&gt;
                                                     </code>
-                                                      Any number of callbacks to initialize the queue
+                                                    <span property="yui:description">  Any number of callbacks to initialize the queue</span>
                                                 </dd>
                                         </dl>
                                     
@@ -95,16 +101,17 @@ object literals with the following keys:
                             </div>
                         </div>
                     </div>
-
+                    
+                    <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="protected">
-                                    <h4><a name="property_id">id</a>
-                                        <code>- protected {number}</code>
+                                    <div class="protected" rel="yui:property" resource="#property_id">
+                                    <h4><a name="property_id" property="yui:name">id</a>
+                                        - <code>protected <span property="yui:type">{number}</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Timeout id used to pause or stop execution and indicate the execution
 state of the Queue.  0 indicates paused or stopped, negatives indicate
 blocking execution, and positives indicate non-blocking execution.
@@ -116,12 +123,12 @@ blocking execution, and positives indicate non-blocking execution.
 
                                     <hr />
                                     </div>
-                                    <div class="protected">
-                                    <h4><a name="property_q">q</a>
-                                        <code>- protected {Array}</code>
+                                    <div class="protected" rel="yui:property" resource="#property_q">
+                                    <h4><a name="property_q" property="yui:name">q</a>
+                                        - <code>protected <span property="yui:type">{Array}</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             The callback queue
                                         </div>
                                     </div>
@@ -131,25 +138,25 @@ blocking execution, and positives indicate non-blocking execution.
 
                                     <hr />
                                     </div>
-
-
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected">
+                                    <div class="protected" rel="yui:method" resource="#method__exec">
                                     <h4>
                                         <a name="method__exec">_exec</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong>_exec</strong>
+                                            <strong property="yui:name">_exec</strong>
                                            (
                                                 
                                                         
@@ -163,30 +170,34 @@ blocking execution, and positives indicate non-blocking execution.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Executes the callback function
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                              the function to execute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Object|Function&gt;</code>
-                                                              the callback as defined during add(c)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Object|Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the callback as defined during add(c)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -197,21 +208,21 @@ blocking execution, and positives indicate non-blocking execution.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__shift">
                                     <h4>
                                         <a name="method__shift">_shift</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_shift</strong>
+                                            <strong property="yui:name">_shift</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Shifts the first callback off the Queue
                                         </div>
 
@@ -220,10 +231,10 @@ blocking execution, and positives indicate non-blocking execution.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -234,45 +245,47 @@ blocking execution, and positives indicate non-blocking execution.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_add">
                                     <h4>
                                         <a name="method_add">add</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Queue
-                                            <strong>add</strong>
+                                            <strong property="yui:name">add</strong>
                                            (
                                                 
                                                         
-                                                         c
+                                                         callback*
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Add any number of callbacks to the end of the queue
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>c &lt;Function|Object&gt;</code>
-                                                             * Any number of callbacks
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">callback*</span>
+                                                        &lt;<span property="yui:type">Function|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Any number of callbacks</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Queue
                                                     </code></dt>
-                                                    <dd>the Queue instance</dd>
+                                                    <dd property="yui:returnInfo">the Queue instance</dd>
                                                 </dl>
 
 
@@ -283,25 +296,25 @@ blocking execution, and positives indicate non-blocking execution.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_pause">
                                     <h4>
                                         <a name="method_pause">pause</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Queue
-                                            <strong>pause</strong>
+                                            <strong property="yui:name">pause</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Pause the execution of the Queue after the current execution of the
-current callback completes.  If called interstitially, clears the
-timeout for the pending callback. Paused Queue can be restarted with
-chain.run()
+                                        <div class="description" property="yui:description">
+                                            Pause the execution of the Queue after the execution of the current
+callback completes.  If called from code outside of a queued callback,
+clears the timeout for the pending callback. Paused Queue can be
+restarted with q.run()
                                         </div>
 
                                         <div class="description">
@@ -309,10 +322,10 @@ chain.run()
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Queue
                                                     </code></dt>
-                                                    <dd>the Queue instance</dd>
+                                                    <dd property="yui:returnInfo">the Queue instance</dd>
                                                 </dl>
 
 
@@ -323,21 +336,21 @@ chain.run()
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_run">
                                     <h4>
                                         <a name="method_run">run</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Queue
-                                            <strong>run</strong>
+                                            <strong property="yui:name">run</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Execute the queue callbacks (also resumes paused Queue).
                                         </div>
 
@@ -346,10 +359,10 @@ chain.run()
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Queue
                                                     </code></dt>
-                                                    <dd>the Queue instance</dd>
+                                                    <dd property="yui:returnInfo">the Queue instance</dd>
                                                 </dl>
 
 
@@ -360,21 +373,21 @@ chain.run()
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_stop">
                                     <h4>
                                         <a name="method_stop">stop</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Queue
-                                            <strong>stop</strong>
+                                            <strong property="yui:name">stop</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Stop and clear the Queue's queue after the current execution of the
 current callback completes.
                                         </div>
@@ -384,10 +397,10 @@ current callback completes.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Queue
                                                     </code></dt>
-                                                    <dd>the Queue instance</dd>
+                                                    <dd property="yui:returnInfo">the Queue instance</dd>
                                                 </dl>
 
 
@@ -401,11 +414,13 @@ current callback completes.
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:events" resource="#events">
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_addCallback">
                                     <h4>
                                         <a name="event_addCallback">addCallback</a></h4>
                                     <div class="detail">
@@ -413,7 +428,7 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>addCallback</strong>
+                                            <strong property="yui:name">addCallback</strong>
 
                                             (
                                                 
@@ -425,19 +440,22 @@ current callback completes.
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired from within <code>add(..)</code> after callbacks are queued
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>callbacks &lt;Array&gt;</code>
-                                                              Array of callbacks passed to <code>add(..)</code>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">callbacks</span>
+                                                                &lt;<span property="yui:type">Array</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Array of callbacks passed to <code>add(..)</code></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -446,7 +464,7 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_afterCallback">
                                     <h4>
                                         <a name="event_afterCallback">afterCallback</a></h4>
                                     <div class="detail">
@@ -454,7 +472,7 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>afterCallback</strong>
+                                            <strong property="yui:name">afterCallback</strong>
 
                                             (
                                                 
@@ -466,23 +484,26 @@ current callback completes.
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired before a callback is executed
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;Object&gt;</code>
-                                                              Object literal with the following keys:
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">o</span>
+                                                                &lt;<span property="yui:type">Object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Object literal with the following keys:
 <dl>
 <dt>fn</dt><dd>The function just executed</dd>
 <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-</dl>
+</dl></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -491,7 +512,7 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_beforeCallback">
                                     <h4>
                                         <a name="event_beforeCallback">beforeCallback</a></h4>
                                     <div class="detail">
@@ -499,7 +520,7 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>beforeCallback</strong>
+                                            <strong property="yui:name">beforeCallback</strong>
 
                                             (
                                                 
@@ -511,23 +532,26 @@ current callback completes.
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired before a callback is executed
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;Object&gt;</code>
-                                                              Object literal with the following keys:
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">o</span>
+                                                                &lt;<span property="yui:type">Object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Object literal with the following keys:
 <dl>
 <dt>fn</dt><dd>The function about to be executed</dd>
 <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-</dl>
+</dl></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -536,24 +560,24 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_end">
                                     <h4>
-                                        <a name="event_complete">complete</a></h4>
+                                        <a name="event_end">end</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong>complete</strong>
+                                            <strong property="yui:name">end</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
-                                            Event fired when the callback queue is emptied via execution
-(not via a call to chain.stop()).
+                                        <div class="description" property="yui:description">
+                                            Event fired after the last queued callback is executed.  Not
+fired if the Queue is stopped via q.stop().
                                         </div>
 
                                         <div class="description">
@@ -566,7 +590,7 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_pause">
                                     <h4>
                                         <a name="event_pause">pause</a></h4>
                                     <div class="detail">
@@ -574,14 +598,14 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>pause</strong>
+                                            <strong property="yui:name">pause</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired after Queue is paused
                                         </div>
 
@@ -595,7 +619,7 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_shiftCallback">
                                     <h4>
                                         <a name="event_shiftCallback">shiftCallback</a></h4>
                                     <div class="detail">
@@ -603,7 +627,7 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>shiftCallback</strong>
+                                            <strong property="yui:name">shiftCallback</strong>
 
                                             (
                                                 
@@ -615,19 +639,22 @@ current callback completes.
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired after a callback is shifted from the Queue
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>callback &lt;Function|Object&gt;</code>
-                                                              The callback passed to <code>add(..)</code>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">callback</span>
+                                                                &lt;<span property="yui:type">Function|Object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  The callback passed to <code>add(..)</code></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -636,7 +663,7 @@ current callback completes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_stop">
                                     <h4>
                                         <a name="event_stop">stop</a></h4>
                                     <div class="detail">
@@ -644,14 +671,14 @@ current callback completes.
                                         
                                         
                                         
-                                            <strong>stop</strong>
+                                            <strong property="yui:name">stop</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fired after Queue is stopped
                                         </div>
 
@@ -669,120 +696,97 @@ current callback completes.
                         </div>
 
 
+                    </div>
 
+                    <div rel="yui:attributes" resource="#configattributes">
 
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class="selected"><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class="selected"><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="Queue.html">Queue</a></li>
+                                <li class="selected"><a href="Queue.html" title="Queue">Queue</a></li>
+                                <li class="selected"><a href="Queue.html" title="Queue">Queue</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Queue.js.html">Queue.js</a></li>
+                                <li class=""><a href="Queue.js.html" title="Queue.js">Queue.js</a></li>
+                                <li class=""><a href="queue.js.html" title="queue.js">queue.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#property_id">id</a>
-                                        <!--<code>&lt;{Array}&gt;</code>-->
-                                </li>
-                                <li class="protected"><a href="#property_q">q</a>
-                                        <!--<code>&lt;{Array}&gt;</code>-->
-                                </li>
+                                <li class="protected"><a href="#property_id" title="id">id</a></li>
+                                <li class="protected"><a href="#property_q" title="q">q</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><!--<code>void</code>-->
-                                <a href="#method__exec">_exec</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__shift">_shift</a>
-                                </li>
-                                <li class=""><!--<code>Queue</code>-->
-                                <a href="#method_add">add</a>
-                                </li>
-                                <li class=""><!--<code>Queue</code>-->
-                                <a href="#method_pause">pause</a>
-                                </li>
-                                <li class=""><!--<code>Queue</code>-->
-                                <a href="#method_run">run</a>
-                                </li>
-                                <li class=""><!--<code>Queue</code>-->
-                                <a href="#method_stop">stop</a>
-                                </li>
+                                <li class="protected"><a href="#method__exec" title="_exec">_exec</a></li>
+                                <li class="private"><a href="#method__shift" title="_shift">_shift</a></li>
+                                <li class=""><a href="#method_add" title="add">add</a></li>
+                                <li class=""><a href="#method_pause" title="pause">pause</a></li>
+                                <li class=""><a href="#method_run" title="run">run</a></li>
+                                <li class=""><a href="#method_stop" title="stop">stop</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#event_addCallback">addCallback</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_afterCallback">afterCallback</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeCallback">beforeCallback</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_complete">complete</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_pause">pause</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_shiftCallback">shiftCallback</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_stop">stop</a>
-                                </li>
+                                <li class=""><a href="#event_addCallback" title="addCallback">addCallback</a></li>
+                                <li class=""><a href="#event_afterCallback" title="afterCallback">afterCallback</a></li>
+                                <li class=""><a href="#event_beforeCallback" title="beforeCallback">beforeCallback</a></li>
+                                <li class=""><a href="#event_end" title="end">end</a></li>
+                                <li class=""><a href="#event_pause" title="pause">pause</a></li>
+                                <li class=""><a href="#event_shiftCallback" title="shiftCallback">shiftCallback</a></li>
+                                <li class=""><a href="#event_stop" title="stop">stop</a></li>
                         </ul>
                     </div>
 
@@ -792,8 +796,11 @@ current callback completes.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
+</script>
 </body>
 </html>

@@ -1,35 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: json   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052355.92" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052355.92" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052355.92"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052355.92"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>json&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_json.html">json</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>json&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_json.html" title="json">json</a>
                 
                 
-            </p>
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                    
@@ -39,87 +50,98 @@
 
                     </h3>
                     <div class="description summary">
-                        Provides Y.JSON.stringify method for converting objects to JSON strings.
+                        The JSON Utility provides methods to serialize JavaScript objects into
+JSON strings and parse JavaScript objects from strings containing JSON data.
+Three modules are available for inclusion:
+<ol>
+<li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
+<li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
+<li>3. <code>json</code> for both parsing and stringification</li>
+</ol>
+Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
                     </div>
 
-                    <form onsubmit="return false">
-                        <p>Search json:
-                        <div id="propertysearch">
-                            <input autocomplete="off" id="searchinput" />
-                            <div id="searchresults">
-                                &nbsp;
-                            </div>
-                        </div>
-                    </form>
-                    <script type="text/javascript">
-                        ALL_YUI_PROPS = [{"url": "JSON.html#property__BRACKETS", "access": "private", "host": "JSON", "name": "_BRACKETS"}, {"url": "JSON.html#property__BRACKETS", "access": "private", "host": "JSON", "name": "_BRACKETS"}, {"url": "JSON.html#property__CHARS", "access": "private", "host": "JSON", "name": "_CHARS"}, {"url": "JSON.html#property__CHARS", "access": "private", "host": "JSON", "name": "_CHARS"}, {"url": "JSON.html#method_dateToString", "access": "", "host": "JSON", "name": "dateToString"}, {"url": "JSON.html#method_dateToString", "access": "", "host": "JSON", "name": "dateToString"}, {"url": "JSON.html#property__ESCAPES", "access": "private", "host": "JSON", "name": "_ESCAPES"}, {"url": "JSON.html#property__ESCAPES", "access": "private", "host": "JSON", "name": "_ESCAPES"}, {"url": "JSON.html#property__INVALID", "access": "private", "host": "JSON", "name": "_INVALID"}, {"url": "JSON.html#property__INVALID", "access": "private", "host": "JSON", "name": "_INVALID"}, {"url": "JSON.html#method_parse", "access": "", "host": "JSON", "name": "parse"}, {"url": "JSON.html#method_parse", "access": "", "host": "JSON", "name": "parse"}, {"url": "JSON.html#method__revive", "access": "private", "host": "JSON", "name": "_revive"}, {"url": "JSON.html#method__revive", "access": "private", "host": "JSON", "name": "_revive"}, {"url": "JSON.html#property__SPECIAL_CHARS", "access": "private", "host": "JSON", "name": "_SPECIAL_CHARS"}, {"url": "JSON.html#property__SPECIAL_CHARS", "access": "private", "host": "JSON", "name": "_SPECIAL_CHARS"}, {"url": "JSON.html#method_stringify", "access": "", "host": "JSON", "name": "stringify"}, {"url": "JSON.html#method_stringify", "access": "", "host": "JSON", "name": "stringify"}, {"url": "JSON.html#property__VALUES", "access": "private", "host": "JSON", "name": "_VALUES"}, {"url": "JSON.html#property__VALUES", "access": "private", "host": "JSON", "name": "_VALUES"}];
-                    </script>
 
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The JSON Utility provides methods to serialize JavaScript objects into\nJSON strings and parse JavaScript objects from strings containing JSON data.\nThree modules are available for inclusion:\n<ol>\n<li>1. <code>json-parse<\/code> for parsing JSON strings into native JavaScript data<\/li>\n<li>2. <code>json-stringify<\/code> for stringification of JavaScript objects into JSON strings<\/li>\n<li>3. <code>json<\/code> for both parsing and stringification<\/li>\n<\/ol>\nBoth <code>json-parse<\/code> and <code>json-stringify<\/code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).", "guessedname": "JSON", "name": "JSON"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="JSON.html" title="JSON" id="class_0">JSON</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code><a href="JSON.html" title="json-stringify">json-stringify</a></code></dt>
+                                            <dd>Provides Y.JSON.stringify method for converting objects to JSON strings.</dd>
+                                            <dt><code><a href="JSON.html" title="json-parse">json-parse</a></code></dt>
+                                            <dd>Provides Y.JSON.parse method to take JSON strings and return native
+JavaScript objects.</dd>
+                                        </dl>
+                                    </div>
+
+                        </div>
+                </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class="selected"><a href="module_json.html">json</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
-
-                                <li class=""><a href="module_Queue.html">Queue</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class="selected"><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="JSON.html">JSON</a></li>
-                                <li class=""><a href="JSON.html">JSON</a></li>
+                                <li class=""><a href="JSON.html" title="JSON">JSON</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="dump.js.html">dump.js</a></li>
-                                <li class=""><a href="Parse.js.html">Parse.js</a></li>
-                                <li class=""><a href="Stringify.js.html">Stringify.js</a></li>
-                                <li class=""><a href="substitute.js.html">substitute.js</a></li>
+                                <li class=""><a href="json-parse.js.html" title="json-parse.js">json-parse.js</a></li>
+                                <li class=""><a href="json-stringify.js.html" title="json-stringify.js">json-stringify.js</a></li>
                         </ul>
                     </div>
 
@@ -132,8 +154,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+</script>
 </body>
 </html>

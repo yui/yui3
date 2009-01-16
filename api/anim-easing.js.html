@@ -1,41 +1,51 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: anim   anim-easing.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052356.21" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052356.21" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052356.21"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052356.21"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>anim&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_anim.html">anim</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>anim&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_anim.html" title="anim">anim</a>
                 
                  &gt; anim-easing.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/*</span>
 <span class="c">TERMS OF USE - EASING EQUATIONS</span>
@@ -54,6 +64,7 @@
 <span class="c">/**</span>
 <span class="c"> * The easing module provides methods for customizing</span>
 <span class="c"> * how an animation behaves during each run.</span>
+<span class="c"> * @class Easing</span>
 <span class="c"> * @module anim</span>
 <span class="c"> * @submodule anim-easing</span>
 <span class="c"> */</span>
@@ -281,7 +292,7 @@
 <span class="c">     * @return {Number} The computed value for the current animation frame</span>
 <span class="c">     */</span>
     <span class="nx">backIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span>
         <span class="o">}</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
@@ -385,56 +396,58 @@
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class="selected"><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class="selected"><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Anim.html">Anim</a></li>
-                                <li class=""><a href="Y.Anim.html">Y.Anim</a></li>
+                                <li class=""><a href="Easing.html" title="Easing">Easing</a></li>
+                                <li class=""><a href="plugin.Anim.html" title="plugin.Anim">plugin.Anim</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="anim-color.js.html">anim-color.js</a></li>
-                                <li class=""><a href="anim-curve.js.html">anim-curve.js</a></li>
-                                <li class="selected"><a href="anim-easing.js.html">anim-easing.js</a></li>
-                                <li class=""><a href="anim-node-plugin.js.html">anim-node-plugin.js</a></li>
-                                <li class=""><a href="anim-scroll.js.html">anim-scroll.js</a></li>
-                                <li class=""><a href="anim-xy.js.html">anim-xy.js</a></li>
-                                <li class=""><a href="anim.js.html">anim.js</a></li>
+                                <li class=""><a href="anim-color.js.html" title="anim-color.js">anim-color.js</a></li>
+                                <li class=""><a href="anim-curve.js.html" title="anim-curve.js">anim-curve.js</a></li>
+                                <li class="selected"><a href="anim-easing.js.html" title="anim-easing.js">anim-easing.js</a></li>
+                                <li class=""><a href="anim-node-plugin.js.html" title="anim-node-plugin.js">anim-node-plugin.js</a></li>
+                                <li class=""><a href="anim-scroll.js.html" title="anim-scroll.js">anim-scroll.js</a></li>
+                                <li class=""><a href="anim-xy.js.html" title="anim-xy.js">anim-xy.js</a></li>
+                                <li class=""><a href="anim.js.html" title="anim.js">anim.js</a></li>
                         </ul>
                     </div>
 
@@ -447,8 +460,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Easing", "name": "backBoth", "url": "Easing.html#method_backBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "backIn", "url": "Easing.html#method_backIn", "type": "method"}, {"access": "", "host": "Easing", "name": "backOut", "url": "Easing.html#method_backOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "behaviors", "url": "plugin.Anim.html#property_behaviors", "type": "property"}, {"access": "", "host": "Easing", "name": "bounceBoth", "url": "Easing.html#method_bounceBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceIn", "url": "Easing.html#method_bounceIn", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceOut", "url": "Easing.html#method_bounceOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_GETTER", "url": "plugin.Anim.html#property_DEFAULT_GETTER", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_SETTER", "url": "plugin.Anim.html#property_DEFAULT_SETTER", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_UNIT", "url": "plugin.Anim.html#property_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "direction", "url": "plugin.Anim.html#config_direction", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "directionChange", "url": "plugin.Anim.html#event_directionChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "duration", "url": "plugin.Anim.html#config_duration", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "durationChange", "url": "plugin.Anim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Easing", "name": "easeBoth", "url": "Easing.html#method_easeBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBothStrong", "url": "Easing.html#method_easeBothStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeIn", "url": "Easing.html#method_easeIn", "type": "method"}, {"access": "", "host": "Easing", "name": "easeInStrong", "url": "Easing.html#method_easeInStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeNone", "url": "Easing.html#method_easeNone", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOut", "url": "Easing.html#method_easeOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOutStrong", "url": "Easing.html#method_easeOutStrong", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "easing", "url": "plugin.Anim.html#config_easing", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "easingChange", "url": "plugin.Anim.html#event_easingChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "elapsedTime", "url": "plugin.Anim.html#config_elapsedTime", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "elapsedTimeChange", "url": "plugin.Anim.html#event_elapsedTimeChange", "type": "event"}, {"access": "", "host": "Easing", "name": "elasticBoth", "url": "Easing.html#method_elasticBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticIn", "url": "Easing.html#method_elasticIn", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticOut", "url": "Easing.html#method_elasticOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "end", "url": "plugin.Anim.html#event_end", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "from", "url": "plugin.Anim.html#config_from", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "fromChange", "url": "plugin.Anim.html#event_fromChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iteration", "url": "plugin.Anim.html#event_iteration", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iterationCount", "url": "plugin.Anim.html#config_iterationCount", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "iterationCountChange", "url": "plugin.Anim.html#event_iterationCountChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iterations", "url": "plugin.Anim.html#config_iterations", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "iterationsChange", "url": "plugin.Anim.html#event_iterationsChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "node", "url": "plugin.Anim.html#config_node", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "nodeChange", "url": "plugin.Anim.html#event_nodeChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "pause", "url": "plugin.Anim.html#method_pause", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "pause", "url": "plugin.Anim.html#event_pause", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "RE_DEFAULT_UNIT", "url": "plugin.Anim.html#property_RE_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "resume", "url": "plugin.Anim.html#event_resume", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "reverse", "url": "plugin.Anim.html#config_reverse", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "reverseChange", "url": "plugin.Anim.html#event_reverseChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "run", "url": "plugin.Anim.html#method_run", "type": "method"}, {"access": "private", "host": "plugin.Anim", "name": "_runFrame", "url": "plugin.Anim.html#method__runFrame", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "running", "url": "plugin.Anim.html#config_running", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "runningChange", "url": "plugin.Anim.html#event_runningChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "start", "url": "plugin.Anim.html#event_start", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "startTime", "url": "plugin.Anim.html#config_startTime", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "startTimeChange", "url": "plugin.Anim.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "stop", "url": "plugin.Anim.html#method_stop", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "to", "url": "plugin.Anim.html#config_to", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "toChange", "url": "plugin.Anim.html#event_toChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "tween", "url": "plugin.Anim.html#event_tween", "type": "event"}];
+</script>
 </body>
 </html>

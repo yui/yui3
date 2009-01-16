@@ -1,0 +1,1412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget   Widget.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052356.13" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052356.13" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052356.13"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052356.13"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget.html" title="widget">widget</a>
+                
+                 &gt; Widget.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Provides the base Widget class along with an augmentable PluginHost interface</span>
+<span class="c"> *</span>
+<span class="c"> * @module widget</span>
+<span class="c"> */</span>
+
+<span class="c">// Local Constants</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">WIDGET</span> <span class="o">=</span> <span class="s2">&quot;widget&quot;</span><span class="o">,</span>
+    <span class="nx">CONTENT</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="o">,</span>
+    <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s2">&quot;visible&quot;</span><span class="o">,</span>
+    <span class="nx">HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">,</span>
+    <span class="nx">DISABLED</span> <span class="o">=</span> <span class="s2">&quot;disabled&quot;</span><span class="o">,</span>
+    <span class="nx">FOCUS</span> <span class="o">=</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
+    <span class="nx">BLUR</span> <span class="o">=</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
+    <span class="nx">HAS_FOCUS</span> <span class="o">=</span> <span class="s2">&quot;hasFocus&quot;</span><span class="o">,</span>
+    <span class="nx">WIDTH</span> <span class="o">=</span> <span class="s2">&quot;width&quot;</span><span class="o">,</span>
+    <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span><span class="o">,</span>
+    <span class="nx">EMPTY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">,</span>
+    <span class="nx">HYPHEN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">,</span>
+    <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="o">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="o">,</span>
+    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s2">&quot;parentNode&quot;</span><span class="o">,</span>
+    <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s2">&quot;firstChild&quot;</span><span class="o">,</span>
+    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="o">,</span>
+    <span class="nx">BODY</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span><span class="o">,</span>
+    <span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span>
+    <span class="nx">LOCALE</span> <span class="o">=</span> <span class="s2">&quot;locale&quot;</span><span class="o">,</span>
+    <span class="nx">INIT_VALUE</span> <span class="o">=</span> <span class="s2">&quot;initValue&quot;</span><span class="o">,</span>
+    <span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="o">,</span>
+    <span class="nx">RENDER</span> <span class="o">=</span> <span class="s2">&quot;render&quot;</span><span class="o">,</span>
+    <span class="nx">RENDERED</span> <span class="o">=</span> <span class="s2">&quot;rendered&quot;</span><span class="o">,</span>
+    <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
+
+    <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="o">,</span>
+
+    <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
+    <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span>
+    <span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">;</span>
+
+<span class="c">// Widget nodeid-to-instance map for now, 1-to-1.</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
+
+<span class="c">/**</span>
+<span class="c"> * A base class for widgets, providing:</span>
+<span class="c"> * &lt;ul&gt;</span>
+<span class="c"> *    &lt;li&gt;The render lifecycle method, in addition to the init and destroy </span>
+<span class="c"> *        lifecycle methods provide by Base&lt;/li&gt;</span>
+<span class="c"> *    &lt;li&gt;Abstract methods to support consistent MVC structure across </span>
+<span class="c"> *        widgets: renderer, renderUI, bindUI, syncUI&lt;/li&gt;</span>
+<span class="c"> *    &lt;li&gt;Support for common widget attributes, such as boundingBox, contentBox, visible, </span>
+<span class="c"> *        disabled, hasFocus, strings&lt;/li&gt;</span>
+<span class="c"> *    &lt;li&gt;Plugin registration and activation support&lt;/li&gt;</span>
+<span class="c"> * &lt;/ul&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * @param config {Object} Object literal specifying widget configuration </span>
+<span class="c"> * properties.</span>
+<span class="c"> *</span>
+<span class="c"> * @class Widget</span>
+<span class="c"> * @constructor</span>
+<span class="c"> * @extends Base</span>
+<span class="c"> * @uses PluginHost</span>
+<span class="c"> */</span>
+<span class="k">function</span> <span class="nx">Widget</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
+
+    <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(</span><span class="nx">WIDGET</span><span class="o">);</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">_strings</span> <span class="o">=</span> <span class="o">{};</span>
+
+    <span class="nx">Widget</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="c">/**</span>
+<span class="c"> * The build configuration for the Widget class.</span>
+<span class="c"> * &lt;p&gt;</span>
+<span class="c"> * Defines the static fields which need to be aggregated,</span>
+<span class="c"> * when this class is used as the main class passed to </span>
+<span class="c"> * the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="c"> * &lt;/p&gt;</span>
+<span class="c"> * @property _buildCfg</span>
+<span class="c"> * @type Object</span>
+<span class="c"> * @static</span>
+<span class="c"> * @final</span>
+<span class="c"> * @private</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;PLUGINS&quot;</span><span class="o">,</span> <span class="s2">&quot;HTML_PARSER&quot;</span><span class="o">]</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Static property provides a string to identify the class.</span>
+<span class="c"> * &lt;p&gt;</span>
+<span class="c"> * Currently used to apply class identifiers to the bounding box </span>
+<span class="c"> * and to classify events fired by the widget.</span>
+<span class="c"> * &lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * @property Widget.NAME</span>
+<span class="c"> * @type String</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">WIDGET</span><span class="o">;</span>
+
+<span class="c">/**</span>
+<span class="c"> * Constant used to identify state changes originating from</span>
+<span class="c"> * the DOM (as opposed to the JavaScript model).</span>
+<span class="c"> *</span>
+<span class="c"> * @property Widget.UI_SRC</span>
+<span class="c"> * @type String</span>
+<span class="c"> * @static</span>
+<span class="c"> * @final</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">UI_SRC</span> <span class="o">=</span> <span class="s2">&quot;ui&quot;</span><span class="o">;</span>
+
+<span class="k">var</span> <span class="nx">UI</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">UI_SRC</span><span class="o">;</span>
+
+<span class="c">/**</span>
+<span class="c"> * Static property used to define the default attribute </span>
+<span class="c"> * configuration for the Widget.</span>
+<span class="c"> * </span>
+<span class="c"> * @property Widget.ATTRS</span>
+<span class="c"> * @type Object</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Flag indicating whether or not this object</span>
+<span class="c">     * has been through the render lifecycle phase.</span>
+<span class="c">     *</span>
+<span class="c">     * @attribute rendered</span>
+<span class="c">     * @readOnly</span>
+<span class="c">     * @default false</span>
+<span class="c">     * @type boolean</span>
+<span class="c">     */</span>
+    <span class="nx">rendered</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+        <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute boundingBox</span>
+<span class="c">    * @description The outermost DOM node for the Widget, used for sizing and positioning </span>
+<span class="c">    * of a Widget as well as a containing element for any decorator elements used </span>
+<span class="c">    * for skinning.</span>
+<span class="c">    * @type Node</span>
+<span class="c">    */</span>
+    <span class="nx">boundingBox</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
+        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBoundingBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute contentBox</span>
+<span class="c">    * @description A DOM node that is a direct descendent of a Widget&#39;s bounding box that </span>
+<span class="c">    * houses its content.</span>
+<span class="c">    * @type Node</span>
+<span class="c">    */</span>
+    <span class="nx">contentBox</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
+        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setContentBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute tabIndex</span>
+<span class="c">    * @description The tabIndex, applied to the bounding box</span>
+<span class="c">    * @type Number</span>
+<span class="c">    */</span>
+    <span class="nx">tabIndex</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="m">0</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute hasFocus</span>
+<span class="c">    * @description Boolean indicating if the Widget has focus.</span>
+<span class="c">    * @default false</span>
+<span class="c">    * @type boolean</span>
+<span class="c">    */</span>
+    <span class="nx">hasFocus</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute disabled</span>
+<span class="c">    * @description Boolean indicating if the Widget should be disabled. The disabled implementation</span>
+<span class="c">    * is left to the specific classes extending widget.</span>
+<span class="c">    * @default false</span>
+<span class="c">    * @type boolean</span>
+<span class="c">    */</span>
+    <span class="nx">disabled</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute visible</span>
+<span class="c">    * @description Boolean indicating weather or not the Widget is visible.</span>
+<span class="c">    * @default true</span>
+<span class="c">    * @type boolean</span>
+<span class="c">    */</span>
+    <span class="nx">visible</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute height</span>
+<span class="c">    * @description String with units, or number, representing the height of the Widget. If a number is provided,</span>
+<span class="c">    * the default unit, defined by the Widgets DEF_UNIT, property is used.</span>
+<span class="c">    * @default &quot;&quot;</span>
+<span class="c">    * @type {String | Number}</span>
+<span class="c">    */</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="nx">EMPTY</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @attribute width</span>
+<span class="c">    * @description String with units, or number, representing the width of the Widget. If a number is provided,</span>
+<span class="c">    * the default unit, defined by the Widgets DEF_UNIT, property is used.</span>
+<span class="c">    * @default &quot;&quot;</span>
+<span class="c">    * @type {String | Number}</span>
+<span class="c">    */</span>
+    <span class="nx">width</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="nx">EMPTY</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute moveStyles</span>
+<span class="c">     * @description Flag defining whether or not style properties from the content box</span>
+<span class="c">     * should be moved to the bounding box when wrapped (as defined by the WRAP_STYLES property)</span>
+<span class="c">     * @default false</span>
+<span class="c">     * @type boolean</span>
+<span class="c">     */</span>
+    <span class="nx">moveStyles</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute locale</span>
+<span class="c">     * @description</span>
+<span class="c">     * The default locale for the widget. NOTE: Using get/set on the &quot;strings&quot; attribute will</span>
+<span class="c">     * return/set strings for this locale.</span>
+<span class="c">     * @default &quot;en&quot;</span>
+<span class="c">     * @type String</span>
+<span class="c">     */</span>
+    <span class="nx">locale</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;en&quot;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute strings</span>
+<span class="c">     * @description Collection of strings used to label elements of the Widget&#39;s UI.</span>
+<span class="c">     * @default null</span>
+<span class="c">     * @type Object</span>
+<span class="c">     */</span>
+    <span class="nx">strings</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setStrings</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getStrings</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Cached lowercase version of Widget.NAME</span>
+<span class="c"> *</span>
+<span class="c"> * @property Widget._NAME_LOWERCASE</span>
+<span class="c"> * @private</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">_NAME_LOWERCASE</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+<span class="c">/**</span>
+<span class="c"> * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined</span>
+<span class="c"> * by the &lt;code&gt;Y.config.classNamePrefix&lt;/code&gt; attribute used by &lt;code&gt;ClassNameManager&lt;/code&gt; and </span>
+<span class="c"> * &lt;code&gt;Widget.NAME.toLowerCase()&lt;/code&gt; (e.g. &quot;yui-widget-xxxxx-yyyyy&quot;, based on default values for </span>
+<span class="c"> * the prefix and widget class name).</span>
+<span class="c"> * &lt;p&gt;</span>
+<span class="c"> * The instance based version of this method can be used to generate standard prefixed classnames,</span>
+<span class="c"> * based on the instances NAME, as opposed to Widget.NAME. This method should be used when you</span>
+<span class="c"> * need to use a constant class name across different types instances.</span>
+<span class="c"> * &lt;/p&gt;</span>
+<span class="c"> * @method getClassName</span>
+<span class="c"> * @param {String*} args* 0..n strings which should be concatenated, using the default separator defined by ClassNameManager, to create the class name</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+	<span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+	<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_NAME_LOWERCASE</span><span class="o">);</span>
+	<span class="k">return</span> <span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Returns the widget instance whose bounding box contains, or is, the given node. </span>
+<span class="c"> * &lt;p&gt;</span>
+<span class="c"> * In the case of nested widgets, the nearest bounding box ancestor is used to</span>
+<span class="c"> * return the widget instance.</span>
+<span class="c"> * &lt;/p&gt;</span>
+<span class="c"> * @method Widget.getByNode</span>
+<span class="c"> * @static</span>
+<span class="c"> * @param node {Node | String} The node for which to return a Widget instance. If a selector</span>
+<span class="c"> * string is passed in, which selects more than one node, the first node found is used.</span>
+<span class="c"> * @return {Widget} Widget instance, or null if not found.</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">getByNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">widget</span><span class="o">,</span>
+        <span class="nx">bbMarker</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">();</span>
+
+    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">bbMarker</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">bbMarker</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">widget</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)];</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="nx">widget</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Object hash, defining how attribute values are to be parsed from</span>
+<span class="c"> * markup contained in the widget&#39;s content box. e.g.:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *   {</span>
+<span class="c"> *       // Set single Node references using selector syntax </span>
+<span class="c"> *       // (selector is run through node.query)</span>
+<span class="c"> *       titleNode: &quot;span.yui-title&quot;,</span>
+<span class="c"> *       // Set NodeList references using selector syntax </span>
+<span class="c"> *       // (array indicates selector is to be run through node.queryAll)</span>
+<span class="c"> *       listNodes: [&quot;li.yui-item&quot;],</span>
+<span class="c"> *       // Set other attribute types, using a parse function. </span>
+<span class="c"> *       // Context is set to the widget instance.</span>
+<span class="c"> *       label: function(contentBox) {</span>
+<span class="c"> *           return contentBox.query(&quot;span.title&quot;).get(&quot;innerHTML&quot;);</span>
+<span class="c"> *       }</span>
+<span class="c"> *   }</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> * </span>
+<span class="c"> * @property Widget.HTML_PARSER</span>
+<span class="c"> * @type Object</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">HTML_PARSER</span> <span class="o">=</span> <span class="o">{};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Widget</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+
+	<span class="c">/**</span>
+<span class="c">	 * Returns a class name prefixed with the the value of the </span>
+<span class="c">	 * &lt;code&gt;YUI.config.classNamePrefix&lt;/code&gt; attribute + the instances &lt;code&gt;NAME&lt;/code&gt; property.</span>
+<span class="c">	 * Uses &lt;code&gt;YUI.config.classNameDelimiter&lt;/code&gt; attribute to delimit the provided strings.</span>
+<span class="c">	 * e.g. </span>
+<span class="c">	 * &lt;code&gt;</span>
+<span class="c">	 * &lt;pre&gt;</span>
+<span class="c">	 *    // returns &quot;yui-slider-foo-bar&quot;, for a slider instance</span>
+<span class="c">	 *    var scn = slider.getClassName(&#39;foo&#39;,&#39;bar&#39;);</span>
+<span class="c">	 *</span>
+<span class="c">	 *    // returns &quot;yui-overlay-foo-bar&quot;, for an overlay instance</span>
+<span class="c">	 *    var ocn = slider.getClassName(&#39;foo&#39;,&#39;bar&#39;);</span>
+<span class="c">	 * &lt;/pre&gt;</span>
+<span class="c">	 * &lt;/code&gt;</span>
+<span class="c">	 *</span>
+<span class="c">	 * @method getClassName</span>
+<span class="c">	 * @param {String}+ One or more classname bits to be joined and prefixed</span>
+<span class="c">	 */</span>
+	<span class="nx">getClassName</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+		<span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+		<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_name</span><span class="o">);</span>
+		<span class="k">return</span> <span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+	<span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Initializer lifecycle implementation for the Widget class. Registers the </span>
+<span class="c">     * widget instance, and runs through the Widget&#39;s HTML_PARSER definition. </span>
+<span class="c">     *</span>
+<span class="c">     * @method initializer</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param  config {Object} Configuration object literal for the widget</span>
+<span class="c">     */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;initializer called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Notification event, which widget implementations can fire, when</span>
+<span class="c">         * they change the content of the widget. This event has no default</span>
+<span class="c">         * behavior and cannot be prevented, so the &quot;on&quot; or &quot;after&quot;</span>
+<span class="c">         * moments are effectively equivalent (with on listeners being invoked before </span>
+<span class="c">         * after listeners).</span>
+<span class="c">         * </span>
+<span class="c">         * @event widget:contentUpdate</span>
+<span class="c">         * @preventable false</span>
+<span class="c">         * @param {Event.Facade} e The Event Facade</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">ContentUpdate</span><span class="o">,</span> <span class="o">{</span> <span class="nx">preventable</span><span class="o">:</span><span class="kc">false</span> <span class="o">});</span>
+
+		<span class="k">this</span><span class="o">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+        <span class="k">var</span> <span class="nx">nodeId</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">nodeId</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">_instances</span><span class="o">[</span><span class="nx">nodeId</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">var</span> <span class="nx">htmlConfig</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_parseHTML</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">));</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">htmlConfig</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">config</span><span class="o">,</span> <span class="nx">htmlConfig</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">PluginHost</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Descructor lifecycle implementation for the Widget class. Purges events attached</span>
+<span class="c">     * to the bounding box (and all child nodes) and removes the Widget from the </span>
+<span class="c">     * list of registered widgets.</span>
+<span class="c">     *</span>
+<span class="c">     * @method destructor</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
+
+        <span class="k">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">);</span>
+        
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+        <span class="k">var</span> <span class="nx">nodeId</span> <span class="o">=</span> <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">nodeId</span> <span class="o">&amp;&amp;</span> <span class="nx">nodeId</span> <span class="k">in</span> <span class="nx">_instances</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">nodeId</span><span class="o">];</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Establishes the initial DOM for the widget. Invoking this</span>
+<span class="c">     * method will lead to the creating of all DOM elements for</span>
+<span class="c">     * the widget (or the manipulation of existing DOM elements </span>
+<span class="c">     * for the progressive enhancement use case).</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * This method should only be invoked once for an initialized</span>
+<span class="c">     * widget.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * It delegates to the widget specific renderer method to do</span>
+<span class="c">     * the actual work.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @method render</span>
+<span class="c">     * @chainable</span>
+<span class="c">     * @final </span>
+<span class="c">     * @param  parentNode {Object | String} Optional. The Node under which the </span>
+<span class="c">     * Widget is to be rendered. This can be a Node instance or a CSS selector string. </span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * If the selector string returns more than one Node, the first node will be used </span>
+<span class="c">     * as the parentNode. NOTE: This argument is required if both the boundingBox and contentBox</span>
+<span class="c">     * are not currently in the document. If it&#39;s not provided, the Widget will be rendered</span>
+<span class="c">     * to the body of the current document in this case.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     */</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Render failed; widget has been destroyed&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">))</span> <span class="o">{</span>
+             <span class="c">/**</span>
+<span class="c">             * Lifcyle event for the render phase, fired prior to rendering the UI </span>
+<span class="c">             * for the widget (prior to invoking the widgets renderer method).</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="c">             * before the widget is rendered.</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Subscribers to the &quot;after&quot; momemt of this event, will be notified</span>
+<span class="c">             * after rendering is complete.</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             *</span>
+<span class="c">             * @event widget:render</span>
+<span class="c">             * @preventable _defRenderFn</span>
+<span class="c">             * @param {Event.Facade} e The Event Facade</span>
+<span class="c">             */</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defRenderFn</span><span class="o">});</span>
+
+            <span class="nx">parentNode</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">parentNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">())</span> <span class="o">{</span>
+                <span class="nx">parentNode</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">parentNode</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default render handler</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defRenderFn</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} e The Event object</span>
+<span class="c">     * @param {Node} parentNode The parent node to render to, if passed in to the &lt;code&gt;render&lt;/code&gt; method</span>
+<span class="c">     */</span>
+    <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_renderUI</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_bindUI</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_syncUI</span><span class="o">();</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">renderer</span><span class="o">();</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/** </span>
+<span class="c">     * Creates DOM (or manipulates DOM for progressive enhancement)</span>
+<span class="c">     * This method is invoked by render() and is not chained </span>
+<span class="c">     * automatically for the class hierarchy (like initializer, destructor) </span>
+<span class="c">     * so it should be chained manually for subclasses if required.</span>
+<span class="c">     * </span>
+<span class="c">     * @method renderer</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">renderer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">renderUI</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">bindUI</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">syncUI</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Configures/Sets up listeners to bind Widget State to UI/DOM</span>
+<span class="c">     * </span>
+<span class="c">     * This method is not called by framework and is not chained </span>
+<span class="c">     * automatically for the class hierarchy.</span>
+<span class="c">     * </span>
+<span class="c">     * @method bindUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">bindUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Adds nodes to the DOM </span>
+<span class="c">     * </span>
+<span class="c">     * This method is not called by framework and is not chained </span>
+<span class="c">     * automatically for the class hierarchy.</span>
+<span class="c">     * </span>
+<span class="c">     * @method renderUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">renderUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Refreshes the rendered UI, based on Widget State</span>
+<span class="c">     * </span>
+<span class="c">     * This method is not called by framework and is not chained</span>
+<span class="c">     * automatically for the class hierarchy.</span>
+<span class="c">     *</span>
+<span class="c">     * @method syncUI</span>
+<span class="c">     * </span>
+<span class="c">     */</span>
+    <span class="nx">syncUI</span><span class="o">:</span> <span class="k">function</span><span class="o">(){},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method hide</span>
+<span class="c">    * @description Shows the Module element by setting the &quot;visible&quot; attribute to &quot;false&quot;.</span>
+<span class="c">    */</span>
+    <span class="nx">hide</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method show</span>
+<span class="c">    * @description Shows the Module element by setting the &quot;visible&quot; attribute to &quot;true&quot;.</span>
+<span class="c">    */</span>
+    <span class="nx">show</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method focus</span>
+<span class="c">    * @description Causes the Widget to receive the focus by setting the &quot;hasFocus&quot; </span>
+<span class="c">    * attribute to &quot;true&quot;.</span>
+<span class="c">    */</span>
+    <span class="nx">focus</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">HAS_FOCUS</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method blur</span>
+<span class="c">    * @description Causes the Widget to lose focus by setting the &quot;hasFocus&quot; attribute </span>
+<span class="c">    * to &quot;false&quot;</span>
+<span class="c">    */</span>            
+    <span class="nx">blur</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">HAS_FOCUS</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method enable</span>
+<span class="c">    * @description Set the Widget&#39;s &quot;disabled&quot; attribute to &quot;false&quot;.</span>
+<span class="c">    */</span>
+    <span class="nx">enable</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * @method disabled</span>
+<span class="c">    * @description Set the Widget&#39;s &quot;disabled&quot; attribute to &quot;true&quot;.</span>
+<span class="c">    */</span>
+    <span class="nx">disable</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Utilitity method used to apply the &lt;code&gt;HTML_PARSER&lt;/code&gt; configuration for the </span>
+<span class="c">     * instance, to retrieve config data values.</span>
+<span class="c">     * </span>
+<span class="c">     * @method _parseHTML</span>
+<span class="c">     * @private </span>
+<span class="c">     * @param  node {Node} Root node to use to parse markup for configuration data</span>
+<span class="c">     * @return config {Object} configuration object, with values found in the HTML, populated</span>
+<span class="c">     */</span>
+    <span class="nx">_parseHTML</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+ 
+        <span class="k">var</span> <span class="nx">schema</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getHtmlParser</span><span class="o">(),</span>
+            <span class="nx">data</span><span class="o">,</span>
+            <span class="nx">val</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">schema</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasChildNodes</span><span class="o">())</span> <span class="o">{</span>
+
+            <span class="nx">O</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">v</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">||</span> <span class="o">{};</span>
+                    <span class="nx">data</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+                <span class="o">}</span>
+
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _moveStyles</span>
+<span class="c">     * @private</span>
+<span class="c">     * @param {Node} nodeFrom The node to gather the styles from</span>
+<span class="c">     * @param {Node} nodeTo The node to apply the styles to</span>
+<span class="c">     */</span>
+    <span class="nx">_moveStyles</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodeFrom</span><span class="o">,</span> <span class="nx">nodeTo</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">styles</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">WRAP_STYLES</span><span class="o">,</span>
+            <span class="nx">pos</span> <span class="o">=</span> <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;position&#39;</span><span class="o">),</span>
+            <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
+            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">],</span>
+            <span class="nx">h</span><span class="o">,</span> <span class="nx">w</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;height&#39;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">h</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;width&#39;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">w</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="s1">&#39;absolute&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">xy</span> <span class="o">=</span> <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">getXY</span><span class="o">();</span>
+            <span class="nx">nodeTo</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
+                <span class="nx">right</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="o">,</span>
+                <span class="nx">bottom</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span>
+            <span class="o">});</span>
+
+            <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
+                <span class="nx">right</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="o">,</span>
+                <span class="nx">bottom</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">styles</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
+            <span class="nx">nodeTo</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">===</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">nodeFrom</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span> <span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">pos</span> <span class="o">===</span> <span class="s1">&#39;absolute&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">nodeTo</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;height&#39;</span><span class="o">,</span> <span class="nx">h</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;width&#39;</span><span class="o">,</span> <span class="nx">w</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not</span>
+<span class="c">    * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used </span>
+<span class="c">    * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and</span>
+<span class="c">    * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered </span>
+<span class="c">    * to the current document&#39;s body.</span>
+<span class="c">    *</span>
+<span class="c">    * @method _renderBox</span>
+<span class="c">    * @private</span>
+<span class="c">    * @param {Node} parentNode The parentNode to render the widget to. If not provided, and both the boundingBox and</span>
+<span class="c">    * the contentBox are not currently in the document, the widget will be rendered to the current document&#39;s body.</span>
+<span class="c">    */</span>
+    <span class="nx">_renderBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
+            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">)</span> <span class="o">||</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">),</span>
+            <span class="nx">body</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">)))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;moveStyles&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_moveStyles</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">,</span> <span class="nx">boundingBox</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c">// If contentBox box is already in the document, have boundingBox box take it&#39;s place</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">replaceChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="nx">contentBox</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">body</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BODY</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c">// Special case when handling body as default (no parentNode), always try to insert.</span>
+<span class="c"></span>                <span class="nx">body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="nx">body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">));</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">parentNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">)))</span> <span class="o">{</span>
+                <span class="nx">parentNode</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * Setter for the boundingBox attribute</span>
+<span class="c">    *</span>
+<span class="c">    * @method _setBoundingBox</span>
+<span class="c">    * @private</span>
+<span class="c">    * @param Node/String</span>
+<span class="c">    * @return Node</span>
+<span class="c">    */</span>
+    <span class="nx">_setBoundingBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">BOUNDING_TEMPLATE</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * Setter for the contentBox attribute</span>
+<span class="c">    *</span>
+<span class="c">    * @method _setContentBox</span>
+<span class="c">    * @private</span>
+<span class="c">    * @param {Node|String} node</span>
+<span class="c">    * @return Node</span>
+<span class="c">    */</span>
+    <span class="nx">_setContentBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">CONTENT_TEMPLATE</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Helper method to set the bounding/content box, or create it from</span>
+<span class="c">     * the provided template if not found.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setBox</span>
+<span class="c">     * @private</span>
+<span class="c">     *</span>
+<span class="c">     * @param {Node|String} node The node reference</span>
+<span class="c">     * @param {String} template HTML string template for the node</span>
+<span class="c">     * @return {Node} The node</span>
+<span class="c">     */</span>
+    <span class="nx">_setBox</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">template</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">||</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">template</span><span class="o">);</span>
+
+        <span class="k">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sid</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Initializes the UI state for the Widget&#39;s bounding/content boxes.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _renderUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Node} The parent node to rendering the widget into</span>
+<span class="c">     */</span>
+    <span class="nx">_renderUI</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_renderBoxClassNames</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_renderBox</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">);</span>
+    <span class="o">},</span>
+
+     <span class="c">/**</span>
+<span class="c">      * Applies standard class names to the boundingBox and contentBox</span>
+<span class="c">      * </span>
+<span class="c">      * @method _renderBoxClassNames</span>
+<span class="c">      * @protected</span>
+<span class="c">      */</span>
+    <span class="nx">_renderBoxClassNames</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+            <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
+            <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
+            <span class="nx">name</span><span class="o">;</span>
+
+        <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">());</span>
+
+        <span class="c">// Start from Widget Sub Class</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">2</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">name</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">NAME</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">()));</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="c">// Use instance based name for content box</span>
+<span class="c"></span>        <span class="nx">contentBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">CONTENT</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets up DOM and CustomEvent listeners for the widget.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _bindUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_bindUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;visibleChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterVisibleChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;disabledChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterDisabledChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;heightChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterHeightChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;widthChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterWidthChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;hasFocusChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterHasFocusChange</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_bindDOMListeners</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets up DOM listeners, on elements rendered by the widget.</span>
+<span class="c">     * </span>
+<span class="c">     * @method _bindDOMListeners</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_bindDOMListeners</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">FOCUS</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">BLUR</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onBlur</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Updates the widget UI to reflect the attribute state.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _syncUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_syncUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetVisible</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetDisabled</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetHeight</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HEIGHT</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetWidth</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">WIDTH</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetHasFocus</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HAS_FOCUS</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetTabIndex</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the height on the widget&#39;s bounding box element</span>
+<span class="c">     * </span>
+<span class="c">     * @method _uiSetHeight</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {String | Number} val</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetHeight</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">DEF_UNIT</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">HEIGHT</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the width on the widget&#39;s bounding box element</span>
+<span class="c">     *</span>
+<span class="c">     * @method _uiSetWidth</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {String | Number} val</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetWidth</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">DEF_UNIT</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">WIDTH</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the visible state for the UI</span>
+<span class="c">     * </span>
+<span class="c">     * @method _uiSetVisible</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {boolean} val</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetVisible</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span> 
+            <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDDEN</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span> 
+            <span class="nx">box</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span> 
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span> 
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the disabled state for the UI</span>
+<span class="c">     * </span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {boolean} val</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetDisabled</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span> 
+            <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">box</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the hasFocus state for the UI</span>
+<span class="c">     *</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {boolean} val</span>
+<span class="c">     * @param {string} src String representing the source that triggered an update to </span>
+<span class="c">     * the UI.     </span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetHasFocus</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
+            <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">FOCUS</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">box</span><span class="o">.</span><span class="nx">focus</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">box</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">box</span><span class="o">.</span><span class="nx">blur</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * Set the tabIndex on the widget&#39;s rendered UI</span>
+<span class="c">    *</span>
+<span class="c">    * @method _uiSetTabIndex</span>
+<span class="c">    * @protected</span>
+<span class="c">    * @param Number</span>
+<span class="c">    */</span>
+    <span class="nx">_uiSetTabIndex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="nx">index</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default visible attribute state change handler</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterVisibleChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the attribute change</span>
+<span class="c">     */</span>
+    <span class="nx">_afterVisibleChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetVisible</span><span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default disabled attribute state change handler</span>
+<span class="c">     * </span>
+<span class="c">     * @method _afterDisabledChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the attribute change</span>
+<span class="c">     */</span>
+    <span class="nx">_afterDisabledChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetDisabled</span><span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default height attribute state change handler</span>
+<span class="c">     * </span>
+<span class="c">     * @method _afterHeightChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the attribute change</span>
+<span class="c">     */</span>
+    <span class="nx">_afterHeightChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetHeight</span><span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default widget attribute state change handler</span>
+<span class="c">     * </span>
+<span class="c">     * @method _afterWidthChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the attribute change</span>
+<span class="c">     */</span>
+    <span class="nx">_afterWidthChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetWidth</span><span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default hasFocus attribute state change handler</span>
+<span class="c">     * </span>
+<span class="c">     * @method _afterHasFocusChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the attribute change</span>
+<span class="c">     */</span>
+    <span class="nx">_afterHasFocusChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetHasFocus</span><span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">src</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * DOM focus event handler, used to sync the state of the Widget with the DOM</span>
+<span class="c">     * </span>
+<span class="c">     * @method _onFocus</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the DOM focus event</span>
+<span class="c">     */</span>
+    <span class="nx">_onFocus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">HAS_FOCUS</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * DOM blur event handler, used to sync the state of the Widget with the DOM</span>
+<span class="c">     *</span>
+<span class="c">     * @method _onBlur</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Event.Facade} evt The event facade for the DOM blur event</span>
+<span class="c">     */</span>			
+    <span class="nx">_onBlur</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">HAS_FOCUS</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Generic toString implementation for all widgets.</span>
+<span class="c">     *</span>
+<span class="c">     * @method toString</span>
+<span class="c">     * @return {String} The default string value for the widget [ displays the NAME of the instance, and the unique id ]</span>
+<span class="c">     */</span>
+    <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default unit to use for dimension values</span>
+<span class="c">     * </span>
+<span class="c">     * @property DEF_UNIT</span>
+<span class="c">     */</span>
+    <span class="nx">DEF_UNIT</span> <span class="o">:</span> <span class="s2">&quot;px&quot;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Static property defining the markup template for content box.</span>
+<span class="c">     *</span>
+<span class="c">     * @property CONTENT_TEMPLATE</span>
+<span class="c">     * @type String</span>
+<span class="c">     */</span>
+    <span class="nx">CONTENT_TEMPLATE</span> <span class="o">:</span> <span class="s2">&quot;&lt;div&gt;&lt;/div&gt;&quot;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Static property defining the markup template for bounding box.</span>
+<span class="c">     *</span>
+<span class="c">     * @property BOUNDING_TEMPLATE</span>
+<span class="c">     * @type String</span>
+<span class="c">     */</span>
+    <span class="nx">BOUNDING_TEMPLATE</span> <span class="o">:</span> <span class="s2">&quot;&lt;div&gt;&lt;/div&gt;&quot;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Static property listing the styles that are mimiced on the bounding box from the content box.</span>
+<span class="c">     *</span>
+<span class="c">     * @property WRAP_STYLES</span>
+<span class="c">     * @type Object</span>
+<span class="c">     */</span>
+    <span class="nx">WRAP_STYLES</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;100%&#39;</span><span class="o">,</span>
+        <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;100%&#39;</span><span class="o">,</span>
+        <span class="nx">zIndex</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+        <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;static&#39;</span><span class="o">,</span>
+        <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
+        <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
+        <span class="nx">bottom</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
+        <span class="nx">right</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
+        <span class="nx">padding</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
+        <span class="nx">margin</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets strings for a particular locale, merging with any existing</span>
+<span class="c">     * strings which may already be defined for the locale.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setStrings</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Object} strings The hash of string key/values to set</span>
+<span class="c">     * @param {Object} locale The locale for the string values being set</span>
+<span class="c">     */</span>
+    <span class="nx">_setStrings</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">strings</span><span class="o">,</span> <span class="nx">locale</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_strings</span><span class="o">;</span>
+        <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">strs</span><span class="o">[</span><span class="nx">locale</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">strs</span><span class="o">[</span><span class="nx">locale</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">strs</span><span class="o">[</span><span class="nx">locale</span><span class="o">],</span> <span class="nx">strings</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">strs</span><span class="o">[</span><span class="nx">locale</span><span class="o">];</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _getStrings</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Object} locale</span>
+<span class="c">     */</span>
+    <span class="nx">_getStrings</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">locale</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_strings</span><span class="o">[</span><span class="nx">locale</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">()];</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Gets the entire strings hash for a particular locale, performing locale lookup.</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * If no values of the key are defined for a particular locale the value for the </span>
+<span class="c">     * default locale (in initial locale set for the class) is returned.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * @method getStrings</span>
+<span class="c">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
+<span class="c">     */</span>
+    <span class="c">// TODO: Optimize/Cache. Clear cache on _setStrings call.</span>
+<span class="c"></span>    <span class="nx">getStrings</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">locale</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nx">locale</span> <span class="o">=</span> <span class="o">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">)).</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;getStrings: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">);</span> 
+
+        <span class="k">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getDefaultLocale</span><span class="o">().</span><span class="nx">toLowerCase</span><span class="o">(),</span>
+            <span class="nx">defStrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStrings</span><span class="o">(</span><span class="nx">defLocale</span><span class="o">),</span>
+            <span class="nx">strs</span> <span class="o">=</span> <span class="o">(</span><span class="nx">defStrs</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">defStrs</span><span class="o">)</span> <span class="o">:</span> <span class="o">{},</span>
+            <span class="nx">localeSegments</span> <span class="o">=</span> <span class="nx">locale</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">HYPHEN</span><span class="o">);</span>
+
+        <span class="c">// If locale is different than the default, or needs lookup support</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">localeSegments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">lookup</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">localeSegments</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">localeSegments</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;getStrings: Merging in strings from: &quot;</span> <span class="o">+</span> <span class="nx">lookup</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">);</span> 
+
+                <span class="k">var</span> <span class="nx">localeStrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStrings</span><span class="o">(</span><span class="nx">lookup</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">localeStrs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">strs</span><span class="o">,</span> <span class="nx">localeStrs</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">HYPHEN</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">strs</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Gets the string for a particular key, for a particular locale, performing locale lookup.</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * If no values if defined for the key, for the given locale, the value for the </span>
+<span class="c">     * default locale (in initial locale set for the class) is returned.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * @method getString</span>
+<span class="c">     * @param {String} key The key.</span>
+<span class="c">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
+<span class="c">     */</span>
+    <span class="nx">getString</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="nx">locale</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nx">locale</span> <span class="o">=</span> <span class="o">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">)).</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;getString: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">);</span> 
+
+        <span class="k">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">getDefaultLocale</span><span class="o">()).</span><span class="nx">toLowerCase</span><span class="o">(),</span>
+            <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStrings</span><span class="o">(</span><span class="nx">defLocale</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+            <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="o">[</span><span class="nx">key</span><span class="o">],</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">HYPHEN</span><span class="o">);</span>
+
+        <span class="c">// If locale is different than the default, or needs lookup support</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">do</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;getString: Performing lookup for: &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">);</span> 
+
+                <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStrings</span><span class="o">(</span><span class="nx">locale</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">strs</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">strs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">HYPHEN</span><span class="o">);</span>
+                <span class="c">// Chop of last locale segment</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">idx</span><span class="o">);</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span> <span class="k">while</span> <span class="o">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">str</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns the default locale for the widget (the locale value defined by the</span>
+<span class="c">     * widget class, or provided by the user during construction).</span>
+<span class="c">     *</span>
+<span class="c">     * @method getDefaultLocale</span>
+<span class="c">     * @return {String} The default locale for the widget</span>
+<span class="c">     */</span>
+    <span class="nx">getDefaultLocale</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">,</span> <span class="nx">INIT_VALUE</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Private stings hash, used to store strings in locale specific buckets.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _strings</span>
+<span class="c">     * @private</span>
+<span class="c">     * @type Object</span>
+<span class="c">     */</span>
+    <span class="nx">_strings</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER</span>
+<span class="c">     * definitions across the class hierarchy.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _getHtmlParser</span>
+<span class="c">     * @return {Object} HTML_PARSER definition for this instance</span>
+<span class="c">     */</span>
+    <span class="nx">_getHtmlParser</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+                <span class="nx">parser</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">HTML_PARSER</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">parser</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+<span class="c">/**</span>
+<span class="c"> * Static registration of default plugins for the class.</span>
+<span class="c"> * </span>
+<span class="c"> * @property Widget.PLUGINS</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">PLUGINS</span> <span class="o">=</span> <span class="o">[];</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Widget</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span> <span class="c">// straightup augment, no wrapper functions</span>
+<span class="c"></span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class="selected"><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="PluginHost.html" title="PluginHost">PluginHost</a></li>
+                                <li class=""><a href="Widget.html" title="Widget">Widget</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="PluginHost.js.html" title="PluginHost.js">PluginHost.js</a></li>
+                                <li class="selected"><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHasFocusChange", "url": "Widget.html#method__afterHasFocusChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#method_disabled", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "hasFocus", "url": "Widget.html#config_hasFocus", "type": "config"}, {"access": "", "host": "Widget", "name": "hasFocusChange", "url": "Widget.html#event_hasFocusChange", "type": "event"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onBlur", "url": "Widget.html#method__onBlur", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseHTML", "url": "Widget.html#method__parseHTML", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHasFocus", "url": "Widget.html#method__uiSetHasFocus", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.PLUGINS", "url": "Widget.html#property_Widget.PLUGINS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
+</script>
+</body>
+</html>

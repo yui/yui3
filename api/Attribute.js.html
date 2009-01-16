@@ -1,41 +1,51 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: attribute   Attribute.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052355.28" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052355.28" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052355.28"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052355.28"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>attribute&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_attribute.html">attribute</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>attribute&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
                 
                  &gt; Attribute.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * Managed Attribute Provider</span>
@@ -74,11 +84,11 @@
 <span class="c">     *     &lt;li&gt;Be defined with a validator function, to validate values before they are stored.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;Be defined with a get function, which can be used to manipulate stored values,</span>
 <span class="c">     *     before they are returned by Attribute&#39;s get method.&lt;/li&gt;</span>
-<span class="c">     *     &lt;li&gt;Specify if and how they should be cloned on &#39;get&#39; (see Attribute.CLONE for supported clone modes).&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;Specify if and how they should be cloned on &#39;get&#39; (see &lt;a href=&quot;#property_CLONE&quot;&gt;Attribute.CLONE&lt;/a&gt; for supported clone modes).&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * &lt;em&gt;See the addAtt method, for details about how to add attributes with</span>
-<span class="c">     * a specific configuration&lt;/em&gt;</span>
+<span class="c">     * &lt;p&gt;See the &lt;a href=&quot;#method_addAtt&quot;&gt;addAtt&lt;/a&gt; method, for details about how to add attributes with</span>
+<span class="c">     * a specific configuration&lt;/p&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @class Attribute</span>
 <span class="c">     * @uses Event.Target</span>
@@ -90,10 +100,6 @@
     <span class="o">}</span>
 
     <span class="c">/**</span>
-<span class="c">     * @property CLONE</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @type Object</span>
 <span class="c">     * &lt;p&gt;</span>
 <span class="c">     * Constants for clone formats supported by Attribute.</span>
 <span class="c">     * &lt;/p&gt;</span>
@@ -105,12 +111,12 @@
 <span class="c">     * &lt;dl&gt;</span>
 <span class="c">     *     &lt;dt&gt;Attribute.CLONE.DEEP&lt;/dt&gt;</span>
 <span class="c">     *     &lt;dd&gt;Will result in a deep cloned value being returned</span>
-<span class="c">     *        (using Y.clone). This can be expensive for complex</span>
+<span class="c">     *        (using YUI&#39;s clone method). This can be expensive for complex</span>
 <span class="c">     *        objects.</span>
 <span class="c">     *     &lt;/dd&gt;</span>
 <span class="c">     *     &lt;dt&gt;Attribute.CLONE.SHALLOW&lt;/dt&gt;</span>
 <span class="c">     *     &lt;dd&gt;Will result in a shallow cloned value being returned</span>
-<span class="c">     *        (using Y.merge).</span>
+<span class="c">     *        (using YUI&#39;s merge method).</span>
 <span class="c">     *     &lt;/dd&gt;</span>
 <span class="c">     *     &lt;dt&gt;Attribute.CLONE.IMMUTABLE&lt;/dt&gt;</span>
 <span class="c">     *     &lt;dd&gt;Will result in a deep cloned value being returned</span>
@@ -127,6 +133,11 @@
 <span class="c">     *         This is the default behavior.</span>
 <span class="c">     *     &lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     * </span>
+<span class="c">     * @property CLONE</span>
+<span class="c">     * @static</span>
+<span class="c">     * @final</span>
+<span class="c">     * @type Object</span>
 <span class="c">     */</span>
     <span class="nx">Attribute</span><span class="o">.</span><span class="nx">CLONE</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">NONE</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
@@ -147,28 +158,28 @@
 <span class="c">         * The config argument object literal supports the following optional properties:</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;dl&gt;</span>
-<span class="c">         *    &lt;dt&gt;value {Any}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;value &amp;#60;Any&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The initial value to set on the attribute&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;readOnly {Boolean}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;readOnly &amp;#60;Boolean&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;Whether or not the attribute is read only. Attributes having readOnly set to true</span>
 <span class="c">         *        cannot be set by invoking the set method.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;writeOnce {Boolean}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;writeOnce &amp;#60;Boolean&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;Whether or not the attribute is &quot;write once&quot;. Attributes having writeOnce set to true, </span>
 <span class="c">         *        can only have their values set once, be it through the default configuration, </span>
 <span class="c">         *        constructor configuration arguments, or by invoking set.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;set {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;set &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The setter function to be invoked (within the context of the host object) before </span>
 <span class="c">         *        the attribute is stored by a call to the set method. The value returned by the </span>
 <span class="c">         *        set function will be the finally stored value.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;get {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;get &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The getter function to be invoked (within the context of the host object) before</span>
 <span class="c">         *    the stored values is returned to a user invoking the get method for the attribute.</span>
 <span class="c">         *    The value returned by the get function is the final value which will be returned to the </span>
 <span class="c">         *    user when they invoke get.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;validator {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;validator &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The validator function which is invoked prior to setting the stored value. Returning</span>
 <span class="c">         *    false from the validator function will prevent the value from being stored&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;clone {int}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;clone &amp;#60;int&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;If and how the value returned by a call to the get method, should be de-referenced from</span>
 <span class="c">         *    the stored value. By default values are not cloned, and hence a call to get will return</span>
 <span class="c">         *    a reference to the stored value. See Attribute.CLONE for more details about the clone </span>
@@ -194,10 +205,28 @@
                 <span class="nx">delete</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
             <span class="o">}</span>
 
+            <span class="nx">config</span><span class="o">.</span><span class="nx">initValue</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">hasValue</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Resets the given attribute or all attributes to the initial value.</span>
+<span class="c">         *</span>
+<span class="c">         * @method reset</span>
+<span class="c">         * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset</span>
+<span class="c">         */</span>
+        <span class="nx">reset</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="s1">&#39;initValue&#39;</span><span class="o">][</span><span class="nx">name</span><span class="o">]);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">initVals</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="s1">&#39;initValue&#39;</span><span class="o">];</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">initVals</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">);</span>
+                <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
@@ -223,6 +252,8 @@
 <span class="c">         * @param {String} key The attribute whose value will be returned. If</span>
 <span class="c">         * the value of the attribute is an Object, dot notation can be used to</span>
 <span class="c">         * obtain the value of a property of the object (e.g. &lt;code&gt;get(&quot;x.y.z&quot;)&lt;/code&gt;)</span>
+<span class="c">         * </span>
+<span class="c">         * @return {Any} The current value of the attribute</span>
 <span class="c">         */</span>
         <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
@@ -249,6 +280,18 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * Allows setting of readOnly/writeOnce attributes.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _set</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @chainable</span>
+<span class="c">         * @return {Object} Reference to the host object</span>
+<span class="c">         */</span>
+        <span class="nx">_set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
 <span class="c">         * Sets the value of an attribute.</span>
 <span class="c">         *</span>
 <span class="c">         * @method set</span>
@@ -258,16 +301,17 @@
 <span class="c">         * value of the attribute is an Object, dot notation can be used</span>
 <span class="c">         * to set the value of a property within the object </span>
 <span class="c">         * (e.g. &lt;code&gt;set(&quot;x.y.z&quot;, 5)&lt;/code&gt;), if the attribute has not</span>
-<span class="c">         * been declared as an immutable attribute (see Attribute.CLONE).</span>
+<span class="c">         * been declared as an immutable attribute (see &lt;a href=&quot;#property_CLONE&quot;&gt;Attribute.CLONE&lt;/a&gt;).</span>
 <span class="c">         * </span>
 <span class="c">         * @param {Any} value The value to apply to the attribute</span>
 <span class="c">         * </span>
 <span class="c">         * @param {Object} opts Optional event data. This object will be mixed into</span>
 <span class="c">         * the event facade passed as the first argument to subscribers </span>
 <span class="c">         * of attribute change events</span>
+<span class="c">         * </span>
+<span class="c">         * @return {Object} Reference to the host object</span>
 <span class="c">         */</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-
+        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="nx">privateSet</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">data</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
                 <span class="nx">strPath</span><span class="o">,</span>
@@ -286,7 +330,7 @@
                 <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">initialSet</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">initialSet</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">privateSet</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">WRITE_ONCE</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; failed; Attribute is writeOnce&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                     <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -298,7 +342,9 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set called with unconfigured attribute. Adding a new attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                <span class="c">//Y.log(&#39;Set called with unconfigured attribute. Adding a new attribute: &#39; + name, &#39;info&#39;, &#39;attribute&#39;);</span>
+<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; failed; Attribute is not configured&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
@@ -318,8 +364,24 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Alias for the &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;Event.Target subscribe method&lt;/a&gt;.</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Alias for the Event.Target &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;subscribe&lt;/a&gt; method.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * </span>
+<span class="c">         * &lt;p&gt;Subscribers using this method to listen for attribute change events will be notified just</span>
+<span class="c">         * &lt;strong&gt;before&lt;/strong&gt; the state of the attribute has been modified, and before the default handler has been</span>
+<span class="c">         * invoked.&lt;/p&gt;</span>
+<span class="c">         * </span>
+<span class="c">         * &lt;p&gt;The &lt;a href=&quot;Event.Target.html#method_after&quot;&gt;after&lt;/a&gt; method, inherited from Event Target, can be used by subscribers</span>
+<span class="c">         * who wish to be notified &lt;strong&gt;after&lt;/strong&gt; the attribute&#39;s value has changed.&lt;/p&gt;</span>
+<span class="c">         * </span>
+<span class="c">         * @param {String} type The event type. For attribute change events, the event type is &quot;[Attribute Name]Change&quot;, e.g.</span>
+<span class="c">         * for the attribute &quot;enabled&quot;, the event type will be &quot;enabledChange&quot;.</span>
+<span class="c">         * @param {Function} fn The subscribed function to invoke</span>
+<span class="c">         * @param {Object} context Optional execution context</span>
+<span class="c">         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.</span>
 <span class="c">         * @method on</span>
+<span class="c">         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.</span>
 <span class="c">         */</span>
         <span class="nx">on</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
@@ -439,17 +501,20 @@
 <span class="c">         * Gets multiple attribute values.</span>
 <span class="c">         *</span>
 <span class="c">         * @method getAtts</span>
+<span class="c">         * @param {Array} Optional. An array of attribute names, whose values are required. If omitted, all attribute values are</span>
+<span class="c">         * returned.</span>
 <span class="c">         * @return {Object} A hash of attributes: name/value pairs</span>
 <span class="c">         */</span>
         <span class="nx">getAtts</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">o</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">atts</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">),</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">o</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span> 
-                <span class="o">});</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">att</span><span class="o">;</span>
+            <span class="nx">atts</span> <span class="o">=</span> <span class="nx">atts</span> <span class="o">||</span> <span class="nx">O</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="nx">VALUE</span><span class="o">]);</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">atts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="c">// Go through get, to retrieve massaged values and honor cloning</span>
+<span class="c"></span>                <span class="nx">att</span> <span class="o">=</span> <span class="nx">atts</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="nx">o</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">att</span><span class="o">);</span> 
             <span class="o">}</span>
+
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -479,6 +544,7 @@
                         <span class="k">if</span> <span class="o">(</span><span class="nx">value</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">attCfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>
                         <span class="o">}</span>
+
                         <span class="k">this</span><span class="o">.</span><span class="nx">addAtt</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">attCfg</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -543,7 +609,7 @@
         <span class="nx">_initAttVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">hasVal</span> <span class="o">=</span> <span class="o">(</span><span class="nx">VALUE</span> <span class="k">in</span> <span class="nx">cfg</span><span class="o">),</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
                 <span class="nx">simple</span><span class="o">,</span>
                 <span class="nx">complex</span><span class="o">,</span>
                 <span class="nx">i</span><span class="o">,</span>
@@ -577,16 +643,18 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Clone utility method, which will </span>
 <span class="c">         * clone the provided value using YUI&#39;s </span>
 <span class="c">         * merge, or clone utilities based</span>
-<span class="c">         * on the clone type provided.</span>
+<span class="c">         * on the clone type provided. See &lt;a href=&quot;#property_CLONE&quot;&gt;Attribute.CLONE&lt;/a&gt;</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * </span>
-<span class="c">         * @see Attribute.CLONE</span>
 <span class="c">         * @method _cloneAttVal</span>
 <span class="c">         * @private </span>
 <span class="c">         * @param {Any} val Value to clone</span>
 <span class="c">         * @param {int} type Clone type to use, See the CLONE property</span>
+<span class="c">         * @return {Any} The cloned copy of the object, based on the provided type.</span>
 <span class="c">         */</span>
         <span class="nx">_cloneAttVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">switch</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
@@ -613,14 +681,13 @@
 <span class="c">         * @param {String} attrName The name of the attribute</span>
 <span class="c">         * @param {String} strFullPath The full path of the property being changed, </span>
 <span class="c">         * if this is a sub-attribute value being change</span>
-<span class="c">         * @param {Function} defaultFn The default handler for the change event</span>
 <span class="c">         * @param {Object} opts Any additional event data to mix into the attribute change event&#39;s event facade.</span>
 <span class="c">         */</span>
-        <span class="nx">_fireAttChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_fireAttChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
 
             <span class="c">// TODO: Publishing temporarily, while we address event bubbling/queuing</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttSet</span><span class="o">});</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttSet</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
 
             <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
                 <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
@@ -648,51 +715,53 @@
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class="selected"><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Attribute.html">Attribute</a></li>
-                                <li class=""><a href="State.html">State</a></li>
+                                <li class=""><a href="Attribute.html" title="Attribute">Attribute</a></li>
+                                <li class=""><a href="State.html" title="State">State</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="Attribute.js.html">Attribute.js</a></li>
-                                <li class=""><a href="State.js.html">State.js</a></li>
+                                <li class="selected"><a href="Attribute.js.html" title="Attribute.js">Attribute.js</a></li>
+                                <li class=""><a href="State.js.html" title="State.js">State.js</a></li>
                         </ul>
                     </div>
 
@@ -705,8 +774,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAtt", "url": "Attribute.html#method_addAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "CLONE", "url": "Attribute.html#property_CLONE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_cloneAttVal", "url": "Attribute.html#method__cloneAttVal", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttSet", "url": "Attribute.html#method__defAttSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttChange", "url": "Attribute.html#method__fireAttChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAtts", "url": "Attribute.html#method_getAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttVal", "url": "Attribute.html#method__getSubAttVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAtts", "url": "Attribute.html#method__initAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_initAttVal", "url": "Attribute.html#method__initAttVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "on", "url": "Attribute.html#method_on", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAtt", "url": "Attribute.html#method_removeAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAtts", "url": "Attribute.html#method_setAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttVal", "url": "Attribute.html#method__setSubAttVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+</script>
 </body>
 </html>

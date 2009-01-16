@@ -1,52 +1,63 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: oop   oop.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052356.95" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052356.95" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052356.95"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052356.95"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>oop&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_oop.html">oop</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>oop&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_oop.html" title="oop">oop</a>
                 
                  &gt; oop.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * OOP utils.  If included, the OOP methods are added to the YUI instance</span>
+<span class="c"> * Supplies object inheritance and manipulation utilities.  This adds</span>
+<span class="c"> * additional functionaity to what is provided in yui-base, and the</span>
+<span class="c"> * methods are applied directly to the YUI instance.  This module</span>
+<span class="c"> * is required for most YUI components.</span>
 <span class="c"> * @module oop</span>
 <span class="c"> */</span>
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;oop&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
-    <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
-    <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span>
-    <span class="nx">O</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">L</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
+        <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
+        <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * The following methods are added to the YUI instance</span>
@@ -69,73 +80,52 @@
 <span class="c">     *</span>
 <span class="c">     * @todo constructor optional?</span>
 <span class="c">     * @todo understanding what an instance is augmented with</span>
-<span class="c">     * @TODO evaluate if we can do this in a way that doesn&#39;t interfere</span>
-<span class="c">     * with normal inheritance</span>
+<span class="c">     * @TODO best practices for overriding sequestered methods.</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-
         <span class="k">var</span> <span class="nx">sProto</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">newProto</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">construct</span> <span class="o">=</span> <span class="nx">s</span><span class="o">,</span> 
             <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
             <span class="nx">target</span> <span class="o">=</span>  <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="c">// working on a class, so apply constructor infrastructure</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// Y.log(&#39;augment will call constructor:&#39;);</span>
-<span class="c"></span>
-            <span class="c">// Y.Do.before(r, construct);</span>
-<span class="c"></span>
             <span class="k">var</span> <span class="nx">sequestered</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">replacements</span> <span class="o">=</span> <span class="o">{};</span>
             <span class="nx">newProto</span> <span class="o">=</span> <span class="o">{};</span>
 
             <span class="c">// sequester all of the functions in the supplier and replace with</span>
 <span class="c"></span>            <span class="c">// one that will restore all of them.</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">sProto</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-
-
-                <span class="c">// var initialized = false;</span>
-<span class="c"></span>
                 <span class="nx">replacements</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-                    <span class="k">var</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-
 <span class="c">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing Event.Target&#39;);</span>
-<span class="c"></span>
-                    <span class="c">// overwrite the prototype with all of the sequestered functions,</span>
-<span class="c"></span>                    <span class="c">// but only if it hasn&#39;t been overridden</span>
+<span class="c">// overwrite the prototype with all of the sequestered functions,</span>
+<span class="c">// but only if it hasn&#39;t been overridden</span>
 <span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">sequestered</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">me</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">sequestered</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                             <span class="c">// Y.log(&#39;... restoring &#39; + k);</span>
-<span class="c"></span>                            <span class="nx">me</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+<span class="c"></span>                            <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                         <span class="o">}</span>
                     <span class="o">}</span>
 
                     <span class="c">// apply the constructor</span>
-<span class="c"></span>                    <span class="nx">construct</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+<span class="c"></span>                    <span class="nx">construct</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
                     <span class="c">// apply the original sequestered function</span>
-<span class="c"></span>                    <span class="k">return</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-
+<span class="c"></span>                    <span class="k">return</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">};</span>
 
                 <span class="k">if</span> <span class="o">((!</span><span class="nx">wl</span> <span class="o">||</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">wl</span><span class="o">))</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">k</span> <span class="k">in</span> <span class="k">this</span><span class="o">)))</span> <span class="o">{</span>
-
                     <span class="c">// Y.log(&#39;augment: &#39; + k);</span>
-<span class="c"></span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
                         <span class="c">// sequester the function</span>
 <span class="c"></span>                        <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
 
-                        <span class="c">// replace the sequestered function with a function that will</span>
-<span class="c"></span>                        <span class="c">// restore all sequestered functions and exectue the constructor.</span>
+<span class="c">// replace the sequestered function with a function that will</span>
+<span class="c">// restore all sequestered functions and exectue the constructor.</span>
 <span class="c"></span>                        <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
-
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-
                         <span class="c">// Y.log(&#39;augment() applying non-function: &#39; + k);</span>
-<span class="c"></span>
-                        <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+<span class="c"></span>                        <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
                     <span class="o">}</span>
 
                 <span class="o">}</span>
@@ -180,7 +170,6 @@
 <span class="c">     * Static members will not be inherited.</span>
 <span class="c">     *</span>
 <span class="c">     * @method extend</span>
-<span class="c">     * @static</span>
 <span class="c">     * @param {Function} r   the object to modify</span>
 <span class="c">     * @param {Function} s the object to inherit</span>
 <span class="c">     * @param {Object} px prototype properties to add/override</span>
@@ -189,7 +178,8 @@
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">px</span><span class="o">,</span> <span class="nx">sx</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">s</span><span class="o">||!</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
+            <span class="c">// @TODO error symbols</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">sp</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
@@ -198,30 +188,17 @@
         <span class="nx">rp</span><span class="o">.</span><span class="nx">constructor</span><span class="o">=</span><span class="nx">r</span><span class="o">;</span>
         <span class="nx">r</span><span class="o">.</span><span class="nx">superclass</span><span class="o">=</span><span class="nx">sp</span><span class="o">;</span>
 
-        <span class="c">// If the superclass doesn&#39;t have a standard constructor,</span>
-<span class="c"></span>        <span class="c">// define one so that Super() works</span>
+        <span class="c">// assign constructor property</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">!=</span> <span class="nb">Object</span> <span class="o">&amp;&amp;</span> <span class="nx">sp</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">OP</span><span class="o">.</span><span class="nx">constructor</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">sp</span><span class="o">.</span><span class="nx">constructor</span><span class="o">=</span><span class="nx">s</span><span class="o">;</span>
         <span class="o">}</span>
     
-        <span class="c">// Add object properties too</span>
-<span class="c"></span>        <span class="c">// @TODO removed for now because it isn&#39;t that useful and</span>
-<span class="c"></span>        <span class="c">// has caused a few issues overwriting things that should</span>
-<span class="c"></span>        <span class="c">// not be.  You can do this manually if needed.  Revisit</span>
-<span class="c"></span>        <span class="c">// if this is something that really is needed for some</span>
-<span class="c"></span>        <span class="c">// reason.</span>
-<span class="c"></span>        <span class="c">// Y.mix(r, s);</span>
-<span class="c"></span>
-        <span class="c">// Add superclass convienience functions </span>
-<span class="c"></span>        <span class="c">// @TODO revisit when we have something that works</span>
-<span class="c"></span>        <span class="c">// Y.augment(r, Ext);</span>
-<span class="c"></span>
-        <span class="c">// Add prototype overrides</span>
+        <span class="c">// add prototype overrides</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">px</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">rp</span><span class="o">,</span> <span class="nx">px</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="c">// Add object overrides</span>
+        <span class="c">// add object overrides</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">sx</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">sx</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
@@ -289,20 +266,22 @@
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
         <span class="o">}</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-        <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">),</span> <span class="nx">o2</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">o2</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">func</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">RegExp</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">switch</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">case</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="nx">case</span> <span class="s1">&#39;regexp&#39;</span><span class="o">:</span>
                 <span class="k">return</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">source</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="nx">o2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">safe</span><span class="o">)</span> <span class="o">?</span> <span class="o">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="nx">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+                <span class="nx">o2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">);</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="nx">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+                <span class="nx">o2</span> <span class="o">=</span> <span class="o">[];</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="nx">default</span><span class="o">:</span>
+                <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">safe</span><span class="o">)</span> <span class="o">?</span> <span class="o">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
@@ -319,77 +298,100 @@
 <span class="c">     * supplied object&#39;s context, optionally adding any additional</span>
 <span class="c">     * supplied parameters to the end of the arguments the function</span>
 <span class="c">     * is executed with.</span>
-<span class="c">     * @TODO review param order for PR2</span>
+<span class="c">     *</span>
+<span class="c">     * In some cases it is preferable to have the additional arguments</span>
+<span class="c">     * applied to the beginning of the function signature.  For instance,</span>
+<span class="c">     * FireFox setTimeout/setInterval supplies a parameter that other</span>
+<span class="c">     * browsers do not.  </span>
+<span class="c">     * Note: YUI provides a later() function which wraps setTimeout/setInterval,</span>
+<span class="c">     * providing context adjustment and parameter addition.  This can be </span>
+<span class="c">     * used instead of setTimeout/setInterval, avoiding the arguments</span>
+<span class="c">     * collection issue when using bind() in FireFox.</span>
+<span class="c">     *</span>
+<span class="c">     * @method bind</span>
+<span class="c">     * @param f {Function} the function to bind</span>
+<span class="c">     * @param c the execution context</span>
+<span class="c">     * @param args* 0..n arguments to append to the end of arguments collection</span>
+<span class="c">     * supplied to the function</span>
+<span class="c">     * @return {function} the wrapped function</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
+        <span class="o">};</span>
+    <span class="o">};</span>
+
+    <span class="c">/*</span>
+<span class="c">     * Returns a function that will execute the supplied function in the</span>
+<span class="c">     * supplied object&#39;s context, optionally adding any additional</span>
+<span class="c">     * supplied parameters to the beginning of the arguments collection the </span>
+<span class="c">     * supplied to the function.</span>
+<span class="c">     *</span>
 <span class="c">     * @method bind</span>
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to append to the arguments collection for the function</span>
 <span class="c">     * @return {function} the wrapped function</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// if (!f) {</span>
-<span class="c"></span>            <span class="c">// Y.log(&#39;no f&#39;);</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="c">// @todo bind args first, or function args first?</span>
-<span class="c"></span>            <span class="c">// return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
-        <span class="o">};</span>
-    <span class="o">};</span>
-
-
-<span class="o">},</span> <span class="s2">&quot;@VERSION@&quot;</span><span class="o">);</span>
-</pre></div>
+    <span class="c">// Y.bind = function(f, c) {</span>
+<span class="c"></span>    <span class="c">//     var a = Y.Array(arguments, 2, true);</span>
+<span class="c"></span>    <span class="c">//     return function () {</span>
+<span class="c"></span>    <span class="c">//         return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));</span>
+<span class="c"></span>    <span class="c">//     };</span>
+<span class="c"></span>    <span class="c">// };</span>
+<span class="c"></span></pre></div>
                     </div>
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class="selected"><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class="selected"><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="YUI~oop.html">YUI~oop</a></li>
+                                <li class=""><a href="YUI~oop.html" title="YUI~oop">YUI~oop</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="oop.js.html">oop.js</a></li>
+                                <li class="selected"><a href="oop.js.html" title="oop.js">oop.js</a></li>
                         </ul>
                     </div>
 
@@ -402,8 +404,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "bind", "url": "YUI~oop.html#method_bind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}];
+</script>
 </body>
 </html>

@@ -1,35 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
-	<title>API: anim-easing  Easing   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
-    <script type="text/javascript" src="assets/api-js"></script>
-    <script type="text/javascript" src="assets/ac-js"></script>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: anim  Easing   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1232052356.21" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1232052356.21" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1232052356.21"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1232052356.21"></script>
 </head>
 
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>anim-easing&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_anim-easing.html">anim-easing</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>anim&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_anim.html" title="anim">anim</a>
                  &gt; Easing 
                 
-            </p>
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -37,71 +48,40 @@
 
                         
                         
-                            Class <b>Easing</b>
+                            Class <b property="yui:name">Easing</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
-                        </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
                 
   
 
-                    <div class="summary description">
-                        Singleton that determines how an animation proceeds from start to end.
+                    <div class="summary description" property="yui:description">
+                        The easing module provides methods for customizing
+how an animation behaves during each run.
                     </div>
 
+                    
+                    <div rel="yui:properties" resource="#properties">
 
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="">
-                                    <h4><a name="property_curve">curve</a>
-                                        <code>- object</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Usage:
-<pre>
-var anim = new Y.Anim({
-node: '#foo',
-to: {
-curve: [ [0, 100], [500, 200], [800, 300] ]
-}
-});
-anim.run(); 
-</pre>
-                                        </div>
-                                    </div>
-     
-                                        
+                    </div>
 
-
-                                    <hr />
-                                    </div>
-
-
-                            </div>
-                        </div>
-
-
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_backBoth">
                                     <h4>
                                         <a name="method_backBoth">backBoth</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>backBoth</strong>
+                                            <strong property="yui:name">backBoth</strong>
                                            (
                                                 
                                                         
@@ -127,60 +107,73 @@ anim.run();
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Backtracks slightly, then reverses direction, overshoots end, 
 then reverses and comes back to end.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>s &lt;Number&gt;</code>
-                                                             Overshoot (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Overshoot (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_backIn">
                                     <h4>
                                         <a name="method_backIn">backIn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>backIn</strong>
+                                            <strong property="yui:name">backIn</strong>
                                            (
                                                 
                                                         
@@ -206,59 +199,72 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Backtracks slightly, then reverses direction and moves to end.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>s &lt;Number&gt;</code>
-                                                             Overshoot (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Overshoot (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_backOut">
                                     <h4>
                                         <a name="method_backOut">backOut</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>backOut</strong>
+                                            <strong property="yui:name">backOut</strong>
                                            (
                                                 
                                                         
@@ -284,59 +290,72 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Overshoots end, then reverses and comes back to end.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>s &lt;Number&gt;</code>
-                                                             Overshoot (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Overshoot (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_bounceBoth">
                                     <h4>
                                         <a name="method_bounceBoth">bounceBoth</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>bounceBoth</strong>
+                                            <strong property="yui:name">bounceBoth</strong>
                                            (
                                                 
                                                         
@@ -358,55 +377,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Bounces off start and end.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_bounceIn">
                                     <h4>
                                         <a name="method_bounceIn">bounceIn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>bounceIn</strong>
+                                            <strong property="yui:name">bounceIn</strong>
                                            (
                                                 
                                                         
@@ -428,55 +458,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Bounce off of start.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_bounceOut">
                                     <h4>
                                         <a name="method_bounceOut">bounceOut</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>bounceOut</strong>
+                                            <strong property="yui:name">bounceOut</strong>
                                            (
                                                 
                                                         
@@ -498,55 +539,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Bounces off end.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeBoth">
                                     <h4>
                                         <a name="method_easeBoth">easeBoth</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeBoth</strong>
+                                            <strong property="yui:name">easeBoth</strong>
                                            (
                                                 
                                                         
@@ -568,55 +620,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins slowly and decelerates towards end. (quadratic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeBothStrong">
                                     <h4>
                                         <a name="method_easeBothStrong">easeBothStrong</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeBothStrong</strong>
+                                            <strong property="yui:name">easeBothStrong</strong>
                                            (
                                                 
                                                         
@@ -638,55 +701,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins slowly and decelerates towards end. (quartic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeIn">
                                     <h4>
                                         <a name="method_easeIn">easeIn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeIn</strong>
+                                            <strong property="yui:name">easeIn</strong>
                                            (
                                                 
                                                         
@@ -708,55 +782,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins slowly and accelerates towards end. (quadratic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeInStrong">
                                     <h4>
                                         <a name="method_easeInStrong">easeInStrong</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeInStrong</strong>
+                                            <strong property="yui:name">easeInStrong</strong>
                                            (
                                                 
                                                         
@@ -778,55 +863,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins slowly and accelerates towards end. (quartic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeNone">
                                     <h4>
                                         <a name="method_easeNone">easeNone</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeNone</strong>
+                                            <strong property="yui:name">easeNone</strong>
                                            (
                                                 
                                                         
@@ -848,55 +944,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Uniform speed between points.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeOut">
                                     <h4>
                                         <a name="method_easeOut">easeOut</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeOut</strong>
+                                            <strong property="yui:name">easeOut</strong>
                                            (
                                                 
                                                         
@@ -918,55 +1025,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins quickly and decelerates towards end.  (quadratic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_easeOutStrong">
                                     <h4>
                                         <a name="method_easeOutStrong">easeOutStrong</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>easeOutStrong</strong>
+                                            <strong property="yui:name">easeOutStrong</strong>
                                            (
                                                 
                                                         
@@ -988,55 +1106,66 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Begins quickly and decelerates towards end.  (quartic)
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_elasticBoth">
                                     <h4>
                                         <a name="method_elasticBoth">elasticBoth</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>elasticBoth</strong>
+                                            <strong property="yui:name">elasticBoth</strong>
                                            (
                                                 
                                                         
@@ -1066,63 +1195,78 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Snap both elastic effect.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>a &lt;Number&gt;</code>
-                                                             Amplitude (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Amplitude (optional)</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>p &lt;Number&gt;</code>
-                                                             Period (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">p</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Period (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_elasticIn">
                                     <h4>
                                         <a name="method_elasticIn">elasticIn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>elasticIn</strong>
+                                            <strong property="yui:name">elasticIn</strong>
                                            (
                                                 
                                                         
@@ -1152,63 +1296,78 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Snap in elastic effect.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>a &lt;Number&gt;</code>
-                                                             Amplitude (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Amplitude (optional)</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>p &lt;Number&gt;</code>
-                                                             Period (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">p</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Period (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_elasticOut">
                                     <h4>
                                         <a name="method_elasticOut">elasticOut</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Number
-                                            <strong>elasticOut</strong>
+                                            <strong property="yui:name">elasticOut</strong>
                                            (
                                                 
                                                         
@@ -1238,106 +1397,63 @@ then reverses and comes back to end.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Snap out elastic effect.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             Time value used to compute current value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Time value used to compute current value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>b &lt;Number&gt;</code>
-                                                             Starting value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">b</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Starting value</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;Number&gt;</code>
-                                                             Delta between start and end values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Delta between start and end values</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;Number&gt;</code>
-                                                             Total length of animation
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Total length of animation</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>a &lt;Number&gt;</code>
-                                                             Amplitude (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Amplitude (optional)</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>p &lt;Number&gt;</code>
-                                                             Period (optional)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">p</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Period (optional)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd>The computed value for the current animation frame</dd>
+                                                    <dd property="yui:returnInfo">The computed value for the current animation frame</dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_getBezier">getBezier</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        Array
-                                            <strong>getBezier</strong>
-                                           (
-                                                
-                                                        
-                                                         points
-                                                    
-                                                
-                                                        , 
-                                                         t
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Get the current position of the animated element based on t.
-Each point is an array of "x" and "y" values (0 = x, 1 = y)
-At least 2 points are required (start and end).
-First point is start. Last point is end.
-Additional control points are optional.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>points &lt;Array&gt;</code>
-                                                             An array containing Bezier points
-                                                        </dd>
-                                                        <dd>
-                                                            <code>t &lt;Number&gt;</code>
-                                                             A number between 0 and 1 which is the basis for determining current position
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Array
-                                                    </code></dt>
-                                                    <dd>An array containing int x and y member data</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -1346,132 +1462,97 @@ Additional control points are optional.
                             </div>
                         </div>
 
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
 
 
+                    </div>
 
+                    <div rel="yui:attributes" resource="#configattributes">
 
-
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class="selected"><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_get.html">get</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class="selected"><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="Easing.html">Easing</a></li>
+                                <li class="selected"><a href="Easing.html" title="Easing">Easing</a></li>
+                                <li class=""><a href="plugin.Anim.html" title="plugin.Anim">plugin.Anim</a></li>
                         </ul>
                     </div>
 
-
-                    <div class="module">
-                        <h4>Properties</h4>
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_curve">curve</a>
-                                        <!--<code>&lt;object&gt;</code>-->
-                                </li>
+                                <li class=""><a href="anim-color.js.html" title="anim-color.js">anim-color.js</a></li>
+                                <li class=""><a href="anim-curve.js.html" title="anim-curve.js">anim-curve.js</a></li>
+                                <li class=""><a href="anim-easing.js.html" title="anim-easing.js">anim-easing.js</a></li>
+                                <li class=""><a href="anim-node-plugin.js.html" title="anim-node-plugin.js">anim-node-plugin.js</a></li>
+                                <li class=""><a href="anim-scroll.js.html" title="anim-scroll.js">anim-scroll.js</a></li>
+                                <li class=""><a href="anim-xy.js.html" title="anim-xy.js">anim-xy.js</a></li>
+                                <li class=""><a href="anim.js.html" title="anim.js">anim.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_backBoth">backBoth</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_backIn">backIn</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_backOut">backOut</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_bounceBoth">bounceBoth</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_bounceIn">bounceIn</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_bounceOut">bounceOut</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeBoth">easeBoth</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeBothStrong">easeBothStrong</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeIn">easeIn</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeInStrong">easeInStrong</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeNone">easeNone</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeOut">easeOut</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_easeOutStrong">easeOutStrong</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_elasticBoth">elasticBoth</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_elasticIn">elasticIn</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_elasticOut">elasticOut</a>
-                                </li>
-                                <li class=""><!--<code>Array</code>-->
-                                <a href="#method_getBezier">getBezier</a>
-                                </li>
+                                <li class=""><a href="#method_backBoth" title="backBoth">backBoth</a></li>
+                                <li class=""><a href="#method_backIn" title="backIn">backIn</a></li>
+                                <li class=""><a href="#method_backOut" title="backOut">backOut</a></li>
+                                <li class=""><a href="#method_bounceBoth" title="bounceBoth">bounceBoth</a></li>
+                                <li class=""><a href="#method_bounceIn" title="bounceIn">bounceIn</a></li>
+                                <li class=""><a href="#method_bounceOut" title="bounceOut">bounceOut</a></li>
+                                <li class=""><a href="#method_easeBoth" title="easeBoth">easeBoth</a></li>
+                                <li class=""><a href="#method_easeBothStrong" title="easeBothStrong">easeBothStrong</a></li>
+                                <li class=""><a href="#method_easeIn" title="easeIn">easeIn</a></li>
+                                <li class=""><a href="#method_easeInStrong" title="easeInStrong">easeInStrong</a></li>
+                                <li class=""><a href="#method_easeNone" title="easeNone">easeNone</a></li>
+                                <li class=""><a href="#method_easeOut" title="easeOut">easeOut</a></li>
+                                <li class=""><a href="#method_easeOutStrong" title="easeOutStrong">easeOutStrong</a></li>
+                                <li class=""><a href="#method_elasticBoth" title="elasticBoth">elasticBoth</a></li>
+                                <li class=""><a href="#method_elasticIn" title="elasticIn">elasticIn</a></li>
+                                <li class=""><a href="#method_elasticOut" title="elasticOut">elasticOut</a></li>
                         </ul>
                     </div>
 
@@ -1482,8 +1563,11 @@ Additional control points are optional.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Easing", "name": "backBoth", "url": "Easing.html#method_backBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "backIn", "url": "Easing.html#method_backIn", "type": "method"}, {"access": "", "host": "Easing", "name": "backOut", "url": "Easing.html#method_backOut", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceBoth", "url": "Easing.html#method_bounceBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceIn", "url": "Easing.html#method_bounceIn", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceOut", "url": "Easing.html#method_bounceOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBoth", "url": "Easing.html#method_easeBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBothStrong", "url": "Easing.html#method_easeBothStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeIn", "url": "Easing.html#method_easeIn", "type": "method"}, {"access": "", "host": "Easing", "name": "easeInStrong", "url": "Easing.html#method_easeInStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeNone", "url": "Easing.html#method_easeNone", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOut", "url": "Easing.html#method_easeOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOutStrong", "url": "Easing.html#method_easeOutStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticBoth", "url": "Easing.html#method_elasticBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticIn", "url": "Easing.html#method_elasticIn", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticOut", "url": "Easing.html#method_elasticOut", "type": "method"}];
+</script>
 </body>
 </html>
