@@ -1,0 +1,6 @@
+
+array-functional is a YUI module that extends Y.Array to include functional methods on collections: map, reduce, etc. Native methods are used if available. Implementation and inspiration taken with gratitude from xmlblog's yui 2.x library yui-functional (http://github.com/xmlblog/yui-functional/tree/master).
+
+
+
+
