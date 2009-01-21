@@ -125,7 +125,7 @@ A.each = (Native.forEach) ?
  * @static
  * @return {boolean} true if the 
  */
- A.some = (Native.forEach) ?
+ A.some = (Native.some) ?
     function (a, f, o) { 
         Native.some.call(a, f, o || Y);
         return Y;
