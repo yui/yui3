@@ -123,12 +123,12 @@ A.each = (Native.forEach) ?
  * @param f {Function} the function to execute on each item
  * @param o Optional context object
  * @static
- * @return {boolean} true if the 
+ * @return {boolean} true if the function returns true on
+ * any of the items in the array
  */
  A.some = (Native.some) ?
     function (a, f, o) { 
-        Native.some.call(a, f, o || Y);
-        return Y;
+        return Native.some.call(a, f, o);
     } :
     function (a, f, o) {
         var l = a.length;
