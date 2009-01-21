@@ -27,15 +27,15 @@
     var cfg = { 
       base: '../../../build',
     };
-
+    alert('here...');
     YUI(cfg).use('console', 'yuitest', 'functional', function(Y) {
-
+      alert('got hereiii');
       var Assert      = Y.Assert;
       var ArrayAssert = Y.ArrayAssert;
       var TestRunner  = Y.Test.Runner;
 
       var method_test = new Y.Test.Case({
-        name: "YUI-Y.Array Unit Tests", 
+        name: "Array-functional Unit Tests", 
         setUp: function () {
           this.data = [1, 2, 3, 4, 5];
         },         
