@@ -3,15 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>YUI-Y.Array Unit Tests</title>	
-  <link type="text/css" rel="stylesheet" href="../../../build/cssfonts/fonts-min.css" />
-  <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+	<title>Y.Array Extensions Unit Tests</title>	
+  <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0pr2/build/cssfonts/fonts-min.css" />
+  <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr2/build/yui/yui-min.js"></script>
+  <script type="text/javascript" src="../js/array-extensions.js"></script>
 </head>
 <body class="yui-skin-sam">
   <div id="doc2" class="yui-t7">
     <div id="hd">
       <!-- Header -->
-      <h1>array-functional unit tests</h1>
+      <h1>array-extensions unit tests</h1>
     </div>
     <div id="bd">
       <div class="yui-g">
@@ -24,12 +25,16 @@
     </div>
   </div>
   <script type="text/javascript">
-    var cfg = { 
-      base: '../../../build',
+    var cfg = {
+      //base: '../../../build',
+      modules: {
+        'array-extensions': {
+          fullpath: '../js/array-extensions.js'
+        }
+      }
     };
-    alert('here...');
-    YUI(cfg).use('console', 'yuitest', 'functional', function(Y) {
-      alert('got hereiii');
+
+    YUI(cfg).use('console', 'yuitest', 'array-extensions', function(Y) {
       var Assert      = Y.Assert;
       var ArrayAssert = Y.ArrayAssert;
       var TestRunner  = Y.Test.Runner;
