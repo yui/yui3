@@ -6,7 +6,6 @@
 	<title>Y.Array Extensions Unit Tests</title>	
   <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0pr2/build/cssfonts/fonts-min.css" />
   <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr2/build/yui/yui-min.js"></script>
-  <script type="text/javascript" src="../js/array-extensions.js"></script>
 </head>
 <body class="yui-skin-sam">
   <div id="doc2" class="yui-t7">
@@ -26,7 +25,6 @@
   </div>
   <script type="text/javascript">
     var cfg = {
-      //base: '../../../build',
       modules: {
         'array-extensions': {
           fullpath: '../js/array-extensions.js'
@@ -56,75 +54,75 @@
           });
         }, 
         
-        testCollect: function () {
+        testMap: function () {
           var data = this.data;
-          var results = Y.Array.collect(data, function (item) {
+          var results = Y.Array.map(data, function (item) {
             return item * 2;
           });
           Assert.isArray(results);
           ArrayAssert.itemsAreEqual([2, 4, 6, 8, 10], results);
         },
         
-        testInject: function () {
+        testReduce: function () {
           var data = this.data;
-          var result = Y.Array.inject(data, 0, function (sum, item) {
+          var result = Y.Array.reduce(data, 0, function (sum, item) {
             return sum + item;
           });
           Assert.areEqual(15, result);
         },
         
-        testDetect: function () {
+        testSome: function () {
           var data = this.data;
-          var result = Y.Array.detect(data, function (item) {
+          var result = Y.Array.some(data, function (item) {
             return item % 2 == 0;
           });
           Assert.areEqual(2, result);
         },
         
-        testDetectNoMatch: function () {
+        testSomeNoMatch: function () {
           var data = this.data;
-          var result = Y.Array.detect(data, function (item) {
+          var result = Y.Array.some(data, function (item) {
             return item % 7 == 0;
           });
           Assert.areEqual(null, result);
         },
         
-        testDetectFirst: function () {
+        testSomeFirst: function () {
           var data = this.data;
-          var result = Y.Array.detect(data, function(item) {
+          var result = Y.Array.some(data, function(item) {
             return item % 2 == 1;
           });
-          Assert.areEqual(1, result, 'First item not found by detect!');
+          Assert.areEqual(1, result, 'First item not found!');
         },
 
-        testDetectLast: function () {
+        testSomeLast: function () {
           var data = this.data;
-          var result = Y.Array.detect(data, function(item) {
+          var result = Y.Array.some(data, function(item) {
             return item % 5 == 0;
           });
-          Assert.areEqual(5, result, 'Last item not found by detect!');
+          Assert.areEqual(5, result, 'Last item not found!');
         },
 
-        testIndexOf: function () {
+        /*testIndexOf: function () {
           var data = this.data;
           var result = Y.Array.indexOf(data, function(item) {
             return item % 2 == 0;
           }); 
           Assert.areEqual(1, result);
-        },
+        },*/
           
-        testSelect: function () {
+        testFilter: function () {
           var data = this.data;
-          var result = Y.Array.select(data, function (item) {
+          var result = Y.Array.filter(data, function (item) {
             return item % 2 == 0;
           });
           Assert.isArray(result);
           ArrayAssert.itemsAreEqual([2, 4], result);
         },
         
-        testSelectNoMatch: function () {
+        testFilterNoMatch: function () {
           var data = this.data;
-          var result = Y.Array.select(data, function (item) {
+          var result = Y.Array.filter(data, function (item) {
             return item % 7 == 0;
           });
           Assert.isArray(result);
@@ -182,14 +180,6 @@
             Assert.isArray(item);
             ArrayAssert.itemsAreEqual(item, results[index]);
           });
-        },
-        
-        testContains: function () {
-          Assert.isTrue(Y.Array.contains([1, 2, 3, 4, 5], 4));        
-        },
-        
-        testDoesNotContain: function () {
-          Assert.isFalse(Y.Array.contains([1, 2, 3, 4, 5], 7));          
         },
       }); 
         
