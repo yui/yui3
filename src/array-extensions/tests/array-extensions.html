@@ -60,6 +60,14 @@
                 Assert.isArray(results);
                 ArrayAssert.itemsAreEqual([2, 4, 6, 8, 10], results);
             },
+
+            testMapContext: function() {
+                var data = this.data;
+                var results = Y.Array.map(data, function(item) {
+                    Assert.areEqual(5, this.x);
+                    Assert.areNotEqual(6, this.x);
+                }, { x: 5 });
+            },
           
             testReduce: function () {
                 var data = this.data;
@@ -68,6 +76,7 @@
                 });
                 Assert.areEqual(15, result);
             },
+
           
             testFind: function () {
                 var data = this.data;
