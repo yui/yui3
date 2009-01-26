@@ -71,33 +71,33 @@
           Assert.areEqual(15, result);
         },
         
-        testSome: function () {
+        testFind: function () {
           var data = this.data;
-          var result = Y.Array.some(data, function (item) {
+          var result = Y.Array.find(data, function (item) {
             return item % 2 == 0;
           });
           Assert.areEqual(2, result);
         },
         
-        testSomeNoMatch: function () {
+        testFindNoMatch: function () {
           var data = this.data;
-          var result = Y.Array.some(data, function (item) {
+          var result = Y.Array.find(data, function (item) {
             return item % 7 == 0;
           });
           Assert.areEqual(null, result);
         },
         
-        testSomeFirst: function () {
+        testFindFirst: function () {
           var data = this.data;
-          var result = Y.Array.some(data, function(item) {
+          var result = Y.Array.find(data, function(item) {
             return item % 2 == 1;
           });
           Assert.areEqual(1, result, 'First item not found!');
         },
 
-        testSomeLast: function () {
+        testFindLast: function () {
           var data = this.data;
-          var result = Y.Array.some(data, function(item) {
+          var result = Y.Array.find(data, function(item) {
             return item % 5 == 0;
           });
           Assert.areEqual(5, result, 'Last item not found!');
