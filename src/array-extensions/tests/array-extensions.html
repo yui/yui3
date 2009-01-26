@@ -77,6 +77,12 @@
                 Assert.areEqual(15, result);
             },
 
+            testReduceContext: function() {
+                var data = this.data;
+                var result = Y.Array.reduce(data, 0, function (sum, item) {
+                    Assert.areEqual("asdf", this.y);
+                }, { y: "asdf" });
+            },
           
             testFind: function () {
                 var data = this.data;
