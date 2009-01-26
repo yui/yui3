@@ -57,8 +57,12 @@ YUI.add('array-extensions', function(Y) {
             function(a, init, f, o) {
                 return Native.reduce.call(a, f, init, o);
             } :
-            function(a, f, init, o) {
-                
+            function(a, init, f, o) {
+                var r = init;
+                A.each(a, function (item, i, a) {
+                    r = f.call(o, r, item, i, a);
+                });
+                return r;
             },
 
         find:
