@@ -1,9 +1,30 @@
+/*
+ * Array extensions
+ * @module array-extensions
+ */
 
 YUI.add('array-extensions', function(Y) {
     var Native = Array.prototype;
     var A = Y.Array;
     Y.mix(A, {
 
+        /**
+        * Adds the following array utilities to the YUI instance
+        * @class YUI~array
+        */
+        
+        /**
+        * Executes the supplied function on each item in the array.
+        * Returns a new array containing the items that the supplied
+        * function returned true for.
+        * @method Array.filter
+        * @param a {Array} the array to iterate
+        * @param f {Function} the function to execute on each item
+        * @param o Optional context object
+        * @static
+        * @return {Array} The items on which the supplied function
+        * returned true.
+        */
         filter: (Native.filter) ?
             function(a, f, o) {
                 return Native.filter.call(a, f, o);
@@ -19,6 +40,18 @@ YUI.add('array-extensions', function(Y) {
                 return results;
             },
 
+        /**
+        * The inverse of filter. Executes the supplied function on each item. 
+        * Returns a new array containing the items that the supplied
+        * function returned *false* for.
+        * @method Array.reject
+        * @param a {Array} the array to iterate
+        * @param f {Function} the function to execute on each item
+        * @param o Optional context object
+        * @static
+        * @return {Array} The items on which the supplied function
+        * returned false.
+        */
         reject: 
             function(a, f, o) {
                 return A.filter(a, function(item, i, a) {
@@ -26,6 +59,16 @@ YUI.add('array-extensions', function(Y) {
                 });
             },
 
+        /**
+        * Executes the supplied function on each item in the array.
+        * @method Array.every
+        * @param a {Array} the array to iterate
+        * @param f {Function} the function to execute on each item
+        * @param o Optional context object
+        * @static
+        * @return {boolean} true if every item in the array returns true
+        * from the supplied function.
+        */
         every: (Native.every) ?
             function(a, f, o) {
                 return Native.every.call(a,f,o);
@@ -41,6 +84,17 @@ YUI.add('array-extensions', function(Y) {
                 return true;
             },
 
+        /**
+        * Executes the supplied function on each item in the array.
+        * @method Array.map
+        * @param a {Array} the array to iterate
+        * @param f {Function} the function to execute on each item
+        * @param o Optional context object
+        * @static
+        * @return {Array} A new array containing the return value
+        * of the supplied function for each item in the original
+        * array.
+        */
         map: (Native.map) ? 
             function(a, f, o) {
                 return Native.map.call(a, f, o);
@@ -55,6 +109,8 @@ YUI.add('array-extensions', function(Y) {
 
         reduce: (Native.reduce) ?
             function(a, init, f, o) {
+                //Firefox's Array.reduce does not allow inclusion of a
+                //  thisObject, so we need to implement it ourselves
                 return Native.reduce.call(a, function(init, item, i, a) {
                     return f.call(o, init, item, i, a);
                 }, init);
