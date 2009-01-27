@@ -55,7 +55,9 @@ YUI.add('array-extensions', function(Y) {
 
         reduce: (Native.reduce) ?
             function(a, init, f, o) {
-                return Native.reduce.call(a, f, init, o);
+                return Native.reduce.call(a, function(init, item, i, a) {
+                    return f.call(o, init, item, i, a);
+                }, init);
             } :
             function(a, init, f, o) {
                 var r = init;
