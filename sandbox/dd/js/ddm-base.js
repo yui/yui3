@@ -21,6 +21,14 @@ YUI.add('dd-ddm-base', function(Y) {
 
     DDMBase.ATTRS = {
         /**
+        * @attribute dragCursor
+        * @description The cursor to apply when dragging, if shimmed the shim will get the cursor.
+        * @type String
+        */
+        dragCursor: {
+            value: 'move'
+        },
+        /**
         * @attribute clickPixelThresh
         * @description The number of pixels to move to start a drag operation, default is 3.
         * @type Number

@@ -53,7 +53,8 @@ YUI.add('dd-ddm', function(Y) {
                 top: 0,
                 left: 0,
                 display: 'block',
-                opacity: ((this._debugShim) ? '.5' : '0')
+                opacity: ((this._debugShim) ? '.5' : '0'),
+                cursor: this.get('dragCursor')
             });
         },
         /**
