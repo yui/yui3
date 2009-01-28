@@ -367,7 +367,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">fired</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="c">// this._notify(s);</span>
-<span class="c"></span>            <span class="c">// setTimeout(Y.bind(this._notify, this, s), 0);</span>
+<span class="c"></span>            <span class="c">// setTimeout(Y.rbind(this._notify, this, s), 0);</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_notify</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -821,7 +821,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * The callback that will be execute when the event fires</span>
-<span class="c">     * This is wrapped by Y.bind if obj was supplied.</span>
+<span class="c">     * This is wrapped by Y.rbind if obj was supplied.</span>
 <span class="c">     * @property fn</span>
 <span class="c">     * @type Function</span>
 <span class="c">     */</span>
@@ -851,7 +851,7 @@
 <span class="c"></span>
     <span class="c">/**</span>
 <span class="c">     * }</span>
-<span class="c">     * fn bound to obj with additional arguments applied via Y.bind</span>
+<span class="c">     * fn bound to obj with additional arguments applied via Y.rbind</span>
 <span class="c">     * @property wrappedFn</span>
 <span class="c">     * @type Function</span>
 <span class="c">     */</span>
@@ -862,9 +862,9 @@
 <span class="c">        var a = (args) ? Y.Array(args) : [];</span>
 <span class="c">        a.unshift(fn, context);</span>
 <span class="c">        // a.unshift(fn);</span>
-<span class="c">        m = Y.bind.apply(Y, a);</span>
+<span class="c">        m = Y.rbind.apply(Y, a);</span>
 <span class="c">        */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">wrappedFn</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">wrappedFn</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
     <span class="o">}</span>
     
 
