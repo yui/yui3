@@ -579,7 +579,6 @@ YUI.add('node-base', function(Y) {
         /**
          * Retrieves a nodeList based on the given CSS selector. 
          * @method queryAll
-         * @deprecated Use query() which returns all matches
          *
          * @param {string} selector The CSS selector to test against.
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
