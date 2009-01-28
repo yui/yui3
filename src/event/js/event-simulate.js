@@ -238,7 +238,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
              * only browser with any implementation of Key Events, so for
              * now, assume it's Firefox if the above line doesn't error.
              */
-            //TODO: Decipher between Firefox's implementation and a correct one.
+            // @TODO: Decipher between Firefox's implementation and a correct one.
             customEvent.initKeyEvent(type, bubbles, cancelable, view, ctrlKey,
                 altKey, shiftKey, metaKey, keyCode, charCode);       
             
@@ -572,7 +572,7 @@ Y.Event.simulate = function(target, type, options){
 };
 
 /*
- * TODO: focus(), blur(), submit()
+ * @TODO: focus(), blur(), submit()
  */
 
 })();

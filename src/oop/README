@@ -1,7 +1,14 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
-3.0.0next
+3.0.0b1
+
+  * bind() now adds the arguments supplied to bind before the
+    arguments supplied when the function is executed.  Added
+    rbind to provide the old functionality (arguments supplied
+    to bind are appended to the arguments collection supplied
+    to the function when executed).
+
   * Fixed array handling in clone
 
 3.0.0pr2
