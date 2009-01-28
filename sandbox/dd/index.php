@@ -209,15 +209,15 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 
 
 
-<script type="text/javascript" src="../../build/dd/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/drag.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/constrain.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
