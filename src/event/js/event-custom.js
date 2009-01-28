@@ -319,7 +319,7 @@ Y.CustomEvent.prototype = {
         if (this.fireOnce && this.fired) {
 
             // this._notify(s);
-            // setTimeout(Y.bind(this._notify, this, s), 0);
+            // setTimeout(Y.rbind(this._notify, this, s), 0);
             Y.later(0, this, this._notify, s);
         }
 
@@ -773,7 +773,7 @@ Y.Subscriber = function(fn, context, args) {
 
     /**
      * The callback that will be execute when the event fires
-     * This is wrapped by Y.bind if obj was supplied.
+     * This is wrapped by Y.rbind if obj was supplied.
      * @property fn
      * @type Function
      */
@@ -803,7 +803,7 @@ Y.Subscriber = function(fn, context, args) {
 
     /**
      * }
-     * fn bound to obj with additional arguments applied via Y.bind
+     * fn bound to obj with additional arguments applied via Y.rbind
      * @property wrappedFn
      * @type Function
      */
@@ -814,9 +814,9 @@ Y.Subscriber = function(fn, context, args) {
         var a = (args) ? Y.Array(args) : [];
         a.unshift(fn, context);
         // a.unshift(fn);
-        m = Y.bind.apply(Y, a);
+        m = Y.rbind.apply(Y, a);
         */
-        this.wrappedFn = Y.bind.apply(Y, args);
+        this.wrappedFn = Y.rbind.apply(Y, args);
     }
     
 
