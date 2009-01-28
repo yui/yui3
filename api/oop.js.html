@@ -292,6 +292,27 @@
 
         <span class="k">return</span> <span class="nx">o2</span><span class="o">;</span>
     <span class="o">};</span>
+
+
+    <span class="c">/*</span>
+<span class="c">     * Returns a function that will execute the supplied function in the</span>
+<span class="c">     * supplied object&#39;s context, optionally adding any additional</span>
+<span class="c">     * supplied parameters to the beginning of the arguments collection the </span>
+<span class="c">     * supplied to the function.</span>
+<span class="c">     *</span>
+<span class="c">     * @method bind</span>
+<span class="c">     * @param f {Function} the function to bind</span>
+<span class="c">     * @param c the execution context</span>
+<span class="c">     * @param args* 0..n arguments to include before the arguments the </span>
+<span class="c">     * function is executed with.</span>
+<span class="c">     * @return {function} the wrapped function</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">a</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">)));</span>
+        <span class="o">};</span>
+    <span class="o">};</span>
     
     <span class="c">/**</span>
 <span class="c">     * Returns a function that will execute the supplied function in the</span>
@@ -308,39 +329,20 @@
 <span class="c">     * used instead of setTimeout/setInterval, avoiding the arguments</span>
 <span class="c">     * collection issue when using bind() in FireFox.</span>
 <span class="c">     *</span>
-<span class="c">     * @method bind</span>
+<span class="c">     * @method rbind</span>
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to append to the end of arguments collection</span>
 <span class="c">     * supplied to the function</span>
 <span class="c">     * @return {function} the wrapped function</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
         <span class="o">};</span>
     <span class="o">};</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Returns a function that will execute the supplied function in the</span>
-<span class="c">     * supplied object&#39;s context, optionally adding any additional</span>
-<span class="c">     * supplied parameters to the beginning of the arguments collection the </span>
-<span class="c">     * supplied to the function.</span>
-<span class="c">     *</span>
-<span class="c">     * @method bind</span>
-<span class="c">     * @param f {Function} the function to bind</span>
-<span class="c">     * @param c the execution context</span>
-<span class="c">     * @param args* 0..n arguments to append to the arguments collection for the function</span>
-<span class="c">     * @return {function} the wrapped function</span>
-<span class="c">     */</span>
-    <span class="c">// Y.bind = function(f, c) {</span>
-<span class="c"></span>    <span class="c">//     var a = Y.Array(arguments, 2, true);</span>
-<span class="c"></span>    <span class="c">//     return function () {</span>
-<span class="c"></span>    <span class="c">//         return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));</span>
-<span class="c"></span>    <span class="c">//     };</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span></pre></div>
+</pre></div>
                     </div>
 			</div>
 		</div>
@@ -408,7 +410,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "bind", "url": "YUI~oop.html#method_bind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "rbind", "url": "YUI~oop.html#method_rbind", "type": "method"}];
 </script>
 </body>
 </html>

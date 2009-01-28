@@ -252,89 +252,6 @@ constructor when initializing.</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_bind">
-                                    <h4>
-                                        <a name="method_bind">bind</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        function
-                                            <strong property="yui:name">bind</strong>
-                                           (
-                                                
-                                                        
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         c
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns a function that will execute the supplied function in the
-supplied object's context, optionally adding any additional
-supplied parameters to the end of the arguments the function
-is executed with.
-In some cases it is preferable to have the additional arguments
-applied to the beginning of the function signature.  For instance,
-FireFox setTimeout/setInterval supplies a parameter that other
-browsers do not.  
-Note: YUI provides a later() function which wraps setTimeout/setInterval,
-providing context adjustment and parameter addition.  This can be 
-used instead of setTimeout/setInterval, avoiding the arguments
-collection issue when using bind() in FireFox.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">f</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the function to bind</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">c</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the execution context</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n arguments to append to the end of arguments collection
-supplied to the function</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        function
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the wrapped function</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_clone">
                                     <h4>
                                         <a name="method_clone">clone</a></h4>
@@ -597,6 +514,89 @@ Static members will not be inherited.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_rbind">
+                                    <h4>
+                                        <a name="method_rbind">rbind</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        function
+                                            <strong property="yui:name">rbind</strong>
+                                           (
+                                                
+                                                        
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns a function that will execute the supplied function in the
+supplied object's context, optionally adding any additional
+supplied parameters to the end of the arguments the function
+is executed with.
+In some cases it is preferable to have the additional arguments
+applied to the beginning of the function signature.  For instance,
+FireFox setTimeout/setInterval supplies a parameter that other
+browsers do not.  
+Note: YUI provides a later() function which wraps setTimeout/setInterval,
+providing context adjustment and parameter addition.  This can be 
+used instead of setTimeout/setInterval, avoiding the arguments
+collection issue when using bind() in FireFox.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to bind</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the execution context</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n arguments to append to the end of arguments collection
+supplied to the function</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        function
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the wrapped function</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -670,10 +670,10 @@ Static members will not be inherited.
                         <ul class="content">        
                                 <li class=""><a href="#method_aggregate" title="aggregate">aggregate</a></li>
                                 <li class=""><a href="#method_augment" title="augment">augment</a></li>
-                                <li class=""><a href="#method_bind" title="bind">bind</a></li>
                                 <li class=""><a href="#method_clone" title="clone">clone</a></li>
                                 <li class=""><a href="#method_each" title="each">each</a></li>
                                 <li class=""><a href="#method_extend" title="extend">extend</a></li>
+                                <li class=""><a href="#method_rbind" title="rbind">rbind</a></li>
                         </ul>
                     </div>
 
@@ -688,7 +688,7 @@ Static members will not be inherited.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "bind", "url": "YUI~oop.html#method_bind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "rbind", "url": "YUI~oop.html#method_rbind", "type": "method"}];
 </script>
 </body>
 </html>

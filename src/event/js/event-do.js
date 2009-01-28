@@ -39,7 +39,7 @@ Y.Do = {
         var f = fn;
         if (c) {
             var a = [fn, c].concat(Y.Array(arguments, 4, true));
-            f = Y.bind.apply(Y, a);
+            f = Y.rbind.apply(Y, a);
         }
 
         return this._inject(BEFORE, f, obj, sFn);
@@ -59,7 +59,7 @@ Y.Do = {
         var f = fn;
         if (c) {
             var a = [fn, c].concat(Y.Array(arguments, 4, true));
-            f = Y.bind.apply(Y, a);
+            f = Y.rbind.apply(Y, a);
         }
 
         return this._inject(AFTER, f, obj, sFn);
