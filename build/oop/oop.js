@@ -241,6 +241,27 @@ YUI.add('oop', function(Y) {
 
         return o2;
     };
+
+
+    /*
+     * Returns a function that will execute the supplied function in the
+     * supplied object's context, optionally adding any additional
+     * supplied parameters to the beginning of the arguments collection the 
+     * supplied to the function.
+     *
+     * @method bind
+     * @param f {Function} the function to bind
+     * @param c the execution context
+     * @param args* 0..n arguments to include before the arguments the 
+     * function is executed with.
+     * @return {function} the wrapped function
+     */
+    Y.bind = function(f, c) {
+        var a = Y.Array(arguments, 2, true);
+        return function () {
+            return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+        };
+    };
     
     /**
      * Returns a function that will execute the supplied function in the
@@ -257,38 +278,19 @@ YUI.add('oop', function(Y) {
      * used instead of setTimeout/setInterval, avoiding the arguments
      * collection issue when using bind() in FireFox.
      *
-     * @method bind
+     * @method rbind
      * @param f {Function} the function to bind
      * @param c the execution context
      * @param args* 0..n arguments to append to the end of arguments collection
      * supplied to the function
      * @return {function} the wrapped function
      */
-    Y.bind = function(f, c) {
+    Y.rbind = function(f, c) {
         var a = Y.Array(arguments, 2, true);
         return function () {
             return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
         };
     };
-
-    /*
-     * Returns a function that will execute the supplied function in the
-     * supplied object's context, optionally adding any additional
-     * supplied parameters to the beginning of the arguments collection the 
-     * supplied to the function.
-     *
-     * @method bind
-     * @param f {Function} the function to bind
-     * @param c the execution context
-     * @param args* 0..n arguments to append to the arguments collection for the function
-     * @return {function} the wrapped function
-     */
-    // Y.bind = function(f, c) {
-    //     var a = Y.Array(arguments, 2, true);
-    //     return function () {
-    //         return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
-    //     };
-    // };
 
 
 
