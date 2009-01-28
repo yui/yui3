@@ -386,7 +386,7 @@ Y.Do = {
         var f = fn;
         if (c) {
             var a = [fn, c].concat(Y.Array(arguments, 4, true));
-            f = Y.bind.apply(Y, a);
+            f = Y.rbind.apply(Y, a);
         }
 
         return this._inject(BEFORE, f, obj, sFn);
@@ -406,7 +406,7 @@ Y.Do = {
         var f = fn;
         if (c) {
             var a = [fn, c].concat(Y.Array(arguments, 4, true));
-            f = Y.bind.apply(Y, a);
+            f = Y.rbind.apply(Y, a);
         }
 
         return this._inject(AFTER, f, obj, sFn);
@@ -955,7 +955,7 @@ Y.CustomEvent.prototype = {
         if (this.fireOnce && this.fired) {
 
             // this._notify(s);
-            // setTimeout(Y.bind(this._notify, this, s), 0);
+            // setTimeout(Y.rbind(this._notify, this, s), 0);
             Y.later(0, this, this._notify, s);
         }
 
@@ -1409,7 +1409,7 @@ Y.Subscriber = function(fn, context, args) {
 
     /**
      * The callback that will be execute when the event fires
-     * This is wrapped by Y.bind if obj was supplied.
+     * This is wrapped by Y.rbind if obj was supplied.
      * @property fn
      * @type Function
      */
@@ -1439,7 +1439,7 @@ Y.Subscriber = function(fn, context, args) {
 
     /**
      * }
-     * fn bound to obj with additional arguments applied via Y.bind
+     * fn bound to obj with additional arguments applied via Y.rbind
      * @property wrappedFn
      * @type Function
      */
@@ -1450,9 +1450,9 @@ Y.Subscriber = function(fn, context, args) {
         var a = (args) ? Y.Array(args) : [];
         a.unshift(fn, context);
         // a.unshift(fn);
-        m = Y.bind.apply(Y, a);
+        m = Y.rbind.apply(Y, a);
         */
-        this.wrappedFn = Y.bind.apply(Y, args);
+        this.wrappedFn = Y.rbind.apply(Y, args);
     }
     
 
@@ -3454,7 +3454,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
              * only browser with any implementation of Key Events, so for
              * now, assume it's Firefox if the above line doesn't error.
              */
-            //TODO: Decipher between Firefox's implementation and a correct one.
+            // @TODO: Decipher between Firefox's implementation and a correct one.
             customEvent.initKeyEvent(type, bubbles, cancelable, view, ctrlKey,
                 altKey, shiftKey, metaKey, keyCode, charCode);       
             
@@ -3788,7 +3788,7 @@ Y.Event.simulate = function(target, type, options){
 };
 
 /*
- * TODO: focus(), blur(), submit()
+ * @TODO: focus(), blur(), submit()
  */
 
 })();
