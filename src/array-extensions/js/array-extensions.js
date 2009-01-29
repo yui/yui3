@@ -23,7 +23,8 @@ YUI.add('array-extensions', function(Y) {
         * @param o Optional context object
         * @static
         * @return {Array} The items on which the supplied function
-        * returned true.
+        * returned true. If no items matched an empty array is 
+        * returned.
         */
         filter: (Native.filter) ?
             function(a, f, o) {
@@ -107,10 +108,25 @@ YUI.add('array-extensions', function(Y) {
                 return results;
             },
 
+
+        /**
+        * Executes the supplied function on each item in the array.
+        * Reduce "folds" the array into a single value.
+        * @method Array.reduce
+        * @param a {Array} the array to iterate
+        * @param init The initial value to start from
+        * @param f {Function} the function to execute on each item. It
+        * is responsible for returning the updated value of the
+        * computation.
+        * @param o Optional context object
+        * @static
+        * @return A value that results from iteratively applying the
+        * supplied function to each element in the array.
+        */
         reduce: (Native.reduce) ?
             function(a, init, f, o) {
                 //Firefox's Array.reduce does not allow inclusion of a
-                //  thisObject, so we need to implement it ourselves
+                //  thisObject, so we need to implement it manually
                 return Native.reduce.call(a, function(init, item, i, a) {
                     return f.call(o, init, item, i, a);
                 }, init);
@@ -123,6 +139,21 @@ YUI.add('array-extensions', function(Y) {
                 return r;
             },
 
+
+        /**
+        * Executes the supplied function on each item in the array,
+        * searching for the first item that matches the supplied
+        * function.
+        * @method Array.find
+        * @param a {Array} the array to search
+        * @param f {Function} the function to execute on each item. 
+        * Iteration is stopped as soon as this function returns true
+        * on an item.
+        * @param o Optional context object
+        * @static
+        * @return {object} the first item that the supplied function
+        * returns true for, or null if it never returns true
+        */
         find:
             function(a, f, o) {
                 var l = a.length;
@@ -134,83 +165,69 @@ YUI.add('array-extensions', function(Y) {
                 return null;
             },
 
-      /**
-        Function: grep
-
-        Parameters:
-        a - a collection to iterate over
-        pattern - The regular expression to test against each item
-
-        Returns:
-        All the items in the collection that produce a match against the
-        supplied regular expression. If no items match, an empty array is returned.
-
-        Example:
-        var matches = Y.Array.grep(['Chris', 'Dan', 'Diego'], /^D.+$/);
-        
-        => ['Dan', 'Diego']
-      */
-      grep:
-          function (a, pattern) {
-              return A.filter(a, function (item, index) {
-                  return pattern.test(item);
-              });
-          },
+        /**
+        * Iterates over an array, returning a new array of all the elements
+        * that match the supplied regular expression
+        * @method Array.grep
+        * @param a {Array} a collection to iterate over
+        * @param pattern {RegExp} The regular expression to test against 
+        * each item
+        * @static
+        * @return {Array} All the items in the collection that 
+        * produce a match against the supplied regular expression. 
+        * If no items match, an empty array is returned.
+        */
+        grep:
+            function (a, pattern) {
+                return A.filter(a, function (item, index) {
+                    return pattern.test(item);
+                });
+            },
     
-      /**
-        Function: partition
 
-        Parameters:
-        a - a collection to iterate over
-        f - a function that will receive each item in the collection and its index
-        o - execution context of f.
-
-        Returns:
-        An object with two members, 'matches' and 'rejects', that are arrays
-        continaing the items that were selected or rejected by the test function
-        (or an empty array).
-
-        Example:
-        var nums = Y.Array.partition([1, 2, 3, 4], function (item) {
-            return item % 2 == 0;
-        });
-
-        nums.matches => [2, 4]
-        nums.rejects => [1, 3]
-      */
-      partition:
-          function (a, f, o) {
-              var results = {matches: [], rejects: []};
-              A.each(a, function (item, index) {
-                  var set = f.call(o, item, index, a) ? results.matches : results.rejects;
-                  set.push(item);
-              });
-              return results;
-          },
+        /**
+        * Partitions an array into two new arrays, one with the items
+        * that match the supplied function, and one with the items that
+        * do not.
+        * @method Array.partition
+        * @param a {Array} a collection to iterate over
+        * @paran f {Function} a function that will receive each item 
+        * in the collection and its index.
+        * @param o Optional execution context of f.
+        * @static
+        * @return An object with two members, 'matches' and 'rejects',
+        * that are arrays containing the items that were selected or 
+        * rejected by the test function (or an empty array).
+        */
+        partition:
+            function (a, f, o) {
+                var results = {matches: [], rejects: []};
+                A.each(a, function (item, index) {
+                    var set = f.call(o, item, index, a) ? results.matches : results.rejects;
+                    set.push(item);
+                });
+                return results;
+            },
     
-      /**
-        Function: zip
+        /**
+        * Creates an array of arrays by pairing the corresponding
+        * elements of two arrays together into a new array.
+        * @method Array.zip
+        * @param a {Array} a collection to iterate over
+        * @param a2 {Array} another collection whose members will be 
+        * paired with members of the first parameter
+        * @static
+        * @return An array of arrays formed by pairing each element 
+        * of the first collection with an item in the second collection 
+        * having the corresponding index.
+        */
+        zip: function (a, a2) {
+            var results = [];
+            A.each(a, function (item, index) {
+                results.push([item, a2[index]]);
+            });
+            return results;
+        }
 
-        Parameters:
-        a - a collection to iterate over
-        a2 - another collection whose members will be paired with members of the first parameter
-
-        Returns:
-        An array of arrays formed by pairing each element of the first collection
-        with an item in the second collection having the corresponding index.
-        
-        Example:
-        var pairs = Y.Array.zip([1, 2, 3], ['a', 'b', 'c']);
-
-        => [[1, 'a'], [2, 'b'], [3, 'c']]
-      */
-      zip: function (a, a2) {
-          var results = [];
-          A.each(a, function (item, index) {
-              results.push([item, a2[index]]);
-          });
-          return results;
-      }
-
-  });
+    });
 });
