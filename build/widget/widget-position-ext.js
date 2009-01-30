@@ -243,7 +243,7 @@ YUI.add('widget-position-ext', function(Y) {
             _uiSetAlign: function (node, points) {
 
                 if (!L.isArray(points) || points.length != 2) {
-                    Y.fail("align: Invalid Points Arguments");
+                    Y.error("align: Invalid Points Arguments");
                     return;
                 }
 
@@ -389,7 +389,6 @@ YUI.add('widget-position-ext', function(Y) {
         };
 
         Y.WidgetPositionExt = PositionExt;
-
 
 
 }, '@VERSION@' ,{requires:['widget', 'widget-position']});

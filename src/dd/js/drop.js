@@ -70,7 +70,7 @@
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                    Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }

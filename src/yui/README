@@ -10,6 +10,10 @@ The YUI Global
 
 3.0.0next
 
+    Core:
+    - Y.fail has been renamed to Y.error so that Y.fail can be used for the assertion
+      engine.
+
     Lang: 
     - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
 

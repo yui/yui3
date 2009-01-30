@@ -128,7 +128,7 @@ YUI.add('oop', function(Y) {
     Y.extend = function(r, s, px, sx) {
         if (!s||!r) {
             // @TODO error symbols
-            Y.fail("extend failed, verify dependencies");
+            Y.error("extend failed, verify dependencies");
         }
 
         var sp = s.prototype, rp=Y.Object(sp), i;

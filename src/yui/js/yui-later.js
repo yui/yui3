@@ -32,7 +32,7 @@
         }
 
         if (!m) {
-            Y.fail("method undefined");
+            Y.error("method undefined");
         }
 
         if (!L.isArray(d)) {

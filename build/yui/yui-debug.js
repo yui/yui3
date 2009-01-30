@@ -218,7 +218,7 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.fail(method + ': applyTo not allowed');
+            this.error(method + ': applyTo not allowed');
             return null;
         }
 
@@ -233,7 +233,7 @@ YUI.prototype = {
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.fail('applyTo not found: ' + method);
+                    this.error('applyTo not found: ' + method);
                 }
             }
 
@@ -517,13 +517,13 @@ YUI.prototype = {
      * the 'throwFail' configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
-     * @method fail
-     * @param msg {string} the failure message
+     * @method error
+     * @param msg {string} the error message
      * @param e {Error} Optional JS error that was caught.  If supplied
      * and throwFail is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance
      */
-    fail: function(msg, e) {
+    error: function(msg, e) {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
@@ -1471,7 +1471,7 @@ Y.UA = function() {
         }
 
         if (!m) {
-            Y.fail("method undefined");
+            Y.error("method undefined");
         }
 
         if (!L.isArray(d)) {
