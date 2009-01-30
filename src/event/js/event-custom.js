@@ -305,7 +305,7 @@ Y.CustomEvent.prototype = {
     _subscribe: function(fn, context, args, when) {
 
         if (!fn) {
-            Y.fail("Invalid callback for CE: " + this.type);
+            Y.error("Invalid callback for CE: " + this.type);
         }
 
         var se = this.subscribeEvent;
@@ -857,7 +857,7 @@ Y.Subscriber.prototype = {
             try {
                 f.call(this);
             } catch(e) {
-                Y.fail(this + ' failed: ' + e.message, e);
+                Y.error(this + ' failed: ' + e.message, e);
             }
         }
 

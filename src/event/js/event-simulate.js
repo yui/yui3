@@ -169,7 +169,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
 {
     //check target    
     if (!target){
-        Y.fail("simulateKeyEvent(): Invalid target.");
+        Y.error("simulateKeyEvent(): Invalid target.");
     }
     
     //check event type
@@ -184,10 +184,10 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
             case "keypress":
                 break;
             default:
-                Y.fail("simulateKeyEvent(): Event type '" + type + "' not supported.");
+                Y.error("simulateKeyEvent(): Event type '" + type + "' not supported.");
         }
     } else {
-        Y.fail("simulateKeyEvent(): Event type must be a string.");
+        Y.error("simulateKeyEvent(): Event type must be a string.");
     }
     
     //setup default values
@@ -308,7 +308,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         target.fireEvent("on" + type, customEvent);  
                 
     } else {
-        Y.fail("simulateKeyEvent(): No event simulation framework present.");
+        Y.error("simulateKeyEvent(): No event simulation framework present.");
     }
 }
 
@@ -375,7 +375,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     
     //check target   
     if (!target){
-        Y.fail("simulateMouseEvent(): Invalid target.");
+        Y.error("simulateMouseEvent(): Invalid target.");
     }
     
     //check event type
@@ -384,10 +384,10 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         
         //make sure it's a supported mouse event
         if (array.indexOf(mouseEvents, type) == -1){
-            Y.fail("simulateMouseEvent(): Event type '" + type + "' not supported.");
+            Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
     } else {
-        Y.fail("simulateMouseEvent(): Event type must be a string.");
+        Y.error("simulateMouseEvent(): Event type must be a string.");
     }
     
     //setup default values
@@ -529,7 +529,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         target.fireEvent("on" + type, customEvent);
                 
     } else {
-        Y.fail("simulateMouseEvent(): No event simulation framework present.");
+        Y.error("simulateMouseEvent(): No event simulation framework present.");
     }
 }
 
