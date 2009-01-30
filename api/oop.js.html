@@ -179,7 +179,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">px</span><span class="o">,</span> <span class="nx">sx</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">s</span><span class="o">||!</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// @TODO error symbols</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">sp</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>

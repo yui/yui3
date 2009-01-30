@@ -290,7 +290,7 @@
             <span class="nx">_uiSetAlign</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">points</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">points</span><span class="o">)</span> <span class="o">||</span> <span class="nx">points</span><span class="o">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="o">);</span>
                     <span class="k">return</span><span class="o">;</span>
                 <span class="o">}</span>
 

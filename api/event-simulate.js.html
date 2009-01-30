@@ -218,7 +218,7 @@
 <span class="o">{</span>
     <span class="c">//check target    </span>
 <span class="c"></span>    <span class="k">if</span> <span class="o">(!</span><span class="nx">target</span><span class="o">){</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Invalid target.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Invalid target.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
     
     <span class="c">//check event type</span>
@@ -233,10 +233,10 @@
             <span class="nx">case</span> <span class="s2">&quot;keypress&quot;</span><span class="o">:</span>
                 <span class="k">break</span><span class="o">;</span>
             <span class="nx">default</span><span class="o">:</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Event type &#39;&quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; not supported.&quot;</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Event type &#39;&quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; not supported.&quot;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Event type must be a string.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): Event type must be a string.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
     
     <span class="c">//setup default values</span>
@@ -357,7 +357,7 @@
 <span class="c"></span>        <span class="nx">target</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">customEvent</span><span class="o">);</span>  
                 
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): No event simulation framework present.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateKeyEvent(): No event simulation framework present.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
@@ -424,7 +424,7 @@
     
     <span class="c">//check target   </span>
 <span class="c"></span>    <span class="k">if</span> <span class="o">(!</span><span class="nx">target</span><span class="o">){</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Invalid target.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Invalid target.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
     
     <span class="c">//check event type</span>
@@ -433,10 +433,10 @@
         
         <span class="c">//make sure it&#39;s a supported mouse event</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">mouseEvents</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">){</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Event type &#39;&quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; not supported.&quot;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Event type &#39;&quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; not supported.&quot;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Event type must be a string.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): Event type must be a string.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
     
     <span class="c">//setup default values</span>
@@ -578,7 +578,7 @@
 <span class="c"></span>        <span class="nx">target</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">customEvent</span><span class="o">);</span>
                 
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): No event simulation framework present.&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;simulateMouseEvent(): No event simulation framework present.&quot;</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 

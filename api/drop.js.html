@@ -119,7 +119,7 @@
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;DD.Drop: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;DD.Drop: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
                 <span class="o">}</span>
                 <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>               
             <span class="o">}</span>
