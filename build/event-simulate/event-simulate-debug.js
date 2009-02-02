@@ -1,8 +1,9 @@
+YUI.add('event-simulate', function(Y) {
+
 (function() {
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
+ * Synthetic DOM events
+ * @module event-simulate
  */
 
 //shortcuts
@@ -13,6 +14,7 @@ var L   = Y.Lang,
     isBoolean   = L.isBoolean,
     isObject    = L.isObject,
     isNumber    = L.isNumber,
+    doc         = Y.config.doc,
     
     //mouse events supported
     mouseEvents = [
@@ -223,12 +225,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
         
     //check for DOM-compliant browsers first
-    if (isFunction(document.createEvent)){
+    if (isFunction(doc.createEvent)){
     
         try {
             
             //try to create key event
-            customEvent = document.createEvent("KeyEvents");
+            customEvent = doc.createEvent("KeyEvents");
             
             /*
              * Interesting problem: Firefox implemented a non-standard
@@ -256,12 +258,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
             try {
 
                 //try to create generic event - will fail in Safari 2.x
-                customEvent = document.createEvent("Events");
+                customEvent = doc.createEvent("Events");
 
             } catch (uierror /*:Error*/){
 
                 //the above failed, so create a UIEvent for Safari 2.x
-                customEvent = document.createEvent("UIEvents");
+                customEvent = doc.createEvent("UIEvents");
 
             } finally {
 
@@ -283,10 +285,10 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(document.createEventObject)){ //IE
+    } else if (isObject(doc.createEventObject)){ //IE
     
         //create an IE event object
-        customEvent = document.createEventObject();
+        customEvent = doc.createEventObject();
         
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -435,9 +437,9 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
         
     //check for DOM-compliant browsers first
-    if (isFunction(document.createEvent)){
+    if (isFunction(doc.createEvent)){
     
-        customEvent = document.createEvent("MouseEvents");
+        customEvent = doc.createEvent("MouseEvents");
     
         //Safari 2.x (WebKit 418) still doesn't implement initMouseEvent()
         if (customEvent.initMouseEvent){
@@ -448,7 +450,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         } else { //Safari
         
             //the closest thing available in Safari 2.x is UIEvents
-            customEvent = document.createEvent("UIEvents");
+            customEvent = doc.createEvent("UIEvents");
             customEvent.initEvent(type, bubbles, cancelable);
             customEvent.view = view;
             customEvent.detail = detail;
@@ -484,10 +486,10 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(document.createEventObject)){ //IE
+    } else if (isObject(doc.createEventObject)){ //IE
     
         //create an IE event object
-        customEvent = document.createEventObject();
+        customEvent = doc.createEventObject();
         
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -576,3 +578,6 @@ Y.Event.simulate = function(target, type, options){
  */
 
 })();
+
+
+}, '@VERSION@' );

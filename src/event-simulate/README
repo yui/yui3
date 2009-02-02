@@ -1,0 +1,6 @@
+YUI Event Simulation Utilities
+    Synthetic DOM events
+
+3.0.0next
+    - Moved out of event module
+    - References to document changed to Y.config.doc
