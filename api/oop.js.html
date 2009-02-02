@@ -83,14 +83,20 @@
 <span class="c">     * @TODO best practices for overriding sequestered methods.</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">sProto</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">newProto</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">construct</span> <span class="o">=</span> <span class="nx">s</span><span class="o">,</span> 
-            <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
-            <span class="nx">target</span> <span class="o">=</span>  <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">sProto</span>           <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
+            <span class="nx">newProto</span>         <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> 
+            <span class="nx">construct</span>        <span class="o">=</span> <span class="nx">s</span><span class="o">,</span> 
+            <span class="nx">a</span>                <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> 
+            <span class="nx">rProto</span>           <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
+            <span class="nx">target</span>           <span class="o">=</span> <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="o">,</span> 
+            <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">sequestered</span><span class="o">,</span> <span class="nx">replacements</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="c">// working on a class, so apply constructor infrastructure</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sequestered</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">replacements</span> <span class="o">=</span> <span class="o">{};</span>
-            <span class="nx">newProto</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">sequestered</span>  <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">replacements</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">newProto</span>     <span class="o">=</span> <span class="o">{};</span>
 
             <span class="c">// sequester all of the functions in the supplier and replace with</span>
 <span class="c"></span>            <span class="c">// one that will restore all of them.</span>
@@ -100,7 +106,7 @@
 <span class="c">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing Event.Target&#39;);</span>
 <span class="c">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c">// but only if it hasn&#39;t been overridden</span>
-<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">sequestered</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                             <span class="c">// Y.log(&#39;... restoring &#39; + k);</span>
 <span class="c"></span>                            <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
@@ -182,7 +188,7 @@
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">sp</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">sp</span><span class="o">);</span>
         <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">=</span><span class="nx">rp</span><span class="o">;</span>
 
         <span class="nx">rp</span><span class="o">.</span><span class="nx">constructor</span><span class="o">=</span><span class="nx">r</span><span class="o">;</span>
@@ -320,15 +326,6 @@
 <span class="c">     * supplied parameters to the end of the arguments the function</span>
 <span class="c">     * is executed with.</span>
 <span class="c">     *</span>
-<span class="c">     * In some cases it is preferable to have the additional arguments</span>
-<span class="c">     * applied to the beginning of the function signature.  For instance,</span>
-<span class="c">     * FireFox setTimeout/setInterval supplies a parameter that other</span>
-<span class="c">     * browsers do not.  </span>
-<span class="c">     * Note: YUI provides a later() function which wraps setTimeout/setInterval,</span>
-<span class="c">     * providing context adjustment and parameter addition.  This can be </span>
-<span class="c">     * used instead of setTimeout/setInterval, avoiding the arguments</span>
-<span class="c">     * collection issue when using bind() in FireFox.</span>
-<span class="c">     *</span>
 <span class="c">     * @method rbind</span>
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
@@ -363,6 +360,8 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
