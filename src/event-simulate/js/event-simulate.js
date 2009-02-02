@@ -125,7 +125,7 @@ var L   = Y.Lang,
         "keypress"
     ];
 
-/**
+/*
  * Note: Intentionally not for YUIDoc generation.
  * Simulates a key event using the given event information to populate
  * the generated event object. This method does browser-equalizing
