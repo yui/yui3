@@ -178,7 +178,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         switch(type){
             case "textevent": //DOM Level 3
                 type = "keypress";
-                /*falls through*/
+                break;
             case "keyup":
             case "keydown":
             case "keypress":

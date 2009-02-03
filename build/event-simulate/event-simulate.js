@@ -127,7 +127,7 @@ var L   = Y.Lang,
         "keypress"
     ];
 
-/**
+/*
  * Note: Intentionally not for YUIDoc generation.
  * Simulates a key event using the given event information to populate
  * the generated event object. This method does browser-equalizing
@@ -180,7 +180,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         switch(type){
             case "textevent": //DOM Level 3
                 type = "keypress";
-                /*falls through*/
+                break;
             case "keyup":
             case "keydown":
             case "keypress":
