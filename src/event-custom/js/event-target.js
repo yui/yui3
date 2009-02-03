@@ -1,4 +1,4 @@
-
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -15,10 +15,9 @@
  * @Class Event.Target
  */
 
-var SILENT = { 'yui:log': true },
-    L = Y.Lang;
+var L = Y.Lang,
 
-Y.EventTarget = function(opts) { 
+ET = function(opts) { 
 
     // console.log('Event.Target constructor executed: ' + this._yuid);
 
@@ -43,8 +42,6 @@ Y.EventTarget = function(opts) {
 
 };
 
-var ET = Y.EventTarget;
-
 
 ET.prototype = {
 
@@ -57,11 +54,14 @@ ET.prototype = {
      * @param args* 0..n params to supply to the callback
      */
     subscribe: function(type, fn, context) {
+        var f, c, args, ret, ce;
 
         if (L.isObject(type)) {
 
-            var f = fn, c = context, args = Y.Array(arguments, 0, true),
-                ret = {};
+            f = fn; 
+            c = context; 
+            args = Y.Array(arguments, 0, true);
+            ret = {};
 
             Y.each(type, function(v, k) {
 
@@ -82,14 +82,10 @@ ET.prototype = {
 
         }
 
-        var ce = this._yuievt.events[type] || 
-            // this.publish(type, {
-            //     configured: false
-            // }),
-            this.publish(type),
-            a = Y.Array(arguments, 1, true);
+        ce = this._yuievt.events[type] || this.publish(type);
+        args = Y.Array(arguments, 1, true);
 
-        return ce.subscribe.apply(ce, a);
+        return ce.subscribe.apply(ce, args);
 
     },
 
@@ -116,16 +112,15 @@ ET.prototype = {
             return type.detach();
         }
 
-        var evts = this._yuievt.events;
+        var evts = this._yuievt.events, ce, i, ret = true;
 
         if (type) {
-            var ce = evts[type];
+            ce = evts[type];
             if (ce) {
                 return ce.unsubscribe(fn, context);
             }
         } else {
-            var ret = true;
-            for (var i in evts) {
+            for (i in evts) {
                 if (evts.hasOwnProperty(i)) {
                     ret = ret && evts[i].unsubscribe(fn, context);
                 }
@@ -202,8 +197,10 @@ ET.prototype = {
      */
     publish: function(type, opts) {
 
+        var events, ce, ret, o;
+
         if (L.isObject(type)) {
-            var ret = {};
+            ret = {};
             Y.each(type, function(v, k) {
                 ret[k] = this.publish(k, v || opts); 
             }, this);
@@ -211,7 +208,8 @@ ET.prototype = {
             return ret;
         }
 
-        var events = this._yuievt.events, ce = events[type];
+        events = this._yuievt.events; 
+        ce = events[type];
 
         //if (ce && !ce.configured) {
         if (ce) {
@@ -222,7 +220,7 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            var o = opts || {};
+            o = opts || {};
 
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
@@ -283,9 +281,8 @@ ET.prototype = {
     fire: function(type) {
 
         var typeIncluded = L.isString(type),
-            t = (typeIncluded) ? type : (type && type.type);
-
-        var ce = this.getEvent(t);
+            t = (typeIncluded) ? type : (type && type.type),
+            ce = this.getEvent(t), a, ret;
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -313,8 +310,8 @@ ET.prototype = {
         // (set in bubble()).
         // ce.target = ce.target || this;
 
-        var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-        var ret = ce.fire.apply(ce, a);
+        a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+        ret = ce.fire.apply(ce, a);
 
         // clear target for next fire()
         ce.target = null;
@@ -342,17 +339,20 @@ ET.prototype = {
      */
     bubble: function(evt) {
 
-        var targs = this._yuievt.targets, ret = true;
+        var targs = this._yuievt.targets, ret = true,
+            t, type, ce, targetProp, i;
 
         if (!evt.stopped && targs) {
 
             // Y.log('Bubbling ' + evt.type);
 
-            for (var i in targs) {
+            for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
 
-                    var t = targs[i], type = evt.type,
-                        ce = t.getEvent(type), targetProp = evt.target || this;
+                    t = targs[i]; 
+                    type = evt.type;
+                    ce = t.getEvent(type); 
+                    targetProp = evt.target || this;
                         
                     // if this event was not published on the bubble target,
                     // publish it with sensible default properties
@@ -427,6 +427,8 @@ ET.prototype = {
 
 };
 
+Y.EventTarget = ET;
+
 // make Y an event target
 Y.mix(Y, ET.prototype, false, false, { 
     bubbles: false 
@@ -434,3 +436,4 @@ Y.mix(Y, ET.prototype, false, false, {
 
 ET.call(Y);
 
+})();

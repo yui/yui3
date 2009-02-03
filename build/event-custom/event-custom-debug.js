@@ -6,10 +6,11 @@ YUI.add('event-custom', function(Y) {
  * @module event-custom
  */
 
-var FOCUS = Y.UA.ie ? "focusin" : "focus",
-    BLUR = Y.UA.ie ? "focusout" : "blur",
+var FOCUS   = Y.UA.ie ? "focusin" : "focus",
+    BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    Lang = Y.Lang;
+    Lang    = Y.Lang,
+    after   = Y.after;
 
 Y.Env.eventAdaptors = {
 
@@ -102,7 +103,8 @@ Y.Env.eventAdaptors = {
 
         on: function(type, fn, id, spec, o) {
 
-            var a = Y.Array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true),
+                parsed, etype, criteria, ename;
 
             if (!spec || spec.indexOf(':') == -1) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
@@ -110,17 +112,16 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
                 return Y.on.apply(Y, a);
             }
 
-            // parse spec ([key event type]:[criteria])
-            var parsed = spec.split(':'),
+            parsed = spec.split(':');
 
-                // key event type: 'down', 'up', or 'press'
-                etype = parsed[0],
+            // key event type: 'down', 'up', or 'press'
+            etype = parsed[0];
 
-                // list of key codes optionally followed by modifiers
-                criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null,
+            // list of key codes optionally followed by modifiers
+            criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
 
-                // the name of the custom event that will be created for the spec
-                ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
+            // the name of the custom event that will be created for the spec
+            ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
 
 
@@ -130,10 +131,11 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
                 // Y.log('keylistener: ' + e.keyCode);
                 
-                var passed = false, failed = false;
+                var passed = false, failed = false, i, crit, critInt;
 
-                for (var i=0; i<criteria.length; i=i+1) {
-                    var crit = criteria[i], critInt = parseInt(crit, 10);
+                for (i=0; i<criteria.length; i=i+1) {
+                    crit = criteria[i]; 
+                    critInt = parseInt(crit, 10);
 
                     // pass this section if any supplied keyCode 
                     // is found
@@ -259,7 +261,6 @@ Y.before = function(type, f, o) {
     }
 };
 
-var after = Y.after;
 
 /**
  * Executes the callback after a DOM event, custom event
@@ -322,9 +323,9 @@ Y.Do = {
      */
     before: function(fn, obj, sFn, c) {
         // Y.log('Do before: ' + sFn, 'info', 'event');
-        var f = fn;
+        var f = fn, a;
         if (c) {
-            var a = [fn, c].concat(Y.Array(arguments, 4, true));
+            a = [fn, c].concat(Y.Array(arguments, 4, true));
             f = Y.rbind.apply(Y, a);
         }
 
@@ -342,9 +343,9 @@ Y.Do = {
      * @static
      */
     after: function(fn, obj, sFn, c) {
-        var f = fn;
+        var f = fn, a;
         if (c) {
-            var a = [fn, c].concat(Y.Array(arguments, 4, true));
+            a = [fn, c].concat(Y.Array(arguments, 4, true));
             f = Y.rbind.apply(Y, a);
         }
 
@@ -366,13 +367,14 @@ Y.Do = {
     _inject: function(when, fn, obj, sFn) {
 
         // object id
-        var id = Y.stamp(obj);
+        var id = Y.stamp(obj), o, sid;
 
         if (! this.objs[id]) {
             // create a map entry for the obj if it doesn't exist
             this.objs[id] = {};
         }
-        var o = this.objs[id];
+
+        o = this.objs[id];
 
         if (! o[sFn]) {
             // create a map entry for the method if it doesn't exist
@@ -386,7 +388,7 @@ Y.Do = {
         }
 
         // subscriber id
-        var sid = id + Y.stamp(fn) + sFn;
+        sid = id + Y.stamp(fn) + sFn;
 
         // register the callback
         o[sFn].register(sid, fn, when);
@@ -883,12 +885,13 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        var se = this.subscribeEvent;
+        var se = this.subscribeEvent, s;
+
         if (se) {
             se.fire.apply(se, args);
         }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        s = new Y.Subscriber(fn, context, args, when);
 
 
         if (this.fireOnce && this.fired) {
@@ -955,10 +958,11 @@ Y.CustomEvent.prototype = {
             return this.unsubscribeAll();
         }
 
-        var found = false, subs = this.subscribers;
-        for (var i in subs) {
+        var found = false, subs = this.subscribers, i, s;
+
+        for (i in subs) {
             if (subs.hasOwnProperty(i)) {
-                var s = subs[i];
+                s = subs[i];
                 if (s && s.contains(fn, context)) {
                     this._delete(s);
                     found = true;
@@ -971,7 +975,7 @@ Y.CustomEvent.prototype = {
 
     _getFacade: function(args) {
 
-        var ef = this._facade;
+        var ef = this._facade, o;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -979,7 +983,8 @@ Y.CustomEvent.prototype = {
 
         // if the first argument is an object literal, apply the
         // properties to the event facade
-        var o = args && args[0];
+        o = args && args[0];
+
         if (Y.Lang.isObject(o, true) && !o._yuifacade) {
             Y.mix(ef, o, true);
         }
@@ -1007,7 +1012,7 @@ Y.CustomEvent.prototype = {
 
         this.log(this.type + "->" + ": " +  s);
 
-        var ret, c, ct;
+        var ret, ct;
 
         // emit an EventFacade if this is that sort of event
         // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -1043,8 +1048,6 @@ Y.CustomEvent.prototype = {
      * @param cat {string} log category
      */
     log: function(msg, cat) {
-        var es = Y.Env._eventstack, s =  es && es.logging;
-        // if (!s && !this.silent) {
         if (!this.silent) {
             Y.log(this.id + ': ' + msg, cat || "info", "event");
         }
@@ -1068,7 +1071,10 @@ Y.CustomEvent.prototype = {
      */
     fire: function() {
 
-        var es = Y.Env._eventstack;
+        var es = Y.Env._eventstack,
+            subs, s, args, i, ef, q, queue, ce, hasSub,
+            ret = true;
+
 
         if (es) {
 
@@ -1105,7 +1111,6 @@ Y.CustomEvent.prototype = {
             es = Y.Env._eventstack;
         }
 
-        var ret = true;
 
         if (this.fireOnce && this.fired) {
 
@@ -1114,8 +1119,8 @@ Y.CustomEvent.prototype = {
         } else {
 
             // var subs = this.subscribers.slice(), len=subs.length,
-            var subs = Y.merge(this.subscribers), s,
-                       args=Y.Array(arguments, 0, true), i;
+            subs = Y.merge(this.subscribers);
+            args = Y.Array(arguments, 0, true);
 
             this.stopped = 0;
             this.prevented = 0;
@@ -1129,11 +1134,10 @@ Y.CustomEvent.prototype = {
             // this.log("Firing " + this  + ", " + "args: " + args);
             this.log("Firing " + this.type);
 
-            var hasSub = false;
+            hasSub = false;
             es.lastLogState = es.logging;
+            ef = null;
 
-
-            var ef = null;
             if (this.emitFacade) {
 
                 // this.fire({
@@ -1226,11 +1230,12 @@ Y.CustomEvent.prototype = {
 // reset propragation properties while processing the rest of the queue
 
 // process queued events
-            var queue = es.queue;
+            queue = es.queue;
 
             while (queue.length) {
                 // q[0] = the event, q[1] = arguments to fire
-                var q = queue.pop(), ce = q[0];
+                q = queue.pop(); 
+                ce = q[0];
 
 // Y.log('firing queued event ' + ce.type + ', from ' + this);
                 es.stopped = 0;
@@ -1465,7 +1470,7 @@ Y.Subscriber.prototype = {
     }
 };
 
-
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -1482,10 +1487,9 @@ Y.Subscriber.prototype = {
  * @Class Event.Target
  */
 
-var SILENT = { 'yui:log': true },
-    L = Y.Lang;
+var L = Y.Lang,
 
-Y.EventTarget = function(opts) { 
+ET = function(opts) { 
 
     // console.log('Event.Target constructor executed: ' + this._yuid);
 
@@ -1510,8 +1514,6 @@ Y.EventTarget = function(opts) {
 
 };
 
-var ET = Y.EventTarget;
-
 
 ET.prototype = {
 
@@ -1524,11 +1526,14 @@ ET.prototype = {
      * @param args* 0..n params to supply to the callback
      */
     subscribe: function(type, fn, context) {
+        var f, c, args, ret, ce;
 
         if (L.isObject(type)) {
 
-            var f = fn, c = context, args = Y.Array(arguments, 0, true),
-                ret = {};
+            f = fn; 
+            c = context; 
+            args = Y.Array(arguments, 0, true);
+            ret = {};
 
             Y.each(type, function(v, k) {
 
@@ -1549,14 +1554,10 @@ ET.prototype = {
 
         }
 
-        var ce = this._yuievt.events[type] || 
-            // this.publish(type, {
-            //     configured: false
-            // }),
-            this.publish(type),
-            a = Y.Array(arguments, 1, true);
+        ce = this._yuievt.events[type] || this.publish(type);
+        args = Y.Array(arguments, 1, true);
 
-        return ce.subscribe.apply(ce, a);
+        return ce.subscribe.apply(ce, args);
 
     },
 
@@ -1583,16 +1584,15 @@ ET.prototype = {
             return type.detach();
         }
 
-        var evts = this._yuievt.events;
+        var evts = this._yuievt.events, ce, i, ret = true;
 
         if (type) {
-            var ce = evts[type];
+            ce = evts[type];
             if (ce) {
                 return ce.unsubscribe(fn, context);
             }
         } else {
-            var ret = true;
-            for (var i in evts) {
+            for (i in evts) {
                 if (evts.hasOwnProperty(i)) {
                     ret = ret && evts[i].unsubscribe(fn, context);
                 }
@@ -1669,8 +1669,10 @@ ET.prototype = {
      */
     publish: function(type, opts) {
 
+        var events, ce, ret, o;
+
         if (L.isObject(type)) {
-            var ret = {};
+            ret = {};
             Y.each(type, function(v, k) {
                 ret[k] = this.publish(k, v || opts); 
             }, this);
@@ -1678,7 +1680,8 @@ ET.prototype = {
             return ret;
         }
 
-        var events = this._yuievt.events, ce = events[type];
+        events = this._yuievt.events; 
+        ce = events[type];
 
         //if (ce && !ce.configured) {
         if (ce) {
@@ -1689,7 +1692,7 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            var o = opts || {};
+            o = opts || {};
 
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
@@ -1750,9 +1753,8 @@ ET.prototype = {
     fire: function(type) {
 
         var typeIncluded = L.isString(type),
-            t = (typeIncluded) ? type : (type && type.type);
-
-        var ce = this.getEvent(t);
+            t = (typeIncluded) ? type : (type && type.type),
+            ce = this.getEvent(t), a, ret;
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -1780,8 +1782,8 @@ ET.prototype = {
         // (set in bubble()).
         // ce.target = ce.target || this;
 
-        var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-        var ret = ce.fire.apply(ce, a);
+        a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+        ret = ce.fire.apply(ce, a);
 
         // clear target for next fire()
         ce.target = null;
@@ -1809,17 +1811,20 @@ ET.prototype = {
      */
     bubble: function(evt) {
 
-        var targs = this._yuievt.targets, ret = true;
+        var targs = this._yuievt.targets, ret = true,
+            t, type, ce, targetProp, i;
 
         if (!evt.stopped && targs) {
 
             // Y.log('Bubbling ' + evt.type);
 
-            for (var i in targs) {
+            for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
 
-                    var t = targs[i], type = evt.type,
-                        ce = t.getEvent(type), targetProp = evt.target || this;
+                    t = targs[i]; 
+                    type = evt.type;
+                    ce = t.getEvent(type); 
+                    targetProp = evt.target || this;
                         
                     // if this event was not published on the bubble target,
                     // publish it with sensible default properties
@@ -1894,6 +1899,8 @@ ET.prototype = {
 
 };
 
+Y.EventTarget = ET;
+
 // make Y an event target
 Y.mix(Y, ET.prototype, false, false, { 
     bubbles: false 
@@ -1901,7 +1908,8 @@ Y.mix(Y, ET.prototype, false, false, {
 
 ET.call(Y);
 
-
+})();
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -1964,9 +1972,9 @@ var whitelist = {
     // "width"           : 1, // needed?
     "x"               : 1,
     "y"               : 1
-};
+},
 
-var ua = Y.UA,
+    ua = Y.UA,
 
     /**
      * webkit key remapping required for Safari < 3.1
@@ -2018,11 +2026,10 @@ Y.EventFacade = function(ev, currentTarget, wrapper, details) {
     // @TODO the document should be the target's owner document
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
+        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
 
     // copy all primitives ... this is slow in FF
-    // for (var i in e) {
-    for (var i in whitelist) {
+    for (i in whitelist) {
         // if (!Y.Lang.isObject(e[i])) {
         if (whitelist.hasOwnProperty(i)) {
             this[i] = e[i];
@@ -2064,7 +2071,7 @@ Y.EventFacade = function(ev, currentTarget, wrapper, details) {
      * @property keyCode
      * @type int
      */
-    var c = e.keyCode || e.charCode || 0;
+    c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
         c = webkitKeymap[c];
@@ -2134,7 +2141,8 @@ Y.EventFacade = function(ev, currentTarget, wrapper, details) {
      */
     this.currentTarget = (isCE) ? ot :  resolve(ot);
 
-    var t = e.relatedTarget;
+    t = e.relatedTarget;
+
     if (!t) {
         if (e.type == "mouseout") {
             t = e.toElement;
@@ -2221,6 +2229,7 @@ Y.EventFacade = function(ev, currentTarget, wrapper, details) {
 
 };
 
+})();
 
 
 }, '@VERSION@' );
