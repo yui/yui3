@@ -20,13 +20,15 @@ Y.Env.eventAdaptors = {
      */
     focus: {
         on: function() {
-            arguments[0] = CAPTURE + FOCUS;
-            return Y.Event.attach.apply(Y.Event, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = CAPTURE + FOCUS;
+            return Y.Event.attach.apply(Y.Event, a);
         },
 
         detach: function() {
-            arguments[0] = CAPTURE + FOCUS;
-            return Y.Event.detach.apply(Y.Event, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = CAPTURE + FOCUS;
+            return Y.Event.detach.apply(Y.Event, a);
 
         }
     },
@@ -40,13 +42,15 @@ Y.Env.eventAdaptors = {
      */
     blur: {
         on: function() {
-            arguments[0] = CAPTURE + BLUR;
-            return Y.Event.attach.apply(Y.Event, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = CAPTURE + BLUR;
+            return Y.Event.attach.apply(Y.Event, a);
         },
 
         detach: function() {
-            arguments[0] = CAPTURE + BLUR;
-            return Y.Event.detach.apply(Y.Event, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = CAPTURE + BLUR;
+            return Y.Event.detach.apply(Y.Event, a);
         }
     },
 
@@ -96,10 +100,12 @@ Y.Env.eventAdaptors = {
 
         on: function(type, fn, id, spec, o) {
 
+            var a = Y.Array(arguments, 0, true);
+
             if (!spec || spec.indexOf(':') == -1) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
-                arguments[0] = 'keypress';
-                return Y.on.apply(Y, arguments);
+                a[0] = 'keypress';
+                return Y.on.apply(Y, a);
             }
 
             // parse spec ([key event type]:[criteria])
@@ -112,9 +118,8 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
                 criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null,
 
                 // the name of the custom event that will be created for the spec
-                ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec,
+                ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
-                a = Y.Array(arguments, 0, true);
 
 
 
