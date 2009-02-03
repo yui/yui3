@@ -85,9 +85,9 @@
 <span class="c">     */</span>
     <span class="nx">before</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// Y.log(&#39;Do before: &#39; + sFn, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">a</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
             <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -105,9 +105,9 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">a</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
             <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -129,13 +129,14 @@
     <span class="nx">_inject</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">when</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// object id</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">obj</span><span class="o">);</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">obj</span><span class="o">),</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">sid</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span> <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">])</span> <span class="o">{</span>
             <span class="c">// create a map entry for the obj if it doesn&#39;t exist</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
         <span class="o">}</span>
-        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+
+        <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
 
         <span class="k">if</span> <span class="o">(!</span> <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">])</span> <span class="o">{</span>
             <span class="c">// create a map entry for the method if it doesn&#39;t exist</span>
@@ -149,7 +150,7 @@
         <span class="o">}</span>
 
         <span class="c">// subscriber id</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">id</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">+</span> <span class="nx">sFn</span><span class="o">;</span>
+<span class="c"></span>        <span class="nx">sid</span> <span class="o">=</span> <span class="nx">id</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">+</span> <span class="nx">sFn</span><span class="o">;</span>
 
         <span class="c">// register the callback</span>
 <span class="c"></span>        <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">].</span><span class="nx">register</span><span class="o">(</span><span class="nx">sid</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">when</span><span class="o">);</span>

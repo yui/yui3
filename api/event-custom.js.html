@@ -356,12 +356,13 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;Invalid callback for CE: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">se</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribeEvent</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">se</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribeEvent</span><span class="o">,</span> <span class="nx">s</span><span class="o">;</span>
+
         <span class="k">if</span> <span class="o">(</span><span class="nx">se</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">se</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">se</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Subscriber</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">when</span><span class="o">);</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Subscriber</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">when</span><span class="o">);</span>
 
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">fired</span><span class="o">)</span> <span class="o">{</span>
@@ -428,10 +429,11 @@
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">unsubscribeAll</span><span class="o">();</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">s</span><span class="o">;</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">subs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_delete</span><span class="o">(</span><span class="nx">s</span><span class="o">);</span>
                     <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -444,7 +446,7 @@
 
     <span class="nx">_getFacade</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
@@ -452,7 +454,8 @@
 
         <span class="c">// if the first argument is an object literal, apply the</span>
 <span class="c"></span>        <span class="c">// properties to the event facade</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+<span class="c"></span>        <span class="nx">o</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+
         <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">_yuifacade</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
@@ -480,7 +483,7 @@
 
         <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span>  <span class="nx">s</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">ct</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ct</span><span class="o">;</span>
 
         <span class="c">// emit an EventFacade if this is that sort of event</span>
 <span class="c"></span>        <span class="c">// if (this.emitFacade &amp;&amp; (!args[0] || !args[0]._yuifacade)) {</span>
@@ -516,9 +519,7 @@
 <span class="c">     * @param cat {string} log category</span>
 <span class="c">     */</span>
     <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span> <span class="nx">s</span> <span class="o">=</span>  <span class="nx">es</span> <span class="o">&amp;&amp;</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">;</span>
-        <span class="c">// if (!s &amp;&amp; !this.silent) {</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">silent</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">silent</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span> <span class="o">||</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
@@ -541,7 +542,10 @@
 <span class="c">     */</span>
     <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span>
+            <span class="nx">subs</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">queue</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">hasSub</span><span class="o">,</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">)</span> <span class="o">{</span>
 
@@ -578,7 +582,6 @@
             <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">fired</span><span class="o">)</span> <span class="o">{</span>
 
@@ -587,8 +590,8 @@
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
             <span class="c">// var subs = this.subscribers.slice(), len=subs.length,</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">),</span> <span class="nx">s</span><span class="o">,</span>
-                       <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">);</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
@@ -602,11 +605,10 @@
             <span class="c">// this.log(&quot;Firing &quot; + this  + &quot;, &quot; + &quot;args: &quot; + args);</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Firing &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
 
-            <span class="k">var</span> <span class="nx">hasSub</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="nx">hasSub</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
             <span class="nx">es</span><span class="o">.</span><span class="nx">lastLogState</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">;</span>
+            <span class="nx">ef</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
-
-            <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// this.fire({</span>
@@ -699,11 +701,12 @@
 <span class="c">// reset propragation properties while processing the rest of the queue</span>
 <span class="c"></span>
 <span class="c">// process queued events</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">queue</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">queue</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">;</span>
 
             <span class="k">while</span> <span class="o">(</span><span class="nx">queue</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                 <span class="c">// q[0] = the event, q[1] = arguments to fire</span>
-<span class="c"></span>                <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queue</span><span class="o">.</span><span class="nx">pop</span><span class="o">(),</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+<span class="c"></span>                <span class="nx">q</span> <span class="o">=</span> <span class="nx">queue</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span> 
+                <span class="nx">ce</span> <span class="o">=</span> <span class="nx">q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
 
 <span class="c">// Y.log(&#39;firing queued event &#39; + ce.type + &#39;, from &#39; + this);</span>
 <span class="c"></span>                <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
