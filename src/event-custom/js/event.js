@@ -1,8 +1,7 @@
 (function() {
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
+ * Custom event engine
+ * @module event-custom
  */
 
 var FOCUS = Y.UA.ie ? "focusin" : "focus",

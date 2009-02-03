@@ -1,6 +1,5 @@
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
+ * DOM event listener abstraction layer
  * @module event
  */
 

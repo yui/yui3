@@ -7,10 +7,10 @@
 
 /**
  * Return value from all subscribe operations
- * @class Event.Handle
+ * @class EventHandle
  * @constructor
  * @param evt {Event.Custom} the custom event
- * @param sub {Event.Subscriber} the subscriber
+ * @param sub {Subscriber} the subscriber
  */
 
 var onsubscribeType = "_event:onsub",
@@ -47,7 +47,7 @@ Y.EventHandle = function(evt, sub) {
 
     /**
      * The subscriber object
-     * @type Event.Subscriber
+     * @type Subscriber
      */
     this.sub = sub;
 };
@@ -127,7 +127,7 @@ Y.CustomEvent = function(type, o) {
     /**
      * The subscribers to this event
      * @property subscribers
-     * @type Event.Subscriber{}
+     * @type Subscriber{}
      */
     this.subscribers = {};
 
@@ -142,7 +142,7 @@ Y.CustomEvent = function(type, o) {
     /**
      * 'After' subscribers
      * @property afters
-     * @type Event.Subscriber{}
+     * @type Subscriber{}
      */
     this.afters = {};
 
@@ -245,7 +245,7 @@ Y.CustomEvent = function(type, o) {
     this.signature = YUI3_SIGNATURE;
 
     /**
-     * If set to true, the custom event will deliver an Event.Facade object
+     * If set to true, the custom event will deliver an EventFacade object
      * that is similar to a DOM event object.
      * @property emitFacade
      * @type boolean
@@ -340,7 +340,7 @@ Y.CustomEvent.prototype = {
      * @param {Object}   context   Specifies the value of the 
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
-     * @return {Event.Handle} unsubscribe handle
+     * @return {EventHandle} unsubscribe handle
      */
     subscribe: function(fn, context) {
         return this._subscribe(fn, context, arguments, true);
@@ -355,7 +355,7 @@ Y.CustomEvent.prototype = {
      * @param {Object}   context   Specifies the value of the 
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
-     * @return {Event.Handle} unsubscribe handle
+     * @return {EventHandle} unsubscribe handle
      */
     after: function(fn, context) {
         return this._subscribe(fn, context, arguments, AFTER);
@@ -399,7 +399,7 @@ Y.CustomEvent.prototype = {
         var ef = this._facade;
 
         if (!ef) {
-            ef = new Y.Event.Facade(this, this.currentTarget);
+            ef = new Y.EventFacade(this, this.currentTarget);
         }
 
         // if the first argument is an object literal, apply the
@@ -424,7 +424,7 @@ Y.CustomEvent.prototype = {
     /**
      * Notify a single subscriber
      * @method _notify
-     * @param s {Event.Subscriber} the subscriber
+     * @param s {Subscriber} the subscriber
      * @param args {Array} the arguments array to apply to the listener
      * @private
      */
@@ -434,7 +434,7 @@ Y.CustomEvent.prototype = {
 
         var ret, c, ct;
 
-        // emit an Event.Facade if this is that sort of event
+        // emit an EventFacade if this is that sort of event
         // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
         if (this.emitFacade) {
 
@@ -766,7 +766,7 @@ Y.CustomEvent.prototype = {
  * @param {Object}   context  The value of the keyword 'this' in the listener
  * @param {Array} args*       0..n additional arguments to supply the listener
  *
- * @class Event.Subscriber
+ * @class Subscriber
  * @constructor
  */
 Y.Subscriber = function(fn, context, args) {

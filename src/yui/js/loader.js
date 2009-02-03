@@ -225,7 +225,7 @@ var BASE = 'base',
         },
 
         attribute: { 
-            requires: ['event']
+            requires: ['event-custom']
         },
 
         base: {
@@ -291,7 +291,15 @@ var BASE = 'base',
         dump: { },
 
         event: { 
+            requires: ['event-custom']
+        },
+
+        'event-custom': { 
             requires: ['oop']
+        },
+
+        'event-simulate': { 
+            requires: ['event']
         },
 
         get: { 

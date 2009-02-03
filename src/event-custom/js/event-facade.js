@@ -8,7 +8,7 @@
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class Event.Facade
+ * @class EventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -110,7 +110,7 @@ var ua = Y.UA,
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
+Y.EventFacade = function(ev, currentTarget, wrapper, details) {
 
     // @TODO the document should be the target's owner document
 

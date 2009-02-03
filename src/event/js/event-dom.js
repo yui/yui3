@@ -1,7 +1,6 @@
 
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
+ * DOM event listener abstraction layer
  * @module event
  */
 
@@ -841,6 +840,8 @@ if (Y.UA.ie && Y.on) {
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
 Event.Target = Y.EventTarget;
+Event.Handle = Y.EventHandle;
+Event.Facade = Y.EventFacade;
 
 Event._tryPreloadAttach();
 
