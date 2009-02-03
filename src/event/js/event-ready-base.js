@@ -6,17 +6,20 @@
 (function() {
 
 var GLOBAL_ENV = YUI.Env, 
+
     C = YUI.config, 
+
     D = C.doc, 
-    POLL_INTERVAL = C.pollInterval || 20;
+
+    POLL_INTERVAL = C.pollInterval || 20,
+
+    _ready = function(e) {
+        GLOBAL_ENV._ready();
+    };
 
     if (!GLOBAL_ENV._ready) {
 
         GLOBAL_ENV.windowLoaded = false;
-
-        var _ready = function(e) {
-            GLOBAL_ENV._ready();
-        };
 
         GLOBAL_ENV._ready = function() {
             if (!GLOBAL_ENV.DOMReady) {
