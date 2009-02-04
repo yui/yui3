@@ -151,8 +151,12 @@
                         //check for normally-formatted cookie (name-value)
                         cookieNameValue = cookieParts[i].match(/([^=]+)=/i);
                         if (cookieNameValue instanceof Array){
-                            cookieName = decode(cookieNameValue[1]);
-                            cookieValue = decodeValue(cookieParts[i].substring(cookieNameValue[1].length+1));
+                            try {
+                                cookieName = decode(cookieNameValue[1]);
+                                cookieValue = decodeValue(cookieParts[i].substring(cookieNameValue[1].length+1));
+                            } catch (ex){
+                                //intentionally ignore the cookie - the encoding is wrong
+                            }
                         } else {
                             //means the cookie does not have an "=", so treat it as a boolean flag
                             cookieName = decode(cookieParts[i]);
@@ -315,7 +319,7 @@
             var subs = this.getSubs(name);
             
             //delete the indicated subcookie
-            if (isObject(subs) && O.owns(subs, subName)){
+            if (isObject(subs) && subs.hasOwnProperty(subName)){
                 delete subs[subName];
                 
                 //reset the cookie
