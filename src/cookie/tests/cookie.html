@@ -10,7 +10,7 @@
 <script type="text/javascript">  
     
 YUI({
-    base: '../build/',
+    base: '../../../build/',
     filter: 'debug'
 }).use('test', 'cookie', 'console', function (Y) {
 
@@ -150,6 +150,19 @@ YUI({
                 ObjectAssert.has("ys-bottom-preview", cookies, "Cookie 'ys-bottom-preview' is missing.");
                 ObjectAssert.has("undefined", cookies, "Cookie 'undefined' is missing.");
             },
+            
+        
+            /**
+             * Tests that the cookie utility deals with cookies that contain
+             * an invalid encoding. It shouldn't error, but should treat the cookie
+             * as if it doesn't exist (return null).
+             */
+            testParseCookieStringInvalidEncoding: function(){
+                var cookieString = "DetailInfoList=CPN03022194=@|@=CPN03#|#%B4%EB%C3%B5%C7%D8%BC%F6%BF%E5%C0%E5#|#1016026000#|#%BD%C5%C8%E6%B5%BF#|##|#";
+                var cookies = Y.Cookie._parseCookieString(cookieString);
+                
+                Assert.isNull(cookies["DetailInfoList"], "Cookie 'DetailInfoList' should not have a value.");
+            },            
             
             testParseCookieStringWithHash : function(){
             
