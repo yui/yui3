@@ -1,3 +1,4 @@
+(function() {
 
 var instance = Y;
 
@@ -83,3 +84,4 @@ instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
 
+})();

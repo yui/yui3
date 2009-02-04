@@ -13,8 +13,6 @@
  * @module history
  */
 
-YUI.add("history", function (Y) {
-
     var L = Y.Lang,
         A = Y.UA,
         ET = Y.Event.Target,
@@ -711,5 +709,3 @@ YUI.add("history", function (Y) {
     Y.mix(H.Module, ET, false, null, 1);
 
     Y.History = H;
-
-}, "3.0.0", { requires: ["event", "node"], skinnable: false });

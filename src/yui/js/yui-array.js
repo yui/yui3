@@ -1,4 +1,4 @@
-
+(function() {
 /**
  * YUI core
  * @module yui
@@ -181,3 +181,4 @@ A.indexOf = function(a, val) {
     return -1;
 };
 
+})();

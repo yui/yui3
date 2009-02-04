@@ -1,4 +1,4 @@
-
+(function() {
     var L = Y.Lang;
 
     /**
@@ -60,3 +60,4 @@
     Y.later = later;
     L.later = later;
 
+})();

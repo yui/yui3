@@ -1,3 +1,4 @@
+(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -83,3 +84,5 @@ O.each = function (o, f, c, proto) {
     }
     return Y;
 };
+
+})();
