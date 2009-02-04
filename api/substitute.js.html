@@ -90,7 +90,7 @@
 <span class="c">     * @return {string} the substituted string</span>
 <span class="c">     */</span>
     <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">;</span>
 
         <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
             <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">LBRACE</span><span class="o">);</span>
@@ -130,7 +130,7 @@
                         <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
 
                         <span class="c">// look for the keyword &#39;dump&#39;, if found force obj dump</span>
-<span class="c"></span>                        <span class="k">var</span> <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DUMP</span><span class="o">);</span>
+<span class="c"></span>                        <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DUMP</span><span class="o">);</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">dump</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">4</span><span class="o">);</span>
                         <span class="o">}</span>
