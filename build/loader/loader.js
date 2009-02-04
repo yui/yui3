@@ -1,5 +1,6 @@
 YUI.add('loader', function(Y) {
 
+(function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -1828,6 +1829,7 @@ Y.Env.meta = META;
 
     // Y.augment(Y.Loader, Y.Event.Target);
 
+})();
 
 
 }, '@VERSION@' );

@@ -1,3 +1,4 @@
+(function() {
 
 var L = Y.Lang, 
 A = Y.Array,
@@ -154,3 +155,5 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 
     return r;
 };
+
+})();

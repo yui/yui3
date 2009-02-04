@@ -1,5 +1,6 @@
 YUI.add('loader', function(Y) {
 
+(function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -1867,6 +1868,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     // Y.augment(Y.Loader, Y.Event.Target);
 
+})();
 
 
 }, '@VERSION@' );

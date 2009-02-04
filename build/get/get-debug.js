@@ -1,6 +1,6 @@
 YUI.add('get', function(Y) {
 
-
+(function() {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -660,6 +660,8 @@ Y.Get = function() {
         }
     };
 }();
+
+})();
 
 
 }, '@VERSION@' );

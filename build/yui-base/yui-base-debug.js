@@ -599,6 +599,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
+(function() {
 
 var instance = Y;
 
@@ -684,6 +685,7 @@ instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
 
+})();
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -875,7 +877,7 @@ L.type = function (o) {
 };
 
 })();
-
+(function() {
 /**
  * YUI core
  * @module yui
@@ -1058,6 +1060,8 @@ A.indexOf = function(a, val) {
     return -1;
 };
 
+})();
+(function() {
 
 var L = Y.Lang, 
 A = Y.Array,
@@ -1215,6 +1219,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+})();
+(function() {
+
 /**
  * Adds the following Object utilities to the YUI instance
  * @class YUI~object
@@ -1299,6 +1306,8 @@ O.each = function (o, f, c, proto) {
     }
     return Y;
 };
+
+})();
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -1437,7 +1446,7 @@ Y.UA = function() {
     
     return o;
 }();
-
+(function() {
     var L = Y.Lang;
 
     /**
@@ -1499,6 +1508,7 @@ Y.UA = function() {
     Y.later = later;
     L.later = later;
 
+})();
 (function() {
 
     // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
