@@ -308,12 +308,13 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        var se = this.subscribeEvent;
+        var se = this.subscribeEvent, s;
+
         if (se) {
             se.fire.apply(se, args);
         }
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        s = new Y.Subscriber(fn, context, args, when);
 
 
         if (this.fireOnce && this.fired) {
@@ -380,10 +381,11 @@ Y.CustomEvent.prototype = {
             return this.unsubscribeAll();
         }
 
-        var found = false, subs = this.subscribers;
-        for (var i in subs) {
+        var found = false, subs = this.subscribers, i, s;
+
+        for (i in subs) {
             if (subs.hasOwnProperty(i)) {
-                var s = subs[i];
+                s = subs[i];
                 if (s && s.contains(fn, context)) {
                     this._delete(s);
                     found = true;
@@ -396,7 +398,7 @@ Y.CustomEvent.prototype = {
 
     _getFacade: function(args) {
 
-        var ef = this._facade;
+        var ef = this._facade, o;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -404,7 +406,8 @@ Y.CustomEvent.prototype = {
 
         // if the first argument is an object literal, apply the
         // properties to the event facade
-        var o = args && args[0];
+        o = args && args[0];
+
         if (Y.Lang.isObject(o, true) && !o._yuifacade) {
             Y.mix(ef, o, true);
         }
@@ -432,7 +435,7 @@ Y.CustomEvent.prototype = {
 
         this.log(this.type + "->" + ": " +  s);
 
-        var ret, c, ct;
+        var ret, ct;
 
         // emit an EventFacade if this is that sort of event
         // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
@@ -468,8 +471,6 @@ Y.CustomEvent.prototype = {
      * @param cat {string} log category
      */
     log: function(msg, cat) {
-        var es = Y.Env._eventstack, s =  es && es.logging;
-        // if (!s && !this.silent) {
         if (!this.silent) {
             Y.log(this.id + ': ' + msg, cat || "info", "event");
         }
@@ -493,7 +494,10 @@ Y.CustomEvent.prototype = {
      */
     fire: function() {
 
-        var es = Y.Env._eventstack;
+        var es = Y.Env._eventstack,
+            subs, s, args, i, ef, q, queue, ce, hasSub,
+            ret = true;
+
 
         if (es) {
 
@@ -530,7 +534,6 @@ Y.CustomEvent.prototype = {
             es = Y.Env._eventstack;
         }
 
-        var ret = true;
 
         if (this.fireOnce && this.fired) {
 
@@ -539,8 +542,8 @@ Y.CustomEvent.prototype = {
         } else {
 
             // var subs = this.subscribers.slice(), len=subs.length,
-            var subs = Y.merge(this.subscribers), s,
-                       args=Y.Array(arguments, 0, true), i;
+            subs = Y.merge(this.subscribers);
+            args = Y.Array(arguments, 0, true);
 
             this.stopped = 0;
             this.prevented = 0;
@@ -554,11 +557,10 @@ Y.CustomEvent.prototype = {
             // this.log("Firing " + this  + ", " + "args: " + args);
             this.log("Firing " + this.type);
 
-            var hasSub = false;
+            hasSub = false;
             es.lastLogState = es.logging;
+            ef = null;
 
-
-            var ef = null;
             if (this.emitFacade) {
 
                 // this.fire({
@@ -651,11 +653,12 @@ Y.CustomEvent.prototype = {
 // reset propragation properties while processing the rest of the queue
 
 // process queued events
-            var queue = es.queue;
+            queue = es.queue;
 
             while (queue.length) {
                 // q[0] = the event, q[1] = arguments to fire
-                var q = queue.pop(), ce = q[0];
+                q = queue.pop(); 
+                ce = q[0];
 
 // Y.log('firing queued event ' + ce.type + ', from ' + this);
                 es.stopped = 0;

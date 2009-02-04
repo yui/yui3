@@ -36,9 +36,9 @@ Y.Do = {
      */
     before: function(fn, obj, sFn, c) {
         // Y.log('Do before: ' + sFn, 'info', 'event');
-        var f = fn;
+        var f = fn, a;
         if (c) {
-            var a = [fn, c].concat(Y.Array(arguments, 4, true));
+            a = [fn, c].concat(Y.Array(arguments, 4, true));
             f = Y.rbind.apply(Y, a);
         }
 
@@ -56,9 +56,9 @@ Y.Do = {
      * @static
      */
     after: function(fn, obj, sFn, c) {
-        var f = fn;
+        var f = fn, a;
         if (c) {
-            var a = [fn, c].concat(Y.Array(arguments, 4, true));
+            a = [fn, c].concat(Y.Array(arguments, 4, true));
             f = Y.rbind.apply(Y, a);
         }
 
@@ -80,13 +80,14 @@ Y.Do = {
     _inject: function(when, fn, obj, sFn) {
 
         // object id
-        var id = Y.stamp(obj);
+        var id = Y.stamp(obj), o, sid;
 
         if (! this.objs[id]) {
             // create a map entry for the obj if it doesn't exist
             this.objs[id] = {};
         }
-        var o = this.objs[id];
+
+        o = this.objs[id];
 
         if (! o[sFn]) {
             // create a map entry for the method if it doesn't exist
@@ -100,7 +101,7 @@ Y.Do = {
         }
 
         // subscriber id
-        var sid = id + Y.stamp(fn) + sFn;
+        sid = id + Y.stamp(fn) + sFn;
 
         // register the callback
         o[sFn].register(sid, fn, when);

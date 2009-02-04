@@ -53,10 +53,11 @@
 <span class="c"> * @module event-custom</span>
 <span class="c"> */</span>
 
-<span class="k">var</span> <span class="nx">FOCUS</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusin&quot;</span> <span class="o">:</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
-    <span class="nx">BLUR</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusout&quot;</span> <span class="o">:</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
+<span class="k">var</span> <span class="nx">FOCUS</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusin&quot;</span> <span class="o">:</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
+    <span class="nx">BLUR</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusout&quot;</span> <span class="o">:</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
     <span class="nx">CAPTURE</span> <span class="o">=</span> <span class="s2">&quot;capture_&quot;</span><span class="o">,</span>
-    <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+    <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    <span class="nx">after</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span> <span class="o">=</span> <span class="o">{</span>
 
@@ -149,7 +150,8 @@
 
         <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>
+                <span class="nx">parsed</span><span class="o">,</span> <span class="nx">etype</span><span class="o">,</span> <span class="nx">criteria</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span> <span class="o">||</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Illegal key spec, creating a regular keypress listener instead.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
@@ -157,17 +159,16 @@
                 <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="c">// parse spec ([key event type]:[criteria])</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">),</span>
+            <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
 
-                <span class="c">// key event type: &#39;down&#39;, &#39;up&#39;, or &#39;press&#39;</span>
-<span class="c"></span>                <span class="nx">etype</span> <span class="o">=</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+            <span class="c">// key event type: &#39;down&#39;, &#39;up&#39;, or &#39;press&#39;</span>
+<span class="c"></span>            <span class="nx">etype</span> <span class="o">=</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
 
-                <span class="c">// list of key codes optionally followed by modifiers</span>
-<span class="c"></span>                <span class="nx">criteria</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">?</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="sr">/,|\+/</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="c">// list of key codes optionally followed by modifiers</span>
+<span class="c"></span>            <span class="nx">criteria</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">?</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="sr">/,|\+/</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
 
-                <span class="c">// the name of the custom event that will be created for the spec</span>
-<span class="c"></span>                <span class="nx">ename</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">;</span>
+            <span class="c">// the name of the custom event that will be created for the spec</span>
+<span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">;</span>
 
 
 
@@ -177,10 +178,11 @@
 
                 <span class="c">// Y.log(&#39;keylistener: &#39; + e.keyCode);</span>
 <span class="c"></span>                
-                <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">crit</span><span class="o">,</span> <span class="nx">critInt</span><span class="o">;</span>
 
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
+                    <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
 
                     <span class="c">// pass this section if any supplied keyCode </span>
 <span class="c"></span>                    <span class="c">// is found</span>
@@ -306,7 +308,6 @@
     <span class="o">}</span>
 <span class="o">};</span>
 
-<span class="k">var</span> <span class="nx">after</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Executes the callback after a DOM event, custom event</span>

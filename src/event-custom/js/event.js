@@ -4,10 +4,11 @@
  * @module event-custom
  */
 
-var FOCUS = Y.UA.ie ? "focusin" : "focus",
-    BLUR = Y.UA.ie ? "focusout" : "blur",
+var FOCUS   = Y.UA.ie ? "focusin" : "focus",
+    BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    Lang = Y.Lang;
+    Lang    = Y.Lang,
+    after   = Y.after;
 
 Y.Env.eventAdaptors = {
 
@@ -100,7 +101,8 @@ Y.Env.eventAdaptors = {
 
         on: function(type, fn, id, spec, o) {
 
-            var a = Y.Array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true),
+                parsed, etype, criteria, ename;
 
             if (!spec || spec.indexOf(':') == -1) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
@@ -108,17 +110,16 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
                 return Y.on.apply(Y, a);
             }
 
-            // parse spec ([key event type]:[criteria])
-            var parsed = spec.split(':'),
+            parsed = spec.split(':');
 
-                // key event type: 'down', 'up', or 'press'
-                etype = parsed[0],
+            // key event type: 'down', 'up', or 'press'
+            etype = parsed[0];
 
-                // list of key codes optionally followed by modifiers
-                criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null,
+            // list of key codes optionally followed by modifiers
+            criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
 
-                // the name of the custom event that will be created for the spec
-                ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
+            // the name of the custom event that will be created for the spec
+            ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
 
 
@@ -128,10 +129,11 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
                 // Y.log('keylistener: ' + e.keyCode);
                 
-                var passed = false, failed = false;
+                var passed = false, failed = false, i, crit, critInt;
 
-                for (var i=0; i<criteria.length; i=i+1) {
-                    var crit = criteria[i], critInt = parseInt(crit, 10);
+                for (i=0; i<criteria.length; i=i+1) {
+                    crit = criteria[i]; 
+                    critInt = parseInt(crit, 10);
 
                     // pass this section if any supplied keyCode 
                     // is found
@@ -257,7 +259,6 @@ Y.before = function(type, f, o) {
     }
 };
 
-var after = Y.after;
 
 /**
  * Executes the callback after a DOM event, custom event
