@@ -5,7 +5,7 @@
  */
 
 
-var L = Y.Lang, Native = Array.prototype;
+var L = Y.Lang, Native = Array.prototype,
 
 /**
  * Adds the following array utilities to the YUI instance
@@ -32,7 +32,7 @@ var L = Y.Lang, Native = Array.prototype;
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-Y.Array = function(o, i, al) {
+A = function(o, i, al) {
     var t = (al) ? 2 : Y.Array.test(o);
 
     // switch (t) {
@@ -52,7 +52,7 @@ Y.Array = function(o, i, al) {
 
 };
 
-var A = Y.Array;
+Y.Array = A;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -131,8 +131,8 @@ A.each = (Native.forEach) ?
         return Y;
     } :
     function (a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        var l = a.length, i;
+        for (i=0; i<l; i=i+1) {
             if (f.call(o, a[i], i, a)) {
                 return true;
             }

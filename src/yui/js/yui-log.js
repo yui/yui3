@@ -22,18 +22,17 @@ var instance = Y;
  */
 instance.log = function(msg, cat, src, silent) {
 
-    var Y = instance, c = Y.config, es = Y.Env._eventstack,
-        // bail = (es && es.logging);
-        bail = false; 
+    var Y = instance, c = Y.config, bail = false, exc, inc, m, f;
 
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
-    if (c.debug && !bail) {
+    if (c.debug) {
 
         // apply source filters
         if (src) {
 
-            var exc = c.logExclude, inc = c.logInclude;
+            exc = c.logExclude; 
+            inc = c.logInclude;
 
             // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
 
@@ -49,9 +48,9 @@ instance.log = function(msg, cat, src, silent) {
         if (!bail) {
 
             if (c.useBrowserConsole) {
-                var m = (src) ? src + ': ' + msg : msg;
+                m = (src) ? src + ': ' + msg : msg;
                 if (typeof console != 'undefined') {
-                    var f = (cat && console[cat]) ? cat : 'log';
+                    f = (cat && console[cat]) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != 'undefined') {
                     opera.postError(m);
