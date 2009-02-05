@@ -68,7 +68,7 @@
     <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
 <span class="o">};</span> 
 
-<span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+<span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Determines whether or not the property was added</span>
@@ -124,9 +124,9 @@
 <span class="c"> * @return {YUI} the YUI instance</span>
 <span class="c"> */</span>
 <span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>

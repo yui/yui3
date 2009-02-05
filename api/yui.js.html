@@ -53,7 +53,7 @@
 <span class="c"> */</span>
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span>
+    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
 
 <span class="c">// @TODO: this needs to be created at build time from module metadata</span>
 <span class="c"></span>
@@ -169,6 +169,7 @@
     <span class="c">/*global YUI*/</span>
     <span class="c">// Make a function, disallow direct instantiation</span>
 <span class="c"></span>    <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
         <span class="c">// Allow instantiation without the new operator</span>
@@ -202,7 +203,8 @@
         <span class="c">// find targeted window</span>
 <span class="c"></span>        <span class="c">// @TODO create facades</span>
 <span class="c"></span>        <span class="c">// @TODO resolve windowless environments</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span>  <span class="o">||</span> <span class="nb">window</span><span class="o">;</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span>  <span class="o">||</span> <span class="nb">window</span><span class="o">,</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">w</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;debug&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
@@ -224,7 +226,6 @@
             <span class="nx">_uidx</span><span class="o">:</span> <span class="m">0</span>
         <span class="o">};</span>
 
-        <span class="k">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="o">;</span>
         <span class="o">}</span>
@@ -271,13 +272,14 @@
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">nest</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">nest</span> <span class="o">=</span> <span class="nx">method</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">),</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">;</span>
+            <span class="nx">nest</span> <span class="o">=</span> <span class="nx">method</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">);</span> 
+            <span class="nx">m</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">;</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nest</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nest</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="nx">m</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">nest</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
 
@@ -335,15 +337,21 @@
     <span class="nx">_attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span>
-            <span class="nx">attached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_attached</span><span class="o">;</span>
+            <span class="nx">attached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_attached</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">mm</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
+            <span class="nx">m</span>    <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+
             <span class="k">if</span> <span class="o">(!</span><span class="nx">attached</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="nx">attached</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">,</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">requires</span><span class="o">,</span> <span class="nx">use</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
+                <span class="nx">d</span>   <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span> 
+                <span class="nx">req</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span> 
+                <span class="nx">use</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
@@ -395,7 +403,65 @@
             <span class="nx">loader</span><span class="o">,</span> 
             <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">];</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">],</span>
+            <span class="nx">k</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> 
+            <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// only attach a module once</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="c">// Y.log(name + &#39; already used&#39;);</span>
+<span class="c"></span>                    <span class="k">return</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+                    <span class="c">// Y.log(&#39;found &#39; + name);</span>
+<span class="c"></span>                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
+                    <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+                    <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="c">// make sure requirements are attached</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">req</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="c">// add this module to full list of things to attach</span>
+<span class="c"></span>                <span class="c">// Y.log(&#39;using &#39; + name);</span>
+<span class="c"></span>                <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+            <span class="o">},</span>
+            <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// Y.log(&#39;Use complete&#39;);</span>
+<span class="c"></span>
+                <span class="nx">fromLoader</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="o">{</span>
+                    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                    <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
+                <span class="o">};</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="nx">cb</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">};</span>
 
         <span class="c">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback);</span>
 <span class="c"></span>
@@ -410,7 +476,7 @@
         <span class="c">// YUI().use(&#39;*&#39;); // bind everything available</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">a</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">mods</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -436,74 +502,16 @@
 
         <span class="c">// Y.log(&#39;loader after: &#39; + a.join(&#39;,&#39;));</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// only attach a module once</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                <span class="c">// Y.log(name + &#39; already used&#39;);</span>
-<span class="c"></span>                <span class="k">return</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-                <span class="c">// Y.log(&#39;found &#39; + name);</span>
-<span class="c"></span>                <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
-                <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
-                <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c">// make sure requirements are attached</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">req</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c">// add this module to full list of things to attach</span>
-<span class="c"></span>            <span class="c">// Y.log(&#39;using &#39; + name);</span>
-<span class="c"></span>            <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
-
-        <span class="o">};</span>
+        <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
         <span class="c">// process each requirement and any additional requirements </span>
 <span class="c"></span>        <span class="c">// the module metadata specifies</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
         <span class="o">}</span>
 
         <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing);</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// Y.log(&#39;Use complete&#39;);</span>
-<span class="c"></span>
-            <span class="nx">fromLoader</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="o">{</span>
-                <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
-            <span class="o">};</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="nx">cb</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
-
-
         <span class="c">// dynamic load</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to dynamically load the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
@@ -627,7 +635,8 @@
 <span class="c">// provides global metadata, so env needs to be configured.</span>
 <span class="c">// @TODO review</span>
 <span class="c"></span>
-    <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+    <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span> 
+    <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">// inheritance utilities are not available yet</span>
 <span class="c"></span>    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
