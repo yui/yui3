@@ -1,5 +1,5 @@
 (function() {
-    var L = Y.Lang;
+    var L = Y.Lang,
 
     /**
      * Executes the supplied function in the context of the supplied 
@@ -22,7 +22,7 @@
      * @return {object} a timer object. Call the cancel() method on this object to 
      * stop the timer.
      */
-    var later = function(when, o, fn, data, periodic) {
+    later = function(when, o, fn, data, periodic) {
         when = when || 0; 
         o = o || {};
         var m=fn, d=data, f, r;

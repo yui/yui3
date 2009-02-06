@@ -8,7 +8,7 @@ The YUI Global
         get
         loader
 
-3.0.0next
+3.0.0b1
 
     Core:
     - Y.fail has been renamed to Y.error so that Y.fail can be used for the assertion
@@ -21,7 +21,8 @@ The YUI Global
     - id attributes are globally unique
 
     Loader:
-    - yuitest renamed to test
+    - yuitest renamed to test, now requires collection
+    - added collection
 
 
 3.0.0pr2

@@ -81,8 +81,6 @@
 <span class="c"></span>    <span class="nx">RE_TABLE</span> <span class="o">=</span> <span class="sr">/^t(?:able|d|h)$/i</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">{</span>
-
-
     <span class="c">/**</span>
 <span class="c">     * Returns the inner height of the viewport (exludes scrollbar). </span>
 <span class="c">     * @method winHeight</span>
@@ -133,7 +131,7 @@
 <span class="c"></span>
 <span class="c">     */</span>
     <span class="nx">docScrollX</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">();</span>
+        <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="k">return</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">doc</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">SCROLL_LEFT</span><span class="o">],</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">body</span><span class="o">[</span><span class="nx">SCROLL_LEFT</span><span class="o">]);</span>
     <span class="o">},</span>
 
@@ -143,7 +141,7 @@
 <span class="c"></span>
 <span class="c">     */</span>
     <span class="nx">docScrollY</span><span class="o">:</span>  <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">();</span>
+        <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="k">return</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">doc</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">SCROLL_TOP</span><span class="o">],</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">body</span><span class="o">[</span><span class="nx">SCROLL_TOP</span><span class="o">]);</span>
     <span class="o">},</span>
 
@@ -317,16 +315,8 @@
 
         <span class="k">var</span> <span class="nx">currentXY</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">getXY</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
 
-
-
-
         <span class="k">if</span> <span class="o">(</span><span class="nx">currentXY</span> <span class="o">===</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span> <span class="c">// has to be part of doc to have xy</span>
-<span class="c"></span>
-
-
-
-
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;xy failed: node not available&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;xy failed: node not available&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span> 
         <span class="o">}</span>
         

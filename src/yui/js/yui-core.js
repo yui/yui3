@@ -19,8 +19,10 @@ PROTO = 'prototype',
  */
 _iefix = (Y.UA && Y.UA.ie) ?
     function(r, s, w) {
-        for (var i=0, a=IEF; i<a.length; i=i+1) {
-            var n = a[i], f = s[n];
+        var i, a = IEF, n, f;
+        for (i=0; i<a.length; i=i+1) {
+            n = a[i]; 
+            f = s[n];
             if (L.isFunction(f) && f != OP[n]) {
                 if (!w || (n in w)) {
                     r[n]=f;
@@ -41,11 +43,8 @@ _iefix = (Y.UA && Y.UA.ie) ?
  * @return {object} the new merged object
  */
 Y.merge = function() {
-    // var o={}, a=arguments;
-    // for (var i=0, l=a.length; i<l; i=i+1) {
-    //var a=arguments, o=Y.Object(a[0]);
-    var a=arguments, o={};
-    for (var i=0, l=a.length; i<l; i=i+1) {
+    var a = arguments, o = {}, i, l = a.length;
+    for (i=0; i<l; i=i+1) {
         Y.mix(o, a[i], true);
     }
     return o;
@@ -89,9 +88,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 
         f = function(fr, fs, proto, iwl) {
 
-            var arr = m && L.isArray(fr);
+            var arr = m && L.isArray(fr), i;
 
-            for (var i in fs) { 
+            for (i in fs) { 
 
                 if (fs.hasOwnProperty(i)) {
 
@@ -131,9 +130,11 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
             }
 
             _iefix(fr, fs, w);
-        };
+        },
 
-    var rp = r.prototype, sp = s.prototype;
+        rp = r.prototype, 
+
+        sp = s.prototype;
 
     switch (mode) {
         case 1: // proto to proto
