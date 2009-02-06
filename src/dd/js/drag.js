@@ -135,7 +135,7 @@
             set: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -151,7 +151,7 @@
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }

@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: base  Base   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,27 +14,33 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>base&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_base.html">base</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>base&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_base.html" title="base">base</a>
                  &gt; Base 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -38,50 +48,65 @@
 
                         
                         
-                            Class <b>Base</b>
+                            Class <b property="yui:name">Base</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
+                            <span class="extends" rel="yui:extends">
                           - uses 
                             
-                                <a href="Attribute.html">Attribute</a>
+                                <span rel="extend" resource="Attribute.html">
+                                <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>
+                                </span>
+                            
                             
                         </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
-                        <dl class="subclasses">
-                            <dt>Known Subclasses:</dd>
+                        <dl class="subclasses" rel="yui:subclasses">
+                            <dt>Known Subclasses:</dt>
                             <dd>
-                                    <a href="Anim.html">Anim</a>
-                                    <a href="Drag.html">Drag</a>
-                                    <a href="Drop.html">Drop</a>
-                                    <a href="DDM.html">DDM</a>
+                                    <span rel="yui:subclass" resource="plugin.DDM.html">
+                                    <a href="plugin.DDM.html" property="yui:name" title="plugin.DDM">plugin.DDM</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="plugin.Drop.html">
+                                    <a href="plugin.Drop.html" property="yui:name" title="plugin.Drop">plugin.Drop</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="plugin.Drag.html">
+                                    <a href="plugin.Drag.html" property="yui:name" title="plugin.Drag">plugin.Drag</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="Plugin.html">
+                                    <a href="Plugin.html" property="yui:name" title="Plugin">Plugin</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="Widget.html">
+                                    <a href="Widget.html" property="yui:name" title="Widget">Widget</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="plugin.Anim.html">
+                                    <a href="plugin.Anim.html" property="yui:name" title="plugin.Anim">plugin.Anim</a>
+                                    </span>
                             </dd>
                        </dl>
                 
   
 
-                    <div class="summary description">
+                    <div class="summary description" property="yui:description">
                         <p>
 Provides a base class for managed attribute based
 objects, which handles the chaining of initializer and destructor methods
 across the hierarchy during init and destroy lifecycle methods and 
 handles automatic configuration of registered Attributes, through 
-the static ATTRS property.
+the static <a href="#property_ATTRS">ATTRS</a> property.
 </p>
-<p>The Base class also handles prefixing of event types with the static NAME 
+<p>The Base class also handles prefixing of event types with the static <a href="#property_NAME">NAME</a> 
 property for all events fired from instances of classes derived from Base.</p>
                     </div>
 
-                        <div class="section constructor details">
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong>Base</strong>
+                                <strong property="yui:name">Base</strong>
                                 <code>
                                     (
   
@@ -91,13 +116,13 @@ property for all events fired from instances of classes derived from Base.</p>
                                     )
                                 </code>
                                 <div class="description">
-                                        <dl>
+                                        <dl rel="yui:parameters">
                                             <dt>Parameters:</dt>
-                                                <dd>
-                                                    <code>config
-                                                    &lt;Object&gt; 
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">config</span>
+                                                    &lt;<span property="yui:type">Object</span>&gt;
                                                     </code>
-                                                     Object literal of configuration property name/value pairs
+                                                    <span property="yui:description"> Object literal of configuration property name/value pairs</span>
                                                 </dd>
                                         </dl>
                                     
@@ -106,16 +131,35 @@ property for all events fired from instances of classes derived from Base.</p>
                             </div>
                         </div>
                     </div>
-
+                    
+                    <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="">
-                                    <h4><a name="property_ATTRS">ATTRS</a>
-                                        <code>- static Object</code>
+                                    <div class="private" rel="yui:property" resource="#property__buildCfg">
+                                    <h4><a name="property__buildCfg" property="yui:name">_buildCfg</a>
+                                        - <code>private static final <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
+                                            The build configuration for the Base class.
+Defines the static fields which need to be aggregated,
+when this class is used as the main class passed to 
+the <a href="#method_build">Base.build</a> method.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_ATTRS">
+                                    <h4><a name="property_ATTRS" property="yui:name">ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
                                             Object literal defining the set of attributes which
 will be available for instances of this class, and 
 how they are configured. See Attributes addAtt method
@@ -129,16 +173,20 @@ for each attribute.
 
                                     <hr />
                                     </div>
-                                    <div class="">
-                                    <h4><a name="property_NAME">NAME</a>
-                                        <code>- static String</code>
+                                    <div class="" rel="yui:property" resource="#property_NAME">
+                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
-                                            Name string to be used to identify instances of 
+                                        <div class="description" property="yui:description">
+                                            <p>
+Name string to be used to identify instances of 
 this class, for example in prefixing events.
+</p>
+<p>
 Classes extending Base, should define their own
 static NAME property.
+</p>
                                         </div>
                                     </div>
      
@@ -147,12 +195,12 @@ static NAME property.
 
                                     <hr />
                                     </div>
-                                    <div class="">
-                                    <h4><a name="property_name">name</a>
-                                        <code>- String</code>
+                                    <div class="" rel="yui:property" resource="#property_name">
+                                    <h4><a name="property_name" property="yui:name">name</a>
+                                        - <code><span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             The name string to be used to identify 
 this instance of object.
                                         </div>
@@ -163,50 +211,66 @@ this instance of object.
 
                                     <hr />
                                     </div>
-
-
                             </div>
                         </div>
 
-                        <div class="section field inheritance">
-                            <h4>Properties inherited from <a href="Attribute.html">Attribute</a>:</h4>
-                            <div class="content">
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                            <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                            <div class="content" rel="yui:properties">
                                 <code>
                                     
                                 </code>
                             </div>
                         </div>
+                        </div>
+                    </div>
 
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected">
+                                    <div class="protected" rel="yui:method" resource="#method__defDestroyFn">
                                     <h4>
                                         <a name="method__defDestroyFn">_defDestroyFn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong>_defDestroyFn</strong>
+                                            <strong property="yui:name">_defDestroyFn</strong>
                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Default destroy event handler
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Event object</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -217,33 +281,57 @@ this instance of object.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected">
+                                    <div class="protected" rel="yui:method" resource="#method__defInitFn">
                                     <h4>
                                         <a name="method__defInitFn">_defInitFn</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong>_defInitFn</strong>
+                                            <strong property="yui:name">_defInitFn</strong>
                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Default init event handler
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Event object</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object literal of configuration property name/value pairs</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -254,21 +342,21 @@ this instance of object.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__destroyHierarchy">
                                     <h4>
                                         <a name="method__destroyHierarchy">_destroyHierarchy</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_destroyHierarchy</strong>
+                                            <strong property="yui:name">_destroyHierarchy</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Destroys the class hierarchy rooted at this base class by invoking
 the descructor method on the prototype of each class in the hierarchy.
                                         </div>
@@ -278,10 +366,10 @@ the descructor method on the prototype of each class in the hierarchy.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -292,23 +380,23 @@ the descructor method on the prototype of each class in the hierarchy.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected">
+                                    <div class="protected" rel="yui:method" resource="#method__getClasses">
                                     <h4>
                                         <a name="method__getClasses">_getClasses</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
-                                        Array
-                                            <strong>_getClasses</strong>
+                                        Function[]
+                                            <strong property="yui:name">_getClasses</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Returns the top down class hierarchy for this object,
-with Base being the first class in the array
+with Base being the first class in the array.
                                         </div>
 
                                         <div class="description">
@@ -316,10 +404,10 @@ with Base being the first class in the array
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        Array
+                                                    <code property="yui:return">
+                                                        Function[]
                                                     </code></dt>
-                                                    <dd>array of classes</dd>
+                                                    <dd property="yui:returnInfo">An Array of classes (constructor functions), making up the class heirarchy for this object</dd>
                                                 </dl>
 
 
@@ -330,16 +418,16 @@ with Base being the first class in the array
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__initHierarchy">
                                     <h4>
                                         <a name="method__initHierarchy">_initHierarchy</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_initHierarchy</strong>
+                                            <strong property="yui:name">_initHierarchy</strong>
                                            (
                                                 
                                                         
@@ -349,29 +437,31 @@ with Base being the first class in the array
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Initializes the class hierarchy rooted at this base class,
 which includes initializing attributes for each class defined 
-in the class's static ATTRS property and invoking the initializer 
+in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
 method on the prototype of each class in the hierarchy.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>userConf &lt;Object&gt;</code>
-                                                             Config hash containing attribute name/value pairs
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">userConf</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object literal containing attribute name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -382,16 +472,16 @@ method on the prototype of each class in the hierarchy.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__prefixEvtType">
                                     <h4>
                                         <a name="method__prefixEvtType">_prefixEvtType</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
-                                        void
-                                            <strong>_prefixEvtType</strong>
+                                        String
+                                            <strong property="yui:name">_prefixEvtType</strong>
                                            (
                                                 
                                                         
@@ -401,27 +491,29 @@ method on the prototype of each class in the hierarchy.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Utility method to prefix the event name with the
 name property of the instance, if absent
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                             The event name
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event name</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        String
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">The prefixed event name</dd>
                                                 </dl>
 
 
@@ -432,16 +524,16 @@ name property of the instance, if absent
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_after">
                                     <h4>
                                         <a name="method_after">after</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>after</strong>
+                                        Event.Handle
+                                            <strong property="yui:name">after</strong>
                                            (
                                                 
                                                         
@@ -463,7 +555,7 @@ name property of the instance, if absent
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Subscribe to a custom event hosted by this object.  The
 supplied callback will execute <em>after</em> any listeners added
@@ -471,41 +563,49 @@ via the subscribe method, and after the default function,
 if configured for the event, has executed.
 </p>
 <p>
-Overrides Event.Target's after method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_after">after</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                             The type of event to subscribe to. If 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The type of event to subscribe to. If 
 the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix.
+the name property of the instance will be used as the default prefix.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                              The callback
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The subscribed callback function</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>context &lt;Object&gt;</code>
-                                                             The execution context
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional execution context for the callback</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>args* &lt;Object*&gt;</code>
-                                                             1..n params to supply to the callback
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Event.Handle
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">Event handle which can be used to unsubscribe the subscribed callback.</dd>
                                                 </dl>
 
 
@@ -516,16 +616,16 @@ the name property of the instance will be used as the default prefix.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_build">
                                     <h4>
                                         <a name="method_build">build</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>build</strong>
+                                        Function
+                                            <strong property="yui:name">build</strong>
                                            (
                                                 
                                                         
@@ -543,7 +643,7 @@ the name property of the instance will be used as the default prefix.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Builds a constructor function (class) from the
 main function, and array of extension functions (classes)
@@ -553,47 +653,54 @@ provided.
 The cfg object literal supports the following properties
 </p>
 <dl>
-<dt>dynamic {boolean}</dt>
+<dt>dynamic &#60;boolean&#62;</dt>
 <dd>
-<p>If true, a completely new class
+<p>If true (default), a completely new class
 is created which extends the main class, and acts as the 
 host on which the extension classes are augmented.</p>
 <p>If false, the extensions classes are augmented directly to
 the main class, modifying the main classes prototype.</p>
 </dd>
-<dt>aggregates {String[]}</dt>
+<dt>aggregates &#60;String[]&#62;</dt>
 <dd>An array of static property names, which will get aggregated
-on to the built class in addition to the default properties build 
-will always aggregate - "ATTRS" and "PLUGINS", as defined by 
-Base.build.AGGREGATES</dd>
+on to the built class, in addition to the default properties build 
+will always aggregate as defined by the main class' _buildCfg
+property.
+</dd>
 </dl>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>main &lt;Function&gt;</code>
-                                                             The main class on which to base the built class
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">main</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The main class on which to base the built class</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>extensions &lt;Function[]&gt;</code>
-                                                             The set of extension classes which will be
-augmented/aggregated to the built class.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extensions</span>
+                                                        &lt;<span property="yui:type">Function[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The set of extension classes which will be
+augmented/aggregated to the built class.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>cfg &lt;Object&gt;</code>
-                                                            
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Function
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">A custom class, created from the provided main and extension classes</dd>
                                                 </dl>
 
 
@@ -604,16 +711,16 @@ augmented/aggregated to the built class.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_create">
                                     <h4>
                                         <a name="method_create">create</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>create</strong>
+                                        Object
+                                            <strong property="yui:name">create</strong>
                                            (
                                                 
                                                         
@@ -625,19 +732,19 @@ augmented/aggregated to the built class.
                                                     
                                                 
                                                         , 
-                                                         args
+                                                         args*
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Creates a new object instance, based on a dynamically created custom class.
 The custom class is created from the main class passed in as the first parameter 
 along with the list of extension classes passed in
-as the second parameter using <a href="#method_build>Base.build</a> 
-with "dynamic" set to true. See the documentation for this method 
+as the second parameter using <a href="#method_build">Base.build</a> 
+with "dynamic" set to true. See the documentation for Base.build method 
 to see how the main class and extension classes are used.
 </p>
 <p>Any arguments following the 2nd argument are passed as arguments to the 
@@ -646,31 +753,37 @@ constructor of the newly created class used to create the instance.</p>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>main &lt;Function&gt;</code>
-                                                             The main class on which the instance it to be 
-based. This class will be extended to create the class for the custom instance
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">main</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The main class on which the instance it to be 
+based. This class will be extended to create the class for the custom instance</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>extensions &lt;Array&gt;</code>
-                                                             The list of extension classes used to augment the
-main class with.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extensions</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The list of extension classes used to augment the
+main class with.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>args &lt;Any*&gt;</code>
-                                                              Zero or more arguments to pass to the constructor of the 
-newly created class, when creating the instance.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n arguments to pass to the constructor of the 
+newly created class, when creating the instance.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Object
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">An instance of the custom class</dd>
                                                 </dl>
 
 
@@ -681,21 +794,21 @@ newly created class, when creating the instance.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_destroy">
                                     <h4>
                                         <a name="method_destroy">destroy</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                          final 
-                                        void
-                                            <strong>destroy</strong>
+                                        Base
+                                            <strong property="yui:name">destroy</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Destroy lifecycle method. Fires the destroy
 event, prior to invoking destructors for the
@@ -703,7 +816,7 @@ class hierarchy.
 </p>
 <p>
 Subscribers to the destroy
-event can preventDefault to prevent destruction
+event can invoke preventDefault on the event object, to prevent destruction
 from proceeding.
 </p>
                                         </div>
@@ -713,10 +826,10 @@ from proceeding.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Base
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">A reference to this object</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -730,16 +843,16 @@ from proceeding.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_fire">
                                     <h4>
                                         <a name="method_fire">fire</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         boolean
-                                            <strong>fire</strong>
+                                            <strong property="yui:name">fire</strong>
                                            (
                                                 
                                                         
@@ -747,47 +860,50 @@ from proceeding.
                                                     
                                                 
                                                         , 
-                                                         arguments
+                                                         args*
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Fire a custom event by name.  The callback functions will be executed
 from the context specified when the event was created, and with the 
 following parameters.
 </p>
 <p>
-Overrides Event.Target's fire method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_fire">fire</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String|Object&gt;</code>
-                                                             The type of the event, or an object that contains
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The type of the event, or an object that contains
 a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
-the name property of the instance will be used as the default prefix.
+the name property of the instance will be used as the default prefix.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>arguments &lt;Object*&gt;</code>
-                                                             an arbitrary set of parameters to pass to 
-the handler.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n Additional arguments to pass to subscribers.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         boolean
                                                     </code></dt>
-                                                    <dd>the return value from Event.Target.fire</dd>
+                                                    <dd property="yui:returnInfo">The return value from Event Target's <a href="Event.Target.html#method_fire">fire</a> method.</dd>
                                                 </dl>
 
 
@@ -798,16 +914,16 @@ the handler.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_init">
                                     <h4>
                                         <a name="method_init">init</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                          final 
-                                        void
-                                            <strong>init</strong>
+                                        Base
+                                            <strong property="yui:name">init</strong>
                                            (
                                                 
                                                         
@@ -817,7 +933,7 @@ the handler.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Init lifecycle method, invoked during construction.
 Fires the init event prior to invoking initializers on
 the class hierarchy.
@@ -825,20 +941,22 @@ the class hierarchy.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>config &lt;Object&gt;</code>
-                                                             Object literal of configuration property name/value pairs
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object literal of configuration property name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Base
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">A reference to this object</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -852,16 +970,16 @@ the class hierarchy.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_publish">
                                     <h4>
                                         <a name="method_publish">publish</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Event.Custom
-                                            <strong>publish</strong>
+                                            <strong property="yui:name">publish</strong>
                                            (
                                                 
                                                         
@@ -875,40 +993,44 @@ the class hierarchy.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Creates a new custom event of the specified type.  If a custom event
 by that name already exists, it will not be re-created.  In either
 case the custom event is returned. 
 </p>
 <p>
-Overrides Event.Target's publish method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_publish">publish</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                              The type, or name of the event. If the type does not 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The type, or name of the event. If the type does not 
 contain a prefix ("prefix:eventType"), the name property of the instance will 
-be used as the default prefix.
+be used as the default prefix.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>opts &lt;Object&gt;</code>
-                                                             Optional config params (see Event.Target publish for details)
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Event.Custom
                                                     </code></dt>
-                                                    <dd>the custom event</dd>
+                                                    <dd property="yui:returnInfo">The published custom event object</dd>
                                                 </dl>
 
 
@@ -919,16 +1041,16 @@ be used as the default prefix.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_subscribe">
                                     <h4>
                                         <a name="method_subscribe">subscribe</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Event.Handle
-                                            <strong>subscribe</strong>
+                                            <strong property="yui:name">subscribe</strong>
                                            (
                                                 
                                                         
@@ -950,46 +1072,54 @@ be used as the default prefix.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Subscribe to a custom event hosted by this object.
 </p>
 <p>
-Overrides Event.Target's subscribe method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_subscribe">subscribe</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                             The type of event to subscribe to. If 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The type of event to subscribe to. If 
 the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix.
+the name property of the instance will be used as the default prefix.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                             The callback, invoked when the event is fired.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The subscribed callback function, invoked when the event is fired.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>context &lt;Object&gt;</code>
-                                                             The execution context
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional execution context for the callback.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>args* &lt;Object*&gt;</code>
-                                                             1..n params to supply to the callback
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Event.Handle
                                                     </code></dt>
-                                                    <dd>unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">An event handle which can be used to unsubscribe the subscribed callback.</dd>
                                                 </dl>
 
 
@@ -1000,22 +1130,23 @@ the name property of the instance will be used as the default prefix.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_toString">
                                     <h4>
                                         <a name="method_toString">toString</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>toString</strong>
+                                        String
+                                            <strong property="yui:name">toString</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Default toString implementation
+                                        <div class="description" property="yui:description">
+                                            Default toString implementation. Provides the constructor NAME
+and the instance ID.
                                         </div>
 
                                         <div class="description">
@@ -1023,10 +1154,10 @@ the name property of the instance will be used as the default prefix.
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        String
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">String representation for this object</dd>
                                                 </dl>
 
 
@@ -1037,16 +1168,16 @@ the name property of the instance will be used as the default prefix.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_unsubscribe">
                                     <h4>
                                         <a name="method_unsubscribe">unsubscribe</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         boolean
-                                            <strong>unsubscribe</strong>
+                                            <strong property="yui:name">unsubscribe</strong>
                                            (
                                                 
                                                         
@@ -1064,51 +1195,57 @@ the name property of the instance will be used as the default prefix.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Unsubscribes one or more listeners the from the specified event.
 </p>
 <p>
-Overrides Event.Target's unsubscribe method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_unsubscribe">unsubscribe</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String|Object&gt;</code>
-                                                              Either the handle to the subscriber or the 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Either the handle to the subscriber or the 
 type of event.  If the type
 is not specified, it will attempt to remove
 the listener from all hosted events. If 
 the type string does not contain a prefix 
 ("prefix:eventType"), the name property of the 
-instance will be used as the default prefix.
+instance will be used as the default prefix.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                                The subscribed function to unsubscribe, if not
-supplied, all subscribers will be removed.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The subscribed function to unsubscribe, if not
+supplied, all subscribers will be removed.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>context &lt;Object&gt;</code>
-                                                                 The custom object passed to subscribe.  This is
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The custom object passed to subscribe.  This is
 optional, but if supplied will be used to
 disambiguate multiple listeners that are the same
 (e.g., you subscribe many object using a function
-that lives on the prototype)
+that lives on the prototype)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         boolean
                                                     </code></dt>
-                                                    <dd>true if the subscriber was found and detached.</dd>
+                                                    <dd property="yui:returnInfo">true if the subscriber was found and detached.</dd>
                                                 </dl>
 
 
@@ -1119,16 +1256,16 @@ that lives on the prototype)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_unsubscribeAll">
                                     <h4>
                                         <a name="method_unsubscribeAll">unsubscribeAll</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>unsubscribeAll</strong>
+                                        int
+                                            <strong property="yui:name">unsubscribeAll</strong>
                                            (
                                                 
                                                         
@@ -1138,36 +1275,38 @@ that lives on the prototype)
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Removes all listeners from the specified event.  If the event type
 is not specified, all listeners from all hosted custom events will
 be removed.
 </p>
 <p>
-Overrides Event.Target's unsubscribeAll method, to add the name prefix 
+Overrides Event.Target's <a href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a> method, to add the name prefix 
 of the instance to the event type, if absent.
 </p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                                The type, or name of the event. If 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The type, or name of the event. If 
 the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix.
+the name property of the instance will be used as the default prefix</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        int
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed</dd>
                                                 </dl>
 
 
@@ -1181,27 +1320,110 @@ the name property of the instance will be used as the default prefix.
                             </div>
                         </div>
 
-                            <div class="section field inheritance">
-                                <h4>Methods inherited from <a href="Attribute.html">Attribute</a>:</h4>
-                                <div class="content">
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
                                     <code>
-                                            <a class="private" href="Attribute.html#method__cloneAttVal">_cloneAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__fireAttChange">_fireAttChange</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_addAtt">addAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_removeAtt">removeAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
+                                            <span rel="yui:method" resource="Attribute.html#method__cloneAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__cloneAttVal" property="yui:name" title="_cloneAttVal">_cloneAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttSet">                                        
+                                            <a class="private" href="Attribute.html#method__defAttSet" property="yui:name" title="_defAttSet">_defAttSet</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttChange" property="yui:name" title="_fireAttChange">_fireAttChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getSubAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__getSubAttVal" property="yui:name" title="_getSubAttVal">_getSubAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__initAtts">                                        
+                                            <a class="protected" href="Attribute.html#method__initAtts" property="yui:name" title="_initAtts">_initAtts</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__initAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__initAttVal" property="yui:name" title="_initAttVal">_initAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setSubAttVal">                                        
+                                            <a class="private" href="Attribute.html#method__setSubAttVal" property="yui:name" title="_setSubAttVal">_setSubAttVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__splitAttrValues">                                        
+                                            <a class="private" href="Attribute.html#method__splitAttrValues" property="yui:name" title="_splitAttrValues">_splitAttrValues</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAtt">                                        
+                                            <a class="" href="Attribute.html#method_addAtt" property="yui:name" title="addAtt">addAtt</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAtts">                                        
+                                            <a class="" href="Attribute.html#method_getAtts" property="yui:name" title="getAtts">getAtts</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_on">                                        
+                                            <a class="" href="Attribute.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAtt">                                        
+                                            <a class="" href="Attribute.html#method_removeAtt" property="yui:name" title="removeAtt">removeAtt</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAtts">                                        
+                                            <a class="" href="Attribute.html#method_setAtts" property="yui:name" title="setAtts">setAtts</a>
+                                            </span>
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance">
-                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
-                                <div class="content">
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
+                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                                <div class="content" rel="yui:methods">
                                     <code>
-                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <span rel="yui:method" resource="Event.Target.html#method_addTarget">                                        
+                                            <a class="" href="Event.Target.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_after">                                        
+                                            <a class="" href="Event.Target.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_bubble">                                        
+                                            <a class="" href="Event.Target.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_fire">                                        
+                                            <a class="" href="Event.Target.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_getEvent">                                        
+                                            <a class="" href="Event.Target.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_publish">                                        
+                                            <a class="" href="Event.Target.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_removeTarget">                                        
+                                            <a class="" href="Event.Target.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_subscribe">                                        
+                                            <a class="" href="Event.Target.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribe">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribeAll">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
                                     </code>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
+                    <div rel="yui:events" resource="#events">
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_destroy">
                                     <h4>
                                         <a name="event_destroy">destroy</a></h4>
                                     <div class="detail">
@@ -1209,7 +1431,7 @@ the name property of the instance will be used as the default prefix.
                                         
                                         
                                         
-                                            <strong>destroy</strong>
+                                            <strong property="yui:name">destroy</strong>
 
                                             (
                                                 
@@ -1221,14 +1443,15 @@ the name property of the instance will be used as the default prefix.
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
-Destroy event, fired prior to destruction. Invoking
-the preventDefault method on the EventFacade provided 
-to subscribers will prevent destruction from proceeding.
+Lifecycle event for the destroy phase, 
+fired prior to destruction. Invoking the preventDefault 
+method on the event object provided to subscribers will 
+prevent destruction from proceeding.
 </p>
 <p>
-Subscribers to the after momemt of this event, will be notified
+Subscribers to the "after" moment of this event, will be notified
 after destruction is complete (and as a result cannot prevent
 destruction).
 </p>
@@ -1237,16 +1460,19 @@ destruction).
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>e &lt;Event.Facade&gt;</code>
-                                                             Event object
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> Event object</span>
                                                         </dd>
+                                                        
                                                 </dl>
 
                                             <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method: _defDestroyFn.
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defDestroyFn.
                                             </div>        
 
                                         </div>
@@ -1254,7 +1480,7 @@ destruction).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_destroyedChange">
                                     <h4>
                                         <a name="event_destroyedChange">destroyedChange</a></h4>
                                     <div class="detail">
@@ -1262,7 +1488,7 @@ destruction).
                                         
                                         
                                         
-                                            <strong>destroyedChange</strong>
+                                            <strong property="yui:name">destroyedChange</strong>
 
                                             (
                                                 
@@ -1274,19 +1500,22 @@ destruction).
 
                                         </code>
                                         
-                                        <div class="description">
-                                            Fires when the value for the configuration attribute 'destroyed' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'destroyed' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>event &lt;Event.Facade&gt;</code>
-                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -1295,7 +1524,7 @@ destruction).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_init">
                                     <h4>
                                         <a name="event_init">init</a></h4>
                                     <div class="detail">
@@ -1303,7 +1532,7 @@ destruction).
                                         
                                         
                                         
-                                            <strong>init</strong>
+                                            <strong property="yui:name">init</strong>
 
                                             (
                                                 
@@ -1319,14 +1548,14 @@ destruction).
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
-Init event, fired prior to initialization. Invoking
-the preventDefault method on the EventFacade provided 
+Lifecycle event for the init phase, fired prior to initialization. 
+Invoking the preventDefault method on the event object provided 
 to subscribers will prevent initialization from occuring.
 </p>
 <p>
-Subscribers to the after momemt of this event, will be notified
+Subscribers to the "after" momemt of this event, will be notified
 after initialization of the object is complete (and therefore
 cannot prevent initialization).
 </p>
@@ -1335,20 +1564,26 @@ cannot prevent initialization).
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>e &lt;Event.Facade&gt;</code>
-                                                             Event object
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> Event object</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>config &lt;object&gt;</code>
-                                                             Object literal of configuration name/value pairs
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">config</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> Object literal of configuration name/value pairs</span>
                                                         </dd>
+                                                        
                                                 </dl>
 
                                             <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method: _defInitFn.
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defInitFn.
                                             </div>        
 
                                         </div>
@@ -1356,7 +1591,7 @@ cannot prevent initialization).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_initializedChange">
                                     <h4>
                                         <a name="event_initializedChange">initializedChange</a></h4>
                                     <div class="detail">
@@ -1364,7 +1599,7 @@ cannot prevent initialization).
                                         
                                         
                                         
-                                            <strong>initializedChange</strong>
+                                            <strong property="yui:name">initializedChange</strong>
 
                                             (
                                                 
@@ -1376,19 +1611,22 @@ cannot prevent initialization).
 
                                         </code>
                                         
-                                        <div class="description">
-                                            Fires when the value for the configuration attribute 'initialized' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'initialized' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>event &lt;Event.Facade&gt;</code>
-                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
                                                         </dd>
+                                                        
                                                 </dl>
 
 
@@ -1401,16 +1639,18 @@ cannot prevent initialization).
                         </div>
 
 
+                    </div>
 
+                    <div rel="yui:attributes" resource="#configattributes">
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="" rel="yui:attribute" resource="#config_destroyed">
                                     <h4><a name="config_destroyed">destroyed</a>
-                                        <code>- boolean</code>
+                                        <code>- <span property="yui:type">boolean</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Flag indicating whether or not this object
 has been through the destroy lifecycle phase.
                                         </div>
@@ -1423,12 +1663,12 @@ has been through the destroy lifecycle phase.
 
                                     <hr />
                                     </div>        
-                                    <div class="">
+                                    <div class="" rel="yui:attribute" resource="#config_initialized">
                                     <h4><a name="config_initialized">initialized</a>
-                                        <code>- boolean</code>
+                                        <code>- <span property="yui:type">boolean</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Flag indicating whether or not this object
 has been through the init lifecycle phase.
                                         </div>
@@ -1445,157 +1685,111 @@ has been through the init lifecycle phase.
                             </div>
                         </div>
 
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class="selected"><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class="selected"><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="Base.html">Base</a></li>
+                                <li class="selected"><a href="Base.html" title="Base">Base</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Base.js.html">Base.js</a></li>
+                                <li class=""><a href="Base.js.html" title="Base.js">Base.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_ATTRS">ATTRS</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_NAME">NAME</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_name">name</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
+                                <li class="private"><a href="#property__buildCfg" title="_buildCfg">_buildCfg</a></li>
+                                <li class=""><a href="#property_ATTRS" title="ATTRS">ATTRS</a></li>
+                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class=""><a href="#property_name" title="name">name</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><!--<code>void</code>-->
-                                <a href="#method__defDestroyFn">_defDestroyFn</a>
-                                </li>
-                                <li class="protected"><!--<code>void</code>-->
-                                <a href="#method__defInitFn">_defInitFn</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__destroyHierarchy">_destroyHierarchy</a>
-                                </li>
-                                <li class="protected"><!--<code>Array</code>-->
-                                <a href="#method__getClasses">_getClasses</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__initHierarchy">_initHierarchy</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__prefixEvtType">_prefixEvtType</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_after">after</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_build">build</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_create">create</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_destroy">destroy</a>
-                                </li>
-                                <li class=""><!--<code>boolean</code>-->
-                                <a href="#method_fire">fire</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_init">init</a>
-                                </li>
-                                <li class=""><!--<code>Event.Custom</code>-->
-                                <a href="#method_publish">publish</a>
-                                </li>
-                                <li class=""><!--<code>Event.Handle</code>-->
-                                <a href="#method_subscribe">subscribe</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_toString">toString</a>
-                                </li>
-                                <li class=""><!--<code>boolean</code>-->
-                                <a href="#method_unsubscribe">unsubscribe</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_unsubscribeAll">unsubscribeAll</a>
-                                </li>
+                                <li class="protected"><a href="#method__defDestroyFn" title="_defDestroyFn">_defDestroyFn</a></li>
+                                <li class="protected"><a href="#method__defInitFn" title="_defInitFn">_defInitFn</a></li>
+                                <li class="private"><a href="#method__destroyHierarchy" title="_destroyHierarchy">_destroyHierarchy</a></li>
+                                <li class="protected"><a href="#method__getClasses" title="_getClasses">_getClasses</a></li>
+                                <li class="private"><a href="#method__initHierarchy" title="_initHierarchy">_initHierarchy</a></li>
+                                <li class="private"><a href="#method__prefixEvtType" title="_prefixEvtType">_prefixEvtType</a></li>
+                                <li class=""><a href="#method_after" title="after">after</a></li>
+                                <li class=""><a href="#method_build" title="build">build</a></li>
+                                <li class=""><a href="#method_create" title="create">create</a></li>
+                                <li class=""><a href="#method_destroy" title="destroy">destroy</a></li>
+                                <li class=""><a href="#method_fire" title="fire">fire</a></li>
+                                <li class=""><a href="#method_init" title="init">init</a></li>
+                                <li class=""><a href="#method_publish" title="publish">publish</a></li>
+                                <li class=""><a href="#method_subscribe" title="subscribe">subscribe</a></li>
+                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
+                                <li class=""><a href="#method_unsubscribe" title="unsubscribe">unsubscribe</a></li>
+                                <li class=""><a href="#method_unsubscribeAll" title="unsubscribeAll">unsubscribeAll</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#event_destroy">destroy</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_destroyedChange">destroyedChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_init">init</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_initializedChange">initializedChange</a>
-                                </li>
+                                <li class=""><a href="#event_destroy" title="destroy">destroy</a></li>
+                                <li class=""><a href="#event_destroyedChange" title="destroyedChange">destroyedChange</a></li>
+                                <li class=""><a href="#event_init" title="init">init</a></li>
+                                <li class=""><a href="#event_initializedChange" title="initializedChange">initializedChange</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#config_destroyed">destroyed</a>
-                                </li>
-                                <li class="">
-                                <a href="#config_initialized">initialized</a>
-                                </li>
+                                <li class=""><a href="#config_destroyed" title="destroyed">destroyed</a></li>
+                                <li class=""><a href="#config_initialized" title="initialized">initialized</a></li>
                         </ul>
                     </div>
 
@@ -1604,8 +1798,11 @@ has been through the init lifecycle phase.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
+</script>
 </body>
 </html>

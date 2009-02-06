@@ -36,14 +36,20 @@ YUI.add('oop', function(Y) {
      * @TODO best practices for overriding sequestered methods.
      */
     Y.augment = function(r, s, ov, wl, args) {
-        var sProto = s.prototype, newProto = null, construct = s, 
-            a = (args) ? Y.Array(args) : [], rProto = r.prototype, 
-            target =  rProto || r, applyConstructor = false;
+        var sProto           = s.prototype, 
+            newProto         = null, 
+            construct        = s, 
+            a                = (args) ? Y.Array(args) : [], 
+            rProto           = r.prototype, 
+            target           = rProto || r, 
+            applyConstructor = false,
+            sequestered, replacements, i;
 
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
-            var sequestered = {}, replacements = {};
-            newProto = {};
+            sequestered  = {};
+            replacements = {};
+            newProto     = {};
 
             // sequester all of the functions in the supplier and replace with
             // one that will restore all of them.
@@ -53,7 +59,7 @@ YUI.add('oop', function(Y) {
 // Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
-                    for (var i in sequestered) {
+                    for (i in sequestered) {
                         if (sequestered.hasOwnProperty(i) && (this[i] === replacements[i])) {
                             // Y.log('... restoring ' + k);
                             this[i] = sequestered[i];
@@ -132,10 +138,10 @@ YUI.add('oop', function(Y) {
     Y.extend = function(r, s, px, sx) {
         if (!s||!r) {
             // @TODO error symbols
-            Y.fail("extend failed, verify dependencies");
+            Y.error("extend failed, verify dependencies");
         }
 
-        var sp = s.prototype, rp=Y.Object(sp), i;
+        var sp = s.prototype, rp=Y.Object(sp);
         r.prototype=rp;
 
         rp.constructor=r;
@@ -245,35 +251,7 @@ YUI.add('oop', function(Y) {
 
         return o2;
     };
-    
-    /**
-     * Returns a function that will execute the supplied function in the
-     * supplied object's context, optionally adding any additional
-     * supplied parameters to the end of the arguments the function
-     * is executed with.
-     *
-     * In some cases it is preferable to have the additional arguments
-     * applied to the beginning of the function signature.  For instance,
-     * FireFox setTimeout/setInterval supplies a parameter that other
-     * browsers do not.  
-     * Note: YUI provides a later() function which wraps setTimeout/setInterval,
-     * providing context adjustment and parameter addition.  This can be 
-     * used instead of setTimeout/setInterval, avoiding the arguments
-     * collection issue when using bind() in FireFox.
-     *
-     * @method bind
-     * @param f {Function} the function to bind
-     * @param c the execution context
-     * @param args* 0..n arguments to append to the end of arguments collection
-     * supplied to the function
-     * @return {function} the wrapped function
-     */
-    Y.bind = function(f, c) {
-        var a = Y.Array(arguments, 2, true);
-        return function () {
-            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
-        };
-    };
+
 
     /*
      * Returns a function that will execute the supplied function in the
@@ -284,15 +262,36 @@ YUI.add('oop', function(Y) {
      * @method bind
      * @param f {Function} the function to bind
      * @param c the execution context
-     * @param args* 0..n arguments to append to the arguments collection for the function
+     * @param args* 0..n arguments to include before the arguments the 
+     * function is executed with.
      * @return {function} the wrapped function
      */
-    // Y.bind = function(f, c) {
-    //     var a = Y.Array(arguments, 2, true);
-    //     return function () {
-    //         return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
-    //     };
-    // };
+    Y.bind = function(f, c) {
+        var a = Y.Array(arguments, 2, true);
+        return function () {
+            return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+        };
+    };
+    
+    /**
+     * Returns a function that will execute the supplied function in the
+     * supplied object's context, optionally adding any additional
+     * supplied parameters to the end of the arguments the function
+     * is executed with.
+     *
+     * @method rbind
+     * @param f {Function} the function to bind
+     * @param c the execution context
+     * @param args* 0..n arguments to append to the end of arguments collection
+     * supplied to the function
+     * @return {function} the wrapped function
+     */
+    Y.rbind = function(f, c) {
+        var a = Y.Array(arguments, 2, true);
+        return function () {
+            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
+        };
+    };
 
 
 

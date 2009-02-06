@@ -920,7 +920,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -936,7 +936,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -2369,7 +2369,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-proxy'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
        /**
@@ -2411,7 +2411,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2486,7 +2486,7 @@ YUI.add('dd-drop', function(Y) {
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                    Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }
@@ -2891,5 +2891,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
 

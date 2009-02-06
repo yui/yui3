@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: node   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,27 +14,33 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>node&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_node.html">node</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>node&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_node.html" title="node">node</a>
                 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                    
@@ -45,100 +55,126 @@
 
 
 
-<div class="yui-gc">
-    <div class="yui-u first">
-                    <form onsubmit="return false">
-                        <p>Search node:
-                        <div id="propertysearch">
-                            <input autocomplete="off" id="searchinput" />
-                            <div id="searchresults">
-                                &nbsp;
-                            </div>
-                        </div>
-                    </form>
-                    <script type="text/javascript">
-                        ALL_YUI_PROPS = [{"url": "Node.html#method_addClass", "access": "", "host": "Node", "name": "addClass"}, {"url": "Node.html#method_all", "access": "", "host": "Node", "name": "all"}, {"url": "Node.html#method_appendChild", "access": "", "host": "Node", "name": "appendChild"}, {"url": "Node.html#method_attach", "access": "", "host": "Node", "name": "attach"}, {"url": "Node.html#method_blur", "access": "", "host": "Node", "name": "blur"}, {"url": "Node.html#config_body", "access": "", "host": "Node", "name": "body"}, {"url": "Node.html#event_bodyChange", "access": "", "host": "Node", "name": "bodyChange"}, {"url": "Node.html#config_cells", "access": "", "host": "Node", "name": "cells"}, {"url": "Node.html#event_cellsChange", "access": "", "host": "Node", "name": "cellsChange"}, {"url": "Node.html#config_childNodes", "access": "", "host": "Node", "name": "childNodes"}, {"url": "Node.html#event_childNodesChange", "access": "", "host": "Node", "name": "childNodesChange"}, {"url": "Node.html#config_children", "access": "", "host": "Node", "name": "children"}, {"url": "Node.html#event_childrenChange", "access": "", "host": "Node", "name": "childrenChange"}, {"url": "Node.html#method_cloneNode", "access": "", "host": "Node", "name": "cloneNode"}, {"url": "Node.html#method_compareTo", "access": "", "host": "Node", "name": "compareTo"}, {"url": "Node.html#method_contains", "access": "", "host": "Node", "name": "contains"}, {"url": "Node.html#method_create", "access": "", "host": "Node", "name": "create"}, {"url": "Node.html#method_detach", "access": "", "host": "Node", "name": "detach"}, {"url": "Node.html#config_documentElement", "access": "", "host": "Node", "name": "documentElement"}, {"url": "Node.html#event_documentElementChange", "access": "", "host": "Node", "name": "documentElementChange"}, {"url": "NodeList.html#method_each", "access": "", "host": "NodeList", "name": "each"}, {"url": "Node.html#config_elements", "access": "", "host": "Node", "name": "elements"}, {"url": "Node.html#event_elementsChange", "access": "", "host": "Node", "name": "elementsChange"}, {"url": "NodeList.html#method_filter", "access": "", "host": "NodeList", "name": "filter"}, {"url": "Node.html#config_firstChild", "access": "", "host": "Node", "name": "firstChild"}, {"url": "Node.html#event_firstChildChange", "access": "", "host": "Node", "name": "firstChildChange"}, {"url": "Node.html#method_focus", "access": "", "host": "Node", "name": "focus"}, {"url": "Node.html#method_get", "access": "", "host": "Node", "name": "get"}, {"url": "NodeList.html#method_get", "access": "", "host": "NodeList", "name": "get"}, {"url": "Node.html#method_getAttribute", "access": "", "host": "Node", "name": "getAttribute"}, {"url": "Node.html#method_getById", "access": "", "host": "Node", "name": "getById"}, {"url": "Node.html#method_getComputedStyle", "access": "", "host": "Node", "name": "getComputedStyle"}, {"url": "Node.html#method_getElementsByTagName", "access": "", "host": "Node", "name": "getElementsByTagName"}, {"url": "Node.html#method_getStyle", "access": "", "host": "Node", "name": "getStyle"}, {"url": "Node.html#method_getX", "access": "", "host": "Node", "name": "getX"}, {"url": "Node.html#method_getXY", "access": "", "host": "Node", "name": "getXY"}, {"url": "Node.html#method_getY", "access": "", "host": "Node", "name": "getY"}, {"url": "Node.html#method_hasAttribute", "access": "", "host": "Node", "name": "hasAttribute"}, {"url": "Node.html#method_hasChildNodes", "access": "", "host": "Node", "name": "hasChildNodes"}, {"url": "Node.html#method_hasClass", "access": "", "host": "Node", "name": "hasClass"}, {"url": "Node.html#method_inDoc", "access": "", "host": "Node", "name": "inDoc"}, {"url": "Node.html#method_inRegion", "access": "", "host": "Node", "name": "inRegion"}, {"url": "Node.html#method_insertBefore", "access": "", "host": "Node", "name": "insertBefore"}, {"url": "Node.html#method_intersect", "access": "", "host": "Node", "name": "intersect"}, {"url": "Node.html#method_inViewportRegion", "access": "", "host": "Node", "name": "inViewportRegion"}, {"url": "NodeList.html#method_item", "access": "", "host": "NodeList", "name": "item"}, {"url": "Node.html#config_lastChild", "access": "", "host": "Node", "name": "lastChild"}, {"url": "Node.html#event_lastChildChange", "access": "", "host": "Node", "name": "lastChildChange"}, {"url": "Node.html#method_next", "access": "", "host": "Node", "name": "next"}, {"url": "Node.html#method_nodeInOut", "access": "", "host": "Node", "name": "nodeInOut"}, {"url": "Node.html#config_offsetParent", "access": "", "host": "Node", "name": "offsetParent"}, {"url": "Node.html#event_offsetParentChange", "access": "", "host": "Node", "name": "offsetParentChange"}, {"url": "Node.html#method_on", "access": "", "host": "Node", "name": "on"}, {"url": "Node.html#config_options", "access": "", "host": "Node", "name": "options"}, {"url": "Node.html#event_optionsChange", "access": "", "host": "Node", "name": "optionsChange"}, {"url": "Node.html#config_ownerDocument", "access": "", "host": "Node", "name": "ownerDocument"}, {"url": "Node.html#event_ownerDocumentChange", "access": "", "host": "Node", "name": "ownerDocumentChange"}, {"url": "Node.html#config_parentNode", "access": "", "host": "Node", "name": "parentNode"}, {"url": "Node.html#event_parentNodeChange", "access": "", "host": "Node", "name": "parentNodeChange"}, {"url": "Node.html#method_previous", "access": "", "host": "Node", "name": "previous"}, {"url": "Node.html#config_previousSibling", "access": "", "host": "Node", "name": "previousSibling"}, {"url": "Node.html#event_previousSiblingChange", "access": "", "host": "Node", "name": "previousSiblingChange"}, {"url": "Node.html#method_query", "access": "", "host": "Node", "name": "query"}, {"url": "Node.html#method_queryAll", "access": "", "host": "Node", "name": "queryAll"}, {"url": "Node.html#config_region", "access": "", "host": "Node", "name": "region"}, {"url": "Node.html#event_regionChange", "access": "", "host": "Node", "name": "regionChange"}, {"url": "Node.html#method_removeChild", "access": "", "host": "Node", "name": "removeChild"}, {"url": "Node.html#method_removeClass", "access": "", "host": "Node", "name": "removeClass"}, {"url": "Node.html#method_replaceChild", "access": "", "host": "Node", "name": "replaceChild"}, {"url": "Node.html#method_replaceClass", "access": "", "host": "Node", "name": "replaceClass"}, {"url": "Node.html#method_reset", "access": "", "host": "Node", "name": "reset"}, {"url": "Node.html#config_rows", "access": "", "host": "Node", "name": "rows"}, {"url": "Node.html#event_rowsChange", "access": "", "host": "Node", "name": "rowsChange"}, {"url": "Node.html#method_scrollIntoView", "access": "", "host": "Node", "name": "scrollIntoView"}, {"url": "Node.html#method_set", "access": "", "host": "Node", "name": "set"}, {"url": "NodeList.html#method_set", "access": "", "host": "NodeList", "name": "set"}, {"url": "Node.html#method_setAttribute", "access": "", "host": "Node", "name": "setAttribute"}, {"url": "Node.html#method_setStyle", "access": "", "host": "Node", "name": "setStyle"}, {"url": "Node.html#method_setStyles", "access": "", "host": "Node", "name": "setStyles"}, {"url": "Node.html#method_setX", "access": "", "host": "Node", "name": "setX"}, {"url": "Node.html#method_setXY", "access": "", "host": "Node", "name": "setXY"}, {"url": "Node.html#method_setY", "access": "", "host": "Node", "name": "setY"}, {"url": "NodeList.html#method_size", "access": "", "host": "NodeList", "name": "size"}, {"url": "Node.html#method_submit", "access": "", "host": "Node", "name": "submit"}, {"url": "Node.html#config_tBodies", "access": "", "host": "Node", "name": "tBodies"}, {"url": "Node.html#event_tBodiesChange", "access": "", "host": "Node", "name": "tBodiesChange"}, {"url": "Node.html#method_test", "access": "", "host": "Node", "name": "test"}, {"url": "Node.html#config_text", "access": "", "host": "Node", "name": "text"}, {"url": "Node.html#event_textChange", "access": "", "host": "Node", "name": "textChange"}, {"url": "Node.html#config_tFoot", "access": "", "host": "Node", "name": "tFoot"}, {"url": "Node.html#event_tFootChange", "access": "", "host": "Node", "name": "tFootChange"}, {"url": "Node.html#config_tHead", "access": "", "host": "Node", "name": "tHead"}, {"url": "Node.html#event_tHeadChange", "access": "", "host": "Node", "name": "tHeadChange"}, {"url": "Node.html#method_toggleClass", "access": "", "host": "Node", "name": "toggleClass"}, {"url": "Node.html#config_viewportRegion", "access": "", "host": "Node", "name": "viewportRegion"}, {"url": "Node.html#event_viewportRegionChange", "access": "", "host": "Node", "name": "viewportRegionChange"}];
-                    </script>
-	    </div>
-    <div class="yui-u">
-                    <style>
-                        .submodules dd {
-                            font-size: 93%;
-                            font-weight: italic;
-                        }
-                    </style>
-                    <div class="submodules">
-                        <h4>Submodules:</h4> 
-                        <dl>
-                            <dt><code><a href="Node.html">node-screen</a></code></dt>
-                            <dd>Extended Node interface for managing regions and screen positioning.
-Adds support for positioning elements and normalizes window size and scroll detection.</dd>
-                            <dt><code><a href="Node.html">node-screen</a></code></dt>
-                            <dd>Extended Node interface for managing regions and screen positioning.
-Adds support for positioning elements and normalizes window size and scroll detection.</dd>
-                            <dt><code><a href="Node.html">node-style</a></code></dt>
-                            <dd>Extended Node interface for managing node styles.</dd>
-                            <dt><code><a href="NodeList.html">node-base</a></code></dt>
-                            <dd>A wrapper for manipulating multiple DOM elements</dd>
-                        </dl>
-                    </div>
+                <div class="yui-gc">
+                    <div class="yui-u first">
 
-	    </div>
-</div>
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The Node class provides a wrapper for manipulating DOM Nodes.\nNode properties can be accessed via the set\/get methods.\nUse Y.get() to retrieve Node instances.\n<strong>NOTE:<\/strong> Node properties are accessed using\nthe <code>set<\/code> and <code>get<\/code> methods.", "guessedname": "Node", "name": "Node"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The Node class provides a wrapper for manipulating DOM Nodes.\nNode properties can be accessed via the set\/get methods.\nUse Y.get() to retrieve Node instances.\n<strong>NOTE:<\/strong> Node properties are accessed using\nthe <code>set<\/code> and <code>get<\/code> methods.", "guessedname": "Node", "name": "Node"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="Node.html" title="Node" id="class_0">Node</a></li>
+                                    <li><a href="Node.html" title="Node" id="class_1">Node</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code><a href="Node.html" title="node-base">node-base</a></code></dt>
+                                            <dd>The Node class provides a wrapper for manipulating DOM Nodes.
+Node properties can be accessed via the set/get methods.
+Use Y.get() to retrieve Node instances.
+<strong>NOTE:</strong> Node properties are accessed using
+the <code>set</code> and <code>get</code> methods.</dd>
+                                            <dt><code><a href="Node.html" title="node-style">node-style</a></code></dt>
+                                            <dd>Extended Node interface for managing node styles.</dd>
+                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
+                                            <dd>Extended Node interface for managing regions and screen positioning.
+Adds support for positioning elements and normalizes window size and scroll detection.</dd>
+                                            <dt><code><a href="Node.html" title="node">node</a></code></dt>
+                                            <dd>Extended Node interface for managing classNames.</dd>
+                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
+                                            <dd>Extended Node interface for managing regions and screen positioning.
+Adds support for positioning elements and normalizes window size and scroll detection.</dd>
+                                            <dt><code><a href="Node.html" title="node-base">node-base</a></code></dt>
+                                            <dd>The Node class provides a wrapper for manipulating DOM Nodes.
+Node properties can be accessed via the set/get methods.
+Use Y.get() to retrieve Node instances.
+<strong>NOTE:</strong> Node properties are accessed using
+the <code>set</code> and <code>get</code> methods.</dd>
+                                            <dt><code><a href="Node.html" title="node-style">node-style</a></code></dt>
+                                            <dd>Extended Node interface for managing node styles.</dd>
+                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
+                                            <dd>Extended Node interface for managing regions and screen positioning.
+Adds support for positioning elements and normalizes window size and scroll detection.</dd>
+                                            <dt><code><a href="Node.html" title="node">node</a></code></dt>
+                                            <dd>Extended Node interface for managing classNames.</dd>
+                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
+                                            <dd>Extended Node interface for managing regions and screen positioning.
+Adds support for positioning elements and normalizes window size and scroll detection.</dd>
+                                        </dl>
+                                    </div>
+
+                        </div>
+                </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class="selected"><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class="selected"><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Node.html">Node</a></li>
-                                <li class=""><a href="NodeList.html">NodeList</a></li>
+                                <li class=""><a href="Node.html" title="Node">Node</a></li>
+                                <li class=""><a href="Node.html" title="Node">Node</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="node-class.js.html">node-class.js</a></li>
-                                <li class=""><a href="node-region.js.html">node-region.js</a></li>
-                                <li class=""><a href="node-screen.js.html">node-screen.js</a></li>
-                                <li class=""><a href="node-style.js.html">node-style.js</a></li>
-                                <li class=""><a href="node.js.html">node.js</a></li>
+                                <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
+                                <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
+                                <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
+                                <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
+                                <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
+                                <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
+                                <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
+                                <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
+                                <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
+                                <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
+                                <li class=""><a href="node.js.html" title="node.js">node.js</a></li>
+                                <li class=""><a href="node.js.html" title="node.js">node.js</a></li>
                         </ul>
                     </div>
 
@@ -151,8 +187,11 @@ Adds support for positioning elements and normalizes window size and scroll dete
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Node", "name": "addClass", "url": "Node.html#method_addClass", "type": "method"}, {"access": "", "host": "Node", "name": "addClass", "url": "Node.html#method_addClass", "type": "method"}, {"access": "", "host": "Node", "name": "ancestor", "url": "Node.html#method_ancestor", "type": "method"}, {"access": "", "host": "Node", "name": "ancestor", "url": "Node.html#method_ancestor", "type": "method"}, {"access": "", "host": "Node", "name": "appendChild", "url": "Node.html#method_appendChild", "type": "method"}, {"access": "", "host": "Node", "name": "appendChild", "url": "Node.html#method_appendChild", "type": "method"}, {"access": "", "host": "Node", "name": "attach", "url": "Node.html#method_attach", "type": "method"}, {"access": "", "host": "Node", "name": "attach", "url": "Node.html#method_attach", "type": "method"}, {"access": "", "host": "Node", "name": "blur", "url": "Node.html#method_blur", "type": "method"}, {"access": "", "host": "Node", "name": "blur", "url": "Node.html#method_blur", "type": "method"}, {"access": "", "host": "Node", "name": "children", "url": "Node.html#property_children", "type": "property"}, {"access": "", "host": "Node", "name": "children", "url": "Node.html#property_children", "type": "property"}, {"access": "", "host": "Node", "name": "cloneNode", "url": "Node.html#method_cloneNode", "type": "method"}, {"access": "", "host": "Node", "name": "cloneNode", "url": "Node.html#method_cloneNode", "type": "method"}, {"access": "", "host": "Node", "name": "compareTo", "url": "Node.html#method_compareTo", "type": "method"}, {"access": "", "host": "Node", "name": "compareTo", "url": "Node.html#method_compareTo", "type": "method"}, {"access": "", "host": "Node", "name": "contains", "url": "Node.html#method_contains", "type": "method"}, {"access": "", "host": "Node", "name": "contains", "url": "Node.html#method_contains", "type": "method"}, {"access": "", "host": "Node", "name": "create", "url": "Node.html#method_create", "type": "method"}, {"access": "", "host": "Node", "name": "create", "url": "Node.html#method_create", "type": "method"}, {"access": "", "host": "Node", "name": "detach", "url": "Node.html#method_detach", "type": "method"}, {"access": "", "host": "Node", "name": "detach", "url": "Node.html#method_detach", "type": "method"}, {"access": "", "host": "Node", "name": "docHeight", "url": "Node.html#property_docHeight", "type": "property"}, {"access": "", "host": "Node", "name": "docHeight", "url": "Node.html#property_docHeight", "type": "property"}, {"access": "", "host": "Node", "name": "docScrollX", "url": "Node.html#property_docScrollX", "type": "property"}, {"access": "", "host": "Node", "name": "docScrollX", "url": "Node.html#property_docScrollX", "type": "property"}, {"access": "", "host": "Node", "name": "docScrollY", "url": "Node.html#property_docScrollY", "type": "property"}, {"access": "", "host": "Node", "name": "docScrollY", "url": "Node.html#property_docScrollY", "type": "property"}, {"access": "", "host": "Node", "name": "each", "url": "Node.html#method_each", "type": "method"}, {"access": "", "host": "Node", "name": "each", "url": "Node.html#method_each", "type": "method"}, {"access": "", "host": "Node", "name": "filter", "url": "Node.html#method_filter", "type": "method"}, {"access": "", "host": "Node", "name": "filter", "url": "Node.html#method_filter", "type": "method"}, {"access": "", "host": "Node", "name": "focus", "url": "Node.html#method_focus", "type": "method"}, {"access": "", "host": "Node", "name": "focus", "url": "Node.html#method_focus", "type": "method"}, {"access": "", "host": "Node", "name": "get", "url": "Node.html#method_get", "type": "method"}, {"access": "", "host": "Node", "name": "get", "url": "Node.html#method_get", "type": "method"}, {"access": "", "host": "Node", "name": "getAttribute", "url": "Node.html#method_getAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "getAttribute", "url": "Node.html#method_getAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "getComputedStyle", "url": "Node.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getComputedStyle", "url": "Node.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getDOMNode", "url": "Node.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "Node", "name": "getDOMNode", "url": "Node.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "Node", "name": "getElementsByTagName", "url": "Node.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "Node", "name": "getElementsByTagName", "url": "Node.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "Node", "name": "getStyle", "url": "Node.html#method_getStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getStyle", "url": "Node.html#method_getStyle", "type": "method"}, {"access": "", "host": "Node", "name": "getX", "url": "Node.html#method_getX", "type": "method"}, {"access": "", "host": "Node", "name": "getX", "url": "Node.html#method_getX", "type": "method"}, {"access": "", "host": "Node", "name": "getXY", "url": "Node.html#method_getXY", "type": "method"}, {"access": "", "host": "Node", "name": "getXY", "url": "Node.html#method_getXY", "type": "method"}, {"access": "", "host": "Node", "name": "getY", "url": "Node.html#method_getY", "type": "method"}, {"access": "", "host": "Node", "name": "getY", "url": "Node.html#method_getY", "type": "method"}, {"access": "", "host": "Node", "name": "hasAttribute", "url": "Node.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "hasAttribute", "url": "Node.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "hasChildNodes", "url": "Node.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "Node", "name": "hasChildNodes", "url": "Node.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "Node", "name": "hasClass", "url": "Node.html#method_hasClass", "type": "method"}, {"access": "", "host": "Node", "name": "hasClass", "url": "Node.html#method_hasClass", "type": "method"}, {"access": "", "host": "Node", "name": "inDoc", "url": "Node.html#method_inDoc", "type": "method"}, {"access": "", "host": "Node", "name": "inDoc", "url": "Node.html#method_inDoc", "type": "method"}, {"access": "", "host": "Node", "name": "inRegion", "url": "Node.html#method_inRegion", "type": "method"}, {"access": "", "host": "Node", "name": "inRegion", "url": "Node.html#method_inRegion", "type": "method"}, {"access": "", "host": "Node", "name": "insertBefore", "url": "Node.html#method_insertBefore", "type": "method"}, {"access": "", "host": "Node", "name": "insertBefore", "url": "Node.html#method_insertBefore", "type": "method"}, {"access": "", "host": "Node", "name": "intersect", "url": "Node.html#method_intersect", "type": "method"}, {"access": "", "host": "Node", "name": "intersect", "url": "Node.html#method_intersect", "type": "method"}, {"access": "", "host": "Node", "name": "inViewportRegion", "url": "Node.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Node", "name": "inViewportRegion", "url": "Node.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Node", "name": "item", "url": "Node.html#method_item", "type": "method"}, {"access": "", "host": "Node", "name": "item", "url": "Node.html#method_item", "type": "method"}, {"access": "", "host": "Node", "name": "next", "url": "Node.html#method_next", "type": "method"}, {"access": "", "host": "Node", "name": "next", "url": "Node.html#method_next", "type": "method"}, {"access": "", "host": "Node", "name": "Node.plug\nAdd a default plugin to be plugged into all instances.", "url": "Node.html#method_Node.plug\nAdd a default plugin to be plugged into all instances.", "type": "method"}, {"access": "", "host": "Node", "name": "Node.plug\nAdd a default plugin to be plugged into all instances.", "url": "Node.html#method_Node.plug\nAdd a default plugin to be plugged into all instances.", "type": "method"}, {"access": "", "host": "Node", "name": "on", "url": "Node.html#method_on", "type": "method"}, {"access": "", "host": "Node", "name": "on", "url": "Node.html#method_on", "type": "method"}, {"access": "", "host": "Node", "name": "plug", "url": "Node.html#method_plug", "type": "method"}, {"access": "", "host": "Node", "name": "plug", "url": "Node.html#method_plug", "type": "method"}, {"access": "", "host": "Node", "name": "PLUGINS\nRegistry for statically configured plugins.\nDefault plugins added to all Node instances.", "url": "Node.html#property_PLUGINS\nRegistry for statically configured plugins.\nDefault plugins added to all Node instances.", "type": "property"}, {"access": "", "host": "Node", "name": "PLUGINS\nRegistry for statically configured plugins.\nDefault plugins added to all Node instances.", "url": "Node.html#property_PLUGINS\nRegistry for statically configured plugins.\nDefault plugins added to all Node instances.", "type": "property"}, {"access": "", "host": "Node", "name": "previous", "url": "Node.html#method_previous", "type": "method"}, {"access": "", "host": "Node", "name": "previous", "url": "Node.html#method_previous", "type": "method"}, {"access": "", "host": "Node", "name": "query", "url": "Node.html#method_query", "type": "method"}, {"access": "", "host": "Node", "name": "query", "url": "Node.html#method_query", "type": "method"}, {"access": "", "host": "Node", "name": "queryAll", "url": "Node.html#method_queryAll", "type": "method"}, {"access": "", "host": "Node", "name": "queryAll", "url": "Node.html#method_queryAll", "type": "method"}, {"access": "", "host": "Node", "name": "region", "url": "Node.html#property_region", "type": "property"}, {"access": "", "host": "Node", "name": "region", "url": "Node.html#property_region", "type": "property"}, {"access": "", "host": "Node", "name": "removeAttribute", "url": "Node.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "removeAttribute", "url": "Node.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "removeChild", "url": "Node.html#method_removeChild", "type": "method"}, {"access": "", "host": "Node", "name": "removeChild", "url": "Node.html#method_removeChild", "type": "method"}, {"access": "", "host": "Node", "name": "removeClass", "url": "Node.html#method_removeClass", "type": "method"}, {"access": "", "host": "Node", "name": "removeClass", "url": "Node.html#method_removeClass", "type": "method"}, {"access": "", "host": "Node", "name": "replaceChild", "url": "Node.html#method_replaceChild", "type": "method"}, {"access": "", "host": "Node", "name": "replaceChild", "url": "Node.html#method_replaceChild", "type": "method"}, {"access": "", "host": "Node", "name": "replaceClass", "url": "Node.html#method_replaceClass", "type": "method"}, {"access": "", "host": "Node", "name": "replaceClass", "url": "Node.html#method_replaceClass", "type": "method"}, {"access": "", "host": "Node", "name": "reset", "url": "Node.html#method_reset", "type": "method"}, {"access": "", "host": "Node", "name": "reset", "url": "Node.html#method_reset", "type": "method"}, {"access": "", "host": "Node", "name": "scrollIntoView", "url": "Node.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "Node", "name": "scrollIntoView", "url": "Node.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "Node", "name": "select", "url": "Node.html#method_select", "type": "method"}, {"access": "", "host": "Node", "name": "select", "url": "Node.html#method_select", "type": "method"}, {"access": "", "host": "Node", "name": "set", "url": "Node.html#method_set", "type": "method"}, {"access": "", "host": "Node", "name": "set", "url": "Node.html#method_set", "type": "method"}, {"access": "", "host": "Node", "name": "setAttribute", "url": "Node.html#method_setAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "setAttribute", "url": "Node.html#method_setAttribute", "type": "method"}, {"access": "", "host": "Node", "name": "setStyle", "url": "Node.html#method_setStyle", "type": "method"}, {"access": "", "host": "Node", "name": "setStyle", "url": "Node.html#method_setStyle", "type": "method"}, {"access": "", "host": "Node", "name": "setStyles", "url": "Node.html#method_setStyles", "type": "method"}, {"access": "", "host": "Node", "name": "setStyles", "url": "Node.html#method_setStyles", "type": "method"}, {"access": "", "host": "Node", "name": "setX", "url": "Node.html#method_setX", "type": "method"}, {"access": "", "host": "Node", "name": "setX", "url": "Node.html#method_setX", "type": "method"}, {"access": "", "host": "Node", "name": "setXY", "url": "Node.html#method_setXY", "type": "method"}, {"access": "", "host": "Node", "name": "setXY", "url": "Node.html#method_setXY", "type": "method"}, {"access": "", "host": "Node", "name": "setY", "url": "Node.html#method_setY", "type": "method"}, {"access": "", "host": "Node", "name": "setY", "url": "Node.html#method_setY", "type": "method"}, {"access": "", "host": "Node", "name": "simulate", "url": "Node.html#method_simulate", "type": "method"}, {"access": "", "host": "Node", "name": "simulate", "url": "Node.html#method_simulate", "type": "method"}, {"access": "", "host": "Node", "name": "size", "url": "Node.html#method_size", "type": "method"}, {"access": "", "host": "Node", "name": "size", "url": "Node.html#method_size", "type": "method"}, {"access": "", "host": "Node", "name": "submit", "url": "Node.html#method_submit", "type": "method"}, {"access": "", "host": "Node", "name": "submit", "url": "Node.html#method_submit", "type": "method"}, {"access": "", "host": "Node", "name": "test", "url": "Node.html#method_test", "type": "method"}, {"access": "", "host": "Node", "name": "test", "url": "Node.html#method_test", "type": "method"}, {"access": "", "host": "Node", "name": "text", "url": "Node.html#property_text", "type": "property"}, {"access": "", "host": "Node", "name": "text", "url": "Node.html#property_text", "type": "property"}, {"access": "", "host": "Node", "name": "toggleClass", "url": "Node.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Node", "name": "toggleClass", "url": "Node.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Node", "name": "viewportRegion", "url": "Node.html#property_viewportRegion", "type": "property"}, {"access": "", "host": "Node", "name": "viewportRegion", "url": "Node.html#property_viewportRegion", "type": "property"}, {"access": "", "host": "Node", "name": "winHeight", "url": "Node.html#property_winHeight", "type": "property"}, {"access": "", "host": "Node", "name": "winHeight", "url": "Node.html#property_winHeight", "type": "property"}, {"access": "", "host": "Node", "name": "winWidth", "url": "Node.html#property_winWidth", "type": "property"}, {"access": "", "host": "Node", "name": "winWidth", "url": "Node.html#property_winWidth", "type": "property"}, {"access": "", "host": "Node", "name": "Y.all", "url": "Node.html#method_Y.all", "type": "method"}, {"access": "", "host": "Node", "name": "Y.all", "url": "Node.html#method_Y.all", "type": "method"}, {"access": "", "host": "Node", "name": "Y.get", "url": "Node.html#method_Y.get", "type": "method"}, {"access": "", "host": "Node", "name": "Y.get", "url": "Node.html#method_Y.get", "type": "method"}];
+</script>
 </body>
 </html>

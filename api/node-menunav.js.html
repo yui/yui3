@@ -1,0 +1,2190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: node-menunav   node-menunav.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>node-menunav&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_node-menunav.html" title="node-menunav">node-menunav</a>
+                
+                 &gt; node-menunav.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c">* &lt;p&gt;The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, </span>
+<span class="c">* drop down navigational menus that are both accessible and easy to customize, and only require </span>
+<span class="c">* a small set of dependencies.&lt;/p&gt;</span>
+<span class="c">* &lt;p&gt;To use the MenuNav Node Plugin, simply pass a reference to the plugin to a Node instance&#39;s </span>
+<span class="c">* &lt;code&gt;plug&lt;/code&gt; method.&lt;/p&gt;</span>
+<span class="c">* </span>
+<span class="c">* &lt;p&gt;</span>
+<span class="c">* &lt;code&gt;</span>
+<span class="c">* &amp;#60;script type=&quot;text/javascript&quot;&amp;#62;&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 		//	Call the &quot;use&quot; method, passing in &quot;node-menunav&quot;.  This will load the &lt;br&gt;</span>
+<span class="c">* 		//	script and CSS for the MenuNav Node Plugin and all of the required &lt;br&gt;</span>
+<span class="c">* 		//	dependencies.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 		YUI().use(&quot;node-menunav&quot;, function(Y) {&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			//	Use the &quot;contentready&quot; event to initialize the menu when the subtree of &lt;br&gt;</span>
+<span class="c">* 			//	element representing the root menu (&amp;#60;div id=&quot;menu-1&quot;&amp;#62;) is ready to &lt;br&gt;</span>
+<span class="c">* 			//	be scripted.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			Y.on(&quot;contentready&quot;, function () {&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 				//	The scope of the callback will be a Node instance representing &lt;br&gt;</span>
+<span class="c">* 				//	the root menu (&amp;#60;div id=&quot;menu-1&quot;&amp;#62;).  Therefore, since &quot;this&quot;&lt;br&gt;</span>
+<span class="c">* 				//	represents a Node instance, it is possible to just call &quot;this.plug&quot;&lt;br&gt;</span>
+<span class="c">* 				//	passing in a reference to the MenuNav Node Plugin.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 				this.plug(Y.plugin.NodeMenuNav);&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			}, &quot;#menu-1&quot;);&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;		</span>
+<span class="c">* 		}); &lt;br&gt;</span>
+<span class="c">* &lt;br&gt;	</span>
+<span class="c">* 	&amp;#60;/script&amp;#62;&lt;br&gt;</span>
+<span class="c">* &lt;/code&gt;</span>
+<span class="c">* &lt;/p&gt;</span>
+<span class="c">*</span>
+<span class="c">* &lt;p&gt;The MenuNav Node Plugin has several configuration properties that can be set via an </span>
+<span class="c">* object literal that is passed as a second argument to a Node instance&#39;s &lt;code&gt;plug&lt;/code&gt; method.</span>
+<span class="c">* &lt;/p&gt;</span>
+<span class="c">*</span>
+<span class="c">* &lt;p&gt;</span>
+<span class="c">* &lt;code&gt;</span>
+<span class="c">* &amp;#60;script type=&quot;text/javascript&quot;&amp;#62;&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 		//	Call the &quot;use&quot; method, passing in &quot;node-menunav&quot;.  This will load the &lt;br&gt;</span>
+<span class="c">* 		//	script and CSS for the MenuNav Node Plugin and all of the required &lt;br&gt;</span>
+<span class="c">* 		//	dependencies.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 		YUI().use(&quot;node-menunav&quot;, function(Y) {&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			//	Use the &quot;contentready&quot; event to initialize the menu when the subtree of &lt;br&gt;</span>
+<span class="c">* 			//	element representing the root menu (&amp;#60;div id=&quot;menu-1&quot;&amp;#62;) is ready to &lt;br&gt;</span>
+<span class="c">* 			//	be scripted.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			Y.on(&quot;contentready&quot;, function () {&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 				//	The scope of the callback will be a Node instance representing &lt;br&gt;</span>
+<span class="c">* 				//	the root menu (&amp;#60;div id=&quot;menu-1&quot;&amp;#62;).  Therefore, since &quot;this&quot;&lt;br&gt;</span>
+<span class="c">* 				//	represents a Node instance, it is possible to just call &quot;this.plug&quot;&lt;br&gt;</span>
+<span class="c">* 				//	passing in a reference to the MenuNav Node Plugin.&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 				this.plug(Y.plugin.NodeMenuNav, { mouseOutHideDelay: 1000 });&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;</span>
+<span class="c">* 			}, &quot;#menu-1&quot;);&lt;br&gt;</span>
+<span class="c">* &lt;br&gt;		</span>
+<span class="c">* 		}); &lt;br&gt;</span>
+<span class="c">* &lt;br&gt;	</span>
+<span class="c">* 	&amp;#60;/script&amp;#62;&lt;br&gt;</span>
+<span class="c">* &lt;/code&gt;</span>
+<span class="c">* &lt;/p&gt;</span>
+<span class="c">* </span>
+<span class="c">* &lt;p&gt; The complete list of the MenuNav Node Plugin configuration properties are:&lt;/p&gt;</span>
+<span class="c">* &lt;dl&gt;</span>
+<span class="c">* 	&lt;dt&gt;useARIA&lt;/dt&gt;</span>
+<span class="c">* 		&lt;dd&gt;Boolean indicating if use of the WAI-ARIA Roles and States should be enabled for the </span>
+<span class="c">* 		MenuNav.  Set to true by default for Firefox 3 and Internet Explorer 8 as currently only </span>
+<span class="c">* 		these browsers have support for ARIA, and are supported by several screen readers for </span>
+<span class="c">* 		Windows that also offer support for ARIA.&lt;/dd&gt;</span>
+<span class="c">* </span>
+<span class="c">* 	&lt;dt&gt;autoSubmenuDisplay&lt;/dt&gt;</span>
+<span class="c">* 		&lt;dd&gt;Boolean indicating if submenus are automatically made visible when the user mouses over </span>
+<span class="c">* 		the menu&#39;s items.  Set to true by default.&lt;/dd&gt;</span>
+<span class="c">* </span>
+<span class="c">* 	&lt;dt&gt;submenuShowDelay&lt;/dt&gt;</span>
+<span class="c">* 		&lt;dd&gt;Number indicating the time (in milliseconds) that should expire before a submenu is </span>
+<span class="c">* 		made visible when the user mouses over the menu&#39;s label.  Set to 250 by default.&lt;/dd&gt;</span>
+<span class="c">* </span>
+<span class="c">* 	&lt;dt&gt;submenuHideDelay&lt;/dt&gt;</span>
+<span class="c">* 		&lt;dd&gt;Number indicating the time (in milliseconds) that should expire before a submenu is </span>
+<span class="c">* 		hidden when the user mouses out of a menu label heading in the direction of a submenu.  </span>
+<span class="c">* 		Set to 250 by default.&lt;/dd&gt;</span>
+<span class="c">* </span>
+<span class="c">* 	&lt;dt&gt;mouseOutHideDelay&lt;/dt&gt;</span>
+<span class="c">* 		&lt;dd&gt;Number indicating the time (in milliseconds) that should expire before a submenu is </span>
+<span class="c">* 		hidden when the user mouses out of it.  Set to 750 by default.&lt;/dd&gt;</span>
+<span class="c">* &lt;/dl&gt;</span>
+<span class="c">* </span>
+<span class="c">* @module node-menunav</span>
+<span class="c">*/</span>
+
+	<span class="c">//	Util shortcuts</span>
+<span class="c"></span>
+<span class="k">var</span> <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
+	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+	<span class="nx">later</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">,</span>
+	<span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">,</span>
+
+
+	<span class="c">//	Native types</span>
+<span class="c"></span>
+	<span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
+	<span class="nx">FALSE</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+	<span class="nx">NULL</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+
+
+
+	<span class="c">//	Frequently used strings</span>
+<span class="c"></span>
+	<span class="nx">MENU</span> <span class="o">=</span> <span class="s2">&quot;menu&quot;</span><span class="o">,</span>
+	<span class="nx">MENUITEM</span> <span class="o">=</span> <span class="s2">&quot;menuitem&quot;</span><span class="o">,</span>
+	<span class="nx">HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">,</span>
+	<span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span>		
+	<span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s2">&quot;parentNode&quot;</span><span class="o">,</span>
+	<span class="nx">CHILDREN</span> <span class="o">=</span> <span class="s2">&quot;children&quot;</span><span class="o">,</span>
+	<span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="o">,</span>
+	<span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s2">&quot;offsetWidth&quot;</span><span class="o">,</span>
+	<span class="nx">PX</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="o">,</span>
+	<span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="o">,</span>
+	<span class="nx">PERIOD</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
+	<span class="nx">HANDLED_MOUSEOUT</span> <span class="o">=</span> <span class="s2">&quot;handledMouseOut&quot;</span><span class="o">,</span>
+	<span class="nx">HANDLED_MOUSEOVER</span> <span class="o">=</span> <span class="s2">&quot;handledMouseOver&quot;</span><span class="o">,</span>
+	<span class="nx">ACTIVE</span> <span class="o">=</span> <span class="s2">&quot;active&quot;</span><span class="o">,</span>
+	<span class="nx">LABEL</span> <span class="o">=</span> <span class="s2">&quot;label&quot;</span><span class="o">,</span>
+	<span class="nx">LOWERCASE_A</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span><span class="o">,</span>
+	<span class="nx">MOUSEDOWN</span> <span class="o">=</span> <span class="s2">&quot;mousedown&quot;</span><span class="o">,</span>
+	<span class="nx">KEYDOWN</span> <span class="o">=</span> <span class="s2">&quot;keydown&quot;</span><span class="o">,</span>
+	<span class="nx">CLICK</span> <span class="o">=</span> <span class="s2">&quot;click&quot;</span><span class="o">,</span>
+	<span class="nx">EMPTY_STRING</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">,</span>
+	<span class="nx">FIRST_OF_TYPE</span> <span class="o">=</span> <span class="s2">&quot;first-of-type&quot;</span><span class="o">,</span>
+
+
+	<span class="c">//	CSS class names</span>
+<span class="c"></span>
+	<span class="nx">CSS_MENU</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">),</span>
+	<span class="nx">CSS_MENU_HIDDEN</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">HIDDEN</span><span class="o">),</span>
+	<span class="nx">CSS_MENU_HORIZONTAL</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="s2">&quot;horizontal&quot;</span><span class="o">),</span>
+	<span class="nx">CSS_MENU_LABEL</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">LABEL</span><span class="o">),</span>
+	<span class="nx">CSS_MENU_LABEL_ACTIVE</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">LABEL</span><span class="o">,</span> <span class="nx">ACTIVE</span><span class="o">),</span>
+	<span class="nx">CSS_MENU_LABEL_MENUVISIBLE</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">LABEL</span><span class="o">,</span> <span class="o">(</span><span class="nx">MENU</span> <span class="o">+</span> <span class="s2">&quot;visible&quot;</span><span class="o">)),</span>
+	<span class="nx">CSS_MENUITEM</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">),</span>
+	<span class="nx">CSS_MENUITEM_ACTIVE</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="nx">ACTIVE</span><span class="o">),</span>
+
+
+	<span class="c">//	CSS selectors</span>
+<span class="c"></span>	
+	<span class="nx">MENU_SELECTOR</span> <span class="o">=</span> <span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU</span><span class="o">;</span>
+
+
+<span class="c">//	Utility functions</span>
+<span class="c"></span>
+
+<span class="c">//	TO DO: Remove once Node implements circular functionality</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">getPreviousSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oPrevious</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">previous</span><span class="o">(),</span>
+		<span class="nx">oParentNode</span><span class="o">,</span>
+		<span class="nx">oChildren</span><span class="o">,</span>
+		<span class="nx">oULs</span><span class="o">,</span>
+		<span class="nx">oUL</span><span class="o">;</span>
+	
+
+	<span class="k">if</span> <span class="o">(!</span><span class="nx">oPrevious</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="nx">oParentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">);</span>
+		<span class="nx">oULs</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+			
+			<span class="nx">oUL</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
+			
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oUL</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oUL</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oULs</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">-</span> <span class="m">1</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+			<span class="o">}</span>
+			
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="nx">oPrevious</span> <span class="o">=</span> <span class="nx">oChildren</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">oChildren</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">-</span> <span class="m">1</span><span class="o">);</span>
+		
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oPrevious</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="c">//	TO DO: Remove once Node implements circular functionality</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">getNextSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oNext</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">next</span><span class="o">(),</span>
+		<span class="nx">oParentNode</span><span class="o">,</span>
+		<span class="nx">oChildren</span><span class="o">,</span>
+		<span class="nx">oULs</span><span class="o">,</span>
+		<span class="nx">oUL</span><span class="o">;</span>
+	
+
+	<span class="k">if</span> <span class="o">(!</span><span class="nx">oNext</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="nx">oParentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">);</span>
+		<span class="nx">oULs</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+			
+			<span class="nx">oUL</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+			
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oUL</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oUL</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oULs</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+			<span class="o">}</span>
+			
+		<span class="o">}</span>		
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="nx">oNext</span> <span class="o">=</span> <span class="nx">oChildren</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>		
+
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oNext</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">setARIARole</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">role</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="nx">node</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="s2">&quot;role&quot;</span><span class="o">,</span> <span class="nx">role</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">setARIAProperty</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">property</span><span class="o">,</span> <span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="nx">node</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">((</span><span class="s2">&quot;aria-&quot;</span> <span class="o">+</span> <span class="nx">property</span><span class="o">),</span> <span class="nx">value</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">setARIAPresentation</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="nx">setARIARole</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="s2">&quot;presentation&quot;</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">removeFromTabIndex</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">placeInDefaultTabIndex</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">isAnchor</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+	
+	<span class="k">var</span> <span class="nx">bReturnVal</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+	
+	<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">bReturnVal</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;nodeName&quot;</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">()</span> <span class="o">===</span> <span class="nx">LOWERCASE_A</span><span class="o">;</span>
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">bReturnVal</span><span class="o">;</span>
+	
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">isMenuItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">CSS_MENUITEM</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">isMenuLabel</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">CSS_MENU_LABEL</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">isHorizontalMenu</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">CSS_MENU_HORIZONTAL</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">hasVisibleSubmenu</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menuLabel</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">menuLabel</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">CSS_MENU_LABEL_MENUVISIBLE</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getItemAnchor</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">isAnchor</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">LOWERCASE_A</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getNodeWithClass</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oItem</span><span class="o">;</span>
+	
+	<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+		
+		<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">className</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+		<span class="o">}</span>
+		
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">oItem</span> <span class="o">&amp;&amp;</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">className</span><span class="o">));</span>
+		<span class="o">}</span>
+	
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oItem</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getParentMenu</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">);</span>
+	
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getMenu</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">getNodeWithClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">CSS_MENU</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getMenuItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oItem</span><span class="o">;</span>
+	
+	<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getNodeWithClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">CSS_MENUITEM</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">);</span>
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oItem</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getMenuLabel</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oItem</span><span class="o">;</span>
+	
+	<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">if</span> <span class="o">(</span><span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getNodeWithClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getNodeWithClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">)</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">));</span>
+		<span class="o">}</span>
+		
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oItem</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oItem</span><span class="o">;</span>
+	
+	<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getMenuItem</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">)</span> <span class="o">||</span> <span class="nx">getMenuLabel</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">searchAncestors</span><span class="o">);</span>
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oItem</span><span class="o">;</span>	
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getNextItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">previous</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oItemLI</span><span class="o">,</span>
+		<span class="nx">oNextLI</span><span class="o">,</span>
+		<span class="nx">oNextItem</span><span class="o">;</span>
+	
+
+	<span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="nx">oItemLI</span> <span class="o">=</span> <span class="nx">isMenuItem</span><span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">?</span> <span class="nx">item</span> <span class="o">:</span> <span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">);</span>
+
+		<span class="nx">oNextLI</span> <span class="o">=</span> <span class="nx">previous</span> <span class="o">?</span> <span class="nx">getPreviousSibling</span><span class="o">(</span><span class="nx">oItemLI</span><span class="o">)</span> <span class="o">:</span> <span class="nx">getNextSibling</span><span class="o">(</span><span class="nx">oItemLI</span><span class="o">);</span>
+
+		<span class="nx">oNextItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oNextLI</span><span class="o">);</span>
+	
+	<span class="o">}</span>
+	
+	<span class="k">return</span> <span class="nx">oNextItem</span><span class="o">;</span>
+	
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getPreviousItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">getNextItem</span><span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getFirstItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+	
+	<span class="k">return</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">menu</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="s2">&quot;li&quot;</span><span class="o">));</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">getActiveClass</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">isMenuItem</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">CSS_MENUITEM_ACTIVE</span> <span class="o">:</span> <span class="nx">CSS_MENU_LABEL_ACTIVE</span><span class="o">;</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">blurItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oAnchor</span><span class="o">;</span>
+
+	<span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="nx">oAnchor</span> <span class="o">=</span> <span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
+
+		<span class="c">//	TO DO:  Remove once implemented in Node</span>
+<span class="c"></span>		<span class="k">try</span> <span class="o">{</span>
+			<span class="nx">oAnchor</span><span class="o">.</span><span class="nx">blur</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+
+	<span class="o">}</span>
+
+<span class="o">};</span>
+	
+
+<span class="k">var</span> <span class="nx">focusItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">oAnchor</span><span class="o">;</span>
+
+	<span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="nx">oAnchor</span> <span class="o">=</span> <span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
+	
+		<span class="c">//	TO DO:  Remove once implemented in Node</span>
+<span class="c"></span>		<span class="k">try</span> <span class="o">{</span>
+			<span class="nx">oAnchor</span><span class="o">.</span><span class="nx">focus</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+	
+	<span class="o">}</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">handleMouseOverForNode</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">target</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">target</span><span class="o">));</span>
+
+<span class="o">};</span>
+
+
+<span class="k">var</span> <span class="nx">handleMouseOutForNode</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">relatedTarget</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">return</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">&amp;&amp;</span> 
+		<span class="o">(</span><span class="nx">node</span> <span class="o">!==</span> <span class="nx">relatedTarget</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">));</span>
+
+<span class="o">};</span>
+
+
+<span class="c">/**</span>
+<span class="c">* The NodeMenuNav class is a plugin for a Node instance.  The class is used via the </span>
+<span class="c">* &lt;a href=&quot;Node.html#method_plug&quot;&gt;&lt;code&gt;plug&lt;/code&gt;&lt;/a&gt; method of Node and should not be </span>
+<span class="c">* instantiated directly.</span>
+<span class="c">* @namespace plugin</span>
+<span class="c">* @class NodeMenuNav</span>
+<span class="c">*/</span>
+<span class="k">var</span> <span class="nx">MenuNav</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+		<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">,</span>
+		<span class="nx">oDocument</span><span class="o">,</span>
+		<span class="nx">bUseARIA</span><span class="o">,</span>
+		<span class="nx">bAutoSubmenuDisplay</span><span class="o">,</span>
+		<span class="nx">nMouseOutHideDelay</span><span class="o">,</span>
+		<span class="nx">oMenuNodes</span><span class="o">,</span>
+		<span class="nx">oFirstItem</span><span class="o">,</span>
+		<span class="nx">oULs</span><span class="o">;</span>
+		
+
+	<span class="k">if</span> <span class="o">(</span><span class="nx">oRootMenu</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="nx">bUseARIA</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">useARIA</span><span class="o">;</span>
+		<span class="nx">bAutoSubmenuDisplay</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">autoSubmenuDisplay</span><span class="o">;</span>
+		<span class="nx">nMouseOutHideDelay</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">mouseOutHideDelay</span><span class="o">;</span>
+		
+
+		<span class="c">//	Enable ARIA for Firefox 3 and IE 8 by default since those are the two browsers </span>
+<span class="c"></span>		<span class="c">//	that current support ARIA</span>
+<span class="c"></span>
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">(</span><span class="nx">bUseARIA</span><span class="o">)</span> <span class="o">?</span> 
+						<span class="nx">bUseARIA</span> <span class="o">:</span> <span class="o">((</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&gt;=</span> <span class="m">1</span><span class="o">.</span><span class="m">9</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&gt;=</span> <span class="m">8</span><span class="o">));</span>
+
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_autoSubmenuDisplay</span> <span class="o">=</span> 
+					<span class="nx">Lang</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">(</span><span class="nx">bAutoSubmenuDisplay</span><span class="o">)</span> <span class="o">?</span> <span class="nx">bAutoSubmenuDisplay</span> <span class="o">:</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_submenuShowDelay</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">submenuShowDelay</span> <span class="o">||</span> <span class="m">250</span><span class="o">;</span>
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_submenuHideDelay</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">submenuHideDelay</span> <span class="o">||</span> <span class="m">250</span><span class="o">;</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_mouseOutHideDelay</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">nMouseOutHideDelay</span><span class="o">)</span> <span class="o">?</span> <span class="nx">nMouseOutHideDelay</span> <span class="o">:</span> <span class="m">750</span><span class="o">;</span>
+
+
+		<span class="c">//	Hide all visible submenus</span>
+<span class="c"></span>
+		<span class="nx">oMenuNodes</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuNodes</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oMenuNodes</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+		<span class="o">}</span>
+
+
+		<span class="nx">oULs</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul:&quot;</span> <span class="o">+</span> <span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oULs</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oULs</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
+		<span class="o">}</span>
+
+
+		<span class="c">//	Wire up all event handlers</span>
+<span class="c"></span>
+
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseover&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOver</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseout&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOut</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousemove&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseMove</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">CLICK</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+		<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+
+		<span class="nx">oDocument</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
+
+		<span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">oDocument</span><span class="o">);</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_applyARIA</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">);</span>
+
+			<span class="nx">oFirstItem</span> <span class="o">=</span> <span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">);</span>
+	
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oFirstItem</span><span class="o">)</span> <span class="o">{</span>
+	
+				<span class="nx">placeInDefaultTabIndex</span><span class="o">(</span><span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">oFirstItem</span><span class="o">));</span>
+	
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_firstItem</span> <span class="o">=</span> <span class="nx">oFirstItem</span><span class="o">;</span>
+	
+			<span class="o">}</span>		
+		
+		<span class="o">}</span>
+
+	<span class="o">}</span>
+
+<span class="o">};</span>
+
+
+<span class="nx">MenuNav</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;MenuNav&quot;</span><span class="o">;</span>
+
+
+<span class="c">/** </span>
+<span class="c">* @property NodeMenuNav.SHIM_TEMPLATE_TITLE</span>
+<span class="c">* @description String representing the value for the &lt;code&gt;title&lt;/code&gt; attribute for the shim used</span>
+<span class="c">* to prevent &lt;code&gt;&amp;#60;select&amp;#62;&lt;/code&gt; elements from poking through menus in IE 6.</span>
+<span class="c">* @default &quot;Menu Stacking Shim&quot;</span>
+<span class="c">* @type String</span>
+<span class="c">*/</span>
+<span class="nx">MenuNav</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE_TITLE</span> <span class="o">=</span> <span class="s2">&quot;Menu Stacking Shim&quot;</span><span class="o">;</span>
+
+
+<span class="c">/** </span>
+<span class="c">* @property NodeMenuNav.SHIM_TEMPLATE</span>
+<span class="c">* @description String representing the HTML used to create the &lt;code&gt;&amp;#60;iframe&amp;#62;&lt;/code&gt; shim </span>
+<span class="c">* used to prevent &lt;code&gt;&amp;#60;select&amp;#62;&lt;/code&gt; elements from poking through menus in IE 6.</span>
+<span class="c">* @default &amp;#34;&amp;#60;iframe frameborder=&amp;#34;0&amp;#34; tabindex=&amp;#34;-1&amp;#34; </span>
+<span class="c">* class=&amp;#34;yui-shim&amp;#34; title=&amp;#34;Menu Stacking Shim&amp;#34; </span>
+<span class="c">* src=&amp;#34;javascript:false;&amp;#34;&amp;#62;&amp;#60;/iframe&amp;#62;&amp;#34;</span>
+<span class="c">* @type String</span>
+<span class="c">*/</span>
+
+<span class="c">//	&lt;iframe&gt; shim notes:</span>
+<span class="c">//</span>
+<span class="c">//	1) Need to set the &quot;frameBorder&quot; property to 0 to suppress the default &lt;iframe&gt; border in IE.  </span>
+<span class="c">//	(Setting the CSS &quot;border&quot; property alone doesn&#39;t suppress it.)  </span>
+<span class="c">//</span>
+<span class="c">//	2) The &quot;src&quot; attribute of the &lt;iframe&gt; is set to &quot;javascript:false;&quot; so that it won&#39;t load a </span>
+<span class="c">//	page inside it, preventing the secure/nonsecure warning in IE when using HTTPS.</span>
+<span class="c">//</span>
+<span class="c">//	3) Since the role of the &lt;iframe&gt; shim is completely presentational, its &quot;tabindex&quot; attribute</span>
+<span class="c">//	is set to &quot;-1&quot; and its title attribute is set to &quot;Menu Stacking Shim&quot;.  Both strategies help</span>
+<span class="c">//	users of screen readers to avoid mistakenly interacting with the &lt;iframe&gt; shim.</span>
+<span class="c"></span>
+<span class="nx">MenuNav</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE</span>	<span class="o">=</span>	<span class="s1">&#39;&lt;iframe frameborder=&quot;0&quot; tabindex=&quot;-1&quot; class=&quot;&#39;</span> <span class="o">+</span> 
+							<span class="nx">getClassName</span><span class="o">(</span><span class="s2">&quot;shim&quot;</span><span class="o">)</span> <span class="o">+</span> 
+							<span class="s1">&#39;&quot; title=&quot;&#39;</span> <span class="o">+</span> <span class="nx">MenuNav</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE_TITLE</span> <span class="o">+</span> 
+							<span class="s1">&#39;&quot; src=&quot;javascript:false;&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="o">;</span>
+
+
+<span class="nx">MenuNav</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+
+	<span class="c">//	Protected properties</span>
+<span class="c"></span>
+	<span class="c">/** </span>
+<span class="c">	* @property _rootMenu</span>
+<span class="c">	* @description Node instance representing the root menu in the MenuNav.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Node</span>
+<span class="c">	*/</span>
+	<span class="nx">_rootMenu</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>	
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _activeItem</span>
+<span class="c">	* @description Node instance representing the MenuNav&#39;s active descendent - the menuitem or </span>
+<span class="c">	* menu label the user is currently interacting with.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Node</span>
+<span class="c">	*/</span>
+	<span class="nx">_activeItem</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span> 
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _activeMenu</span>
+<span class="c">	* @description Node instance representing the menu that is the parent of the MenuNav&#39;s </span>
+<span class="c">	* active descendent.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Node</span>
+<span class="c">	*/</span>
+	<span class="nx">_activeMenu</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _hasFocus</span>
+<span class="c">	* @description Boolean indicating if the MenuNav has focus.</span>
+<span class="c">	* @default false</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Boolean</span>
+<span class="c">	*/</span>
+	<span class="nx">_hasFocus</span><span class="o">:</span> <span class="nx">FALSE</span><span class="o">,</span>
+
+
+	<span class="c">//	In gecko-based browsers a mouseover and mouseout event will fire even </span>
+<span class="c"></span>	<span class="c">//	if a DOM element moves out from under the mouse without the user actually</span>
+<span class="c"></span>	<span class="c">//	moving the mouse.  This bug affects MenuNav because the user can hit the </span>
+<span class="c"></span>	<span class="c">//	Esc key to hide a menu, and if the mouse is over the menu when the </span>
+<span class="c"></span>	<span class="c">//	user presses Esc, the _onMenuMouseOut handler will be called.  To fix this </span>
+<span class="c"></span>	<span class="c">//	bug the following flag (_blockMouseEvent) is used to block the code in the </span>
+<span class="c"></span>	<span class="c">//	_onMenuMouseOut handler from executing.</span>
+<span class="c"></span>
+	<span class="c">/** </span>
+<span class="c">	* @property _blockMouseEvent</span>
+<span class="c">	* @description Boolean indicating whether or not to handle the &quot;mouseover&quot; event.</span>
+<span class="c">	* @default false</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Boolean</span>
+<span class="c">	*/</span>
+	<span class="nx">_blockMouseEvent</span><span class="o">:</span> <span class="nx">FALSE</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _currentMouseX</span>
+<span class="c">	* @description Number representing the current x coordinate of the mouse inside the MenuNav.</span>
+<span class="c">	* @default 0</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Number</span>
+<span class="c">	*/</span>
+	<span class="nx">_currentMouseX</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _movingToSubmenu</span>
+<span class="c">	* @description Boolean indicating if the mouse is moving from a menu label to its </span>
+<span class="c">	* corresponding submenu.</span>
+<span class="c">	* @default false</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Boolean</span>
+<span class="c">	*/</span>
+	<span class="nx">_movingToSubmenu</span><span class="o">:</span> <span class="nx">FALSE</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _showSubmenuTimer</span>
+<span class="c">	* @description Timer used to show a submenu.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Object</span>
+<span class="c">	*/</span>
+	<span class="nx">_showSubmenuTimer</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _hideSubmenuTimer</span>
+<span class="c">	* @description Timer used to hide a submenu.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Object</span>
+<span class="c">	*/</span>
+	<span class="nx">_hideSubmenuTimer</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _hideAllSubmenusTimer</span>
+<span class="c">	* @description Timer used to hide a all submenus.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Object</span>
+<span class="c">	*/</span>
+	<span class="nx">_hideAllSubmenusTimer</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _firstItem</span>
+<span class="c">	* @description Node instance representing the first item (menuitem or menu label) in the root </span>
+<span class="c">	* menu of a MenuNav.</span>
+<span class="c">	* @default null</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @type Node</span>
+<span class="c">	*/</span>
+	<span class="nx">_firstItem</span><span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+
+
+	<span class="c">/** </span>
+<span class="c">	* @property _autoSubmenuDisplay</span>
+<span class="c">    * @description Boolean indicating if submenus are automatically made visible when the user </span>
+<span class="c">    * mouses over the menu&#39;s items.</span>
+<span class="c">    * @default true</span>
+<span class="c">	* @protected</span>
+<span class="c">    * @type Boolean</span>
+<span class="c">	*/</span>
+	<span class="nx">_autoSubmenuDisplay</span><span class="o">:</span> <span class="nx">TRUE</span><span class="o">,</span>
+
+
+
+	<span class="c">//	Protected methods</span>
+<span class="c"></span>
+	<span class="c">/**</span>
+<span class="c">	* @method _isRoot</span>
+<span class="c">	* @description Returns a boolean indicating if the specified menu is the root menu in </span>
+<span class="c">	* the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	* @return {Boolean} Boolean indicating if the specified menu is the root menu in the MenuNav.	</span>
+<span class="c">	*/</span>
+	<span class="nx">_isRoot</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">menu</span><span class="o">);</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _getTopmostSubmenu</span>
+<span class="c">	* @description Returns the topmost submenu of a submenu hierarchy.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	* @return {Node} Node instance representing a menu.</span>
+<span class="c">	*/</span>
+	<span class="nx">_getTopmostSubmenu</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">menu</span><span class="o">),</span>
+			<span class="nx">returnVal</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">oMenu</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_getTopmostSubmenu</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">);</span>
+		<span class="o">}</span>
+	
+		<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _clearActiveItem</span>
+<span class="c">	* @description Clears the MenuNav&#39;s active descendent.</span>
+<span class="c">	* @protected</span>
+<span class="c">	*/</span>
+	<span class="nx">_clearActiveItem</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span><span class="o">;</span>
+		
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oActiveItem</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">getActiveClass</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">));</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">removeFromTabIndex</span><span class="o">(</span><span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">));</span>
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span> <span class="o">=</span> <span class="nx">NULL</span><span class="o">;</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _setActiveItem</span>
+<span class="c">	* @description Sets the specified menuitem or menu label as the MenuNav&#39;s active descendent.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} item Node instance representing a menuitem or menu label.</span>
+<span class="c">	*/</span>
+	<span class="nx">_setActiveItem</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+	
+		<span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+			
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+	
+			<span class="nx">item</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">getActiveClass</span><span class="o">(</span><span class="nx">item</span><span class="o">));</span>
+	
+			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">placeInDefaultTabIndex</span><span class="o">(</span><span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">item</span><span class="o">));</span>
+			<span class="o">}</span>
+			
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span> <span class="o">=</span> <span class="nx">item</span><span class="o">;</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _focusItem</span>
+<span class="c">	* @description Focuses the specified menuitem or menu label.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} item Node instance representing a menuitem or menu label.</span>
+<span class="c">	*/</span>
+	<span class="nx">_focusItem</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">if</span> <span class="o">(</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_hasFocus</span><span class="o">)</span> <span class="o">{</span>
+		
+			<span class="c">//	Need to focus using a zero-second timeout to get Apple&#39;s VoiceOver to </span>
+<span class="c"></span>			<span class="c">//	recognize that the focused item has changed</span>
+<span class="c"></span>
+			<span class="nx">later</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">focusItem</span><span class="o">,</span> <span class="nx">item</span><span class="o">);</span>
+
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _applyARIA</span>
+<span class="c">	* @description Applies the ARIA Roles, States and Properties to the supplied menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	*/</span>
+	<span class="nx">_applyARIA</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">bIsRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">menu</span><span class="o">),</span>
+			<span class="nx">oMenuLabel</span><span class="o">,</span>
+			<span class="nx">oMenuToggle</span><span class="o">,</span>
+			<span class="nx">oListNodes</span><span class="o">,</span>
+			<span class="nx">oMenuItemContentNodes</span><span class="o">,</span>
+			<span class="nx">oMenuLabelNodes</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span><span class="o">,</span>
+			<span class="nx">sID</span><span class="o">;</span>
+
+
+		<span class="nx">setARIARole</span><span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="o">(</span><span class="nx">bIsRoot</span> <span class="o">?</span> <span class="s2">&quot;menubar&quot;</span> <span class="o">:</span> <span class="nx">MENU</span><span class="o">));</span>
+
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">bIsRoot</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
+			<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="s2">&quot;toggle&quot;</span><span class="o">));</span>
+			
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oMenuToggle</span><span class="o">;</span>
+			<span class="o">}</span>
+			
+			<span class="nx">sID</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
+			
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">sID</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+				<span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
+			<span class="o">}</span>
+
+			<span class="nx">setARIAProperty</span><span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="s2">&quot;labelledby&quot;</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
+			<span class="nx">setARIAProperty</span><span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">HIDDEN</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+		
+		<span class="o">}</span>
+
+
+		<span class="nx">oListNodes</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li&quot;</span><span class="o">);</span>
+		
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oListNodes</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oListNodes</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+			
+				<span class="nx">setARIAPresentation</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+			
+			<span class="o">});</span>
+
+		<span class="o">}</span>
+		
+
+		<span class="nx">oMenuItemContentNodes</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="s2">&quot;content&quot;</span><span class="o">)));</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuItemContentNodes</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oMenuItemContentNodes</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="nx">removeFromTabIndex</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+				<span class="nx">setARIARole</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
+
+			<span class="o">});</span>
+
+		<span class="o">}</span>
+		
+
+		<span class="nx">oMenuLabelNodes</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">));</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuLabelNodes</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oMenuLabelNodes</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+				<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="s2">&quot;toggle&quot;</span><span class="o">)));</span>
+				
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
+
+					<span class="nx">setARIAPresentation</span><span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">);</span>
+					<span class="nx">removeFromTabIndex</span><span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">);</span>
+					
+					<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oMenuToggle</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
+				
+				<span class="o">}</span>
+
+				<span class="nx">setARIARole</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
+				<span class="nx">setARIAProperty</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="s2">&quot;haspopup&quot;</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+				<span class="nx">removeFromTabIndex</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
+				
+				<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+				
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_applyARIA</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+				<span class="o">}</span>
+				
+			<span class="o">});</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _showMenu</span>
+<span class="c">	* @description Shows the specified menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	*/</span>
+	<span class="nx">_showMenu</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oParentMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">menu</span><span class="o">),</span>
+			<span class="nx">oLI</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">),</span>
+			<span class="nx">aXY</span> <span class="o">=</span> <span class="nx">oLI</span><span class="o">.</span><span class="nx">getXY</span><span class="o">(),</span>
+			<span class="nx">oItem</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">setARIAProperty</span><span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">HIDDEN</span><span class="o">,</span> <span class="nx">FALSE</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oParentMenu</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">aXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">aXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">oLI</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">aXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">aXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">oLI</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
+		<span class="o">}</span>
+		
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">aXY</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">===</span> <span class="m">6</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menu</span><span class="o">.</span><span class="nx">hasIFrameShim</span><span class="o">)</span> <span class="o">{</span>
+	
+				<span class="nx">menu</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">MenuNav</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE</span><span class="o">));</span>
+				<span class="nx">menu</span><span class="o">.</span><span class="nx">hasIFrameShim</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="o">}</span>
+
+			<span class="c">//	Clear previous values for height and width</span>
+<span class="c"></span>
+			<span class="nx">menu</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span><span class="o">,</span> <span class="nx">width</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span> <span class="o">});</span>
+
+			<span class="c">//	Set the width and height of the menu&#39;s bounding box - this is necessary for IE 6</span>
+<span class="c"></span>			<span class="c">//	so that the CSS for the &lt;iframe&gt; shim can simply set the &lt;iframe&gt;&#39;s width and height </span>
+<span class="c"></span>			<span class="c">//	to 100% to ensure that dimensions of an &lt;iframe&gt; shim are always sync&#39;d to the </span>
+<span class="c"></span>			<span class="c">//	that of its parent menu.  Specifying a width and height also helps when positioning</span>
+<span class="c"></span>			<span class="c">//	decorator elements (for creating effects like rounded corners) inside a menu&#39;s </span>
+<span class="c"></span>			<span class="c">//	bounding box in IE 7.</span>
+<span class="c"></span>			
+			<span class="nx">menu</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span> 
+				<span class="nx">height</span><span class="o">:</span> <span class="o">(</span><span class="nx">menu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">),</span> 
+				<span class="nx">width</span><span class="o">:</span> <span class="o">(</span><span class="nx">menu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">)</span> <span class="o">});</span>
+
+		<span class="o">}</span>
+
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">previous</span><span class="o">().</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_LABEL_MENUVISIBLE</span><span class="o">);</span>
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+
+		<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">menu</span><span class="o">);</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+
+	<span class="o">},</span>
+	
+
+	<span class="c">/**</span>
+<span class="c">	* @method _hideMenu </span>
+<span class="c">	* @description Hides the specified menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	* @param {Boolean} activateAndFocusLabel Boolean indicating if the label for the specified </span>
+<span class="c">	* menu should be focused and set as active.</span>
+<span class="c">	*/</span>
+	<span class="nx">_hideMenu</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">activateAndFocusLabel</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oLabel</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">previous</span><span class="o">(),</span>
+			<span class="nx">oActiveItem</span><span class="o">;</span>
+
+		<span class="nx">oLabel</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">CSS_MENU_LABEL_MENUVISIBLE</span><span class="o">);</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">activateAndFocusLabel</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">));</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oActiveItem</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c">//	Clear the values for top and left that were set by the call to &quot;setXY&quot; when the menu</span>
+<span class="c"></span>		<span class="c">//	was shown so that the hidden position specified in the core CSS file will take affect.</span>
+<span class="c"></span>
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span> <span class="nx">left</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span><span class="o">,</span> <span class="nx">top</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span> <span class="o">});</span>
+		
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+		<span class="nx">setARIAProperty</span><span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">HIDDEN</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+		
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _hideAllSubmenus</span>
+<span class="c">	* @description Hides all submenus of the specified menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	*/</span>
+	<span class="nx">_hideAllSubmenus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oSubmenus</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenus</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oSubmenus</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">submenuNode</span><span class="o">)</span> <span class="o">{</span>
+			
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">submenuNode</span><span class="o">);</span>
+			
+			<span class="o">},</span> <span class="nx">menuNav</span><span class="o">));</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _cancelShowSubmenuTimer</span>
+<span class="c">	* @description Cancels the timer used to show a submenu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	*/</span>
+	<span class="nx">_cancelShowSubmenuTimer</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oShowSubmenuTimer</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showSubmenuTimer</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oShowSubmenuTimer</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oShowSubmenuTimer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showSubmenuTimer</span> <span class="o">=</span> <span class="nx">NULL</span><span class="o">;</span>
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _cancelHideSubmenuTimer</span>
+<span class="c">	* @description Cancels the timer used to hide a submenu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	*/</span>
+	<span class="nx">_cancelHideSubmenuTimer</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oHideSubmenuTimer</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideSubmenuTimer</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oHideSubmenuTimer</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oHideSubmenuTimer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideSubmenuTimer</span> <span class="o">=</span> <span class="nx">NULL</span><span class="o">;</span>
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+
+	<span class="c">//	Event handlers for discrete pieces of pieces of the menu</span>
+<span class="c"></span>
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuMouseOver</span>
+<span class="c">	* @description &quot;mouseover&quot; event handler for a menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuMouseOver</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oHideAllSubmenusTimer</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenusTimer</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oHideAllSubmenusTimer</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oHideAllSubmenusTimer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenusTimer</span> <span class="o">=</span> <span class="nx">NULL</span><span class="o">;</span>
+		<span class="o">}</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelHideSubmenuTimer</span><span class="o">();</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">menu</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuMouseOut</span>
+<span class="c">	* @description &quot;mouseout&quot; event handler for a menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menu Node instance representing a menu.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuMouseOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">oRelatedTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">,</span>
+			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span><span class="o">,</span>
+			<span class="nx">oParentMenu</span><span class="o">,</span>
+			<span class="nx">oMenu</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveMenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oActiveMenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">))</span> <span class="o">{</span>
+		
+			<span class="nx">oParentMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+			
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oParentMenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oParentMenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_mouseOutHideDelay</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="o">();</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenusTimer</span> <span class="o">=</span> 
+
+							<span class="nx">later</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_mouseOutHideDelay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+								<span class="k">var</span>	<span class="nx">oSubmenu</span><span class="o">;</span>
+
+								<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">;</span>
+							
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
+						
+								<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">)</span> <span class="o">{</span>
+						
+									<span class="c">//	Focus the label element for the topmost submenu</span>
+<span class="c"></span>									<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_getTopmostSubmenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">previous</span><span class="o">());</span>
+						
+								<span class="o">}</span>
+							
+							<span class="o">});</span>
+						
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+			
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>
+				
+					<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">);</span>
+
+					<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">))</span> <span class="o">{</span> 
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">.</span><span class="nx">previous</span><span class="o">());</span>
+					<span class="o">}</span>
+				
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuLabelMouseOver</span>
+<span class="c">	* @description &quot;mouseover&quot; event handler for a menu label.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menuLabel Node instance representing a menu label.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuLabelMouseOver</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menuLabel</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">bIsRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">),</span>
+			<span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">=</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_autoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="o">),</span>
+			<span class="nx">oSubmenu</span><span class="o">;</span>
+
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">);</span>
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">);</span>
+		
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
+	
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelHideSubmenuTimer</span><span class="o">();</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="o">();</span>
+
+
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">hasVisibleSubmenu</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuLabel</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+	
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+					
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showSubmenuTimer</span> <span class="o">=</span> 
+									<span class="nx">later</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_submenuShowDelay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">,</span> 
+											<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">,</span> <span class="nx">oSubmenu</span><span class="o">);</span>
+				
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuLabelMouseOut</span>
+<span class="c">	* @description &quot;mouseout&quot; event handler for a menu label.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menuLabel Node instance representing a menu label.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuLabelMouseOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menuLabel</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">bIsRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">),</span>
+			<span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">=</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_autoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="o">),</span>
+			<span class="nx">oRelatedTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuLabel</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">bUseAutoSubmenuDisplay</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showSubmenuTimer</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="c">//	If the mouse is moving diagonally toward the submenu and another submenu </span>
+<span class="c"></span>				<span class="c">//	isn&#39;t in the process of being displayed (via a timer), then hide the submenu </span>
+<span class="c"></span>				<span class="c">//	via a timer to give the user some time to reach the submenu.</span>
+<span class="c"></span>			
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideSubmenuTimer</span> <span class="o">=</span> <span class="nx">later</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_submenuHideDelay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">,</span> 
+															<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">,</span> <span class="nx">oSubmenu</span><span class="o">);</span>
+			
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> 
+				<span class="o">!</span><span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">oRelatedTarget</span> <span class="o">!==</span> <span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="c">//	If the mouse is not moving toward the submenu, cancel any submenus that </span>
+<span class="c"></span>				<span class="c">//	might be in the process of being displayed (via a timer) and hide this </span>
+<span class="c"></span>				<span class="c">//	submenu immediately.</span>
+<span class="c"></span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="o">();</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+	
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuItemMouseOver</span>
+<span class="c">	* @description &quot;mouseover&quot; event handler for a menuitem.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menuItem Node instance representing a menuitem.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuItemMouseOver</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menuItem</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">bIsRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">),</span>
+			<span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">=</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_autoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="o">);</span>
+
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuItem</span><span class="o">);</span>
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">menuItem</span><span class="o">);</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+	
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMenuItemMouseOut</span>
+<span class="c">	* @description &quot;mouseout&quot; event handler for a menuitem.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Node} menuItem Node instance representing a menuitem.</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMenuItemMouseOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menuItem</span><span class="o">,</span> <span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">this</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onVerticalMenuKeyDown</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for vertical menus of a MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onVerticalMenuKeyDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oFocusedItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">),</span>
+			<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">,</span>
+			<span class="nx">nKeyCode</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span><span class="o">,</span>
+			<span class="nx">oParentMenu</span><span class="o">,</span>
+			<span class="nx">oLI</span><span class="o">,</span>
+			<span class="nx">oNextItem</span><span class="o">,</span>
+			<span class="nx">oItem</span><span class="o">;</span>
+
+
+		<span class="nx">switch</span> <span class="o">(</span><span class="nx">nKeyCode</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">case</span> <span class="m">37</span><span class="o">:</span>	<span class="c">//	left arrow</span>
+<span class="c"></span>
+				<span class="nx">oParentMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oParentMenu</span> <span class="o">&amp;&amp;</span> <span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oParentMenu</span><span class="o">))</span> <span class="o">{</span>
+				
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+					<span class="nx">oLI</span> <span class="o">=</span> <span class="nx">getPreviousSibling</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">));</span>
+					<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oLI</span><span class="o">);</span>
+					
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oItem</span><span class="o">)</span> <span class="o">{</span>
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">isMenuLabel</span><span class="o">(</span><span class="nx">oItem</span><span class="o">))</span> <span class="o">{</span>	<span class="c">//	Menu label</span>
+<span class="c"></span>						
+							<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oItem</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+						
+
+							<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+
+							<span class="o">}</span>
+							<span class="k">else</span> <span class="o">{</span>
+	
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+								<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+	
+							<span class="o">}</span>
+						
+						<span class="o">}</span>
+						<span class="k">else</span> <span class="o">{</span>	<span class="c">//	MenuItem</span>
+<span class="c"></span>
+							<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+							<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+
+						<span class="o">}</span>
+					
+					<span class="o">}</span>
+
+				<span class="o">}</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">))</span> <span class="o">{</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+				<span class="o">}</span>
+
+
+				<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+			<span class="nx">case</span> <span class="m">39</span><span class="o">:</span>	<span class="c">//	right arrow</span>
+<span class="c"></span>
+				<span class="k">if</span> <span class="o">(</span><span class="nx">isMenuLabel</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+					
+					<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+					<span class="o">}</span>
+				
+				<span class="o">}</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">))</span> <span class="o">{</span>
+
+					<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_getTopmostSubmenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+					<span class="nx">oLI</span> <span class="o">=</span> <span class="nx">getNextSibling</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">));</span>
+					<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oLI</span><span class="o">);</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">);</span>
+
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oItem</span><span class="o">)</span> <span class="o">{</span>
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">isMenuLabel</span><span class="o">(</span><span class="nx">oItem</span><span class="o">))</span> <span class="o">{</span>	<span class="c">//	Menu label</span>
+<span class="c"></span>
+							<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oItem</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+							<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+
+							<span class="o">}</span>
+							<span class="k">else</span> <span class="o">{</span>
+	
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+								<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+	
+							<span class="o">}</span>
+						
+						<span class="o">}</span>
+						<span class="k">else</span> <span class="o">{</span>	<span class="c">//	MenuItem</span>
+<span class="c"></span>
+							<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+							<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+
+						<span class="o">}</span>							
+
+					<span class="o">}</span>
+				
+				<span class="o">}</span>
+
+				<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+			<span class="nx">case</span> <span class="m">38</span><span class="o">:</span>	<span class="c">//	up arrow</span>
+<span class="c"></span>			<span class="nx">case</span> <span class="m">40</span><span class="o">:</span>	<span class="c">//	down arrow</span>
+<span class="c"></span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+				<span class="nx">oNextItem</span> <span class="o">=</span> <span class="nx">nKeyCode</span> <span class="o">===</span> <span class="m">38</span> <span class="o">?</span> 
+								<span class="nx">getPreviousItem</span><span class="o">(</span><span class="nx">oFocusedItem</span><span class="o">)</span> <span class="o">:</span> <span class="nx">getNextItem</span><span class="o">(</span><span class="nx">oFocusedItem</span><span class="o">);</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oNextItem</span><span class="o">);</span>
+				<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oNextItem</span><span class="o">);</span>
+
+				<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+		<span class="o">}</span>	
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">bPreventDefault</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="c">//	Prevent the browser from scrolling the window</span>
+<span class="c"></span>
+			<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>			
+
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+	
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onHorizontalMenuKeyDown</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for horizontal menus of a MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onHorizontalMenuKeyDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oFocusedItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">),</span>
+			<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">,</span>
+			<span class="nx">nKeyCode</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span><span class="o">,</span>
+			<span class="nx">oNextItem</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span><span class="o">;</span>
+
+		<span class="nx">switch</span> <span class="o">(</span><span class="nx">nKeyCode</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">case</span> <span class="m">37</span><span class="o">:</span>	<span class="c">//	left arrow</span>
+<span class="c"></span>			<span class="nx">case</span> <span class="m">39</span><span class="o">:</span>	<span class="c">//	right arrow</span>
+<span class="c"></span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+				<span class="nx">oNextItem</span> <span class="o">=</span> <span class="nx">nKeyCode</span> <span class="o">===</span> <span class="m">37</span> <span class="o">?</span> 
+								<span class="nx">getPreviousItem</span><span class="o">(</span><span class="nx">oFocusedItem</span><span class="o">)</span> <span class="o">:</span> <span class="nx">getNextItem</span><span class="o">(</span><span class="nx">oFocusedItem</span><span class="o">);</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oNextItem</span><span class="o">);</span>
+				<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oNextItem</span><span class="o">);</span>
+
+				<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+			<span class="nx">case</span> <span class="m">40</span><span class="o">:</span>	<span class="c">//	down arrow</span>
+<span class="c"></span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">);</span>
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">isMenuLabel</span><span class="o">(</span><span class="nx">oFocusedItem</span><span class="o">))</span> <span class="o">{</span>
+				
+					<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oFocusedItem</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+					<span class="o">}</span>
+
+					<span class="nx">bPreventDefault</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+				
+				<span class="o">}</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+		<span class="o">}</span>		
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">bPreventDefault</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="c">//	Prevent the browser from scrolling the window</span>
+<span class="c"></span>
+			<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>			
+
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">//	Generic DOM Event handlers</span>
+<span class="c"></span>
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMouseMove</span>
+<span class="c">	* @description &quot;mousemove&quot; event handler for the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMouseMove</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+
+		<span class="c">//	Using a timer to set the value of the &quot;_currentMouseX&quot; property helps improve the </span>
+<span class="c"></span>		<span class="c">//	reliability of the calculation used to set the value of the &quot;_movingToSubmenu&quot;</span>
+<span class="c"></span>		<span class="c">//	property - especially in Opera.</span>
+<span class="c"></span>
+		<span class="nx">later</span><span class="o">(</span><span class="m">10</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_currentMouseX</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">pageX</span><span class="o">;</span>
+		
+		<span class="o">});</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMouseOver</span>
+<span class="c">	* @description &quot;mouseover&quot; event handler for the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMouseOver</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oTarget</span><span class="o">,</span>
+			<span class="nx">oMenu</span><span class="o">,</span>
+			<span class="nx">oMenuLabel</span><span class="o">,</span>
+			<span class="nx">oParentMenu</span><span class="o">,</span>
+			<span class="nx">oMenuItem</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_blockMouseEvent</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_blockMouseEvent</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+			<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+			<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">getMenuLabel</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+			<span class="nx">oMenuItem</span> <span class="o">=</span> <span class="nx">getMenuItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOverForNode</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuMouseOver</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+
+				<span class="nx">oMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+				<span class="nx">oMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+
+				<span class="nx">oParentMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">);</span>
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oParentMenu</span><span class="o">)</span> <span class="o">{</span>
+
+					<span class="nx">oParentMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+					<span class="nx">oParentMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+		
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOverForNode</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuLabelMouseOver</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+
+				<span class="nx">oMenuLabel</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+				<span class="nx">oMenuLabel</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+	
+			<span class="o">}</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOverForNode</span><span class="o">(</span><span class="nx">oMenuItem</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+	
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuItemMouseOver</span><span class="o">(</span><span class="nx">oMenuItem</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+
+				<span class="nx">oMenuItem</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+				<span class="nx">oMenuItem</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+				
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onMouseOut</span>
+<span class="c">	* @description &quot;mouseout&quot; event handler for the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onMouseOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+			
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">,</span>
+			<span class="nx">bMovingToSubmenu</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">,</span>
+			<span class="nx">oTarget</span><span class="o">,</span>
+			<span class="nx">oRelatedTarget</span><span class="o">,</span>
+			<span class="nx">oMenu</span><span class="o">,</span>
+			<span class="nx">oMenuLabel</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span><span class="o">,</span>
+			<span class="nx">oMenuItem</span><span class="o">;</span>
+
+
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">=</span> <span class="o">(</span><span class="nx">oActiveMenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">)</span> <span class="o">&amp;&amp;</span> 
+											<span class="o">((</span><span class="nx">event</span><span class="o">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="m">5</span><span class="o">)</span> <span class="o">&gt;</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_currentMouseX</span><span class="o">));</span>
+		
+		<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+		<span class="nx">oRelatedTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">;</span>
+		<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+		<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">getMenuLabel</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+		<span class="nx">oMenuItem</span> <span class="o">=</span> <span class="nx">getMenuItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOutForNode</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="nx">oRelatedTarget</span><span class="o">))</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuLabelMouseOut</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+
+			<span class="nx">oMenuLabel</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+			<span class="nx">oMenuLabel</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+
+		<span class="o">}</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOutForNode</span><span class="o">(</span><span class="nx">oMenuItem</span><span class="o">,</span> <span class="nx">oRelatedTarget</span><span class="o">))</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuItemMouseOut</span><span class="o">(</span><span class="nx">oMenuItem</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+
+			<span class="nx">oMenuItem</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+			<span class="nx">oMenuItem</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+			
+		<span class="o">}</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">oRelatedTarget</span> <span class="o">===</span> <span class="nx">oSubmenu</span> <span class="o">||</span> <span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">)))</span> <span class="o">{</span>
+
+				<span class="nx">bMovingToSubmenu</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+		
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">handleMouseOutForNode</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">,</span> <span class="nx">oRelatedTarget</span><span class="o">)</span> <span class="o">||</span> <span class="nx">bMovingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMenuMouseOut</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>				
+
+			<span class="nx">oMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+			<span class="nx">oMenu</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _toggleSubmenuDisplay</span>
+<span class="c">	* @description &quot;mousedown,&quot; &quot;keydown,&quot; and &quot;click&quot; event handler for the MenuNav used to </span>
+<span class="c">	* toggle the display of a submenu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_toggleSubmenuDisplay</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">getMenuLabel</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">),</span>
+			<span class="nx">sType</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
+			<span class="nx">oAnchor</span><span class="o">,</span>
+			<span class="nx">oSubmenu</span><span class="o">,</span>
+			<span class="nx">sHref</span><span class="o">,</span>
+			<span class="nx">nHashPos</span><span class="o">,</span>
+			<span class="nx">nLen</span><span class="o">,</span>
+			<span class="nx">sId</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">oAnchor</span> <span class="o">=</span> <span class="nx">isAnchor</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">?</span> <span class="nx">oTarget</span> <span class="o">:</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="nx">isAnchor</span><span class="o">);</span>
+			
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oAnchor</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="c">//	Need to pass &quot;2&quot; as a second argument to &quot;getAttribute&quot; for IE otherwise IE </span>
+<span class="c"></span>				<span class="c">//	will return a fully qualified URL for the value of the &quot;href&quot; attribute.</span>
+<span class="c"></span>				<span class="c">//	http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx</span>
+<span class="c"></span>
+				<span class="nx">sHref</span> <span class="o">=</span> <span class="nx">oAnchor</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s2">&quot;href&quot;</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
+				<span class="nx">nHashPos</span> <span class="o">=</span> <span class="nx">sHref</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;#&quot;</span><span class="o">);</span>
+				<span class="nx">nLen</span> <span class="o">=</span> <span class="nx">sHref</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+
+				<span class="k">if</span> <span class="o">(</span><span class="nx">nHashPos</span> <span class="o">===</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">nLen</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+
+					<span class="nx">sId</span> <span class="o">=</span> <span class="nx">sHref</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="nx">nLen</span><span class="o">);</span>
+					<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)</span> <span class="o">===</span> <span class="nx">sId</span><span class="o">))</span> <span class="o">{</span>
+
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">sType</span> <span class="o">===</span> <span class="nx">MOUSEDOWN</span> <span class="o">||</span> <span class="o">(</span><span class="nx">sType</span> <span class="o">===</span> <span class="nx">KEYDOWN</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="m">13</span><span class="o">))</span> <span class="o">{</span>
+
+							<span class="c">//	The call to &quot;preventDefault&quot; below results in the element </span>
+<span class="c"></span>							<span class="c">//	serving as the menu&#39;s label to not receive focus in Webkit, </span>
+<span class="c"></span>							<span class="c">//	therefore the &quot;_hasFocus&quot; flag never gets set to true, meaning the </span>
+<span class="c"></span>							<span class="c">//	first item in the submenu isn&#39;t focused when the submenu is </span>
+<span class="c"></span>							<span class="c">//	displayed.  To fix this issue, it is necessary to set the </span>
+<span class="c"></span>							<span class="c">//	&quot;_hasFocus&quot; flag to true.</span>
+<span class="c"></span>	
+							<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span><span class="o">)</span> <span class="o">{</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+							<span class="o">}</span>
+
+
+							<span class="k">if</span> <span class="o">(</span><span class="nx">hasVisibleSubmenu</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">))</span> <span class="o">{</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+								<span class="nx">focusItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
+							<span class="o">}</span>
+							<span class="k">else</span> <span class="o">{</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+							<span class="o">}</span>
+						
+						<span class="o">}</span>
+
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">sType</span> <span class="o">===</span> <span class="nx">CLICK</span><span class="o">)</span> <span class="o">{</span>
+
+							<span class="c">//	Prevent the browser from following the URL of the anchor element</span>
+<span class="c"></span>							
+							<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+						
+						<span class="o">}</span>
+					
+					<span class="o">}</span>
+				
+				<span class="o">}</span>				
+
+
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+	
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onKeyPress</span>
+<span class="c">	* @description &quot;keypress&quot; event handler for the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onKeyPress</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="nx">switch</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">case</span> <span class="m">37</span><span class="o">:</span>	<span class="c">//	left arrow</span>
+<span class="c"></span>			<span class="nx">case</span> <span class="m">38</span><span class="o">:</span>	<span class="c">//	up arrow</span>
+<span class="c"></span>			<span class="nx">case</span> <span class="m">39</span><span class="o">:</span>	<span class="c">//	right arrow</span>
+<span class="c"></span>			<span class="nx">case</span> <span class="m">40</span><span class="o">:</span>	<span class="c">//	down arrow</span>
+<span class="c"></span>
+				<span class="c">//	Prevent the browser from scrolling the window</span>
+<span class="c"></span>
+				<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+
+			<span class="k">break</span><span class="o">;</span>
+
+		<span class="o">}</span>						
+
+	<span class="o">},</span>	
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onKeyDown</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onKeyDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oActiveMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">),</span>
+			<span class="nx">oSubmenu</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">oActiveMenu</span><span class="o">;</span>
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">))</span> <span class="o">{</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onHorizontalMenuKeyDown</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onVerticalMenuKeyDown</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
+			<span class="o">}</span>
+
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="m">27</span><span class="o">)</span> <span class="o">{</span>
+
+				<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">))</span> <span class="o">{</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oActiveMenu</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+					<span class="nx">event</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_blockMouseEvent</span> <span class="o">=</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">?</span> <span class="nx">TRUE</span> <span class="o">:</span> <span class="nx">FALSE</span><span class="o">;</span>
+
+				<span class="o">}</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>
+
+					<span class="k">if</span> <span class="o">(</span><span class="nx">isMenuLabel</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">hasVisibleSubmenu</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">))</span> <span class="o">{</span>
+					
+						<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oActiveItem</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+							<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+						<span class="o">}</span>
+
+					<span class="o">}</span>
+					<span class="k">else</span> <span class="o">{</span>
+
+						<span class="nx">blurItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+					
+					<span class="o">}</span>
+
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onDocMouseDown</span>
+<span class="c">	* @description &quot;mousedown&quot; event handler for the owner document of the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+
+
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+		
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>
+
+
+			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses down on it, </span>
+<span class="c"></span>			<span class="c">//	so the &quot;_hasFocus&quot; property won&#39;t get set to the correct value.  The </span>
+<span class="c"></span>			<span class="c">//	following line corrects the problem.</span>
+<span class="c"></span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onDocFocus</span>
+<span class="c">	* @description &quot;focus&quot; event handler for the owner document of the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onDocFocus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">bUseARIA</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_useARIA</span><span class="o">,</span>
+			<span class="nx">oFirstItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_firstItem</span><span class="o">,</span>
+			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+
+		
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>	<span class="c">//	The menu has focus</span>
+<span class="c"></span>
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span><span class="o">)</span> <span class="o">{</span>	<span class="c">//	Initial focus</span>
+<span class="c"></span>
+				<span class="c">//	First time the menu has been focused, need to setup focused state and  </span>
+<span class="c"></span>				<span class="c">//	established active active descendant</span>
+<span class="c"></span>	
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+	
+				<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="nx">TRUE</span><span class="o">);</span>
+	
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>	
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">);</span>
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>	<span class="c">//	The menu has lost focus</span>
+<span class="c"></span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+			
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="nx">FALSE</span><span class="o">;</span>
+
+
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oFirstItem</span> <span class="o">&amp;&amp;</span> <span class="nx">bUseARIA</span><span class="o">)</span> <span class="o">{</span>
+			
+				<span class="nx">placeInDefaultTabIndex</span><span class="o">(</span><span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">oFirstItem</span><span class="o">));</span>
+
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+	
+	<span class="o">}</span>
+
+<span class="o">};</span>
+
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;plugin&#39;</span><span class="o">);</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">plugin</span><span class="o">.</span><span class="nx">NodeMenuNav</span> <span class="o">=</span> <span class="nx">MenuNav</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class="selected"><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="plugin.NodeMenuNav.html" title="plugin.NodeMenuNav">plugin.NodeMenuNav</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="node-menunav.js.html" title="node-menunav.js">node-menunav.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_applyARIA", "url": "plugin.NodeMenuNav.html#method__applyARIA", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#property__autoSubmenuDisplay", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocFocus", "url": "plugin.NodeMenuNav.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}];
+</script>
+</body>
+</html>

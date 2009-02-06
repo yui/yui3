@@ -1,15 +1,14 @@
-
+(function() {
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
+ * DOM event listener abstraction layer
  * @module event
  */
 
-var GLOBAL_ENV = YUI.Env;
+var GLOBAL_ENV = YUI.Env,
 
-// if (Y !== YUI) {
-    // return;
-// }
+    yready = function() {
+        Y.fire('domready');
+    };
 
 Y.mix(Y.Env.eventAdaptors, {
 
@@ -42,9 +41,7 @@ Y.mix(Y.Env.eventAdaptors, {
      * @optional args 0..n arguments to send to the listener
      *
      */
-    domready: {
-
-    },
+    domready: {},
 
     /**
      * Use domready event instead. @see domready
@@ -55,13 +52,15 @@ Y.mix(Y.Env.eventAdaptors, {
     'event:ready': {
 
         on: function() {
-            arguments[0] = 'domready';
-            return Y.subscribe.apply(Y, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = 'domready';
+            return Y.subscribe.apply(Y, a);
         },
 
         detach: function() {
-            arguments[0] = 'domready';
-            return Y.unsubscribe.apply(Y, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = 'domready';
+            return Y.unsubscribe.apply(Y, a);
         }
     }
 
@@ -72,10 +71,6 @@ Y.publish('domready', {
     fireOnce: true
 });
 
-var yready = function() {
-    Y.fire('domready');
-};
-
 if (GLOBAL_ENV.DOMReady) {
     // Y.log('DOMReady already fired', 'info', 'event');
     yready();
@@ -84,3 +79,4 @@ if (GLOBAL_ENV.DOMReady) {
     Y.before(yready, GLOBAL_ENV, "_ready");
 }
 
+})();

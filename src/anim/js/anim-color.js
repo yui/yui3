@@ -14,7 +14,7 @@ Y.Anim.behaviors.color = {
         to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
 
         if (!from || from.length < 3 || !to || to.length < 3) {
-            Y.fail('invalid from or to passed to color behavior');
+            Y.error('invalid from or to passed to color behavior');
         }
 
         anim._node.setStyle(att, 'rgb(' + [

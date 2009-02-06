@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: io   io-xdr.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>io&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_io.html" title="io">io</a>
+                
+                 &gt; io-xdr.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>   <span class="c">/*</span>
+<span class="c">    * Extends the IO base class to provide an alternate, Flash transport, for making</span>
+<span class="c">    * cross-domain requests.</span>
+<span class="c">	* @module io-base</span>
+<span class="c">	* @submodule io-xdr</span>
+<span class="c">	*/</span>
+
+   <span class="c">/**</span>
+<span class="c">	* @event io:xdrReady</span>
+<span class="c">	* @description This event is fired by YUI.io when the specified transport is</span>
+<span class="c">	* ready for use.</span>
+<span class="c">	* @type Event Custom</span>
+<span class="c">	*/</span>
+	<span class="k">var</span> <span class="nx">E_XDR_READY</span> <span class="o">=</span> <span class="s1">&#39;io:xdrReady&#39;</span><span class="o">;</span>
+
+   <span class="c">/**</span>
+<span class="c">	* @description Method that creates the Flash transport swf.</span>
+<span class="c">	*</span>
+<span class="c">	* @method _swf</span>
+<span class="c">	* @private</span>
+<span class="c">	* @static</span>
+<span class="c">	* @param {string} uri - location of IO.swf.</span>
+<span class="c">	* @param {string} yid - YUI instance id.</span>
+<span class="c">	* @return void</span>
+<span class="c">	*/</span>
+	<span class="k">function</span> <span class="nx">_swf</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">yid</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">var</span> <span class="nx">XDR_SWF</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
+		     		  <span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+		     		  <span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;sameDomain&quot;&gt;&#39;</span> <span class="o">+</span>
+		    	      <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">;</span>
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">).</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">XDR_SWF</span><span class="o">))</span>
+	<span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
+
+	   <span class="c">/**</span>
+<span class="c">		* @description Map of IO transports.</span>
+<span class="c">		*</span>
+<span class="c">		* @property _transportMap</span>
+<span class="c">		* @private</span>
+<span class="c">		* @static</span>
+<span class="c">		* @type object</span>
+<span class="c">		*/</span>
+		<span class="nx">_transportMap</span><span class="o">:</span> <span class="o">{},</span>
+
+	   <span class="c">/**</span>
+<span class="c">		* @description Object that stores callback handlers for cross-domain requests</span>
+<span class="c">		* when using Flash as the transport.</span>
+<span class="c">		*</span>
+<span class="c">		* @property _fn</span>
+<span class="c">		* @private</span>
+<span class="c">		* @static</span>
+<span class="c">		* @type object</span>
+<span class="c">		*/</span>
+		<span class="nx">_fn</span><span class="o">:</span> <span class="o">{},</span>
+
+	   <span class="c">/**</span>
+<span class="c">	   	* @description Method for accessing the transport&#39;s interface for making a</span>
+<span class="c">	   	* cross-domain transaction.</span>
+<span class="c">	   	*</span>
+<span class="c">		* @method _xdr</span>
+<span class="c">		* @private</span>
+<span class="c">		* @static</span>
+<span class="c">		* @param {string} uri - qualified path to transaction resource.</span>
+<span class="c">    	* @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="c">		* @param {object} c - configuration object for the transaction.</span>
+<span class="c">		* @return object</span>
+<span class="c">		*/</span>
+		<span class="nx">_xdr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">){</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">this</span><span class="o">.</span><span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
+
+			<span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+		<span class="o">},</span>
+
+
+	   <span class="c">/**</span>
+<span class="c">		* @description Fires event &quot;io:xdrReady&quot;</span>
+<span class="c">		*</span>
+<span class="c">		* @method xdrReady</span>
+<span class="c">		* @private</span>
+<span class="c">		* @static</span>
+<span class="c">		* @param {number} id - transaction id</span>
+<span class="c">		* @param {object} c - configuration object for the transaction.</span>
+<span class="c">		*</span>
+<span class="c">		* @return void</span>
+<span class="c">		*/</span>
+		<span class="nx">xdrReady</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_XDR_READY</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+		<span class="o">},</span>
+
+	   <span class="c">/**</span>
+<span class="c">		* @description Method to initialize the desired transport.</span>
+<span class="c">		*</span>
+<span class="c">		* @method transport</span>
+<span class="c">		* @public</span>
+<span class="c">		* @static</span>
+<span class="c">		* @param {object} o - object of transport configurations.</span>
+<span class="c">		* @return void</span>
+<span class="c">		*/</span>
+		<span class="nx">transport</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">switch</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">case</span> <span class="s1">&#39;flash&#39;</span><span class="o">:</span>
+					<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span><span class="o">);</span>
+					<span class="k">this</span><span class="o">.</span><span class="nx">_transportMap</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
+					<span class="k">break</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">});</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class="selected"><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="io.html" title="io">io</a></li>
+                                <li class=""><a href="io.html" title="io">io</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class=""><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class=""><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class="selected"><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
+                                <li class="selected"><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:abort", "url": "io.html#event_io:abort", "type": "event"}, {"access": "", "host": "io", "name": "io:abort", "url": "io.html#event_io:abort", "type": "event"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioAbort", "url": "io.html#method__ioAbort", "type": "method"}, {"access": "private", "host": "io", "name": "_ioAbort", "url": "io.html#method__ioAbort", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_transportMap", "url": "io.html#property__transportMap", "type": "property"}, {"access": "private", "host": "io", "name": "_transportMap", "url": "io.html#property__transportMap", "type": "property"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+</script>
+</body>
+</html>

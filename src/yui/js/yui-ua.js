@@ -83,9 +83,9 @@ Y.UA = function() {
          * @static
          */
         mobile: null 
-    };
+    },
 
-    var ua=navigator.userAgent, m;
+    ua = navigator.userAgent, m;
 
     // Modern KHTML browsers should qualify as Safari X-Grade
     if ((/KHTML/).test(ua)) {

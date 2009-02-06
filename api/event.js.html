@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
-	<title>API: event   event.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event-custom   event.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,168 +14,324 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>event&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_event.html">event</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event-custom&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                 
                  &gt; event.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The YUI event system</span>
-<span class="c"> * @module event</span>
+<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="c">/**</span>
+<span class="c"> * Custom event engine</span>
+<span class="c"> * @module event-custom</span>
 <span class="c"> */</span>
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;event&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+<span class="k">var</span> <span class="nx">FOCUS</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusin&quot;</span> <span class="o">:</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
+    <span class="nx">BLUR</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusout&quot;</span> <span class="o">:</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
+    <span class="nx">CAPTURE</span> <span class="o">=</span> <span class="s2">&quot;capture_&quot;</span><span class="o">,</span>
+    <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    <span class="nx">after</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="c">/**</span>
-<span class="c">     * Subscribes to the yui:load event, which fires when a Y.use operation</span>
-<span class="c">     * is complete.</span>
-<span class="c">     * @method ready</span>
-<span class="c">     * @param f {Function} the function to execute</span>
-<span class="c">     * @param c Optional execution context</span>
-<span class="c">     * @param args* 0..n Additional arguments to append </span>
-<span class="c">     * to the signature provided when the event fires.</span>
-<span class="c">     * @return {YUI} the YUI instance</span>
-<span class="c">     */</span>
-    <span class="c">// Y.ready = function(f, c) {</span>
-<span class="c"></span>    <span class="c">//     var a = arguments, m = (a.length &gt; 1) ? Y.bind.apply(Y, a) : f;</span>
-<span class="c"></span>    <span class="c">//     Y.on(&quot;yui:load&quot;, m);</span>
-<span class="c"></span>    <span class="c">//     return this;</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span>
-    <span class="c">/**</span>
-<span class="c">     * Attach an event listener, either to a DOM object</span>
-<span class="c">     * or to an Event.Target.</span>
-<span class="c">     * @param type {string} the event type</span>
-<span class="c">     * @param f {Function} the function to execute</span>
-<span class="c">     * @param o the Event.Target or element to attach to</span>
-<span class="c">     * @param context Optional execution context</span>
-<span class="c">     * @param args* 0..n additional arguments to append</span>
-<span class="c">     * to the signature provided when the event fires.</span>
-<span class="c">     * @method on</span>
+<span class="c">     * Adds a DOM focus listener.  Uses the focusin event in IE,</span>
+<span class="c">     * and the capture phase otherwise so that</span>
+<span class="c">     * the event propagates properly.</span>
 <span class="c">     * @for YUI</span>
-<span class="c">     * @return {Event.Handle} a handle object for </span>
-<span class="c">     * unsubscribing to this event.</span>
+<span class="c">     * @event focus</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">focus</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">FOCUS</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">},</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">cat</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">default</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">FOCUS</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Adds a DOM focus listener.  Uses the focusout event in IE,</span>
+<span class="c">     * and the capture phase otherwise so that</span>
+<span class="c">     * the event propagates properly.</span>
+<span class="c">     * @for YUI</span>
+<span class="c">     * @event blur</span>
+<span class="c">     */</span>
+    <span class="nx">blur</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">BLUR</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">BLUR</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes the callback as soon as the specified element </span>
+<span class="c">     * is detected in the DOM.</span>
+<span class="c">     * @for YUI</span>
+<span class="c">     * @event available</span>
+<span class="c">     */</span>
+    <span class="nx">available</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="o">[];</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes the callback as soon as the specified element </span>
+<span class="c">     * is detected in the DOM with a nextSibling property</span>
+<span class="c">     * (indicating that the element&#39;s children are available)</span>
+<span class="c">     * @for YUI</span>
+<span class="c">     * @event contentready</span>
+<span class="c">     */</span>
+    <span class="nx">contentready</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="o">[];</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">onContentReady</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Add a key listener.  The listener will only be notified if the</span>
+<span class="c">     * keystroke detected meets the supplied specification.  The</span>
+<span class="c">     * spec consists of the key event type, followed by a colon,</span>
+<span class="c">     * followed by zero or more comma separated key codes, followed</span>
+<span class="c">     * by zero or more modifiers delimited by a plus sign.  Ex:</span>
+<span class="c">     * press:12,65+shift+ctrl</span>
+<span class="c">     * @event key</span>
+<span class="c">     * @param fn {string} the function to execute</span>
+<span class="c">     * @param id {string} the element(s) to bind</span>
+<span class="c">     * @param spec {string} the keyCode and modifier specification</span>
+<span class="c">     * @param o optional context object</span>
+<span class="c">     * @param args 0..n additional arguments that should be provided </span>
+<span class="c">     * to the listener.</span>
+<span class="c">     */</span>
+    <span class="nx">key</span><span class="o">:</span> <span class="o">{</span>
+
+        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>
+                <span class="nx">parsed</span><span class="o">,</span> <span class="nx">etype</span><span class="o">,</span> <span class="nx">criteria</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span> <span class="o">||</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Illegal key spec, creating a regular keypress listener instead.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;keypress&#39;</span><span class="o">;</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
             <span class="o">}</span>
+
+            <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
+
+            <span class="c">// key event type: &#39;down&#39;, &#39;up&#39;, or &#39;press&#39;</span>
+<span class="c"></span>            <span class="nx">etype</span> <span class="o">=</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+
+            <span class="c">// list of key codes optionally followed by modifiers</span>
+<span class="c"></span>            <span class="nx">criteria</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">?</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="sr">/,|\+/</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+
+            <span class="c">// the name of the custom event that will be created for the spec</span>
+<span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">;</span>
+
+
+
+
+            <span class="c">// subscribe spec validator to the DOM event</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="nx">etype</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// Y.log(&#39;keylistener: &#39; + e.keyCode);</span>
+<span class="c"></span>                
+                <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">crit</span><span class="o">,</span> <span class="nx">critInt</span><span class="o">;</span>
+
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
+                    <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
+
+                    <span class="c">// pass this section if any supplied keyCode </span>
+<span class="c"></span>                    <span class="c">// is found</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">critInt</span><span class="o">))</span> <span class="o">{</span>
+
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="nx">critInt</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="c">// Y.log(&#39;passed: &#39; + crit);</span>
+<span class="c"></span>                            <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">failed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                            <span class="c">// Y.log(&#39;failed: &#39; + crit);</span>
+<span class="c"></span>                        <span class="o">}</span>
+
+                    <span class="c">// only check modifier if no keyCode was specified</span>
+<span class="c"></span>                    <span class="c">// or the keyCode check was successful.  pass only </span>
+<span class="c"></span>                    <span class="c">// if every modifier passes</span>
+<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">failed</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">passed</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">[</span><span class="nx">crit</span> <span class="o">+</span> <span class="s1">&#39;Key&#39;</span><span class="o">]);</span>
+                        <span class="nx">failed</span> <span class="o">=</span> <span class="o">!</span><span class="nx">passed</span><span class="o">;</span>
+                        <span class="c">// Y.log(crit + &quot;: &quot; + passed);</span>
+<span class="c"></span>                    <span class="o">}</span>                    
+                <span class="o">}</span>
+
+                <span class="c">// fire spec custom event if spec if met</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                <span class="o">}</span>
+
+            <span class="o">},</span> <span class="nx">id</span><span class="o">);</span>
+
+            <span class="c">// subscribe supplied listener to custom event for spec validator</span>
+<span class="c"></span>            <span class="c">// remove element and spec.</span>
+<span class="c"></span>            <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Attach an event listener, either to a DOM object</span>
+<span class="c"> * or to an Event.Target.</span>
+<span class="c"> * @param type {string} the event type</span>
+<span class="c"> * @param f {Function} the function to execute</span>
+<span class="c"> * @param o the Event.Target or element to attach to</span>
+<span class="c"> * @param context Optional execution context</span>
+<span class="c"> * @param args* 0..n additional arguments to append</span>
+<span class="c"> * to the signature provided when the event fires.</span>
+<span class="c"> * @method on</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> * @return {Event.Handle} a handle object for </span>
+<span class="c"> * unsubscribing to this event.</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    
+   <span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+    
+    <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">||</span> <span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
+    <span class="o">}</span>
 
-    <span class="o">};</span>
+<span class="o">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Detach an event listener (either a custom event or a</span>
-<span class="c">     * DOM event</span>
-<span class="c">     * @method detach</span>
-<span class="c">     * @param type the type of event, or a Event.Handle to</span>
-<span class="c">     * for the subscription.  If the Event.Handle is passed</span>
-<span class="c">     * in, the other parameters are not used.</span>
-<span class="c">     * @param f {Function} the subscribed function</span>
-<span class="c">     * @param o the object or element the listener is subscribed</span>
-<span class="c">     * to.</span>
-<span class="c">     * @method detach</span>
-<span class="c">     * @return {YUI} the YUI instance</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">cat</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">default</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-            <span class="o">}</span>
+<span class="c">/**</span>
+<span class="c"> * Detach an event listener (either a custom event or a</span>
+<span class="c"> * DOM event</span>
+<span class="c"> * @method detach</span>
+<span class="c"> * @param type the type of event, or a Event.Handle to</span>
+<span class="c"> * for the subscription.  If the Event.Handle is passed</span>
+<span class="c"> * in, the other parameters are not used.</span>
+<span class="c"> * @param f {Function} the subscribed function</span>
+<span class="c"> * @param o the object or element the listener is subscribed</span>
+<span class="c"> * to.</span>
+<span class="c"> * @method detach</span>
+<span class="c"> * @return {YUI} the YUI instance</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">||</span> <span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
-    <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Executes the callback before a DOM event, custom event</span>
-<span class="c">     * or method.  If the first argument is a function, it</span>
-<span class="c">     * is assumed the target is a method.</span>
-<span class="c">     *</span>
-<span class="c">     * For DOM and custom events:</span>
-<span class="c">     * type, callback, context, 1-n arguments</span>
-<span class="c">     *  </span>
-<span class="c">     * For methods:</span>
-<span class="c">     * callback, object (method host), methodName, context, 1-n arguments</span>
-<span class="c">     *</span>
-<span class="c">     * @method before</span>
-<span class="c">     * @return unsubscribe handle</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">before</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
-        <span class="c">// method override</span>
-<span class="c"></span>        <span class="c">// callback, object, sMethod</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-        <span class="o">}</span>
+<span class="c">/**</span>
+<span class="c"> * Executes the callback before a DOM event, custom event</span>
+<span class="c"> * or method.  If the first argument is a function, it</span>
+<span class="c"> * is assumed the target is a method.  For DOM and custom</span>
+<span class="c"> * events, this is an alias for Y.on.</span>
+<span class="c"> *</span>
+<span class="c"> * For DOM and custom events:</span>
+<span class="c"> * type, callback, context, 1-n arguments</span>
+<span class="c"> *  </span>
+<span class="c"> * For methods:</span>
+<span class="c"> * callback, object (method host), methodName, context, 1-n arguments</span>
+<span class="c"> *</span>
+<span class="c"> * @method before</span>
+<span class="c"> * @return unsubscribe handle</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">before</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
 
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
-    <span class="o">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Executes the callback after a DOM event, custom event</span>
-<span class="c">     * or method.  If the first argument is a function, it</span>
-<span class="c">     * is assumed the target is a method.</span>
-<span class="c">     *</span>
-<span class="c">     * @TODO add event</span>
-<span class="c">     *</span>
-<span class="c">     * For DOM and custom events:</span>
-<span class="c">     * type, callback, context, 1-n arguments</span>
-<span class="c">     *  </span>
-<span class="c">     * For methods:</span>
-<span class="c">     * callback, object (method host), methodName, context, 1-n arguments</span>
-<span class="c">     *</span>
-<span class="c">     * @method after</span>
-<span class="c">     * @return unsubscribe handle</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-        <span class="o">}</span>
+<span class="c">/**</span>
+<span class="c"> * Executes the callback after a DOM event, custom event</span>
+<span class="c"> * or method.  If the first argument is a function, it</span>
+<span class="c"> * is assumed the target is a method.</span>
+<span class="c"> *</span>
+<span class="c"> * For DOM and custom events:</span>
+<span class="c"> * type, callback, context, 1-n arguments</span>
+<span class="c"> *  </span>
+<span class="c"> * For methods:</span>
+<span class="c"> * callback, object (method host), methodName, context, 1-n arguments</span>
+<span class="c"> *</span>
+<span class="c"> * @method after</span>
+<span class="c"> * @return {Event.Handle} unsubscribe handle</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">after</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">};</span>
 
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
-    <span class="o">};</span>
-
-<span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">,</span> <span class="o">{</span>
-    <span class="nx">use</span><span class="o">:</span> <span class="o">[</span>
-          <span class="s2">&quot;aop&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;event-custom&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;event-target&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;event-ready&quot;</span><span class="o">,</span>
-          <span class="s2">&quot;event-dom&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;event-facade&quot;</span>
-          <span class="o">]</span>
-<span class="o">});</span>
+<span class="o">})();</span>
 </pre></div>
                     </div>
 			</div>
@@ -179,65 +339,48 @@
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class="selected"><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
-                        <h4>Classes</h4>
-                        <ul class="content">
-                                <li class=""><a href="Do.html">Do</a></li>
-                                <li class=""><a href="Do.AlterArgs.html">Do.AlterArgs</a></li>
-                                <li class=""><a href="Do.AlterReturn.html">Do.AlterReturn</a></li>
-                                <li class=""><a href="Do.Error.html">Do.Error</a></li>
-                                <li class=""><a href="Do.Method.html">Do.Method</a></li>
-                                <li class=""><a href="Event.html">Event</a></li>
-                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
-                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
-                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
-                                <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
-                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
-                                <li class=""><a href="event-do.js.html">event-do.js</a></li>
-                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
-                                <li class=""><a href="event-facade.js.html">event-facade.js</a></li>
-                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
-                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
-                                <li class="selected"><a href="event.js.html">event.js</a></li>
+                                <li class=""><a href="event-facade.js.html" title="event-facade.js">event-facade.js</a></li>
+                                <li class="selected"><a href="event.js.html" title="event.js">event.js</a></li>
                         </ul>
                     </div>
 
@@ -250,8 +393,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [];
+</script>
 </body>
 </html>

@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: yui   yui.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,32 +14,38 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_yui.html">yui</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>yui&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html" title="yui">yui</a>
                 
                  &gt; yui.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * YUI core</span>
@@ -43,7 +53,7 @@
 <span class="c"> */</span>
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span>
+    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
 
 <span class="c">// @TODO: this needs to be created at build time from module metadata</span>
 <span class="c"></span>
@@ -56,7 +66,8 @@
         <span class="o">};</span>
         
 
-<span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
+<span class="c">// reduce to one or the other</span>
+<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="c">/**</span>
 <span class="c">     * The YUI global namespace object.  If YUI is already defined, the</span>
@@ -74,7 +85,7 @@
 <span class="c">     *  &lt;li&gt;------------------------------------------------------------------------&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;debug:</span>
 <span class="c">     *  Turn debug statements on or off&lt;/li&gt;</span>
-<span class="c">     *  &lt;li&gt;useConsole:</span>
+<span class="c">     *  &lt;li&gt;useBrowserConsole:</span>
 <span class="c">     *  Log to the browser console if debug is on and the console is available&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;logInclude:</span>
 <span class="c">     *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.</span>
@@ -114,7 +125,7 @@
 <span class="c">     * &lt;dl&gt;</span>
 <span class="c">     *  &lt;dt&gt;DEBUG&lt;/dt&gt;</span>
 <span class="c">     *  &lt;dd&gt;Selects the debug versions of the library (e.g., event-debug.js).</span>
-<span class="c">     *      This option will automatically include the logger widget&lt;/dd&gt;</span>
+<span class="c">     *      This option will automatically include the Logger widget&lt;/dd&gt;</span>
 <span class="c">     *  &lt;dt&gt;RAW&lt;/dt&gt;</span>
 <span class="c">     *  &lt;dd&gt;Selects the non-minified version of the library (e.g., event.js).&lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
@@ -156,10 +167,13 @@
 <span class="c">     */</span>
 
     <span class="c">/*global YUI*/</span>
-    <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c">// Make a function, disallow direct instantiation</span>
+<span class="c"></span>    <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="c">// Allow var yui = YUI() instead of var yui = new YUI()</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">==</span> <span class="nb">window</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c">// Allow instantiation without the new operator</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(!(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="c">// set up the core environment</span>
@@ -167,6 +181,8 @@
 
             <span class="c">// bind the specified additional modules for this instance</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
 <span class="o">}</span>
@@ -182,15 +198,18 @@
 <span class="c">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         
-
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
 
-        <span class="c">// find targeted window and @TODO create facades</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span>  <span class="o">||</span> <span class="nb">window</span><span class="o">;</span>
+        <span class="c">// find targeted window</span>
+<span class="c"></span>        <span class="c">// @TODO create facades</span>
+<span class="c"></span>        <span class="c">// @TODO resolve windowless environments</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span>  <span class="o">||</span> <span class="nb">window</span><span class="o">,</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">w</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;debug&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">useConsole</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;useConsole&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="nx">o</span><span class="o">.</span><span class="nx">useBrowserConsole</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;useBrowserConsole&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">useBrowserConsole</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="nx">o</span><span class="o">.</span><span class="nx">throwFail</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;throwFail&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">throwFail</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
     
         <span class="c">// add a reference to o for anything that needs it</span>
 <span class="c"></span>        <span class="c">// before _setup is called.</span>
@@ -206,6 +225,12 @@
             <span class="nx">_yidx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
             <span class="nx">_uidx</span><span class="o">:</span> <span class="m">0</span>
         <span class="o">};</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">;</span>
@@ -225,10 +250,10 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_setup</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="s2">&quot;yui&quot;</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="s2">&quot;yui-base&quot;</span><span class="o">);</span>
         <span class="c">// @TODO eval the need to copy the config</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="c"></span>        <span class="c">// this.config = this.merge(this.config);</span>
+<span class="c"></span>    <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Executes a method on a YUI instance with</span>
@@ -243,22 +268,23 @@
     <span class="nx">applyTo</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">method</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(!(</span><span class="nx">method</span> <span class="k">in</span> <span class="nx">_APPLY_TO_WHITE_LIST</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: applyTo not allowed&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: applyTo not allowed&#39;</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">nest</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">nest</span> <span class="o">=</span> <span class="nx">method</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">),</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">;</span>
+            <span class="nx">nest</span> <span class="o">=</span> <span class="nx">method</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">);</span> 
+            <span class="nx">m</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">;</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nest</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nest</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="nx">m</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">nest</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;applyTo not found: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;applyTo not found: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
@@ -272,7 +298,6 @@
 <span class="c">     * Register a module</span>
 <span class="c">     * @method add</span>
 <span class="c">     * @param name {string} module name</span>
-<span class="c">     * @param namespace {string} name space for the module</span>
 <span class="c">     * @param fn {Function} entry point into the module that</span>
 <span class="c">     * is used to bind module to the YUI instance</span>
 <span class="c">     * @param version {string} version string</span>
@@ -312,15 +337,21 @@
     <span class="nx">_attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span>
-            <span class="nx">attached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_attached</span><span class="o">;</span>
+            <span class="nx">attached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_attached</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">mm</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
+            <span class="nx">m</span>    <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+
             <span class="k">if</span> <span class="o">(!</span><span class="nx">attached</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="nx">attached</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">,</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">requires</span><span class="o">,</span> <span class="nx">use</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
+                <span class="nx">d</span>   <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span> 
+                <span class="nx">req</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span> 
+                <span class="nx">use</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
@@ -372,7 +403,65 @@
             <span class="nx">loader</span><span class="o">,</span> 
             <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">];</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">],</span>
+            <span class="nx">k</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> 
+            <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// only attach a module once</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="c">// Y.log(name + &#39; already used&#39;);</span>
+<span class="c"></span>                    <span class="k">return</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+                    <span class="c">// Y.log(&#39;found &#39; + name);</span>
+<span class="c"></span>                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
+                    <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+                    <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="c">// make sure requirements are attached</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">req</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="c">// add this module to full list of things to attach</span>
+<span class="c"></span>                <span class="c">// Y.log(&#39;using &#39; + name);</span>
+<span class="c"></span>                <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+            <span class="o">},</span>
+            <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// Y.log(&#39;Use complete&#39;);</span>
+<span class="c"></span>
+                <span class="nx">fromLoader</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="o">{</span>
+                    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                    <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
+                <span class="o">};</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="nx">cb</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">};</span>
 
         <span class="c">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback);</span>
 <span class="c"></span>
@@ -387,7 +476,7 @@
         <span class="c">// YUI().use(&#39;*&#39;); // bind everything available</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">a</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">mods</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -399,85 +488,33 @@
         <span class="c">// Y.log(&#39;loader before: &#39; + a.join(&#39;,&#39;));</span>
 <span class="c"></span>       
 
-        <span class="c">// use loader to optimize and sort the requirements if it</span>
-<span class="c"></span>        <span class="c">// is available.</span>
+        <span class="c">// use loader to expand dependencies and sort the </span>
+<span class="c"></span>        <span class="c">// requirements if it is available.</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">calculate</span><span class="o">();</span>
             <span class="nx">a</span> <span class="o">=</span> <span class="nx">loader</span><span class="o">.</span><span class="nx">sorted</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="c">// Y.log(&#39;loader after: &#39; + a.join(&#39;,&#39;));</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// only attach a module once</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                <span class="c">// Y.log(name + &#39; already used&#39;);</span>
-<span class="c"></span>                <span class="k">return</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-                <span class="c">// Y.log(&#39;found &#39; + name);</span>
-<span class="c"></span>                <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
-                <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
-                <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c">// make sure requirements are attached</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">req</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c">// add this module to full list of things to attach</span>
-<span class="c"></span>            <span class="c">// Y.log(&#39;using &#39; + name);</span>
-<span class="c"></span>            <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
-
-        <span class="o">};</span>
+        <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
         <span class="c">// process each requirement and any additional requirements </span>
 <span class="c"></span>        <span class="c">// the module metadata specifies</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
         <span class="o">}</span>
 
         <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing);</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// Y.log(&#39;Use complete&#39;);</span>
-<span class="c"></span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="nx">cb</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
-
-
         <span class="c">// dynamic load</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to dynamically load the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to dynamically load the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
@@ -498,9 +535,9 @@
 <span class="c">     * Returns the namespace specified and creates it if it doesn&#39;t exist</span>
 <span class="c">     * &lt;pre&gt;</span>
 <span class="c">     * YUI.namespace(&quot;property.package&quot;);</span>
-<span class="c">     * YUI.namespace(&quot;YUI.property.package&quot;);</span>
+<span class="c">     * YUI.namespace(&quot;YAHOO.property.package&quot;);</span>
 <span class="c">     * &lt;/pre&gt;</span>
-<span class="c">     * Either of the above would create YUI.property, then</span>
+<span class="c">     * Either of the above would create YAHOO.property, then</span>
 <span class="c">     * YUI.property.package</span>
 <span class="c">     *</span>
 <span class="c">     * Be careful when naming packages. Reserved words may work in some browsers</span>
@@ -517,9 +554,9 @@
     <span class="nx">namespace</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">o</span><span class="o">=</span><span class="kc">null</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">d</span><span class="o">;</span>
         <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">d</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;.&quot;</span><span class="o">);</span>
+            <span class="nx">d</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]).</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;.&quot;</span><span class="o">);</span>
             <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=(</span><span class="nx">d</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;YUI&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">d</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=(</span><span class="nx">d</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;YAHOO&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">d</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">o</span><span class="o">[</span><span class="nx">d</span><span class="o">[</span><span class="nx">j</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">d</span><span class="o">[</span><span class="nx">j</span><span class="o">]]</span> <span class="o">||</span> <span class="o">{};</span>
                 <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">d</span><span class="o">[</span><span class="nx">j</span><span class="o">]];</span>
             <span class="o">}</span>
@@ -535,21 +572,20 @@
     <span class="c">/**</span>
 <span class="c">     * Report an error.  The reporting mechanism is controled by</span>
 <span class="c">     * the &#39;throwFail&#39; configuration attribute.  If throwFail is</span>
-<span class="c">     * not specified, the message is written to the logger, otherwise</span>
+<span class="c">     * not specified, the message is written to the Logger, otherwise</span>
 <span class="c">     * a JS error is thrown</span>
-<span class="c">     * @method fail</span>
-<span class="c">     * @param msg {string} the failure message</span>
+<span class="c">     * @method error</span>
+<span class="c">     * @param msg {string} the error message</span>
 <span class="c">     * @param e {Error} Optional JS error that was caught.  If supplied</span>
 <span class="c">     * and throwFail is specified, this error will be re-thrown.</span>
 <span class="c">     * @return {YUI} this YUI instance</span>
 <span class="c">     */</span>
-    <span class="nx">fail</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="nx">instance</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">);</span> <span class="c">// don&#39;t scrub this one</span>
-<span class="c"></span>
+    <span class="nx">error</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">throwFail</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">throw</span> <span class="nx">e</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">msg</span><span class="o">);</span>
-        <span class="o">}</span>
+            <span class="k">throw</span> <span class="o">(</span><span class="nx">e</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">msg</span><span class="o">));</span> 
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">message</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">);</span> <span class="c">// don&#39;t scrub this one</span>
+<span class="c"></span>        <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
@@ -562,7 +598,11 @@
 <span class="c">     */</span>
     <span class="nx">guid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_pre</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">p</span> <span class="o">+</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++;</span>
+        <span class="k">return</span> <span class="nx">p</span>            <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
+               <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
+               <span class="nx">e</span><span class="o">.</span><span class="nx">_yidx</span>      <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
+               <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++)</span>  <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
+               <span class="nx">_startTime</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -595,12 +635,13 @@
 <span class="c">// provides global metadata, so env needs to be configured.</span>
 <span class="c">// @TODO review</span>
 <span class="c"></span>
-    <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+    <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span> 
+    <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">// inheritance utilities are not available yet</span>
 <span class="c"></span>    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span> <span class="c">// hasOwnProperty not available yet and not needed</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
@@ -616,67 +657,66 @@
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class="selected"><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Get.html">Get</a></li>
-                                <li class=""><a href="Lang.html">Lang</a></li>
-                                <li class=""><a href="Loader.html">Loader</a></li>
-                                <li class=""><a href="UA.html">UA</a></li>
-                                <li class=""><a href="YUI.html">YUI</a></li>
-                                <li class=""><a href="YUI~array.html">YUI~array</a></li>
-                                <li class=""><a href="YUI~object.html">YUI~object</a></li>
+                                <li class=""><a href="Get.html" title="Get">Get</a></li>
+                                <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
+                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                                <li class=""><a href="UA.html" title="UA">UA</a></li>
+                                <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
+                                <li class=""><a href="YUI~object.html" title="YUI~object">YUI~object</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="get.js.html">get.js</a></li>
-                                <li class=""><a href="loader.js.html">loader.js</a></li>
-                                <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
-                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
-                                <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
-                                <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
-                                <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
-                                <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
-                                <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
-                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
-                                <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
-                                <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
-                                <li class="selected"><a href="yui.js.html">yui.js</a></li>
+                                <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
+                                <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
+                                <li class=""><a href="yui-lang.js.html" title="yui-lang.js">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html" title="yui-later.js">yui-later.js</a></li>
+                                <li class=""><a href="yui-object.js.html" title="yui-object.js">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html" title="yui-ua.js">yui-ua.js</a></li>
+                                <li class="selected"><a href="yui.js.html" title="yui.js">yui.js</a></li>
                         </ul>
                     </div>
 
@@ -689,8 +729,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "before", "url": "YUI.html#method_before", "type": "method"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "YUI", "name": "detach", "url": "YUI.html#method_detach", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "private", "host": "Get", "name": "nidx", "url": "Get.html#property_nidx", "type": "property"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}];
+</script>
 </body>
 </html>

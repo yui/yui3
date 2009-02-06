@@ -1,164 +1,76 @@
 (function() {
-    var Event=YAHOO.util.Event,Dom=YAHOO.util.Dom,oACDS,oAutoComp;
-       
-    Cookie = {
+    var Event=YAHOO.util.Event,
+        Dom=YAHOO.util.Dom,
+        oACDS, oAutoComp,
+        show = {
+            'private': false,
+            'protected': false,
+            'deprecated': false
+        };
 
-        set: function(key, val, o){
-            o = o||{};
-            val = encodeURIComponent(val);
-            if (o.domain) {
-                val += '; domain=' + o.domain;
-            }
-            if (o.path) {
-                val += '; path=' + o.path;
-            }
-            if (YAHOO.lang.isNumber(o.duration)) {
-                var date = new Date();
-                date.setTime(date.getTime() + o.duration*24*60*60*1000);
-                val += '; expires=' + date.toGMTString();
-            }
-            if (o.secure) {
-                val += '; secure';
-            }
-            document.cookie = key + '=' + val;
-        },
-
-        get: function(key){
-            var m = document.cookie.match('(?:^|;)\\s*?' + key + '=([^;]*)');
-            return (m) ? decodeURIComponent(m[1]) : null;
-        },	
-        
-        remove: function(key){
-            return this.set(key, "", {duration: -1});
-        }
-    }
-
-    var showPrivate=(Cookie.get("showPrivate")=="true");
-    var showProtected=(Cookie.get("showProtected")=="true");
-    var showDeprecated=(Cookie.get("showDeprecated")=="true");
-
-    //alert(Cookie.get("showPrivate"));
-    //alert(Cookie.get("showProtected"));
-    //var s="",style=(YAHOO.lang.ua.ie)?"":"inherit";
-    var s="", style;
-
-    style=(showPrivate) ? "inherit" : "none";
-    s='#doc3 .private { display:' + style + '; }';
-
-    style=(showProtected) ? "inherit" : "none";
-    s+='\n#doc3 .protected { display:' + style + '; }';
-
-    style=(showDeprecated) ? "inherit" : "none";
-        s+='\n#doc3 .deprecated { display:' + style + '; }';
-
-    if (s.length > 0) {
-        var el=document.createElement("style");
-        //el.innerHTML=s;
-
-        el.setAttribute("type", "text/css");
-        if(el.styleSheet) {
-            el.styleSheet.cssText = s;
+Event.onAvailable('yui-classopts-form', function() {
+    //Checkboxes are available..
+    var handleClick = function(e) {
+        var id, checked = false;
+        if (YAHOO.lang.isString(e)) {
+            id = e;
         } else {
-            var txt = document.createTextNode(s);
-            el.appendChild(txt);
+            var tar = Event.getTarget(e);
+            id = tar.id;
         }
+        var el = Dom.get(id);
+        checked = el.checked;
 
-        document.getElementsByTagName("head")[0].appendChild(el);
+        var className = id;
+        if (checked) {
+            show[id.replace('show_', '')] = true;
+            Dom.addClass(document.body, className);
+            YAHOO.util.Cookie.setSub('yuidoc', id, 'checked');
+        } else {
+            show[id.replace('show_', '')] = false;
+            Dom.removeClass(document.body, className);
+            YAHOO.util.Cookie.setSub('yuidoc', id, '');
+        }
+    };
+
+    var checkCookie = function(id) {
+        var value = YAHOO.util.Cookie.getSub('yuidoc', id),
+            el = Dom.get(id), checked = (value === 'checked');;
+
+        /*
+        if (value === 'checked') {
+            el.checked = true;
+        } else {
+            el.checked = false;
+        }
+        */
+
+        el.checked = checked;
+        return checked;
+    };
+
+    var els = ['show_deprecated', 'show_protected', 'show_private'],
+        reapplyHash = false;
+
+    for (var i = 0; i < els.length; i++) {
+        Event.on(els[i], 'click', handleClick);
+        reapplyHash = checkCookie(els[i]) || reapplyHash;
+        handleClick(els[i]);
     }
 
-    function showHidePrivate(show) {
-        showHide("private", show);
-        showPrivate=show;
-        Cookie.set("showPrivate", show, 2);
-    }
-
-    function showHideProtected(show) {
-        showHide("protected", show);
-        showProtected=show;
-        Cookie.set("showProtected", show, 2);
-    }
-
-    function showHideDeprecated(show) {
-        showHide("deprecated", show);
-        showDeprecated=show;
-        Cookie.set("showDeprecated", show, 2);
-    }
-
-    function showHide(type, show) {
-        var className=(show) ? "": "none";
-        var els=Dom.getElementsByClassName(type);
-
-        // console.log('showhide ' + type + ', ' + els.length);
-
-        for (var i=0,l=els.length;i<l;i=i+1) {
-            //try {
-                Dom.setStyle(els[i], "display", className);
-            //} catch(e) {}
+    // If we dynamically show private/protected/etc items during
+    // load, we need to reapply anchors so that the search feature
+    // works correctly for items that are initially hidden.
+    if (reapplyHash) {
+        var dl = document.location, hash = dl.hash;
+        if (hash) {
+            dl.hash = hash;
         }
     }
+    
+});
 
-    Event.onAvailable("showprivate", function() {
-            var el = Dom.get("showprivate");
-            if (el) {
-
-                if (showPrivate) {
-                    el.checked=true;
-                    Cookie.set("showPrivate", true, 2);
-                }
-
-                // get cookie state, show private if needed
-                showHidePrivate(el.checked);
-
-
-                // set up handler
-                Event.on(el, "click", function(e) {
-                        showHidePrivate(this.checked);
-                    });
-            }
-
-            el = Dom.get("showprotected");
-            if (el) {
-
-                if (showProtected) {
-                    el.checked=true;
-                    Cookie.set("showProtected", true, 2);
-                }
-
-                // get cookie state, show private if needed
-                showHideProtected(el.checked);
-
-                // set up handler
-                Event.on(el, "click", function(e) {
-                        showHideProtected(this.checked);
-                    });
-            }
-
-            el = Dom.get("showdeprecated");
-            if (el) {
-
-                if (showDeprecated) {
-                    el.checked=true;
-                    Cookie.set("showDeprecated", true, 2);
-                }
-
-                // get cookie state, show private if needed
-                showHideDeprecated(el.checked);
-
-                // set up handler
-                Event.on(el, "click", function(e) {
-                        showHideDeprecated(this.checked);
-                    });
-            }
-        });
-
-    var propsort = function(a, b) {
-            //return (a.url > b.url) ? 1 : ((a.url < b.url) ? -1  : 0);
-            return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((a.name.toLowerCase() < b.name.toLowerCase()) ? -1  : 0);
-    }
-
-    //var allprops = ALL_YUI_PROPS;
-    // allprops.sort(propsort);
-
+//Starting the AutoComplete code
     var getResults = function(query) {
         var results = [];
         if(query && query.length > 0) {
@@ -169,11 +81,11 @@
 
                 var prop = ALL_YUI_PROPS[i];
 
-                if (!showProtected && prop.access == "protected") {
+                if (!show['protected'] && prop.access == "protected") {
                     // skip
-                } else if (!showPrivate && prop.access == "private") {
+                } else if (!show['private'] && prop.access == "private") {
                     // skip
-                } else if (!showDeprecated && prop.deprecated) {
+                } else if (!show['deprecated'] && prop.deprecated) {
                     // skip
                 } else {
                     var s = (prop.host + "." + prop.name).toLowerCase();
@@ -196,17 +108,8 @@
         if(aResults.length == 0) {
             if (query.length > 0) {
                 oAutoComp.setBody("<div id=\"resultsdefault\">Not found</div>");
-            } else {
-                //oAutoComp.setBody("<div id=\"resultsdefault\">Start typing to find a property/method/event/config " +
-                                   //" or browse a module by clicking a link on the left.</div>");
-                oAutoComp.setBody("<div id=\"resultsdefault\">Start typing to find a property/method/event/config</div>");
             }
         }
-    };
-
-    var myOnContainerCollapse = function(sType, aArgs) {
-        var oAutoComp = aArgs[0];
-        oAutoComp.setBody("<div id=\"resultsdefault\">Start typing to find a property/method/event/config</div>");
     };
 
     var myOnItemSelect = function(sType, aArgs) {
@@ -224,7 +127,7 @@
 
         // Instantiate AutoComplete
         oAutoComp = new YAHOO.widget.AutoComplete('searchinput','searchresults', oACDS);
-        oAutoComp.alwaysShowContainer = true;
+        //oAutoComp.alwaysShowContainer = true;
         oAutoComp.queryDelay = 0.2;
         oAutoComp.maxResultsDisplayed = 200;
         oAutoComp.minQueryLength = 0;
@@ -235,7 +138,6 @@
 
         // Subscribe to Custom Events
         oAutoComp.dataReturnEvent.subscribe(myOnDataReturn);
-        oAutoComp.containerCollapseEvent.subscribe(myOnContainerCollapse);
         oAutoComp.itemSelectEvent.subscribe(myOnItemSelect);
         
         // Set initial content in the container
@@ -246,5 +148,15 @@
     var validateForm = function() {
         return false;
     };
+    
+    YAHOO.util.Event.onAvailable('classTab', function() {
+        var tabs = new YAHOO.widget.TabView('classTab');
+    });
+    /*
+    YAHOO.util.Event.onAvailable('codeTree', function() {
+        var tree1 = new YAHOO.widget.TreeView('codeTree');
+        tree1.render();    
+    });
+    */
 
 })();

@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(),
+    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -120,6 +120,7 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     // Make a function, disallow direct instantiation
     YUI = function(o) {
+
         var Y = this;
 
         // Allow instantiation without the new operator
@@ -153,7 +154,8 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
+        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+            v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
@@ -175,7 +177,6 @@ YUI.prototype = {
             _uidx: 0
         };
 
-        var v = '@VERSION@';
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
@@ -218,22 +219,23 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.fail(method + ': applyTo not allowed');
+            this.error(method + ': applyTo not allowed');
             return null;
         }
 
-        var instance = _instances[id];
+        var instance = _instances[id], nest, m, i;
 
         if (instance) {
 
-            var nest = method.split('.'), m = instance;
+            nest = method.split('.'); 
+            m = instance;
 
-            for (var i=0; i<nest.length; i=i+1) {
+            for (i=0; i<nest.length; i=i+1) {
 
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.fail('applyTo not found: ' + method);
+                    this.error('applyTo not found: ' + method);
                 }
             }
 
@@ -286,15 +288,21 @@ YUI.prototype = {
     _attach: function(r, fromLoader) {
 
         var mods = YUI.Env.mods,
-            attached = this.Env._attached;
+            attached = this.Env._attached,
+            i, l = r.length, name, m, d, req, use;
 
-        for (var i=0, l=r.length; i<l; i=i+1) {
-            var name = r[i], m = mods[name], mm;
+        for (i=0; i<l; i=i+1) {
+
+            name = r[i]; 
+            m    = mods[name];
+
             if (!attached[name] && m) {
 
                 attached[name] = true;
 
-                var d = m.details, req = d.requires, use = d.use;
+                d   = m.details; 
+                req = d.requires; 
+                use = d.use;
 
                 if (req) {
                     this._attach(this.Array(req));
@@ -346,7 +354,60 @@ YUI.prototype = {
             loader, 
             firstArg = a[0], 
             dynamic = false,
-            callback = a[a.length-1];
+            callback = a[a.length-1],
+            k, i, l, missing = [], r = [], 
+            f = function(name) {
+
+                // only attach a module once
+                if (used[name]) {
+                    return;
+                }
+
+                var m = mods[name], j, req, use;
+
+                if (m) {
+                    used[name] = true;
+
+                    req = m.details.requires;
+                    use = m.details.use;
+                } else {
+                    missing.push(name);
+                }
+
+                // make sure requirements are attached
+                if (req) {
+                    if (Y.Lang.isString(req)) {
+                        f(req);
+                    } else {
+                        for (j = 0; j < req.length; j = j + 1) {
+                            f(req[j]);
+                        }
+                    }
+                }
+
+                // add this module to full list of things to attach
+                r.push(name);
+
+            },
+            onComplete = function(fromLoader) {
+
+
+                fromLoader = fromLoader || {
+                    success: true,
+                    msg: 'not dynamic'
+                };
+
+                if (Y.Env._callback) {
+
+                    var cb = Y.Env._callback;
+                    Y.Env._callback = null;
+                    cb(Y, fromLoader);
+                }
+
+                if (Y.fire) {
+                    Y.fire('yui:load', Y, fromLoader);
+                }
+            };
 
 
         // The last argument supplied to use can be a load complete callback
@@ -360,7 +421,7 @@ YUI.prototype = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             a = [];
-            for (var k in mods) {
+            for (k in mods) {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
@@ -384,66 +445,13 @@ YUI.prototype = {
         }
 
 
-        var missing = [], r = [], f = function(name) {
-
-            // only attach a module once
-            if (used[name]) {
-                return;
-            }
-
-            var m = mods[name], j, req, use;
-
-            if (m) {
-                used[name] = true;
-
-                req = m.details.requires;
-                use = m.details.use;
-            } else {
-                missing.push(name);
-            }
-
-            // make sure requirements are attached
-            if (req) {
-                if (Y.Lang.isString(req)) {
-                    f(req);
-                } else {
-                    for (j = 0; j < req.length; j = j + 1) {
-                        f(req[j]);
-                    }
-                }
-            }
-
-            // add this module to full list of things to attach
-            r.push(name);
-
-        };
+        l = a.length;
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        for (var i=0, l=a.length; i<l; i=i+1) {
+        for (i=0; i<l; i=i+1) {
             f(a[i]);
         }
-
-
-        var onComplete = function(fromLoader) {
-
-
-            fromLoader = fromLoader || {
-                success: true,
-                msg: 'not dynamic'
-            };
-
-            if (Y.Env._callback) {
-
-                var cb = Y.Env._callback;
-                Y.Env._callback = null;
-                cb(Y, fromLoader);
-            }
-
-            if (Y.fire) {
-                Y.fire('yui:load', Y, fromLoader);
-            }
-        };
 
 
         // dynamic load
@@ -507,13 +515,13 @@ YUI.prototype = {
      * the 'throwFail' configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
-     * @method fail
-     * @param msg {string} the failure message
+     * @method error
+     * @param msg {string} the error message
      * @param e {Error} Optional JS error that was caught.  If supplied
      * and throwFail is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance
      */
-    fail: function(msg, e) {
+    error: function(msg, e) {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
@@ -568,7 +576,8 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    var Y = YUI, p = Y.prototype, i;
+    Y = YUI; 
+    p = Y.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
@@ -589,6 +598,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
+(function() {
 
 var instance = Y;
 
@@ -612,18 +622,17 @@ var instance = Y;
  */
 instance.log = function(msg, cat, src, silent) {
 
-    var Y = instance, c = Y.config, es = Y.Env._eventstack,
-        // bail = (es && es.logging);
-        bail = false; 
+    var Y = instance, c = Y.config, bail = false, exc, inc, m, f;
 
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
-    if (c.debug && !bail) {
+    if (c.debug) {
 
         // apply source filters
         if (src) {
 
-            var exc = c.logExclude, inc = c.logInclude;
+            exc = c.logExclude; 
+            inc = c.logInclude;
 
             // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
 
@@ -639,9 +648,9 @@ instance.log = function(msg, cat, src, silent) {
         if (!bail) {
 
             if (c.useBrowserConsole) {
-                var m = (src) ? src + ': ' + msg : msg;
+                m = (src) ? src + ': ' + msg : msg;
                 if (typeof console != 'undefined') {
-                    var f = (cat && console[cat]) ? cat : 'log';
+                    f = (cat && console[cat]) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != 'undefined') {
                     opera.postError(m);
@@ -674,6 +683,7 @@ instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
 
+})();
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -865,14 +875,14 @@ L.type = function (o) {
 };
 
 })();
-
+(function() {
 /**
  * YUI core
  * @module yui
  */
 
 
-var L = Y.Lang, Native = Array.prototype;
+var L = Y.Lang, Native = Array.prototype,
 
 /**
  * Adds the following array utilities to the YUI instance
@@ -899,7 +909,7 @@ var L = Y.Lang, Native = Array.prototype;
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-Y.Array = function(o, i, al) {
+A = function(o, i, al) {
     var t = (al) ? 2 : Y.Array.test(o);
 
     // switch (t) {
@@ -919,7 +929,7 @@ Y.Array = function(o, i, al) {
 
 };
 
-var A = Y.Array;
+Y.Array = A;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -998,8 +1008,8 @@ A.each = (Native.forEach) ?
         return Y;
     } :
     function (a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        var l = a.length, i;
+        for (i=0; i<l; i=i+1) {
             if (f.call(o, a[i], i, a)) {
                 return true;
             }
@@ -1048,6 +1058,8 @@ A.indexOf = function(a, val) {
     return -1;
 };
 
+})();
+(function() {
 
 var L = Y.Lang, 
 A = Y.Array,
@@ -1068,8 +1080,10 @@ PROTO = 'prototype',
  */
 _iefix = (Y.UA && Y.UA.ie) ?
     function(r, s, w) {
-        for (var i=0, a=IEF; i<a.length; i=i+1) {
-            var n = a[i], f = s[n];
+        var i, a = IEF, n, f;
+        for (i=0; i<a.length; i=i+1) {
+            n = a[i]; 
+            f = s[n];
             if (L.isFunction(f) && f != OP[n]) {
                 if (!w || (n in w)) {
                     r[n]=f;
@@ -1090,11 +1104,8 @@ _iefix = (Y.UA && Y.UA.ie) ?
  * @return {object} the new merged object
  */
 Y.merge = function() {
-    // var o={}, a=arguments;
-    // for (var i=0, l=a.length; i<l; i=i+1) {
-    //var a=arguments, o=Y.Object(a[0]);
-    var a=arguments, o={};
-    for (var i=0, l=a.length; i<l; i=i+1) {
+    var a = arguments, o = {}, i, l = a.length;
+    for (i=0; i<l; i=i+1) {
         Y.mix(o, a[i], true);
     }
     return o;
@@ -1138,9 +1149,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 
         f = function(fr, fs, proto, iwl) {
 
-            var arr = m && L.isArray(fr);
+            var arr = m && L.isArray(fr), i;
 
-            for (var i in fs) { 
+            for (i in fs) { 
 
                 if (fs.hasOwnProperty(i)) {
 
@@ -1179,9 +1190,11 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
             }
 
             _iefix(fr, fs, w);
-        };
+        },
 
-    var rp = r.prototype, sp = s.prototype;
+        rp = r.prototype, 
+
+        sp = s.prototype;
 
     switch (mode) {
         case 1: // proto to proto
@@ -1204,6 +1217,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+})();
+(function() {
+
 /**
  * Adds the following Object utilities to the YUI instance
  * @class YUI~object
@@ -1223,7 +1239,7 @@ Y.Object = function(o) {
     return new F();
 }; 
 
-var O = Y.Object, L = Y.Lang;
+var O = Y.Object;
 
 /**
  * Determines whether or not the property was added
@@ -1279,15 +1295,17 @@ O.keys = function(o) {
  * @return {YUI} the YUI instance
  */
 O.each = function (o, f, c, proto) {
-    var s = c || Y;
+    var s = c || Y, i;
 
-    for (var i in o) {
+    for (i in o) {
         if (proto || o.hasOwnProperty(i)) {
             f.call(s, o[i], i, o);
         }
     }
     return Y;
 };
+
+})();
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -1373,9 +1391,9 @@ Y.UA = function() {
          * @static
          */
         mobile: null 
-    };
+    },
 
-    var ua=navigator.userAgent, m;
+    ua = navigator.userAgent, m;
 
     // Modern KHTML browsers should qualify as Safari X-Grade
     if ((/KHTML/).test(ua)) {
@@ -1426,8 +1444,8 @@ Y.UA = function() {
     
     return o;
 }();
-
-    var L = Y.Lang;
+(function() {
+    var L = Y.Lang,
 
     /**
      * Executes the supplied function in the context of the supplied 
@@ -1450,7 +1468,7 @@ Y.UA = function() {
      * @return {object} a timer object. Call the cancel() method on this object to 
      * stop the timer.
      */
-    var later = function(when, o, fn, data, periodic) {
+    later = function(when, o, fn, data, periodic) {
         when = when || 0; 
         o = o || {};
         var m=fn, d=data, f, r;
@@ -1460,7 +1478,7 @@ Y.UA = function() {
         }
 
         if (!m) {
-            Y.fail("method undefined");
+            Y.error("method undefined");
         }
 
         if (!L.isArray(d)) {
@@ -1488,6 +1506,7 @@ Y.UA = function() {
     Y.later = later;
     L.later = later;
 
+})();
 (function() {
 
     // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
@@ -1518,7 +1537,7 @@ Y.UA = function() {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
-
+(function() {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -1567,7 +1586,7 @@ Y.Get = function() {
      * @type boolean
      * @private
      */
-        purging=false;
+        purging=false,
 
     
     /** 
@@ -1579,17 +1598,18 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _node = function(type, attr, win) {
-        var w = win || Y.config.win, d=w.document, n=d.createElement(type);
+    _node = function(type, attr, win) {
+        var w = win || Y.config.win, d=w.document, n=d.createElement(type),
+            i;
 
-        for (var i in attr) {
+        for (i in attr) {
             if (attr[i] && attr.hasOwnProperty(i)) {
                 n.setAttribute(i, attr[i]);
             }
         }
 
         return n;
-    };
+    },
 
     /**
      * Generates a link node
@@ -1599,7 +1619,7 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("link", {
                 "id":      PREFIX + (nidx++),
@@ -1608,7 +1628,7 @@ Y.Get = function() {
                 "rel":     "stylesheet",
                 "href":    url
             }, win);
-    };
+    },
 
     /**
      * Generates a script node
@@ -1618,7 +1638,7 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("script", {
                 "id":      PREFIX + (nidx++),
@@ -1626,39 +1646,41 @@ Y.Get = function() {
                 "charset": c,
                 "src":     url
             }, win);
-    };
+    },
 
     /**
      * Removes the nodes for the specified queue
      * @method _purge
      * @private
      */
-    var _purge = function(tId) {
-        var q=queues[tId];
+    _purge = function(tId) {
+        var q=queues[tId], n, l, d, h, s, i;
         if (q) {
-            var n=q.nodes, l=n.length, d=q.win.document, 
-                h=d.getElementsByTagName("head")[0];
+            n = q.nodes; 
+            l = n.length;
+            d = q.win.document;
+            h = d.getElementsByTagName("head")[0];
 
             if (q.insertBefore) {
-                var s = _get(q.insertBefore, tId);
+                s = _get(q.insertBefore, tId);
                 if (s) {
                     h = s.parentNode;
                 }
             }
 
-            for (var i=0; i<l; i=i+1) {
+            for (i=0; i<l; i=i+1) {
                 h.removeChild(n[i]);
             }
         }
         q.nodes = [];
-    };
+    },
 
     /**
      * Returns the data payload for callback functions
      * @method _returnData
      * @private
      */
-    var _returnData = function(q, msg) {
+    _returnData = function(q, msg) {
         return {
                 tId: q.tId,
                 win: q.win,
@@ -1669,7 +1691,7 @@ Y.Get = function() {
                     _purge(this.tId);
                 }
             };
-    };
+    },
 
     /*
      * The request failed, execute fail handler with whatever
@@ -1679,22 +1701,22 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _fail = function(id, msg) {
+    _fail = function(id, msg) {
 
 
-        var q = queues[id];
+        var q = queues[id], sc;
         if (q.timer) {
             q.timer.cancel();
         }
 
         // execute failure callback
         if (q.onFailure) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
-    };
+    },
 
-    var _get = function(nId, tId) {
+    _get = function(nId, tId) {
         var q = queues[tId],
             n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
         if (!n) {
@@ -1702,8 +1724,7 @@ Y.Get = function() {
         }
 
         return n;
-    };
-
+    },
 
     /**
      * The request is complete, so executing the requester's callback
@@ -1711,25 +1732,25 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _finish = function(id) {
-        var q = queues[id];
+    _finish = function(id) {
+        var q = queues[id], msg, sc;
         if (q.timer) {
             q.timer.cancel();
         }
         q.finished = true;
 
         if (q.aborted) {
-            var msg = "transaction " + id + " was aborted";
+            msg = "transaction " + id + " was aborted";
             _fail(id, msg);
             return;
         }
 
         // execute success callback
         if (q.onSuccess) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
-    };
+    },
 
     /**
      * Timeout detected
@@ -1737,13 +1758,13 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _timeout = function(id) {
-        var q = queues[id];
+    _timeout = function(id) {
+        var q = queues[id], sc;
         if (q.onTimeout) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
-    };
+    },
 
     /**
      * Loads the next item for a given request
@@ -1752,16 +1773,16 @@ Y.Get = function() {
      * @param loaded {string} the url that was just loaded, if any
      * @private
      */
-    var _next = function(id, loaded) {
+    _next = function(id, loaded) {
 
-        var q = queues[id];
+        var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
             q.timer.cancel();
         }
 
         if (q.aborted) {
-            var msg = "transaction " + id + " was aborted";
+            msg = "transaction " + id + " was aborted";
             _fail(id, msg);
             return;
         }
@@ -1779,14 +1800,16 @@ Y.Get = function() {
             }
         }
 
-        var w=q.win, d=w.document, h=d.getElementsByTagName("head")[0], n;
+        w = q.win; 
+        d = w.document; 
+        h = d.getElementsByTagName("head")[0];
 
         if (q.url.length === 0) {
             _finish(id);
             return;
         } 
 
-        var url = q.url[0];
+        url = q.url[0];
 
         // if the url is undefined, this is probably a trailing comma problem in IE
         if (!url) {
@@ -1813,7 +1836,7 @@ Y.Get = function() {
 
         // add it to the head or insert it before 'insertBefore'
         if (q.insertBefore) {
-            var s = _get(q.insertBefore, id);
+            s = _get(q.insertBefore, id);
             if (s) {
                 s.parentNode.insertBefore(n, s);
             }
@@ -1829,23 +1852,26 @@ Y.Get = function() {
         if ((ua.webkit || ua.gecko) && q.type === "css") {
             _next(id, url);
         }
-    };
+    },
 
     /**
      * Removes processed queues and corresponding nodes
      * @method _autoPurge
      * @private
      */
-    var _autoPurge = function() {
+    _autoPurge = function() {
 
         if (purging) {
             return;
         }
 
         purging = true;
-        for (var i in queues) {
+
+        var i, q;
+
+        for (i in queues) {
             if (queues.hasOwnProperty(i)) {
-                var q = queues[i];
+                q = queues[i];
                 if (q.autopurge && q.finished) {
                     _purge(q.tId);
                     delete queues[i];
@@ -1854,7 +1880,7 @@ Y.Get = function() {
         }
 
         purging = false;
-    };
+    },
 
     /**
      * Saves the state for the request and begins loading
@@ -1865,9 +1891,9 @@ Y.Get = function() {
      * @param opts the hash of options for this request
      * @private
      */
-    var _queue = function(type, url, opts) {
+    _queue = function(type, url, opts) {
 
-        var id = "q" + (qidx++);
+        var id = "q" + (qidx++), q;
         opts = opts || {};
 
         if (qidx % Y.Get.PURGE_THRESH === 0) {
@@ -1882,7 +1908,7 @@ Y.Get = function() {
             nodes: []
         });
 
-        var q = queues[id];
+        q = queues[id];
         q.win = q.win || Y.config.win;
         q.context = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
@@ -1893,7 +1919,7 @@ Y.Get = function() {
         return {
             tId: id
         };
-    };
+    },
 
     /**
      * Detects when a node has been loaded.  In the case of
@@ -1911,7 +1937,7 @@ Y.Get = function() {
      * the default is _next
      * @private
      */
-    var _track = function(type, n, id, url, win, qlength, trackfn) {
+    _track = function(type, n, id, url, win, qlength, trackfn) {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
@@ -1983,8 +2009,8 @@ Y.Get = function() {
          * script() or css()
          */
         abort: function(o) {
-            var id = (L.isString(o)) ? o : o.tId;
-            var q = queues[id];
+            var id = (L.isString(o)) ? o : o.tId,
+                q = queues[id];
             if (q) {
                 q.aborted = true;
             }
@@ -2159,10 +2185,13 @@ Y.Get = function() {
     };
 }();
 
+})();
+
 
 }, '@VERSION@' );
 YUI.add('loader', function(Y) {
 
+(function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -2390,7 +2419,7 @@ var BASE = 'base',
         },
 
         attribute: { 
-            requires: ['event']
+            requires: ['event-custom']
         },
 
         base: {
@@ -2456,7 +2485,15 @@ var BASE = 'base',
         dump: { },
 
         event: { 
+            requires: ['event-custom']
+        },
+
+        'event-custom': { 
             requires: ['oop']
+        },
+
+        'event-simulate': { 
+            requires: ['event']
         },
 
         get: { 
@@ -2565,612 +2602,634 @@ var BASE = 'base',
         }  
 
     }
-};
+},
 
-var _path = function(dir, file, type) {
+_path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
-};
+},
 
-var _cssmeta = function() {
-    var mods = META.modules;
-    // modify the meta info for YUI CSS
-    for (var i=0; i<YUI_CSS.length; i=i+1) {
-        var bname = YUI_CSS[i],
-            mname = CSS + bname;
+mods  = META.modules, i, bname, mname, contextname,
+L     = Y.Lang, 
+PROV  = "_provides", 
+SUPER = "_supersedes";
 
-        mods[mname] = {
-            type: CSS,
-            path: _path(mname, bname)
-        };
+// Create the metadata for both the regular and context-aware
+// versions of the YUI CSS foundation.
+for (i=0; i<YUI_CSS.length; i=i+1) {
+    bname = YUI_CSS[i];
+    mname = CSS + bname;
 
-        // define -context module
-        var contextname = mname + CONTEXT;
-        bname = bname + CONTEXT;
+    mods[mname] = {
+        type: CSS,
+        path: _path(mname, bname)
+    };
 
-        mods[contextname] = {
-            type: CSS,
-            path: _path(mname, bname)
-        };
+    // define -context module
+    contextname = mname + CONTEXT;
+    bname = bname + CONTEXT;
 
-        if (mname == CSSGRIDS) {
-            mods[mname].requires = [CSSFONTS];
-            mods[mname].optional = [CSSRESET];
-            mods[contextname].requires = [CSSFONTS + CONTEXT];
-            mods[contextname].optional = [CSSRESET + CONTEXT];
-        } else if (mname == CSSBASE) {
-            mods[mname].after = CSS_AFTER;
-            mods[contextname].after = CSS_AFTER;
-        }
+    mods[contextname] = {
+        type: CSS,
+        path: _path(mname, bname)
+    };
+
+    if (mname == CSSGRIDS) {
+        mods[mname].requires = [CSSFONTS];
+        mods[mname].optional = [CSSRESET];
+        mods[contextname].requires = [CSSFONTS + CONTEXT];
+        mods[contextname].optional = [CSSRESET + CONTEXT];
+    } else if (mname == CSSBASE) {
+        mods[mname].after = CSS_AFTER;
+        mods[contextname].after = CSS_AFTER;
     }
-}();
+}
 
 Y.Env.meta = META;
 
+Y.Loader = function(o) {
 
-    var L=Y.Lang, env=Y.Env,
-        PROV = "_provides", SUPER = "_supersedes",
-        REQ = "expanded";
+    /**
+     * Internal callback to handle multiple internal insert() calls
+     * so that css is inserted prior to js
+     * @property _internalCallback
+     * @private
+     */
+    this._internalCallback = null;
 
-    Y.Loader = function(o) {
+    /**
+     * Use the YUI environment listener to detect script load.  This
+     * is only switched on for Safari 2.x and below.
+     * @property _useYahooListener
+     * @private
+     */
+    this._useYahooListener = false;
 
-        /**
-         * Internal callback to handle multiple internal insert() calls
-         * so that css is inserted prior to js
-         * @property _internalCallback
-         * @private
-         */
-        this._internalCallback = null;
+    /**
+     * Callback that will be executed when the loader is finished
+     * with an insert
+     * @method onSuccess
+     * @type function
+     */
+    this.onSuccess = null;
 
-        /**
-         * Use the YUI environment listener to detect script load.  This
-         * is only switched on for Safari 2.x and below.
-         * @property _useYahooListener
-         * @private
-         */
-        this._useYahooListener = false;
+    /**
+     * Callback that will be executed if there is a failure
+     * @method onFailure
+     * @type function
+     */
+    this.onFailure = null;
 
-        /**
-         * Callback that will be executed when the loader is finished
-         * with an insert
-         * @method onSuccess
-         * @type function
-         */
-        this.onSuccess = null;
+    /**
+     * Callback executed each time a script or css file is loaded
+     * @method onProgress
+     * @type function
+     */
+    this.onProgress = null;
 
-        /**
-         * Callback that will be executed if there is a failure
-         * @method onFailure
-         * @type function
-         */
-        this.onFailure = null;
+    /**
+     * Callback that will be executed if a timeout occurs
+     * @method onTimeout
+     * @type function
+     */
+    this.onTimeout = null;
 
-        /**
-         * Callback executed each time a script or css file is loaded
-         * @method onProgress
-         * @type function
-         */
-        this.onProgress = null;
+    /**
+     * The execution context for all callbacks
+     * @property context
+     * @default {YUI} the YUI instance
+     */
+    this.context = Y;
 
-        /**
-         * Callback that will be executed if a timeout occurs
-         * @method onTimeout
-         * @type function
-         */
-        this.onTimeout = null;
+    /**
+     * Data that is passed to all callbacks
+     * @property data
+     */
+    this.data = null;
 
-        /**
-         * The execution context for all callbacks
-         * @property context
-         * @default {YUI} the YUI instance
-         */
-        this.context = Y;
+    /**
+     * Node reference or id where new nodes should be inserted before
+     * @property insertBefore
+     * @type string|HTMLElement
+     */
+    this.insertBefore = null;
 
-        /**
-         * Data that is passed to all callbacks
-         * @property data
-         */
-        this.data = null;
+    /**
+     * The charset attribute for inserted nodes
+     * @property charset
+     * @type string
+     * @default utf-8
+     */
+    this.charset = null;
 
-        /**
-         * Node reference or id where new nodes should be inserted before
-         * @property insertBefore
-         * @type string|HTMLElement
-         */
-        this.insertBefore = null;
+    /**
+     * The base directory.
+     * @property base
+     * @type string
+     * @default http://yui.yahooapis.com/[YUI VERSION]/build/
+     */
+    this.base = Y.Env.meta.base;
 
-        /**
-         * The charset attribute for inserted nodes
-         * @property charset
-         * @type string
-         * @default utf-8
-         */
-        this.charset = null;
+    /**
+     * Base path for the combo service
+     * @property comboBase
+     * @type string
+     * @default http://yui.yahooapis.com/combo?
+     */
+    this.comboBase = Y.Env.meta.comboBase;
 
-        /**
-         * The base directory.
-         * @property base
-         * @type string
-         * @default http://yui.yahooapis.com/[YUI VERSION]/build/
-         */
-        this.base = Y.Env.meta.base;
+    /**
+     * If configured, YUI JS resources will use the combo
+     * handler
+     * @property combine
+     * @type boolean
+     * @default true if a base dir isn't in the config
+     */
+    this.combine = (!(BASE in o));
 
-        /**
-         * Base path for the combo service
-         * @property comboBase
-         * @type string
-         * @default http://yui.yahooapis.com/combo?
-         */
-        this.comboBase = Y.Env.meta.comboBase;
+    /**
+     * Ignore modules registered on the YUI global
+     * @property ignoreRegistered
+     * @default false
+     */
+    this.ignoreRegistered = false;
 
-        /**
-         * If configured, YUI JS resources will use the combo
-         * handler
-         * @property combine
-         * @type boolean
-         * @default true if a base dir isn't in the config
-         */
-        this.combine = (!(BASE in o));
+    /**
+     * Root path to prepend to module path for the combo
+     * service
+     * @property root
+     * @type string
+     * @default [YUI VERSION]/build/
+     */
+    this.root = Y.Env.meta.root;
 
-        /**
-         * Ignore modules registered on the YUI global
-         * @property ignoreRegistered
-         * @default false
-         */
-        this.ignoreRegistered = false;
+    /**
+     * Timeout value in milliseconds.  If set, this value will be used by
+     * the get utility.  the timeout event will fire if
+     * a timeout occurs.
+     * @property timeout
+     * @type int
+     */
+    this.timeout = 0;
 
-        /**
-         * Root path to prepend to module path for the combo
-         * service
-         * @property root
-         * @type string
-         * @default [YUI VERSION]/build/
-         */
-        this.root = Y.Env.meta.root;
+    /**
+     * A list of modules that should not be loaded, even if
+     * they turn up in the dependency tree
+     * @property ignore
+     * @type string[]
+     */
+    this.ignore = null;
 
-        /**
-         * Timeout value in milliseconds.  If set, this value will be used by
-         * the get utility.  the timeout event will fire if
-         * a timeout occurs.
-         * @property timeout
-         * @type int
-         */
-        this.timeout = 0;
+    /**
+     * A list of modules that should always be loaded, even
+     * if they have already been inserted into the page.
+     * @property force
+     * @type string[]
+     */
+    this.force = null;
 
-        /**
-         * A list of modules that should not be loaded, even if
-         * they turn up in the dependency tree
-         * @property ignore
-         * @type string[]
-         */
-        this.ignore = null;
+    /**
+     * Should we allow rollups
+     * @property allowRollup
+     * @type boolean
+     * @default true
+     */
+    this.allowRollup = true;
 
-        /**
-         * A list of modules that should always be loaded, even
-         * if they have already been inserted into the page.
-         * @property force
-         * @type string[]
-         */
-        this.force = null;
+    /**
+     * A filter to apply to result urls.  This filter will modify the default
+     * path for all modules.  The default path for the YUI library is the
+     * minified version of the files (e.g., event-min.js).  The filter property
+     * can be a predefined filter or a custom filter.  The valid predefined 
+     * filters are:
+     * <dl>
+     *  <dt>DEBUG</dt>
+     *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
+     *      This option will automatically include the Logger widget</dd>
+     *  <dt>RAW</dt>
+     *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+     * </dl>
+     * You can also define a custom filter, which must be an object literal 
+     * containing a search expression and a replace string:
+     * <pre>
+     *  myFilter: &#123; 
+     *      'searchExp': "-min\\.js", 
+     *      'replaceStr': "-debug.js"
+     *  &#125;
+     * </pre>
+     * @property filter
+     * @type string|{searchExp: string, replaceStr: string}
+     */
+    this.filter = null;
 
-        /**
-         * Should we allow rollups
-         * @property allowRollup
-         * @type boolean
-         * @default true
-         */
-        this.allowRollup = true;
+    /**
+     * The list of requested modules
+     * @property required
+     * @type {string: boolean}
+     */
+    this.required = {};
 
-        /**
-         * A filter to apply to result urls.  This filter will modify the default
-         * path for all modules.  The default path for the YUI library is the
-         * minified version of the files (e.g., event-min.js).  The filter property
-         * can be a predefined filter or a custom filter.  The valid predefined 
-         * filters are:
-         * <dl>
-         *  <dt>DEBUG</dt>
-         *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
-         *      This option will automatically include the Logger widget</dd>
-         *  <dt>RAW</dt>
-         *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
-         * </dl>
-         * You can also define a custom filter, which must be an object literal 
-         * containing a search expression and a replace string:
-         * <pre>
-         *  myFilter: &#123; 
-         *      'searchExp': "-min\\.js", 
-         *      'replaceStr': "-debug.js"
-         *  &#125;
-         * </pre>
-         * @property filter
-         * @type string|{searchExp: string, replaceStr: string}
-         */
-        this.filter = null;
+    /**
+     * The library metadata
+     * @property moduleInfo
+     */
+    // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
+    this.moduleInfo = {};
 
-        /**
-         * The list of requested modules
-         * @property required
-         * @type {string: boolean}
-         */
-        this.required = {};
+    /**
+     * Provides the information used to skin the skinnable components.
+     * The following skin definition would result in 'skin1' and 'skin2'
+     * being loaded for calendar (if calendar was requested), and
+     * 'sam' for all other skinnable components:
+     *
+     *   <code>
+     *   skin: {
+     *
+     *      // The default skin, which is automatically applied if not
+     *      // overriden by a component-specific skin definition.
+     *      // Change this in to apply a different skin globally
+     *      defaultSkin: 'sam', 
+     *
+     *      // This is combined with the loader base property to get
+     *      // the default root directory for a skin. ex:
+     *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+     *      base: 'assets/skins/',
+     *
+     *      // The name of the rollup css file for the skin
+     *      path: 'skin.css',
+     *
+     *      // The number of skinnable components requested that are
+     *      // required before using the rollup file rather than the
+     *      // individual component css files
+     *      rollup: 3,
+     *
+     *      // Any component-specific overrides can be specified here,
+     *      // making it possible to load different skins for different
+     *      // components.  It is possible to load more than one skin
+     *      // for a given component as well.
+     *      overrides: {
+     *          calendar: ['skin1', 'skin2']
+     *      }
+     *   }
+     *   </code>
+     *   @property skin
+     */
+     this.skin = Y.merge(Y.Env.meta.skin);
+    
+    var defaults = Y.Env.meta.modules, i;
 
-        /**
-         * The library metadata
-         * @property moduleInfo
-         */
-        // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
-        this.moduleInfo = {};
+    for (i in defaults) {
+        if (defaults.hasOwnProperty(i)) {
+            this._internal = true;
+            this.addModule(defaults[i], i);
+            this._internal = false;
+        }
+    }
 
-        /**
-         * Provides the information used to skin the skinnable components.
-         * The following skin definition would result in 'skin1' and 'skin2'
-         * being loaded for calendar (if calendar was requested), and
-         * 'sam' for all other skinnable components:
-         *
-         *   <code>
-         *   skin: {
-         *
-         *      // The default skin, which is automatically applied if not
-         *      // overriden by a component-specific skin definition.
-         *      // Change this in to apply a different skin globally
-         *      defaultSkin: 'sam', 
-         *
-         *      // This is combined with the loader base property to get
-         *      // the default root directory for a skin. ex:
-         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
-         *      base: 'assets/skins/',
-         *
-         *      // The name of the rollup css file for the skin
-         *      path: 'skin.css',
-         *
-         *      // The number of skinnable components requested that are
-         *      // required before using the rollup file rather than the
-         *      // individual component css files
-         *      rollup: 3,
-         *
-         *      // Any component-specific overrides can be specified here,
-         *      // making it possible to load different skins for different
-         *      // components.  It is possible to load more than one skin
-         *      // for a given component as well.
-         *      overrides: {
-         *          calendar: ['skin1', 'skin2']
-         *      }
-         *   }
-         *   </code>
-         *   @property skin
-         */
-         this.skin = Y.merge(Y.Env.meta.skin);
-        
-        var defaults = Y.Env.meta.modules;
+    /**
+     * List of rollup files found in the library metadata
+     * @property rollups
+     */
+    this.rollups = null;
 
-        for (var i in defaults) {
-            if (defaults.hasOwnProperty(i)) {
-                this._internal = true;
-                this.addModule(defaults[i], i);
-                this._internal = false;
+    /**
+     * Whether or not to load optional dependencies for 
+     * the requested modules
+     * @property loadOptional
+     * @type boolean
+     * @default false
+     */
+    this.loadOptional = false;
+
+    /**
+     * All of the derived dependencies in sorted order, which
+     * will be populated when either calculate() or insert()
+     * is called
+     * @property sorted
+     * @type string[]
+     */
+    this.sorted = [];
+
+    /**
+     * Set when beginning to compute the dependency tree. 
+     * Composed of what YUI reports to be loaded combined
+     * with what has been loaded by the tool
+     * @propery loaded
+     * @type {string: boolean}
+     */
+    this.loaded = {};
+
+    /**
+     * A list of modules to attach to the YUI instance when complete.
+     * If not supplied, the sorted list of dependencies are applied.
+     * @property attaching
+     */
+    this.attaching = null;
+
+    /**
+     * Flag to indicate the dependency tree needs to be recomputed
+     * if insert is called again.
+     * @property dirty
+     * @type boolean
+     * @default true
+     */
+    this.dirty = true;
+
+    /**
+     * List of modules inserted by the utility
+     * @property inserted
+     * @type {string: boolean}
+     */
+    this.inserted = {};
+
+    /**
+     * List of skipped modules during insert() because the module
+     * was not defined
+     * @property skipped
+     */
+    this.skipped = {};
+
+
+    // Y.on('yui:load', this.loadNext, this);
+
+    this._config(o);
+
+};
+
+Y.Loader.prototype = {
+
+    FILTERS: {
+        RAW: { 
+            'searchExp': "-min\\.js", 
+            'replaceStr': ".js"
+        },
+        DEBUG: { 
+            'searchExp': "-min\\.js", 
+            'replaceStr': "-debug.js"
+        }
+    },
+
+    SKIN_PREFIX: "skin-",
+
+    _config: function(o) {
+
+        var i, j, val, f;
+
+        // apply config values
+        if (o) {
+            for (i in o) {
+                if (o.hasOwnProperty(i)) {
+                    val = o[i];
+                    if (i == 'require') {
+                        this.require(val);
+                    } else if (i == 'modules') {
+
+                        // add a hash of module definitions
+                        for (j in val) {
+                            if (val.hasOwnProperty(j)) {
+                                this.addModule(val[j], j);
+                            }
+                        }
+
+                    } else {
+                        this[i] = val;
+                    }
+                }
             }
         }
 
-        /**
-         * List of rollup files found in the library metadata
-         * @property rollups
-         */
-        this.rollups = null;
+        // fix filter
+        f = this.filter;
 
-        /**
-         * Whether or not to load optional dependencies for 
-         * the requested modules
-         * @property loadOptional
-         * @type boolean
-         * @default false
-         */
-        this.loadOptional = false;
+        if (L.isString(f)) {
+            f = f.toUpperCase();
+            this.filterName = f;
+            this.filter = this.FILTERS[f];
+        }
 
-        /**
-         * All of the derived dependencies in sorted order, which
-         * will be populated when either calculate() or insert()
-         * is called
-         * @property sorted
-         * @type string[]
-         */
-        this.sorted = [];
+    },
 
-        /**
-         * Set when beginning to compute the dependency tree. 
-         * Composed of what YUI reports to be loaded combined
-         * with what has been loaded by the tool
-         * @propery loaded
-         * @type {string: boolean}
-         */
-        this.loaded = {};
+    /**
+     * Returns the skin module name for the specified skin name.  If a
+     * module name is supplied, the returned skin module name is 
+     * specific to the module passed in.
+     * @method formatSkin
+     * @param skin {string} the name of the skin
+     * @param mod {string} optional: the name of a module to skin
+     * @return {string} the full skin module name
+     */
+    formatSkin: function(skin, mod) {
+        var s = this.SKIN_PREFIX + skin;
+        if (mod) {
+            s = s + "-" + mod;
+        }
 
-        /**
-         * A list of modules to attach to the YUI instance when complete.
-         * If not supplied, the sorted list of dependencies are applied.
-         * @property attaching
-         */
-        this.attaching = null;
+        return s;
+    },
 
-        /**
-         * Flag to indicate the dependency tree needs to be recomputed
-         * if insert is called again.
-         * @property dirty
-         * @type boolean
-         * @default true
-         */
-        this.dirty = true;
+    /**
+     * Reverses <code>formatSkin</code>, providing the skin name and
+     * module name if the string matches the pattern for skins.
+     * @method parseSkin
+     * @param mod {string} the module name to parse
+     * @return {skin: string, module: string} the parsed skin name 
+     * and module name, or null if the supplied string does not match
+     * the skin pattern
+     */
+    parseSkin: function(mod) {
+        
+        if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+            var a = mod.split("-");
+            return {skin: a[1], module: a[2]};
+        } 
 
-        /**
-         * List of modules inserted by the utility
-         * @property inserted
-         * @type {string: boolean}
-         */
-        this.inserted = {};
+        return null;
+    },
 
-        this.skipped = {};
+    /**
+     * Adds the skin def to the module info
+     * @method _addSkin
+     * @param skin {string} the name of the skin
+     * @param mod {string} the name of the module
+     * @param parent {string} parent module if this is a skin of a
+     * submodule or plugin
+     * @return {string} the module name for the skin
+     * @private
+     */
+    _addSkin: function(skin, mod, parent) {
 
+        var name = this.formatSkin(skin), 
+            info = this.moduleInfo,
+            sinf = this.skin, 
+            ext  = info[mod] && info[mod].ext,
+            mdef, pkg;
 
-        // Y.on('yui:load', this.loadNext, this);
+        /*
+        // Add a module definition for the skin rollup css
+        if (!info[name]) {
+            this.addModule({
+                'name': name,
+                'type': 'css',
+                'path': sinf.base + skin + '/' + sinf.path,
+                //'supersedes': '*',
+                'after': sinf.after,
+                'rollup': sinf.rollup,
+                'ext': ext
+            });
+        }
+        */
 
-        this._config(o);
-
-    };
-
-    Y.Loader.prototype = {
-
-        FILTERS: {
-            RAW: { 
-                'searchExp': "-min\\.js", 
-                'replaceStr': ".js"
-            },
-            DEBUG: { 
-                'searchExp': "-min\\.js", 
-                'replaceStr': "-debug.js"
-            }
-        },
-
-        SKIN_PREFIX: "skin-",
-
-        _config: function(o) {
-
-            // apply config values
-            if (o) {
-                for (var i in o) {
-                    if (o.hasOwnProperty(i)) {
-                        var val = o[i];
-                        if (i == 'require') {
-                            this.require(val);
-                        } else if (i == 'modules') {
-
-                            // add a hash of module definitions
-                            for (var j in val) {
-                                if (val.hasOwnProperty(j)) {
-                                    this.addModule(val[j], j);
-                                }
-                            }
-
-                        } else {
-                            this[i] = val;
-                        }
-                    }
-                }
-            }
-
-            // fix filter
-            var f = this.filter;
-
-            if (L.isString(f)) {
-                f = f.toUpperCase();
-                this.filterName = f;
-                this.filter = this.FILTERS[f];
-            }
-
-        },
-
-        /**
-         * Returns the skin module name for the specified skin name.  If a
-         * module name is supplied, the returned skin module name is 
-         * specific to the module passed in.
-         * @method formatSkin
-         * @param skin {string} the name of the skin
-         * @param mod {string} optional: the name of a module to skin
-         * @return {string} the full skin module name
-         */
-        formatSkin: function(skin, mod) {
-            var s = this.SKIN_PREFIX + skin;
-            if (mod) {
-                s = s + "-" + mod;
-            }
-
-            return s;
-        },
-
-        /**
-         * Reverses <code>formatSkin</code>, providing the skin name and
-         * module name if the string matches the pattern for skins.
-         * @method parseSkin
-         * @param mod {string} the module name to parse
-         * @return {skin: string, module: string} the parsed skin name 
-         * and module name, or null if the supplied string does not match
-         * the skin pattern
-         */
-        parseSkin: function(mod) {
-            
-            if (mod.indexOf(this.SKIN_PREFIX) === 0) {
-                var a = mod.split("-");
-                return {skin: a[1], module: a[2]};
-            } 
-
-            return null;
-        },
-
-        /**
-         * Adds the skin def to the module info
-         * @method _addSkin
-         * @param skin {string} the name of the skin
-         * @param mod {string} the name of the module
-         * @param parent {string} parent module if this is a skin of a
-         * submodule or plugin
-         * @return {string} the module name for the skin
-         * @private
-         */
-        _addSkin: function(skin, mod, parent) {
-
-            var name = this.formatSkin(skin), info = this.moduleInfo,
-                sinf = this.skin, ext = info[mod] && info[mod].ext;
-
-            /*
-            // Add a module definition for the skin rollup css
+        // Add a module definition for the module-specific skin css
+        if (mod) {
+            name = this.formatSkin(skin, mod);
             if (!info[name]) {
+                mdef = info[mod];
+                pkg = mdef.pkg || mod;
                 this.addModule({
                     'name': name,
                     'type': 'css',
-                    'path': sinf.base + skin + '/' + sinf.path,
-                    //'supersedes': '*',
                     'after': sinf.after,
-                    'rollup': sinf.rollup,
+                    'path': (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
                     'ext': ext
                 });
             }
-            */
+        }
 
-            // Add a module definition for the module-specific skin css
-            if (mod) {
-                name = this.formatSkin(skin, mod);
-                if (!info[name]) {
-                    var mdef = info[mod], pkg = mdef.pkg || mod;
-                    this.addModule({
-                        'name': name,
-                        'type': 'css',
-                        'after': sinf.after,
-                        'path': (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
-                        'ext': ext
-                    });
-                }
-            }
+        return name;
+    },
 
-            return name;
-        },
+    /** Add a new module to the component metadata.         
+     * <dl>
+     *     <dt>name:</dt>       <dd>required, the component name</dd>
+     *     <dt>type:</dt>       <dd>required, the component type (js or css)</dd>
+     *     <dt>path:</dt>       <dd>required, the path to the script from "base"</dd>
+     *     <dt>requires:</dt>   <dd>array of modules required by this component</dd>
+     *     <dt>optional:</dt>   <dd>array of optional modules for this component</dd>
+     *     <dt>supersedes:</dt> <dd>array of the modules this component replaces</dd>
+     *     <dt>after:</dt>      <dd>array of modules the components which, if present, should be sorted above this one</dd>
+     *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
+     *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
+     *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
+     *     <dt>submodules:</dt> <dd>a has of submodules</dd>
+     * </dl>
+     * @method addModule
+     * @param o An object containing the module data
+     * @param name the module name (optional), required if not in the module data
+     * @return {boolean} true if the module was added, false if 
+     * the object passed in did not provide all required attributes
+     */
+    addModule: function(o, name) {
 
-        /** Add a new module to the component metadata.         
-         * <dl>
-         *     <dt>name:</dt>       <dd>required, the component name</dd>
-         *     <dt>type:</dt>       <dd>required, the component type (js or css)</dd>
-         *     <dt>path:</dt>       <dd>required, the path to the script from "base"</dd>
-         *     <dt>requires:</dt>   <dd>array of modules required by this component</dd>
-         *     <dt>optional:</dt>   <dd>array of optional modules for this component</dd>
-         *     <dt>supersedes:</dt> <dd>array of the modules this component replaces</dd>
-         *     <dt>after:</dt>      <dd>array of modules the components which, if present, should be sorted above this one</dd>
-         *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
-         *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
-         *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
-         *     <dt>submodules:</dt> <dd>a has of submodules</dd>
-         * </dl>
-         * @method addModule
-         * @param o An object containing the module data
-         * @param name the module name (optional), required if not in the module data
-         * @return {boolean} true if the module was added, false if 
-         * the object passed in did not provide all required attributes
-         */
-        addModule: function(o, name) {
+        name = name || o.name;
+        o.name = name;
 
-            name = name || o.name;
-            o.name = name;
+        if (!o || !o.name) {
+            return false;
+        }
 
-            if (!o || !o.name) {
-                return false;
-            }
+        if (!o.type) {
+            o.type = JS;
+        }
 
-            if (!o.type) {
-                o.type = JS;
-            }
+        if (!o.path && !o.fullpath) {
+            // o.path = name + "/" + name + "-min." + o.type;
+            o.path = _path(name, name, o.type);
+        }
 
-            if (!o.path && !o.fullpath) {
-                // o.path = name + "/" + name + "-min." + o.type;
-                o.path = _path(name, name, o.type);
-            }
-
-            o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-            o.requires = o.requires || [];
+        o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
+        o.requires = o.requires || [];
 
 
-            this.moduleInfo[name] = o;
+        this.moduleInfo[name] = o;
 
-            // Handle submodule logic
-            var subs = o.submodules, i;
-            if (subs) {
-                var sup = [], l=0;
+        // Handle submodule logic
+        var subs = o.submodules, i, l, sup, s, smod, plugins, plug;
+        if (subs) {
+            sup = []; 
+            l   = 0;
 
-                for (i in subs) {
-                    if (subs.hasOwnProperty(i)) {
-                        var s = subs[i];
-                        s.path = _path(name, i, o.type);
-                        this.addModule(s, i);
-                        sup.push(i);
+            for (i in subs) {
+                if (subs.hasOwnProperty(i)) {
+                    s = subs[i];
+                    s.path = _path(name, i, o.type);
+                    this.addModule(s, i);
+                    sup.push(i);
 
-                        if (o.skinnable) {
-                            var smod = this._addSkin(this.skin.defaultSkin, i, name);
-                            sup.push(smod.name);
-                        }
-
-                        l++;
+                    if (o.skinnable) {
+                        smod = this._addSkin(this.skin.defaultSkin, i, name);
+                        sup.push(smod.name);
                     }
-                }
 
-                o.supersedes = sup;
-                o.rollup = Math.min(l-1, 4);
+                    l++;
+                }
             }
 
-            var plugins = o.plugins;
-            if (plugins) {
-                for (i in plugins) {
-                    if (plugins.hasOwnProperty(i)) {
-                        var plug = plugins[i];
-                        plug.path = _path(name, i, o.type);
-                        plug.requires = plug.requires || [];
-                        plug.requires.push(name);
-                        this.addModule(plug, i);
-                        if (o.skinnable) {
-                            this._addSkin(this.skin.defaultSkin, i, name);
-                        }
+            o.supersedes = sup;
+            o.rollup = Math.min(l-1, 4);
+        }
+
+        plugins = o.plugins;
+        if (plugins) {
+            for (i in plugins) {
+                if (plugins.hasOwnProperty(i)) {
+                    plug = plugins[i];
+                    plug.path = _path(name, i, o.type);
+                    plug.requires = plug.requires || [];
+                    plug.requires.push(name);
+                    this.addModule(plug, i);
+                    if (o.skinnable) {
+                        this._addSkin(this.skin.defaultSkin, i, name);
                     }
                 }
             }
+        }
 
-            this.dirty = true;
+        this.dirty = true;
 
-            return o;
-        },
+        return o;
+    },
 
-        /**
-         * Add a requirement for one or more module
-         * @method require
-         * @param what {string[] | string*} the modules to load
-         */
-        require: function(what) {
-            var a = (typeof what === "string") ? arguments : what;
-            this.dirty = true;
-            Y.mix(this.required, Y.Array.hash(a));
-        },
+    /**
+     * Add a requirement for one or more module
+     * @method require
+     * @param what {string[] | string*} the modules to load
+     */
+    require: function(what) {
+        var a = (typeof what === "string") ? arguments : what;
+        this.dirty = true;
+        Y.mix(this.required, Y.Array.hash(a));
+    },
 
-        /**
-         * Returns an object containing properties for all modules required
-         * in order to load the requested module
-         * @method getRequires
-         * @param mod The module definition from moduleInfo
-         */
-        getRequires: function(mod) {
+    /**
+     * Returns an object containing properties for all modules required
+     * in order to load the requested module
+     * @method getRequires
+     * @param mod The module definition from moduleInfo
+     */
+    getRequires: function(mod) {
 
-            if (!mod) {
-                return [];
+        if (!mod) {
+            return [];
+        }
+
+        if (!this.dirty && mod.expanded) {
+            return mod.expanded;
+        }
+
+        var i, d=[], r=mod.requires, o=mod.optional, 
+            info=this.moduleInfo, m, j, add;
+
+        for (i=0; i<r.length; i=i+1) {
+            d.push(r[i]);
+            m = this.getModule(r[i]);
+            add = this.getRequires(m);
+            for (j=0;j<add.length;j=j+1) {
+                d.push(add[j]);
             }
+        }
 
-            if (!this.dirty && mod.expanded) {
-                return mod.expanded;
-            }
-
-            var i, d=[], r=mod.requires, o=mod.optional, 
-                info=this.moduleInfo, m, j, add;
-
+        // get the requirements from superseded modules, if any
+        r=mod.supersedes;
+        if (r) {
             for (i=0; i<r.length; i=i+1) {
                 d.push(r[i]);
                 m = this.getModule(r[i]);
@@ -3179,60 +3238,39 @@ Y.Env.meta = META;
                     d.push(add[j]);
                 }
             }
+        }
 
-            // get the requirements from superseded modules, if any
-            r=mod.supersedes;
-            if (r) {
-                for (i=0; i<r.length; i=i+1) {
-                    d.push(r[i]);
-                    m = this.getModule(r[i]);
-                    add = this.getRequires(m);
-                    for (j=0;j<add.length;j=j+1) {
-                        d.push(add[j]);
-                    }
+        if (o && this.loadOptional) {
+            for (i=0; i<o.length; i=i+1) {
+                d.push(o[i]);
+                add = this.getRequires(info[o[i]]);
+                for (j=0;j<add.length;j=j+1) {
+                    d.push(add[j]);
                 }
             }
+        }
 
-            if (o && this.loadOptional) {
-                for (i=0; i<o.length; i=i+1) {
-                    d.push(o[i]);
-                    add = this.getRequires(info[o[i]]);
-                    for (j=0;j<add.length;j=j+1) {
-                        d.push(add[j]);
-                    }
-                }
-            }
-
-            mod.expanded = Y.Object.keys(Y.Array.hash(d));
+        mod.expanded = Y.Object.keys(Y.Array.hash(d));
 
 
-            return mod.expanded;
-        },
+        return mod.expanded;
+    },
 
 
-        /**
-         * Returns an object literal of the modules the supplied module satisfies
-         * @method getProvides
-         * @param name{string} The name of the module
-         * @param notMe {string} don't add this module name, only include superseded modules
-         * @return what this module provides
-         */
-        getProvides: function(name, notMe) {
-            var addMe = !(notMe), ckey = (addMe) ? PROV : SUPER,
-                m = this.getModule(name), o = {};
-
-            if (!m) {
-                return o;
-            }
-
-            if (m[ckey]) {
-                return m[ckey];
-            }
-
-            var s = m.supersedes, done={}, me = this;
+    /**
+     * Returns an object literal of the modules the supplied module satisfies
+     * @method getProvides
+     * @param name{string} The name of the module
+     * @param notMe {string} don't add this module name, only include superseded modules
+     * @return what this module provides
+     */
+    getProvides: function(name, notMe) {
+        var addMe = !(notMe), ckey = (addMe) ? PROV : SUPER,
+            m = this.getModule(name), o = {},
+            s, done, me, i,
 
             // use worker to break cycles
-            var add = function(mm) {
+            add = function(mm) {
                 if (!done[mm]) {
                     done[mm] = true;
                     // we always want the return value normal behavior 
@@ -3244,369 +3282,384 @@ Y.Env.meta = META;
                 // }
             };
 
-            // calculate superseded modules
-            if (s) {
-                for (var i=0; i<s.length; i=i+1) {
-                    add(s[i]);
-                }
-            }
+        if (!m) {
+            return o;
+        }
 
-            // supersedes cache
-            m[SUPER] = o;
-            // provides cache
-            m[PROV] = Y.merge(o);
-            m[PROV][name] = true;
-
-
+        if (m[ckey]) {
             return m[ckey];
-        },
+        }
+
+        s    = m.supersedes;
+        done = {};
+        me   = this;
 
 
-        /**
-         * Calculates the dependency tree, the result is stored in the sorted 
-         * property
-         * @method calculate
-         * @param o optional options object
-         */
-        calculate: function(o) {
-            if (o || this.dirty) {
-                this._config(o);
-                this._setup();
-                this._explode();
-                if (this.allowRollup) {
-                    this._rollup();
-                }
-                this._reduce();
-                this._sort();
-
-
-                this.dirty = false;
+        // calculate superseded modules
+        if (s) {
+            for (i=0; i<s.length; i=i+1) {
+                add(s[i]);
             }
-        },
+        }
 
-        /**
-         * Investigates the current YUI configuration on the page.  By default,
-         * modules already detected will not be loaded again unless a force
-         * option is encountered.  Called by calculate()
-         * @method _setup
-         * @private
-         */
-        _setup: function() {
+        // supersedes cache
+        m[SUPER] = o;
+        // provides cache
+        m[PROV] = Y.merge(o);
+        m[PROV][name] = true;
 
-            var info = this.moduleInfo, name, i, j;
 
-            // Create skin modules
-            for (name in info) {
-                if (info.hasOwnProperty(name)) {
-                    var m = info[name];
-                    if (m && m.skinnable) {
-                        var o=this.skin.overrides, smod;
-                        if (o && o[name]) {
-                            for (i=0; i<o[name].length; i=i+1) {
-                                smod = this._addSkin(o[name][i], name);
-                            }
-                        } else {
-                            smod = this._addSkin(this.skin.defaultSkin, name);
+        return m[ckey];
+    },
+
+
+    /**
+     * Calculates the dependency tree, the result is stored in the sorted 
+     * property
+     * @method calculate
+     * @param o optional options object
+     */
+    calculate: function(o) {
+        if (o || this.dirty) {
+            this._config(o);
+            this._setup();
+            this._explode();
+            if (this.allowRollup) {
+                this._rollup();
+            }
+            this._reduce();
+            this._sort();
+
+
+            this.dirty = false;
+        }
+    },
+
+    /**
+     * Investigates the current YUI configuration on the page.  By default,
+     * modules already detected will not be loaded again unless a force
+     * option is encountered.  Called by calculate()
+     * @method _setup
+     * @private
+     */
+    _setup: function() {
+
+        var info = this.moduleInfo, name, i, j, m, o, l, smod;
+
+        // Create skin modules
+        for (name in info) {
+            if (info.hasOwnProperty(name)) {
+                m = info[name];
+                if (m && m.skinnable) {
+                    o = this.skin.overrides;
+                    if (o && o[name]) {
+                        for (i=0; i<o[name].length; i=i+1) {
+                            smod = this._addSkin(o[name][i], name);
                         }
-
-                        m.requires.push(smod);
+                    } else {
+                        smod = this._addSkin(this.skin.defaultSkin, name);
                     }
+
+                    m.requires.push(smod);
                 }
             }
+        }
 
-            var l = Y.merge(this.inserted); // shallow clone
+        l = Y.merge(this.inserted); // shallow clone
 
-            // available modules
-            if (!this.ignoreRegistered) {
-                Y.mix(l, YUI.Env.mods);
-            }
-            
-
-            // add the ignore list to the list of loaded packages
-            if (this.ignore) {
-                // OU.appendArray(l, this.ignore);
-                Y.mix(l, Y.Array.hash(this.ignore));
-            }
-
-            // expand the list to include superseded modules
-            for (j in l) {
-                if (l.hasOwnProperty(j)) {
-                    Y.mix(l, this.getProvides(j));
-                }
-            }
-
-            // remove modules on the force list from the loaded list
-            if (this.force) {
-                for (i=0; i<this.force.length; i=i+1) {
-                    if (this.force[i] in l) {
-                        delete l[this.force[i]];
-                    }
-                }
-            }
-
-
-            this.loaded = l;
-
-        },
+        // available modules
+        if (!this.ignoreRegistered) {
+            Y.mix(l, YUI.Env.mods);
+        }
         
 
-        /**
-         * Inspects the required modules list looking for additional 
-         * dependencies.  Expands the required list to include all 
-         * required modules.  Called by calculate()
-         * @method _explode
-         * @private
-         */
-        _explode: function() {
+        // add the ignore list to the list of loaded packages
+        if (this.ignore) {
+            // OU.appendArray(l, this.ignore);
+            Y.mix(l, Y.Array.hash(this.ignore));
+        }
 
-            var r=this.required, i, mod;
+        // expand the list to include superseded modules
+        for (j in l) {
+            if (l.hasOwnProperty(j)) {
+                Y.mix(l, this.getProvides(j));
+            }
+        }
 
-            for (i in r) {
-                if (r.hasOwnProperty(i)) {
-                    mod = this.getModule(i);
+        // remove modules on the force list from the loaded list
+        if (this.force) {
+            for (i=0; i<this.force.length; i=i+1) {
+                if (this.force[i] in l) {
+                    delete l[this.force[i]];
+                }
+            }
+        }
 
-                    var req = this.getRequires(mod);
 
-                    if (req) {
-                        Y.mix(r, Y.Array.hash(req));
+        this.loaded = l;
+
+    },
+    
+
+    /**
+     * Inspects the required modules list looking for additional 
+     * dependencies.  Expands the required list to include all 
+     * required modules.  Called by calculate()
+     * @method _explode
+     * @private
+     */
+    _explode: function() {
+
+        var r=this.required, i, mod, req;
+
+        for (i in r) {
+            if (r.hasOwnProperty(i)) {
+                mod = this.getModule(i);
+
+                req = this.getRequires(mod);
+
+                if (req) {
+                    Y.mix(r, Y.Array.hash(req));
+                }
+            }
+        }
+    },
+
+    getModule: function(name) {
+
+        var m = this.moduleInfo[name];
+
+        // create the default module
+        // if (!m) {
+            // m = this.addModule({ext: false}, name);
+        // }
+
+        return m;
+    },
+
+    /**
+     * Look for rollup packages to determine if all of the modules a
+     * rollup supersedes are required.  If so, include the rollup to
+     * help reduce the total number of connections required.  Called
+     * by calculate()
+     * @method _rollup
+     * @private
+     */
+    _rollup: function() {
+        var i, j, m, s, rollups={}, r=this.required, roll,
+            info = this.moduleInfo, rolled, c;
+
+        // find and cache rollup modules
+        if (this.dirty || !this.rollups) {
+            for (i in info) {
+                if (info.hasOwnProperty(i)) {
+                    m = this.getModule(i);
+                    // if (m && m.rollup && m.supersedes) {
+                    if (m && m.rollup) {
+                        rollups[i] = m;
                     }
                 }
             }
-        },
 
-        getModule: function(name) {
+            this.rollups = rollups;
+        }
 
-            var m = this.moduleInfo[name];
+        // make as many passes as needed to pick up rollup rollups
+        for (;;) {
+            rolled = false;
 
-            // create the default module
-            // if (!m) {
-                // m = this.addModule({ext: false}, name);
-            // }
+            // go through the rollup candidates
+            for (i in rollups) { 
 
-            return m;
-        },
+                if (rollups.hasOwnProperty(i)) {
 
-        /**
-         * Look for rollup packages to determine if all of the modules a
-         * rollup supersedes are required.  If so, include the rollup to
-         * help reduce the total number of connections required.  Called
-         * by calculate()
-         * @method _rollup
-         * @private
-         */
-        _rollup: function() {
-            var i, j, m, s, rollups={}, r=this.required, roll,
-                info = this.moduleInfo;
+                    // there can be only one
+                    if (!r[i] && !this.loaded[i]) {
+                        m = this.getModule(i); 
+                        s = m.supersedes || []; 
+                        roll = false;
 
-            // find and cache rollup modules
-            if (this.dirty || !this.rollups) {
-                for (i in info) {
-                    if (info.hasOwnProperty(i)) {
-                        m = this.getModule(i);
-                        // if (m && m.rollup && m.supersedes) {
-                        if (m && m.rollup) {
-                            rollups[i] = m;
+                        // @TODO remove continue
+                        if (!m.rollup) {
+                            continue;
                         }
-                    }
-                }
 
-                this.rollups = rollups;
-            }
+                        c = 0;
 
-            // make as many passes as needed to pick up rollup rollups
-            for (;;) {
-                var rolled = false;
+                        // check the threshold
+                        for (j=0;j<s.length;j=j+1) {
 
-                // go through the rollup candidates
-                for (i in rollups) { 
-
-                    if (rollups.hasOwnProperty(i)) {
-
-                        // there can be only one
-                        if (!r[i] && !this.loaded[i]) {
-                            m = this.getModule(i); 
-                            s = m.supersedes || []; 
-                            roll = false;
-
-                            // @TODO remove continue
-                            if (!m.rollup) {
-                                continue;
-                            }
-
-                            var c=0;
-
-                            // check the threshold
-                            for (j=0;j<s.length;j=j+1) {
-
-                                // if the superseded module is loaded, we can't load the rollup
-                                // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                                if (this.loaded[s[j]]) {
-                                    roll = false;
+                            // if the superseded module is loaded, we can't load the rollup
+                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                            if (this.loaded[s[j]]) {
+                                roll = false;
+                                break;
+                            // increment the counter if this module is required.  if we are
+                            // beyond the rollup threshold, we will use the rollup module
+                            } else if (r[s[j]]) {
+                                c++;
+                                roll = (c >= m.rollup);
+                                if (roll) {
                                     break;
-                                // increment the counter if this module is required.  if we are
-                                // beyond the rollup threshold, we will use the rollup module
-                                } else if (r[s[j]]) {
-                                    c++;
-                                    roll = (c >= m.rollup);
-                                    if (roll) {
-                                        break;
-                                    }
                                 }
                             }
+                        }
 
-                            if (roll) {
-                                // add the rollup
-                                r[i] = true;
-                                rolled = true;
+                        if (roll) {
+                            // add the rollup
+                            r[i] = true;
+                            rolled = true;
 
-                                // expand the rollup's dependencies
-                                this.getRequires(m);
-                            }
+                            // expand the rollup's dependencies
+                            this.getRequires(m);
                         }
                     }
                 }
-
-                // if we made it here w/o rolling up something, we are done
-                if (!rolled) {
-                    break;
-                }
             }
-        },
 
-        /**
-         * Remove superceded modules and loaded modules.  Called by
-         * calculate() after we have the mega list of all dependencies
-         * @method _reduce
-         * @private
-         */
-        _reduce: function() {
+            // if we made it here w/o rolling up something, we are done
+            if (!rolled) {
+                break;
+            }
+        }
+    },
 
-            var i, j, s, m, r=this.required;
-            for (i in r) {
+    /**
+     * Remove superceded modules and loaded modules.  Called by
+     * calculate() after we have the mega list of all dependencies
+     * @method _reduce
+     * @private
+     */
+    _reduce: function() {
 
-                if (r.hasOwnProperty(i)) {
+        var i, j, s, m, r=this.required;
+        for (i in r) {
 
-                    // remove if already loaded
-                    if (i in this.loaded) { 
-                        delete r[i];
+            if (r.hasOwnProperty(i)) {
 
-                    // remove anything this module supersedes
-                    } else {
+                // remove if already loaded
+                if (i in this.loaded) { 
+                    delete r[i];
 
-                         m = this.getModule(i);
-                         s = m && m.supersedes;
-                         if (s) {
-                             for (j=0; j<s.length; j=j+1) {
-                                 if (s[j] in r) {
-                                     delete r[s[j]];
-                                 }
+                // remove anything this module supersedes
+                } else {
+
+                     m = this.getModule(i);
+                     s = m && m.supersedes;
+                     if (s) {
+                         for (j=0; j<s.length; j=j+1) {
+                             if (s[j] in r) {
+                                 delete r[s[j]];
                              }
                          }
-                    }
+                     }
                 }
             }
-        },
+        }
+    },
 
-        _attach: function() {
+    _attach: function() {
 
-            // this is the full list of items the YUI needs attached,
-            // which is needed if some dependencies are already on
-            // the page without their dependencies.
-            if (this.attaching) {
-                Y._attach(this.attaching);
-            } else {
-                Y._attach(this.sorted);
+        // this is the full list of items the YUI needs attached,
+        // which is needed if some dependencies are already on
+        // the page without their dependencies.
+        if (this.attaching) {
+            Y._attach(this.attaching);
+        } else {
+            Y._attach(this.sorted);
+        }
+
+        this._pushEvents();
+
+    },
+
+    _onSuccess: function() {
+
+        this._attach();
+
+        var skipped = this.skipped, i, f;
+
+        for (i in skipped) {
+            if (skipped.hasOwnProperty(i)) {
+                delete this.inserted[i];
             }
+        }
 
-            this._pushEvents();
+        this.skipped = {};
 
-        },
+        // this.fire('success', {
+        //     data: this.data
+        // });
 
-        _onSuccess: function() {
+        f = this.onSuccess;
 
-            this._attach();
+        if (f) {
+            f.call(this.context, {
+                msg: 'success',
+                data: this.data,
+                success: true
+            });
+        }
 
-            var skipped = this.skipped;
+    },
 
-            for (var i in skipped) {
-                if (skipped.hasOwnProperty(i)) {
-                    delete this.inserted[i];
-                }
-            }
+    _onFailure: function(msg) {
+        this._attach();
+        // this.fire('failure', {
+        //     msg: 'operation failed: ' + msg,
+        //     data: this.data
+        // });
 
-            this.skipped = {};
+        var f = this.onFailure;
+        if (f) {
+            f.call(this.context, {
+                msg: 'failure: ' + msg,
+                data: this.data,
+                success: false
+            });
+        }
+    },
 
-            // this.fire('success', {
-            //     data: this.data
-            // });
+    _onTimeout: function() {
+        this._attach();
 
-            var f = this.onSuccess;
-            if (f) {
-                f.call(this.context, {
-                    msg: 'success',
-                    data: this.data,
-                    success: true
-                });
-            }
+        // this.fire('timeout', {
+        //     data: this.data
+        // });
 
-        },
+        var f = this.onTimeout;
+        if (f) {
+            f.call(this.context, {
+                msg: 'timeout',
+                data: this.data,
+                success: false
+            });
+        }
+    },
+    
+    /**
+     * Sorts the dependency tree.  The last step of calculate()
+     * @method _sort
+     * @private
+     */
+    _sort: function() {
+        // create an indexed list
+        var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
+            p, l, a, b, j, k, moved,
 
-        _onFailure: function(msg) {
-            this._attach();
-            // this.fire('failure', {
-            //     msg: 'operation failed: ' + msg,
-            //     data: this.data
-            // });
+        // returns true if b is not loaded, and is required
+        // directly or by means of modules it supersedes.
+            requires = function(aa, bb) {
 
-            var f = this.onFailure;
-            if (f) {
-                f.call(this.context, {
-                    msg: 'failure: ' + msg,
-                    data: this.data,
-                    success: false
-                });
-            }
-        },
-
-        _onTimeout: function() {
-            this._attach();
-
-            // this.fire('timeout', {
-            //     data: this.data
-            // });
-
-            var f = this.onTimeout;
-            if (f) {
-                f.call(this.context, {
-                    msg: 'timeout',
-                    data: this.data,
-                    success: false
-                });
-            }
-        },
-        
-        /**
-         * Sorts the dependency tree.  The last step of calculate()
-         * @method _sort
-         * @private
-         */
-        _sort: function() {
-            // create an indexed list
-            var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
-                me = this;
-
-            // returns true if b is not loaded, and is required
-            // directly or by means of modules it supersedes.
-            var requires = function(aa, bb) {
-
-                var mm=info[aa];
+                var mm = info[aa], ii, rr, after, other, ss;
 
                 if (loaded[bb] || !mm) {
                     return false;
                 }
 
-                var ii, rr = mm.expanded, 
-                    after = mm.after, other=info[bb];
+                rr    = mm.expanded;
+                after = mm.after; 
+                other = info[bb];
 
                 // check if this module requires the other directly
                 if (rr && Y.Array.indexOf(rr, bb) > -1) {
@@ -3619,7 +3672,7 @@ Y.Env.meta = META;
                 }
 
                 // check if this module requires one the other supersedes
-                var ss=info[bb] && info[bb].supersedes;
+                ss = info[bb] && info[bb].supersedes;
                 if (ss) {
                     for (ii=0; ii<ss.length; ii=ii+1) {
                         if (requires(aa, ss[ii])) {
@@ -3636,353 +3689,358 @@ Y.Env.meta = META;
                 return false;
             };
 
-            // pointer to the first unsorted item
-            var p=0; 
+        // pointer to the first unsorted item
+        p = 0; 
 
-            // keep going until we make a pass without moving anything
-            for (;;) {
-               
-                var l=s.length, a, b, j, k, moved=false;
+        // keep going until we make a pass without moving anything
+        for (;;) {
+           
+            l     = s.length; 
+            moved = false;
 
-                // start the loop after items that are already sorted
-                for (j=p; j<l; j=j+1) {
+            // start the loop after items that are already sorted
+            for (j=p; j<l; j=j+1) {
 
-                    // check the next module on the list to see if its
-                    // dependencies have been met
-                    a = s[j];
+                // check the next module on the list to see if its
+                // dependencies have been met
+                a = s[j];
 
-                    // check everything below current item and move if we
-                    // find a requirement for the current item
-                    for (k=j+1; k<l; k=k+1) {
-                        if (requires(a, s[k])) {
+                // check everything below current item and move if we
+                // find a requirement for the current item
+                for (k=j+1; k<l; k=k+1) {
+                    if (requires(a, s[k])) {
 
-                            // extract the dependency so we can move it up
-                            b = s.splice(k, 1);
+                        // extract the dependency so we can move it up
+                        b = s.splice(k, 1);
 
-                            // insert the dependency above the item that 
-                            // requires it
-                            s.splice(j, 0, b[0]);
+                        // insert the dependency above the item that 
+                        // requires it
+                        s.splice(j, 0, b[0]);
 
-                            moved = true;
-                            break;
-                        }
-                    }
-
-                    // jump out of loop if we moved something
-                    if (moved) {
+                        moved = true;
                         break;
-                    // this item is sorted, move our pointer and keep going
-                    } else {
-                        p = p + 1;
                     }
                 }
 
-                // when we make it here and moved is false, we are 
-                // finished sorting
-                if (!moved) {
+                // jump out of loop if we moved something
+                if (moved) {
                     break;
-                }
-
-            }
-
-            this.sorted = s;
-        },
-
-        /**
-         * inserts the requested modules and their dependencies.  
-         * <code>type</code> can be "js" or "css".  Both script and 
-         * css are inserted if type is not provided.
-         * @method insert
-         * @param o optional options object
-         * @param type {string} the type of dependency to insert
-         */
-        insert: function(o, type) {
-
-
-            // build the dependency list
-            this.calculate(o);
-
-            if (!type) {
-                var self = this;
-                this._internalCallback = function() {
-                            self._internalCallback = null;
-                            self.insert(null, JS);
-                        };
-                this.insert(null, CSS);
-                return;
-            }
-
-            // set a flag to indicate the load has started
-            this._loading = true;
-
-            // flag to indicate we are done with the combo service
-            // and any additional files will need to be loaded
-            // individually
-            this._combineComplete = {};
-
-            // keep the loadType (js, css or undefined) cached
-            this.loadType = type;
-
-            // start the load
-            this.loadNext();
-
-        },
-
-        /**
-         * Executed every time a module is loaded, and if we are in a load
-         * cycle, we attempt to load the next script.  Public so that it
-         * is possible to call this if using a method other than
-         * Y.register to determine when scripts are fully loaded
-         * @method loadNext
-         * @param mname {string} optional the name of the module that has
-         * been loaded (which is usually why it is time to load the next
-         * one)
-         */
-        loadNext: function(mname) {
-
-            // It is possible that this function is executed due to something
-            // else one the page loading a YUI module.  Only react when we
-            // are actively loading something
-            if (!this._loading) {
-                return;
-            }
-
-            var s, len, i, m, url, self=this, type=this.loadType, fn;
-
-            // @TODO this will need to handle the two phase insert when
-            // CSS support is added
-            if (this.combine && (!this._combineComplete[type])) {
-
-                this._combining = []; 
-                s=this.sorted;
-                len=s.length;
-                url=this.comboBase;
-
-                for (i=0; i<len; i=i+1) {
-                    m = this.getModule(s[i]);
-// @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
-                    // Do not try to combine non-yui JS
-                    if (m && m.type === this.loadType && !m.ext) {
-                        url += this.root + m.path;
-                        if (i < len-1) {
-                            url += '&';
-                        }
-
-                        this._combining.push(s[i]);
-                    }
-                }
-
-                if (this._combining.length) {
-
-
-                    var callback=function(o) {
-                        this._combineComplete[type] = true;
-
-
-                        var c=this._combining, len=c.length, i, m;
-                        for (i=0; i<len; i=i+1) {
-                            this.inserted[c[i]] = true;
-                        }
-
-                        this.loadNext(o.data);
-                    };
-
-                    fn =(type === CSS) ? Y.Get.css : Y.Get.script;
-
-                    // @TODO get rid of the redundant Get code
-                    fn(this._filter(url), {
-                        data: this._loading,
-                        onSuccess: callback,
-                        onFailure: this._onFailure,
-                        onTimeout: this._onTimeout,
-                        insertBefore: this.insertBefore,
-                        charset: this.charset,
-                        timeout: this.timeout,
-                        context: self 
-                    });
-
-                    return;
-
+                // this item is sorted, move our pointer and keep going
                 } else {
-                    this._combineComplete[type] = true;
+                    p = p + 1;
                 }
             }
 
-            if (mname) {
-
-                // if the module that was just loaded isn't what we were expecting,
-                // continue to wait
-                if (mname !== this._loading) {
-                    return;
-                }
-
-
-                // The global handler that is called when each module is loaded
-                // will pass that module name to this function.  Storing this
-                // data to avoid loading the same module multiple times
-                this.inserted[mname] = true;
-
-                // this.fire('progress', {
-                //     name: mname,
-                //     data: this.data
-                // });
-                if (this.onProgress) {
-                    this.onProgress.call(this.context, {
-                            name: mname,
-                            data: this.data
-                        });
-                }
-
-
+            // when we make it here and moved is false, we are 
+            // finished sorting
+            if (!moved) {
+                break;
             }
 
-            s=this.sorted;
-            len=s.length;
-
-            for (i=0; i<len; i=i+1) {
-
-                // this.inserted keeps track of what the loader has loaded.
-                // move on if this item is done.
-                if (s[i] in this.inserted) {
-                    continue;
-                }
-
-                // Because rollups will cause multiple load notifications
-                // from Y, loadNext may be called multiple times for
-                // the same module when loading a rollup.  We can safely
-                // skip the subsequent requests
-                if (s[i] === this._loading) {
-                    return;
-                }
-
-                // log("inserting " + s[i]);
-                m = this.getModule(s[i]);
-
-                if (!m) {
-
-                    var msg = "Undefined module " + s[i] + " skipped";
-                    this.inserted[s[i]] = true;
-                    this.skipped[s[i]] = true;
-                    continue;
-
-                    // this.fire('failure', {
-                        // msg: msg,
-                        // data: this.data
-                    // });
-                }
-
-
-                // The load type is stored to offer the possibility to load
-                // the css separately from the script.
-                if (!type || type === m.type) {
-                    this._loading = s[i];
-
-                    fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
-
-                    var onsuccess=function(o) {
-                            self.loadNext(o.data);
-                        };
-                        
-                    url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
-
-                    fn(url, {
-                        data: s[i],
-                        onSuccess: onsuccess,
-                        insertBefore: this.insertBefore,
-                        charset: this.charset,
-                        onFailure: this._onFailure,
-                        onTimeout: this._onTimeout,
-                        timeout: this.timeout,
-                        context: self 
-                    });
-
-                    return;
-                }
-            }
-
-            // we are finished
-            this._loading = null;
-
-            fn = this._internalCallback;
-
-            // internal callback for loading css first
-            if (fn) {
-                this._internalCallback = null;
-                fn.call(this);
-
-            // } else if (this.onSuccess) {
-            } else {
-                // call Y.use passing this instance. Y will use the sorted
-                // dependency list.
-                this._onSuccess();
-            }
-
-        },
-
-        /**
-         * In IE, the onAvailable/onDOMReady events need help when Event is
-         * loaded dynamically
-         * @method _pushEvents
-         * @param {Function} optional function reference
-         * @private
-         */
-        _pushEvents: function() {
-            if (Y.Event) {
-                Y.Event._load();
-            }
-        },
-
-        /**
-         * Apply filter defined for this instance to a url/path
-         * method _filter
-         * @param u {string} the string to filter
-         * @return {string} the filtered string
-         * @private
-         */
-        _filter: function(u) {
-
-
-            var f = this.filter;
-
-            if (u && f) {
-                var useFilter = true;
-
-                if (this.filterName == "DEBUG") {
-                
-                    var exc = this.logExclude,
-                        inc = this.logInclude;
-                    if (inc && !(name in inc)) {
-                        useFilter = false;
-                    } else if (exc && (name in exc)) {
-                        useFilter = false;
-                    }
-
-                }
-                
-                if (useFilter) {
-                    u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
-                }
-            }
-
-            return u;
-
-        },
-
-        /**
-         * Generates the full url for a module
-         * method _url
-         * @param path {string} the path fragment
-         * @return {string} the full url
-         * @private
-         */
-        _url: function(path, name) {
-            return this._filter((this.base || "") + path);
         }
 
-    };
+        this.sorted = s;
+    },
 
-    // Y.augment(Y.Loader, Y.Event.Target);
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
 
+
+        // build the dependency list
+        this.calculate(o);
+
+        if (!type) {
+            var self = this;
+            this._internalCallback = function() {
+                        self._internalCallback = null;
+                        self.insert(null, JS);
+                    };
+            this.insert(null, CSS);
+            return;
+        }
+
+        // set a flag to indicate the load has started
+        this._loading = true;
+
+        // flag to indicate we are done with the combo service
+        // and any additional files will need to be loaded
+        // individually
+        this._combineComplete = {};
+
+        // keep the loadType (js, css or undefined) cached
+        this.loadType = type;
+
+        // start the load
+        this.loadNext();
+
+    },
+
+    /**
+     * Executed every time a module is loaded, and if we are in a load
+     * cycle, we attempt to load the next script.  Public so that it
+     * is possible to call this if using a method other than
+     * Y.register to determine when scripts are fully loaded
+     * @method loadNext
+     * @param mname {string} optional the name of the module that has
+     * been loaded (which is usually why it is time to load the next
+     * one)
+     */
+    loadNext: function(mname) {
+
+        // It is possible that this function is executed due to something
+        // else one the page loading a YUI module.  Only react when we
+        // are actively loading something
+        if (!this._loading) {
+            return;
+        }
+
+        var s, len, i, m, url, self=this, type=this.loadType, fn, msg,
+            callback=function(o) {
+                this._combineComplete[type] = true;
+
+
+                var c=this._combining, len=c.length, i;
+
+                for (i=0; i<len; i=i+1) {
+                    this.inserted[c[i]] = true;
+                }
+
+                this.loadNext(o.data);
+            },
+            onsuccess=function(o) {
+                self.loadNext(o.data);
+            };
+
+        // @TODO this will need to handle the two phase insert when
+        // CSS support is added
+        if (this.combine && (!this._combineComplete[type])) {
+
+            this._combining = []; 
+            s=this.sorted;
+            len=s.length;
+            url=this.comboBase;
+
+            for (i=0; i<len; i=i+1) {
+                m = this.getModule(s[i]);
+// @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
+                // Do not try to combine non-yui JS
+                if (m && m.type === this.loadType && !m.ext) {
+                    url += this.root + m.path;
+                    if (i < len-1) {
+                        url += '&';
+                    }
+
+                    this._combining.push(s[i]);
+                }
+            }
+
+            if (this._combining.length) {
+
+
+
+                fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+
+                // @TODO get rid of the redundant Get code
+                fn(this._filter(url), {
+                    data: this._loading,
+                    onSuccess: callback,
+                    onFailure: this._onFailure,
+                    onTimeout: this._onTimeout,
+                    insertBefore: this.insertBefore,
+                    charset: this.charset,
+                    timeout: this.timeout,
+                    context: self 
+                });
+
+                return;
+
+            } else {
+                this._combineComplete[type] = true;
+            }
+        }
+
+        if (mname) {
+
+            // if the module that was just loaded isn't what we were expecting,
+            // continue to wait
+            if (mname !== this._loading) {
+                return;
+            }
+
+
+            // The global handler that is called when each module is loaded
+            // will pass that module name to this function.  Storing this
+            // data to avoid loading the same module multiple times
+            this.inserted[mname] = true;
+
+            // this.fire('progress', {
+            //     name: mname,
+            //     data: this.data
+            // });
+            if (this.onProgress) {
+                this.onProgress.call(this.context, {
+                        name: mname,
+                        data: this.data
+                    });
+            }
+
+
+        }
+
+        s=this.sorted;
+        len=s.length;
+
+        for (i=0; i<len; i=i+1) {
+
+            // this.inserted keeps track of what the loader has loaded.
+            // move on if this item is done.
+            if (s[i] in this.inserted) {
+                continue;
+            }
+
+            // Because rollups will cause multiple load notifications
+            // from Y, loadNext may be called multiple times for
+            // the same module when loading a rollup.  We can safely
+            // skip the subsequent requests
+            if (s[i] === this._loading) {
+                return;
+            }
+
+            // log("inserting " + s[i]);
+            m = this.getModule(s[i]);
+
+            if (!m) {
+
+                msg = "Undefined module " + s[i] + " skipped";
+                this.inserted[s[i]] = true;
+                this.skipped[s[i]] = true;
+                continue;
+
+                // this.fire('failure', {
+                    // msg: msg,
+                    // data: this.data
+                // });
+            }
+
+
+            // The load type is stored to offer the possibility to load
+            // the css separately from the script.
+            if (!type || type === m.type) {
+                this._loading = s[i];
+
+                fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+
+                    
+                url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
+
+                fn(url, {
+                    data: s[i],
+                    onSuccess: onsuccess,
+                    insertBefore: this.insertBefore,
+                    charset: this.charset,
+                    onFailure: this._onFailure,
+                    onTimeout: this._onTimeout,
+                    timeout: this.timeout,
+                    context: self 
+                });
+
+                return;
+            }
+        }
+
+        // we are finished
+        this._loading = null;
+
+        fn = this._internalCallback;
+
+        // internal callback for loading css first
+        if (fn) {
+            this._internalCallback = null;
+            fn.call(this);
+
+        // } else if (this.onSuccess) {
+        } else {
+            // call Y.use passing this instance. Y will use the sorted
+            // dependency list.
+            this._onSuccess();
+        }
+
+    },
+
+    /**
+     * In IE, the onAvailable/onDOMReady events need help when Event is
+     * loaded dynamically
+     * @method _pushEvents
+     * @param {Function} optional function reference
+     * @private
+     */
+    _pushEvents: function() {
+        if (Y.Event) {
+            Y.Event._load();
+        }
+    },
+
+    /**
+     * Apply filter defined for this instance to a url/path
+     * method _filter
+     * @param u {string} the string to filter
+     * @return {string} the filtered string
+     * @private
+     */
+    _filter: function(u) {
+
+
+        var f = this.filter, useFilter, exc, inc;
+
+        if (u && f) {
+
+            useFilter = true;
+
+            if (this.filterName == "DEBUG") {
+            
+                exc = this.logExclude;
+                inc = this.logInclude;
+
+                if (inc && !(name in inc)) {
+                    useFilter = false;
+                } else if (exc && (name in exc)) {
+                    useFilter = false;
+                }
+
+            }
+            
+            if (useFilter) {
+                u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
+            }
+        }
+
+        return u;
+
+    },
+
+    /**
+     * Generates the full url for a module
+     * method _url
+     * @param path {string} the path fragment
+     * @return {string} the full url
+     * @private
+     */
+    _url: function(path, name) {
+        return this._filter((this.base || "") + path);
+    }
+
+};
+
+// Y.augment(Y.Loader, Y.Event.Target);
+
+})();
 
 
 }, '@VERSION@' );

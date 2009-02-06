@@ -1,6 +1,6 @@
 YUI.add('get', function(Y) {
 
-
+(function() {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -49,7 +49,7 @@ Y.Get = function() {
      * @type boolean
      * @private
      */
-        purging=false;
+        purging=false,
 
     
     /** 
@@ -61,17 +61,18 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _node = function(type, attr, win) {
-        var w = win || Y.config.win, d=w.document, n=d.createElement(type);
+    _node = function(type, attr, win) {
+        var w = win || Y.config.win, d=w.document, n=d.createElement(type),
+            i;
 
-        for (var i in attr) {
+        for (i in attr) {
             if (attr[i] && attr.hasOwnProperty(i)) {
                 n.setAttribute(i, attr[i]);
             }
         }
 
         return n;
-    };
+    },
 
     /**
      * Generates a link node
@@ -81,7 +82,7 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("link", {
                 "id":      PREFIX + (nidx++),
@@ -90,7 +91,7 @@ Y.Get = function() {
                 "rel":     "stylesheet",
                 "href":    url
             }, win);
-    };
+    },
 
     /**
      * Generates a script node
@@ -100,7 +101,7 @@ Y.Get = function() {
      * @return {HTMLElement} the generated node
      * @private
      */
-    var _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, charset) {
         var c = charset || "utf-8";
         return _node("script", {
                 "id":      PREFIX + (nidx++),
@@ -108,39 +109,41 @@ Y.Get = function() {
                 "charset": c,
                 "src":     url
             }, win);
-    };
+    },
 
     /**
      * Removes the nodes for the specified queue
      * @method _purge
      * @private
      */
-    var _purge = function(tId) {
-        var q=queues[tId];
+    _purge = function(tId) {
+        var q=queues[tId], n, l, d, h, s, i;
         if (q) {
-            var n=q.nodes, l=n.length, d=q.win.document, 
-                h=d.getElementsByTagName("head")[0];
+            n = q.nodes; 
+            l = n.length;
+            d = q.win.document;
+            h = d.getElementsByTagName("head")[0];
 
             if (q.insertBefore) {
-                var s = _get(q.insertBefore, tId);
+                s = _get(q.insertBefore, tId);
                 if (s) {
                     h = s.parentNode;
                 }
             }
 
-            for (var i=0; i<l; i=i+1) {
+            for (i=0; i<l; i=i+1) {
                 h.removeChild(n[i]);
             }
         }
         q.nodes = [];
-    };
+    },
 
     /**
      * Returns the data payload for callback functions
      * @method _returnData
      * @private
      */
-    var _returnData = function(q, msg) {
+    _returnData = function(q, msg) {
         return {
                 tId: q.tId,
                 win: q.win,
@@ -151,7 +154,7 @@ Y.Get = function() {
                     _purge(this.tId);
                 }
             };
-    };
+    },
 
     /*
      * The request failed, execute fail handler with whatever
@@ -161,22 +164,22 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _fail = function(id, msg) {
+    _fail = function(id, msg) {
 
 
-        var q = queues[id];
+        var q = queues[id], sc;
         if (q.timer) {
             q.timer.cancel();
         }
 
         // execute failure callback
         if (q.onFailure) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
-    };
+    },
 
-    var _get = function(nId, tId) {
+    _get = function(nId, tId) {
         var q = queues[tId],
             n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
         if (!n) {
@@ -184,8 +187,7 @@ Y.Get = function() {
         }
 
         return n;
-    };
-
+    },
 
     /**
      * The request is complete, so executing the requester's callback
@@ -193,25 +195,25 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _finish = function(id) {
-        var q = queues[id];
+    _finish = function(id) {
+        var q = queues[id], msg, sc;
         if (q.timer) {
             q.timer.cancel();
         }
         q.finished = true;
 
         if (q.aborted) {
-            var msg = "transaction " + id + " was aborted";
+            msg = "transaction " + id + " was aborted";
             _fail(id, msg);
             return;
         }
 
         // execute success callback
         if (q.onSuccess) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
-    };
+    },
 
     /**
      * Timeout detected
@@ -219,13 +221,13 @@ Y.Get = function() {
      * @param id {string} the id of the request
      * @private
      */
-    var _timeout = function(id) {
-        var q = queues[id];
+    _timeout = function(id) {
+        var q = queues[id], sc;
         if (q.onTimeout) {
-            var sc=q.context || q;
+            sc = q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
-    };
+    },
 
     /**
      * Loads the next item for a given request
@@ -234,16 +236,16 @@ Y.Get = function() {
      * @param loaded {string} the url that was just loaded, if any
      * @private
      */
-    var _next = function(id, loaded) {
+    _next = function(id, loaded) {
 
-        var q = queues[id];
+        var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
             q.timer.cancel();
         }
 
         if (q.aborted) {
-            var msg = "transaction " + id + " was aborted";
+            msg = "transaction " + id + " was aborted";
             _fail(id, msg);
             return;
         }
@@ -261,14 +263,16 @@ Y.Get = function() {
             }
         }
 
-        var w=q.win, d=w.document, h=d.getElementsByTagName("head")[0], n;
+        w = q.win; 
+        d = w.document; 
+        h = d.getElementsByTagName("head")[0];
 
         if (q.url.length === 0) {
             _finish(id);
             return;
         } 
 
-        var url = q.url[0];
+        url = q.url[0];
 
         // if the url is undefined, this is probably a trailing comma problem in IE
         if (!url) {
@@ -295,7 +299,7 @@ Y.Get = function() {
 
         // add it to the head or insert it before 'insertBefore'
         if (q.insertBefore) {
-            var s = _get(q.insertBefore, id);
+            s = _get(q.insertBefore, id);
             if (s) {
                 s.parentNode.insertBefore(n, s);
             }
@@ -311,23 +315,26 @@ Y.Get = function() {
         if ((ua.webkit || ua.gecko) && q.type === "css") {
             _next(id, url);
         }
-    };
+    },
 
     /**
      * Removes processed queues and corresponding nodes
      * @method _autoPurge
      * @private
      */
-    var _autoPurge = function() {
+    _autoPurge = function() {
 
         if (purging) {
             return;
         }
 
         purging = true;
-        for (var i in queues) {
+
+        var i, q;
+
+        for (i in queues) {
             if (queues.hasOwnProperty(i)) {
-                var q = queues[i];
+                q = queues[i];
                 if (q.autopurge && q.finished) {
                     _purge(q.tId);
                     delete queues[i];
@@ -336,7 +343,7 @@ Y.Get = function() {
         }
 
         purging = false;
-    };
+    },
 
     /**
      * Saves the state for the request and begins loading
@@ -347,9 +354,9 @@ Y.Get = function() {
      * @param opts the hash of options for this request
      * @private
      */
-    var _queue = function(type, url, opts) {
+    _queue = function(type, url, opts) {
 
-        var id = "q" + (qidx++);
+        var id = "q" + (qidx++), q;
         opts = opts || {};
 
         if (qidx % Y.Get.PURGE_THRESH === 0) {
@@ -364,7 +371,7 @@ Y.Get = function() {
             nodes: []
         });
 
-        var q = queues[id];
+        q = queues[id];
         q.win = q.win || Y.config.win;
         q.context = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
@@ -375,7 +382,7 @@ Y.Get = function() {
         return {
             tId: id
         };
-    };
+    },
 
     /**
      * Detects when a node has been loaded.  In the case of
@@ -393,7 +400,7 @@ Y.Get = function() {
      * the default is _next
      * @private
      */
-    var _track = function(type, n, id, url, win, qlength, trackfn) {
+    _track = function(type, n, id, url, win, qlength, trackfn) {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
@@ -465,8 +472,8 @@ Y.Get = function() {
          * script() or css()
          */
         abort: function(o) {
-            var id = (L.isString(o)) ? o : o.tId;
-            var q = queues[id];
+            var id = (L.isString(o)) ? o : o.tId,
+                q = queues[id];
             if (q) {
                 q.aborted = true;
             }
@@ -640,6 +647,8 @@ Y.Get = function() {
         }
     };
 }();
+
+})();
 
 
 }, '@VERSION@' );

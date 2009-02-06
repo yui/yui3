@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
-	<title>API: dd   constrain.js  (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dd-plugin   constrain.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,32 +14,38 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>dd&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dd.html">dd</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dd-plugin&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd-plugin.html" title="dd-plugin">dd-plugin</a>
                 
                  &gt; constrain.js (source view) 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <div id="srcout">
                         <style>
-                            #doc3 #classopts { display:none; }
+                            #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.</span>
@@ -45,7 +55,7 @@
     <span class="c">/**</span>
 <span class="c">     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also</span>
 <span class="c">     * supports tick based moves and XY axis constraints.</span>
-<span class="c">     * @class DragConstained</span>
+<span class="c">     * @class DragConstrained</span>
 <span class="c">     * @extends Drag</span>
 <span class="c">     * @constructor</span>
 <span class="c">     */</span>
@@ -60,7 +70,7 @@
 
     <span class="o">};</span>
     
-    <span class="nx">C</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DragConstrained&#39;</span><span class="o">;</span>
+    <span class="nx">C</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;dragConstrained&#39;</span><span class="o">;</span>
 
     <span class="nx">C</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
@@ -213,7 +223,7 @@
             <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="s1">&#39;window&#39;</span><span class="o">,</span> <span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nb">window</span><span class="o">);</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">();</span>
                 <span class="o">}</span>
                 <span class="nx">r</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span><span class="o">);</span>
@@ -252,22 +262,22 @@
                 <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRegion</span><span class="o">(),</span>
                 <span class="nx">oh</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span>
                 <span class="nx">ow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
+            
+                <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">_xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">top</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">_xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">top</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">_xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">left</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">_xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">;</span>
+                <span class="o">}</span>
 
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">left</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="k">return</span> <span class="nx">oxy</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">_xy</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @method inRegion</span>
@@ -295,6 +305,7 @@
         <span class="nx">_align</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">_xy</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">_align</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">),</span>
                 <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRegion</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;stickX&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">_xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
             <span class="o">}</span>
@@ -420,59 +431,54 @@
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class="selected"><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class="selected"><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DDM.html">DDM</a></li>
-                                <li class=""><a href="Drag.html">Drag</a></li>
-                                <li class=""><a href="DragConstained.html">DragConstained</a></li>
-                                <li class=""><a href="Drop.html">Drop</a></li>
-                                <li class=""><a href="Proxy.html">Proxy</a></li>
+                                <li class=""><a href="plugin.DragPlugin.html" title="plugin.DragPlugin">plugin.DragPlugin</a></li>
+                                <li class=""><a href="plugin.DropPlugin.html" title="plugin.DropPlugin">plugin.DropPlugin</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="constrain.js.html">constrain.js</a></li>
-                                <li class=""><a href="ddm-base.js.html">ddm-base.js</a></li>
-                                <li class=""><a href="ddm-drop.js.html">ddm-drop.js</a></li>
-                                <li class=""><a href="ddm.js.html">ddm.js</a></li>
-                                <li class=""><a href="drag.js.html">drag.js</a></li>
-                                <li class=""><a href="drop.js.html">drop.js</a></li>
-                                <li class=""><a href="proxy.js.html">proxy.js</a></li>
+                                <li class="selected"><a href="constrain.js.html" title="constrain.js">constrain.js</a></li>
                         </ul>
                     </div>
 
@@ -485,8 +491,11 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "plugin.DropPlugin", "name": "NAME", "url": "plugin.DropPlugin.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DragPlugin", "name": "NAME", "url": "plugin.DragPlugin.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DropPlugin", "name": "NS", "url": "plugin.DropPlugin.html#property_NS", "type": "property"}, {"access": "", "host": "plugin.DragPlugin", "name": "NS", "url": "plugin.DragPlugin.html#property_NS", "type": "property"}];
+</script>
 </body>
 </html>

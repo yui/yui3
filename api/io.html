@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: io  io   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,27 +14,33 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>io&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_io.html">io</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>io&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_io.html" title="io">io</a>
                  &gt; io 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -38,21 +48,17 @@
 
                         
                         
-                            Class <b>io</b>
+                            Class <b property="yui:name">io</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
-                        </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
                 
   
 
-                    <div class="summary description">
+                    <div class="summary description" property="yui:description">
                         The io class is a utility that brokers HTTP requests through a simplified
 interface.  Specifically, it allows JavaScript to make HTTP requests to
 a resource without a page reload.  The underlying transport for making
@@ -60,17 +66,19 @@ same-domain requests is the XMLHttpRequest object.  YUI.io can also use
 Flash, if specified as a transport, for cross-domain requests.
                     </div>
 
-
+                    
+                    <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private">
-                                    <h4><a name="property__fn">_fn</a>
-                                        <code>- private static object</code>
+                                    <div class="private" rel="yui:property" resource="#property__fn">
+                                    <h4><a name="property__fn" property="yui:name">_fn</a>
+                                        - <code>private static <span property="yui:type">object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
-                                            Object that stores callback handlers for cross-domain requests,
+                                        <div class="description" property="yui:description">
+                                            Object that stores callback handlers for cross-domain requests
+when using Flash as the transport.
                                         </div>
                                     </div>
      
@@ -79,12 +87,12 @@ Flash, if specified as a transport, for cross-domain requests.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__headers">_headers</a>
-                                        <code>- private static object</code>
+                                    <div class="private" rel="yui:property" resource="#property__headers">
+                                    <h4><a name="property__headers" property="yui:name">_headers</a>
+                                        - <code>private static <span property="yui:type">object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Object of default HTTP headers to be initialized and sent
 for all transactions.
                                         </div>
@@ -95,12 +103,12 @@ for all transactions.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__q">_q</a>
-                                        <code>- private static array</code>
+                                    <div class="private" rel="yui:property" resource="#property__q">
+                                    <h4><a name="property__q" property="yui:name">_q</a>
+                                        - <code>private static <span property="yui:type">array</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Array of transactions queued for processing
                                         </div>
                                     </div>
@@ -110,12 +118,12 @@ for all transactions.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__qMaxSize">_qMaxSize</a>
-                                        <code>- private static int</code>
+                                    <div class="private" rel="yui:property" resource="#property__qMaxSize">
+                                    <h4><a name="property__qMaxSize" property="yui:name">_qMaxSize</a>
+                                        - <code>private static <span property="yui:type">int</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Queue property to set a maximum queue storage size.  When
 this property is set, the queue will not store any more transactions
 until the queue size os reduced below this threshold. There is no
@@ -128,12 +136,12 @@ maximum queue size until it is explicitly set.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__qState">_qState</a>
-                                        <code>- private static int</code>
+                                    <div class="private" rel="yui:property" resource="#property__qState">
+                                    <h4><a name="property__qState" property="yui:name">_qState</a>
+                                        - <code>private static <span property="yui:type">int</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Property to determine whether the queue is set to
 1 (active) or 0 (inactive).  When inactive, transactions
 will be stored in the queue until the queue is set to active.
@@ -145,12 +153,12 @@ will be stored in the queue until the queue is set to active.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__timeOut">_timeOut</a>
-                                        <code>- private static object</code>
+                                    <div class="private" rel="yui:property" resource="#property__timeOut">
+                                    <h4><a name="property__timeOut" property="yui:name">_timeOut</a>
+                                        - <code>private static <span property="yui:type">object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Object that stores timeout values for any transaction with
 a defined "timeout" configuration property.
                                         </div>
@@ -161,13 +169,13 @@ a defined "timeout" configuration property.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property__xdr">_xdr</a>
-                                        <code>- private static object</code>
+                                    <div class="private" rel="yui:property" resource="#property__transportMap">
+                                    <h4><a name="property__transportMap" property="yui:name">_transportMap</a>
+                                        - <code>private static <span property="yui:type">object</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
-                                            Map of transports created for cross-domain requests.
+                                        <div class="description" property="yui:description">
+                                            Map of IO transports.
                                         </div>
                                     </div>
      
@@ -176,12 +184,12 @@ a defined "timeout" configuration property.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property_transactionId">transactionId</a>
-                                        <code>- private static int</code>
+                                    <div class="private" rel="yui:property" resource="#property_transactionId">
+                                    <h4><a name="property_transactionId" property="yui:name">transactionId</a>
+                                        - <code>private static <span property="yui:type">int</span></code>
                                     </h4>
                                     <div class="detail">
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             A transaction counter that increments for each transaction.
                                         </div>
                                     </div>
@@ -191,25 +199,25 @@ a defined "timeout" configuration property.
 
                                     <hr />
                                     </div>
-
-
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__async">
                                     <h4>
                                         <a name="method__async">_async</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_async</strong>
+                                        
+                                            <strong property="yui:name">_async</strong>
                                            (
                                                 
                                                         
@@ -227,35 +235,34 @@ a defined "timeout" configuration property.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that sends the transaction request.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - Transaction object generated by _create().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create().</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;string&gt;</code>
-                                                             - Transaction data.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction data.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -265,16 +272,16 @@ a defined "timeout" configuration property.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__clearTimeout">
                                     <h4>
                                         <a name="method__clearTimeout">_clearTimeout</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_clearTimeout</strong>
+                                        
+                                            <strong property="yui:name">_clearTimeout</strong>
                                            (
                                                 
                                                         
@@ -284,27 +291,22 @@ a defined "timeout" configuration property.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Clears the timeout interval started by _startTimeout().
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>id &lt;number&gt;</code>
-                                                             - Transaction id.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction id.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -314,16 +316,16 @@ a defined "timeout" configuration property.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__concat">
                                     <h4>
                                         <a name="method__concat">_concat</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_concat</strong>
+                                        
+                                            <strong property="yui:name">_concat</strong>
                                            (
                                                 
                                                         
@@ -337,31 +339,28 @@ a defined "timeout" configuration property.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that concatenates string data for HTTP GET transactions.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>s &lt;string&gt;</code>
-                                                             - URI or root data.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - URI or root data.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>d &lt;string&gt;</code>
-                                                             - data to be concatenated onto URI.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - data to be concatenated onto URI.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -371,16 +370,16 @@ a defined "timeout" configuration property.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__create">
                                     <h4>
                                         <a name="method__create">_create</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_create</strong>
+                                        
+                                            <strong property="yui:name">_create</strong>
                                            (
                                                 
                                                         
@@ -394,32 +393,29 @@ a defined "timeout" configuration property.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that creates a unique transaction object for each
 request..
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>s &lt;number&gt;</code>
-                                                             - URI or root data.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - URI or root data.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;number&gt;</code>
-                                                             - configuration object
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>object</dd>
-                                                </dl>
 
 
              
@@ -429,16 +425,16 @@ request..
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__handleResponse">
                                     <h4>
                                         <a name="method__handleResponse">_handleResponse</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_handleResponse</strong>
+                                        
+                                            <strong property="yui:name">_handleResponse</strong>
                                            (
                                                 
                                                         
@@ -452,7 +448,7 @@ request..
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that determines if a transaction response qualifies
 as success or failure, based on the response HTTP status code, and
 fires the appropriate success or failure events.
@@ -460,25 +456,22 @@ fires the appropriate success or failure events.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - Transaction object generated by _create().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create().</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Configuration object passed to io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -488,34 +481,27 @@ fires the appropriate success or failure events.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__id">
                                     <h4>
                                         <a name="method__id">_id</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_id</strong>
+                                        
+                                            <strong property="yui:name">_id</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that increments _transactionId for each transaction.
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -525,65 +511,16 @@ fires the appropriate success or failure events.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4>
-                                        <a name="method__initTransport">_initTransport</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                         private 
-                                         static 
-                                        
-                                        void
-                                            <strong>_initTransport</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Method to initialize the desired transport medium.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - object of transport configurations.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__io">
                                     <h4>
                                         <a name="method__io">_io</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_io</strong>
+                                        
+                                            <strong property="yui:name">_io</strong>
                                            (
                                                 
                                                         
@@ -597,7 +534,7 @@ fires the appropriate success or failure events.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for requesting a transaction. _io() is implemented as
 yui.io().  Each transaction may include a configuration object.  Its
 properties are:
@@ -659,25 +596,22 @@ event handlers.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>uri &lt;string&gt;</code>
-                                                             - qualified path to transaction resource.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">uri</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - qualified path to transaction resource.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>object</dd>
-                                                </dl>
 
 
              
@@ -687,16 +621,16 @@ event handlers.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__ioAbort">
                                     <h4>
                                         <a name="method__ioAbort">_ioAbort</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_ioAbort</strong>
+                                        
+                                            <strong property="yui:name">_ioAbort</strong>
                                            (
                                                 
                                                         
@@ -710,7 +644,7 @@ event handlers.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fires event "io:abort" and creates, fires a
 transaction-specific "abort" event, if config.on.abort is
 defined.
@@ -718,25 +652,22 @@ defined.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - Transaction object generated by _create().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create().</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -746,20 +677,20 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__ioComplete">
                                     <h4>
                                         <a name="method__ioComplete">_ioComplete</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_ioComplete</strong>
+                                        
+                                            <strong property="yui:name">_ioComplete</strong>
                                            (
                                                 
                                                         
-                                                         id
+                                                         o
                                                     
                                                 
                                                         , 
@@ -769,7 +700,7 @@ defined.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fires event "io:complete" and creates, fires a
 transaction-specific "complete" event, if config.on.complete is
 defined.
@@ -777,25 +708,22 @@ defined.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>id &lt;object&gt;</code>
-                                                             - transaction object.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - transaction object.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -805,16 +733,16 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__ioFailure">
                                     <h4>
                                         <a name="method__ioFailure">_ioFailure</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_ioFailure</strong>
+                                        
+                                            <strong property="yui:name">_ioFailure</strong>
                                            (
                                                 
                                                         
@@ -828,7 +756,7 @@ defined.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fires event "io:failure" and creates, fires a
 transaction-specific "failure" event, if config.on.failure is
 defined.
@@ -836,25 +764,22 @@ defined.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - transaction object.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - transaction object.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -864,16 +789,16 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__ioStart">
                                     <h4>
                                         <a name="method__ioStart">_ioStart</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_ioStart</strong>
+                                        
+                                            <strong property="yui:name">_ioStart</strong>
                                            (
                                                 
                                                         
@@ -887,7 +812,7 @@ defined.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fires event "io:start" and creates, fires a
 transaction-specific start event, if config.on.start is
 defined.
@@ -895,25 +820,22 @@ defined.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>id &lt;number&gt;</code>
-                                                             - transaction id
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - transaction id</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -923,16 +845,16 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__ioSuccess">
                                     <h4>
                                         <a name="method__ioSuccess">_ioSuccess</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_ioSuccess</strong>
+                                        
+                                            <strong property="yui:name">_ioSuccess</strong>
                                            (
                                                 
                                                         
@@ -946,7 +868,7 @@ defined.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Fires event "io:success" and creates, fires a
 transaction-specific "success" event, if config.on.success is
 defined.
@@ -954,25 +876,22 @@ defined.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - transaction object.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - transaction object.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -982,21 +901,21 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__purge">
                                     <h4>
                                         <a name="method__purge">_purge</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_purge</strong>
+                                        
+                                            <strong property="yui:name">_purge</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for removing a specific, pending transaction from
 the queue.
                                         </div>
@@ -1004,13 +923,6 @@ the queue.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1020,21 +932,21 @@ the queue.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__queue">
                                     <h4>
                                         <a name="method__queue">_queue</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_queue</strong>
+                                        
+                                            <strong property="yui:name">_queue</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for requesting a transaction, and queueing the
 request before it is sent to the resource.
                                         </div>
@@ -1042,13 +954,6 @@ request before it is sent to the resource.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -1058,16 +963,16 @@ request before it is sent to the resource.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__readyState">
                                     <h4>
                                         <a name="method__readyState">_readyState</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_readyState</strong>
+                                        
+                                            <strong property="yui:name">_readyState</strong>
                                            (
                                                 
                                                         
@@ -1081,31 +986,28 @@ request before it is sent to the resource.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Event handler bound to onreadystatechange.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - Transaction object generated by _create().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create().</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1115,47 +1017,42 @@ request before it is sent to the resource.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__serialize">
                                     <h4>
                                         <a name="method__serialize">_serialize</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_serialize</strong>
+                                        
+                                            <strong property="yui:name">_serialize</strong>
                                            (
                                                 
                                                         
-                                                         c
+                                                         o
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method to enumerate through an HTML form's elements collection
 and return a string comprised of key-value pairs.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object specific to form operations..
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTML form object or id.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>string</dd>
-                                                </dl>
 
 
              
@@ -1165,16 +1062,16 @@ and return a string comprised of key-value pairs.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__setHeader">
                                     <h4>
                                         <a name="method__setHeader">_setHeader</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_setHeader</strong>
+                                        
+                                            <strong property="yui:name">_setHeader</strong>
                                            (
                                                 
                                                         
@@ -1188,32 +1085,29 @@ and return a string comprised of key-value pairs.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that stores default client headers for all transactions.
 If a label is passed with no value argument, the header will be deleted.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>l &lt;string&gt;</code>
-                                                             - HTTP header
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">l</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTTP header</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>v &lt;string&gt;</code>
-                                                             - HTTP header value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTTP header value</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -1223,16 +1117,16 @@ If a label is passed with no value argument, the header will be deleted.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__setHeaders">
                                     <h4>
                                         <a name="method__setHeaders">_setHeaders</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_setHeaders</strong>
+                                        
+                                            <strong property="yui:name">_setHeaders</strong>
                                            (
                                                 
                                                         
@@ -1246,32 +1140,29 @@ If a label is passed with no value argument, the header will be deleted.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that sets all HTTP headers to be sent in a transaction.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - XHR instance for the specific transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - XHR instance for the specific transaction.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>h &lt;object&gt;</code>
-                                                             - HTTP headers for the specific transaction, as defined
-in the configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">h</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTTP headers for the specific transaction, as defined
+in the configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1281,21 +1172,21 @@ in the configuration object passed to YUI.io().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__shift">
                                     <h4>
                                         <a name="method__shift">_shift</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_shift</strong>
+                                        
+                                            <strong property="yui:name">_shift</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for removing a transaction from the top of the
 queue, and sending the transaction to _io().
                                         </div>
@@ -1303,13 +1194,6 @@ queue, and sending the transaction to _io().
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1319,21 +1203,21 @@ queue, and sending the transaction to _io().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__size">
                                     <h4>
                                         <a name="method__size">_size</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_size</strong>
+                                        
+                                            <strong property="yui:name">_size</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method to query the current size of the queue, or to
 set a maximum queue size.
                                         </div>
@@ -1341,13 +1225,6 @@ set a maximum queue size.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -1357,21 +1234,21 @@ set a maximum queue size.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__start">
                                     <h4>
                                         <a name="method__start">_start</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_start</strong>
+                                        
+                                            <strong property="yui:name">_start</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for setting the queue to active. If there are
 transactions pending in the queue, they will be processed from the
 queue in FIFO order.
@@ -1380,13 +1257,6 @@ queue in FIFO order.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1396,16 +1266,16 @@ queue in FIFO order.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__startTimeout">
                                     <h4>
                                         <a name="method__startTimeout">_startTimeout</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_startTimeout</strong>
+                                        
+                                            <strong property="yui:name">_startTimeout</strong>
                                            (
                                                 
                                                         
@@ -1419,31 +1289,29 @@ queue in FIFO order.
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Starts timeout count if config,timeout is defined.
+                                        <div class="description" property="yui:description">
+                                            Starts timeout count if the configuration object
+has a defined timeout property.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             - Transaction object generated by _create().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create().</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - Configuration object passed to YUI.io().
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1453,21 +1321,21 @@ queue in FIFO order.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__stop">
                                     <h4>
                                         <a name="method__stop">_stop</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_stop</strong>
+                                        
+                                            <strong property="yui:name">_stop</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for setting queue processing to inactive.
 Transaction requests to YUI.io.queue() will be stored in the queue, but
 not processed until the queue is reset to "active".
@@ -1476,13 +1344,6 @@ not processed until the queue is reset to "active".
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1492,16 +1353,16 @@ not processed until the queue is reset to "active".
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__swf">
                                     <h4>
                                         <a name="method__swf">_swf</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_swf</strong>
+                                        
+                                            <strong property="yui:name">_swf</strong>
                                            (
                                                 
                                                         
@@ -1515,31 +1376,28 @@ not processed until the queue is reset to "active".
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that creates the Flash transport swf.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>uri &lt;string&gt;</code>
-                                                             - location of IO.swf.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">uri</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - location of IO.swf.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>yid &lt;string&gt;</code>
-                                                             - string representation of YUI instance.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">yid</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - YUI instance id.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1549,16 +1407,16 @@ not processed until the queue is reset to "active".
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__tPubSub">
                                     <h4>
                                         <a name="method__tPubSub">_tPubSub</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_tPubSub</strong>
+                                        
+                                            <strong property="yui:name">_tPubSub</strong>
                                            (
                                                 
                                                         
@@ -1572,31 +1430,28 @@ not processed until the queue is reset to "active".
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for creating and subscribing transaction events.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>e &lt;string&gt;</code>
-                                                             - event to be published
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - event to be published</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1606,33 +1461,98 @@ not processed until the queue is reset to "active".
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__unshift">
                                     <h4>
                                         <a name="method__unshift">_unshift</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_unshift</strong>
+                                        
+                                            <strong property="yui:name">_unshift</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for promoting a transaction to the top of the queue.
                                         </div>
 
                                         <div class="description">
 
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__upload">
+                                    <h4>
+                                        <a name="method__upload">_upload</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_upload</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Uploads HTML form, inclusive of files/attachments, using the
+iframe created in createFrame to facilitate the transaction.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">o</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The transaction object</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">uri</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Qualified path to transaction resource.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
+                                                        </dd>
+                                                </dl>
+
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd>void</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1643,33 +1563,143 @@ not processed until the queue is reset to "active".
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__xdr">
                                     <h4>
-                                        <a name="method__xhr">_xhr</a></h4>
-                                    <div class="detail">
+                                        <a name="method__xdr">_xdr</a></h4>
+                                    <div class="detail" >
                                         <code>
                                          private 
                                          static 
                                         
-                                        void
-                                            <strong>_xhr</strong>
+                                        
+                                            <strong property="yui:name">_xdr</strong>
+                                           (
+                                                
+                                                        
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Method for accessing the transport's interface for making a
+cross-domain transaction.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">uri</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - qualified path to transaction resource.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Transaction object generated by _create() in io-base.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__xhr">
+                                    <h4>
+                                        <a name="method__xhr">_xhr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">_xhr</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that creates the XMLHttpRequest transport
                                         </div>
 
                                         <div class="description">
 
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_appendData">
+                                    <h4>
+                                        <a name="method_appendData">appendData</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        array
+                                            <strong property="yui:name">appendData</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Parses the POST data object and creates hidden form elements
+for each key-value, and appends them to the HTML form object.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The key-value hash map.</span>
+                                                        </dd>
+                                                </dl>
+
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        array
                                                     </code></dt>
-                                                    <dd>object</dd>
+                                                    <dd property="yui:returnInfo">e Array of created fields.</dd>
                                                 </dl>
 
 
@@ -1680,16 +1710,16 @@ not processed until the queue is reset to "active".
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_header">
                                     <h4>
                                         <a name="method_header">header</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>header</strong>
+                                        
+                                            <strong property="yui:name">header</strong>
                                            (
                                                 
                                                         
@@ -1703,7 +1733,7 @@ not processed until the queue is reset to "active".
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method that stores default client headers for all transactions.
 If a label is passed with no value argument, the header will be deleted.
 This is the interface for _setHeader().
@@ -1711,25 +1741,22 @@ This is the interface for _setHeader().
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>l &lt;string&gt;</code>
-                                                             - HTTP header
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">l</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTTP header</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>v &lt;string&gt;</code>
-                                                             - HTTP header value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - HTTP header value</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
 
 
              
@@ -1739,16 +1766,16 @@ This is the interface for _setHeader().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_io">
                                     <h4>
                                         <a name="method_io">io</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>io</strong>
+                                        
+                                            <strong property="yui:name">io</strong>
                                            (
                                                 
                                                         
@@ -1762,32 +1789,29 @@ This is the interface for _setHeader().
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for requesting a transaction. This
 is the interface for _io().
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>uri &lt;string&gt;</code>
-                                                             - qualified path to transaction resource.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">uri</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - qualified path to transaction resource.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>object</dd>
-                                                </dl>
 
 
              
@@ -1797,16 +1821,16 @@ is the interface for _io().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_promote">
                                     <h4>
                                         <a name="method_promote">promote</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>promote</strong>
+                                        
+                                            <strong property="yui:name">promote</strong>
                                            (
                                                 
                                                         
@@ -1816,28 +1840,23 @@ is the interface for _io().
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for promoting a transaction to the top of the queue.
 This is the interface for _unshift().
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>i &lt;number&gt;</code>
-                                                             - ID of queued transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - ID of queued transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1847,16 +1866,16 @@ This is the interface for _unshift().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_purge">
                                     <h4>
                                         <a name="method_purge">purge</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>purge</strong>
+                                        
+                                            <strong property="yui:name">purge</strong>
                                            (
                                                 
                                                         
@@ -1866,28 +1885,23 @@ This is the interface for _unshift().
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for removing a specific, pending transaction from
 the queue. This is the interface for _purge().
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>i &lt;number&gt;</code>
-                                                             - ID of queued transaction.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - ID of queued transaction.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -1897,75 +1911,16 @@ the queue. This is the interface for _purge().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_queue">queue</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong>queue</strong>
-                                           (
-                                                
-                                                        
-                                                         uri
-                                                    
-                                                
-                                                        , 
-                                                         c
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Method for requesting a transaction, and queueing the
-request before it is sent to the resource. This is the
-interface for _queue().
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>uri &lt;string&gt;</code>
-                                                             - qualified path to transaction resource.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             - configuration object for the transaction.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>int</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_size">
                                     <h4>
                                         <a name="method_size">size</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>size</strong>
+                                        
+                                            <strong property="yui:name">size</strong>
                                            (
                                                 
                                                         
@@ -1975,28 +1930,23 @@ interface for _queue().
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method to query the current size of the queue, or to
 set a maximum queue size.  This is the interface for _size().
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>i &lt;number&gt;</code>
-                                                             - Specified maximum size of queue.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - Specified maximum size of queue.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>number</dd>
-                                                </dl>
 
 
              
@@ -2006,21 +1956,21 @@ set a maximum queue size.  This is the interface for _size().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_start">
                                     <h4>
                                         <a name="method_start">start</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>start</strong>
+                                        
+                                            <strong property="yui:name">start</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for setting the queue to "active". If there are
 transactions pending in the queue, they will be processed from the
 queue in FIFO order. This is the interface for _start().
@@ -2029,13 +1979,6 @@ queue in FIFO order. This is the interface for _start().
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -2045,21 +1988,21 @@ queue in FIFO order. This is the interface for _start().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_stop">
                                     <h4>
                                         <a name="method_stop">stop</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>stop</strong>
+                                        
+                                            <strong property="yui:name">stop</strong>
                                            (
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Method for setting queue processing to inactive.
 Transaction requests to YUI.io.queue() will be stored in the queue, but
 not processed until the queue is set to "active". This is the
@@ -2069,13 +2012,6 @@ interface for _stop().
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>void</dd>
-                                                </dl>
 
 
              
@@ -2085,48 +2021,95 @@ interface for _stop().
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_transport">
                                     <h4>
                                         <a name="method_transport">transport</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
-                                        void
-                                            <strong>transport</strong>
+                                        
+                                            <strong property="yui:name">transport</strong>
                                            (
                                                 
                                                         
-                                                         t
+                                                         o
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Method for specifying and initializing a transport
-to facilitate cross-domain HTTP requests.  This is the
-interface for _initTransport
+                                        <div class="description" property="yui:description">
+                                            Method to initialize the desired transport.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;object&gt;</code>
-                                                             - configuration object for the transport.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - object of transport configurations.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>boolean</dd>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_xdrReady">
+                                    <h4>
+                                        <a name="method_xdrReady">xdrReady</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">xdrReady</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires event "io:xdrReady"
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - transaction id</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> - configuration object for the transaction.</span>
+                                                        </dd>
                                                 </dl>
+
 
 
              
@@ -2139,11 +2122,13 @@ interface for _initTransport
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:events" resource="#events">
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:abort">
                                     <h4>
                                         <a name="event_io:abort">io:abort</a></h4>
                                     <div class="detail">
@@ -2151,14 +2136,14 @@ interface for _initTransport
                                         
                                         
                                         
-                                            <strong>io:abort</strong>
+                                            <strong property="yui:name">io:abort</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             This event is fired by YUI.io when a transaction is aborted
 explicitly or by a defined config.timeout.
                                         </div>
@@ -2173,7 +2158,7 @@ explicitly or by a defined config.timeout.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:complete">
                                     <h4>
                                         <a name="event_io:complete">io:complete</a></h4>
                                     <div class="detail">
@@ -2181,14 +2166,14 @@ explicitly or by a defined config.timeout.
                                         
                                         
                                         
-                                            <strong>io:complete</strong>
+                                            <strong property="yui:name">io:complete</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             This event is fired by YUI.io when a transaction is complete and
 all response data are available.
                                         </div>
@@ -2203,7 +2188,7 @@ all response data are available.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:failure">
                                     <h4>
                                         <a name="event_io:failure">io:failure</a></h4>
                                     <div class="detail">
@@ -2211,14 +2196,14 @@ all response data are available.
                                         
                                         
                                         
-                                            <strong>io:failure</strong>
+                                            <strong property="yui:name">io:failure</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             This event is fired by YUI.io when a transaction is complete and
 the HTTP status resolves to HTTP4xx, 5xx and above.
                                         </div>
@@ -2233,7 +2218,7 @@ the HTTP status resolves to HTTP4xx, 5xx and above.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:start">
                                     <h4>
                                         <a name="event_io:start">io:start</a></h4>
                                     <div class="detail">
@@ -2241,14 +2226,14 @@ the HTTP status resolves to HTTP4xx, 5xx and above.
                                         
                                         
                                         
-                                            <strong>io:start</strong>
+                                            <strong property="yui:name">io:start</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             This event is fired by YUI.io when a transaction is initiated..
                                         </div>
 
@@ -2262,7 +2247,7 @@ the HTTP status resolves to HTTP4xx, 5xx and above.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:success">
                                     <h4>
                                         <a name="event_io:success">io:success</a></h4>
                                     <div class="detail">
@@ -2270,14 +2255,14 @@ the HTTP status resolves to HTTP4xx, 5xx and above.
                                         
                                         
                                         
-                                            <strong>io:success</strong>
+                                            <strong property="yui:name">io:success</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             This event is fired by YUI.io when a transaction is complete and
 the HTTP status resolves to HTTP2xx.
                                         </div>
@@ -2292,7 +2277,7 @@ the HTTP status resolves to HTTP2xx.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:event" resource="#event_io:xdrReady">
                                     <h4>
                                         <a name="event_io:xdrReady">io:xdrReady</a></h4>
                                     <div class="detail">
@@ -2300,15 +2285,16 @@ the HTTP status resolves to HTTP2xx.
                                         
                                         
                                         
-                                            <strong>io:xdrReady</strong>
+                                            <strong property="yui:name">io:xdrReady</strong>
 
                                             (
                                             )
 
                                         </code>
                                         
-                                        <div class="description">
-                                            This event is fired by YUI.io when a transaction is initiated..
+                                        <div class="description" property="yui:description">
+                                            This event is fired by YUI.io when the specified transport is
+ready for use.
                                         </div>
 
                                         <div class="description">
@@ -2325,228 +2311,145 @@ the HTTP status resolves to HTTP2xx.
                         </div>
 
 
+                    </div>
 
+                    <div rel="yui:attributes" resource="#configattributes">
 
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class="selected"><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class="selected"><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="io.html">io</a></li>
+                                <li class="selected"><a href="io.html" title="io">io</a></li>
+                                <li class="selected"><a href="io.html" title="io">io</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="io.js.html">io.js</a></li>
+                                <li class=""><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class=""><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class=""><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class=""><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
+                                <li class=""><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__fn">_fn</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__headers">_headers</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__q">_q</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__qMaxSize">_qMaxSize</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__qState">_qState</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__timeOut">_timeOut</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property__xdr">_xdr</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property_transactionId">transactionId</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
+                                <li class="private"><a href="#property__fn" title="_fn">_fn</a></li>
+                                <li class="private"><a href="#property__headers" title="_headers">_headers</a></li>
+                                <li class="private"><a href="#property__q" title="_q">_q</a></li>
+                                <li class="private"><a href="#property__qMaxSize" title="_qMaxSize">_qMaxSize</a></li>
+                                <li class="private"><a href="#property__qState" title="_qState">_qState</a></li>
+                                <li class="private"><a href="#property__timeOut" title="_timeOut">_timeOut</a></li>
+                                <li class="private"><a href="#property__transportMap" title="_transportMap">_transportMap</a></li>
+                                <li class="private"><a href="#property_transactionId" title="transactionId">transactionId</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__async">_async</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__clearTimeout">_clearTimeout</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__concat">_concat</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__create">_create</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__handleResponse">_handleResponse</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__id">_id</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__initTransport">_initTransport</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__io">_io</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__ioAbort">_ioAbort</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__ioComplete">_ioComplete</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__ioFailure">_ioFailure</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__ioStart">_ioStart</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__ioSuccess">_ioSuccess</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__purge">_purge</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__queue">_queue</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__readyState">_readyState</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__serialize">_serialize</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__setHeader">_setHeader</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__setHeaders">_setHeaders</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__shift">_shift</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__size">_size</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__start">_start</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__startTimeout">_startTimeout</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__stop">_stop</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__swf">_swf</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__tPubSub">_tPubSub</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__unshift">_unshift</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__xhr">_xhr</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_header">header</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_io">io</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_promote">promote</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_purge">purge</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_queue">queue</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_size">size</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_start">start</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_stop">stop</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_transport">transport</a>
-                                </li>
+                                <li class="private"><a href="#method__async" title="_async">_async</a></li>
+                                <li class="private"><a href="#method__clearTimeout" title="_clearTimeout">_clearTimeout</a></li>
+                                <li class="private"><a href="#method__concat" title="_concat">_concat</a></li>
+                                <li class="private"><a href="#method__create" title="_create">_create</a></li>
+                                <li class="private"><a href="#method__handleResponse" title="_handleResponse">_handleResponse</a></li>
+                                <li class="private"><a href="#method__id" title="_id">_id</a></li>
+                                <li class="private"><a href="#method__io" title="_io">_io</a></li>
+                                <li class="private"><a href="#method__ioAbort" title="_ioAbort">_ioAbort</a></li>
+                                <li class="private"><a href="#method__ioComplete" title="_ioComplete">_ioComplete</a></li>
+                                <li class="private"><a href="#method__ioFailure" title="_ioFailure">_ioFailure</a></li>
+                                <li class="private"><a href="#method__ioStart" title="_ioStart">_ioStart</a></li>
+                                <li class="private"><a href="#method__ioSuccess" title="_ioSuccess">_ioSuccess</a></li>
+                                <li class="private"><a href="#method__purge" title="_purge">_purge</a></li>
+                                <li class="private"><a href="#method__queue" title="_queue">_queue</a></li>
+                                <li class="private"><a href="#method__readyState" title="_readyState">_readyState</a></li>
+                                <li class="private"><a href="#method__serialize" title="_serialize">_serialize</a></li>
+                                <li class="private"><a href="#method__setHeader" title="_setHeader">_setHeader</a></li>
+                                <li class="private"><a href="#method__setHeaders" title="_setHeaders">_setHeaders</a></li>
+                                <li class="private"><a href="#method__shift" title="_shift">_shift</a></li>
+                                <li class="private"><a href="#method__size" title="_size">_size</a></li>
+                                <li class="private"><a href="#method__start" title="_start">_start</a></li>
+                                <li class="private"><a href="#method__startTimeout" title="_startTimeout">_startTimeout</a></li>
+                                <li class="private"><a href="#method__stop" title="_stop">_stop</a></li>
+                                <li class="private"><a href="#method__swf" title="_swf">_swf</a></li>
+                                <li class="private"><a href="#method__tPubSub" title="_tPubSub">_tPubSub</a></li>
+                                <li class="private"><a href="#method__unshift" title="_unshift">_unshift</a></li>
+                                <li class="private"><a href="#method__upload" title="_upload">_upload</a></li>
+                                <li class="private"><a href="#method__xdr" title="_xdr">_xdr</a></li>
+                                <li class="private"><a href="#method__xhr" title="_xhr">_xhr</a></li>
+                                <li class="private"><a href="#method_appendData" title="appendData">appendData</a></li>
+                                <li class=""><a href="#method_header" title="header">header</a></li>
+                                <li class=""><a href="#method_io" title="io">io</a></li>
+                                <li class=""><a href="#method_promote" title="promote">promote</a></li>
+                                <li class=""><a href="#method_purge" title="purge">purge</a></li>
+                                <li class=""><a href="#method_size" title="size">size</a></li>
+                                <li class=""><a href="#method_start" title="start">start</a></li>
+                                <li class=""><a href="#method_stop" title="stop">stop</a></li>
+                                <li class=""><a href="#method_transport" title="transport">transport</a></li>
+                                <li class="private"><a href="#method_xdrReady" title="xdrReady">xdrReady</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#event_io:abort">io:abort</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_io:complete">io:complete</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_io:failure">io:failure</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_io:start">io:start</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_io:success">io:success</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_io:xdrReady">io:xdrReady</a>
-                                </li>
+                                <li class=""><a href="#event_io:abort" title="io:abort">io:abort</a></li>
+                                <li class=""><a href="#event_io:complete" title="io:complete">io:complete</a></li>
+                                <li class=""><a href="#event_io:failure" title="io:failure">io:failure</a></li>
+                                <li class=""><a href="#event_io:start" title="io:start">io:start</a></li>
+                                <li class=""><a href="#event_io:success" title="io:success">io:success</a></li>
+                                <li class=""><a href="#event_io:xdrReady" title="io:xdrReady">io:xdrReady</a></li>
                         </ul>
                     </div>
 
@@ -2556,8 +2459,11 @@ the HTTP status resolves to HTTP2xx.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:abort", "url": "io.html#event_io:abort", "type": "event"}, {"access": "", "host": "io", "name": "io:abort", "url": "io.html#event_io:abort", "type": "event"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioAbort", "url": "io.html#method__ioAbort", "type": "method"}, {"access": "private", "host": "io", "name": "_ioAbort", "url": "io.html#method__ioAbort", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_transportMap", "url": "io.html#property__transportMap", "type": "property"}, {"access": "private", "host": "io", "name": "_transportMap", "url": "io.html#property__transportMap", "type": "property"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+</script>
 </body>
 </html>

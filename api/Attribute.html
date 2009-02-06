@@ -1,8 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>API: attribute  Attribute   (YUI Library)</title>
-	<link rel="stylesheet" type="text/css" href="assets/api.css">
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
 </head>
@@ -10,27 +14,33 @@
 <body id="yahoo-com">
 
 <div id="doc3" class="yui-t2">
-
 	<div id="hd">
-        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>attribute&nbsp; <span class="subtitle">3.00PR1</span></h3>
-        <p>
-        <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_attribute.html">attribute</a>
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>attribute&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
                  &gt; Attribute 
                 
-            </p>
-
-
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
-            <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
             </form>
 
                     <h2>
@@ -38,25 +48,26 @@
 
                         
                         
-                            Class <b>Attribute</b>
+                            Class <b property="yui:name">Attribute</b>
                         <span class="extends">
                         </span>
 
-                        <span class="extends">
+                            <span class="extends" rel="yui:extends">
                           - uses 
                             
-                                <a href="Event.Target.html">Event.Target</a>
+                                <span rel="extend" resource="Event.Target.html">
+                                <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>
+                                </span>
+                            
                             
                         </span>
-                        
-                        </code>
                     </h2>
                     <!-- class tree goes here -->
                     
                 
   
 
-                    <div class="summary description">
+                    <div class="summary description" property="yui:description">
                         <p>
 Attribute provides managed attribute support. 
 </p>
@@ -74,20 +85,24 @@ values passed to Attribute's set method, before they are stored.</li>
 <li>Be defined with a validator function, to validate values before they are stored.</li>
 <li>Be defined with a get function, which can be used to manipulate stored values,
 before they are returned by Attribute's get method.</li>
-<li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
+<li>Specify if and how they should be cloned on 'get' (see <a href="#property_CLONE">Attribute.CLONE</a> for supported clone modes).</li>
 </ul>
-<em>See the addAtt method, for details about how to add attributes with
-a specific configuration</em>
+<p>See the <a href="#method_addAtt">addAtt</a> method, for details about how to add attributes with
+a specific configuration</p>
                     </div>
 
-
+                    
+                    <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="">
-                                    <h4><a name="property_CLONE">CLONE</a>
-                                        <code>- static final Object
-<p>
+                                    <div class="" rel="yui:property" resource="#property_CLONE">
+                                    <h4><a name="property_CLONE" property="yui:name">CLONE</a>
+                                        - <code>static final <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            <p>
 Constants for clone formats supported by Attribute.
 </p>
 <p>
@@ -98,12 +113,12 @@ property to:
 <dl>
 <dt>Attribute.CLONE.DEEP</dt>
 <dd>Will result in a deep cloned value being returned
-(using Y.clone). This can be expensive for complex
+(using YUI's clone method). This can be expensive for complex
 objects.
 </dd>
 <dt>Attribute.CLONE.SHALLOW</dt>
 <dd>Will result in a shallow cloned value being returned
-(using Y.merge).
+(using YUI's merge method).
 </dd>
 <dt>Attribute.CLONE.IMMUTABLE</dt>
 <dd>Will result in a deep cloned value being returned
@@ -119,11 +134,7 @@ The value will not be cloned, resulting in a reference
 to the stored value being passed back, if the value is an object.
 This is the default behavior.
 </dd>
-</dl></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            
+</dl>
                                         </div>
                                     </div>
      
@@ -132,25 +143,25 @@ This is the default behavior.
 
                                     <hr />
                                     </div>
-
-
                             </div>
                         </div>
 
+                    </div>
 
+                    <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__cloneAttVal">
                                     <h4>
                                         <a name="method__cloneAttVal">_cloneAttVal</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
-                                        void
-                                            <strong>_cloneAttVal</strong>
+                                        Any
+                                            <strong property="yui:name">_cloneAttVal</strong>
                                            (
                                                 
                                                         
@@ -164,33 +175,39 @@ This is the default behavior.
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Clone utility method, which will 
+                                        <div class="description" property="yui:description">
+                                            <p>
+Clone utility method, which will 
 clone the provided value using YUI's 
 merge, or clone utilities based
-on the clone type provided.
+on the clone type provided. See <a href="#property_CLONE">Attribute.CLONE</a>
+</p>
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>val &lt;Any&gt;</code>
-                                                             Value to clone
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Value to clone</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>type &lt;int&gt;</code>
-                                                             Clone type to use, See the CLONE property
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Clone type to use, See the CLONE property</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Any
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">The cloned copy of the object, based on the provided type.</dd>
                                                 </dl>
 
 
@@ -201,16 +218,16 @@ on the clone type provided.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__defAttSet">
                                     <h4>
                                         <a name="method__defAttSet">_defAttSet</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_defAttSet</strong>
+                                            <strong property="yui:name">_defAttSet</strong>
                                            (
                                                 
                                                         
@@ -220,26 +237,28 @@ on the clone type provided.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Default handler implementation for set events
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>e &lt;Event.Facade&gt;</code>
-                                                             The event object for the custom event
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event object for the custom event</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -250,16 +269,16 @@ on the clone type provided.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__fireAttChange">
                                     <h4>
                                         <a name="method__fireAttChange">_fireAttChange</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_fireAttChange</strong>
+                                            <strong property="yui:name">_fireAttChange</strong>
                                            (
                                                 
                                                         
@@ -283,62 +302,66 @@ on the clone type provided.
                                                     
                                                 
                                                         , 
-                                                         defaultFn
-                                                    
-                                                
-                                                        , 
                                                          opts
                                                     
                                                 
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Utility method to help setup the event payload and 
 fire the attribute change event.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;String&gt;</code>
-                                                             The event name
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event name</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>currVal &lt;Any&gt;</code>
-                                                             The current value of the attribute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">currVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The current value of the attribute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>newVal &lt;Any&gt;</code>
-                                                             The new value of the attribute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The new value of the attribute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>attrName &lt;String&gt;</code>
-                                                             The name of the attribute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>strFullPath &lt;String&gt;</code>
-                                                             The full path of the property being changed, 
-if this is a sub-attribute value being change
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">strFullPath</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The full path of the property being changed, 
+if this is a sub-attribute value being change</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>defaultFn &lt;Function&gt;</code>
-                                                             The default handler for the change event
-                                                        </dd>
-                                                        <dd>
-                                                            <code>opts &lt;Object&gt;</code>
-                                                             Any additional event data to mix into the attribute change event's event facade.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Any additional event data to mix into the attribute change event's event facade.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -349,16 +372,16 @@ if this is a sub-attribute value being change
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__getSubAttVal">
                                     <h4>
                                         <a name="method__getSubAttVal">_getSubAttVal</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         Any
-                                            <strong>_getSubAttVal</strong>
+                                            <strong property="yui:name">_getSubAttVal</strong>
                                            (
                                                 
                                                         
@@ -372,32 +395,36 @@ if this is a sub-attribute value being change
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Retrieves the sub value at the provided path,
 from the value object provided.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>path &lt;Array&gt;</code>
-                                                              A path array, specifying the object traversal path
-from which to obtain the sub value.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">path</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  A path array, specifying the object traversal path
+from which to obtain the sub value.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>val &lt;Object&gt;</code>
-                                                              The object from which to extract the property value
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The object from which to extract the property value</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Any
                                                     </code></dt>
-                                                    <dd>The value stored in the path or undefined if not found.</dd>
+                                                    <dd property="yui:returnInfo">The value stored in the path or undefined if not found.</dd>
                                                 </dl>
 
 
@@ -408,16 +435,16 @@ from which to obtain the sub value.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected">
+                                    <div class="protected" rel="yui:method" resource="#method__initAtts">
                                     <h4>
                                         <a name="method__initAtts">_initAtts</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong>_initAtts</strong>
+                                            <strong property="yui:name">_initAtts</strong>
                                            (
                                                 
                                                         
@@ -431,30 +458,34 @@ from which to obtain the sub value.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Configures attributes, and sets initial values
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>cfg &lt;Object&gt;</code>
-                                                             Attribute configuration object literal
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Attribute configuration object literal</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>initValues &lt;Object&gt;</code>
-                                                             Name/value hash of initial values to apply
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">initValues</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Name/value hash of initial values to apply</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -465,16 +496,16 @@ from which to obtain the sub value.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__initAttVal">
                                     <h4>
                                         <a name="method__initAttVal">_initAttVal</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         Any
-                                            <strong>_initAttVal</strong>
+                                            <strong property="yui:name">_initAttVal</strong>
                                            (
                                                 
                                                         
@@ -492,7 +523,7 @@ from which to obtain the sub value.
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Returns the initial value of the given attribute from
 either the default configuration provided, or the 
 over-ridden value if it exists in the initValues 
@@ -501,30 +532,36 @@ hash provided.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>att &lt;String&gt;</code>
-                                                             Attribute name
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">att</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Attribute name</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>cfg &lt;Object&gt;</code>
-                                                             Default attribute configuration
-object literal
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Default attribute configuration
+object literal</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>initVales &lt;Object&gt;</code>
-                                                             Initial attribute values, provided 
-for the instance
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">initVales</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Initial attribute values, provided 
+for the instance</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Any
                                                     </code></dt>
-                                                    <dd>Initial value of the attribute.</dd>
+                                                    <dd property="yui:returnInfo">Initial value of the attribute.</dd>
                                                 </dl>
 
 
@@ -535,16 +572,56 @@ for the instance
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="protected" rel="yui:method" resource="#method__set">
+                                    <h4>
+                                        <a name="method__set">_set</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_set</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Allows setting of readOnly/writeOnce attributes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Reference to the host object</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setSubAttVal">
                                     <h4>
                                         <a name="method__setSubAttVal">_setSubAttVal</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         Object
-                                            <strong>_setSubAttVal</strong>
+                                            <strong property="yui:name">_setSubAttVal</strong>
                                            (
                                                 
                                                         
@@ -562,36 +639,42 @@ for the instance
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Sets the sub value at the provided path on the value object.
 Returns the modified value object, or undefined if the path is invalid.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>path &lt;Array&gt;</code>
-                                                              A path array, specifying the object traversal path
-at which to set the sub value.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">path</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  A path array, specifying the object traversal path
+at which to set the sub value.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>val &lt;Object&gt;</code>
-                                                              The object on which to set the sub value.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The object on which to set the sub value.</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>subval &lt;Any&gt;</code>
-                                                              The sub value to set.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">subval</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The sub value to set.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd>The modified object, with the new sub value set, or 
+                                                    <dd property="yui:returnInfo">The modified object, with the new sub value set, or 
 undefined, if the path was invalid.</dd>
                                                 </dl>
 
@@ -603,16 +686,16 @@ undefined, if the path was invalid.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="private" rel="yui:method" resource="#method__splitAttrValues">
                                     <h4>
                                         <a name="method__splitAttrValues">_splitAttrValues</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         Object
-                                            <strong>_splitAttrValues</strong>
+                                            <strong property="yui:name">_splitAttrValues</strong>
                                            (
                                                 
                                                         
@@ -622,7 +705,7 @@ undefined, if the path was invalid.</dd>
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Utility to split out regular attribute values
 from complex attribute values, so that complex
 attributes can be keyed by top level attribute name.
@@ -630,20 +713,22 @@ attributes can be keyed by top level attribute name.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>valueHash &lt;Object&gt;</code>
-                                                             Name/value hash of initial values
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">valueHash</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Name/value hash of initial values</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd>Object literal with 2 properties - "simple" and "complex",
+                                                    <dd property="yui:returnInfo">Object literal with 2 properties - "simple" and "complex",
 containing simple and complex attribute values respectively keyed 
 by attribute the top level attribute name.</dd>
                                                 </dl>
@@ -656,16 +741,16 @@ by attribute the top level attribute name.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_addAtt">
                                     <h4>
                                         <a name="method_addAtt">addAtt</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>addAtt</strong>
+                                            <strong property="yui:name">addAtt</strong>
                                            (
                                                 
                                                         
@@ -679,7 +764,7 @@ by attribute the top level attribute name.</dd>
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             <p>
 Adds an attribute, with the provided configuration to the host object. Intended
 to be used by the host object to setup it's set of available attributes.
@@ -688,28 +773,28 @@ to be used by the host object to setup it's set of available attributes.
 The config argument object literal supports the following optional properties:
 </p>
 <dl>
-<dt>value {Any}</dt>
+<dt>value &#60;Any&#62;</dt>
 <dd>The initial value to set on the attribute</dd>
-<dt>readOnly {Boolean}</dt>
+<dt>readOnly &#60;Boolean&#62;</dt>
 <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
 cannot be set by invoking the set method.</dd>
-<dt>writeOnce {Boolean}</dt>
+<dt>writeOnce &#60;Boolean&#62;</dt>
 <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
 can only have their values set once, be it through the default configuration, 
 constructor configuration arguments, or by invoking set.</dd>
-<dt>set {Function}</dt>
+<dt>set &#60;Function&#62;</dt>
 <dd>The setter function to be invoked (within the context of the host object) before 
 the attribute is stored by a call to the set method. The value returned by the 
 set function will be the finally stored value.</dd>
-<dt>get {Function}</dt>
+<dt>get &#60;Function&#62;</dt>
 <dd>The getter function to be invoked (within the context of the host object) before
 the stored values is returned to a user invoking the get method for the attribute.
 The value returned by the get function is the final value which will be returned to the 
 user when they invoke get.</dd>
-<dt>validator {Function}</dt>
+<dt>validator &#60;Function&#62;</dt>
 <dd>The validator function which is invoked prior to setting the stored value. Returning
 false from the validator function will prevent the value from being stored</dd>
-<dt>clone {int}</dt>
+<dt>clone &#60;int&#62;</dt>
 <dd>If and how the value returned by a call to the get method, should be de-referenced from
 the stored value. By default values are not cloned, and hence a call to get will return
 a reference to the stored value. See Attribute.CLONE for more details about the clone 
@@ -719,26 +804,30 @@ options available</dd>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>name &lt;String&gt;</code>
-                                                             The attribute key
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute key</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>config &lt;Object&gt;</code>
-                                                             (optional) An object literal specifying the configuration for the attribute.
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (optional) An object literal specifying the configuration for the attribute.
 <strong>NOTE:</strong> The config object is modified when adding an attribute, 
-so if you need to protect the original values, you will need to merge or clone the object.
+so if you need to protect the original values, you will need to merge or clone the object.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -749,16 +838,16 @@ so if you need to protect the original values, you will need to merge or clone t
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_get">
                                     <h4>
                                         <a name="method_get">get</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>get</strong>
+                                        Any
+                                            <strong property="yui:name">get</strong>
                                            (
                                                 
                                                         
@@ -768,7 +857,7 @@ so if you need to protect the original values, you will need to merge or clone t
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Returns the current value of the attribute. If the attribute
 has been configured with a 'get' handler, this method will delegate
 to the 'get' handler to obtain the value of the attribute.
@@ -778,22 +867,24 @@ as the only argument.
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>key &lt;String&gt;</code>
-                                                             The attribute whose value will be returned. If
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">key</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute whose value will be returned. If
 the value of the attribute is an Object, dot notation can be used to
-obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
+obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Any
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">The current value of the attribute</dd>
                                                 </dl>
 
 
@@ -804,33 +895,48 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_getAtts">
                                     <h4>
                                         <a name="method_getAtts">getAtts</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         Object
-                                            <strong>getAtts</strong>
+                                            <strong property="yui:name">getAtts</strong>
                                            (
+                                                
+                                                        
+                                                         Optional.
+                                                    
+                                                
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Gets multiple attribute values.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Optional.</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of attribute names, whose values are required. If omitted, all attribute values are
+returned.</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd>A hash of attributes: name/value pairs</dd>
+                                                    <dd property="yui:returnInfo">A hash of attributes: name/value pairs</dd>
                                                 </dl>
 
 
@@ -841,33 +947,85 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_on">
                                     <h4>
                                         <a name="method_on">on</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>on</strong>
+                                        Event.Handle
+                                            <strong property="yui:name">on</strong>
                                            (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
-                                        <div class="description">
-                                            Alias for the <a href="Event.Target.html#method_subscribe">Event.Target subscribe method</a>.
+                                        <div class="description" property="yui:description">
+                                            <p>
+Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
+</p>
+<p>Subscribers using this method to listen for attribute change events will be notified just
+<strong>before</strong> the state of the attribute has been modified, and before the default handler has been
+invoked.</p>
+<p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
+who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
+for the attribute "enabled", the event type will be "enabledChange".</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The subscribed function to invoke</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional execution context</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n additional arguments to append to supply to the subscribed function when the event fires.</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Event.Handle
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">The handle object for unsubscribing the subscriber from the event.</dd>
                                                 </dl>
 
 
@@ -878,16 +1036,16 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_removeAtt">
                                     <h4>
                                         <a name="method_removeAtt">removeAtt</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>removeAtt</strong>
+                                            <strong property="yui:name">removeAtt</strong>
                                            (
                                                 
                                                         
@@ -897,26 +1055,28 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Removes an attribute.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>name &lt;String&gt;</code>
-                                                             The attribute key
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute key</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -927,16 +1087,67 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_reset">
                                     <h4>
-                                        <a name="method_set">set</a></h4>
-                                    <div class="detail">
+                                        <a name="method_reset">reset</a></h4>
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>set</strong>
+                                            <strong property="yui:name">reset</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Resets the given attribute or all attributes to the initial value.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional An attribute to reset.  If omitted, all attributes are reset</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_set">
+                                    <h4>
+                                        <a name="method_set">set</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">set</strong>
                                            (
                                                 
                                                         
@@ -954,40 +1165,46 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Sets the value of an attribute.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>name &lt;String&gt;</code>
-                                                             The name of the attribute. Note, if the 
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute. Note, if the 
 value of the attribute is an Object, dot notation can be used
 to set the value of a property within the object 
 (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-been declared as an immutable attribute (see Attribute.CLONE).
+been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>value &lt;Any&gt;</code>
-                                                             The value to apply to the attribute
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to apply to the attribute</span>
                                                         </dd>
-                                                        <dd>
-                                                            <code>opts &lt;Object&gt;</code>
-                                                             Optional event data. This object will be mixed into
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional event data. This object will be mixed into
 the event facade passed as the first argument to subscribers 
-of attribute change events
+of attribute change events</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
-                                                        void
+                                                    <code property="yui:return">
+                                                        Object
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo">Reference to the host object</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -1001,16 +1218,16 @@ of attribute change events
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="" rel="yui:method" resource="#method_setAtts">
                                     <h4>
                                         <a name="method_setAtts">setAtts</a></h4>
-                                    <div class="detail">
+                                    <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>setAtts</strong>
+                                            <strong property="yui:name">setAtts</strong>
                                            (
                                                 
                                                         
@@ -1020,26 +1237,28 @@ of attribute change events
                                             )
                                         </code>
                                         
-                                        <div class="description">
+                                        <div class="description" property="yui:description">
                                             Sets multiple attribute values.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
+                                                <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>atts &lt;Object&gt;</code>
-                                                              A hash of attributes: name/value pairs
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">atts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  A hash of attributes: name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
-                                                    <code>
+                                                    <code property="yui:return">
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1053,163 +1272,140 @@ of attribute change events
                             </div>
                         </div>
 
-                            <div class="section field inheritance">
-                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
-                                <div class="content">
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
+                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                                <div class="content" rel="yui:methods">
                                     <code>
-                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <span rel="yui:method" resource="Event.Target.html#method_addTarget">                                        
+                                            <a class="" href="Event.Target.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_after">                                        
+                                            <a class="" href="Event.Target.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_bubble">                                        
+                                            <a class="" href="Event.Target.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_fire">                                        
+                                            <a class="" href="Event.Target.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_getEvent">                                        
+                                            <a class="" href="Event.Target.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_publish">                                        
+                                            <a class="" href="Event.Target.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_removeTarget">                                        
+                                            <a class="" href="Event.Target.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_subscribe">                                        
+                                            <a class="" href="Event.Target.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribe">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribeAll">                                        
+                                            <a class="" href="Event.Target.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
                                     </code>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
 
 
+                    </div>
 
+                    <div rel="yui:attributes" resource="#configattributes">
 
-
+                    </div>
 
 			</div>
 		</div>
 		<div class="yui-b">
             <div class="nav">
 
-                    <div class="module">
+                    <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-
-                                <li class=""><a href="module_anim.html">anim</a></li>
-
-                                <li class="selected"><a href="module_attribute.html">attribute</a></li>
-
-                                <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd.html">dd</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dump.html">dump</a></li>
-
-                                <li class=""><a href="module_event.html">event</a></li>
-
-                                <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_oop.html">oop</a></li>
-
-                                <li class=""><a href="module_queue.html">queue</a></li>
-
-                                <li class=""><a href="module_substitute.html">substitute</a></li>
-
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="Attribute.html">Attribute</a></li>
-                                <li class=""><a href="State.html">State</a></li>
+                                <li class="selected"><a href="Attribute.html" title="Attribute">Attribute</a></li>
+                                <li class=""><a href="State.html" title="State">State</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Attribute.js.html">Attribute.js</a></li>
-                                <li class=""><a href="State.js.html">State.js</a></li>
+                                <li class=""><a href="Attribute.js.html" title="Attribute.js">Attribute.js</a></li>
+                                <li class=""><a href="State.js.html" title="State.js">State.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_CLONE">CLONE</a>
-                                        <!--<code>&lt;Object
-<p>
-Constants for clone formats supported by Attribute.
-</p>
-<p>
-By default attribute values returned by the get method
-are not cloned. However setting the attribute's "clone"
-property to:
-</p>
-<dl>
-<dt>Attribute.CLONE.DEEP</dt>
-<dd>Will result in a deep cloned value being returned
-(using Y.clone). This can be expensive for complex
-objects.
-</dd>
-<dt>Attribute.CLONE.SHALLOW</dt>
-<dd>Will result in a shallow cloned value being returned
-(using Y.merge).
-</dd>
-<dt>Attribute.CLONE.IMMUTABLE</dt>
-<dd>Will result in a deep cloned value being returned
-when using the get method. Additionally users will
-not be able to set sub values of the attribute 
-using the complex attribute notation (obj.set("x.y.z, 5)).
-However the value of the attribute can be changed, making
-it different from a READONLY attribute.
-</dd>
-<dt>Attribute.CLONE.NONE</dt>
-<dd>
-The value will not be cloned, resulting in a reference
-to the stored value being passed back, if the value is an object.
-This is the default behavior.
-</dd>
-</dl>&gt;</code>-->
-                                </li>
+                                <li class=""><a href="#property_CLONE" title="CLONE">CLONE</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
+                    <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__cloneAttVal">_cloneAttVal</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__defAttSet">_defAttSet</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__fireAttChange">_fireAttChange</a>
-                                </li>
-                                <li class="private"><!--<code>Any</code>-->
-                                <a href="#method__getSubAttVal">_getSubAttVal</a>
-                                </li>
-                                <li class="protected"><!--<code>void</code>-->
-                                <a href="#method__initAtts">_initAtts</a>
-                                </li>
-                                <li class="private"><!--<code>Any</code>-->
-                                <a href="#method__initAttVal">_initAttVal</a>
-                                </li>
-                                <li class="private"><!--<code>Object</code>-->
-                                <a href="#method__setSubAttVal">_setSubAttVal</a>
-                                </li>
-                                <li class="private"><!--<code>Object</code>-->
-                                <a href="#method__splitAttrValues">_splitAttrValues</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_addAtt">addAtt</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_get">get</a>
-                                </li>
-                                <li class=""><!--<code>Object</code>-->
-                                <a href="#method_getAtts">getAtts</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_on">on</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_removeAtt">removeAtt</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_set">set</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_setAtts">setAtts</a>
-                                </li>
+                                <li class="private"><a href="#method__cloneAttVal" title="_cloneAttVal">_cloneAttVal</a></li>
+                                <li class="private"><a href="#method__defAttSet" title="_defAttSet">_defAttSet</a></li>
+                                <li class="private"><a href="#method__fireAttChange" title="_fireAttChange">_fireAttChange</a></li>
+                                <li class="private"><a href="#method__getSubAttVal" title="_getSubAttVal">_getSubAttVal</a></li>
+                                <li class="protected"><a href="#method__initAtts" title="_initAtts">_initAtts</a></li>
+                                <li class="private"><a href="#method__initAttVal" title="_initAttVal">_initAttVal</a></li>
+                                <li class="protected"><a href="#method__set" title="_set">_set</a></li>
+                                <li class="private"><a href="#method__setSubAttVal" title="_setSubAttVal">_setSubAttVal</a></li>
+                                <li class="private"><a href="#method__splitAttrValues" title="_splitAttrValues">_splitAttrValues</a></li>
+                                <li class=""><a href="#method_addAtt" title="addAtt">addAtt</a></li>
+                                <li class=""><a href="#method_get" title="get">get</a></li>
+                                <li class=""><a href="#method_getAtts" title="getAtts">getAtts</a></li>
+                                <li class=""><a href="#method_on" title="on">on</a></li>
+                                <li class=""><a href="#method_removeAtt" title="removeAtt">removeAtt</a></li>
+                                <li class=""><a href="#method_reset" title="reset">reset</a></li>
+                                <li class=""><a href="#method_set" title="set">set</a></li>
+                                <li class=""><a href="#method_setAtts" title="setAtts">setAtts</a></li>
                         </ul>
                     </div>
 
@@ -1220,8 +1416,11 @@ This is the default behavior.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAtt", "url": "Attribute.html#method_addAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "CLONE", "url": "Attribute.html#property_CLONE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_cloneAttVal", "url": "Attribute.html#method__cloneAttVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_defAttSet", "url": "Attribute.html#method__defAttSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttChange", "url": "Attribute.html#method__fireAttChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAtts", "url": "Attribute.html#method_getAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttVal", "url": "Attribute.html#method__getSubAttVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAtts", "url": "Attribute.html#method__initAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_initAttVal", "url": "Attribute.html#method__initAttVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "on", "url": "Attribute.html#method_on", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAtt", "url": "Attribute.html#method_removeAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAtts", "url": "Attribute.html#method_setAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttVal", "url": "Attribute.html#method__setSubAttVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+</script>
 </body>
 </html>

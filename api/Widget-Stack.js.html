@@ -1,0 +1,570 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-stack   Widget-Stack.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-stack&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-stack.html" title="widget-stack">widget-stack</a>
+                
+                 &gt; Widget-Stack.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Provides stackable (z-index) support for Widgets through an extension.</span>
+<span class="c"> *</span>
+<span class="c"> * @module widget-stack</span>
+<span class="c"> */</span>
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+        <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
+        <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span>
+        <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span><span class="o">,</span>
+
+        <span class="nx">ZINDEX</span> <span class="o">=</span> <span class="s2">&quot;zIndex&quot;</span><span class="o">,</span>
+        <span class="nx">SHIM</span> <span class="o">=</span> <span class="s2">&quot;shim&quot;</span><span class="o">,</span>
+        <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s2">&quot;visible&quot;</span><span class="o">,</span>
+
+        <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="o">,</span>
+
+        <span class="nx">RENDER_UI</span> <span class="o">=</span> <span class="s2">&quot;renderUI&quot;</span><span class="o">,</span>
+        <span class="nx">BIND_UI</span> <span class="o">=</span> <span class="s2">&quot;bindUI&quot;</span><span class="o">,</span>
+        <span class="nx">SYNC_UI</span> <span class="o">=</span> <span class="s2">&quot;syncUI&quot;</span><span class="o">,</span>
+
+        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s2">&quot;offsetWidth&quot;</span><span class="o">,</span>
+        <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="o">,</span>
+        <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s2">&quot;parentNode&quot;</span><span class="o">,</span>
+        <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s2">&quot;firstChild&quot;</span><span class="o">,</span>
+
+        <span class="nx">WIDTH</span> <span class="o">=</span> <span class="s2">&quot;width&quot;</span><span class="o">,</span>
+        <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span><span class="o">,</span>
+        <span class="nx">PX</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span><span class="o">,</span>
+
+        <span class="c">// HANDLE KEYS</span>
+<span class="c"></span>        <span class="nx">SHIM_DEFERRED</span> <span class="o">=</span> <span class="s2">&quot;shimdeferred&quot;</span><span class="o">,</span>
+        <span class="nx">SHIM_RESIZE</span> <span class="o">=</span> <span class="s2">&quot;shimresize&quot;</span><span class="o">,</span>
+
+        <span class="c">// Events</span>
+<span class="c"></span>        <span class="nx">VisibleChange</span> <span class="o">=</span> <span class="s2">&quot;visibleChange&quot;</span><span class="o">,</span>
+        <span class="nx">WidthChange</span> <span class="o">=</span> <span class="s2">&quot;widthChange&quot;</span><span class="o">,</span>
+        <span class="nx">HeightChange</span> <span class="o">=</span> <span class="s2">&quot;heightChange&quot;</span><span class="o">,</span>
+        <span class="nx">ShimChange</span> <span class="o">=</span> <span class="s2">&quot;shimChange&quot;</span><span class="o">,</span>
+        <span class="nx">ZIndexChange</span> <span class="o">=</span> <span class="s2">&quot;zIndexChange&quot;</span><span class="o">,</span>
+        <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="o">,</span>
+
+        <span class="c">// CSS</span>
+<span class="c"></span>        <span class="nx">STACKED</span> <span class="o">=</span> <span class="s2">&quot;stacked&quot;</span><span class="o">,</span>
+        <span class="nx">SHOW_SCROLLBARS</span> <span class="o">=</span> <span class="s2">&quot;show-scrollbars&quot;</span><span class="o">,</span>
+        <span class="nx">HIDE_SCROLLBARS</span> <span class="o">=</span> <span class="s2">&quot;hide-scrollbars&quot;</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Widget extension, which can be used to add stackable (z-index) support to the </span>
+<span class="c">     * base Widget class along with a shimming solution, through the </span>
+<span class="c">     * &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="c">     *</span>
+<span class="c">     * @class WidgetStack</span>
+<span class="c">     * @param {Object} User configuration object</span>
+<span class="c">     */</span>
+    <span class="k">function</span> <span class="nx">Stack</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span> <span class="o">=</span> <span class="o">{};</span>
+
+        <span class="c">// WIDGET METHOD OVERLAP</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_renderUIStack</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">RENDER_UI</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_syncUIStack</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">SYNC_UI</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_bindUIStack</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">BIND_UI</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c">// Static Properties</span>
+<span class="c"></span>    <span class="c">/**</span>
+<span class="c">     * Static property used to define the default attribute </span>
+<span class="c">     * configuration introduced by WidgetStack.</span>
+<span class="c">     * </span>
+<span class="c">     * @property WidgetStack.ATTRS</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * @attribute shim</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         * @default false, for all browsers other than IE6, for which a shim is enabled by default.</span>
+<span class="c">         * </span>
+<span class="c">         * @description Boolean flag to indicate whether or not a shim should be added to the Widgets</span>
+<span class="c">         * boundingBox, to protect it from select box bleedthrough.</span>
+<span class="c">         */</span>
+        <span class="nx">shim</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">==</span> <span class="m">6</span><span class="o">)</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @attribute zIndex</span>
+<span class="c">         * @type number</span>
+<span class="c">         * @default 0</span>
+<span class="c">         * @description The z-index to apply to the Widgets boundingBox. Non-numerical values for </span>
+<span class="c">         * zIndex will be converted to 0</span>
+<span class="c">         */</span>
+        <span class="nx">zIndex</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="m">0</span><span class="o">,</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setZIndex</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The HTML parsing rules for the WidgetStack class.</span>
+<span class="c">     * </span>
+<span class="c">     * @property WidgetStack.HTML_PARSER</span>
+<span class="c">     * @static</span>
+<span class="c">     * @type Object</span>
+<span class="c">     */</span>
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">HTML_PARSER</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">zIndex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="nx">ZINDEX</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default class used to mark the shim element</span>
+<span class="c">     *</span>
+<span class="c">     * @property WidgetStack.SHIM_CLASS_NAME</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static</span>
+<span class="c">     * @default &quot;yui-widget-shim&quot;</span>
+<span class="c">     */</span>
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">SHIM_CLASS_NAME</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">SHIM</span><span class="o">);</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default class used to mark the boundingBox of a stacked widget.</span>
+<span class="c">     * </span>
+<span class="c">     * @property WidgetStack.STACKED_CLASS_NAME</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static</span>
+<span class="c">     * @default &quot;yui-widget-stacked&quot;</span>
+<span class="c">     */</span>
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">STACKED_CLASS_NAME</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">STACKED</span><span class="o">);</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Default markup template used to generate the shim element.</span>
+<span class="c">     * </span>
+<span class="c">     * @property WidgetStack.SHIM_TEMPLATE</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&lt;iframe class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Stack</span><span class="o">.</span><span class="nx">SHIM_CLASS_NAME</span> <span class="o">+</span> <span class="s1">&#39;&quot; frameborder=&quot;0&quot; title=&quot;Widget Stacking Shim&quot; src=&quot;javascript:false&quot; tabindex=&quot;-1&quot; role=&quot;presentation&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="o">;</span>
+
+    <span class="nx">Stack</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Synchronizes the UI to match the Widgets stack state. This method in </span>
+<span class="c">         * invoked after syncUI is invoked for the Widget class using YUI&#39;s aop infrastructure.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _syncUIStack</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_syncUIStack</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetShim</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SHIM</span><span class="o">));</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetZIndex</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ZINDEX</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Binds event listeners responsible for updating the UI state in response to </span>
+<span class="c">         * Widget stack related state changes.</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * This method is invoked after bindUI is invoked for the Widget class</span>
+<span class="c">         * using YUI&#39;s aop infrastructure.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @method _bindUIStack</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_bindUIStack</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ShimChange</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterShimChange</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ZIndexChange</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterZIndexChange</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Creates/Initializes the DOM to support stackability.</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * This method in invoked after renderUI is invoked for the Widget class</span>
+<span class="c">         * using YUI&#39;s aop infrastructure.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @method _renderUIStack</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_renderUIStack</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">Stack</span><span class="o">.</span><span class="nx">STACKED_CLASS_NAME</span><span class="o">);</span>
+
+            <span class="c">// TODO:DEPENDENCY Env.os</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">isMac</span> <span class="o">=</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;macintosh&quot;</span><span class="o">)</span> <span class="o">!=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">isMac</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&lt;=</span> <span class="m">1</span><span class="o">.</span><span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_fixMacGeckoScrollbars</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default setter for zIndex attribute changes. Normalizes zIndex values to </span>
+<span class="c">         * numbers, converting non-numerical values to 0.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _setZIndex</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @param {String | Number} zIndex</span>
+<span class="c">         * @return {Number} Normalized zIndex</span>
+<span class="c">         */</span>
+        <span class="nx">_setZIndex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">zIndex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">zIndex</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">zIndex</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">zIndex</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">zIndex</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">zIndex</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">zIndex</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default attribute change listener for the shim attribute, responsible</span>
+<span class="c">         * for updating the UI, in response to attribute changes.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _afterShimChange</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @param {Event.Facade} e The event facade for the attribute change</span>
+<span class="c">         */</span>
+        <span class="nx">_afterShimChange</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetShim</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default attribute change listener for the zIndex attribute, responsible</span>
+<span class="c">         * for updating the UI, in response to attribute changes.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _afterZIndexChange</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @param {Event.Facade} e The event facade for the attribute change</span>
+<span class="c">         */</span>
+        <span class="nx">_afterZIndexChange</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetZIndex</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Updates the UI to reflect the zIndex value passed in.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _uiSetZIndex</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @param {number} zIndex The zindex to be reflected in the UI</span>
+<span class="c">         */</span>
+        <span class="nx">_uiSetZIndex</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">zIndex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">ZINDEX</span><span class="o">,</span> <span class="nx">zIndex</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Updates the UI to enable/disable the shim. If the widget is not currently visible,</span>
+<span class="c">         * creation of the shim is deferred until it is made visible, for performance reasons.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _uiSetShim</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @param {boolean} enable If true, creates/renders the shim, if false, removes it.</span>
+<span class="c">         */</span>
+        <span class="nx">_uiSetShim</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">enable</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">enable</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Lazy creation</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_renderShim</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_renderShimDeferred</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_destroyShim</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Sets up change handlers for the visible attribute, to defer shim creation/rendering </span>
+<span class="c">         * until the Widget is made visible.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _renderShimDeferred</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_renderShimDeferred</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_DEFERRED</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_DEFERRED</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
+
+            <span class="k">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_DEFERRED</span><span class="o">],</span>
+                <span class="nx">createBeforeVisible</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">_renderShim</span><span class="o">();</span>
+                    <span class="o">}</span>
+                <span class="o">};</span>
+
+            <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">VisibleChange</span><span class="o">,</span> <span class="nx">createBeforeVisible</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Sets up event listeners to resize the shim when the size of the Widget changes.</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * NOTE: This method is only used for IE6 currently, since IE6 doesn&#39;t support a way to</span>
+<span class="c">         * resize the shim purely through CSS, when the Widget does not have an explicit width/height </span>
+<span class="c">         * set.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @method _addShimResizeHandlers</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_addShimResizeHandlers</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_RESIZE</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_RESIZE</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
+
+            <span class="k">var</span> <span class="nx">sizeShim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">sizeShim</span><span class="o">,</span>
+                <span class="nx">handles</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">SHIM_RESIZE</span><span class="o">];</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">sizeShim</span><span class="o">();</span>
+
+            <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">VisibleChange</span><span class="o">,</span> <span class="nx">sizeShim</span><span class="o">));</span>
+            <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">WidthChange</span><span class="o">,</span> <span class="nx">sizeShim</span><span class="o">));</span>
+            <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">HeightChange</span><span class="o">,</span> <span class="nx">sizeShim</span><span class="o">));</span>
+            <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ContentUpdate</span><span class="o">,</span> <span class="nx">sizeShim</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Detaches any handles stored for the provided key</span>
+<span class="c">         *</span>
+<span class="c">         * @method _detachStackHandles</span>
+<span class="c">         * @param String handleKey The key defining the group of handles which should be detached</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_detachStackHandles</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">handleKey</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackHandles</span><span class="o">[</span><span class="nx">handleKey</span><span class="o">],</span>
+                <span class="nx">handle</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">handles</span> <span class="o">&amp;&amp;</span> <span class="nx">handles</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">while</span><span class="o">((</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">handles</span><span class="o">.</span><span class="nx">pop</span><span class="o">()))</span> <span class="o">{</span>
+                    <span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Creates the shim element and adds it to the DOM</span>
+<span class="c">         *</span>
+<span class="c">         * @method _renderShim</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_renderShim</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">shimEl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span><span class="o">,</span>
+                <span class="nx">stackEl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">shimEl</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">shimEl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getShimTemplate</span><span class="o">();</span>
+                <span class="nx">stackEl</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">shimEl</span><span class="o">,</span> <span class="nx">stackEl</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">));</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">==</span> <span class="m">6</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_addShimResizeHandlers</span><span class="o">();</span>
+                <span class="o">}</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_detachStackHandles</span><span class="o">(</span><span class="nx">SHIM_DEFERRED</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Removes the shim from the DOM, and detaches any related event</span>
+<span class="c">         * listeners.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _destroyShim</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_destroyShim</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">removeChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">_detachStackHandles</span><span class="o">(</span><span class="nx">SHIM_DEFERRED</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_detachStackHandles</span><span class="o">(</span><span class="nx">SHIM_RESIZE</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Applies the CSS classes required to fix scrollbar bleedthrough, for FF2/Mac</span>
+<span class="c">         * </span>
+<span class="c">         * @method _fixMacGeckoScrollbars</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_fixMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_toggleMacGeckoScrollbars</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">VisibleChange</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_toggleMacGeckoScrollbars</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Flip the hide/show scrollbar classes applied to the Widget based on visibility, </span>
+<span class="c">         * to prevent scrollbar bleedthrough on FF2/Mac,</span>
+<span class="c">         *</span>
+<span class="c">         * @method _toggleMacGeckoScrollbars</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_toggleMacGeckoScrollbars</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_showMacGeckoScrollbars</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_hideMacGeckoScrollbars</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is hidden.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _hideMacGeckoScrollbars</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_hideMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">SHOW_SCROLLBARS</span><span class="o">),</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDE_SCROLLBARS</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is visible.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _hideMacGeckoScrollbars</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_showMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDE_SCROLLBARS</span><span class="o">),</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">SHOW_SCROLLBARS</span><span class="o">));</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * For IE6, synchronizes the size and position of iframe shim to that of </span>
+<span class="c">         * Widget bounding box which it is protecting. For all other browsers,</span>
+<span class="c">         * this method does not do anything.</span>
+<span class="c">         *</span>
+<span class="c">         * @method sizeShim</span>
+<span class="c">         */</span>
+        <span class="nx">sizeShim</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shimNode</span><span class="o">,</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">shim</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">===</span> <span class="m">6</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">shim</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">WIDTH</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">);</span>
+                <span class="nx">shim</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">HEIGHT</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Creates a cloned shim node, using the SHIM_TEMPLATE html template, for use on a new instance.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _getShimTemplate</span>
+<span class="c">         * @private</span>
+<span class="c">         * @return {Node} node A new shim Node instance.</span>
+<span class="c">         */</span>
+        <span class="nx">_getShimTemplate</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">Stack</span><span class="o">.</span><span class="nx">_SHIM_TEMPLATE</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Stack</span><span class="o">.</span><span class="nx">_SHIM_TEMPLATE</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">Stack</span><span class="o">.</span><span class="nx">SHIM_TEMPLATE</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">Stack</span><span class="o">.</span><span class="nx">_SHIM_TEMPLATE</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetStack</span> <span class="o">=</span> <span class="nx">Stack</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class="selected"><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="WidgetStack.html" title="WidgetStack">WidgetStack</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Widget-Stack.js.html" title="Widget-Stack.js">Widget-Stack.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStack", "name": "_addShimResizeHandlers", "url": "WidgetStack.html#method__addShimResizeHandlers", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterShimChange", "url": "WidgetStack.html#method__afterShimChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterZIndexChange", "url": "WidgetStack.html#method__afterZIndexChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_bindUIStack", "url": "WidgetStack.html#method__bindUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_destroyShim", "url": "WidgetStack.html#method__destroyShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_detachStackHandles", "url": "WidgetStack.html#method__detachStackHandles", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_fixMacGeckoScrollbars", "url": "WidgetStack.html#method__fixMacGeckoScrollbars", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_getShimTemplate", "url": "WidgetStack.html#method__getShimTemplate", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_hideMacGeckoScrollbars", "url": "WidgetStack.html#method__hideMacGeckoScrollbars", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShim", "url": "WidgetStack.html#method__renderShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShimDeferred", "url": "WidgetStack.html#method__renderShimDeferred", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_renderUIStack", "url": "WidgetStack.html#method__renderUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_setZIndex", "url": "WidgetStack.html#method__setZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "shim", "url": "WidgetStack.html#config_shim", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "shimChange", "url": "WidgetStack.html#event_shimChange", "type": "event"}, {"access": "", "host": "WidgetStack", "name": "sizeShim", "url": "WidgetStack.html#method_sizeShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_syncUIStack", "url": "WidgetStack.html#method__syncUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_toggleMacGeckoScrollbars", "url": "WidgetStack.html#method__toggleMacGeckoScrollbars", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetShim", "url": "WidgetStack.html#method__uiSetShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetZIndex", "url": "WidgetStack.html#method__uiSetZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.ATTRS", "url": "WidgetStack.html#property_WidgetStack.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.HTML_PARSER", "url": "WidgetStack.html#property_WidgetStack.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.SHIM_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_TEMPLATE", "url": "WidgetStack.html#property_WidgetStack.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.STACKED_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.STACKED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "zIndex", "url": "WidgetStack.html#config_zIndex", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "zIndexChange", "url": "WidgetStack.html#event_zIndexChange", "type": "event"}];
+</script>
+</body>
+</html>

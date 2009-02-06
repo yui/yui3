@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(),
+    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -120,6 +120,7 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     // Make a function, disallow direct instantiation
     YUI = function(o) {
+
         var Y = this;
 
         // Allow instantiation without the new operator
@@ -153,7 +154,8 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
+        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+            v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
@@ -175,7 +177,6 @@ YUI.prototype = {
             _uidx: 0
         };
 
-        var v = '@VERSION@';
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
@@ -218,22 +219,23 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.fail(method + ': applyTo not allowed');
+            this.error(method + ': applyTo not allowed');
             return null;
         }
 
-        var instance = _instances[id];
+        var instance = _instances[id], nest, m, i;
 
         if (instance) {
 
-            var nest = method.split('.'), m = instance;
+            nest = method.split('.'); 
+            m = instance;
 
-            for (var i=0; i<nest.length; i=i+1) {
+            for (i=0; i<nest.length; i=i+1) {
 
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.fail('applyTo not found: ' + method);
+                    this.error('applyTo not found: ' + method);
                 }
             }
 
@@ -286,15 +288,21 @@ YUI.prototype = {
     _attach: function(r, fromLoader) {
 
         var mods = YUI.Env.mods,
-            attached = this.Env._attached;
+            attached = this.Env._attached,
+            i, l = r.length, name, m, d, req, use;
 
-        for (var i=0, l=r.length; i<l; i=i+1) {
-            var name = r[i], m = mods[name], mm;
+        for (i=0; i<l; i=i+1) {
+
+            name = r[i]; 
+            m    = mods[name];
+
             if (!attached[name] && m) {
 
                 attached[name] = true;
 
-                var d = m.details, req = d.requires, use = d.use;
+                d   = m.details; 
+                req = d.requires; 
+                use = d.use;
 
                 if (req) {
                     this._attach(this.Array(req));
@@ -346,7 +354,65 @@ YUI.prototype = {
             loader, 
             firstArg = a[0], 
             dynamic = false,
-            callback = a[a.length-1];
+            callback = a[a.length-1],
+            k, i, l, missing = [], r = [], 
+            f = function(name) {
+
+                // only attach a module once
+                if (used[name]) {
+                    // Y.log(name + ' already used');
+                    return;
+                }
+
+                var m = mods[name], j, req, use;
+
+                if (m) {
+                    used[name] = true;
+
+                    // Y.log('found ' + name);
+                    req = m.details.requires;
+                    use = m.details.use;
+                } else {
+                    Y.log('module not found: ' + name, 'info', 'yui');
+                    missing.push(name);
+                }
+
+                // make sure requirements are attached
+                if (req) {
+                    if (Y.Lang.isString(req)) {
+                        f(req);
+                    } else {
+                        for (j = 0; j < req.length; j = j + 1) {
+                            f(req[j]);
+                        }
+                    }
+                }
+
+                // add this module to full list of things to attach
+                // Y.log('using ' + name);
+                r.push(name);
+
+            },
+            onComplete = function(fromLoader) {
+
+                // Y.log('Use complete');
+
+                fromLoader = fromLoader || {
+                    success: true,
+                    msg: 'not dynamic'
+                };
+
+                if (Y.Env._callback) {
+
+                    var cb = Y.Env._callback;
+                    Y.Env._callback = null;
+                    cb(Y, fromLoader);
+                }
+
+                if (Y.fire) {
+                    Y.fire('yui:load', Y, fromLoader);
+                }
+            };
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
@@ -361,7 +427,7 @@ YUI.prototype = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             a = [];
-            for (var k in mods) {
+            for (k in mods) {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
@@ -387,73 +453,15 @@ YUI.prototype = {
 
         // Y.log('loader after: ' + a.join(','));
 
-        var missing = [], r = [], f = function(name) {
-
-            // only attach a module once
-            if (used[name]) {
-                // Y.log(name + ' already used');
-                return;
-            }
-
-            var m = mods[name], j, req, use;
-
-            if (m) {
-                used[name] = true;
-
-                // Y.log('found ' + name);
-                req = m.details.requires;
-                use = m.details.use;
-            } else {
-                Y.log('module not found: ' + name, 'info', 'yui');
-                missing.push(name);
-            }
-
-            // make sure requirements are attached
-            if (req) {
-                if (Y.Lang.isString(req)) {
-                    f(req);
-                } else {
-                    for (j = 0; j < req.length; j = j + 1) {
-                        f(req[j]);
-                    }
-                }
-            }
-
-            // add this module to full list of things to attach
-            // Y.log('using ' + name);
-            r.push(name);
-
-        };
+        l = a.length;
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        for (var i=0, l=a.length; i<l; i=i+1) {
+        for (i=0; i<l; i=i+1) {
             f(a[i]);
         }
 
         // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
-
-        var onComplete = function(fromLoader) {
-
-            // Y.log('Use complete');
-
-            fromLoader = fromLoader || {
-                success: true,
-                msg: 'not dynamic'
-            };
-
-            if (Y.Env._callback) {
-
-                var cb = Y.Env._callback;
-                Y.Env._callback = null;
-                cb(Y, fromLoader);
-            }
-
-            if (Y.fire) {
-                Y.fire('yui:load', Y, fromLoader);
-            }
-        };
-
 
         // dynamic load
         if (Y.Loader && missing.length) {
@@ -517,13 +525,13 @@ YUI.prototype = {
      * the 'throwFail' configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
-     * @method fail
-     * @param msg {string} the failure message
+     * @method error
+     * @param msg {string} the error message
      * @param e {Error} Optional JS error that was caught.  If supplied
      * and throwFail is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance
      */
-    fail: function(msg, e) {
+    error: function(msg, e) {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
@@ -578,7 +586,8 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    var Y = YUI, p = Y.prototype, i;
+    Y = YUI; 
+    p = Y.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
