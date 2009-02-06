@@ -2439,6 +2439,8 @@ var BASE = 'base',
 
         classnamemanager: { },
 
+        collection: { },
+
         console: {
             requires: ['widget', 'substitute'],
             skinnable: true
@@ -2605,7 +2607,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['substitute', 'node', 'json']                                                                                                                     
+            requires: ['collection', 'substitute', 'node', 'json']                                                                                                                     
         }  
 
     }
