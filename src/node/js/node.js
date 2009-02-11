@@ -719,7 +719,7 @@
         var instance;
 
 
-        if (node && node.size) { // return existing Node instance
+        if (node && node instanceof Node) { // return existing Node instance
             return node;
         } else if (typeof node === 'string') {
             node = Node._getByString(node, doc, getAll);

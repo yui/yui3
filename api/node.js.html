@@ -768,7 +768,7 @@
         <span class="k">var</span> <span class="nx">instance</span><span class="o">;</span>
 
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">size</span><span class="o">)</span> <span class="o">{</span> <span class="c">// return existing Node instance</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// return existing Node instance</span>
 <span class="c"></span>            <span class="k">return</span> <span class="nx">node</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">node</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_getByString</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="nx">getAll</span><span class="o">);</span>
