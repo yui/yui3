@@ -287,7 +287,7 @@ A.grep = function (a, pattern) {
 */
 A.partition = function (a, f, o) {
     var results = {matches: [], rejects: []};
-    a.each(a, function (item, index) {
+    A.each(a, function (item, index) {
         var set = f.call(o, item, index, a) ? results.matches : results.rejects;
         set.push(item);
     });

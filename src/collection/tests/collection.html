@@ -7,7 +7,7 @@
   <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0pr2/build/cssfonts/fonts-min.css" />
   <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr2/build/yui/yui-min.js"></script>
   <script type="text/javascript">
-    //Bootstrap the tests by declaring the necessary YUI objects
+    //Bootstrap array-extras by declaring the necessary YUI objects
   var Y = {
     Lang: {},
     Array: {}
@@ -33,12 +33,15 @@
   </div>
   <script type="text/javascript">
 
-    YUI().use('console', 'yuitest', function(Y) {
-        var Assert      = Y.Assert;
-        var ArrayAssert = Y.ArrayAssert;
-        var TestRunner  = Y.Test.Runner;
+    YUI().use('console', 'yuitest', function(Y2) {
+        //finish bootstrapping
+        Y.Array.each = Y2.Array.each;
 
-        var method_test = new Y.Test.Case({
+        var Assert      = Y2.Assert;
+        var ArrayAssert = Y2.ArrayAssert;
+        var TestRunner  = Y2.Test.Runner;
+
+        var method_test = new Y2.Test.Case({
             name: "Collection Unit Tests", 
             setUp: function () {
                 this.data = [1, 2, 3, 4, 5];
@@ -209,7 +212,7 @@
             }
         }); 
           
-        var r = new Y.Console({ verbose: true, newestOnTop: false });
+        var r = new Y2.Console({ verbose: true, newestOnTop: false });
         r.render('#logger');
         TestRunner.add(method_test); 
         TestRunner.run();
