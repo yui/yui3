@@ -2387,7 +2387,7 @@ var BASE = 'base',
                 },
 
                 'node-event-simulate': {
-                    requires: ['node-base']
+                    requires: ['node-base', 'event-simulate']
                 }
             }
         },

@@ -13,7 +13,7 @@
      * @method simulate
      * @static
      */     
-    Y.Node.prototype.simulate = function(type, options){
+    Y.Node.prototype.simulate = function(type, options) {
         Y.Event.simulate(Y.Node.getDOMNode(this), type, options);
     };
 
