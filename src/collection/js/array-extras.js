@@ -115,7 +115,7 @@ A.unique = function(a, sort) {
 * returned true. If no items matched an empty array is 
 * returned.
 */
-filter: (Native.filter) ?
+A.filter = (Native.filter) ?
     function(a, f, o) {
         return Native.filter.call(a, f, o);
     } :
@@ -128,7 +128,7 @@ filter: (Native.filter) ?
         });
 
         return results;
-    },
+    };
 
 /**
 * The inverse of filter. Executes the supplied function on each item. 
@@ -142,12 +142,11 @@ filter: (Native.filter) ?
 * @return {Array} The items on which the supplied function
 * returned false.
 */
-reject: 
-    function(a, f, o) {
-        return A.filter(a, function(item, i, a) {
-            return !f.call(o, item, i, a);
-        });
-    },
+A.reject = function(a, f, o) {
+    return A.filter(a, function(item, i, a) {
+        return !f.call(o, item, i, a);
+    });
+};
 
 /**
 * Executes the supplied function on each item in the array.
@@ -159,7 +158,7 @@ reject:
 * @return {boolean} true if every item in the array returns true
 * from the supplied function.
 */
-every: (Native.every) ?
+A.every = (Native.every) ?
     function(a, f, o) {
         return Native.every.call(a,f,o);
     } :
@@ -172,7 +171,7 @@ every: (Native.every) ?
         }
 
         return true;
-    },
+    };
 
 /**
 * Executes the supplied function on each item in the array.
@@ -185,7 +184,7 @@ every: (Native.every) ?
 * of the supplied function for each item in the original
 * array.
 */
-map: (Native.map) ? 
+A.map = (Native.map) ? 
     function(a, f, o) {
         return Native.map.call(a, f, o);
     } :
@@ -195,7 +194,7 @@ map: (Native.map) ?
             results.push(f.call(o, item, i, a));
         });
         return results;
-    },
+    };
 
 
 /**
@@ -212,7 +211,7 @@ map: (Native.map) ?
 * @return A value that results from iteratively applying the
 * supplied function to each element in the array.
 */
-reduce: (Native.reduce) ?
+A.reduce = (Native.reduce) ?
     function(a, init, f, o) {
         //Firefox's Array.reduce does not allow inclusion of a
         //  thisObject, so we need to implement it manually
@@ -226,7 +225,7 @@ reduce: (Native.reduce) ?
             r = f.call(o, r, item, i, a);
         });
         return r;
-    },
+    };
 
 
 /**
@@ -243,16 +242,15 @@ reduce: (Native.reduce) ?
 * @return {object} the first item that the supplied function
 * returns true for, or null if it never returns true
 */
-find:
-    function(a, f, o) {
-        var l = a.length;
-        for(var i=0; i < l; i++) {
-            if (f.call(o, a[i], i, a)) {
-                return a[i];
-            }
+A.find = function(a, f, o) {
+    var l = a.length;
+    for(var i=0; i < l; i++) {
+        if (f.call(o, a[i], i, a)) {
+            return a[i];
         }
-        return null;
-    },
+    }
+    return null;
+};
 
 /**
 * Iterates over an array, returning a new array of all the elements
@@ -266,12 +264,11 @@ find:
 * produce a match against the supplied regular expression. 
 * If no items match, an empty array is returned.
 */
-grep:
-    function (a, pattern) {
-        return A.filter(a, function (item, index) {
-            return pattern.test(item);
-        });
-    },
+A.grep = function (a, pattern) {
+    return A.filter(a, function (item, index) {
+        return pattern.test(item);
+    });
+};
 
 
 /**
@@ -288,15 +285,14 @@ grep:
 * that are arrays containing the items that were selected or 
 * rejected by the test function (or an empty array).
 */
-partition:
-    function (a, f, o) {
-        var results = {matches: [], rejects: []};
-        A.each(a, function (item, index) {
-            var set = f.call(o, item, index, a) ? results.matches : results.rejects;
-            set.push(item);
-        });
-        return results;
-    },
+A.partition = function (a, f, o) {
+    var results = {matches: [], rejects: []};
+    a.each(a, function (item, index) {
+        var set = f.call(o, item, index, a) ? results.matches : results.rejects;
+        set.push(item);
+    });
+    return results;
+};
 
 /**
 * Creates an array of arrays by pairing the corresponding
@@ -310,13 +306,10 @@ partition:
 * of the first collection with an item in the second collection 
 * having the corresponding index.
 */
-zip: function (a, a2) {
+A.zip = function (a, a2) {
     var results = [];
     A.each(a, function (item, index) {
         results.push([item, a2[index]]);
     });
     return results;
-}
-
-});
-
+};
