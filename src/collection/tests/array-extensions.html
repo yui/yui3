@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Y.Array Extensions Unit Tests</title>	
+  <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0pr2/build/cssfonts/fonts-min.css" />
+  <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr2/build/yui/yui-min.js"></script>
+</head>
+<body class="yui-skin-sam">
+  <div id="doc2" class="yui-t7">
+    <div id="hd">
+      <!-- Header -->
+      <h1>array-extensions unit tests</h1>
+    </div>
+    <div id="bd">
+      <div class="yui-g">
+        <!-- Body -->
+        <div id="logger"></div>  
+      </div>
+    </div>
+    <div id="ft">
+      <!-- Footer -->
+    </div>
+  </div>
+  <script type="text/javascript">
+    var cfg = {
+        modules: {
+            'array-extensions': { fullpath: '../js/array-extensions.js' }
+        }
+    };
+
+    YUI(cfg).use('console', 'yuitest', 'array-extensions', function(Y) {
+        var Assert      = Y.Assert;
+        var ArrayAssert = Y.ArrayAssert;
+        var TestRunner  = Y.Test.Runner;
+
+        var method_test = new Y.Test.Case({
+            name: "Array-functional Unit Tests", 
+            setUp: function () {
+                this.data = [1, 2, 3, 4, 5];
+            },         
+            
+            tearDown: function () {
+                delete this.data;
+            },            
+          
+            testEach: function () {          
+                var data = this.data;
+                Y.Array.each(data, function (item, index) {
+                    Assert.areEqual(data[index], item);
+                });
+            }, 
+          
+            testMap: function () {
+                var data = this.data;
+                var results = Y.Array.map(data, function (item) {
+                    return item * 2;
+                });
+                Assert.isArray(results);
+                ArrayAssert.itemsAreEqual([2, 4, 6, 8, 10], results);
+            },
+
+            testMapContext: function() {
+                var data = this.data;
+                var results = Y.Array.map(data, function(item) {
+                    Assert.areEqual(5, this.x);
+                    Assert.areNotEqual(6, this.x);
+                }, { x: 5 });
+            },
+          
+            testReduce: function () {
+                var data = this.data;
+                var result = Y.Array.reduce(data, 0, function (sum, item) {
+                    return sum + item;
+                });
+                Assert.areEqual(15, result);
+            },
+
+            testReduceContext: function() {
+                var data = this.data;
+                var result = Y.Array.reduce(data, 0, function (sum, item) {
+                    Assert.areEqual("asdf", this.y);
+                }, { y: "asdf" });
+            },
+          
+            testFind: function () {
+                var data = this.data;
+                var result = Y.Array.find(data, function (item) {
+                    return item % 2 == 0;
+                });
+                Assert.areEqual(2, result);
+            },
+          
+            testFindNoMatch: function () {
+                var data = this.data;
+                var result = Y.Array.find(data, function (item) {
+                    return item % 7 == 0;
+                });
+                Assert.areEqual(null, result);
+            },
+          
+            testFindFirst: function () {
+                var data = this.data;
+                var result = Y.Array.find(data, function(item) {
+                    return item % 2 == 1;
+                });
+                Assert.areEqual(1, result, 'First item not found!');
+            },
+
+            testFindLast: function () {
+                var data = this.data;
+                var result = Y.Array.find(data, function(item) {
+                    return item % 5 == 0;
+                });
+                Assert.areEqual(5, result, 'Last item not found!');
+            },
+
+            testFilter: function () {
+                var data = this.data;
+                var result = Y.Array.filter(data, function (item) {
+                    return item % 2 == 0;
+                });
+                Assert.isArray(result);
+                ArrayAssert.itemsAreEqual([2, 4], result);
+            },
+          
+            testFilterNoMatch: function () {
+                var data = this.data;
+                var result = Y.Array.filter(data, function (item) {
+                    return item % 7 == 0;
+                });
+                Assert.isArray(result);
+                ArrayAssert.isEmpty(result);
+            },
+          
+            testReject: function () {
+                var data = this.data;
+                var result = Y.Array.reject(data, function (item) {
+                    return item % 2 == 0;
+                });
+                Assert.isArray(result);
+                ArrayAssert.itemsAreEqual([1, 3, 5], result);
+            },
+
+            testRejectNoMatch: function () {
+                var data = this.data;
+                var result = Y.Array.reject(data, function (item) {
+                    return item % 7 == 0;
+                });
+                Assert.isArray(result);
+                ArrayAssert.itemsAreEqual(data, result);
+            },
+          
+            testGrepMatches: function () {
+                var data = ['ruby', 'perl', 'python'];
+                var results = Y.Array.grep(data, /p(erl|ython)/);
+                Assert.isArray(results);
+                ArrayAssert.itemsAreEqual(['perl', 'python'], results);
+            },
+          
+            testGrepNoMatches: function () {
+                var data = ['ruby', 'perl', 'python'];
+                var results = Y.Array.grep(data, /j(ruby|ython)/);
+                Assert.isArray(results);
+                ArrayAssert.isEmpty(results);
+            },
+          
+            testPartition: function () {
+                var data = this.data;
+                var results = Y.Array.partition(data, function (item) {
+                    return item % 2 == 0;
+                });
+                Assert.isArray(results.matches);
+                ArrayAssert.itemsAreEqual([2, 4], results);
+                Assert.isArray(results.rejects);
+                ArrayAssert.itemsAreEqual([1, 3, 5], results);
+            },
+          
+            testZip: function () {
+                var results = Y.Array.zip([1, 2, 3], ['a', 'b', 'c']);
+                var expected = [[1, 'a'], [2, 'b'], [3, 'c']];
+                Assert.isArray(results);
+                Y.Array.each(expected, function (item, index) {
+                    Assert.isArray(item);
+                    ArrayAssert.itemsAreEqual(item, results[index]);
+                });
+            },
+          
+            testEvery: function() {
+                var data = [5, 10, 20, 540];
+                var result = Y.Array.every(data, function(item, i, a) {
+                    return item % 5 == 0;
+                });
+
+                Assert.isTrue(result);                 
+            },
+            
+            testEveryNoMatches: function() {
+                var data = [5, 10, 20, 541];
+                var result = Y.Array.every(data, function(item, i, a) {
+                    return item % 5 == 0;
+                });
+
+                Assert.isFalse(result);                 
+            }
+        }); 
+          
+        var r = new Y.Console({ verbose: true, newestOnTop: false });
+        r.render('#logger');
+        TestRunner.add(method_test); 
+        TestRunner.run();
+    });
+  </script>
+</body>
+</html>
