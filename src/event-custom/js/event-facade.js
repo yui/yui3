@@ -1,4 +1,4 @@
-
+(function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
@@ -8,7 +8,7 @@
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class Event.Facade
+ * @class EventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -61,9 +61,9 @@ var whitelist = {
     // "width"           : 1, // needed?
     "x"               : 1,
     "y"               : 1
-};
+},
 
-var ua = Y.UA,
+    ua = Y.UA,
 
     /**
      * webkit key remapping required for Safari < 3.1
@@ -110,16 +110,15 @@ var ua = Y.UA,
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
+Y.EventFacade = function(ev, currentTarget, wrapper, details) {
 
     // @TODO the document should be the target's owner document
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
+        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
 
     // copy all primitives ... this is slow in FF
-    // for (var i in e) {
-    for (var i in whitelist) {
+    for (i in whitelist) {
         // if (!Y.Lang.isObject(e[i])) {
         if (whitelist.hasOwnProperty(i)) {
             this[i] = e[i];
@@ -161,7 +160,7 @@ Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
      * @property keyCode
      * @type int
      */
-    var c = e.keyCode || e.charCode || 0;
+    c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
         c = webkitKeymap[c];
@@ -231,7 +230,8 @@ Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
      */
     this.currentTarget = (isCE) ? ot :  resolve(ot);
 
-    var t = e.relatedTarget;
+    t = e.relatedTarget;
+
     if (!t) {
         if (e.type == "mouseout") {
             t = e.toElement;
@@ -318,3 +318,4 @@ Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
 
 };
 
+})();

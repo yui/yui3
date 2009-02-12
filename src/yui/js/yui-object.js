@@ -1,3 +1,4 @@
+(function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
@@ -18,7 +19,7 @@ Y.Object = function(o) {
     return new F();
 }; 
 
-var O = Y.Object, L = Y.Lang;
+var O = Y.Object;
 
 /**
  * Determines whether or not the property was added
@@ -74,12 +75,14 @@ O.keys = function(o) {
  * @return {YUI} the YUI instance
  */
 O.each = function (o, f, c, proto) {
-    var s = c || Y;
+    var s = c || Y, i;
 
-    for (var i in o) {
+    for (i in o) {
         if (proto || o.hasOwnProperty(i)) {
             f.call(s, o[i], i, o);
         }
     }
     return Y;
 };
+
+})();

@@ -43,7 +43,7 @@ YUI.add('substitute', function(Y) {
      * @return {string} the substituted string
      */
     substitute = function (s, o, f) {
-        var i, j, k, key, v, meta, saved=[], token;
+        var i, j, k, key, v, meta, saved=[], token, dump;
 
         for (;;) {
             i = s.lastIndexOf(LBRACE);
@@ -83,7 +83,7 @@ YUI.add('substitute', function(Y) {
                         meta = meta || "";
 
                         // look for the keyword 'dump', if found force obj dump
-                        var dump = meta.indexOf(DUMP);
+                        dump = meta.indexOf(DUMP);
                         if (dump > -1) {
                             meta = meta.substring(4);
                         }

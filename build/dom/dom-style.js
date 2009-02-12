@@ -419,6 +419,7 @@ var ComputedStyle = {
 //fontSize: getPixelFont,
 var IEComputed = {};
 
+// TODO: top, right, bottom, left
 IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
 
 IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;

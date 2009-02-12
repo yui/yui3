@@ -1,11 +1,11 @@
-
+(function() {
 /**
  * YUI core
  * @module yui
  */
 
 
-var L = Y.Lang, Native = Array.prototype;
+var L = Y.Lang, Native = Array.prototype,
 
 /**
  * Adds the following array utilities to the YUI instance
@@ -32,7 +32,7 @@ var L = Y.Lang, Native = Array.prototype;
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-Y.Array = function(o, i, al) {
+A = function(o, i, al) {
     var t = (al) ? 2 : Y.Array.test(o);
 
     // switch (t) {
@@ -52,7 +52,7 @@ Y.Array = function(o, i, al) {
 
 };
 
-var A = Y.Array;
+Y.Array = A;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -114,33 +114,6 @@ A.each = (Native.forEach) ?
     };
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array
- */
- A.some = (Native.some) ?
-    function (a, f, o) { 
-        return Native.some.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-/**
  * Returns an object using the first array as keys, and
  * the second as values.  If the second array is not
  * provided the value is set to true for each.
@@ -159,25 +132,28 @@ A.hash = function(k, v) {
     return o;
 };
 
-
 /**
  * Returns the index of the first item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * @TODO use native method if avail
  * @method Array.indexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = function(a, val) {
-    for (var i=0; i<a.length; i=i+1) {
-        if (a[i] === val) {
-            return i;
+A.indexOf = (Native.indexOf) ?
+    function(a, val) {
+        return a.indexOf(val);
+    } :
+    function(a, val) {
+        for (var i=0; i<a.length; i=i+1) {
+            if (a[i] === val) {
+                return i;
+            }
         }
-    }
 
-    return -1;
-};
+        return -1;
+    };
 
+})();

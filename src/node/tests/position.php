@@ -181,16 +181,12 @@ if (!$_GET['quirks']) {
 <button id="checktest" disabled>Check Test</button>
 <div id="results">No results yet...</results>
 
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <!-- needed until built into a module -->
-    <script type="text/javascript" src="../../../util/yui/src/js/State.js"></script>
-    <script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
-    <script type="text/javascript" src="../../../build/base/base.js"></script>
-
-    <!-- needed until new node.js is built into yui.js -->
-    <script type="text/javascript" src="../../../build/node/node.js"></script>
-    <script type="text/javascript" src="../../../build/dom/dom.js"></script>
-
+    <script type="text/javascript" src="../../../build/yui/yui.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/oop/oop.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/dump/dump.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/event/event.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/dom/dom.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/node/node.js?<?php echo rand(1, 999) ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -199,12 +195,11 @@ var yConfig = {
         Event: true,
         Base: true,
         Attribute: true
-    } 
+    },
+    filter: 'debug'
 };
 
-var Y = new YUI(yConfig).use('dump', 'node', 'nodeextras');
-
-Y.on('event:ready', function() {
+YUI(yConfig).use('*', function(Y) {
     var tests = {};
     var sel = 'h1, .node, table th, table td, table tr, table';
     //var sel = '#fixed.node';
@@ -215,10 +210,12 @@ Y.on('event:ready', function() {
     play2.set('scrollTop', 50);
 
     var clearTest = function() {
-        var nodeTests = Y.Node.get('document').queryAll('.nodeOver');
-        nodeTests.each(function(n) {
-            n.get('parentNode').removeChild(n);
-        });
+        var nodeTests = Y.all('.nodeOver');
+        if (nodeTests) {
+            nodeTests.each(function(n) {
+                n.get('parentNode').removeChild(n);
+            });
+        }
         Y.Node.get('#checktest').set('disabled', true);
         var results = Y.Node.get('document').query('#results');
         results.set('innerHTML', 'No results yet...');
@@ -232,8 +229,7 @@ Y.on('event:ready', function() {
 
         Y.Node.get('#checktest').set('disabled', false);
         var nodes = Y.Node.get('document').queryAll(sel);
-        nodes.each(function(o, i, l) {
-            var n = l.item(i);
+        nodes.each(function(n) {
             var el = document.createElement('div');
             var id = n.get('id') || n._yuid;
             el.id = 'test_' + id;
@@ -255,8 +251,7 @@ Y.on('event:ready', function() {
             failed: []
         };
         var nodes = Y.Node.get('document').queryAll(sel);
-        nodes.each(function(o, i, l) {
-            var n = l.item(i);
+        nodes.each(function(n) {
             var id = n.get('id') || n._yuid;
             var test = Y.Node.get('document').query('#test_' + id);
             var xy1 = n.getXY();

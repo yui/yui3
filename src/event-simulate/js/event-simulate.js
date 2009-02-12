@@ -1,8 +1,7 @@
 (function() {
 /**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
+ * Synthetic DOM events
+ * @module event-simulate
  */
 
 //shortcuts
@@ -13,6 +12,7 @@ var L   = Y.Lang,
     isBoolean   = L.isBoolean,
     isObject    = L.isObject,
     isNumber    = L.isNumber,
+    doc         = Y.config.doc,
     
     //mouse events supported
     mouseEvents = [
@@ -125,7 +125,7 @@ var L   = Y.Lang,
         "keypress"
     ];
 
-/**
+/*
  * Note: Intentionally not for YUIDoc generation.
  * Simulates a key event using the given event information to populate
  * the generated event object. This method does browser-equalizing
@@ -169,7 +169,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
 {
     //check target    
     if (!target){
-        Y.fail("simulateKeyEvent(): Invalid target.");
+        Y.error("simulateKeyEvent(): Invalid target.");
     }
     
     //check event type
@@ -178,16 +178,16 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         switch(type){
             case "textevent": //DOM Level 3
                 type = "keypress";
-                /*falls through*/
+                break;
             case "keyup":
             case "keydown":
             case "keypress":
                 break;
             default:
-                Y.fail("simulateKeyEvent(): Event type '" + type + "' not supported.");
+                Y.error("simulateKeyEvent(): Event type '" + type + "' not supported.");
         }
     } else {
-        Y.fail("simulateKeyEvent(): Event type must be a string.");
+        Y.error("simulateKeyEvent(): Event type must be a string.");
     }
     
     //setup default values
@@ -223,12 +223,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
         
     //check for DOM-compliant browsers first
-    if (isFunction(document.createEvent)){
+    if (isFunction(doc.createEvent)){
     
         try {
             
             //try to create key event
-            customEvent = document.createEvent("KeyEvents");
+            customEvent = doc.createEvent("KeyEvents");
             
             /*
              * Interesting problem: Firefox implemented a non-standard
@@ -256,12 +256,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
             try {
 
                 //try to create generic event - will fail in Safari 2.x
-                customEvent = document.createEvent("Events");
+                customEvent = doc.createEvent("Events");
 
             } catch (uierror /*:Error*/){
 
                 //the above failed, so create a UIEvent for Safari 2.x
-                customEvent = document.createEvent("UIEvents");
+                customEvent = doc.createEvent("UIEvents");
 
             } finally {
 
@@ -283,10 +283,10 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(document.createEventObject)){ //IE
+    } else if (isObject(doc.createEventObject)){ //IE
     
         //create an IE event object
-        customEvent = document.createEventObject();
+        customEvent = doc.createEventObject();
         
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -308,7 +308,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         target.fireEvent("on" + type, customEvent);  
                 
     } else {
-        Y.fail("simulateKeyEvent(): No event simulation framework present.");
+        Y.error("simulateKeyEvent(): No event simulation framework present.");
     }
 }
 
@@ -375,7 +375,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     
     //check target   
     if (!target){
-        Y.fail("simulateMouseEvent(): Invalid target.");
+        Y.error("simulateMouseEvent(): Invalid target.");
     }
     
     //check event type
@@ -384,10 +384,10 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         
         //make sure it's a supported mouse event
         if (array.indexOf(mouseEvents, type) == -1){
-            Y.fail("simulateMouseEvent(): Event type '" + type + "' not supported.");
+            Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
     } else {
-        Y.fail("simulateMouseEvent(): Event type must be a string.");
+        Y.error("simulateMouseEvent(): Event type must be a string.");
     }
     
     //setup default values
@@ -435,9 +435,9 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
         
     //check for DOM-compliant browsers first
-    if (isFunction(document.createEvent)){
+    if (isFunction(doc.createEvent)){
     
-        customEvent = document.createEvent("MouseEvents");
+        customEvent = doc.createEvent("MouseEvents");
     
         //Safari 2.x (WebKit 418) still doesn't implement initMouseEvent()
         if (customEvent.initMouseEvent){
@@ -448,7 +448,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         } else { //Safari
         
             //the closest thing available in Safari 2.x is UIEvents
-            customEvent = document.createEvent("UIEvents");
+            customEvent = doc.createEvent("UIEvents");
             customEvent.initEvent(type, bubbles, cancelable);
             customEvent.view = view;
             customEvent.detail = detail;
@@ -484,10 +484,10 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(document.createEventObject)){ //IE
+    } else if (isObject(doc.createEventObject)){ //IE
     
         //create an IE event object
-        customEvent = document.createEventObject();
+        customEvent = doc.createEventObject();
         
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -529,7 +529,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         target.fireEvent("on" + type, customEvent);
                 
     } else {
-        Y.fail("simulateMouseEvent(): No event simulation framework present.");
+        Y.error("simulateMouseEvent(): No event simulation framework present.");
     }
 }
 

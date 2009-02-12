@@ -13,8 +13,6 @@
  * @module history
  */
 
-YUI.add("history", function (Y) {
-
     var L = Y.Lang,
         A = Y.UA,
         ET = Y.Event.Target,
@@ -301,9 +299,9 @@ YUI.add("history", function (Y) {
 
         if (A.ie) {
 
-            // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie < 8 || Y.config.doc.documentMode < 8) {
+            if (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8) {
 
+                // IE < 8 or IE8 in quirks mode or IE7 standards mode
                 _checkIframeLoaded();
 
             } else {
@@ -448,7 +446,7 @@ YUI.add("history", function (Y) {
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (A.ie < 8 || Y.config.doc.documentMode < 8)) {
+            if (A.ie && (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8)) {
 
                 historyIFrame = Y.get(historyIFrame);
                 if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== "IFRAME") {
@@ -540,7 +538,7 @@ YUI.add("history", function (Y) {
             fqstate = currentStates.join("&");
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (A.ie < 8 || Y.config.doc.documentMode < 8)) {
+            if (A.ie && (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8)) {
 
                 return _updateIFrame(fqstate);
 
@@ -711,5 +709,3 @@ YUI.add("history", function (Y) {
     Y.mix(H.Module, ET, false, null, 1);
 
     Y.History = H;
-
-}, "3.0.0", { requires: ["event", "node"], skinnable: false });

@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(),
+    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -120,6 +120,7 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     // Make a function, disallow direct instantiation
     YUI = function(o) {
+
         var Y = this;
 
         // Allow instantiation without the new operator
@@ -153,7 +154,8 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
+        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+            v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
@@ -175,7 +177,6 @@ YUI.prototype = {
             _uidx: 0
         };
 
-        var v = '@VERSION@';
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
@@ -218,22 +219,23 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.fail(method + ': applyTo not allowed');
+            this.error(method + ': applyTo not allowed');
             return null;
         }
 
-        var instance = _instances[id];
+        var instance = _instances[id], nest, m, i;
 
         if (instance) {
 
-            var nest = method.split('.'), m = instance;
+            nest = method.split('.'); 
+            m = instance;
 
-            for (var i=0; i<nest.length; i=i+1) {
+            for (i=0; i<nest.length; i=i+1) {
 
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.fail('applyTo not found: ' + method);
+                    this.error('applyTo not found: ' + method);
                 }
             }
 
@@ -286,15 +288,21 @@ YUI.prototype = {
     _attach: function(r, fromLoader) {
 
         var mods = YUI.Env.mods,
-            attached = this.Env._attached;
+            attached = this.Env._attached,
+            i, l = r.length, name, m, d, req, use;
 
-        for (var i=0, l=r.length; i<l; i=i+1) {
-            var name = r[i], m = mods[name], mm;
+        for (i=0; i<l; i=i+1) {
+
+            name = r[i]; 
+            m    = mods[name];
+
             if (!attached[name] && m) {
 
                 attached[name] = true;
 
-                var d = m.details, req = d.requires, use = d.use;
+                d   = m.details; 
+                req = d.requires; 
+                use = d.use;
 
                 if (req) {
                     this._attach(this.Array(req));
@@ -346,7 +354,60 @@ YUI.prototype = {
             loader, 
             firstArg = a[0], 
             dynamic = false,
-            callback = a[a.length-1];
+            callback = a[a.length-1],
+            k, i, l, missing = [], r = [], 
+            f = function(name) {
+
+                // only attach a module once
+                if (used[name]) {
+                    return;
+                }
+
+                var m = mods[name], j, req, use;
+
+                if (m) {
+                    used[name] = true;
+
+                    req = m.details.requires;
+                    use = m.details.use;
+                } else {
+                    missing.push(name);
+                }
+
+                // make sure requirements are attached
+                if (req) {
+                    if (Y.Lang.isString(req)) {
+                        f(req);
+                    } else {
+                        for (j = 0; j < req.length; j = j + 1) {
+                            f(req[j]);
+                        }
+                    }
+                }
+
+                // add this module to full list of things to attach
+                r.push(name);
+
+            },
+            onComplete = function(fromLoader) {
+
+
+                fromLoader = fromLoader || {
+                    success: true,
+                    msg: 'not dynamic'
+                };
+
+                if (Y.Env._callback) {
+
+                    var cb = Y.Env._callback;
+                    Y.Env._callback = null;
+                    cb(Y, fromLoader);
+                }
+
+                if (Y.fire) {
+                    Y.fire('yui:load', Y, fromLoader);
+                }
+            };
 
 
         // The last argument supplied to use can be a load complete callback
@@ -360,7 +421,7 @@ YUI.prototype = {
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
             a = [];
-            for (var k in mods) {
+            for (k in mods) {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
@@ -384,66 +445,13 @@ YUI.prototype = {
         }
 
 
-        var missing = [], r = [], f = function(name) {
-
-            // only attach a module once
-            if (used[name]) {
-                return;
-            }
-
-            var m = mods[name], j, req, use;
-
-            if (m) {
-                used[name] = true;
-
-                req = m.details.requires;
-                use = m.details.use;
-            } else {
-                missing.push(name);
-            }
-
-            // make sure requirements are attached
-            if (req) {
-                if (Y.Lang.isString(req)) {
-                    f(req);
-                } else {
-                    for (j = 0; j < req.length; j = j + 1) {
-                        f(req[j]);
-                    }
-                }
-            }
-
-            // add this module to full list of things to attach
-            r.push(name);
-
-        };
+        l = a.length;
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        for (var i=0, l=a.length; i<l; i=i+1) {
+        for (i=0; i<l; i=i+1) {
             f(a[i]);
         }
-
-
-        var onComplete = function(fromLoader) {
-
-
-            fromLoader = fromLoader || {
-                success: true,
-                msg: 'not dynamic'
-            };
-
-            if (Y.Env._callback) {
-
-                var cb = Y.Env._callback;
-                Y.Env._callback = null;
-                cb(Y, fromLoader);
-            }
-
-            if (Y.fire) {
-                Y.fire('yui:load', Y, fromLoader);
-            }
-        };
 
 
         // dynamic load
@@ -507,13 +515,13 @@ YUI.prototype = {
      * the 'throwFail' configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
-     * @method fail
-     * @param msg {string} the failure message
+     * @method error
+     * @param msg {string} the error message
      * @param e {Error} Optional JS error that was caught.  If supplied
      * and throwFail is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance
      */
-    fail: function(msg, e) {
+    error: function(msg, e) {
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
         } else {
@@ -568,7 +576,8 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    var Y = YUI, p = Y.prototype, i;
+    Y = YUI; 
+    p = Y.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
@@ -589,6 +598,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
+(function() {
 
 var instance = Y;
 
@@ -612,18 +622,17 @@ var instance = Y;
  */
 instance.log = function(msg, cat, src, silent) {
 
-    var Y = instance, c = Y.config, es = Y.Env._eventstack,
-        // bail = (es && es.logging);
-        bail = false; 
+    var Y = instance, c = Y.config, bail = false, exc, inc, m, f;
 
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
-    if (c.debug && !bail) {
+    if (c.debug) {
 
         // apply source filters
         if (src) {
 
-            var exc = c.logExclude, inc = c.logInclude;
+            exc = c.logExclude; 
+            inc = c.logInclude;
 
             // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
 
@@ -639,9 +648,9 @@ instance.log = function(msg, cat, src, silent) {
         if (!bail) {
 
             if (c.useBrowserConsole) {
-                var m = (src) ? src + ': ' + msg : msg;
+                m = (src) ? src + ': ' + msg : msg;
                 if (typeof console != 'undefined') {
-                    var f = (cat && console[cat]) ? cat : 'log';
+                    f = (cat && console[cat]) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != 'undefined') {
                     opera.postError(m);
@@ -674,6 +683,7 @@ instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
 
+})();
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -865,14 +875,14 @@ L.type = function (o) {
 };
 
 })();
-
+(function() {
 /**
  * YUI core
  * @module yui
  */
 
 
-var L = Y.Lang, Native = Array.prototype;
+var L = Y.Lang, Native = Array.prototype,
 
 /**
  * Adds the following array utilities to the YUI instance
@@ -899,7 +909,7 @@ var L = Y.Lang, Native = Array.prototype;
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-Y.Array = function(o, i, al) {
+A = function(o, i, al) {
     var t = (al) ? 2 : Y.Array.test(o);
 
     // switch (t) {
@@ -919,7 +929,7 @@ Y.Array = function(o, i, al) {
 
 };
 
-var A = Y.Array;
+Y.Array = A;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -981,33 +991,6 @@ A.each = (Native.forEach) ?
     };
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the 
- */
- A.some = (Native.forEach) ?
-    function (a, f, o) { 
-        Native.some.call(a, f, o || Y);
-        return Y;
-    } :
-    function (a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-/**
  * Returns an object using the first array as keys, and
  * the second as values.  If the second array is not
  * provided the value is set to true for each.
@@ -1026,28 +1009,32 @@ A.hash = function(k, v) {
     return o;
 };
 
-
 /**
  * Returns the index of the first item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * @TODO use native method if avail
  * @method Array.indexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = function(a, val) {
-    for (var i=0; i<a.length; i=i+1) {
-        if (a[i] === val) {
-            return i;
+A.indexOf = (Native.indexOf) ?
+    function(a, val) {
+        return a.indexOf(val);
+    } :
+    function(a, val) {
+        for (var i=0; i<a.length; i=i+1) {
+            if (a[i] === val) {
+                return i;
+            }
         }
-    }
 
-    return -1;
-};
+        return -1;
+    };
 
+})();
+(function() {
 
 var L = Y.Lang, 
 A = Y.Array,
@@ -1068,8 +1055,10 @@ PROTO = 'prototype',
  */
 _iefix = (Y.UA && Y.UA.ie) ?
     function(r, s, w) {
-        for (var i=0, a=IEF; i<a.length; i=i+1) {
-            var n = a[i], f = s[n];
+        var i, a = IEF, n, f;
+        for (i=0; i<a.length; i=i+1) {
+            n = a[i]; 
+            f = s[n];
             if (L.isFunction(f) && f != OP[n]) {
                 if (!w || (n in w)) {
                     r[n]=f;
@@ -1090,11 +1079,8 @@ _iefix = (Y.UA && Y.UA.ie) ?
  * @return {object} the new merged object
  */
 Y.merge = function() {
-    // var o={}, a=arguments;
-    // for (var i=0, l=a.length; i<l; i=i+1) {
-    //var a=arguments, o=Y.Object(a[0]);
-    var a=arguments, o={};
-    for (var i=0, l=a.length; i<l; i=i+1) {
+    var a = arguments, o = {}, i, l = a.length;
+    for (i=0; i<l; i=i+1) {
         Y.mix(o, a[i], true);
     }
     return o;
@@ -1138,9 +1124,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 
         f = function(fr, fs, proto, iwl) {
 
-            var arr = m && L.isArray(fr);
+            var arr = m && L.isArray(fr), i;
 
-            for (var i in fs) { 
+            for (i in fs) { 
 
                 if (fs.hasOwnProperty(i)) {
 
@@ -1179,9 +1165,11 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
             }
 
             _iefix(fr, fs, w);
-        };
+        },
 
-    var rp = r.prototype, sp = s.prototype;
+        rp = r.prototype, 
+
+        sp = s.prototype;
 
     switch (mode) {
         case 1: // proto to proto
@@ -1204,6 +1192,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+})();
+(function() {
+
 /**
  * Adds the following Object utilities to the YUI instance
  * @class YUI~object
@@ -1223,7 +1214,7 @@ Y.Object = function(o) {
     return new F();
 }; 
 
-var O = Y.Object, L = Y.Lang;
+var O = Y.Object;
 
 /**
  * Determines whether or not the property was added
@@ -1279,15 +1270,17 @@ O.keys = function(o) {
  * @return {YUI} the YUI instance
  */
 O.each = function (o, f, c, proto) {
-    var s = c || Y;
+    var s = c || Y, i;
 
-    for (var i in o) {
+    for (i in o) {
         if (proto || o.hasOwnProperty(i)) {
             f.call(s, o[i], i, o);
         }
     }
     return Y;
 };
+
+})();
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -1373,9 +1366,9 @@ Y.UA = function() {
          * @static
          */
         mobile: null 
-    };
+    },
 
-    var ua=navigator.userAgent, m;
+    ua = navigator.userAgent, m;
 
     // Modern KHTML browsers should qualify as Safari X-Grade
     if ((/KHTML/).test(ua)) {
@@ -1426,8 +1419,8 @@ Y.UA = function() {
     
     return o;
 }();
-
-    var L = Y.Lang;
+(function() {
+    var L = Y.Lang,
 
     /**
      * Executes the supplied function in the context of the supplied 
@@ -1450,7 +1443,7 @@ Y.UA = function() {
      * @return {object} a timer object. Call the cancel() method on this object to 
      * stop the timer.
      */
-    var later = function(when, o, fn, data, periodic) {
+    later = function(when, o, fn, data, periodic) {
         when = when || 0; 
         o = o || {};
         var m=fn, d=data, f, r;
@@ -1460,7 +1453,7 @@ Y.UA = function() {
         }
 
         if (!m) {
-            Y.fail("method undefined");
+            Y.error("method undefined");
         }
 
         if (!L.isArray(d)) {
@@ -1488,6 +1481,7 @@ Y.UA = function() {
     Y.later = later;
     L.later = later;
 
+})();
 (function() {
 
     // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;

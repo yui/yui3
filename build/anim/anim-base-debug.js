@@ -541,7 +541,7 @@ YUI.add('anim-base', function(Y) {
                 }
 
                 if (!begin || !end) {
-                    Y.fail('invalid "from" or "to" for "' + name + '"', 'Anim');
+                    Y.error('invalid "from" or "to" for "' + name + '"', 'Anim');
                     return;
                 }
 

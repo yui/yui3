@@ -119,7 +119,7 @@
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;DD.Drop: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;DD.Drop: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
                 <span class="o">}</span>
                 <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>               
             <span class="o">}</span>
@@ -497,6 +497,8 @@
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

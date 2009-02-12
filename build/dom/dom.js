@@ -798,8 +798,6 @@ var OFFSET_TOP = 'offsetTop',
     RE_TABLE = /^t(?:able|d|h)$/i;
 
 Y.mix(Y.DOM, {
-
-
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
@@ -846,7 +844,7 @@ Y.mix(Y.DOM, {
 
      */
     docScrollX: function(node) {
-        var doc = Y.DOM._getDoc();
+        var doc = Y.DOM._getDoc(node);
         return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
     },
 
@@ -856,7 +854,7 @@ Y.mix(Y.DOM, {
 
      */
     docScrollY:  function(node) {
-        var doc = Y.DOM._getDoc();
+        var doc = Y.DOM._getDoc(node);
         return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
     },
 
@@ -1030,15 +1028,7 @@ Y.mix(Y.DOM, {
 
         var currentXY = Y.DOM.getXY(node);
 
-
-
-
         if (currentXY === false) { // has to be part of doc to have xy
-
-
-
-
-
             return false; 
         }
         
@@ -1483,6 +1473,7 @@ var ComputedStyle = {
 //fontSize: getPixelFont,
 var IEComputed = {};
 
+// TODO: top, right, bottom, left
 IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
 
 IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
