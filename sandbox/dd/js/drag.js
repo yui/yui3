@@ -671,7 +671,7 @@ YUI.add('dd-drag', function(Y) {
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
-                            this.set('activeHandle', els.item(i));
+                            this.set('activeHandle', n);
                         }
                     }, this);
                 } else {

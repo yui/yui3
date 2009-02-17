@@ -14,6 +14,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #davdoc {
             min-height: 2000px;
         }
+        #drag h2 {
+            cursor: text;
+        }
         #drag, #drag2, #drag3, #drag4, #drag5, #drag6, #drag7, .drop {
             height: 75px;
             width: 75px;

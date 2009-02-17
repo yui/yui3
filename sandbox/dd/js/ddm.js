@@ -48,13 +48,19 @@ YUI.add('dd-ddm', function(Y) {
         * @description Activates the shim
         */
         _pg_activate: function() {
+            var ah = this.activeDrag.get('activeHandle'),
+            cur = ah.getStyle('cursor');
+            if (cur == 'auto') {
+                cur = this.get('dragCursor');
+            }
+            
             this._pg_size();
             this._pg.setStyles({
                 top: 0,
                 left: 0,
                 display: 'block',
                 opacity: ((this._debugShim) ? '.5' : '0'),
-                cursor: this.get('dragCursor')
+                cursor: cur
             });
         },
         /**
