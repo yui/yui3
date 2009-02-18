@@ -5,11 +5,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <html>
 <head>
     <title>YUI: DragDrop</title>
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
-        <link rel="stylesheet" type="text/css" href="../yui-dev/build/assets/skins/sam/logger.css"> 
-    <link rel="stylesheet" href="http://blog.davglass.com/wp-content/themes/davglass/style.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="http://us.js2.yimg.com/us.js.yimg.com/i/ydn/yuiweb/css/dpsyntax-min-11.css">
-    <!--link rel="stylesheet" type="text/css" href="dd.css"-->
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
+    <link rel="stylesheet" href="http://blog.davglass.com/files/yui/css/davglass.css" type="text/css">
     <style type="text/css" media="screen">
         p, h2 {
             margin: 1em;
@@ -57,45 +54,50 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     </div>
     <div id="ft">&nbsp;</div>
 </div>
-    <script type="text/javascript" src="../3.x/build/yui/yui.js"></script>
 
-    <!-- needed until built into a module -->
-    <script type="text/javascript" src="../3.x/util/yui/src/js/State.js"></script>
-    <script type="text/javascript" src="../3.x/build/attribute/attribute.js"></script>
-    <script type="text/javascript" src="../3.x/build/base/base.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
-    <!-- needed until new node.js is built into yui.js -->
-    <script type="text/javascript" src="../3.x/build/node/node.js"></script>
 
-    <script type="text/javascript" src="ddm-base.js"></script>
-    <script type="text/javascript" src="ddm.js"></script>
-    <script type="text/javascript" src="ddm-drop.js"></script>
-    <script type="text/javascript" src="drag.js"></script>
-    <script type="text/javascript" src="drop.js"></script>
-    <script type="text/javascript" src="proxy.js"></script>
-    <script type="text/javascript" src="constrain.js"></script>
-    <script type="text/javascript" src="scroll.js"></script>
+
+<script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+
+<script type="text/javascript" src="js/scroll.js"></script>
 
 <script type="text/javascript">
 var yConfig = {
+    base: '../../build/',
+    allowRollup: false,
     logExclude: {
         'YUI': true,
         Event: true,
         Base: true,
-        Attribute: true
-    } 
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
 };
-var yConfig2 = {};
-YUI().mix(yConfig2, yConfig);
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-var Y1 = new YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll');
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
 
-Y1.on('event:ready', function() {
+    Y.DD.DDM._debugShim = true;
 
-    Y1.DD.DDM._debugShim = true;
-
-    dd4 = new Y1.DD.DragScroll({
+    dd4 = new Y.DD.DragScroll({
         node: '#drag4',
         windowScroll: true
     });
