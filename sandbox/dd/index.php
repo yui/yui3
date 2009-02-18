@@ -85,6 +85,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             bottom: 0;
             right: 0;
         }
+        #drag4 {
+            cursor: ne-resize;
+        }
         #drag6 {
             height: 150px;
             width: 150px;
