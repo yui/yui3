@@ -1,3 +1,4 @@
+YUI.add('dd-ddm', function(Y) {
 
     /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
@@ -118,3 +119,4 @@
 
 
 
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});

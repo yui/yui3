@@ -1,5 +1,6 @@
 YUI.add('dd-ddm-base', function(Y) {
 
+
     /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
      * @module dd
@@ -20,6 +21,14 @@ YUI.add('dd-ddm-base', function(Y) {
     DDMBase.NAME = 'dragDropMgr';
 
     DDMBase.ATTRS = {
+        /**
+        * @attribute dragCursor
+        * @description The cursor to apply when dragging, if shimmed the shim will get the cursor.
+        * @type String
+        */
+        dragCursor: {
+            value: 'move'
+        },
         /**
         * @attribute clickPixelThresh
         * @description The number of pixels to move to start a drag operation, default is 3.
@@ -267,8 +276,11 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
+
 
     /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
@@ -318,12 +330,19 @@ YUI.add('dd-ddm', function(Y) {
         * @description Activates the shim
         */
         _pg_activate: function() {
+            var ah = this.activeDrag.get('activeHandle'),
+            cur = ah.getStyle('cursor');
+            if (cur == 'auto') {
+                cur = this.get('dragCursor');
+            }
+            
             this._pg_size();
             this._pg.setStyles({
                 top: 0,
                 left: 0,
                 display: 'block',
-                opacity: ((this._debugShim) ? '.5' : '0')
+                opacity: ((this._debugShim) ? '.5' : '0'),
+                cursor: cur
             });
         },
         /**
@@ -382,8 +401,11 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-ddm-drop', function(Y) {
+
 
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
@@ -778,8 +800,11 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
 YUI.add('dd-drag', function(Y) {
+
 
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
@@ -918,7 +943,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -934,7 +959,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -1452,7 +1477,7 @@ YUI.add('dd-drag', function(Y) {
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
-                            this.set('activeHandle', els.item(i));
+                            this.set('activeHandle', n);
                         }
                     }, this);
                 } else {
@@ -1776,8 +1801,11 @@ YUI.add('dd-drag', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
+
 
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
@@ -1905,11 +1933,22 @@ YUI.add('dd-proxy', function(Y) {
                     width: n.get('offsetWidth') + 'px'
                 });
             }
+
+            var ah = DDM.activeDrag.get('activeHandle'),
+            cur = ah.getStyle('cursor');
+            if (cur == 'auto') {
+                cur = DDM.get('dragCursor');
+            }
+
+
             this.get(DRAG_NODE).setStyles({
                 visibility: 'hidden',
                 display: 'block',
+                cursor: cur,
                 border: this.get('borderStyle')
             });
+
+
 
             if (this.get('positionProxy')) {
                 this.get(DRAG_NODE).setXY(this.nodeXY);
@@ -1968,8 +2007,11 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
 YUI.add('dd-constrain', function(Y) {
+
 
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
@@ -2348,8 +2390,11 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-proxy'], skinnable:false});
+
+
+}, '@VERSION@' ,{optional:['dd-proxy'], skinnable:false, requires:['dd-drag']});
 YUI.add('dd-plugin', function(Y) {
+
 
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
@@ -2390,8 +2435,11 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
+
+
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
 YUI.add('dd-drop', function(Y) {
+
 
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
@@ -2465,7 +2513,7 @@ YUI.add('dd-drop', function(Y) {
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.error('DD.Drop: Invalid Node Given: ' + node);
+                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }
@@ -2825,8 +2873,11 @@ YUI.add('dd-drop', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
+
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
@@ -2867,8 +2918,10 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
 

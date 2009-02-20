@@ -1,5 +1,6 @@
 YUI.add('dd-drag', function(Y) {
 
+
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
@@ -137,7 +138,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -153,7 +154,7 @@ YUI.add('dd-drag', function(Y) {
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -671,7 +672,7 @@ YUI.add('dd-drag', function(Y) {
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
-                            this.set('activeHandle', els.item(i));
+                            this.set('activeHandle', n);
                         }
                     }, this);
                 } else {
@@ -992,6 +993,8 @@ YUI.add('dd-drag', function(Y) {
     });
     Y.namespace('DD');    
     Y.DD.Drag = Drag;
+
+
 
 
 

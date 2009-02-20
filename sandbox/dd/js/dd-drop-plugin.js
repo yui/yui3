@@ -1,3 +1,4 @@
+YUI.add('dd-drop-plugin', function(Y) {
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
@@ -38,3 +39,4 @@
 
 
 
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});

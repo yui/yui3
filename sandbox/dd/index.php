@@ -14,6 +14,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #davdoc {
             min-height: 2000px;
         }
+        #drag h2 {
+            cursor: text;
+        }
         #drag, #drag2, #drag3, #drag4, #drag5, #drag6, #drag7, .drop {
             height: 75px;
             width: 75px;
@@ -81,6 +84,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #drag3 h2.four {
             bottom: 0;
             right: 0;
+        }
+        #drag4 {
+            cursor: ne-resize;
         }
         #drag6 {
             height: 150px;
@@ -209,15 +215,15 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 
 
 
-<script type="text/javascript" src="../../build/dd/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/drag.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/drop.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/constrain.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dd/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {

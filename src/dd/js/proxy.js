@@ -1,3 +1,4 @@
+
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
@@ -124,11 +125,22 @@
                     width: n.get('offsetWidth') + 'px'
                 });
             }
+
+            var ah = DDM.activeDrag.get('activeHandle'),
+            cur = ah.getStyle('cursor');
+            if (cur == 'auto') {
+                cur = DDM.get('dragCursor');
+            }
+
+
             this.get(DRAG_NODE).setStyles({
                 visibility: 'hidden',
                 display: 'block',
+                cursor: cur,
                 border: this.get('borderStyle')
             });
+
+
 
             if (this.get('positionProxy')) {
                 this.get(DRAG_NODE).setXY(this.nodeXY);
@@ -184,4 +196,6 @@
     Y.extend(Proxy, Y.DD.Drag, proto);
     //Set this new class as DD.Drag for other extensions
     Y.DD.Drag = Proxy;    
+
+
 
