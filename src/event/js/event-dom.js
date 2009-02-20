@@ -755,7 +755,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */           
         getListeners: function(el, type) {
-            var ek = Y.stamp(el), evts = _el_events[ek],
+            var ek = Y.stamp(el, true), evts = _el_events[ek],
                 results=[] , key = (type) ? 'event:' + type : null;
 
             if (!evts) {

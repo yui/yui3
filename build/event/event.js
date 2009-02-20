@@ -6,17 +6,20 @@
 (function() {
 
 var GLOBAL_ENV = YUI.Env, 
+
     C = YUI.config, 
+
     D = C.doc, 
-    POLL_INTERVAL = C.pollInterval || 20;
+
+    POLL_INTERVAL = C.pollInterval || 20,
+
+    _ready = function(e) {
+        GLOBAL_ENV._ready();
+    };
 
     if (!GLOBAL_ENV._ready) {
 
         GLOBAL_ENV.windowLoaded = false;
-
-        var _ready = function(e) {
-            GLOBAL_ENV._ready();
-        };
 
         GLOBAL_ENV._ready = function() {
             if (!GLOBAL_ENV.DOMReady) {
@@ -64,17 +67,17 @@ var GLOBAL_ENV = YUI.Env,
 })();
 YUI.add('event', function(Y) {
 
-
+(function() {
 /**
  * DOM event listener abstraction layer
  * @module event
  */
 
-var GLOBAL_ENV = YUI.Env;
+var GLOBAL_ENV = YUI.Env,
 
-// if (Y !== YUI) {
-    // return;
-// }
+    yready = function() {
+        Y.fire('domready');
+    };
 
 Y.mix(Y.Env.eventAdaptors, {
 
@@ -107,9 +110,7 @@ Y.mix(Y.Env.eventAdaptors, {
      * @optional args 0..n arguments to send to the listener
      *
      */
-    domready: {
-
-    },
+    domready: {},
 
     /**
      * Use domready event instead. @see domready
@@ -120,13 +121,15 @@ Y.mix(Y.Env.eventAdaptors, {
     'event:ready': {
 
         on: function() {
-            arguments[0] = 'domready';
-            return Y.subscribe.apply(Y, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = 'domready';
+            return Y.subscribe.apply(Y, a);
         },
 
         detach: function() {
-            arguments[0] = 'domready';
-            return Y.unsubscribe.apply(Y, arguments);
+            var a = Y.Array(arguments, 0, true);
+            a[0] = 'domready';
+            return Y.unsubscribe.apply(Y, a);
         }
     }
 
@@ -137,17 +140,14 @@ Y.publish('domready', {
     fireOnce: true
 });
 
-var yready = function() {
-    Y.fire('domready');
-};
-
 if (GLOBAL_ENV.DOMReady) {
     yready();
 } else {
     Y.before(yready, GLOBAL_ENV, "_ready");
 }
 
-
+})();
+(function() {
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -193,18 +193,18 @@ EVENT_READY = 'domready',
 
 COMPAT_ARG = '~yui|2|compat~',
 
-CAPTURE = "capture_";
+CAPTURE = "capture_",
 
-Y.Event = function() {
+Event = function() {
 
     /**
      * True after the onload event has fired
-     * @property loadComplete
+     * @property _loadComplete
      * @type boolean
      * @static
      * @private
      */
-    var loadComplete =  false;
+    var _loadComplete =  false,
 
     /**
      * The number of times to poll after window.onload.  This number is
@@ -214,7 +214,7 @@ Y.Event = function() {
      * @static
      * @private
      */
-    var _retryCount = 0;
+    _retryCount = 0,
 
     /**
      * onAvailable listeners
@@ -222,7 +222,7 @@ Y.Event = function() {
      * @static
      * @private
      */
-    var _avail = [];
+    _avail = [],
 
     /**
      * Custom event wrappers for DOM events.  Key is 
@@ -232,9 +232,9 @@ Y.Event = function() {
      * @static
      * @private
      */
-    var _wrappers = {};
+    _wrappers = {},
 
-    var _windowLoadKey = null;
+    _windowLoadKey = null,
 
     /**
      * Custom event wrapper map DOM events.  Key is 
@@ -245,7 +245,7 @@ Y.Event = function() {
      * @static
      * @private
      */
-    var _el_events = {};
+    _el_events = {};
 
     return {
 
@@ -347,10 +347,10 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
         // @TODO fix arguments
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-            var a = Y.Array(id);
+            var a = Y.Array(id), i;
 
 
-            for (var i=0; i<a.length; i=i+1) {
+            for (i=0; i<a.length; i=i+1) {
                 _avail.push({ 
                     id:         a[i], 
                     fn:         fn, 
@@ -420,7 +420,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
-                compat, E=Y.Event, capture = false;
+                compat, E=Y.Event, capture = false,
+                handles, oEl, size, ek, key, cewrapper, context;
 
             if (type.indexOf(CAPTURE) > -1) {
                 type = type.substr(CAPTURE.length);
@@ -441,7 +442,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             if (this._isValidCollection(el)) {
 
 
-                var handles=[], i, l;
+                handles=[];
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
@@ -453,7 +454,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
             } else if (Y.Lang.isString(el)) {
 
-                var oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
                 // If the el argument is a string, we assume it is 
                 // actually the id of the element.  If the page is loaded
@@ -473,7 +474,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 */
 
                 if (oEl && (oEl instanceof Y.Node)) {
-                    var size = oEl.size();
+                    size = oEl.size();
                     if (size > 1) {
                         // args[0] = oEl;
                         args[2] = oEl;
@@ -505,8 +506,9 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
             // the custom event key is the uid for the element + type
 
-            var ek = Y.stamp(el), key = 'event:' + ek + type,
-                cewrapper = _wrappers[key];
+            ek = Y.stamp(el); 
+            key = 'event:' + ek + type;
+            cewrapper = _wrappers[key];
 
 
             if (!cewrapper) {
@@ -549,7 +551,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
-            var context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
             
             // set the context as the second arg to subscribe
             trimmedArgs[1] = context;
@@ -580,7 +582,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat;
+            var args=Y.Array(arguments, 0, true), compat, i, len, ok,
+                id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -591,7 +594,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 return type.detach();
             }
 
-            var i, len, li;
 
             // The el argument can be a string
             if (typeof el == "string") {
@@ -601,12 +603,9 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             // The el argument can be an array of elements or element ids.
             } else if ( this._isValidCollection(el)) {
 
-                var ok = true;
+                ok = true;
                 for (i=0, len=el.length; i<len; ++i) {
-
                     args[2] = el[i];
-
-                    // ok = ( this.detach(el[i], type, fn) && ok );
                     ok = ( Y.Event.detach.apply(Y.Event, args) && ok );
                 }
 
@@ -618,8 +617,9 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 return this.purgeElement(el, false, type);
             }
 
-            var id = 'event:' + Y.stamp(el) + type, 
-                ce = _wrappers[id];
+            id = 'event:' + Y.stamp(el) + type;
+            ce = _wrappers[id];
+
             if (ce) {
                 return ce.unsubscribe(fn);
             } else {
@@ -706,10 +706,10 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */
         _load: function(e) {
 
-            if (!loadComplete) {
+            if (!_loadComplete) {
 
 
-                loadComplete = true;
+                _loadComplete = true;
 
                 // Just in case DOMReady did not go off for some reason
                 // E._ready();
@@ -755,15 +755,18 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             // check the page load state prior to trying to bind the 
             // elements so that we can be certain all elements have been 
             // tested appropriately
-            var tryAgain = !loadComplete;
+            var tryAgain = !_loadComplete, notAvail, executeItem,
+                i, len, item, el;
+
             if (!tryAgain) {
                 tryAgain = (_retryCount > 0);
             }
 
             // onAvailable
-            var notAvail = [];
+            notAvail = [];
 
-            var executeItem = function (el, item) {
+            executeItem = function (el, item) {
+
                 var context, ov = item.override;
 
                 if (item.compat) {
@@ -787,7 +790,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
             };
 
-            var i, len, item, el;
 
             // onAvailable
             for (i=0,len=_avail.length; i<len; ++i) {
@@ -815,7 +817,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     if (el) {
                         // The element is available, but not necessarily ready
                         // @todo should we test parentNode.nextSibling?
-                        if (loadComplete || (el.get && el.get('nextSibling')) || el.nextSibling) {
+                        if (_loadComplete || (el.get && el.get('nextSibling')) || el.nextSibling) {
                             executeItem(el, item);
                             _avail[i] = null;
                         }
@@ -855,8 +857,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */
         purgeElement: function(el, recurse, type) {
             var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
-                id = Y.stamp(oEl);
-            var lis = this.getListeners(oEl, type), i, len;
+                lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
                     lis[i].unsubscribeAll();
@@ -881,13 +882,13 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          * @static
          */           
         getListeners: function(el, type) {
-            var ek = Y.stamp(el), evts = _el_events[ek];
+            var ek = Y.stamp(el, true), evts = _el_events[ek],
+                results=[] , key = (type) ? 'event:' + type : null;
 
             if (!evts) {
                 return null;
             }
 
-            var results=[] , key = (type) ? 'event:' + type : null;
 
             if (key) {
                 if (evts[key]) {
@@ -956,8 +957,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 add(window, "load", onLoad);
 add(window, "unload", onUnload);
 
-// Y.Event = Event;
-var Event = Y.Event;
+Y.Event = Event;
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
 if (Y.UA.ie && Y.on) {
@@ -972,6 +972,7 @@ Event.Facade = Y.EventFacade;
 
 Event._tryPreloadAttach();
 
+})();
 
 
 }, '@VERSION@' );

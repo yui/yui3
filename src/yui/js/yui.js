@@ -557,13 +557,16 @@ YUI.prototype = {
     },
 
     /**
-     * Stamps an object with a guid.  If the object already
-     * has one, a new one is not created
+     * Returns a guid associated with an object.  If the object
+     * does not have one, a new one is created unless readOnly
+     * is specified.
      * @method stamp
      * @param o The object to stamp
-     * @return {string} The object's guid
+     * @param readOnly {boolean} if true, a valid guid will only
+     * be returned if the object has one assigned to it.
+     * @return {string} The object's guid or null
      */
-    stamp: function(o) {
+    stamp: function(o, readOnly) {
 
         if (!o) {
             return o;
@@ -573,7 +576,13 @@ YUI.prototype = {
 
         if (!uid) {
             uid = this.guid();
-            o._yuid = uid;
+            if (!readOnly) {
+                try {
+                    o._yuid = uid;
+                } catch(e) {
+                    uid = null;
+                }
+            }
         }
 
         return uid;
