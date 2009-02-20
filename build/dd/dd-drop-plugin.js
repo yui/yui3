@@ -1,5 +1,6 @@
 YUI.add('dd-drop-plugin', function(Y) {
 
+
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
         * @module dd-plugin
@@ -36,6 +37,8 @@ YUI.add('dd-drop-plugin', function(Y) {
         Y.extend(Drop, Y.DD.Drop);
         Y.namespace('plugin');
         Y.plugin.Drop = Drop;
+
+
 
 
 

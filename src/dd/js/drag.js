@@ -1,3 +1,4 @@
+
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
@@ -135,7 +136,7 @@
             set: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -151,7 +152,7 @@
             set: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -605,12 +606,10 @@
         */
         _handleMouseDown: function(e) {
             var ev = e.ev;
-            Y.log('_handleMouseDown', 'info', 'dd-drag');
             this._dragThreshMet = false;
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                Y.log('Mousedown was not produced by the primary button', 'warn', 'dd-drag');
                 return false;
             }
             if (this.validClick(ev)) {
@@ -638,12 +637,10 @@
             tar = ev.target,
             hTest = null;
             if (this._handles) {
-                Y.log('validClick: We have handles', 'info', 'dd-drag');
                 Y.each(this._handles, function(i, n) {
                     if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
-                            Y.log('Valid Selector found: ' + n, 'info', 'dd-drag');
                             hTest = n;
                             r = true;
                         }
@@ -651,18 +648,15 @@
                 });
             } else {
                 if (this.get(NODE).contains(tar) || this.get(NODE).compareTo(tar)) {
-                    Y.log('validClick: We have a valid click', 'info', 'dd-drag');
                     r = true;
                 }
             }
             if (r) {
-                Y.log('validClick: Check invalid selectors', 'info', 'dd-drag');
                 if (this._invalids) {
                     Y.each(this._invalids, function(i, n) {
                         if (Y.Lang.isString(n)) {
                             //Am I this or am I inside this
                             if (tar.test(n + ', ' + n + ' *')) {
-                                Y.log('Invalid Selector found: (' + (n + ', ' + n + ' *') + ')', 'warn', 'dd-drag');
                                 r = false;
                             }
                         }
@@ -676,7 +670,7 @@
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
-                            this.set('activeHandle', els.item(i));
+                            this.set('activeHandle', n);
                         }
                     }, this);
                 } else {
@@ -711,7 +705,6 @@
         */
         _timeoutCheck: function() {
             if (!this.get('lock')) {
-                Y.log("timeout threshold met", "info", "dd-drag");
                 this._fromTimeout = true;
                 this._dragThreshMet = true;
                 this.start();
@@ -776,7 +769,6 @@
                 this._invalids[str] = true;
                 this.fire(EV_ADD_INVALID, { handle: str });
             } else {
-                Y.log('Selector needs to be a string..', 'warn', 'dd-drag');
             }
             return this;
         },
@@ -840,7 +832,6 @@
             if (!this.get('lock') && !this.get('dragging')) {
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
-                Y.log('startDrag', 'info', 'dd-drag');
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
@@ -873,7 +864,6 @@
             this._dragThreshMet = false;
             this._fromTimeout = false;
             if (!this.get('lock') && this.get('dragging')) {
-                Y.log('endDrag', 'info', 'dd-drag');
                 this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-dragging');
@@ -905,7 +895,6 @@
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
 
             //This will probably kill your machine ;)
-            //Y.log('dragging..', 'info', 'dd-drag');
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
@@ -956,16 +945,13 @@
         */
         _move: function(ev) {
             if (this.get('lock')) {
-                Y.log('Drag Locked', 'warn', 'dd-drag');
                 return false;
             } else {
                 this.mouseXY = [ev.pageX, ev.pageY];
                 if (!this._dragThreshMet) {
                     var diffX = Math.abs(this.startXY[0] - ev.pageX);
                     var diffY = Math.abs(this.startXY[1] - ev.pageY);
-                    Y.log("diffX: " + diffX + ", diffY: " + diffY, 'info', 'dd-drag');
                     if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
-                        Y.log("pixel threshold met", "info", "dd-drag");
                         this._dragThreshMet = true;
                         this.start();
                         this._moveNode([ev.pageX, ev.pageY]);
@@ -985,7 +971,6 @@
         */
         stopDrag: function() {
             if (this.get('dragging')) {
-                Y.log('stopDrag called', 'warn', 'dd-drag');
                 DDM._end();
             }
             return this;
@@ -1006,4 +991,6 @@
     });
     Y.namespace('DD');    
     Y.DD.Drag = Drag;
+
+
 

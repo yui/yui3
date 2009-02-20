@@ -1,5 +1,6 @@
 YUI.add('dd-ddm-drop', function(Y) {
 
+
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * @module dd
@@ -282,7 +283,6 @@ YUI.add('dd-ddm-drop', function(Y) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
-                Y.log('No Active Drag', 'warn', 'dd-ddm');
             }
             
             this.activeDrop = null;
@@ -298,7 +298,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _dropMove: function() {
             if (this._hasActiveShim()) {
-                //Y.log('We have an active shim, check targets', 'info', 'dd-ddm');
                 this._handleTargetOver();
             } else {
                 Y.each(this.otherDrops, function(v, k) {
@@ -391,6 +390,8 @@ YUI.add('dd-ddm-drop', function(Y) {
         }
     }, true);
     
+
+
 
 
 
