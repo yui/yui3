@@ -1314,12 +1314,17 @@ unsubscribing to this event.</dd>
                                                          o
                                                     
                                                 
+                                                        , 
+                                                         readOnly
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Stamps an object with a guid.  If the object already
-has one, a new one is not created
+                                            Returns a guid associated with an object.  If the object
+does not have one, a new one is created unless readOnly
+is specified.
                                         </div>
 
                                         <div class="description">
@@ -1332,6 +1337,13 @@ has one, a new one is not created
                                                         </code>
                                                         <span property="yui:description"> The object to stamp</span>
                                                         </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">readOnly</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  if true, a valid guid will only
+be returned if the object has one assigned to it.</span>
+                                                        </dd>
                                                 </dl>
 
                                                 <dl>
@@ -1339,7 +1351,7 @@ has one, a new one is not created
                                                     <code property="yui:return">
                                                         string
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The object's guid</dd>
+                                                    <dd property="yui:returnInfo">The object's guid or null</dd>
                                                 </dl>
 
 

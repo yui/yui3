@@ -606,13 +606,16 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Stamps an object with a guid.  If the object already</span>
-<span class="c">     * has one, a new one is not created</span>
+<span class="c">     * Returns a guid associated with an object.  If the object</span>
+<span class="c">     * does not have one, a new one is created unless readOnly</span>
+<span class="c">     * is specified.</span>
 <span class="c">     * @method stamp</span>
 <span class="c">     * @param o The object to stamp</span>
-<span class="c">     * @return {string} The object&#39;s guid</span>
+<span class="c">     * @param readOnly {boolean} if true, a valid guid will only</span>
+<span class="c">     * be returned if the object has one assigned to it.</span>
+<span class="c">     * @return {string} The object&#39;s guid or null</span>
 <span class="c">     */</span>
-    <span class="nx">stamp</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">stamp</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">readOnly</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
@@ -622,7 +625,13 @@
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">uid</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">=</span> <span class="nx">uid</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">readOnly</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="nx">o</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">=</span> <span class="nx">uid</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">uid</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">uid</span><span class="o">;</span>
