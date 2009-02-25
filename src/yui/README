@@ -22,6 +22,8 @@ The YUI Global
 
     Get:
     - id attributes are globally unique
+    - Now accepts purgethreshold as a config option.  This will set the number of transactions
+      required before auto removing nodes from previous transactions (default is 20)
 
     Loader:
     - yuitest renamed to test, now requires collection

@@ -10,7 +10,8 @@
 
 var Y = YUI();
 
-Y.Get.script(["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js"], { 
+// Y.Get.css(["../../build/menu/assets/skins/sam/menu.css", "../../build/logger/assets/skins/sam/logger.css"], { 
+Y.Get.css(["http://yui.yahooapis.com/2.5.2/build/fonts/fonts.css"], { 
 
         timeout: 2000,
 
@@ -24,18 +25,43 @@ Y.Get.script(["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js"], {
     
 });
 
-// Y.Get.css(["../../build/menu/assets/skins/sam/menu.css", "../../build/logger/assets/skins/sam/logger.css"], { 
-Y.Get.css(["http://yui.yahooapis.com/2.5.2/build/fonts/fonts.css"], { 
+
+Y.Get.script([
+    "http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js"
+    ], { 
 
         timeout: 2000,
 
         onSuccess: function() {
             Y.log("css1 (menu, logger) complet", 'warn');
+
+
+            Y.Get.script([
+                "http://yui.yahooapis.com/2.5.2/build/event/event-min.js"
+                ], { 
+
+                    timeout: 2000,
+
+                    onSuccess: function() {
+                        Y.log("nested complet", 'warn');
+                    },
+
+                    onTimeout: function() {
+                        Y.log('onTimeout handler');
+                    },
+
+                    autopurge: true,
+                    purgethreshold: 1
+                
+            });
         },
 
         onTimeout: function() {
             Y.log('onTimeout handler');
-        }
+        },
+
+        autopurge: true,
+        purgethreshold: 1
     
 });
 

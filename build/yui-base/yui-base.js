@@ -478,8 +478,9 @@ YUI.prototype = {
      * YUI.namespace("property.package");
      * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YAHOO.property, then
-     * YUI.property.package
+     * Either of the above would create YUI.property, then
+     * YUI.property.package (YAHOO is scrubbed out, this is
+     * to remain compatible with YUI2)
      *
      * Be careful when naming packages. Reserved words may work in some browsers
      * and not others. For instance, the following will fail in Safari:

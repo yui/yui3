@@ -478,8 +478,9 @@ YUI.prototype = {
      * YUI.namespace("property.package");
      * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YAHOO.property, then
-     * YUI.property.package
+     * Either of the above would create YUI.property, then
+     * YUI.property.package (YAHOO is scrubbed out, this is
+     * to remain compatible with YUI2)
      *
      * Be careful when naming packages. Reserved words may work in some browsers
      * and not others. For instance, the following will fail in Safari:
@@ -1877,10 +1878,12 @@ Y.Get = function() {
      */
     _queue = function(type, url, opts) {
 
-        var id = "q" + (qidx++), q;
         opts = opts || {};
 
-        if (qidx % Y.Get.PURGE_THRESH === 0) {
+        var id = "q" + (qidx++), q,
+            thresh = opts.purgethreshold || Y.Get.PURGE_THRESH;
+
+        if (qidx % thresh === 0) {
             _autoPurge();
         }
 
@@ -2075,6 +2078,10 @@ Y.Get = function() {
          * setting to true will let the utilities cleanup routine purge 
          * the script once loaded
          * </dd>
+         * <dt>purgethreshold</dt>
+         * <dd>
+         * The number of transaction before autopurge should be initiated
+         * </dd>
          * <dt>data</dt>
          * <dd>
          * data that is supplied to the callback when the script(s) are
@@ -2103,6 +2110,7 @@ Y.Get = function() {
          * &nbsp;&nbsp;&nbsp;&nbsp;context: Y, // make the YUI instance
          * &nbsp;&nbsp;&nbsp;&nbsp;// win: otherframe // target another window/frame
          * &nbsp;&nbsp;&nbsp;&nbsp;autopurge: true // allow the utility to choose when to remove the nodes
+         * &nbsp;&nbsp;&nbsp;&nbsp;purgetheshold: 1 // purge previous transaction before next transaction
          * &nbsp;&nbsp;&#125;);
          * </pre>
          * @return {tId: string} an object containing info about the transaction
