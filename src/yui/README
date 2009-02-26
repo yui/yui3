@@ -16,6 +16,7 @@ The YUI Global
     - Y.stamp now accepts a readOnly parameter to be used when you are only interested
       in reading an existing guid rather than creating a new one.
     - Y.stamp defends against stamping items that can't be stamped.
+    - Added to Object: values(), hasKey(), hasValue(), size()
 
     Lang: 
     - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.

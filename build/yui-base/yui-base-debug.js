@@ -1235,7 +1235,92 @@ Y.Object = function(o) {
     return new F();
 }; 
 
-var O = Y.Object;
+var O = Y.Object,
+
+    /**
+     * Extracts the keys, values, or size from an object
+     * 
+     * @method _extract
+     * @param o the object
+     * @param what what to extract (0: keys, 1: values, 2: size)
+     * @return {boolean|Array} the extracted info
+     * @private
+     */
+    _extract = function(o, what) {
+        var count = (what === 2), out = (count) ? 0 : [], i;
+
+        for (i in o) {
+            if (count) {
+                out++;
+            } else {
+                if (o.hasOwnProperty(i)) {
+                    out.push((what) ? o[i] : i);
+                }
+            }
+        }
+
+        return out;
+    };
+
+/**
+ * Returns an array containing the object's keys
+ * @TODO use native Object.keys() if available
+ * @method Object.keys
+ * @static
+ * @param o an object
+ * @return {string[]} the keys
+ */
+O.keys = function(o) {
+    return _extract(o);
+};
+
+/**
+ * Returns an array containing the object's values
+ * @TODO use native Object.values() if available
+ * @method Object.values
+ * @static
+ * @param o an object
+ * @return {Array} the values
+ */
+O.values = function(o) {
+    return _extract(o, 1);
+};
+
+/**
+ * Returns the size of an object
+ * @TODO use native Object.size() if available
+ * @method Object.size
+ * @static
+ * @param o an object
+ * @return {int} the size
+ */
+O.size = function(o) {
+    return _extract(o, 2);
+};
+
+/**
+ * Returns true if the object contains a given key
+ * @method Object.hasKey
+ * @static
+ * @param o an object
+ * @param k the key to query
+ * @return {boolena} true if the object contains the key
+ */
+O.hasKey = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
+
+/**
+ * Returns true if the object contains a given value
+ * @method Object.hasValue
+ * @static
+ * @param o an object
+ * @param v the value to query
+ * @return {boolean} true if the object contains the value
+ */
+O.hasValue = function(o, v) {
+    return (Y.Array.indexOf(O.values(o), v) > -1);
+};
 
 /**
  * Determines whether or not the property was added
@@ -1254,29 +1339,7 @@ var O = Y.Object;
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, p) {
-    Y.message('Object.owns is deprecated, use the native method');
-    return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
-};
-
-/**
- * Returns an array containing the object's keys
- * @TODO use native Object.keys() if available
- * @method Object.keys
- * @static
- * @param o an object
- * @return {string[]} the keys
- */
-O.keys = function(o) {
-    var a=[], i;
-    for (i in o) {
-        if (o.hasOwnProperty(i)) {
-            a.push(i);
-        }
-    }
-
-    return a;
-};
+O.owns = O.hasKey;
 
 /**
  * Executes a function on each item. The function
