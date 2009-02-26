@@ -478,8 +478,9 @@ YUI.prototype = {
      * YUI.namespace("property.package");
      * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YAHOO.property, then
-     * YUI.property.package
+     * Either of the above would create YUI.property, then
+     * YUI.property.package (YAHOO is scrubbed out, this is
+     * to remain compatible with YUI2)
      *
      * Be careful when naming packages. Reserved words may work in some browsers
      * and not others. For instance, the following will fail in Safari:
@@ -1223,7 +1224,92 @@ Y.Object = function(o) {
     return new F();
 }; 
 
-var O = Y.Object;
+var O = Y.Object,
+
+    /**
+     * Extracts the keys, values, or size from an object
+     * 
+     * @method _extract
+     * @param o the object
+     * @param what what to extract (0: keys, 1: values, 2: size)
+     * @return {boolean|Array} the extracted info
+     * @private
+     */
+    _extract = function(o, what) {
+        var count = (what === 2), out = (count) ? 0 : [], i;
+
+        for (i in o) {
+            if (count) {
+                out++;
+            } else {
+                if (o.hasOwnProperty(i)) {
+                    out.push((what) ? o[i] : i);
+                }
+            }
+        }
+
+        return out;
+    };
+
+/**
+ * Returns an array containing the object's keys
+ * @TODO use native Object.keys() if available
+ * @method Object.keys
+ * @static
+ * @param o an object
+ * @return {string[]} the keys
+ */
+O.keys = function(o) {
+    return _extract(o);
+};
+
+/**
+ * Returns an array containing the object's values
+ * @TODO use native Object.values() if available
+ * @method Object.values
+ * @static
+ * @param o an object
+ * @return {Array} the values
+ */
+O.values = function(o) {
+    return _extract(o, 1);
+};
+
+/**
+ * Returns the size of an object
+ * @TODO use native Object.size() if available
+ * @method Object.size
+ * @static
+ * @param o an object
+ * @return {int} the size
+ */
+O.size = function(o) {
+    return _extract(o, 2);
+};
+
+/**
+ * Returns true if the object contains a given key
+ * @method Object.hasKey
+ * @static
+ * @param o an object
+ * @param k the key to query
+ * @return {boolena} true if the object contains the key
+ */
+O.hasKey = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
+
+/**
+ * Returns true if the object contains a given value
+ * @method Object.hasValue
+ * @static
+ * @param o an object
+ * @param v the value to query
+ * @return {boolean} true if the object contains the value
+ */
+O.hasValue = function(o, v) {
+    return (Y.Array.indexOf(O.values(o), v) > -1);
+};
 
 /**
  * Determines whether or not the property was added
@@ -1242,29 +1328,7 @@ var O = Y.Object;
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, p) {
-    Y.message('Object.owns is deprecated, use the native method');
-    return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
-};
-
-/**
- * Returns an array containing the object's keys
- * @TODO use native Object.keys() if available
- * @method Object.keys
- * @static
- * @param o an object
- * @return {string[]} the keys
- */
-O.keys = function(o) {
-    var a=[], i;
-    for (i in o) {
-        if (o.hasOwnProperty(i)) {
-            a.push(i);
-        }
-    }
-
-    return a;
-};
+O.owns = O.hasKey;
 
 /**
  * Executes a function on each item. The function
@@ -1877,10 +1941,12 @@ Y.Get = function() {
      */
     _queue = function(type, url, opts) {
 
-        var id = "q" + (qidx++), q;
         opts = opts || {};
 
-        if (qidx % Y.Get.PURGE_THRESH === 0) {
+        var id = "q" + (qidx++), q,
+            thresh = opts.purgethreshold || Y.Get.PURGE_THRESH;
+
+        if (qidx % thresh === 0) {
             _autoPurge();
         }
 
@@ -2075,6 +2141,10 @@ Y.Get = function() {
          * setting to true will let the utilities cleanup routine purge 
          * the script once loaded
          * </dd>
+         * <dt>purgethreshold</dt>
+         * <dd>
+         * The number of transaction before autopurge should be initiated
+         * </dd>
          * <dt>data</dt>
          * <dd>
          * data that is supplied to the callback when the script(s) are
@@ -2103,6 +2173,7 @@ Y.Get = function() {
          * &nbsp;&nbsp;&nbsp;&nbsp;context: Y, // make the YUI instance
          * &nbsp;&nbsp;&nbsp;&nbsp;// win: otherframe // target another window/frame
          * &nbsp;&nbsp;&nbsp;&nbsp;autopurge: true // allow the utility to choose when to remove the nodes
+         * &nbsp;&nbsp;&nbsp;&nbsp;purgetheshold: 1 // purge previous transaction before next transaction
          * &nbsp;&nbsp;&#125;);
          * </pre>
          * @return {tId: string} an object containing info about the transaction

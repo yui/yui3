@@ -13,12 +13,18 @@ The YUI Global
     Core:
     - Y.fail has been renamed to Y.error so that Y.fail can be used for the assertion
       engine.
+    - Y.stamp now accepts a readOnly parameter to be used when you are only interested
+      in reading an existing guid rather than creating a new one.
+    - Y.stamp defends against stamping items that can't be stamped.
+    - Added to Object: values(), hasKey(), hasValue(), size()
 
     Lang: 
     - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
 
     Get:
     - id attributes are globally unique
+    - Now accepts purgethreshold as a config option.  This will set the number of transactions
+      required before auto removing nodes from previous transactions (default is 20)
 
     Loader:
     - yuitest renamed to test, now requires collection
