@@ -4,7 +4,7 @@
  */
 
 
-var L = Y.Lang, Native = Array.prototype, A = Y.Array;
+var Y = YUI(), L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
  * Executes the supplied function on each item in the array.
@@ -68,16 +68,13 @@ A.lastIndexOf = (Native.lastIndexOf) ?
 A.unique = function(a, sort) {
     var s = L.isValue(sort) ? sort : true,
         b = a.slice(), i = 0, n = -1, item = null;
-    Y.log("Sort? " + s);
     if (s) {
         b.sort();
-        Y.log("Start: " + b);
         while (i < b.length) {
             if (b[i] === item) {
                 n = (n == -1 ? i : n);
                 i += 1;
-            } else if (s !== -1) {
-                Y.log("Removing " + (i-n) + " elements starting at " + n);
+            } else if (n !== -1) {
                 b.splice(n, i-n);
                 i = n;                
                 n = -1;
@@ -86,10 +83,8 @@ A.unique = function(a, sort) {
                 i += 1;
             }
         }
-        Y.log("Result: " + b);
         return b;
     } else {
-        Y.log("Start: " + b);        
         while (i < b.length) {
             item = b[i];
             while ((n = b.lastIndexOf(item)) !== i) {
@@ -97,7 +92,6 @@ A.unique = function(a, sort) {
             }
             i += 1;
         }
-        Y.log("Result: " + b);
         return b;
     }
 };
