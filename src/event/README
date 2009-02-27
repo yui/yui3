@@ -6,6 +6,7 @@ YUI Event Utility
     - Event.attach returns a single handle if the result from collection processing is a single item.
     - Fixed unsubscribeAll return value.
     - purgeElement only reads element guids, it does not create new ones for elements without one.
+    - Added Y.on('delegate', fn, el, 'click', 'selector' ...
 
 3.0.0pr2
     - Fixed IE notification error when no arguments are supplied.
