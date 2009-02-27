@@ -70,40 +70,29 @@
 
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">event</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="c">// Y.log(&#39;new delegate event: &#39; + event + &#39;, &#39; + spec);</span>
-<span class="c"></span>
         <span class="k">var</span> <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">+</span> <span class="nx">event</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">,</span>
-            <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">a</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
-        <span class="c">// Y.log(&#39;ename: &#39; + ename);</span>
-<span class="c"></span>
         <span class="c">// set up the event on the container</span>
 <span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="c">// Y.log(&#39;delegate test: &#39; + e.currentTarget + &#39;, &#39; + spec);</span>
-<span class="c"></span>
             <span class="k">var</span> <span class="nx">targets</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
-                <span class="nx">target</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="nx">target</span>  <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
+                <span class="nx">passed</span>  <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">targets</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// @TODO we need Node.some </span>
 <span class="c"></span>                <span class="nx">targets</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="c">// Y.log(&#39;comparing: &#39; + target + &#39;, &#39; + v);</span>
-<span class="c"></span>
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">passed</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span> <span class="o">==</span> <span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">((!</span><span class="nx">passed</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">v</span> <span class="o">==</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
                         <span class="c">// Y.log(&#39;success&#39;);</span>
 <span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
                         <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                        <span class="c">// @TODO we need Node.some</span>
-<span class="c"></span>                        <span class="c">// return true;</span>
-<span class="c"></span>                    <span class="o">}</span>
+                    <span class="o">}</span>
 
                 <span class="o">});</span>
 
-                <span class="c">// Y.log(&#39;fail&#39;);</span>
-<span class="c"></span>
             <span class="o">}</span>
 
         <span class="o">},</span> <span class="nx">el</span><span class="o">);</span>
@@ -111,7 +100,8 @@
         <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
         <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">3</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
             
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="c">// subscribe to the custom event for the delegation spec</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
     <span class="o">}</span>
 
