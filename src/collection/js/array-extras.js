@@ -62,14 +62,13 @@ A.lastIndexOf = (Native.lastIndexOf) ?
  * @method Array.unique
  * @static
  * @param a {Array} the array to find the subset of uniques for
- * @param sort {bool} flag to denote if the array should be sorted or not. Defaults to true, this is a faster operation
+ * @param sort {bool} flag to denote if the array is sorted or not. Defaults to false, the more general operation
  * @return {Array} a copy of the array with duplicate entries removed
  */
 A.unique = function(a, sort) {
-    var s = L.isValue(sort) ? sort : true,
+    var s = L.isValue(sort) ? sort : false,
         b = a.slice(), i = 0, n = -1, item = null;
     if (s) {
-        b.sort();
         while (i < b.length) {
             if (b[i] === item) {
                 n = (n == -1 ? i : n);
