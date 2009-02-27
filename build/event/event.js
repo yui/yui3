@@ -1192,6 +1192,7 @@ adapt.delegate = {
 
                     if (!passed && v == target) {
                         Y.fire(ename, e);
+                        passed = true;
                         // @TODO we need Node.some
                         // return true;
                     }
