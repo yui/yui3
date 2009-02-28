@@ -416,6 +416,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */
         attach: function(type, fn, el, obj) {
 
+            el = el || Y.config.win;
+
             // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
 
             var args=Y.Array(arguments, 0, true), 

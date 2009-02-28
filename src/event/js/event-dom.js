@@ -268,6 +268,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */
         attach: function(type, fn, el, obj) {
 
+            el = el || Y.config.win;
+
             // Y.log('attach: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
             // Y.log('attach:');
             // Y.log(Y.Array(arguments, 0, true), 1);
