@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event  Subscriber   (YUI Library)</title>
+	<title>API: event   delegate.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,8 +19,8 @@
         <h3>event&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
-                 &gt; Subscriber 
                 
+                 &gt; delegate.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,350 +43,74 @@
                 </fieldset>
             </form>
 
-                    <h2>
-                        
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-                        
-                        
-                            Class <b property="yui:name">Subscriber</b>
-                        <span class="extends">
-                        </span>
+<span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">;</span>
 
-                    </h2>
-                    <!-- class tree goes here -->
-                    
-                
-  
+<span class="c">/**</span>
+<span class="c"> * Set up a delegated listener container.</span>
+<span class="c"> * @event delegate</span>
+<span class="c"> * @param type {string} &#39;delegate&#39;</span>
+<span class="c"> * @param fn {string} the function to execute</span>
+<span class="c"> * @param el {string|node} the element that is the delegation container</span>
+<span class="c"> * @param event {string} the event type to delegate</span>
+<span class="c"> * @param spec {string} a selector that must match the target of the</span>
+<span class="c"> * event.</span>
+<span class="c"> * @param o optional context object</span>
+<span class="c"> * @param args 0..n additional arguments that should be provided </span>
+<span class="c"> * to the listener.</span>
+<span class="c"> * @return {Event.Handle} the detach handle</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
+<span class="nx">adapt</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="o">{</span>
 
-                    <div class="summary description" property="yui:description">
-                        Stores the subscriber information to be used when the event fires.
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">event</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">+</span> <span class="nx">event</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">,</span>
+            <span class="nx">a</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+        <span class="c">// set up the event on the container</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">targets</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
+                <span class="nx">target</span>  <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
+                <span class="nx">passed</span>  <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">targets</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// @TODO we need Node.some </span>
+<span class="c"></span>                <span class="nx">targets</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="k">if</span> <span class="o">((!</span><span class="nx">passed</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">v</span> <span class="o">==</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="c">// Y.log(&#39;success&#39;);</span>
+<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                        <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="o">}</span>
+
+                <span class="o">});</span>
+
+            <span class="o">}</span>
+
+        <span class="o">},</span> <span class="nx">el</span><span class="o">);</span>
+
+        <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
+        <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">3</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
+            
+        <span class="c">// subscribe to the custom event for the delegation spec</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+
+    <span class="o">}</span>
+
+<span class="o">};</span>
+
+
+<span class="o">})();</span>
+</pre></div>
                     </div>
-
-                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
-                        <h3 id="constructor">Constructor</h3>
-                        <div class="content">
-                            <div class="detail">
-                                <strong property="yui:name">Subscriber</strong>
-                                <code>
-                                    (
-  
-                                        
-                                                
-                                                fn
-
-                                                , 
-                                                context
-
-                                                , 
-                                                args*
-                                    )
-                                </code>
-                                <div class="description">
-                                        <dl rel="yui:parameters">
-                                            <dt>Parameters:</dt>
-                                                <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">fn</span>
-                                                    &lt;<span property="yui:type">Function</span>&gt;
-                                                    </code>
-                                                    <span property="yui:description">       The wrapped function to execute</span>
-                                                </dd>
-                                                <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">context</span>
-                                                    &lt;<span property="yui:type">Object</span>&gt;
-                                                    </code>
-                                                    <span property="yui:description">  The value of the keyword 'this' in the listener</span>
-                                                </dd>
-                                                <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">args*</span>
-                                                    &lt;<span property="yui:type">Array</span>&gt;
-                                                    </code>
-                                                    <span property="yui:description">       0..n additional arguments to supply the listener</span>
-                                                </dd>
-                                        </dl>
-                                    
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div rel="yui:properties" resource="#properties">
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_args">
-                                    <h4><a name="property_args" property="yui:name">args</a>
-                                        - <code><span property="yui:type">Array</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Optional additional arguments supplied to subscribe().  If present,
-these will be appended to the arguments supplied to fire()
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_context">
-                                    <h4><a name="property_context" property="yui:name">context</a>
-                                        - <code><span property="yui:type">Object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Optional 'this' keyword for the listener
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_fn">
-                                    <h4><a name="property_fn" property="yui:name">fn</a>
-                                        - <code><span property="yui:type">Function</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The callback that will be execute when the event fires
-This is wrapped by Y.rbind if obj was supplied.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_id">
-                                    <h4><a name="property_id" property="yui:name">id</a>
-                                        - <code><span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Unique subscriber id
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_wrappedFn">
-                                    <h4><a name="property_wrappedFn" property="yui:name">wrappedFn</a>
-                                        - <code><span property="yui:type">Function</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            }
-fn bound to obj with additional arguments applied via Y.rbind
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div rel="yui:methods" resource="#methods">
-                        <div class="section method details">
-                            <h3 id="methods">Methods</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_contains">
-                                    <h4>
-                                        <a name="method_contains">contains</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">contains</strong>
-                                           (
-                                                
-                                                        
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns true if the fn and obj match this objects properties.
-Used by the unsubscribe method to match the right subscriber.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the function to execute</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional 'this' keyword for the listener</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">true if the supplied arguments match this 
-subscriber's signature.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_notify">
-                                    <h4>
-                                        <a name="method_notify">notify</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">notify</strong>
-                                           (
-                                                
-                                                        
-                                                         defaultContext
-                                                    
-                                                
-                                                        , 
-                                                         args
-                                                    
-                                                
-                                                        , 
-                                                         ce
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executes the subscriber.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">defaultContext</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The execution context if not overridden
-by the subscriber</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Arguments array for the subscriber</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ce</span>
-                                                        &lt;<span property="yui:type">Event.Custom</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The custom event that sent the notification</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_toString">
-                                    <h4>
-                                        <a name="method_toString">toString</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">toString</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div rel="yui:events" resource="#events">
-
-
-                    </div>
-
-                    <div rel="yui:attributes" resource="#configattributes">
-
-                    </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -443,7 +167,7 @@ by the subscriber</span>
                                 <li class=""><a href="Event.Target.html" title="Event.Target">Event.Target</a></li>
                                 <li class=""><a href="EventFacade.html" title="EventFacade">EventFacade</a></li>
                                 <li class=""><a href="EventHandle.html" title="EventHandle">EventHandle</a></li>
-                                <li class="selected"><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
+                                <li class=""><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
                         </ul>
                     </div>
 
@@ -451,7 +175,7 @@ by the subscriber</span>
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
-                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class="selected"><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-custom.js.html" title="event-custom.js">event-custom.js</a></li>
                                 <li class=""><a href="event-do.js.html" title="event-do.js">event-do.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
@@ -463,25 +187,7 @@ by the subscriber</span>
                         </ul>
                     </div>
 
-                    <div id="propertyList" class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#property_args" title="args">args</a></li>
-                                <li class=""><a href="#property_context" title="context">context</a></li>
-                                <li class=""><a href="#property_fn" title="fn">fn</a></li>
-                                <li class=""><a href="#property_id" title="id">id</a></li>
-                                <li class=""><a href="#property_wrappedFn" title="wrappedFn">wrappedFn</a></li>
-                        </ul>
-                    </div>
 
-                    <div id="methodsList" class="module">
-                        <h4>Methods</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#method_contains" title="contains">contains</a></li>
-                                <li class=""><a href="#method_notify" title="notify">notify</a></li>
-                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
-                        </ul>
-                    </div>
 
 
 
