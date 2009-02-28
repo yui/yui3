@@ -997,17 +997,13 @@ Event.Facade = Y.EventFacade;
 Event._tryPreloadAttach();
 
 })();
-(function() {
-
-var adapt = Y.Env.eventAdaptors;
-
-    /**
-     * Executes the callback as soon as the specified element 
-     * is detected in the DOM.
-     * @for YUI
-     * @event available
-     */
-adapt.available = {
+/**
+ * Executes the callback as soon as the specified element 
+ * is detected in the DOM.
+ * @for YUI
+ * @event available
+ */
+Y.Env.eventAdaptors.available = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
@@ -1021,14 +1017,12 @@ adapt.available = {
  * @for YUI
  * @event contentready
  */
-adapt.contentready = {
+Y.Env.eventAdaptors.contentready = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
     }
 };
-
-})();
 (function() {
 
 var FOCUS   = Y.UA.ie ? "focusin" : "focus",
@@ -1081,11 +1075,6 @@ adapt.blur = {
 };
 
 })();
-(function() {
-
-var Lang  = Y.Lang,
-    adapt = Y.Env.eventAdaptors;
-
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -1104,7 +1093,7 @@ var Lang  = Y.Lang,
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-adapt.key = {
+Y.Env.eventAdaptors.key = {
 
     on: function(type, fn, id, spec, o) {
 
@@ -1126,7 +1115,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
 
         // the name of the custom event that will be created for the spec
-        ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
+        ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
         // subscribe spec validator to the DOM event
         Y.on(type + etype, function(e) {
@@ -1141,7 +1130,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
                 // pass this section if any supplied keyCode 
                 // is found
-                if (Lang.isNumber(critInt)) {
+                if (Y.Lang.isNumber(critInt)) {
 
                     if (e.charCode === critInt) {
                         // Y.log('passed: ' + crit);
@@ -1176,12 +1165,6 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
-
-})();
-(function() {
-
-var adapt = Y.Env.eventAdaptors;
-
 /**
  * Set up a delegated listener container.
  * @event delegate
@@ -1197,14 +1180,14 @@ var adapt = Y.Env.eventAdaptors;
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-adapt.delegate = {
+Y.Env.eventAdaptors.delegate = {
 
     on: function(type, fn, el, event, spec, o) {
 
         var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
             a     = Y.Array(arguments, 0, true);
 
-        // set up the event on the container
+        // set up the listener on the container
         Y.on(event, function(e) {
 
             var targets = e.currentTarget.queryAll(spec),
@@ -1217,7 +1200,6 @@ adapt.delegate = {
                 targets.each(function (v, k) {
 
                     if ((!passed) && (v == target)) {
-                        // Y.log('success');
                         Y.fire(ename, e);
                         passed = true;
                     }
@@ -1229,7 +1211,9 @@ adapt.delegate = {
         }, el);
 
         a[0] = ename;
-        a.splice(3, 2);
+
+        // remove element, delegation event, and delegation spec from the args
+        a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
@@ -1237,9 +1221,6 @@ adapt.delegate = {
     }
 
 };
-
-
-})();
 
 
 }, '@VERSION@' );

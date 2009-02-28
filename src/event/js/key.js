@@ -1,8 +1,3 @@
-(function() {
-
-var Lang  = Y.Lang,
-    adapt = Y.Env.eventAdaptors;
-
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -21,7 +16,7 @@ var Lang  = Y.Lang,
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-adapt.key = {
+Y.Env.eventAdaptors.key = {
 
     on: function(type, fn, id, spec, o) {
 
@@ -43,7 +38,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
 
         // the name of the custom event that will be created for the spec
-        ename = (Lang.isString(id) ? id : Y.stamp(id)) + spec;
+        ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
         // subscribe spec validator to the DOM event
         Y.on(type + etype, function(e) {
@@ -58,7 +53,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
                 // pass this section if any supplied keyCode 
                 // is found
-                if (Lang.isNumber(critInt)) {
+                if (Y.Lang.isNumber(critInt)) {
 
                     if (e.charCode === critInt) {
                         // Y.log('passed: ' + crit);
@@ -93,5 +88,3 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
-
-})();

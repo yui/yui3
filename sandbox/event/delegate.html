@@ -28,13 +28,13 @@ YUI({
 }).use('node', 'dump', 'substitute', function(Y) {
 
     var handle = Y.on('delegate', function(e) {
-
-        Y.log(e.type + ": " + e.target.get('innerHTML') + ' -- ' + arguments[1]);
-        Y.log(this);
-        //e.halt();
-    }, '#ul1', 
-        'click', 
-        '.clickable');
+                    Y.log(e.type + ": " + e.target.get('innerHTML') + ' -- ' + arguments[1]);
+                 }, '#ul1', 
+                 'click', 
+                 '.clickable', 
+                 Y, 
+                 1, 
+                 2);
 
 
 
