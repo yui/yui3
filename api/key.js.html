@@ -89,45 +89,49 @@
         <span class="c">// the name of the custom event that will be created for the spec</span>
 <span class="c"></span>        <span class="nx">ename</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">;</span>
 
-        <span class="c">// subscribe spec validator to the DOM event</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="nx">etype</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">ename</span><span class="o">))</span> <span class="o">{</span>
 
-            <span class="c">// Y.log(&#39;keylistener: &#39; + e.keyCode);</span>
-<span class="c"></span>            
-            <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">crit</span><span class="o">,</span> <span class="nx">critInt</span><span class="o">;</span>
+            <span class="c">// subscribe spec validator to the DOM event</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="nx">etype</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
-                <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
+                <span class="c">// Y.log(&#39;keylistener: &#39; + e.keyCode);</span>
+<span class="c"></span>                
+                <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">crit</span><span class="o">,</span> <span class="nx">critInt</span><span class="o">;</span>
 
-                <span class="c">// pass this section if any supplied keyCode </span>
-<span class="c"></span>                <span class="c">// is found</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">critInt</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
+                    <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="nx">critInt</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// Y.log(&#39;passed: &#39; + crit);</span>
-<span class="c"></span>                        <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">failed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                        <span class="c">// Y.log(&#39;failed: &#39; + crit);</span>
-<span class="c"></span>                    <span class="o">}</span>
+                    <span class="c">// pass this section if any supplied keyCode </span>
+<span class="c"></span>                    <span class="c">// is found</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">critInt</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// only check modifier if no keyCode was specified</span>
-<span class="c"></span>                <span class="c">// or the keyCode check was successful.  pass only </span>
-<span class="c"></span>                <span class="c">// if every modifier passes</span>
-<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">failed</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">passed</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">[</span><span class="nx">crit</span> <span class="o">+</span> <span class="s1">&#39;Key&#39;</span><span class="o">]);</span>
-                    <span class="nx">failed</span> <span class="o">=</span> <span class="o">!</span><span class="nx">passed</span><span class="o">;</span>
-                    <span class="c">// Y.log(crit + &quot;: &quot; + passed);</span>
-<span class="c"></span>                <span class="o">}</span>                    
-            <span class="o">}</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="nx">critInt</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="c">// Y.log(&#39;passed: &#39; + crit);</span>
+<span class="c"></span>                            <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">failed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                            <span class="c">// Y.log(&#39;failed: &#39; + crit);</span>
+<span class="c"></span>                        <span class="o">}</span>
 
-            <span class="c">// fire spec custom event if spec if met</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-            <span class="o">}</span>
+                    <span class="c">// only check modifier if no keyCode was specified</span>
+<span class="c"></span>                    <span class="c">// or the keyCode check was successful.  pass only </span>
+<span class="c"></span>                    <span class="c">// if every modifier passes</span>
+<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">failed</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">passed</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">[</span><span class="nx">crit</span> <span class="o">+</span> <span class="s1">&#39;Key&#39;</span><span class="o">]);</span>
+                        <span class="nx">failed</span> <span class="o">=</span> <span class="o">!</span><span class="nx">passed</span><span class="o">;</span>
+                        <span class="c">// Y.log(crit + &quot;: &quot; + passed);</span>
+<span class="c"></span>                    <span class="o">}</span>                    
+                <span class="o">}</span>
 
-        <span class="o">},</span> <span class="nx">id</span><span class="o">);</span>
+                <span class="c">// fire spec custom event if spec if met</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                <span class="o">}</span>
+
+            <span class="o">},</span> <span class="nx">id</span><span class="o">);</span>
+
+        <span class="o">}</span>
 
         <span class="c">// subscribe supplied listener to custom event for spec validator</span>
 <span class="c"></span>        <span class="c">// remove element and spec.</span>

@@ -69,28 +69,31 @@
         <span class="k">var</span> <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">+</span> <span class="nx">event</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">,</span>
             <span class="nx">a</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
-        <span class="c">// set up the listener on the container</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">ename</span><span class="o">))</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">targets</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
-                <span class="nx">target</span>  <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
-                <span class="nx">passed</span>  <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="c">// set up the listener on the container</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">targets</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">targets</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
+                    <span class="nx">target</span>  <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
+                    <span class="nx">passed</span>  <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
-                <span class="c">// @TODO we need Node.some </span>
-<span class="c"></span>                <span class="nx">targets</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">targets</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="k">if</span> <span class="o">((!</span><span class="nx">passed</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">v</span> <span class="o">==</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-                        <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span>
+                    <span class="c">// @TODO we need Node.some </span>
+<span class="c"></span>                    <span class="nx">targets</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="o">});</span>
+                        <span class="k">if</span> <span class="o">((!</span><span class="nx">passed</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">v</span> <span class="o">==</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
+                            <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                            <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span>
 
-            <span class="o">}</span>
+                    <span class="o">});</span>
 
-        <span class="o">},</span> <span class="nx">el</span><span class="o">);</span>
+                <span class="o">}</span>
+
+            <span class="o">},</span> <span class="nx">el</span><span class="o">);</span>
+        <span class="o">}</span>
 
         <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
 
