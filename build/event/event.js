@@ -1098,41 +1098,45 @@ Y.Env.eventAdaptors.key = {
         // the name of the custom event that will be created for the spec
         ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
 
-        // subscribe spec validator to the DOM event
-        Y.on(type + etype, function(e) {
+        if (!Y.getEvent(ename)) {
 
-            
-            var passed = false, failed = false, i, crit, critInt;
+            // subscribe spec validator to the DOM event
+            Y.on(type + etype, function(e) {
 
-            for (i=0; i<criteria.length; i=i+1) {
-                crit = criteria[i]; 
-                critInt = parseInt(crit, 10);
+                
+                var passed = false, failed = false, i, crit, critInt;
 
-                // pass this section if any supplied keyCode 
-                // is found
-                if (Y.Lang.isNumber(critInt)) {
+                for (i=0; i<criteria.length; i=i+1) {
+                    crit = criteria[i]; 
+                    critInt = parseInt(crit, 10);
 
-                    if (e.charCode === critInt) {
-                        passed = true;
-                    } else {
-                        failed = true;
-                    }
+                    // pass this section if any supplied keyCode 
+                    // is found
+                    if (Y.Lang.isNumber(critInt)) {
 
-                // only check modifier if no keyCode was specified
-                // or the keyCode check was successful.  pass only 
-                // if every modifier passes
-                } else if (passed || !failed) {
-                    passed = (e[crit + 'Key']);
-                    failed = !passed;
-                }                    
-            }
+                        if (e.charCode === critInt) {
+                            passed = true;
+                        } else {
+                            failed = true;
+                        }
 
-            // fire spec custom event if spec if met
-            if (passed) {
-                Y.fire(ename, e);
-            }
+                    // only check modifier if no keyCode was specified
+                    // or the keyCode check was successful.  pass only 
+                    // if every modifier passes
+                    } else if (passed || !failed) {
+                        passed = (e[crit + 'Key']);
+                        failed = !passed;
+                    }                    
+                }
 
-        }, id);
+                // fire spec custom event if spec if met
+                if (passed) {
+                    Y.fire(ename, e);
+                }
+
+            }, id);
+
+        }
 
         // subscribe supplied listener to custom event for spec validator
         // remove element and spec.
@@ -1164,28 +1168,31 @@ Y.Env.eventAdaptors.delegate = {
         var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
             a     = Y.Array(arguments, 0, true);
 
-        // set up the listener on the container
-        Y.on(event, function(e) {
+        if (!Y.getEvent(ename)) {
 
-            var targets = e.currentTarget.queryAll(spec),
-                target  = e.target, 
-                passed  = false;
+            // set up the listener on the container
+            Y.on(event, function(e) {
 
-            if (targets) {
+                var targets = e.currentTarget.queryAll(spec),
+                    target  = e.target, 
+                    passed  = false;
 
-                // @TODO we need Node.some 
-                targets.each(function (v, k) {
+                if (targets) {
 
-                    if ((!passed) && (v == target)) {
-                        Y.fire(ename, e);
-                        passed = true;
-                    }
+                    // @TODO we need Node.some 
+                    targets.each(function (v, k) {
 
-                });
+                        if ((!passed) && (v == target)) {
+                            Y.fire(ename, e);
+                            passed = true;
+                        }
 
-            }
+                    });
 
-        }, el);
+                }
+
+            }, el);
+        }
 
         a[0] = ename;
 
