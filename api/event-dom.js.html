@@ -317,6 +317,8 @@
 <span class="c">         */</span>
         <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
 
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+
             <span class="c">// Y.log(&#39;attach: &#39; + Y.Lang.dump(Y.Array(arguments, 0, true), 1));</span>
 <span class="c"></span>            <span class="c">// Y.log(&#39;attach:&#39;);</span>
 <span class="c"></span>            <span class="c">// Y.log(Y.Array(arguments, 0, true), 1);</span>

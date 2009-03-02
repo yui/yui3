@@ -54,6 +54,10 @@
 
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
+<span class="c">// Unlike most of the library, this code has to be executed as soon as it is</span>
+<span class="c">// introduced into the page -- and it should only be executed one time</span>
+<span class="c">// regardless of the number of instances that use it.</span>
+<span class="c"></span>
 <span class="k">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> 
 
     <span class="nx">C</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> 
