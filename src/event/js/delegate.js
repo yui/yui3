@@ -1,7 +1,3 @@
-(function() {
-
-var adapt = Y.Env.eventAdaptors;
-
 /**
  * Set up a delegated listener container.
  * @event delegate
@@ -17,14 +13,14 @@ var adapt = Y.Env.eventAdaptors;
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-adapt.delegate = {
+Y.Env.eventAdaptors.delegate = {
 
     on: function(type, fn, el, event, spec, o) {
 
         var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
             a     = Y.Array(arguments, 0, true);
 
-        // set up the event on the container
+        // set up the listener on the container
         Y.on(event, function(e) {
 
             var targets = e.currentTarget.queryAll(spec),
@@ -37,7 +33,6 @@ adapt.delegate = {
                 targets.each(function (v, k) {
 
                     if ((!passed) && (v == target)) {
-                        // Y.log('success');
                         Y.fire(ename, e);
                         passed = true;
                     }
@@ -49,7 +44,9 @@ adapt.delegate = {
         }, el);
 
         a[0] = ename;
-        a.splice(3, 2);
+
+        // remove element, delegation event, and delegation spec from the args
+        a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
@@ -58,5 +55,3 @@ adapt.delegate = {
 
 };
 
-
-})();
