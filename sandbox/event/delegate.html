@@ -36,9 +36,13 @@ YUI({
 
     var handle = 
 
-        Y.on('delegate', function(e) {
+        Y.on('delegate', 
+
+         function(e) {
             Y.log(e.type + ": " + e.target.get('innerHTML') + ' -- ' + arguments[1]);
-         }, '#ul1', 
+         }, 
+         
+         '#ul1', 
 
          'click', 
           
@@ -46,12 +50,29 @@ YUI({
 
          Y, 
 
-         1, 
+         'firstone', 
          
          2);
 
+    var handle2 = 
 
+        Y.on('delegate', 
 
+         function(e) {
+            Y.log(e.type + ": " + e.target.get('innerHTML') + ' -- ' + arguments[1]);
+         }, 
+         
+         '#ul1', 
+
+         'click', 
+          
+         'li.clickable', 
+
+         Y, 
+
+         'secondone', 
+         
+         2);
 });
 
 </script>

@@ -20,28 +20,31 @@ Y.Env.eventAdaptors.delegate = {
         var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
             a     = Y.Array(arguments, 0, true);
 
-        // set up the listener on the container
-        Y.on(event, function(e) {
+        if (!Y.getEvent(ename)) {
 
-            var targets = e.currentTarget.queryAll(spec),
-                target  = e.target, 
-                passed  = false;
+            // set up the listener on the container
+            Y.on(event, function(e) {
 
-            if (targets) {
+                var targets = e.currentTarget.queryAll(spec),
+                    target  = e.target, 
+                    passed  = false;
 
-                // @TODO we need Node.some 
-                targets.each(function (v, k) {
+                if (targets) {
 
-                    if ((!passed) && (v == target)) {
-                        Y.fire(ename, e);
-                        passed = true;
-                    }
+                    // @TODO we need Node.some 
+                    targets.each(function (v, k) {
 
-                });
+                        if ((!passed) && (v == target)) {
+                            Y.fire(ename, e);
+                            passed = true;
+                        }
 
-            }
+                    });
 
-        }, el);
+                }
+
+            }, el);
+        }
 
         a[0] = ename;
 
