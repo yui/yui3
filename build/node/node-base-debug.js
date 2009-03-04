@@ -260,7 +260,8 @@ YUI.add('node-base', function(Y) {
 
     Node.prototype = {
         init: function(nodes, doc, isRoot, getAll) {
-            var uid;
+            var uid,
+                instance = this;
 
             doc = _getDoc(doc);
 
@@ -268,11 +269,13 @@ YUI.add('node-base', function(Y) {
                 return uid;
             };
 
-            var _all = function(fn, i) {
+            var _all = function(fn, i, context) {
                 if (fn) {
                     i = i || 0;
+                    context = context || instance;
+
                     for (var node; node = nodes[i++];) {
-                        fn(node);
+                        fn.call(context, node, i - 1, instance);
                     }
                 }
                 return nodes;
@@ -338,9 +341,7 @@ YUI.add('node-base', function(Y) {
          */
         each: function(fn, context) {
             context = context || this;
-            Node[this._yuid](function(node) {
-                fn.call(context, Node.get(node));
-            });
+            Node[this._yuid](fn, 0, context);
         },
 
         /**
