@@ -13,6 +13,14 @@
  * @module history
  */
 
+/**
+ * This class represents an instance of the browser history utility.
+ * @class History.Module
+ * @constructor
+ * @param id {String} the module identifier
+ * @param initialState {String} the module's initial state
+ */
+
     var L = Y.Lang,
         A = Y.UA,
         ET = Y.Event.Target,
@@ -365,13 +373,6 @@
     }
 
 
-    /**
-     * This class represents an instance of the browser history utility.
-     * @class History.Module
-     * @constructor
-     * @param id {String} the module identifier
-     * @param initialState {String} the module's initial state
-     */
     H = {
 
         /**
