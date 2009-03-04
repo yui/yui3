@@ -8,6 +8,7 @@
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/event-simulate/event-simulate.js"></script>
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom.js"></script>
@@ -168,13 +169,19 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
 
         test_each: function() {
             var count = 0,
-                nodes = Y.all('#test-nodes *');
+                nodes = Y.all('#test-nodes *'),
+                index, instance;
 
-            nodes.each(function(node) {
+            nodes.each(function(node, i, list) {
                 count++;
+                index = i;
+                instance = list;
+                console.log(i);
             });
 
             Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
+            Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
+            Assert.areEqual(nodes, instance, 'nodes === instance');
         },
 
         test_getters: function() {
