@@ -351,6 +351,52 @@ Y.DOM = {
         //return ret.firstChild;
     },
 
+    CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
+        'for': 'htmlFor',
+        'class': 'className'
+    } : { // w3c
+        'htmlFor': 'for',
+        'className': 'class' 
+    },
+
+    /**
+     * Provides a normalized attribute interface. 
+     * @method setAttibute
+     * @param {String | HTMLElement} el The target element for the attribute.
+     * @param {String} attr The attribute to set.
+     * @param {String} val The value of the attribute.
+     */
+    setAttribute: function(el, attr, val) {
+        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+        el.setAttribute(attr, val);
+    },
+
+
+    /**
+     * Provides a normalized attribute interface. 
+     * @method getAttibute
+     * @param {String | HTMLElement} el The target element for the attribute.
+     * @param {String} attr The attribute to get.
+     * @return {String} The current value of the attribute. 
+     */
+    getAttribute: function(el, attr) {
+        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+        var ret = el.getAttribute(attr);
+        if (!document.documentElement.hasAttribute) { // IE < 8
+            if (el.getAttributeNode) {
+                ret = el.getAttributeNode(attr);
+                ret = (ret) ? ret.value : null;
+            } else {
+                ret = el.getAttribute(attr);
+            }
+
+        }
+        if (ret === null) {
+            ret = ''; // per DOM spec
+        }
+        return ret;
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = templateCache[tag] || doc.createElement(tag);
