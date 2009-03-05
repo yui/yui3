@@ -252,10 +252,10 @@ YUI.add('node', function(Y) {
     Node.addDOMMethods = function(methods) {
         var add = {}; 
         Y.each(methods, function(v, n) {
-            add[v] = Y.Node.wrapDOMMethod(v);
+            add[v] = Node.wrapDOMMethod(v);
         });
 
-        Y.Node.methods(add);
+        Node.methods(add);
     };
 
     Node.prototype = {
@@ -827,23 +827,6 @@ YUI.add('node', function(Y) {
 
         /**
          * Passes through to DOM method.
-         * @method getAttribute
-         * @param {String} attribute The attribute to retrieve 
-         * @return {String} The current value of the attribute 
-         */
-        'getAttribute',
-
-        /**
-         * Passes through to DOM method.
-         * @method setAttribute
-         * @param {String} attribute The attribute to set 
-         * @param {String} The value to apply to the attribute 
-         * @chainable
-         */
-        'setAttribute',
-
-        /**
-         * Passes through to DOM method.
          * @method hasAttribute
          * @param {String} attribute The attribute to test for 
          * @return {Boolean} Whether or not the attribute is present 
@@ -916,14 +899,16 @@ YUI.add('node', function(Y) {
         };
     });
 
-    if (!document.documentElement.hasAttribute) {
-        Node.methods({
-            'hasAttribute': function(node, att) {
-                // TODO: falsey empty string val? foo in attributes?
-                return !! node.getAttribute(att);
-            }
+    if (!document.documentElement.hasAttribute) { // IE < 8
+        Node.methods('hasAttribute', function(node, attr) {
+            return Y.DOM.getAttribute(node, attr) !== '';
         });
     }
+
+    Node.addDOMMethods([
+        'getAttribute',
+        'setAttribute'
+    ]);
 
     // used to call Node methods against NodeList nodes
     Y.Node = Node;
