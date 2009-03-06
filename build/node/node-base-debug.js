@@ -370,10 +370,12 @@ YUI.add('node-base', function(Y) {
          * @method attach
          * @param {String} type The type of DOM Event to listen for 
          * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} context An optional context to execute the handler,
+         * with, defaults to the Node instance
          * @param {Object} arg An argument object to pass to the handler 
          */
 
-        attach: function(type, fn, arg) {
+        attach: function(type, fn, context, arg) {
             var args = _slice.call(arguments, 0);
             args.splice(2, 0, Node[this._yuid]());
             return Y.Event.attach.apply(Y.Event, args);
