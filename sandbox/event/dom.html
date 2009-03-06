@@ -4,7 +4,9 @@
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/event-simulate/event-simulate.js"></script>
 <script type="text/javascript" src="../../build/dom/dom.js"></script>
 <script type="text/javascript" src="../../build/node/node.js"></script>
 <script type="text/javascript" src="../../build/dump/dump.js"></script>
@@ -33,6 +35,10 @@ YUI({
     base: '../../build/'
 
 }).use('node', 'dump', 'substitute', function(Y) {
+
+    Y.on('load', function(e) {
+        Y.log('window load event');
+    });
 
     // debugger;
 

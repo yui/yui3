@@ -2556,6 +2556,10 @@ var BASE = 'base',
         get: { 
             requires: ['yui-base']
         },
+
+        history: { 
+            requires: ['node']
+        },
         
         io:{
             submodules: {

@@ -252,15 +252,16 @@ YUI.add('node-base', function(Y) {
     Node.addDOMMethods = function(methods) {
         var add = {}; 
         Y.each(methods, function(v, n) {
-            add[v] = Y.Node.wrapDOMMethod(v);
+            add[v] = Node.wrapDOMMethod(v);
         });
 
-        Y.Node.methods(add);
+        Node.methods(add);
     };
 
     Node.prototype = {
         init: function(nodes, doc, isRoot, getAll) {
-            var uid;
+            var uid,
+                instance = this;
 
             doc = _getDoc(doc);
 
@@ -268,11 +269,13 @@ YUI.add('node-base', function(Y) {
                 return uid;
             };
 
-            var _all = function(fn, i) {
+            var _all = function(fn, i, context) {
                 if (fn) {
                     i = i || 0;
+                    context = context || instance;
+
                     for (var node; node = nodes[i++];) {
-                        fn(node);
+                        fn.call(context, node, i - 1, instance);
                     }
                 }
                 return nodes;
@@ -337,9 +340,7 @@ YUI.add('node-base', function(Y) {
          */
         each: function(fn, context) {
             context = context || this;
-            Node[this._yuid](function(node) {
-                fn.call(context, Node.get(node));
-            });
+            Node[this._yuid](fn, 0, context);
         },
 
         /**
@@ -368,10 +369,12 @@ YUI.add('node-base', function(Y) {
          * @method attach
          * @param {String} type The type of DOM Event to listen for 
          * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} context An optional context to execute the handler,
+         * with, defaults to the Node instance
          * @param {Object} arg An argument object to pass to the handler 
          */
 
-        attach: function(type, fn, arg) {
+        attach: function(type, fn, context, arg) {
             var args = _slice.call(arguments, 0);
             args.splice(2, 0, Node[this._yuid]());
             return Y.Event.attach.apply(Y.Event, args);
@@ -826,23 +829,6 @@ YUI.add('node-base', function(Y) {
 
         /**
          * Passes through to DOM method.
-         * @method getAttribute
-         * @param {String} attribute The attribute to retrieve 
-         * @return {String} The current value of the attribute 
-         */
-        'getAttribute',
-
-        /**
-         * Passes through to DOM method.
-         * @method setAttribute
-         * @param {String} attribute The attribute to set 
-         * @param {String} The value to apply to the attribute 
-         * @chainable
-         */
-        'setAttribute',
-
-        /**
-         * Passes through to DOM method.
          * @method hasAttribute
          * @param {String} attribute The attribute to test for 
          * @return {Boolean} Whether or not the attribute is present 
@@ -915,14 +901,16 @@ YUI.add('node-base', function(Y) {
         };
     });
 
-    if (!document.documentElement.hasAttribute) {
-        Node.methods({
-            'hasAttribute': function(node, att) {
-                // TODO: falsey empty string val? foo in attributes?
-                return !! node.getAttribute(att);
-            }
+    if (!document.documentElement.hasAttribute) { // IE < 8
+        Node.methods('hasAttribute', function(node, attr) {
+            return Y.DOM.getAttribute(node, attr) !== '';
         });
     }
+
+    Node.addDOMMethods([
+        'getAttribute',
+        'setAttribute'
+    ]);
 
     // used to call Node methods against NodeList nodes
     Y.Node = Node;

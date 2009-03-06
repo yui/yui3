@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                  &gt; DOM 
@@ -1191,6 +1191,67 @@ If no function is given, the first found is returned.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_getAttibute">
+                                    <h4>
+                                        <a name="method_getAttibute">getAttibute</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">getAttibute</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         attr
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides a normalized attribute interface.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">el</span>
+                                                        &lt;<span property="yui:type">String | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The target element for the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute to get.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The current value of the attribute.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_getComputedStyle">
                                     <h4>
                                         <a name="method_getComputedStyle">getComputedStyle</a></h4>
@@ -2253,6 +2314,77 @@ If no oldClassName is present, the newClassName is simply added.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_setAttibute">
+                                    <h4>
+                                        <a name="method_setAttibute">setAttibute</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setAttibute</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         attr
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides a normalized attribute interface.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">el</span>
+                                                        &lt;<span property="yui:type">String | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The target element for the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute to set.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value of the attribute.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_setStyle">
                                     <h4>
                                         <a name="method_setStyle">setStyle</a></h4>
@@ -2788,6 +2920,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -2853,6 +2986,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_filterElementsBy" title="filterElementsBy">filterElementsBy</a></li>
                                 <li class=""><a href="#method_firstByTag" title="firstByTag">firstByTag</a></li>
                                 <li class=""><a href="#method_firstChild" title="firstChild">firstChild</a></li>
+                                <li class=""><a href="#method_getAttibute" title="getAttibute">getAttibute</a></li>
                                 <li class=""><a href="#method_getComputedStyle" title="getComputedStyle">getComputedStyle</a></li>
                                 <li class=""><a href="#method_getStyle" title="getStyle">getStyle</a></li>
                                 <li class=""><a href="#method_getText" title="getText">getText</a></li>
@@ -2870,6 +3004,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_region" title="region">region</a></li>
                                 <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
                                 <li class=""><a href="#method_replaceClass" title="replaceClass">replaceClass</a></li>
+                                <li class=""><a href="#method_setAttibute" title="setAttibute">setAttibute</a></li>
                                 <li class=""><a href="#method_setStyle" title="setStyle">setStyle</a></li>
                                 <li class=""><a href="#method_setStyles" title="setStyles">setStyles</a></li>
                                 <li class=""><a href="#method_setX" title="setX">setX</a></li>
@@ -2893,7 +3028,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "ancestor", "url": "DOM.html#method_ancestor", "type": "method"}, {"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "byTag", "url": "DOM.html#method_byTag", "type": "method"}, {"access": "", "host": "DOM", "name": "children", "url": "DOM.html#method_children", "type": "method"}, {"access": "", "host": "DOM", "name": "childrenByTag", "url": "DOM.html#method_childrenByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "Selector", "name": "document", "url": "Selector.html#property_document", "type": "property"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "DOM", "name": "filterElementsBy", "url": "DOM.html#method_filterElementsBy", "type": "method"}, {"access": "", "host": "DOM", "name": "firstByTag", "url": "DOM.html#method_firstByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "firstChild", "url": "DOM.html#method_firstChild", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "lastChild", "url": "DOM.html#method_lastChild", "type": "method"}, {"access": "", "host": "DOM", "name": "next", "url": "DOM.html#method_next", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "DOM", "name": "previous", "url": "DOM.html#method_previous", "type": "method"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "ancestor", "url": "DOM.html#method_ancestor", "type": "method"}, {"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "byTag", "url": "DOM.html#method_byTag", "type": "method"}, {"access": "", "host": "DOM", "name": "children", "url": "DOM.html#method_children", "type": "method"}, {"access": "", "host": "DOM", "name": "childrenByTag", "url": "DOM.html#method_childrenByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "Selector", "name": "document", "url": "Selector.html#property_document", "type": "property"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "DOM", "name": "filterElementsBy", "url": "DOM.html#method_filterElementsBy", "type": "method"}, {"access": "", "host": "DOM", "name": "firstByTag", "url": "DOM.html#method_firstByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "firstChild", "url": "DOM.html#method_firstChild", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "lastChild", "url": "DOM.html#method_lastChild", "type": "method"}, {"access": "", "host": "DOM", "name": "next", "url": "DOM.html#method_next", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "DOM", "name": "previous", "url": "DOM.html#method_previous", "type": "method"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
 </script>
 </body>
 </html>

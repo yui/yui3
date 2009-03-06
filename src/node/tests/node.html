@@ -8,6 +8,7 @@
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/event-simulate/event-simulate.js"></script>
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom.js"></script>
@@ -70,7 +71,10 @@ body {
     <div id="test-xy"></div>
     <div id="doc" class="doc-wrap">
         <form id="test-form" class="test-class" action="#">
-            <input name="test-data1">
+            <input name="test-data1" value="0">
+            <textarea name="test-data2" value="0"></textarea>
+            <button name="test-data3" value="0">button</button>
+            <button name="test-data4">button</button>
         </form><div id="test-class">test class</div>
         <div id="test-prop">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
         <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
@@ -85,8 +89,8 @@ body {
     <div id="test-computed">test computed style</div>
     <form>
         <select id="test-select" name="test-select">
-            <option>foo</option>
-            <option>bar</option>
+            <option value="0">foo</option>
+            <option value="1">bar</option>
             <option>baz</option>
         </select>
     </form>
@@ -168,13 +172,18 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
 
         test_each: function() {
             var count = 0,
-                nodes = Y.all('#test-nodes *');
+                nodes = Y.all('#test-nodes *'),
+                index, instance;
 
-            nodes.each(function(node) {
+            nodes.each(function(node, i, list) {
                 count++;
+                index = i;
+                instance = list;
             });
 
             Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
+            Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
+            Assert.areEqual(nodes, instance, 'nodes === instance');
         },
 
         test_getters: function() {
@@ -317,8 +326,15 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
             Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
             Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
 
-            node.removeAttribute('title');
-            Assert.isFalse(node.hasAttribute('title'), 'node.hasAttribute("title")');
+            
+            Assert.isFalse(Y.get('body').hasAttribute('title'), 'body.hasAttribute("title")');
+            Assert.isTrue(Y.get('input[name=test-data1]').hasAttribute('value'), 'input.hasAttribute("value")');
+            Assert.isTrue(Y.get('textarea[name=test-data2]').hasAttribute('value'), 'textarea.hasAttribute("value")');
+            Assert.areEqual('0', Y.get('textarea[name=test-data2]').getAttribute('value'), 'textarea.getAttribute("value")');
+            Assert.areEqual('0', Y.get('button[name=test-data3]').getAttribute('value'), 'button.getAttribute("value")');
+            Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
+            Assert.areEqual('1', Y.get('select[name=test-select] option:nth-child(2)').getAttribute('value'), 'option2.getAttribute("value") (from innerText)');
+            Assert.areEqual('', Y.get('select[name=test-select] option:nth-child(3)').getAttribute('value'), 'option3.getAttribute("value") (from innerText)');
         },
 
         test_fragment: function() {

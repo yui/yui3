@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.0.0pr2</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                 
@@ -53,176 +53,10 @@
 <span class="c"> * @module event-custom</span>
 <span class="c"> */</span>
 
-<span class="k">var</span> <span class="nx">FOCUS</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusin&quot;</span> <span class="o">:</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
-    <span class="nx">BLUR</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusout&quot;</span> <span class="o">:</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
-    <span class="nx">CAPTURE</span> <span class="o">=</span> <span class="s2">&quot;capture_&quot;</span><span class="o">,</span>
-    <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+<span class="k">var</span> <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
     <span class="nx">after</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span> <span class="o">=</span> <span class="o">{</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Adds a DOM focus listener.  Uses the focusin event in IE,</span>
-<span class="c">     * and the capture phase otherwise so that</span>
-<span class="c">     * the event propagates properly.</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     * @event focus</span>
-<span class="c">     */</span>
-    <span class="nx">focus</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">FOCUS</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">FOCUS</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Adds a DOM focus listener.  Uses the focusout event in IE,</span>
-<span class="c">     * and the capture phase otherwise so that</span>
-<span class="c">     * the event propagates properly.</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     * @event blur</span>
-<span class="c">     */</span>
-    <span class="nx">blur</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">BLUR</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">BLUR</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Executes the callback as soon as the specified element </span>
-<span class="c">     * is detected in the DOM.</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     * @event available</span>
-<span class="c">     */</span>
-    <span class="nx">available</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="o">[];</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Executes the callback as soon as the specified element </span>
-<span class="c">     * is detected in the DOM with a nextSibling property</span>
-<span class="c">     * (indicating that the element&#39;s children are available)</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     * @event contentready</span>
-<span class="c">     */</span>
-    <span class="nx">contentready</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="o">[];</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">onContentReady</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Add a key listener.  The listener will only be notified if the</span>
-<span class="c">     * keystroke detected meets the supplied specification.  The</span>
-<span class="c">     * spec consists of the key event type, followed by a colon,</span>
-<span class="c">     * followed by zero or more comma separated key codes, followed</span>
-<span class="c">     * by zero or more modifiers delimited by a plus sign.  Ex:</span>
-<span class="c">     * press:12,65+shift+ctrl</span>
-<span class="c">     * @event key</span>
-<span class="c">     * @param fn {string} the function to execute</span>
-<span class="c">     * @param id {string} the element(s) to bind</span>
-<span class="c">     * @param spec {string} the keyCode and modifier specification</span>
-<span class="c">     * @param o optional context object</span>
-<span class="c">     * @param args 0..n additional arguments that should be provided </span>
-<span class="c">     * to the listener.</span>
-<span class="c">     */</span>
-    <span class="nx">key</span><span class="o">:</span> <span class="o">{</span>
-
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>
-                <span class="nx">parsed</span><span class="o">,</span> <span class="nx">etype</span><span class="o">,</span> <span class="nx">criteria</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span> <span class="o">||</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Illegal key spec, creating a regular keypress listener instead.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;keypress&#39;</span><span class="o">;</span>
-                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
-
-            <span class="c">// key event type: &#39;down&#39;, &#39;up&#39;, or &#39;press&#39;</span>
-<span class="c"></span>            <span class="nx">etype</span> <span class="o">=</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-
-            <span class="c">// list of key codes optionally followed by modifiers</span>
-<span class="c"></span>            <span class="nx">criteria</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">?</span> <span class="nx">parsed</span><span class="o">[</span><span class="m">1</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="sr">/,|\+/</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-
-            <span class="c">// the name of the custom event that will be created for the spec</span>
-<span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">;</span>
-
-
-
-
-            <span class="c">// subscribe spec validator to the DOM event</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="nx">etype</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="c">// Y.log(&#39;keylistener: &#39; + e.keyCode);</span>
-<span class="c"></span>                
-                <span class="k">var</span> <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">failed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">crit</span><span class="o">,</span> <span class="nx">critInt</span><span class="o">;</span>
-
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">criteria</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">crit</span> <span class="o">=</span> <span class="nx">criteria</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
-                    <span class="nx">critInt</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">crit</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
-
-                    <span class="c">// pass this section if any supplied keyCode </span>
-<span class="c"></span>                    <span class="c">// is found</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">critInt</span><span class="o">))</span> <span class="o">{</span>
-
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">===</span> <span class="nx">critInt</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="c">// Y.log(&#39;passed: &#39; + crit);</span>
-<span class="c"></span>                            <span class="nx">passed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">failed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                            <span class="c">// Y.log(&#39;failed: &#39; + crit);</span>
-<span class="c"></span>                        <span class="o">}</span>
-
-                    <span class="c">// only check modifier if no keyCode was specified</span>
-<span class="c"></span>                    <span class="c">// or the keyCode check was successful.  pass only </span>
-<span class="c"></span>                    <span class="c">// if every modifier passes</span>
-<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">failed</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">passed</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">[</span><span class="nx">crit</span> <span class="o">+</span> <span class="s1">&#39;Key&#39;</span><span class="o">]);</span>
-                        <span class="nx">failed</span> <span class="o">=</span> <span class="o">!</span><span class="nx">passed</span><span class="o">;</span>
-                        <span class="c">// Y.log(crit + &quot;: &quot; + passed);</span>
-<span class="c"></span>                    <span class="o">}</span>                    
-                <span class="o">}</span>
-
-                <span class="c">// fire spec custom event if spec if met</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">passed</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-                <span class="o">}</span>
-
-            <span class="o">},</span> <span class="nx">id</span><span class="o">);</span>
-
-            <span class="c">// subscribe supplied listener to custom event for spec validator</span>
-<span class="c"></span>            <span class="c">// remove element and spec.</span>
-<span class="c"></span>            <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
-
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-<span class="o">};</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">/**</span>
 <span class="c"> * Attach an event listener, either to a DOM object</span>
@@ -355,6 +189,7 @@
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

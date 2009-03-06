@@ -5,6 +5,10 @@
 
 (function() {
 
+// Unlike most of the library, this code has to be executed as soon as it is
+// introduced into the page -- and it should only be executed one time
+// regardless of the number of instances that use it.
+
 var GLOBAL_ENV = YUI.Env, 
 
     C = YUI.config, 
@@ -418,6 +422,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          * @static
          */
         attach: function(type, fn, el, obj) {
+
+            el = el || Y.config.win;
 
             // Y.log('attach: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
             // Y.log('attach:');
@@ -997,6 +1003,238 @@ Event.Facade = Y.EventFacade;
 Event._tryPreloadAttach();
 
 })();
+/**
+ * Executes the callback as soon as the specified element 
+ * is detected in the DOM.
+ * @for YUI
+ * @event available
+ */
+Y.Env.eventAdaptors.available = {
+    on: function(type, fn, id, o) {
+        var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+        return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
+    }
+};
+
+/**
+ * Executes the callback as soon as the specified element 
+ * is detected in the DOM with a nextSibling property
+ * (indicating that the element's children are available)
+ * @for YUI
+ * @event contentready
+ */
+Y.Env.eventAdaptors.contentready = {
+    on: function(type, fn, id, o) {
+        var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+        return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
+    }
+};
+(function() {
+
+var FOCUS   = Y.UA.ie ? "focusin" : "focus",
+    BLUR    = Y.UA.ie ? "focusout" : "blur",
+    CAPTURE = "capture_",
+    adapt = Y.Env.eventAdaptors;
+
+
+/**
+ * Adds a DOM focus listener.  Uses the focusin event in IE,
+ * and the capture phase otherwise so that
+ * the event propagates properly.
+ * @for YUI
+ * @event focus
+ */
+adapt.focus = {
+    on: function() {
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CAPTURE + FOCUS;
+        return Y.Event.attach.apply(Y.Event, a);
+    },
+
+    detach: function() {
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CAPTURE + FOCUS;
+        return Y.Event.detach.apply(Y.Event, a);
+
+    }
+};
+
+/**
+ * Adds a DOM focus listener.  Uses the focusout event in IE,
+ * and the capture phase otherwise so that
+ * the event propagates properly.
+ * @for YUI
+ * @event blur
+ */
+adapt.blur = {
+    on: function() {
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CAPTURE + BLUR;
+        return Y.Event.attach.apply(Y.Event, a);
+    },
+
+    detach: function() {
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CAPTURE + BLUR;
+        return Y.Event.detach.apply(Y.Event, a);
+    }
+};
+
+})();
+/**
+ * Add a key listener.  The listener will only be notified if the
+ * keystroke detected meets the supplied specification.  The
+ * spec consists of the key event type, followed by a colon,
+ * followed by zero or more comma separated key codes, followed
+ * by zero or more modifiers delimited by a plus sign.  Ex:
+ * press:12,65+shift+ctrl
+ * @event key
+ * @for YUI
+ * @param type {string} 'key'
+ * @param fn {string} the function to execute
+ * @param id {string} the element(s) to bind
+ * @param spec {string} the keyCode and modifier specification
+ * @param o optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
+ */
+Y.Env.eventAdaptors.key = {
+
+    on: function(type, fn, id, spec, o) {
+
+        var a = Y.Array(arguments, 0, true),
+            parsed, etype, criteria, ename;
+
+        if (!spec || spec.indexOf(':') == -1) {
+Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
+            a[0] = 'keypress';
+            return Y.on.apply(Y, a);
+        }
+
+        parsed = spec.split(':');
+
+        // key event type: 'down', 'up', or 'press'
+        etype = parsed[0];
+
+        // list of key codes optionally followed by modifiers
+        criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
+
+        // the name of the custom event that will be created for the spec
+        ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
+
+        if (!Y.getEvent(ename)) {
+
+            // subscribe spec validator to the DOM event
+            Y.on(type + etype, function(e) {
+
+                // Y.log('keylistener: ' + e.keyCode);
+                
+                var passed = false, failed = false, i, crit, critInt;
+
+                for (i=0; i<criteria.length; i=i+1) {
+                    crit = criteria[i]; 
+                    critInt = parseInt(crit, 10);
+
+                    // pass this section if any supplied keyCode 
+                    // is found
+                    if (Y.Lang.isNumber(critInt)) {
+
+                        if (e.charCode === critInt) {
+                            // Y.log('passed: ' + crit);
+                            passed = true;
+                        } else {
+                            failed = true;
+                            // Y.log('failed: ' + crit);
+                        }
+
+                    // only check modifier if no keyCode was specified
+                    // or the keyCode check was successful.  pass only 
+                    // if every modifier passes
+                    } else if (passed || !failed) {
+                        passed = (e[crit + 'Key']);
+                        failed = !passed;
+                        // Y.log(crit + ": " + passed);
+                    }                    
+                }
+
+                // fire spec custom event if spec if met
+                if (passed) {
+                    Y.fire(ename, e);
+                }
+
+            }, id);
+
+        }
+
+        // subscribe supplied listener to custom event for spec validator
+        // remove element and spec.
+        a.splice(2, 2);
+        a[0] = ename;
+
+        return Y.on.apply(Y, a);
+    }
+};
+/**
+ * Set up a delegated listener container.
+ * @event delegate
+ * @param type {string} 'delegate'
+ * @param fn {string} the function to execute
+ * @param el {string|node} the element that is the delegation container
+ * @param event {string} the event type to delegate
+ * @param spec {string} a selector that must match the target of the
+ * event.
+ * @param o optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
+ * @for YUI
+ */
+Y.Env.eventAdaptors.delegate = {
+
+    on: function(type, fn, el, event, spec, o) {
+
+        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
+            a     = Y.Array(arguments, 0, true);
+
+        if (!Y.getEvent(ename)) {
+
+            // set up the listener on the container
+            Y.on(event, function(e) {
+
+                var targets = e.currentTarget.queryAll(spec),
+                    target  = e.target, 
+                    passed  = false;
+
+                if (targets) {
+
+                    // @TODO we need Node.some 
+                    targets.each(function (v, k) {
+
+                        if ((!passed) && (v == target)) {
+                            Y.fire(ename, e);
+                            passed = true;
+                        }
+
+                    });
+
+                }
+
+            }, el);
+        }
+
+        a[0] = ename;
+
+        // remove element, delegation event, and delegation spec from the args
+        a.splice(2, 3);
+            
+        // subscribe to the custom event for the delegation spec
+        return Y.on.apply(Y, a);
+
+    }
+
+};
+
 
 
 }, '@VERSION@' );
