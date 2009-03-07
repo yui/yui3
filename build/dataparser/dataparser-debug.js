@@ -146,7 +146,7 @@ Y.extend(Base, Y.Base, {
     parse: function(data) {
         var ok = this.fire("parseEvent", {data:data});
         if(ok) {
-            return this._parse(data)
+            return this._parse(data);
         }
     }
 });
@@ -348,20 +348,20 @@ Y.extend(JSON, Y.DataParser.Base, {
                     }
 
                     // Process the results, flattening the records and/or applying parsers if needed
-                    //if (fieldParsers.length || fieldPaths.length) {
-                        for (i = resultsList.length - 1; i >= 0; --i) {
-                            var r = resultsList[i], rec = {};
+                    for (i = resultsList.length - 1; i >= 0; --i) {
+                        var r = resultsList[i], rec = {};
+                        if(r) {
                             for (j = simpleFields.length - 1; j >= 0; --j) {
                                 // Bug 1777850: data might be held in an array
                                 rec[simpleFields[j].key] =
                                         (r[simpleFields[j].path] !== undefined) ?
                                         r[simpleFields[j].path] : r[j];
                             }
-
+    
                             for (j = fieldPaths.length - 1; j >= 0; --j) {
                                 rec[fieldPaths[j].key] = walkPath(fieldPaths[j].path,r);
                             }
-
+    
                             for (j = fieldParsers.length - 1; j >= 0; --j) {
                                 var p = fieldParsers[j].key;
                                 rec[p] = fieldParsers[j].parser(rec[p]);
@@ -369,9 +369,9 @@ Y.extend(JSON, Y.DataParser.Base, {
                                     rec[p] = null;
                                 }
                             }
-                            results[i] = rec;
                         }
-                    //}
+                        results[i] = rec;
+                    }
                 }
                 else {
                     results = resultsList;

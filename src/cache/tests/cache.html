@@ -7,14 +7,14 @@
 <h1>Cache Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
-<script type="text/javascript" src="../build/yui/yui.js"></script>
-<script type="text/javascript" src="../build/cache/cache-debug.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/cache/cache-debug.js" id="buildsrc"></script>
 <script type="text/javascript">
 
 (function() {
     YUI({
-        base: "../build/",
-        //filter: "debug",
+        base: "../../../build/",
+        filter: "debug",
         useConsole: true,
         insertBefore: "buildsrc"
     }).use("console", "test", "dump", "cache", function(Y) {

@@ -146,7 +146,7 @@ Y.extend(Base, Y.Base, {
     parse: function(data) {
         var ok = this.fire("parseEvent", {data:data});
         if(ok) {
-            return this._parse(data)
+            return this._parse(data);
         }
     }
 });
