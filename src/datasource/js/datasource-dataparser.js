@@ -38,7 +38,7 @@ Parsable.ATTRS = {
     
 Parsable.prototype = {
     /**
-     * Overriding responseEvent handler parses raw data response before sending
+     * Overriding <code>response</code> event handler parses raw data response before sending
      * to returnData().
      *
      * @method _handleResponse

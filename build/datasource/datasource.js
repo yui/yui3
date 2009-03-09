@@ -181,7 +181,7 @@ Y.extend(Base, Y.Base, {
 
     /**
     * @method _createEvents
-    * @description This method creates all the events for this Event
+    * @description This method creates all the events for this module
     * Target and publishes them so we get Event Bubbling.
     * @private        
     */
@@ -189,7 +189,7 @@ Y.extend(Base, Y.Base, {
         /**
          * Fired when an error is encountered.
          *
-         * @event errorEvent
+         * @event error
          * @param args {Object} Object literal data payload.         
          * @param args.request {MIXED} The request.
          * @param args.response {Object} The response object.
@@ -199,13 +199,13 @@ Y.extend(Base, Y.Base, {
         /**
          * Fired when a request is sent to the live data source.
          *
-         * @event requestEvent
+         * @event request
          * @param e {Event.Facade} Event Facade.         
          * @param e.tId {Number} Unique transaction ID.             
          * @param e.request {MIXED} The request.
          * @param e.callback {Object} The callback object.
          */
-        this.publish("requestEvent", {
+        this.publish("request", {
             //emitFacade: false,
             defaultFn: this._makeConnection
         });
@@ -213,38 +213,38 @@ Y.extend(Base, Y.Base, {
         /**
          * Fired when a response is received from the live data source.
          *
-         * @event responseEvent
+         * @event response
          * @param e {Event.Facade} Event Facade.         
          * @param e.tId {Number} Unique transaction ID.             
          * @param e.request {MIXED} The request.
          * @param e.callback {Object} The callback object.
          * @param e.response {Object} The raw response data.         
          */
-        this.publish("responseEvent", {
+        this.publish("response", {
             //emitFacade: false,
             defaultFn: this._handleResponse
         });
     },
 
     /**
-     * Overridable default requestEvent handler manages request/response
-     * transaction. Must fire responseEvent when response is received. This
+     * Overridable default <code>request</code> event handler manages request/response
+     * transaction. Must fire <code>response</code> event when response is received. This
      * method should be implemented by subclasses to achieve more complex
      * behavior such as accessing remote data.
      *
      * @method _makeConnection
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.tId {Number} Transaction ID.
      * @param e.request {MIXED} Request.
      * @param e.callback {Object} Callback object.
      */
     _makeConnection: function(e) {
-        this.fire("responseEvent", Y.mix(e.details[0], {response:this.get("source")}));
+        this.fire("response", Y.mix(e.details[0], {response:this.get("source")}));
     },
 
     /**
-     * Overridable default responseEvent handler receives raw data response and
+     * Overridable default <code>response</code> event handler receives raw data response and
      * by default, passes it as-is to returnData.
      *
      * @method _handleResponse
@@ -260,7 +260,7 @@ Y.extend(Base, Y.Base, {
     },
 
     /**
-     * Generates a unique transaction ID and fires requestEvent.
+     * Generates a unique transaction ID and fires <code>request</code> event.
      *
      * @method sendRequest
      * @param request {MIXED} Request.
@@ -279,7 +279,7 @@ Y.extend(Base, Y.Base, {
      */
     sendRequest: function(request, callback) {
         var tId = DS._tId++;
-        this.fire("requestEvent", {tId:tId, request:request,callback:callback});
+        this.fire("request", {tId:tId, request:request,callback:callback});
         return tId;
     },
 
@@ -299,7 +299,7 @@ Y.extend(Base, Y.Base, {
         }
         // Handle any error
         if(response.error) {
-            this.fire("errorEvent", {tId:tId, request:request, callback:callback, response:response});
+            this.fire("error", {tId:tId, request:request, callback:callback, response:response});
         }
 
         // Normalize
@@ -448,8 +448,8 @@ Y.mix(XHR, {
     
 Y.extend(XHR, Y.DataSource.Base, {
     /**
-     * Overriding requestEvent handler passes query string to IO. Fires
-     * responseEvent when response is received.     
+     * Overriding <code>request</code> event handler passes query string to IO. Fires
+     * <code>response</code> event when response is received.     
      *
      * @method _makeConnection
      * @protected     
@@ -462,7 +462,7 @@ Y.extend(XHR, Y.DataSource.Base, {
             cfg = {
                 on: {
                     complete: function (id, response, args) {
-                        this.fire("responseEvent", Y.mix(args, {response:response}));
+                        this.fire("response", Y.mix(args, {response:response}));
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     }
@@ -648,7 +648,7 @@ Parsable.ATTRS = {
     
 Parsable.prototype = {
     /**
-     * Overriding responseEvent handler parses raw data response before sending
+     * Overriding <code>response</code> event handler parses raw data response before sending
      * to returnData().
      *
      * @method _handleResponse

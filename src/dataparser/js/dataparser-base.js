@@ -126,7 +126,7 @@ Y.extend(Base, Y.Base, {
      *
      * @method _parse
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
      */
     _parse: function(data) {
@@ -138,11 +138,11 @@ Y.extend(Base, Y.Base, {
      *
      * @method parse
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
      */
     parse: function(data) {
-        var ok = this.fire("parseEvent", {data:data});
+        var ok = this.fire("parse", {data:data});
         if(ok) {
             return this._parse(data);
         }

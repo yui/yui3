@@ -61,8 +61,8 @@ Y.mix(XHR, {
     
 Y.extend(XHR, Y.DataSource.Base, {
     /**
-     * Overriding requestEvent handler passes query string to IO. Fires
-     * responseEvent when response is received.     
+     * Overriding <code>request</code> event handler passes query string to IO. Fires
+     * <code>response</code> event when response is received.     
      *
      * @method _makeConnection
      * @protected     
@@ -75,7 +75,7 @@ Y.extend(XHR, Y.DataSource.Base, {
             cfg = {
                 on: {
                     complete: function (id, response, args) {
-                        this.fire("responseEvent", Y.mix(args, {response:response}));
+                        this.fire("response", Y.mix(args, {response:response}));
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     }

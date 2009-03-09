@@ -72,7 +72,7 @@ Y.extend(JSON, Y.DataParser.Base, {
      *
      * @method _parse
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for requestEvent.
+     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
      */
     _parse: function(data) {
