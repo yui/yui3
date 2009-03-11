@@ -338,8 +338,11 @@
          * @chainable
          */
         each: function(fn, context) {
+            var instance = this;
             context = context || this;
-            Node[this._yuid](fn, 0, context);
+            Y.each(Node[this._yuid](), function(node, index) {
+                return fn.call(context, Y.get(node), index, instance);
+            });
         },
 
         /**
