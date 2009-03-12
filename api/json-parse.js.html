@@ -71,61 +71,58 @@
 <span class="c"> * @for JSON</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">||</span> <span class="o">{};</span>
 
 <span class="c">// All internals kept private for security reasons</span>
 <span class="c"></span>
-<span class="c">/**</span>
-<span class="c"> * Replace certain Unicode characters that JavaScript may handle incorrectly</span>
-<span class="c"> * during eval--either by deleting them or treating them as line endings--with</span>
-<span class="c"> * escae sequences.</span>
-<span class="c"> * IMPORTANT NOTE: This regex will be used to modify the input if a match is</span>
-<span class="c"> * found.</span>
-<span class="c"> * @property _UNICODE_EXCEPTIONS</span>
-<span class="c"> * @type {RegExp}</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
+    <span class="c">/**</span>
+<span class="c">     * Replace certain Unicode characters that JavaScript may handle incorrectly</span>
+<span class="c">     * during eval--either by deleting them or treating them as line</span>
+<span class="c">     * endings--with escape sequences.</span>
+<span class="c">     * IMPORTANT NOTE: This regex will be used to modify the input if a match is</span>
+<span class="c">     * found.</span>
+<span class="c">     * @property _UNICODE_EXCEPTIONS</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
 <span class="k">var</span> <span class="nx">_UNICODE_EXCEPTIONS</span> <span class="o">=</span> <span class="sr">/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g</span><span class="o">,</span>
 
 
-<span class="c">/**</span>
-<span class="c"> * First step in the validation.  Regex used to replace all escape</span>
-<span class="c"> * sequences (i.e. &quot;\\&quot;, etc) with &#39;@&#39; characters (a non-JSON character).</span>
-<span class="c"> * @property _ESCAPES</span>
-<span class="c"> * @type {RegExp}</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
+    <span class="c">/**</span>
+<span class="c">     * First step in the validation.  Regex used to replace all escape</span>
+<span class="c">     * sequences (i.e. &quot;\\&quot;, etc) with &#39;@&#39; characters (a non-JSON character).</span>
+<span class="c">     * @property _ESCAPES</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
     <span class="nx">_ESCAPES</span> <span class="o">=</span> <span class="sr">/\\(?:[&quot;\\\/bfnrt]|u[0-9a-fA-F]{4})/g</span><span class="o">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Second step in the validation.  Regex used to replace all simple</span>
-<span class="c"> * values with &#39;]&#39; characters.</span>
-<span class="c"> * @property _VALUES</span>
-<span class="c"> * @type {RegExp}</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
+    <span class="c">/**</span>
+<span class="c">     * Second step in the validation.  Regex used to replace all simple</span>
+<span class="c">     * values with &#39;]&#39; characters.</span>
+<span class="c">     * @property _VALUES</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
     <span class="nx">_VALUES</span>  <span class="o">=</span> <span class="sr">/&quot;[^&quot;\\\n\r]*&quot;|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g</span><span class="o">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Third step in the validation.  Regex used to remove all open square</span>
-<span class="c"> * brackets following a colon, comma, or at the beginning of the string.</span>
-<span class="c"> * @property _BRACKETS</span>
-<span class="c"> * @type {RegExp}</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
-
+    <span class="c">/**</span>
+<span class="c">     * Third step in the validation.  Regex used to remove all open square</span>
+<span class="c">     * brackets following a colon, comma, or at the beginning of the string.</span>
+<span class="c">     * @property _BRACKETS</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
     <span class="nx">_BRACKETS</span> <span class="o">=</span> <span class="sr">/(?:^|:|,)(?:\s*\[)+/g</span><span class="o">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Final step in the validation.  Regex used to test the string left after</span>
-<span class="c"> * all previous replacements for invalid characters.</span>
-<span class="c"> * @property _INVALID</span>
-<span class="c"> * @type {RegExp}</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
-    <span class="nx">_INVALID</span>  <span class="o">=</span> <span class="sr">/^[\],:{}\s]*$/</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Final step in the validation.  Regex used to test the string left after</span>
+<span class="c">     * all previous replacements for invalid characters.</span>
+<span class="c">     * @property _INVALID</span>
+<span class="c">     * @type {RegExp}</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">_INVALID</span> <span class="o">=</span> <span class="sr">/[^\],:{}\s]/</span><span class="o">;</span>
 
-    <span class="nx">has</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">,</span>
 <span class="c">/**</span>
 <span class="c"> * Traverses nested objects, applying a reviver function to each (key,value)</span>
 <span class="c"> * from the scope if the key:value&#39;s containing object.  The value returned</span>
@@ -138,61 +135,92 @@
 <span class="c"> * @return {MIXED} The results of the filtered data</span>
 <span class="c"> * @private</span>
 <span class="c"> */</span>
-    <span class="nx">_revive</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">data</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">walk</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">,</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">has</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">walk</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">k</span><span class="o">);</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">delete</span> <span class="nx">value</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">value</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
-                        <span class="o">}</span>
+<span class="k">function</span> <span class="nx">_revive</span><span class="o">(</span><span class="nx">data</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">walk</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">,</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">value</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">walk</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">k</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">delete</span> <span class="nx">value</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">value</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">reviver</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">value</span><span class="o">);</span>
-        <span class="o">};</span>
-
-        <span class="k">return</span> <span class="k">typeof</span> <span class="nx">reviver</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">walk</span><span class="o">({</span><span class="s1">&#39;&#39;</span><span class="o">:</span><span class="nx">data</span><span class="o">},</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="nx">data</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">reviver</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">value</span><span class="o">);</span>
     <span class="o">};</span>
 
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">reviver</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">walk</span><span class="o">({</span><span class="s1">&#39;&#39;</span><span class="o">:</span><span class="nx">data</span><span class="o">},</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="nx">data</span><span class="o">;</span>
+<span class="o">}</span>
+
 <span class="c">/**</span>
-<span class="c"> * Parse a JSON string, returning the native JavaScript representation.</span>
-<span class="c"> * @param s {string} JSON string data</span>
-<span class="c"> * @param reviver {function} (optional) function(k,v) passed each key value pair of object literals, allowing pruning or altering values</span>
-<span class="c"> * @return {MIXED} the native JavaScript representation of the JSON string</span>
-<span class="c"> * @throws SyntaxError</span>
-<span class="c"> * @method parse</span>
-<span class="c"> * @static</span>
-<span class="c"> * @public</span>
+<span class="c"> * Replaces specific unicode characters with their appropriate \unnnn format.</span>
+<span class="c"> * Some browsers ignore certain characters during eval.</span>
+<span class="c"> *</span>
+<span class="c"> * @method escapeException</span>
+<span class="c"> * @param c {String} Unicode character</span>
+<span class="c"> * @return {String} the \unnnn escapement of the character</span>
+<span class="c"> * @private</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">// Ensure valid JSON</span>
-<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// Replace certain Unicode characters that are otherwise handled</span>
-<span class="c"></span>        <span class="c">// incorrectly by some browser implementations.</span>
-<span class="c"></span>        <span class="c">// NOTE: This modifies the input if such characters are found!</span>
-<span class="c"></span>        <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="s1">&#39;\\u&#39;</span><span class="o">+(</span><span class="s1">&#39;0000&#39;</span><span class="o">+(+(</span><span class="nx">c</span><span class="o">.</span><span class="nx">charCodeAt</span><span class="o">(</span><span class="m">0</span><span class="o">))).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">)).</span><span class="nx">slice</span><span class="o">(-</span><span class="m">4</span><span class="o">);</span>
-        <span class="o">});</span>
-        
-        <span class="c">// Test for validity</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">_INVALID</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_ESCAPES</span><span class="o">,</span><span class="s1">&#39;@&#39;</span><span class="o">).</span>
-                            <span class="nx">replace</span><span class="o">(</span><span class="nx">_VALUES</span><span class="o">,</span><span class="s1">&#39;]&#39;</span><span class="o">).</span>
-                            <span class="nx">replace</span><span class="o">(</span><span class="nx">_BRACKETS</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">)))</span> <span class="o">{</span>
+<span class="k">function</span> <span class="nx">escapeException</span><span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="s1">&#39;\\u&#39;</span><span class="o">+(</span><span class="s1">&#39;0000&#39;</span><span class="o">+(+(</span><span class="nx">c</span><span class="o">.</span><span class="nx">charCodeAt</span><span class="o">(</span><span class="m">0</span><span class="o">))).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">)).</span><span class="nx">slice</span><span class="o">(-</span><span class="m">4</span><span class="o">);</span>
+<span class="o">}</span>
 
-            <span class="c">// Eval the text into a JavaScript data structure, apply any</span>
-<span class="c"></span>            <span class="c">// reviver function, and return</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">_revive</span><span class="o">(</span> <span class="nb">eval</span><span class="o">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">),</span> <span class="nx">reviver</span> <span class="o">);</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;JSON&#39;</span><span class="o">),{</span>
+    <span class="c">/**</span>
+<span class="c">     * Parse a JSON string, returning the native JavaScript representation.</span>
+<span class="c">     * @param s {string} JSON string data</span>
+<span class="c">     * @param reviver {function} (optional) function(k,v) passed each key value</span>
+<span class="c">     *          pair of object literals, allowing pruning or altering values</span>
+<span class="c">     * @return {MIXED} the native JavaScript representation of the JSON string</span>
+<span class="c">     * @throws SyntaxError</span>
+<span class="c">     * @method parse</span>
+<span class="c">     * @static</span>
+<span class="c">     * @public</span>
+<span class="c">     */</span>
+    <span class="nx">parse</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// Ensure valid JSON</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// Replace certain Unicode characters that are otherwise handled</span>
+<span class="c"></span>            <span class="c">// incorrectly by some browser implementations.</span>
+<span class="c"></span>            <span class="c">// NOTE: This modifies the input if such characters are found!</span>
+<span class="c"></span>            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="o">,</span> <span class="nx">escapeException</span><span class="o">);</span>
+            
+            <span class="c">// Test for validity</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">_INVALID</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_ESCAPES</span><span class="o">,</span><span class="s1">&#39;@&#39;</span><span class="o">).</span>
+                                 <span class="nx">replace</span><span class="o">(</span><span class="nx">_VALUES</span><span class="o">,</span><span class="s1">&#39;]&#39;</span><span class="o">).</span>
+                                 <span class="nx">replace</span><span class="o">(</span><span class="nx">_BRACKETS</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">)))</span> <span class="o">{</span>
+
+                <span class="c">// Eval the text into a JavaScript data structure, apply any</span>
+<span class="c"></span>                <span class="c">// reviver function, and return</span>
+<span class="c"></span>                <span class="k">return</span> <span class="nx">_revive</span><span class="o">(</span> <span class="nb">eval</span><span class="o">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">),</span> <span class="nx">reviver</span> <span class="o">);</span>
+            <span class="o">}</span>
         <span class="o">}</span>
-    <span class="o">}</span>
 
-    <span class="c">// The text is not JSON parsable</span>
-<span class="c"></span>    <span class="k">throw</span> <span class="k">new</span> <span class="nx">SyntaxError</span><span class="o">(</span><span class="s1">&#39;parseJSON&#39;</span><span class="o">);</span>
-<span class="o">};</span>
+        <span class="c">// The text is not JSON parsable</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">handleParseError</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">);</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">SyntaxError</span><span class="o">(</span><span class="s1">&#39;JSON.parse&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Hook for plugins to add more detailed error reporting.  Note this will</span>
+<span class="c">     * only catch a subset of JSON format errors.  Others are expressed via</span>
+<span class="c">     * failure to eval.</span>
+<span class="c">     *</span>
+<span class="c">     * @method handleParseError</span>
+<span class="c">     * @param s {String} the JSON string</span>
+<span class="c">     * @param reviver {Function} (optional) the reviver passed to parse(..)</span>
+<span class="c">     * @static</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">handleParseError</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid JSON passed to parse&quot;</span><span class="o">,</span><span class="s2">&quot;warn&quot;</span><span class="o">,</span><span class="s2">&quot;JSON&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
 </pre></div>
                     </div>
 			</div>
@@ -265,7 +293,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "protected", "host": "JSON", "name": "handleParseError", "url": "JSON.html#method_handleParseError", "type": "method"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>
