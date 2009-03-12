@@ -453,8 +453,11 @@ Y.DOM = {
      */
     _getDoc: function(element) {
         element = element || {};
-        return (element[NODE_TYPE] === 9) ? element : element.document || // doc or window
-                element[OWNER_DOCUMENT] || Y.config.doc; // HTMLElement or default doc
+
+        return (element[NODE_TYPE] === 9) ? element : // element === document
+                element[OWNER_DOCUMENT] || // element === DOM node
+                element.document || // element === window
+                Y.config.doc; // default
     },
 
     /**
