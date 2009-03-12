@@ -500,10 +500,9 @@
 <span class="c">     */</span>
     <span class="nx">_getDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span> <span class="o">||</span> <span class="o">{};</span>
-        <span class="c">// TODO: use nodeName instead of magic number</span>
-<span class="c"></span>        <span class="k">return</span> <span class="o">(</span><span class="nx">element</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">]</span> <span class="o">||</span>
-                                                <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">element</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="nx">element</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="c">// doc or window</span>
+<span class="c"></span>                <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span> <span class="c">// HTMLElement or default doc</span>
+<span class="c"></span>    <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * returns the appropriate window.</span>
@@ -514,8 +513,7 @@
 <span class="c">     */</span>
     <span class="nx">_getWin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">(</span><span class="nx">element</span><span class="o">);</span>
-        <span class="k">return</span> <span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nb">document</span><span class="o">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">]</span> <span class="o">||</span>
-                                        <span class="nx">doc</span><span class="o">[</span><span class="nx">PARENT_WINDOW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">PARENT_WINDOW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">// TODO: document this</span>

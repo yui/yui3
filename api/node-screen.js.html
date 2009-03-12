@@ -103,6 +103,38 @@
         <span class="o">}</span>
     <span class="o">);</span>
 
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getters</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getters</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">setters</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span> <span class="c">// scroll window if win or doc</span>
+<span class="c"></span>            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to set scrollLeft for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">setters</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">val</span><span class="o">);</span> <span class="c">// scroll window if win or doc</span>
+<span class="c"></span>            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to set scrollTop for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">addDOMMethods</span><span class="o">([</span>
     <span class="c">/**</span>
 <span class="c">     * Gets the current position of the node in page coordinates. </span>
