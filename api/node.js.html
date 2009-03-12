@@ -387,8 +387,11 @@
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">each</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
-            <span class="nx">Node</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">](</span><span class="nx">fn</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">context</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Node</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">](),</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
+            <span class="o">});</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>

@@ -34,7 +34,6 @@ var SLIDER = 'slider',
     COMPLETE = 'complete',
 
     L = Y.Lang,
-    isArray  = L.isArray,
     isBoolean= L.isBoolean,
     isString = L.isString,
     isNumber = L.isNumber,
@@ -50,9 +49,7 @@ var SLIDER = 'slider',
     M        = Math,
     max      = M.max,
     round    = M.round,
-    floor    = M.floor,
-    ceil     = M.ceil,
-    abs      = M.abs;
+    floor    = M.floor;
 
 /**
  * Create a slider to represent an integer value between a given minimum and
@@ -715,11 +712,11 @@ Y.extend(Slider, Y.Widget, {
      * the Slider's disabled attribute.
      *
      * @method _imageLoaded
-     * @param e {Event} load or error event fired by the thumbImage
      * @param img {Node} The thumbImage Node
+     * @param e {Event} load or error event fired by the thumbImage
      * @protected
      */
-    _imageLoaded : function (e,img) {
+    _imageLoaded : function (img,e) {
         var error = (e.type.toLowerCase().indexOf('error') > -1);
 
         if (this._stall) {
