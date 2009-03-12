@@ -7,9 +7,7 @@
  */
 var isA = Y.Lang.isArray;
 
-Y.JSON = Y.JSON || {};
-
-Y.mix(Y.JSON,{
+Y.mix(Y.namespace('JSON'),{
     /**
      * Regex used to capture characters that need escaping before enclosing
      * their containing string in quotes.
@@ -80,31 +78,29 @@ Y.mix(Y.JSON,{
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
             rep    = typeof w === 'function' ? w : null,
-            pstack = []; // Processing stack used for cyclical ref protection
+            pstack = [], // Processing stack used for cyclical ref protection
+            _date = Y.JSON.dateToString; // Use the configured date conversion
 
         if (rep || typeof w !== 'object') {
             w = undefined;
         }
 
         // escape encode special characters
-        var _char = function (c) {
+        function _char(c) {
             if (!m[c]) {
                 m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
             }
             return m[c];
-        };
+        }
 
         // Enclose the escaped string in double quotes
-        var _string = function (s) {
+        function _string(s) {
             return '"' + s.replace(str_re, _char) + '"';
-        };
+        }
 
-        // Use the configured date conversion
-        var _date = Y.JSON.dateToString;
-    
         // Worker function.  Fork behavior on data type and recurse objects and
         // arrays per the configured depth.
-        var _stringify = function (h,key,d) {
+        function _stringify(h,key,d) {
             var o = typeof rep === 'function' ? rep.call(h,key,h[key]) : h[key],
                 t = typeof o,
                 i,len,j, // array iteration
@@ -182,7 +178,7 @@ Y.mix(Y.JSON,{
             }
 
             return undefined; // invalid input
-        };
+        }
 
         // Default depth to POSITIVE_INFINITY
         d = d >= 0 ? d : 1/0;

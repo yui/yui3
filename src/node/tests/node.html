@@ -60,6 +60,17 @@ body {
     padding:10px;
     z-index: 2;
 }
+
+#test-scroll {
+    height: 100px;
+    width: 100px;
+    overflow:auto;
+}
+
+#test-scroll p {
+    height:1000px;
+    width:1000px;
+}
 </style>
 
 <style type="text/css">
@@ -69,6 +80,9 @@ body {
 <body class="yui-skin-sam">
     <div id="test-append"></div>
     <div id="test-xy"></div>
+    <div id="test-scroll">
+        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+    </div>
     <div id="doc" class="doc-wrap">
         <form id="test-form" class="test-class" action="#">
             <input name="test-data1" value="0">
@@ -173,17 +187,19 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
         test_each: function() {
             var count = 0,
                 nodes = Y.all('#test-nodes *'),
-                index, instance;
+                index, instance, isNode;
 
             nodes.each(function(node, i, list) {
                 count++;
                 index = i;
                 instance = list;
+                isNode = (node instanceof Y.Node);
             });
 
             Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
             Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
             Assert.areEqual(nodes, instance, 'nodes === instance');
+            Assert.isTrue(isNode, 'node instanceof Y.Node');
         },
 
         test_getters: function() {
@@ -495,6 +511,34 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
             Assert.areEqual(window, Y.Node[win._yuid]()[0], 'Y.get(window)');
             Assert.areEqual(document, Y.Node[win.get('document')._yuid]()[0], 'win.get(document)');
             //Assert.areEqual(window, Y.Node[Y.get('document').get('defaultView')._yuid]()[0], 'win.get(document)');
+        },
+
+
+        test_windowSize: function() {
+            Assert.isNotNull(Y.get('body').get('winHeight'), 'body.get("winHeight")');
+        },
+
+        test_scroll: function() {
+            Y.get('#test-scroll').set('scrollTop', 100);
+            Y.get('#test-scroll').set('scrollLeft', 200);
+            Assert.areEqual(100, byId('test-scroll').scrollTop, 'test-scroll.set("scrollTop", 100)');
+            Assert.areEqual(200, byId('test-scroll').scrollLeft, 'test-scroll.set("scrollLeft", 200)');
+            document.body.style.height = '5000px';
+            document.body.style.width = '5000px';
+            Y.get(window).set('scrollTop', 100);
+            Y.get(window).set('scrollLeft', 200);
+            Assert.areEqual(100, Y.DOM.docScrollY(window), 'window.set("scrollTop", 100)');
+            Assert.areEqual(200, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 200)');
+
+            Y.get(document).set('scrollTop', 200);
+            Y.get(document).set('scrollLeft', 100);
+            Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
+            Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
+
+            document.body.style.height = '';
+            document.body.style.width = '';
+
+            window.scrollTo(0, 0);
         }
     }));
 
@@ -533,7 +577,12 @@ YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
     })); 
     tool.TestRunner.add(suite);
 
-    tool.TestRunner.run();
+    // allow window scroll event to happen post-onload
+    Y.on('load', function() {
+        setTimeout(function() {
+            tool.TestRunner.run();
+        }, 1);
+    }, window);
 });
 </script>
 </body>

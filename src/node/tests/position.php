@@ -9,14 +9,14 @@ if (!$_GET['quirks']) {
     <style type="text/css" media="screen">
         
         html {
-            border: 0;
+            Xborder: 10px solid #000;
         }
         
         body {
             background-image: url( grid.png );
             background-position: -12.5px -12.5px;
             height: 2000px;
-            margin: 5em;
+            margin: 50px;
         }
         .node {
             height: 50px;
@@ -105,12 +105,29 @@ if (!$_GET['quirks']) {
             border: 1px solid black;
             background-color: #ccc;
             width: 200px;
-            float: left;
+        }
+
+        #controls {
+            position:absolute;
+            right:20px;
+            top:20px;
+        }
+        #demo {
+            background:#ccc;
+            height:10px;
+            width:10px;
         }
     </style>
 </head>
 <body>
 <h1 id="h1-1">Positioning Tests</h1>
+<div id="demo"></div>
+<div id="controls">
+    <button id="runner">Run Test</button>
+    <button id="cleartest">Clear Test</button>
+    <button id="checktest" disabled>Check Test</button>
+    <div id="results">No results yet...</div>
+</div>
 <div id="static1" class="node">S1</div>
 <div id="abs1" class="node">A1</div>
 <div id="rel1" class="node">R1</div>
@@ -150,6 +167,7 @@ if (!$_GET['quirks']) {
 <div id="fixed" class="node">Fixed</div>
 
 <table border="1" width="300" id="table1">
+    <caption>I am a table</caption>
     <thead>
         <tr id="tr1">
             <th id="th1">1</th><th id="th2">2</th><th id="th3">3</th><th id="th4">4</th>
@@ -176,14 +194,12 @@ if (!$_GET['quirks']) {
         </tr>
     </tbody>
 </table>
-<button id="runner">Run Test</button>
-<button id="cleartest">Clear Test</button>
-<button id="checktest" disabled>Check Test</button>
-<div id="results">No results yet...</results>
 
     <script type="text/javascript" src="../../../build/yui/yui.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/oop/oop.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/dump/dump.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/event-custom/event-custom.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/event-simulate/event-simulate.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/event/event.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/dom/dom.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/node/node.js?<?php echo rand(1, 999) ?>"></script>
@@ -280,6 +296,8 @@ YUI(yConfig).use('*', function(Y) {
         results.set('innerHTML', Y.Lang.dump(tests));
         
     });
+
+    Y.get('#demo').setXY([0, 0]);
 
 });
 

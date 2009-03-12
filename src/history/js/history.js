@@ -15,10 +15,8 @@
 
 /**
  * This class represents an instance of the browser history utility.
- * @class History.Module
+ * @class History
  * @constructor
- * @param id {String} the module identifier
- * @param initialState {String} the module's initial state
  */
 
     var L = Y.Lang,

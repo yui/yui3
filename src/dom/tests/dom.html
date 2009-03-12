@@ -51,6 +51,7 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
         <div id="bd">
             <div id="main" class="main">
                 <h2 id="foo">Section Header</h2>
+                <select id="test-select"><option>choose</option></select>
                 <em class="lorem ipsum ipsum" id="lorem-ipsum">lorem ipsum</em>
                 <div class="mod" id="mod1">
                     <div class="hd">
@@ -340,6 +341,10 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                 el = Y.DOM.create(html);
                 Assert.areEqual('THEAD', el.tagName, html);
 
+                html = '<option selected>foo</option>';
+                el = Y.DOM.create(html);
+                document.getElementById('test-select').appendChild(el);
+                Assert.areEqual(true, el.selected, 'el.selected');
             },
 
             test_createNodes: function() {

@@ -24,61 +24,58 @@ YUI.add('json-parse', function(Y) {
  * @for JSON
  * @static
  */
-Y.JSON = Y.JSON || {};
 
 // All internals kept private for security reasons
 
-/**
- * Replace certain Unicode characters that JavaScript may handle incorrectly
- * during eval--either by deleting them or treating them as line endings--with
- * escae sequences.
- * IMPORTANT NOTE: This regex will be used to modify the input if a match is
- * found.
- * @property _UNICODE_EXCEPTIONS
- * @type {RegExp}
- * @private
- */
+    /**
+     * Replace certain Unicode characters that JavaScript may handle incorrectly
+     * during eval--either by deleting them or treating them as line
+     * endings--with escape sequences.
+     * IMPORTANT NOTE: This regex will be used to modify the input if a match is
+     * found.
+     * @property _UNICODE_EXCEPTIONS
+     * @type {RegExp}
+     * @private
+     */
 var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
 
-/**
- * First step in the validation.  Regex used to replace all escape
- * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
- * @property _ESCAPES
- * @type {RegExp}
- * @private
- */
+    /**
+     * First step in the validation.  Regex used to replace all escape
+     * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
+     * @property _ESCAPES
+     * @type {RegExp}
+     * @private
+     */
     _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
 
-/**
- * Second step in the validation.  Regex used to replace all simple
- * values with ']' characters.
- * @property _VALUES
- * @type {RegExp}
- * @private
- */
+    /**
+     * Second step in the validation.  Regex used to replace all simple
+     * values with ']' characters.
+     * @property _VALUES
+     * @type {RegExp}
+     * @private
+     */
     _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
 
-/**
- * Third step in the validation.  Regex used to remove all open square
- * brackets following a colon, comma, or at the beginning of the string.
- * @property _BRACKETS
- * @type {RegExp}
- * @private
- */
-
+    /**
+     * Third step in the validation.  Regex used to remove all open square
+     * brackets following a colon, comma, or at the beginning of the string.
+     * @property _BRACKETS
+     * @type {RegExp}
+     * @private
+     */
     _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
 
-/**
- * Final step in the validation.  Regex used to test the string left after
- * all previous replacements for invalid characters.
- * @property _INVALID
- * @type {RegExp}
- * @private
- */
-    _INVALID  = /^[\],:{}\s]*$/,
+    /**
+     * Final step in the validation.  Regex used to test the string left after
+     * all previous replacements for invalid characters.
+     * @property _INVALID
+     * @type {RegExp}
+     * @private
+     */
+    _INVALID = /[^\],:{}\s]/;
 
-    has = Object.prototype.hasOwnProperty,
 /**
  * Traverses nested objects, applying a reviver function to each (key,value)
  * from the scope if the key:value's containing object.  The value returned
@@ -91,61 +88,92 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
  * @return {MIXED} The results of the filtered data
  * @private
  */
-    _revive = function (data, reviver) {
-        var walk = function (o,key) {
-            var k,v,value = o[key];
-            if (value && typeof value === 'object') {
-                for (k in value) {
-                    if (has.call(value,k)) {
-                        v = walk(value, k);
-                        if (v === undefined) {
-                            delete value[k];
-                        } else {
-                            value[k] = v;
-                        }
+function _revive(data, reviver) {
+    var walk = function (o,key) {
+        var k,v,value = o[key];
+        if (value && typeof value === 'object') {
+            for (k in value) {
+                if (value.hasOwnProperty(k)) {
+                    v = walk(value, k);
+                    if (v === undefined) {
+                        delete value[k];
+                    } else {
+                        value[k] = v;
                     }
                 }
             }
-            return reviver.call(o,key,value);
-        };
-
-        return typeof reviver === 'function' ? walk({'':data},'') : data;
+        }
+        return reviver.call(o,key,value);
     };
 
+    return typeof reviver === 'function' ? walk({'':data},'') : data;
+}
+
 /**
- * Parse a JSON string, returning the native JavaScript representation.
- * @param s {string} JSON string data
- * @param reviver {function} (optional) function(k,v) passed each key value pair of object literals, allowing pruning or altering values
- * @return {MIXED} the native JavaScript representation of the JSON string
- * @throws SyntaxError
- * @method parse
- * @static
- * @public
+ * Replaces specific unicode characters with their appropriate \unnnn format.
+ * Some browsers ignore certain characters during eval.
+ *
+ * @method escapeException
+ * @param c {String} Unicode character
+ * @return {String} the \unnnn escapement of the character
+ * @private
  */
-Y.JSON.parse = function (s,reviver) {
-    // Ensure valid JSON
-    if (typeof s === 'string') {
-        // Replace certain Unicode characters that are otherwise handled
-        // incorrectly by some browser implementations.
-        // NOTE: This modifies the input if such characters are found!
-        s = s.replace(_UNICODE_EXCEPTIONS, function (c) {
-            return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-        });
-        
-        // Test for validity
-        if (_INVALID.test(s.replace(_ESCAPES,'@').
-                            replace(_VALUES,']').
-                            replace(_BRACKETS,''))) {
+function escapeException(c) {
+    return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+}
 
-            // Eval the text into a JavaScript data structure, apply any
-            // reviver function, and return
-            return _revive( eval('(' + s + ')'), reviver );
+Y.mix(Y.namespace('JSON'),{
+    /**
+     * Parse a JSON string, returning the native JavaScript representation.
+     * @param s {string} JSON string data
+     * @param reviver {function} (optional) function(k,v) passed each key value
+     *          pair of object literals, allowing pruning or altering values
+     * @return {MIXED} the native JavaScript representation of the JSON string
+     * @throws SyntaxError
+     * @method parse
+     * @static
+     * @public
+     */
+    parse : function (s,reviver) {
+        // Ensure valid JSON
+        if (typeof s === 'string') {
+            // Replace certain Unicode characters that are otherwise handled
+            // incorrectly by some browser implementations.
+            // NOTE: This modifies the input if such characters are found!
+            s = s.replace(_UNICODE_EXCEPTIONS, escapeException);
+            
+            // Test for validity
+            if (!_INVALID.test(s.replace(_ESCAPES,'@').
+                                 replace(_VALUES,']').
+                                 replace(_BRACKETS,''))) {
+
+                // Eval the text into a JavaScript data structure, apply any
+                // reviver function, and return
+                return _revive( eval('(' + s + ')'), reviver );
+            }
         }
-    }
 
-    // The text is not JSON parsable
-    throw new SyntaxError('parseJSON');
-};
+        // The text is not JSON parsable
+        Y.JSON.handleParseError(s,reviver);
+
+        throw new SyntaxError('JSON.parse');
+    },
+
+    /**
+     * Hook for plugins to add more detailed error reporting.  Note this will
+     * only catch a subset of JSON format errors.  Others are expressed via
+     * failure to eval.
+     *
+     * @method handleParseError
+     * @param s {String} the JSON string
+     * @param reviver {Function} (optional) the reviver passed to parse(..)
+     * @static
+     * @protected
+     */
+    handleParseError : function (s,reviver) {
+        Y.log("Invalid JSON passed to parse","warn","JSON");
+    }
+});
 
 
 }, '@VERSION@' );
@@ -160,9 +188,7 @@ YUI.add('json-stringify', function(Y) {
  */
 var isA = Y.Lang.isArray;
 
-Y.JSON = Y.JSON || {};
-
-Y.mix(Y.JSON,{
+Y.mix(Y.namespace('JSON'),{
     /**
      * Regex used to capture characters that need escaping before enclosing
      * their containing string in quotes.
@@ -233,31 +259,29 @@ Y.mix(Y.JSON,{
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
             rep    = typeof w === 'function' ? w : null,
-            pstack = []; // Processing stack used for cyclical ref protection
+            pstack = [], // Processing stack used for cyclical ref protection
+            _date = Y.JSON.dateToString; // Use the configured date conversion
 
         if (rep || typeof w !== 'object') {
             w = undefined;
         }
 
         // escape encode special characters
-        var _char = function (c) {
+        function _char(c) {
             if (!m[c]) {
                 m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
             }
             return m[c];
-        };
+        }
 
         // Enclose the escaped string in double quotes
-        var _string = function (s) {
+        function _string(s) {
             return '"' + s.replace(str_re, _char) + '"';
-        };
+        }
 
-        // Use the configured date conversion
-        var _date = Y.JSON.dateToString;
-    
         // Worker function.  Fork behavior on data type and recurse objects and
         // arrays per the configured depth.
-        var _stringify = function (h,key,d) {
+        function _stringify(h,key,d) {
             var o = typeof rep === 'function' ? rep.call(h,key,h[key]) : h[key],
                 t = typeof o,
                 i,len,j, // array iteration
@@ -335,7 +359,7 @@ Y.mix(Y.JSON,{
             }
 
             return undefined; // invalid input
-        };
+        }
 
         // Default depth to POSITIVE_INFINITY
         d = d >= 0 ? d : 1/0;
