@@ -64,12 +64,25 @@ callback is executed via setTimout unless configured with a negative
 timeout, in which case it is run in blocking mode in the same execution
 thread as the previous callback.  Callbacks can be function references or
 object literals with the following keys:
-<ul>
-<li><code>fn</code> - {Function} REQUIRED the callback function.</li>
-<li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
-<li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
-<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>
-</ul>
+<dl>
+<dt>fn</dt>
+<dd>{Function} REQUIRED the callback function.</dd>
+<dt>context</dt>
+<dd>{Object} the context from which to call the callback function.</dd>
+<dt>timeout</dt>
+<dd>{number} millisecond delay to wait after previous callback
+completion before executing this callback.  Negative
+values cause immediate blocking execution.  Default 0.</dd>
+<dt>until</dt>
+<dd>{Function} boolean function executed before each iteration.
+Return true to indicate callback completion.</dd>
+<dt>iterations</dt>
+<dd>{Number} number of times to execute the callback before
+proceeding to the next callback in the queue.
+Incompatible with <code>until</code>.</dd>
+<dt>args</dt>
+<dd>{MIXED} argument passed to callback object</dd>
+</dl>
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -106,6 +119,23 @@ object literals with the following keys:
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_defaultTimeout">
+                                    <h4><a name="property_defaultTimeout" property="yui:name">defaultTimeout</a>
+                                        - <code>static <span property="yui:type">{int}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default millisecond timeout used between callback execution.  Override for
+individual callbacks using the <code>timeout</code> key in callback object
+notation.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:property" resource="#property_id">
                                     <h4><a name="property_id" property="yui:name">id</a>
                                         - <code>protected <span property="yui:type">{number}</span></code>
@@ -160,11 +190,7 @@ blocking execution, and positives indicate non-blocking execution.
                                            (
                                                 
                                                         
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         c
+                                                         callback
                                                     
                                                 
                                             )
@@ -179,16 +205,10 @@ blocking execution, and positives indicate non-blocking execution.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        <code><span property="yui:name">callback</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the function to execute</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">c</span>
-                                                        &lt;<span property="yui:type">Object|Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the callback as defined during add(c)</span>
+                                                        <span property="yui:description">  the callback object</span>
                                                         </dd>
                                                 </dl>
 
@@ -265,7 +285,9 @@ blocking execution, and positives indicate non-blocking execution.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Add any number of callbacks to the end of the queue
+                                            Add any number of callbacks to the end of the queue.  Callbacks passed
+in as functions will be wrapped in a callback object with defaulted
+config values.
                                         </div>
 
                                         <div class="description">
@@ -477,7 +499,7 @@ current callback completes.
                                             (
                                                 
                                                         
-                                                         o
+                                                         callback
                                                     
                                                 
                                             )
@@ -494,14 +516,10 @@ current callback completes.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">o</span>
+                                                            <code><span property="yui:name">callback</span>
                                                                 &lt;<span property="yui:type">Object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  Object literal with the following keys:
-<dl>
-<dt>fn</dt><dd>The function just executed</dd>
-<dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-</dl></span>
+                                                            <span property="yui:description">  The callback object</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -525,7 +543,7 @@ current callback completes.
                                             (
                                                 
                                                         
-                                                         o
+                                                         callback
                                                     
                                                 
                                             )
@@ -542,14 +560,10 @@ current callback completes.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">o</span>
+                                                            <code><span property="yui:name">callback</span>
                                                                 &lt;<span property="yui:type">Object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  Object literal with the following keys:
-<dl>
-<dt>fn</dt><dd>The function about to be executed</dd>
-<dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-</dl></span>
+                                                            <span property="yui:description">  The callback object</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -761,6 +775,7 @@ fired if the Queue is stopped via q.stop().
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_defaultTimeout" title="defaultTimeout">defaultTimeout</a></li>
                                 <li class="protected"><a href="#property_id" title="id">id</a></li>
                                 <li class="protected"><a href="#property_q" title="q">q</a></li>
                         </ul>
@@ -801,7 +816,7 @@ fired if the Queue is stopped via q.stop().
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "defaultTimeout", "url": "Queue.html#property_defaultTimeout", "type": "property"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
 </script>
 </body>
 </html>

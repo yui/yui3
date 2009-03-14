@@ -55,12 +55,25 @@ callback is executed via setTimout unless configured with a negative
 timeout, in which case it is run in blocking mode in the same execution
 thread as the previous callback.  Callbacks can be function references or
 object literals with the following keys:
-<ul>
-<li><code>fn</code> - {Function} REQUIRED the callback function.</li>
-<li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
-<li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
-<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>
-</ul>
+<dl>
+<dt>fn</dt>
+<dd>{Function} REQUIRED the callback function.</dd>
+<dt>context</dt>
+<dd>{Object} the context from which to call the callback function.</dd>
+<dt>timeout</dt>
+<dd>{number} millisecond delay to wait after previous callback
+completion before executing this callback.  Negative
+values cause immediate blocking execution.  Default 0.</dd>
+<dt>until</dt>
+<dd>{Function} boolean function executed before each iteration.
+Return true to indicate callback completion.</dd>
+<dt>iterations</dt>
+<dd>{Number} number of times to execute the callback before
+proceeding to the next callback in the queue.
+Incompatible with <code>until</code>.</dd>
+<dt>args</dt>
+<dd>{MIXED} argument passed to callback object</dd>
+</dl>
                     </div>
 
 
@@ -70,7 +83,7 @@ object literals with the following keys:
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Mechanism to execute a series of callbacks in a non-blocking queue.  Each\ncallback is executed via setTimout unless configured with a negative\ntimeout, in which case it is run in blocking mode in the same execution\nthread as the previous callback.  Callbacks can be function references or\nobject literals with the following keys:\n<ul>\n<li><code>fn<\/code> - {Function} REQUIRED the callback function.<\/li>\n<li><code>timeout<\/code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.<\/li>\n<li><code>until<\/code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.<\/li>\n<li><code>iterations<\/code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until<\/code>.<\/li>\n<\/ul>", "guessedname": "Queue", "name": "Queue"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Mechanism to execute a series of callbacks in a non-blocking queue.  Each\ncallback is executed via setTimout unless configured with a negative\ntimeout, in which case it is run in blocking mode in the same execution\nthread as the previous callback.  Callbacks can be function references or\nobject literals with the following keys:\n<dl>\n<dt>fn<\/dt>\n<dd>{Function} REQUIRED the callback function.<\/dd>\n<dt>context<\/dt>\n<dd>{Object} the context from which to call the callback function.<\/dd>\n<dt>timeout<\/dt>\n<dd>{number} millisecond delay to wait after previous callback\ncompletion before executing this callback.  Negative\nvalues cause immediate blocking execution.  Default 0.<\/dd>\n<dt>until<\/dt>\n<dd>{Function} boolean function executed before each iteration.\nReturn true to indicate callback completion.<\/dd>\n<dt>iterations<\/dt>\n<dd>{Number} number of times to execute the callback before\nproceeding to the next callback in the queue.\nIncompatible with <code>until<\/code>.<\/dd>\n<dt>args<\/dt>\n<dd>{MIXED} argument passed to callback object<\/dd>\n<\/dl>", "guessedname": "Queue", "name": "Queue"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -152,7 +165,7 @@ object literals with the following keys:
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "defaultTimeout", "url": "Queue.html#property_defaultTimeout", "type": "property"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
 </script>
 </body>
 </html>
