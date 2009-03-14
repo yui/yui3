@@ -27,8 +27,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         }
         #drag4 {
             position: relative;
-            top: 3px;
-            left: 3px;
+            top: 30px;
+            left: 300px;
         }
         #drag4Cont {
             border: 1px solid black;
@@ -94,6 +94,7 @@ var yConfig = {
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
 YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
+    
 
     Y.DD.DDM._debugShim = true;
 
