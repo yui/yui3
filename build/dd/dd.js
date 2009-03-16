@@ -1204,7 +1204,7 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                queuable: true,
+                queuable: false,
                 emitFacade: true,
                 bubbles: true
             });
@@ -1231,7 +1231,7 @@ YUI.add('dd-drag', function(Y) {
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -1637,7 +1637,6 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get('dragging')) {
-                this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
@@ -1655,7 +1654,7 @@ YUI.add('dd-drag', function(Y) {
                     bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
                     left: xy[0]
                 };
-                
+                this.set('dragging', true);
             }
             return this;
         },
@@ -1710,6 +1709,9 @@ YUI.add('dd-drag', function(Y) {
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(xy, noFire) {
+            if (!this.get('dragging')) {
+                noFire = true;
+            }
             var diffXY = [], diffXY2 = [];
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
@@ -2739,8 +2741,11 @@ YUI.add('dd-drop', function(Y) {
     var Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
-        this._createShim();
+
+        //DD init speed up.
+        Y.later(100, this, this._createShim);
         DDM._regTarget(this);
+
         /* TODO
         if (Dom.getStyle(this.el, 'position') == 'fixed') {
             Event.on(window, 'scroll', function() {
@@ -2840,7 +2845,7 @@ YUI.add('dd-drop', function(Y) {
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -2904,7 +2909,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function() {
-            this._createEvents();
+            //this._createEvents();
+            Y.later(100, this, this._createEvents);
+
             var node = this.get(NODE);
             if (!node.get('id')) {
                 var id = Y.stamp(node);
@@ -3036,7 +3043,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
-            //var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',

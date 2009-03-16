@@ -399,7 +399,7 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                queuable: true,
+                queuable: false,
                 emitFacade: true,
                 bubbles: true
             });
@@ -426,7 +426,7 @@ YUI.add('dd-drag', function(Y) {
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -832,7 +832,6 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get('dragging')) {
-                this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
@@ -850,7 +849,7 @@ YUI.add('dd-drag', function(Y) {
                     bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
                     left: xy[0]
                 };
-                
+                this.set('dragging', true);
             }
             return this;
         },
@@ -905,6 +904,9 @@ YUI.add('dd-drag', function(Y) {
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(xy, noFire) {
+            if (!this.get('dragging')) {
+                noFire = true;
+            }
             var diffXY = [], diffXY2 = [];
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
