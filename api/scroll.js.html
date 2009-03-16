@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dd   dd-plugin.js  (YUI Library)</title>
+	<title>API: dd   scroll.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
                 
-                 &gt; dd-plugin.js (source view) 
+                 &gt; scroll.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,42 +47,238 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre>       <span class="c">/**</span>
-<span class="c">        * This is a simple Drag plugin that can be attached to a Node via the plug method.</span>
-<span class="c">        * @module dd-plugin</span>
-<span class="c">        * @submodule dd-plugin</span>
-<span class="c">        */</span>
-       <span class="c">/**</span>
-<span class="c">        * This is a simple Drag plugin that can be attached to a Node via the plug method.</span>
-<span class="c">        * @class DragPlugin</span>
-<span class="c">        * @extends Drag</span>
-<span class="c">        * @constructor</span>
-<span class="c">        * @namespace plugin</span>
-<span class="c">        */</span>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.</span>
+<span class="c">     * @module dd</span>
+<span class="c">     * @submodule dd-scroll</span>
+<span class="c">     */</span>
+    <span class="c">/**</span>
+<span class="c">     * This class extends the dd-drag module to add the ability to scroll the window.</span>
+<span class="c">     * @class DragScroll</span>
+<span class="c">     * @extends Drag</span>
+<span class="c">     * @constructor</span>
+<span class="c">     */</span>
 
+    <span class="k">var</span> <span class="nx">S</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">S</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">Drag</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">;</span>
-            <span class="nx">Drag</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-        <span class="o">};</span>
-        
+    <span class="o">},</span>
+    <span class="nx">SCROLL_TOP</span> <span class="o">=</span> <span class="s1">&#39;scrollTop&#39;</span><span class="o">,</span>
+    <span class="nx">SCROLL_LEFT</span> <span class="o">=</span> <span class="s1">&#39;scrollLeft&#39;</span><span class="o">;</span>
+    <span class="nx">S</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DragScroll&#39;</span><span class="o">;</span>
+    
+
+    <span class="nx">S</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
-<span class="c">        * @property NAME</span>
-<span class="c">        * @description dd-plugin</span>
-<span class="c">        * @type {String}</span>
+<span class="c">        * @attribute scrollWindow</span>
+<span class="c">        * @description Turn on window scroll support</span>
+<span class="c">        * @type Boolean</span>
 <span class="c">        */</span>
-        <span class="nx">Drag</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;dd-plugin&quot;</span><span class="o">;</span>
+        <span class="nx">windowScroll</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
         <span class="c">/**</span>
-<span class="c">        * @property NS</span>
-<span class="c">        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;</span>
-<span class="c">        * @type {String}</span>
+<span class="c">        * @attribute buffer</span>
+<span class="c">        * @description The number of pixels from the edge of the screen to turn on scrolling. Default: 30</span>
+<span class="c">        * @type Number</span>
 <span class="c">        */</span>
-        <span class="nx">Drag</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;dd&quot;</span><span class="o">;</span>
+        <span class="nx">buffer</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">30</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute scrollDelay</span>
+<span class="c">        * @description The number of milliseconds delay to pass to the auto scroller. Default: 90</span>
+<span class="c">        * @type Number</span>
+<span class="c">        */</span>
+        <span class="nx">scrollDelay</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">90</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
 
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">S</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">,</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @property _scrolling</span>
+<span class="c">        * @description Tells if we are actively scrolling or not.</span>
+<span class="c">        * @type Boolean</span>
+<span class="c">        */</span>
+        <span class="nx">_scrolling</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property _vpRegionCache</span>
+<span class="c">        * @description Cache of the Viewport dims.</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">_vpRegionCache</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property _dimCache</span>
+<span class="c">        * @description Cache of the dragNode dims.</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">_dimCache</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property _scrollTimer</span>
+<span class="c">        * @description Holder for the Timer object returned from Y.later.</span>
+<span class="c">        * @type {Y.later}</span>
+<span class="c">        */</span>
+        <span class="nx">_scrollTimer</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _getVPRegion</span>
+<span class="c">        * @description Sets the _vpRegionCache property with an Object containing the dims from the viewport.</span>
+<span class="c">        */</span>        
+        <span class="nx">_getVPRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_vpRegionCache</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nb">window</span><span class="o">),</span>
+                <span class="nx">b</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;buffer&#39;</span><span class="o">);</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Drag</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">);</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;plugin&#39;</span><span class="o">);</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">plugin</span><span class="o">.</span><span class="nx">Drag</span> <span class="o">=</span> <span class="nx">Drag</span><span class="o">;</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="o">{</span>
+                    <span class="nx">top</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_TOP</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">,</span>
+                    <span class="nx">right</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;winWidth&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_LEFT</span><span class="o">)</span> <span class="o">-</span> <span class="nx">b</span><span class="o">,</span>
+                    <span class="nx">bottom</span><span class="o">:</span> <span class="o">(</span><span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;winHeight&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_TOP</span><span class="o">))</span> <span class="o">-</span> <span class="nx">b</span><span class="o">,</span>
+                    <span class="nx">left</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_LEFT</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span>
+                <span class="o">};</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_vpRegionCache</span> <span class="o">=</span> <span class="nx">r</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_vpRegionCache</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nb">window</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;scroll&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_vpRegionCache</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _checkWinScroll</span>
+<span class="c">        * @description Check to see if we need to fire the scroll timer. If scroll timer is running this will scroll the window.</span>
+<span class="c">        * @param {Boolean} move Should we move the window. From Y.later</span>
+<span class="c">        */</span>        
+        <span class="nx">_checkWinScroll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">move</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getVPRegion</span><span class="o">(),</span>
+                <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">realXY</span><span class="o">,</span>
+                <span class="nx">scroll</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+                <span class="nx">b</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;buffer&#39;</span><span class="o">),</span>
+                <span class="nx">win</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nb">window</span><span class="o">),</span>
+                <span class="nx">sTop</span> <span class="o">=</span> <span class="nx">win</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_TOP</span><span class="o">),</span>
+                <span class="nx">sLeft</span> <span class="o">=</span> <span class="nx">win</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SCROLL_LEFT</span><span class="o">),</span>
+                <span class="nx">w</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_dimCache</span><span class="o">.</span><span class="nx">w</span><span class="o">,</span>
+                <span class="nx">h</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_dimCache</span><span class="o">.</span><span class="nx">h</span><span class="o">,</span>
+                <span class="nx">bottom</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">realXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">h</span><span class="o">,</span>
+                <span class="nx">top</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">realXY</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                <span class="nx">right</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">realXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">w</span><span class="o">,</span>
+                <span class="nx">left</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">realXY</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+                <span class="nx">nt</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                <span class="nx">nl</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+                <span class="nx">st</span> <span class="o">=</span> <span class="nx">sTop</span><span class="o">,</span>
+                <span class="nx">sl</span> <span class="o">=</span> <span class="nx">sLeft</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">left</span> <span class="o">&lt;=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">scroll</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="nx">nl</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">-</span> <span class="nx">b</span><span class="o">;</span>
+                <span class="nx">sl</span> <span class="o">=</span> <span class="nx">sLeft</span> <span class="o">-</span> <span class="nx">b</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">right</span> <span class="o">&gt;=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">scroll</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="nx">nl</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+                <span class="nx">sl</span> <span class="o">=</span> <span class="nx">sLeft</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">bottom</span> <span class="o">&gt;=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">scroll</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="nx">nt</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+                <span class="nx">st</span> <span class="o">=</span> <span class="nx">sTop</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">top</span> <span class="o">&lt;=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">scroll</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="nx">nt</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="nx">b</span><span class="o">;</span>
+                <span class="nx">st</span> <span class="o">=</span> <span class="nx">sTop</span> <span class="o">-</span> <span class="nx">b</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nt</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">nt</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nl</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">nl</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">move</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">nl</span><span class="o">,</span> <span class="nx">nt</span><span class="o">]);</span>
+                <span class="nx">win</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">SCROLL_TOP</span><span class="o">,</span> <span class="nx">st</span><span class="o">);</span>
+                <span class="nx">win</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">SCROLL_LEFT</span><span class="o">,</span> <span class="nx">sl</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">scroll</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_initScroll</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_cancelScroll</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _initScroll</span>
+<span class="c">        * @description Cancel a previous scroll timer and init a new one.</span>
+<span class="c">        */</span>        
+        <span class="nx">_initScroll</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_cancelScroll</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_scrollTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollDelay&#39;</span><span class="o">),</span> <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_checkWinScroll</span><span class="o">,</span> <span class="o">[</span><span class="kc">true</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
+
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _cancelScroll</span>
+<span class="c">        * @description Cancel a currently running scroll timer.</span>
+<span class="c">        */</span>        
+        <span class="nx">_cancelScroll</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_scrolling</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_scrollTimer</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_scrollTimer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_scrollTimer</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="nx">_align</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_scrolling</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_cancelScroll</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c">//Only call align if we are not scrolling..</span>
+<span class="c"></span>                <span class="nx">xy</span> <span class="o">=</span> <span class="nx">S</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">_align</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;windowScroll&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_scrolling</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_checkWinScroll</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">xy</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _setDimCache</span>
+<span class="c">        * @description Set the cache of the dragNode dims.</span>
+<span class="c">        */</span>        
+        <span class="nx">_setDimCache</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_dimCache</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">h</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">),</span>
+                <span class="nx">w</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">)</span>
+            <span class="o">};</span>
+        <span class="o">},</span>
+        <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">S</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">start</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_setDimCache</span><span class="o">();</span>
+        <span class="o">},</span>
+        <span class="nx">end</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_dimCache</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_cancelScroll</span><span class="o">();</span>
+            <span class="nx">S</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">end</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method toString</span>
+<span class="c">        * @description General toString method for logging</span>
+<span class="c">        * @return String name for the object</span>
+<span class="c">        */</span>
+        <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">S</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s1">&#39; #&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DragScroll</span> <span class="o">=</span> <span class="nx">S</span><span class="o">;</span>
 </pre></div>
                     </div>
 			</div>
@@ -143,14 +339,14 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="dd-drop-plugin.js.html" title="dd-drop-plugin.js">dd-drop-plugin.js</a></li>
-                                <li class="selected"><a href="dd-plugin.js.html" title="dd-plugin.js">dd-plugin.js</a></li>
+                                <li class=""><a href="dd-plugin.js.html" title="dd-plugin.js">dd-plugin.js</a></li>
                                 <li class=""><a href="ddm-base.js.html" title="ddm-base.js">ddm-base.js</a></li>
                                 <li class=""><a href="ddm-drop.js.html" title="ddm-drop.js">ddm-drop.js</a></li>
                                 <li class=""><a href="ddm.js.html" title="ddm.js">ddm.js</a></li>
                                 <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
                                 <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
                                 <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>
-                                <li class=""><a href="scroll.js.html" title="scroll.js">scroll.js</a></li>
+                                <li class="selected"><a href="scroll.js.html" title="scroll.js">scroll.js</a></li>
                         </ul>
                     </div>
 
