@@ -49,8 +49,11 @@ YUI.add('dd-drop', function(Y) {
     var Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
-        this._createShim();
+
+        //DD init speed up.
+        Y.later(100, this, this._createShim);
         DDM._regTarget(this);
+
         /* TODO
         if (Dom.getStyle(this.el, 'position') == 'fixed') {
             Event.on(window, 'scroll', function() {
@@ -150,7 +153,7 @@ YUI.add('dd-drop', function(Y) {
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -214,7 +217,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function() {
-            this._createEvents();
+            //this._createEvents();
+            Y.later(100, this, this._createEvents);
+
             var node = this.get(NODE);
             if (!node.get('id')) {
                 var id = Y.stamp(node);
@@ -346,7 +351,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
-            //var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
