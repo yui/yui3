@@ -50,30 +50,13 @@
 
                     </h3>
                     <div class="description summary">
-                        Mechanism to execute a series of callbacks in a non-blocking queue.  Each
-callback is executed via setTimout unless configured with a negative
-timeout, in which case it is run in blocking mode in the same execution
-thread as the previous callback.  Callbacks can be function references or
-object literals with the following keys:
-<dl>
-<dt>fn</dt>
-<dd>{Function} REQUIRED the callback function.</dd>
-<dt>context</dt>
-<dd>{Object} the context from which to call the callback function.</dd>
-<dt>timeout</dt>
-<dd>{number} millisecond delay to wait after previous callback
-completion before executing this callback.  Negative
-values cause immediate blocking execution.  Default 0.</dd>
-<dt>until</dt>
-<dd>{Function} boolean function executed before each iteration.
-Return true to indicate callback completion.</dd>
-<dt>iterations</dt>
-<dd>{Number} number of times to execute the callback before
-proceeding to the next callback in the queue.
-Incompatible with <code>until</code>.</dd>
-<dt>args</dt>
-<dd>{MIXED} argument passed to callback object</dd>
-</dl>
+                        Mechanism for executing a series of callbacks in sequential order.  Supports
+simple synchronous queueing as well as queuing callbacks across setTimeout.
+Callback iteration, specifying context and callback arguments, retrieval,
+removal, and promotion of queued callbacks.
+Pass in a configuration object with the same keys as a callback object (see
+the add method) to set the default values for those keys on all callbacks
+added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
                     </div>
 
 
@@ -83,7 +66,7 @@ Incompatible with <code>until</code>.</dd>
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Mechanism to execute a series of callbacks in a non-blocking queue.  Each\ncallback is executed via setTimout unless configured with a negative\ntimeout, in which case it is run in blocking mode in the same execution\nthread as the previous callback.  Callbacks can be function references or\nobject literals with the following keys:\n<dl>\n<dt>fn<\/dt>\n<dd>{Function} REQUIRED the callback function.<\/dd>\n<dt>context<\/dt>\n<dd>{Object} the context from which to call the callback function.<\/dd>\n<dt>timeout<\/dt>\n<dd>{number} millisecond delay to wait after previous callback\ncompletion before executing this callback.  Negative\nvalues cause immediate blocking execution.  Default 0.<\/dd>\n<dt>until<\/dt>\n<dd>{Function} boolean function executed before each iteration.\nReturn true to indicate callback completion.<\/dd>\n<dt>iterations<\/dt>\n<dd>{Number} number of times to execute the callback before\nproceeding to the next callback in the queue.\nIncompatible with <code>until<\/code>.<\/dd>\n<dt>args<\/dt>\n<dd>{MIXED} argument passed to callback object<\/dd>\n<\/dl>", "guessedname": "Queue", "name": "Queue"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Mechanism to execute a series of callbacks in sequence.\nCallbacks can be function references or object literals with the following\nkeys:\n<dl>\n<dt>fn<\/dt>\n<dd>{Function} REQUIRED the callback function.<\/dd>\n<dt>context<\/dt>\n<dd>{Object} the desired execution context of the callback function<\/dd>\n<dt>args<\/dt>\n<dd>{Array} list of arguments to pass to the callback function<\/dd>\n<\/dl>", "guessedname": "Queue", "name": "Queue"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -92,6 +75,35 @@ Incompatible with <code>until</code>.</dd>
                             </div>
                     </div>
                     <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code><a href="Queue.html" title="queue-full">queue-full</a></code></dt>
+                                            <dd>Mechanism for executing a series of callbacks in sequential order.  Supports
+simple synchronous queueing as well as queuing callbacks across setTimeout.
+Callback iteration, specifying context and callback arguments, retrieval,
+removal, and promotion of queued callbacks.
+Pass in a configuration object with the same keys as a callback object (see
+the add method) to set the default values for those keys on all callbacks
+added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code></dd>
+                                            <dt><code><a href="Queue.html" title="queue-io">queue-io</a></code></dt>
+                                            <dd>Adds support for callback configuration key <code>pauseForIOResponse</code>.
+This will trigger the Queue to pause until all Y.io requests issued from
+inside the callback have received a response.</dd>
+                                            <dt><code><a href="Queue.html" title="queue-base">queue-base</a></code></dt>
+                                            <dd>Mechanism to execute a series of callbacks in sequence.
+Callbacks can be function references or object literals with the following
+keys:
+<dl>
+<dt>fn</dt>
+<dd>{Function} REQUIRED the callback function.</dd>
+<dt>context</dt>
+<dd>{Object} the desired execution context of the callback function</dd>
+<dt>args</dt>
+<dd>{Array} list of arguments to pass to the callback function</dd>
+</dl></dd>
+                                        </dl>
+                                    </div>
 
                         </div>
                 </div>
@@ -148,7 +160,9 @@ Incompatible with <code>until</code>.</dd>
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="queue.js.html" title="queue.js">queue.js</a></li>
+                                <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
+                                <li class=""><a href="queue-full.js.html" title="queue-full.js">queue-full.js</a></li>
+                                <li class=""><a href="queue-io.js.html" title="queue-io.js">queue-io.js</a></li>
                         </ul>
                     </div>
 
@@ -165,7 +179,7 @@ Incompatible with <code>until</code>.</dd>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "afterCallback", "url": "Queue.html#event_afterCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "beforeCallback", "url": "Queue.html#event_beforeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "defaultTimeout", "url": "Queue.html#property_defaultTimeout", "type": "property"}, {"access": "", "host": "Queue", "name": "end", "url": "Queue.html#event_end", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_exec", "url": "Queue.html#method__exec", "type": "method"}, {"access": "protected", "host": "Queue", "name": "id", "url": "Queue.html#property_id", "type": "property"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "q", "url": "Queue.html#property_q", "type": "property"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "private", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processCallback", "url": "Queue.html#method__processCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
 </script>
 </body>
 </html>
