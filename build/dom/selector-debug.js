@@ -872,7 +872,8 @@ function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
 
 			while ( elem ) {
 				if ( elem.sizcache === doneName ) {
-					match = checkSet[elem.sizset];
+					//match = checkSet[elem.sizset];
+					match = checkSet[i];
 					break;
 				}
 
@@ -975,24 +976,41 @@ window.Sizzle = Sizzle;
 })();
 Y.Selector = {
     query: function(selector, root, firstOnly) {
-        if (firstOnly) {
-            selector += ':first';
+        var ret = firstOnly ? null : [];
+
+        root = root || Y.config.doc; // default to configured document
+
+        if (typeof root === 'string') { // allow string input TODO: do we need this?
+            root = Y.DOM.byId(root);
         }
-        return Sizzle(selector, root);
+
+        if (root) {
+            if (firstOnly) {
+                ret = Sizzle(selector + ':first', root)[0] || null;
+            } else {
+                ret  = Sizzle(selector, root)
+            }
+        }
+        return ret;
     },
     test: function(node, selector) {
-        var matches = Sizzle.matches([node], selector),
+        var matches,
             ret = false;
 
-        if (matches.length) {
-            ret = (matches[0] === node);
+        if (node && selector) {
+            matches = Sizzle.matches(selector, [node]);
+            if (matches.length) {
+                ret = (matches[0] === node);
+            }
+        } else {
+            Y.log('test called with invalid arguments, node:  ' +node + ', selector: ' + selector, 'warn', 'Selector');
         }
-
         return ret;
     },
 
     filter: function(nodes, selector) {
-        return Sizzle.matches(nodes, selector); 
+        nodes = nodes || [];
+        return Sizzle.matches(selector, nodes); 
     }
 };
 
