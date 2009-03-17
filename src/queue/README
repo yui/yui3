@@ -1,8 +1,27 @@
 Queue
     The Queue module allows you create a chain of function callbacks executed in order via setTimeout.  Also supports timeout chained iterations for each item in the Queue.
 
-3.0.0pr1
-    Initial release
+3.0.0 beta1
+Queue overhaul.  Breaking into submodules queue-base, queue-full, and queue-io.
+queue-base
+    * basic synchronous queuing
+    * constructor takes callback defaults as first param, 0..n callbacks after that
+    * static configurable defaults Y.Queue.defaults, merged with instance defaults and individual callback configurations
+    * callback config supports fn, context, and args
+    * API includes add, run, pause, stop, size
+
+queue-full
+    * more full featured queue
+    * emits events; callback execution can be prevented via subscriber
+    * callback config supports timeout, iterations, until, name
+    * API includes getCallback, promote, remove
+
+queue-io
+    * callbacks can trigger a stall in Queue execution for Y.io transaction responses issued from within until all responses are received
+    * callback config supports waitForIOResponse
 
 3.0.0pr2
     No changes
+
+3.0.0pr1
+    Initial release
