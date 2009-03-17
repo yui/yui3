@@ -18,6 +18,7 @@ YUI.add('queue-base', function(Y) {
  * @for queue
  * @class Queue
  * @constructor
+ * @param config {Object} default callback configuration values
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
  */
 function Queue() {

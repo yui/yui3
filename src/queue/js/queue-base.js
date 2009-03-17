@@ -13,9 +13,9 @@
  *
  * @module queue
  * @submodule queue-base
- * @for queue
  * @class Queue
  * @constructor
+ * @param config {Object} default callback configuration values
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
  */
 function Queue() {
@@ -28,7 +28,7 @@ function Queue() {
 /**
  * Defaults used to fill unset callback configuration values.
  *
- * @property defaults
+ * @property Queue.defaults
  * @type {Object}
  * @static
  */
@@ -179,11 +179,6 @@ Queue.prototype = {
             }
         }
 
-        /**
-         * Fired from within <code>add(..)</code> after callbacks are queued
-         * @event addCallback
-         * @param callbacks {Array} Array of callbacks passed to <code>add(..)</code>
-         */
         this.fire('addCallback',added);
 
         return this;
@@ -266,10 +261,8 @@ Queue.prototype = {
         return this._q.length;
     },
 
-    /**
-     * Placeholder stubs for event methods to allow for less code replacement
-     * in extension.
-     */
+    // Placeholder stubs for event methods to allow for less code replacement
+    // in extension.
     publish : function () {},
     fire : function () {}
 };

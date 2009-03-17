@@ -15,10 +15,7 @@ var EXEC  = 'executeCallback',
  *
  * @module queue
  * @submodule queue-full
- * @class Queue
- * @constructor
- * @param config {Object} Default settings for callbacks in this Queue
- * @param callback* {Object} (optional) Any number of callbacks to seed the Queue
+ * @for queue
  */
 
 

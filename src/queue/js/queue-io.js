@@ -7,7 +7,7 @@ var _protoInit = Y.Queue.prototype._init;
  *
  * @module queue
  * @submodule queue-io
- * @for queue
+ * @for Queue
  */
 Y.mix(Y.Queue.prototype, {
 
@@ -52,7 +52,7 @@ Y.mix(Y.Queue.prototype, {
      * Event listener for global io:success event to mark off io transactions,
      * eventually restarting the Queue after all are complete or aborted.
      *
-     * @property _ioSuccessSub
+     * @property _ioFailureSub
      * @type {Object}
      * @protected
      */
