@@ -12,6 +12,8 @@ queue-base
 
 queue-full
     * more full featured queue
+    * default operation is now synchronous.  Set { timeout : 10 } in class or isntance defaults to return to async default behavior.
+    * iterations now handled by default until function
     * emits events; callback execution can be prevented via subscriber
     * callback config supports timeout, iterations, until, name
     * API includes getCallback, promote, remove

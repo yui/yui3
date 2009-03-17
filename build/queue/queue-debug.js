@@ -14,6 +14,8 @@ YUI.add('queue-base', function(Y) {
  * </dl>
  *
  * @module queue
+ * @submodule queue-base
+ * @for queue
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
@@ -291,9 +293,10 @@ var EXEC  = 'executeCallback',
  *
  * Pass in a configuration object with the same keys as a callback object (see
  * the add method) to set the default values for those keys on all callbacks
- * added to this Queue. E.g. <code>Y.Queue({ pauseForIOResponse : true });</code>
+ * added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
  *
  * @module queue
+ * @submodule queue-full
  * @class Queue
  * @constructor
  * @param config {Object} Default settings for callbacks in this Queue

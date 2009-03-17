@@ -12,6 +12,8 @@
  * </dl>
  *
  * @module queue
+ * @submodule queue-base
+ * @for queue
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
