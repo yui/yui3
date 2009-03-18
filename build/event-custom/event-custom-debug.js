@@ -27,14 +27,26 @@ Y.Env.eventAdaptors = {};
  */
 Y.on = function(type, f, o) {
     
-   var adapt = Y.Env.eventAdaptors[type];
-    
-    if (adapt && adapt.on) {
+    var adapt = Y.Env.eventAdaptors[type], a;
+
+    // check to see if the target is an Event.Target.  If so,
+    // delegate to it (the Event.Target should handle whether
+    // or not the prefix was included);
+    if (o && o._yuievt && o.subscribe) {
+        a = Y.Array(arguments, 0, true);
+        a.splice(2, 1);
+        return o.subscribe.apply(Y, a);
+    // check for the existance of an event adaptor
+    } else if (adapt && adapt.on) {
         Y.log('Using adaptor for ' + type, 'info', 'event');
         return adapt.on.apply(Y, arguments);
     } else {
+        // the pattern for custom events is 'prefix:event',
+        // however it is possible to have an event adaptor that
+        // doesn't do anything special for subscribe.
         if (adapt || type.indexOf(':') > -1) {
             return Y.subscribe.apply(Y, arguments);
+        // DOM event listener
         } else {
             return Y.Event.attach.apply(Y.Event, arguments);
         }
@@ -57,9 +69,13 @@ Y.on = function(type, f, o) {
  */
 Y.detach = function(type, f, o) {
 
-    var adapt = Y.Env.eventAdaptors[type];
+    var adapt = Y.Env.eventAdaptors[type], a;
 
-    if (Lang.isObject(type) && type.detach) {
+    if (o && o._yuievt && o.unsubscribe) {
+        a = Y.Array(arguments, 0, true);
+        a.splice(2, 1);
+        return o.unsubscribe.apply(Y, a);
+    } else if (Lang.isObject(type) && type.detach) {
         return type.detach();
     } else {
         if (adapt && adapt.detach) {
@@ -94,7 +110,6 @@ Y.before = function(type, f, o) {
         return Y.on.apply(Y, arguments);
     }
 };
-
 
 /**
  * Executes the callback after a DOM event, custom event
