@@ -137,10 +137,11 @@
 <span class="c"> * @static</span>
 <span class="c"> * @param o an object</span>
 <span class="c"> * @param k the key to query</span>
-<span class="c"> * @return {boolena} true if the object contains the key</span>
+<span class="c"> * @return {boolean} true if the object contains the key</span>
 <span class="c"> */</span>
 <span class="nx">O</span><span class="o">.</span><span class="nx">hasKey</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">));</span>
+    <span class="c">// return (o.hasOwnProperty(k));</span>
+<span class="c"></span>    <span class="k">return</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="o">);</span>
 <span class="o">};</span>
 
 <span class="c">/**</span>
