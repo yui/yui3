@@ -1,6 +1,7 @@
 YUI.add('get', function(Y) {
 
 (function() {
+
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -382,9 +383,9 @@ Y.Get = function() {
             nodes: []
         });
 
-        q = queues[id];
-        q.win = q.win || Y.config.win;
-        q.context = q.context || q;
+        q           = queues[id];
+        q.win       = q.win || Y.config.win;
+        q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
