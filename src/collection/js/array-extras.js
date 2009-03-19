@@ -4,7 +4,7 @@
  */
 
 
-var Y = YUI(), L = Y.Lang, Native = Array.prototype, A = Y.Array;
+var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
  * Executes the supplied function on each item in the array.
