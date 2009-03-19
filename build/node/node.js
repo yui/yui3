@@ -505,7 +505,7 @@ YUI.add('node', function(Y) {
         set: function(node, prop, val) {
             if (prop.indexOf('.') < 0) {
                 if (prop in Node.setters) { // use custom setter
-                    Node.setters[prop](this, prop, val);  // passing Node instance
+                    Node.setters[prop](node, val, prop);  // passing Node instance
                 } else if (node[prop] !== undefined) { // no expandos 
                     node[prop] = val;
                 } else {
@@ -1135,6 +1135,36 @@ Y.Node.methods({
             Y.Node.getters[v] = Y.Node.wrapDOMMethod(v);
         }
     );
+
+    Y.Node.getters.scrollLeft = function(node) {
+        return ('scrollLeft' in node) ? node.scrollLeft : Y.DOM.docScrollX(node);
+    };
+
+    Y.Node.getters.scrollTop = function(node) {
+        return ('scrollTop' in node) ? node.scrollTop : Y.DOM.docScrollY(node);
+    };
+
+    Y.Node.setters.scrollLeft = function(node, val) {
+        if (node) {
+            if ('scrollLeft' in node) {
+                node.scrollLeft = val;
+            } else if (node.document || node[NODE_TYPE] === 9) {
+                Y.DOM._getWin(node).scrollTo(val, Y.DOM.docScrollY(node)); // scroll window if win or doc
+            }
+        } else {
+        }
+    };
+
+    Y.Node.setters.scrollTop = function(node, val) {
+        if (node) {
+            if ('scrollTop' in node) {
+                node.scrollTop = val;
+            } else if (node.document || node[NODE_TYPE] === 9) {
+                Y.DOM._getWin(node).scrollTo(Y.DOM.docScrollX(node), val); // scroll window if win or doc
+            }
+        } else {
+        }
+    };
 
     Y.Node.addDOMMethods([
     /**

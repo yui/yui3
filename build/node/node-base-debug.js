@@ -507,7 +507,7 @@ YUI.add('node-base', function(Y) {
         set: function(node, prop, val) {
             if (prop.indexOf('.') < 0) {
                 if (prop in Node.setters) { // use custom setter
-                    Node.setters[prop](this, prop, val);  // passing Node instance
+                    Node.setters[prop](node, val, prop);  // passing Node instance
                 } else if (node[prop] !== undefined) { // no expandos 
                     node[prop] = val;
                 } else {

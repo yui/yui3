@@ -1293,10 +1293,11 @@ O.size = function(o) {
  * @static
  * @param o an object
  * @param k the key to query
- * @return {boolena} true if the object contains the key
+ * @return {boolean} true if the object contains the key
  */
 O.hasKey = function(o, k) {
-    return (o.hasOwnProperty(k));
+    // return (o.hasOwnProperty(k));
+    return (k in o);
 };
 
 /**
@@ -1422,7 +1423,7 @@ Y.UA = function() {
          *                                   from 2.x via the 10.4.11 OS patch
          *                                   
          * </pre>
-         * http://developer.apple.com/internet/safari/uamatrix.html
+         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
          * @type float
          * @static
@@ -1586,6 +1587,7 @@ Y.UA = function() {
 YUI.add('get', function(Y) {
 
 (function() {
+
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -1958,9 +1960,9 @@ Y.Get = function() {
             nodes: []
         });
 
-        q = queues[id];
-        q.win = q.win || Y.config.win;
-        q.context = q.context || q;
+        q           = queues[id];
+        q.win       = q.win || Y.config.win;
+        q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
@@ -2405,7 +2407,6 @@ var BASE = 'base',
 
                 'dom-style': {
                     requires: ['dom-base']
-
                 },
 
                 'dom-screen': {
@@ -2420,8 +2421,8 @@ var BASE = 'base',
 
         node: {
             requires: ['dom'],
-            submodules: {
 
+            submodules: {
                 'node-base': {
                     requires: ['dom-base', 'selector']
                 },
@@ -2432,8 +2433,10 @@ var BASE = 'base',
 
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
-                },
+                }
+            },
 
+            plugins: {
                 'node-event-simulate': {
                     requires: ['node-base', 'event-simulate']
                 }

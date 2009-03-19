@@ -81,7 +81,6 @@
     <span class="nx">COMPLETE</span> <span class="o">=</span> <span class="s1">&#39;complete&#39;</span><span class="o">,</span>
 
     <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-    <span class="nx">isArray</span>  <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">,</span>
     <span class="nx">isBoolean</span><span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">,</span>
     <span class="nx">isString</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">,</span>
     <span class="nx">isNumber</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">,</span>
@@ -97,9 +96,7 @@
     <span class="nx">M</span>        <span class="o">=</span> <span class="nb">Math</span><span class="o">,</span>
     <span class="nx">max</span>      <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">max</span><span class="o">,</span>
     <span class="nx">round</span>    <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">round</span><span class="o">,</span>
-    <span class="nx">floor</span>    <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">floor</span><span class="o">,</span>
-    <span class="nx">ceil</span>     <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">ceil</span><span class="o">,</span>
-    <span class="nx">abs</span>      <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">abs</span><span class="o">;</span>
+    <span class="nx">floor</span>    <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">floor</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Create a slider to represent an integer value between a given minimum and</span>
@@ -762,11 +759,11 @@
 <span class="c">     * the Slider&#39;s disabled attribute.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _imageLoaded</span>
-<span class="c">     * @param e {Event} load or error event fired by the thumbImage</span>
 <span class="c">     * @param img {Node} The thumbImage Node</span>
+<span class="c">     * @param e {Event} load or error event fired by the thumbImage</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_imageLoaded</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">,</span><span class="nx">img</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_imageLoaded</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">img</span><span class="o">,</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">error</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;error&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_stall</span><span class="o">)</span> <span class="o">{</span>

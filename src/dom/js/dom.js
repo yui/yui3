@@ -451,9 +451,11 @@ Y.DOM = {
      */
     _getDoc: function(element) {
         element = element || {};
-        // TODO: use nodeName instead of magic number
-        return (element[NODE_TYPE] === 9) ? element : element[OWNER_DOCUMENT] ||
-                                                Y.config.doc;
+
+        return (element[NODE_TYPE] === 9) ? element : // element === document
+                element[OWNER_DOCUMENT] || // element === DOM node
+                element.document || // element === window
+                Y.config.doc; // default
     },
 
     /**
@@ -465,8 +467,7 @@ Y.DOM = {
      */
     _getWin: function(element) {
         var doc = Y.DOM._getDoc(element);
-        return (element.document) ? element : doc[DEFAULT_VIEW] ||
-                                        doc[PARENT_WINDOW] || Y.config.win;
+        return doc[DEFAULT_VIEW] || doc[PARENT_WINDOW] || Y.config.win;
     },
 
     // TODO: document this

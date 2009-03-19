@@ -1304,10 +1304,11 @@ O.size = function(o) {
  * @static
  * @param o an object
  * @param k the key to query
- * @return {boolena} true if the object contains the key
+ * @return {boolean} true if the object contains the key
  */
 O.hasKey = function(o, k) {
-    return (o.hasOwnProperty(k));
+    // return (o.hasOwnProperty(k));
+    return (k in o);
 };
 
 /**
@@ -1433,7 +1434,7 @@ Y.UA = function() {
          *                                   from 2.x via the 10.4.11 OS patch
          *                                   
          * </pre>
-         * http://developer.apple.com/internet/safari/uamatrix.html
+         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
          * @type float
          * @static
