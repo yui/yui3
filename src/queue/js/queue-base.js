@@ -46,15 +46,6 @@ Queue.prototype = {
     _defaults : null,
 
     /**
-     * Flag used to indicate the Queue is currently executing a callback.
-     *
-     * @property _tId
-     * @type {Number}
-     * @protected
-     */
-    _tId : 0,
-    
-    /**
      * Indicates the execution state of the Queue.
      *
      * @property active
@@ -93,48 +84,22 @@ Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     run : function () {
+        this.active = true;
+
         // Grab the first callback in the queue
-        var callback = this._q[0];
+        var callback = this._q.shift();
 
         // A callback is present and not currently executing/scheduled
-        if (callback && this.isReady()) {
-            this._processCallback(callback);
-        } else if (!callback) {
+        while (callback && this.active) {
+            this._defExecFn(callback);
+            callback = this._q.shift();
+        }
+
+        if (!this.size()) {
             this.active = false;
-            this.fire('complete');
         }
 
         return this;
-    },
-
-    /**
-     * Determines if the Queue is in a state that will allow for callback
-     * execution.
-     *
-     * @method isReady
-     * @return {Boolean} true if callbacks can be run now
-     */
-    isReady : function () {
-        return !this._tId;
-    },
-
-    /**
-     * Sets the Queue status to active and executes the callback.
-     *
-     * @method _processCallback
-     * @param callback {Object} the callback object to execute
-     * @protected
-     */
-    _processCallback : function (callback) {
-        this.active = true;
-        this._tId   = -1;
-
-        this._defExecFn(callback);
-
-        this._shift();
-        this._tId = 0;
-
-        this.run();
     },
 
     /**
@@ -149,15 +114,6 @@ Queue.prototype = {
         }
     },
 
-    /**
-     * Shifts the first callback off the Queue
-     * @method _shift
-     * @protected
-     */
-    _shift : function () {
-        this.fire('shiftCallback', this._q.shift());
-    },
-    
     /**
      * Add any number of callbacks to the end of the queue.  Callbacks passed
      * in as functions will be wrapped in a callback object with defaulted
@@ -214,16 +170,7 @@ Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     pause: function () {
-        clearTimeout(this._tId);
-        this._tId = 0;
-
         this.active = false;
-
-        /**
-         * Fired after Queue is paused
-         * @event pause
-         */
-        this.fire('pause');
 
         return this;
     },
@@ -235,17 +182,8 @@ Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     stop : function () { 
-        clearTimeout(this._tId);
-        this._tId = 0;
-
         this.active = false;
         this._q = [];
-
-        /**
-         * Fired after Queue is stopped
-         * @event stop
-         */
-        this.fire('stop');
 
         return this;
     },
