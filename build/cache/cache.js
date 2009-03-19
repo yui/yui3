@@ -109,26 +109,23 @@ Y.extend(Cache, Y.Base, {
     initializer: function() {
         /**
         * @event add
-        * @description Fired when a request/response object is added.
+        * @description Fired when an entry is added.
         * @param args {Object} Object literal data payload.
         * @param args.entry {Object} The cached entry.
         */
 
         /**
         * @event request
-        * @description Fired when an request/response object is requested from the cache.
+        * @description Fired when an entry is requested from the cache.
         * @param args {Object} Object literal data payload.        
         * @param args.request {Object} The request object.
-        * @param args.callback {Object} The callback object.
         */
 
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
         * @param args {Object} Object literal data payload.
-        * @param args.request {Object} The request object.
         * @param args.entry {Object} The retrieved entry.
-        * @param args.callback {Object} The callback object.
         */
 
         /**
@@ -185,7 +182,7 @@ Y.extend(Cache, Y.Base, {
      *     {request: request, response: resopnse}
      * If cache is full, evicts the stalest entry before adding the new one.
      *
-     * @method cache
+     * @method add
      * @param request {Object} Request object.
      * @param response {Object} Response object.
      * @param payload {Object} Arbitrary data payload.     
@@ -235,7 +232,7 @@ Y.extend(Cache, Y.Base, {
     
                 // Execute matching function
                 if(this.isMatch(request,entry)) {
-                    this.fire("retrieve", {request:request, entry: entry});
+                    this.fire("retrieve", {entry: entry});
                     
                     // Refresh the position of the cache hit
                     if(i < length-1) {
@@ -264,7 +261,7 @@ Y.extend(Cache, Y.Base, {
     }
 });
     
-    Y.namespace('Cache');    
+    Y.namespace('Cache');
     Y.Cache = Cache;
     
 
