@@ -35,9 +35,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value 'cache'
+     * @value "cache'
      */
-    NAME: 'cache',
+    NAME: "cache",
 
 
     ATTRS: {
@@ -107,12 +107,15 @@ Y.extend(Cache, Y.Base, {
     * @private        
     */
     initializer: function() {
+
         /**
         * @event add
         * @description Fired when an entry is added.
-        * @param args {Object} Object literal data payload.
-        * @param args.entry {Object} The cached entry.
+        * @param e {Object} {Event.Facade} Event Facade object.
+        * @param e.entry {Object} The cached entry.
+        * @preventable _defAdd
         */
+        this.publish("add",       {defaultFn: this._defAdd});
 
         /**
         * @event request
@@ -144,6 +147,37 @@ Y.extend(Cache, Y.Base, {
     */
     destructor: function() {
         this._entries = null;
+    },
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // Cache protected methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The default add behavior.
+     *
+     * @method _defAdd
+     * @param e {Event} Internal sync event
+     * @protected
+     */
+    _defAdd: function(e, entry) {
+        var entries = this._entries,
+            max = this.get("size");
+            
+        if(!entries || (max === 0)) {
+            e.stopImmediatePropagation();
+            return;
+        }        
+    
+        // If the cache at or over capacity, make room by removing stalest element (index=0)
+        while(entries.length >= (max)) {
+            entries.shift();
+        }
+    
+        // Add entry to cache in the newest position, at the end of the array
+        entries[entries.length] = entry;
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -188,22 +222,7 @@ Y.extend(Cache, Y.Base, {
      * @param payload {Object} Arbitrary data payload.     
      */
     add: function(request, response, payload) {
-        var entries = this._entries,
-            entry = {request:request, response:response, payload:payload},
-            max = this.get("size");
-            
-        if(!entries || (max === 0)) {
-            return;
-        }        
-    
-        // If the cache at or over capacity, make room by removing stalest element (index=0)
-        while(entries.length >= (max)) {
-            entries.shift();
-        }
-    
-        // Add entry to cache in the newest position, at the end of the array
-        entries[entries.length] = entry;
-        this.fire("add", {entry: entry});
+        this.fire("add", null, {request:request, response:response, payload:payload});
     },
 
     /**
@@ -261,7 +280,7 @@ Y.extend(Cache, Y.Base, {
     }
 });
     
-    Y.namespace('Cache');
+    Y.namespace("Cache");
     Y.Cache = Cache;
     
 
