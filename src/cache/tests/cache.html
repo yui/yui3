@@ -24,7 +24,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             BTNRUN = Y.get("#btnRun");
         BTNRUN.set("disabled", false);
-        Y.on("click", function(){
+        Y.on("click", function(e){
             Y.Test.Runner.run();
         }, BTNRUN);
         var myConsole = new Y.Console().render();
@@ -114,6 +114,85 @@
             }
         });
     
+        var testEvents = new Y.Test.Case({
+            name: "Event Tests",
+
+            testAdd: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("add", function(e, entry) {
+                    this.resume(function() {
+                        ASSERT.areSame(1, entry.request);
+                        ASSERT.areSame("a", entry.response);
+                    });
+                }, this, true);
+                cache.add(1, "a");
+                this.wait(0);
+            },
+        
+            testFlush: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("flush", function(e) {
+                    this.resume(function() {
+                        // This function intentionally left blank
+                    });
+                }, this, true);
+                cache.add(1, "a");
+                cache.flush()
+                this.wait(0); 
+            },
+
+            testRequest: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("request", function(e) {
+                    this.resume(function() {
+                        ASSERT.areSame(2,e.request);
+                    });
+                }, this, true);
+                cache.add(1, "a");
+                cache.retrieve(2)
+                this.wait(0); 
+            },
+
+            testRetrieveSuccess: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("retrieve", function(e) {
+                    this.resume(function() {
+                        ASSERT.areSame(1,e.entry.request);
+                        ASSERT.areSame("a",e.entry.response);
+                    });
+                }, this, true);
+                cache.add(1, "a");
+                cache.retrieve(1)
+                this.wait(0); 
+            },
+
+            testRetrieveFailure: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("retrieve", function(e) {
+                    this.resume(function() {
+                        ASSERT.fail();
+                    });
+                }, this, true);
+                cache.add(1, "a");
+                cache.retrieve(2)
+                this.wait(function() {
+                    // This function intentionally left blank
+                }, 0); 
+            },
+
+            testCancelAdd: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("add", function(e) {
+                    e.preventDefault();
+                }, this, true);
+                cache.add(1, "a");
+                
+                // Test the cancel
+                ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
+                ASSERT.isNull(cache.retrieve(1), "Expected null cached response.");
+            },
+        });
+
         var testEntryManagement = new Y.Test.Case({
             name: "Entry Management Tests",
 
@@ -143,6 +222,7 @@
         
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testBasic);
+        Y.Test.Runner.add(testEvents);
         Y.Test.Runner.add(testEntryManagement);
         Y.Test.Runner.run();
     });
