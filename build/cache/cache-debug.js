@@ -111,11 +111,19 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event add
         * @description Fired when an entry is added.
-        * @param e {Object} {Event.Facade} Event Facade object.
-        * @param e.entry {Object} The cached entry.
+        * @param e {Event.Facade} Event Facade object.
+        * @param entry {Object} The cached entry.
         * @preventable _defAdd
         */
-        this.publish("add",       {defaultFn: this._defAdd});
+        this.publish("add", {defaultFn: this._defAdd});
+
+        /**
+        * @event flush
+        * @description Fired when the cache is flushed.
+        * @param e {Event.Facade} Event Facade object.
+        * @preventable _defFlush
+        */
+        this.publish("flush", {defaultFn: this._defFlush});
 
         /**
         * @event request
@@ -129,11 +137,6 @@ Y.extend(Cache, Y.Base, {
         * @description Fired when an entry is retrieved from the cache.
         * @param args {Object} Object literal data payload.
         * @param args.entry {Object} The retrieved entry.
-        */
-
-        /**
-        * @event flush
-        * @description Fired when the cache is flushed.
         */
 
         // Initialize internal values
@@ -161,7 +164,8 @@ Y.extend(Cache, Y.Base, {
      * The default add behavior.
      *
      * @method _defAdd
-     * @param e {Event} Internal sync event
+    * @param e {Event.Facade} Event Facade object.
+    * @param entry {Object} The cached entry.
      * @protected
      */
     _defAdd: function(e, entry) {
@@ -181,6 +185,17 @@ Y.extend(Cache, Y.Base, {
         // Add entry to cache in the newest position, at the end of the array
         entries[entries.length] = entry;
         Y.log("Cached entry: " + Y.dump(entry), "info", this.toString());
+    },
+
+    /**
+     * Flushes cache.
+     *
+     * @method flush
+     * @param e {Event.Facade} Event Facade object.
+     */
+    _defFlush: function(e) {
+        this._entries = [];
+        Y.log("Cache flushed", "info", this.toString());
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -229,6 +244,15 @@ Y.extend(Cache, Y.Base, {
     },
 
     /**
+     * Flushes cache.
+     *
+     * @method flush
+     */
+    flush: function() {
+        this.fire("flush");
+    },
+
+    /**
      * Retrieves entry from cache for given request, if available, and refreshes
      * entry in the cache. Returns null if there is no cache match.
      *
@@ -274,17 +298,6 @@ Y.extend(Cache, Y.Base, {
 
         }
         return null;
-    },
-    
-    /**
-     * Flushes cache.
-     *
-     * @method flush
-     */
-    flush: function() {
-        this._entries = [];
-        this.fire("flush");
-        Y.log("Cache flushed", "info", this.toString());
     }
 });
     

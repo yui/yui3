@@ -189,7 +189,19 @@
                 
                 // Test the cancel
                 ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
-                ASSERT.isNull(cache.retrieve(1), "Expected null cached response.");
+            },
+        });
+
+            testCancelFlush: function() {
+                var cache = new Y.Cache({size:2});
+                cache.on("flush", function(e) {
+                    e.preventDefault();
+                }, this, true);
+                cache.add(1, "a");
+                cache.flush();
+                
+                // Test the cancel
+                ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
             },
         });
 
