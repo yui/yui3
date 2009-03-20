@@ -128,8 +128,8 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event request
         * @description Fired when an entry is requested from the cache.
-        * @param args {Object} Object literal data payload.        
-        * @param args.request {Object} The request object.
+        * @param e {Event.Facade} Event Facade object. 
+        * @param request {Object} The request object.
         */
 
         /**
@@ -266,7 +266,7 @@ Y.extend(Cache, Y.Base, {
             i = length-1;
             
         if((this.get("size") > 0) && (length > 0)) {   
-            this.fire("request", {request:request});
+            this.fire("request", null, request);
     
             // Loop through each cached entry starting from the newest
             for(; i >= 0; i--) {
@@ -274,7 +274,7 @@ Y.extend(Cache, Y.Base, {
     
                 // Execute matching function
                 if(this.isMatch(request,entry)) {
-                    this.fire("retrieve", {entry: entry});
+                    this.fire("retrieve", null, entry);
                     
                     // Refresh the position of the cache hit
                     if(i < length-1) {

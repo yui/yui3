@@ -143,9 +143,9 @@
 
             testRequest: function() {
                 var cache = new Y.Cache({size:2});
-                cache.on("request", function(e) {
+                cache.on("request", function(e, request) {
                     this.resume(function() {
-                        ASSERT.areSame(2,e.request);
+                        ASSERT.areSame(2, request);
                     });
                 }, this, true);
                 cache.add(1, "a");
@@ -155,10 +155,10 @@
 
             testRetrieveSuccess: function() {
                 var cache = new Y.Cache({size:2});
-                cache.on("retrieve", function(e) {
+                cache.on("retrieve", function(e, entry) {
                     this.resume(function() {
-                        ASSERT.areSame(1,e.entry.request);
-                        ASSERT.areSame("a",e.entry.response);
+                        ASSERT.areSame(1, entry.request);
+                        ASSERT.areSame("a", entry.response);
                     });
                 }, this, true);
                 cache.add(1, "a");
@@ -168,7 +168,7 @@
 
             testRetrieveFailure: function() {
                 var cache = new Y.Cache({size:2});
-                cache.on("retrieve", function(e) {
+                cache.on("retrieve", function(e, entry) {
                     this.resume(function() {
                         ASSERT.fail();
                     });
@@ -182,7 +182,7 @@
 
             testCancelAdd: function() {
                 var cache = new Y.Cache({size:2});
-                cache.on("add", function(e) {
+                cache.on("add", function(e, entry) {
                     e.preventDefault();
                 }, this, true);
                 cache.add(1, "a");
@@ -190,7 +190,6 @@
                 // Test the cancel
                 ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
             },
-        });
 
             testCancelFlush: function() {
                 var cache = new Y.Cache({size:2});
@@ -202,7 +201,7 @@
                 
                 // Test the cancel
                 ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
-            },
+            }
         });
 
         var testEntryManagement = new Y.Test.Case({
