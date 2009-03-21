@@ -159,7 +159,6 @@ var BASE = 'base',
 
                 'dom-style': {
                     requires: ['dom-base']
-
                 },
 
                 'dom-screen': {
@@ -174,8 +173,8 @@ var BASE = 'base',
 
         node: {
             requires: ['dom'],
-            submodules: {
 
+            submodules: {
                 'node-base': {
                     requires: ['dom-base', 'selector']
                 },
@@ -186,8 +185,10 @@ var BASE = 'base',
 
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
-                },
+                }
+            },
 
+            plugins: {
                 'node-event-simulate': {
                     requires: ['node-base', 'event-simulate']
                 }
