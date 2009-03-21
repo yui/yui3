@@ -370,6 +370,43 @@ Y.io requests, to trigger the waiting process accordingly.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__defShiftFn">
+                                    <h4>
+                                        <a name="method__defShiftFn">_defShiftFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_defShiftFn</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Shifts the first callback off the Queue
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__detachIOListeners">
                                     <h4>
                                         <a name="method__detachIOListeners">_detachIOListeners</a></h4>
@@ -849,43 +886,6 @@ appropriate executor (synchronous or asynchronous).
                                                         Queue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the Queue instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__shift">
-                                    <h4>
-                                        <a name="method__shift">_shift</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_shift</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Shifts the first callback off the Queue
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1638,6 +1638,7 @@ so will not stop or pause the Queue.
                         <ul class="content">        
                                 <li class="protected"><a href="#method__bindIOListeners" title="_bindIOListeners">_bindIOListeners</a></li>
                                 <li class="protected"><a href="#method__defExecFn" title="_defExecFn">_defExecFn</a></li>
+                                <li class="protected"><a href="#method__defShiftFn" title="_defShiftFn">_defShiftFn</a></li>
                                 <li class="protected"><a href="#method__detachIOListeners" title="_detachIOListeners">_detachIOListeners</a></li>
                                 <li class="protected"><a href="#method__detachIOStartListener" title="_detachIOStartListener">_detachIOStartListener</a></li>
                                 <li class="protected"><a href="#method__init" title="_init">_init</a></li>
@@ -1648,7 +1649,6 @@ so will not stop or pause the Queue.
                                 <li class="protected"><a href="#method__processCallback" title="_processCallback">_processCallback</a></li>
                                 <li class="protected"><a href="#method__processSync" title="_processSync">_processSync</a></li>
                                 <li class="protected"><a href="#method__promote" title="_promote">_promote</a></li>
-                                <li class="protected"><a href="#method__shift" title="_shift">_shift</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
                                 <li class=""><a href="#method_getCallback" title="getCallback">getCallback</a></li>
                                 <li class=""><a href="#method_isReady" title="isReady">isReady</a></li>
@@ -1683,7 +1683,7 @@ so will not stop or pause the Queue.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processCallback", "url": "Queue.html#method__processCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_shift", "url": "Queue.html#method__shift", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processCallback", "url": "Queue.html#method__processCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
 </script>
 </body>
 </html>
