@@ -421,7 +421,7 @@ suite.add(new Y.Test.Case({
 
         q.add({ fn : "results += 'X'" },
               { fn : /results += 'X'/ },
-              { fn : function () { Y.Assert.areSame("RUN", results); }).run();
+              { fn : function () { Y.Assert.areSame("RUN", results); } }).run();
     },
 
     test_context : function () {
