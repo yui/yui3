@@ -74,6 +74,7 @@ Queue.prototype = {
             (Y.Lang.isObject(config) ? config : {}));
 
         this.publish('executeCallback', { defaultFn : this._defExecFn });
+        this.publish('shiftCallback', { defaultFn : this._defShiftFn });
 
         return this.add.apply(this,args);
     },

@@ -76,6 +76,7 @@ Queue.prototype = {
             (Y.Lang.isObject(config) ? config : {}));
 
         this.publish('executeCallback', { defaultFn : this._defExecFn });
+        this.publish('shiftCallback', { defaultFn : this._defShiftFn });
 
         return this.add.apply(this,args);
     },
@@ -313,10 +314,12 @@ Y.mix(Y.Queue.prototype, {
         }
 
         if (this.isReady()) {
-            this._shift();
+            this.fire(SHIFT);
         }
 
-        this.run();
+        if (this.active) {
+            this.run();
+        }
     },
 
     /**
@@ -330,7 +333,7 @@ Y.mix(Y.Queue.prototype, {
         var self = this;
 
         if (callback.until()) {
-            this._shift();
+            this.fire(SHIFT);
             this.run();
         } else {
             // Set to execute after the configured timeout
@@ -351,11 +354,11 @@ Y.mix(Y.Queue.prototype, {
 
     /**
      * Shifts the first callback off the Queue
-     * @method _shift
+     * @method _defShiftFn
      * @protected
      */
-    _shift : function () {
-        this.fire('shiftCallback', this._q.shift());
+    _defShiftFn : function () {
+        this._q.shift();
     },
     
     pause: function () {

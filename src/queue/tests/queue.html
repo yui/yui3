@@ -332,6 +332,7 @@ suite.add(new Y.Test.Case({
         q.run();
         q.stop();
         Y.Assert.areSame('STOP',results);
+        Y.Assert.areSame(0,q.size());
 
         setTimeout(function () {
             self.resume(function () {
@@ -345,12 +346,64 @@ suite.add(new Y.Test.Case({
     },
 
     test_getCallback : function () {
+        var c,
+            q = Y.Queue({fn: function () {}},
+                    { name : 'a', test: 1 },
+                    { name : 'b', test: 2, fn: function () {
+                            this.pause();
+                        }
+                    },
+                    { name : 'c', test: 3 },
+                    { name : 'd', test: 4,
+                      fn: function () {
+                          Y.Assert.areSame(this._q[0], this.getCallback('d'));
+                      }
+                    },
+                    { name : 'a', test: 5 });
+
+        c = q.getCallback('a');
+        Y.Assert.isObject(c);
+        Y.Assert.areSame(1, c.test);
+
+        q.run();
+        c = q.getCallback('a');
+        Y.Assert.isObject(c);
+        Y.Assert.areSame(5, c.test);
+
+        q.run();
     },
 
     test_active : function () {
-    },
+        var self = this,
+            q = Y.Queue(null,
+                    function () {
+                        Y.Assert.areSame(true, this.active);
+                    },
+                    {
+                        fn: function () {
+                            self.resume(function () {
+                                q.pause();
+                                Y.Assert.areSame(false, q.active);
+                            });
+                        },
+                        timeout: 10
+                    },
+                    function () {
+                        Y.Assert.areSame(true, this.active);
+                    });
 
-    test_isReady : function () {
+        Y.Assert.areSame(false, q.active);
+        q.run();
+
+        Y.Assert.areSame(true, q.active);
+
+        setTimeout(function () {
+            Y.Assert.areSame(false, q.active);
+            q.run(); // run to completion
+            Y.Assert.areSame(false, q.active);
+        },100);
+
+        this.wait();
     }
 }));
 
@@ -358,9 +411,21 @@ suite.add(new Y.Test.Case({
     name : "Test callback config",
 
     test_fn : function () {
+        var results = '',
+            q = Y.Queue({ fn: function () { results += 'U' } },
+                    function () { results += 'R'; },
+                    {},
+                    function () { results += 'N'; }).run();
+
+        Y.Assert.areSame("RUN", results);
+
+        q.add({ fn : "results += 'X'" },
+              { fn : /results += 'X'/ },
+              { fn : function () { Y.Assert.areSame("RUN", results); }).run();
     },
 
     test_context : function () {
+        
     },
 
     test_args : function () {
