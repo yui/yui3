@@ -188,8 +188,9 @@ Y.extend(Cache, Y.Base, {
     /**
      * Flushes cache.
      *
-     * @method flush
+     * @method _defFlush
      * @param e {Event.Facade} Event Facade object.
+     * @protected     
      */
     _defFlush: function(e) {
         this._entries = [];
@@ -228,8 +229,8 @@ Y.extend(Cache, Y.Base, {
     },
 
     /**
-     * Adds a new entry to the cache of the format:
-     *     {request: request, response: resopnse}
+     * Adds a new entry to the cache of the format
+     * {request:request, response:response, payload:payload}.
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
@@ -251,19 +252,17 @@ Y.extend(Cache, Y.Base, {
     },
 
     /**
-     * Retrieves entry from cache for given request, if available, and refreshes
+     * Retrieves cached entry for given request, if available, and refreshes
      * entry in the cache. Returns null if there is no cache match.
      *
      * @method retrieve
      * @param request {Object} Request object.
-     * @return {Object} Cached entry object with the following properties:
-     * {request:request, response:response, payload:payload},  or null.
+     * @return {Object} Cached entry object with the properties request, response, and payload, or null.
      */
     retrieve: function(request) {
         // If cache is enabled...
         var entries = this._entries,     
             length = entries.length,
-            response = null,
             entry = null,
             i = length-1;
             
@@ -275,7 +274,7 @@ Y.extend(Cache, Y.Base, {
                 entry = entries[i];
     
                 // Execute matching function
-                if(this.isMatch(request,entry)) {
+                if(this.isMatch(request, entry)) {
                     this.fire("retrieve", null, entry);
                     
                     // Refresh the position of the cache hit
@@ -290,7 +289,7 @@ Y.extend(Cache, Y.Base, {
                     } 
                 }
             }
-            Y.log("Retrieved cached response: " + Y.dump(response) +
+            Y.log("Retrieved cached response: " + Y.dump(entry) +
                     " for request: " + Y.dump(request), "info", this.toString());
             return entry;
 
