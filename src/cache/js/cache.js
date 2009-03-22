@@ -162,8 +162,8 @@ Y.extend(Cache, Y.Base, {
      * The default add behavior.
      *
      * @method _defAdd
-    * @param e {Event.Facade} Event Facade object.
-    * @param entry {Object} The cached entry.
+     * @param e {Event.Facade} Event Facade object.
+     * @param entry {Object} The cached entry.
      * @protected
      */
     _defAdd: function(e, entry) {
