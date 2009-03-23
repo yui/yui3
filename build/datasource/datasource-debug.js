@@ -124,7 +124,7 @@ Y.mix(DSBase, {
      * param determines whether to execute the success handler or failure handler.
      *
      * @method issueCallback
-     * @param callback {Function|Object} the callback to execute
+     * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred
      * @static
@@ -185,19 +185,6 @@ Y.extend(DSBase, Y.Base, {
     */
     _initEvents: function() {
         /**
-         * Fired when an error is encountered.
-         *
-         * @event error
-         * @param e {Event.Facade} Event Facade.
-         * @param o {Object} Object with the following properties:
-         * <dl>                          
-         * <dt>request (Object)</dt> <dd>The request.</dd>
-         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
-         * </dl>            
-         */              
-         
-        /**
          * Fired when a request is sent to the live data source.
          *
          * @event request
@@ -225,6 +212,22 @@ Y.extend(DSBase, Y.Base, {
          * </dl>                 
          */
         this.publish("response", {defaultFn: this._defResponseHandler});
+
+        /**
+         * Fired when an error is encountered.
+         *
+         * @event error
+         * @param e {Event.Facade} Event Facade.
+         * @param o {Object} Object with the following properties:
+         * <dl>
+         * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+         * <dt>request (Object)</dt> <dd>The request.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+         * <dt>error (Object)</dt> <dd>Error data.</dd>
+         * </dl>
+         */
+
     },
 
     /**
@@ -299,18 +302,18 @@ Y.extend(DSBase, Y.Base, {
      *
      * @method returnData
      * @param tId {Number} Transaction ID.
-     * @param request {MIXED} Request.
+     * @param request {Object} Request.
      * @param callback {Object} Callback object.
-     * @param response {MIXED} Raw data response.
+     * @param response {Object} Raw data response.
      */
     returnData: function(tId, request, callback, response) {
-        // Problemic response
-        if(!response) {
+        // Problematic response
+        if(!response || LANG.isUndefined(response.results)) {
             response = {error:true};
         }
         // Handle any error
         if(response.error) {
-            this.fire("error", {tId:tId, request:request, response:response, callback:callback});
+            this.fire("error", null, {tId:tId, request:request, response:response, callback:callback, error:response.error});
             Y.log("Error in response", "error", this.toString());
         }
 

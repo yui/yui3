@@ -29,7 +29,7 @@
         // Set up the page
         
         BTNRUN.set("disabled", false);
-        Y.on("click", function(){
+        Y.on("click", function() {
             Y.Test.Runner.run();
         }, BTNRUN);
         var myConsole = new Y.Console().render();
@@ -37,12 +37,12 @@
         var testClass = new Y.Test.Case({
             name: "Class Tests",
         
-            testConstructorBase: function(){
+            testConstructorBase: function() {
                 var ds = new Y.DataSource.Base();
                 ASSERT.areSame((ds instanceof Y.DataSource.Base), true);
             },
             
-            testConstructorLocal: function(){
+            testConstructorLocal: function() {
                 var ds = new Y.DataSource.Local();
                 ASSERT.areSame((ds instanceof Y.DataSource.Local), true);
                 ASSERT.areSame((ds instanceof Y.DataSource.Base), true);
@@ -52,7 +52,7 @@
         var testLocal = new Y.Test.Case({
             name: "DataSource.Local Tests",
 
-            testLocalDefaults: function(){
+            testLocalDefaults: function() {
                 var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
@@ -63,28 +63,68 @@
             }           
         });
 
-        /*var testLocalEvents = new Y.Test.Case({
+        var testLocalEvents = new Y.Test.Case({
             name: "DataSource.Local Event Tests",
 
-            test=: function(){
+            testRequest: function() {
                 var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
                 
-                ds.subscribe("requestEvent", function(e) {
-                    e.preventDefault();
+                ds.subscribe("request", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testResponse: function() {
+                var ds = new Y.DataSource.Local({
+                    source: ["a","b","c","d"]
                 });
 
-                ds.sendRequest("a", {success:function(request,response) {
-                    ASSERT.fail("Request should not be sent.")
-                }});                
-            }            
-        });*/
+                ds.subscribe("response", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isArray(o.response, "Expected response.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testError: function() {
+                var ds = new Y.DataSource.Local({
+                    source: ["a","b","c","d"]
+                });
+
+                ds.subscribe("error", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isTrue(o.error, "Expected error.");
+                    });
+                }, this, true);
+
+                ds.set("source", undefined);
+                ds.sendRequest("a", "callback");
+                this.wait();
+            }
+        });
 
         var testXHR = new Y.Test.Case({
             name: "DataSource.XHR Tests",
 
-            testXHRDefaults: function(){
+            testXHRDefaults: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
                     parser: new Y.DataParser.JSON({
@@ -112,61 +152,32 @@
                 });                
 
                 this.wait(5000); // On a slow connection: this.wait(5000);
-            }//,
-
-            /*testXHRCancelRequestEvent: function(){
-                var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
-                });
-
-                ds.subscribe("requestEvent", function(e) {
-                        e.preventDefault();
-                }, this);
-
-                ds.sendRequest(null, {
-                    success: function(request,response) {
-                        this.resume(function() {
-                            ASSERT.fail("Request should not be sent.")
-                        });
-                    },
-                    scope: this
-                });
-
-                this.wait(function(){
-                    // This function has been intentionally left blank.
-                }, 0);
-            }*/
+            }
         });
 
         var testCache = new Y.Test.Case({
             name: "DataSource Cache Tests",
 
-            testCacheDefaultSize: function(){
+            testCacheDefaultSize: function() {
                 var ds = new Y.DataSource.Base({cache: new Y.Cache()});
                 ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
             },
 
-            testCacheInitSize: function(){
+            testCacheInitSize: function() {
                 var ds = new Y.DataSource.Base({cache: new Y.Cache({size:3})});
                 ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
             },
 
-            testSetCache: function(){
+            testSetCache: function() {
                 var ds = new Y.DataSource.Base();
                 ds.set("cache",new Y.Cache({size:5}));
                 ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
             },
             
-            testLocalCache: function(){
+            testLocalCache: function() {
                 var cache = new Y.Cache({size:3}),
                     ds = new Y.DataSource.Local({
                         source: ["a","b","c","d"],
@@ -177,7 +188,7 @@
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});
                 
-                ds.subscribe("requestEvent", function(){
+                ds.subscribe("requestEvent", function() {
                     ASSERT.fail("Entry is cached -- requestEvent is unexpected");
                 });
 
@@ -189,6 +200,7 @@
 
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
+        Y.Test.Runner.add(testLocalEvents);
         Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testCache);
         Y.Test.Runner.run();
