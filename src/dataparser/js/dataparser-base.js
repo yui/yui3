@@ -109,7 +109,7 @@ Y.extend(Base, Y.Base, {
          *
          * @event parse
          * @param e {Event.Facade} Event Facade.
-         * @param e.data {MIXED} Data to parse.
+         * @param data {MIXED} Data to parse.
          */
 
         /**
@@ -142,7 +142,7 @@ Y.extend(Base, Y.Base, {
      * @param e.data {MIXED} Data to parse.
      */
     parse: function(data) {
-        var ok = this.fire("parse", {data:data});
+        var ok = this.fire("parse", null, data);
         if(ok) {
             return this._parse(data);
         }

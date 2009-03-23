@@ -7,7 +7,18 @@
  * @title DataSource Utility
  */
     Y.namespace("DataSource");
-    var DS = Y.DataSource;
+    var DS = Y.DataSource,
+        LANG = Y.Lang,
+    
+    /**
+     * Base class for the YUI DataSource utility.
+     * @class DataSource.Base
+     * @extends Base
+     * @constructor
+     */    
+    DSBase = function() {
+        DSBase.superclass.constructor.apply(this, arguments);
+    };
     
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -50,25 +61,12 @@ Y.mix(DS, {
     ERROR_DATAINVALID: 1
 });
     
-    var LANG = Y.Lang,
-    
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource.Base
-     * @extends Base
-     * @constructor
-     */    
-    Base = function() {
-        Base.superclass.constructor.apply(this, arguments);
-    };
-    
-
     /////////////////////////////////////////////////////////////////////////////
     //
-    // Base static properties
+    // DataSource.Base static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(Base, {    
+Y.mix(DSBase, {    
     /**
      * Class name.
      *
@@ -82,7 +80,7 @@ Y.mix(Base, {
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // Base Attributes
+    // DataSource.Base Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -140,7 +138,7 @@ Y.mix(Base, {
     }
 });
     
-Y.extend(Base, Y.Base, {
+Y.extend(DSBase, Y.Base, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -188,40 +186,43 @@ Y.extend(Base, Y.Base, {
          * Fired when an error is encountered.
          *
          * @event error
-         * @param args {Object} Object literal data payload.         
-         * @param args.request {MIXED} The request.
-         * @param args.response {Object} The response object.
-         * @param args.callback {Object} The callback object.
-         */
+         * @param e {Event.Facade} Event Facade.
+         * @param o {Object} Object with the following properties:
+         * <dl>                          
+         * <dt>request (Object)</dt> <dd>The request.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+         * </dl>            
+         */              
          
         /**
          * Fired when a request is sent to the live data source.
          *
          * @event request
          * @param e {Event.Facade} Event Facade.         
-         * @param e.tId {Number} Unique transaction ID.             
-         * @param e.request {MIXED} The request.
-         * @param e.callback {Object} The callback object.
+         * @param o {Object} Object with the following properties:
+         * <dl>                          
+         * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+         * <dt>request (Object)</dt> <dd>The request.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * </dl>                 
          */
-        this.publish("request", {
-            //emitFacade: false,
-            defaultFn: this._makeConnection
-        });
+        this.publish("request", {defaultFn: this._defRequestHandler});
          
         /**
          * Fired when a response is received from the live data source.
          *
          * @event response
-         * @param e {Event.Facade} Event Facade.         
-         * @param e.tId {Number} Unique transaction ID.             
-         * @param e.request {MIXED} The request.
-         * @param e.callback {Object} The callback object.
-         * @param e.response {Object} The raw response data.         
+         * @param e {Event.Facade} Event Facade.
+         * @param o {Object} Object with the following properties:
+         * <dl>                          
+         * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+         * <dt>request (Object)</dt> <dd>The request.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+         * </dl>                 
          */
-        this.publish("response", {
-            //emitFacade: false,
-            defaultFn: this._handleResponse
-        });
+        this.publish("response", {defaultFn: this._defResponseHandler});
     },
 
     /**
@@ -230,32 +231,39 @@ Y.extend(Base, Y.Base, {
      * method should be implemented by subclasses to achieve more complex
      * behavior such as accessing remote data.
      *
-     * @method _makeConnection
+     * @method _defRequestHandler
      * @protected
-     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
-     * @param e.tId {Number} Transaction ID.
-     * @param e.request {MIXED} Request.
-     * @param e.callback {Object} Callback object.
+     * @param e {Event.Facade} Event Facade.         
+     * @param o {Object} Object with the following properties:
+     * <dl>                          
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * </dl>                 
      */
-    _makeConnection: function(e) {
-        this.fire("response", Y.mix(e.details[0], {response:this.get("source")}));
+    _defRequestHandler: function(e, o) {
+        this.fire("response", null, Y.mix(o, {response:this.get("source")}));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
+                Y.dump(o.request) + " . Response: " + Y.dump(o.response), "info", this.toString());
     },
 
     /**
      * Overridable default <code>response</code> event handler receives raw data response and
      * by default, passes it as-is to returnData.
      *
-     * @method _handleResponse
+     * @method _defResponseHandler
      * @protected
-     * @param args.tId {Number} Transaction ID.
-     * @param args.request {MIXED} Request.
-     * @param args.callback {Object} Callback object.
-     * @param args.response {MIXED} Raw data response.
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>                          
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+     * </dl>                 
      */
-    _handleResponse: function(args) {
-        this.returnData(args.tId, args.request, args.callback, {results: args.response});
+    _defResponseHandler: function(e, o) {
+        this.returnData(o.tId, o.request, o.callback, {results: o.response});
 
     },
 
@@ -263,7 +271,7 @@ Y.extend(Base, Y.Base, {
      * Generates a unique transaction ID and fires <code>request</code> event.
      *
      * @method sendRequest
-     * @param request {MIXED} Request.
+     * @param request {Object} Request.
      * @param callback {Object} An object literal with the following properties:
      *     <dl>
      *     <dt><code>success</code></dt>
@@ -279,7 +287,7 @@ Y.extend(Base, Y.Base, {
      */
     sendRequest: function(request, callback) {
         var tId = DS._tId++;
-        this.fire("request", {tId:tId, request:request,callback:callback});
+        this.fire("request", null, {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     },
@@ -300,7 +308,7 @@ Y.extend(Base, Y.Base, {
         }
         // Handle any error
         if(response.error) {
-            this.fire("error", {tId:tId, request:request, callback:callback, response:response});
+            this.fire("error", {tId:tId, request:request, response:response, callback:callback});
             Y.log("Error in response", "error", this.toString());
         }
 
@@ -314,10 +322,10 @@ Y.extend(Base, Y.Base, {
         }
 
         // Send the response back to the callback
-        Base.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
+        DSBase.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
     }
 
 });
     
-    DS.Base = Base;
+    DS.Base = DSBase;
     

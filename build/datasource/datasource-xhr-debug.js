@@ -75,7 +75,7 @@ Y.extend(XHR, Y.DataSource.Base, {
             cfg = {
                 on: {
                     complete: function (id, response, args) {
-                        this.fire("response", Y.mix(args, {response:response}));
+                        this.fire("response", null, Y.mix(args, {response:response}));
                         Y.log("Received XHR data response for \"" + args.request + "\"", "info", this.toString());
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
