@@ -462,32 +462,36 @@ Y.extend(XHR, Y.DataSource.Base, {
      * Overriding <code>request</code> event handler passes query string to IO. Fires
      * <code>response</code> event when response is received.     
      *
-     * @method _makeConnection
+     * @method _defRequestHandler
      * @protected     
-     * @param args.tId {Number} Transaction ID.     
-     * @param args.request {MIXED} Request.     
-     * @param args.callback {Object} Callback object.
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * </dl>
      */
-    _makeConnection: function(args) {
+    _defRequestHandler: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {
-                    complete: function (id, response, args) {
-                        this.fire("response", null, Y.mix(args, {response:response}));
+                    complete: function (id, response, o) {
+                        this.fire("response", null, Y.mix(o, {response:response}));
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     }
                 },
                 context: this,
                 arguments: {
-                    tId: args.tId,
-                    request: args.request,
-                    callback: args.callback
+                    tId: o.tId,
+                    request: o.request,
+                    callback: o.callback
                 }
             };
         
         this.get("io")(uri, cfg);
-        return args.tId;
+        return o.tId;
     }
 });
   
@@ -662,19 +666,23 @@ Parsable.prototype = {
      * Overriding <code>response</code> event handler parses raw data response before sending
      * to returnData().
      *
-     * @method _handleResponse
+     * @method _defResponseHandler
      * @protected
-     * @param args.tId {Number} Transaction ID.
-     * @param args.request {MIXED} Request.
-     * @param args.callback {Object} Callback object.
-     * @param args.response {MIXED} Raw data response.
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+     * </dl>
      */
-    _handleResponse: function(args) {
-        var response = args.response;
+    _defResponseHandler: function(e, o) {
+        var response = o.response;
 
         response = (this.get("parser") && this.get("parser").parse(response)) || {results: response};
 
-        this.returnData(args.tId, args.request, args.callback, response);
+        this.returnData(o.tId, o.request, o.callback, response);
     }
 };
     

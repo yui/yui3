@@ -41,19 +41,23 @@ Parsable.prototype = {
      * Overriding <code>response</code> event handler parses raw data response before sending
      * to returnData().
      *
-     * @method _handleResponse
+     * @method _defResponseHandler
      * @protected
-     * @param args.tId {Number} Transaction ID.
-     * @param args.request {MIXED} Request.
-     * @param args.callback {Object} Callback object.
-     * @param args.response {MIXED} Raw data response.
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+     * </dl>
      */
-    _handleResponse: function(args) {
-        var response = args.response;
+    _defResponseHandler: function(e, o) {
+        var response = o.response;
 
         response = (this.get("parser") && this.get("parser").parse(response)) || {results: response};
 
-        this.returnData(args.tId, args.request, args.callback, response);
+        this.returnData(o.tId, o.request, o.callback, response);
     }
 };
     

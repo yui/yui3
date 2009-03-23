@@ -296,13 +296,13 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable method returns data to callback.
+     * Overridable method returns handled data to callback.
      *
      * @method returnData
      * @param tId {Number} Transaction ID.
      * @param request {Object} Request.
      * @param callback {Object} Callback object.
-     * @param response {Object} Raw data response.
+     * @param response {Object} Handled response data.
      */
     returnData: function(tId, request, callback, response) {
         // Problematic response
