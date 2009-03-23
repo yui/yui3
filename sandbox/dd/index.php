@@ -248,7 +248,7 @@ var yConfig2 = {
         Base: true,
         Attribute: true,
         augment: true
-    }, 
+    },
     throwFail: true,
     debug: false
 };

@@ -246,6 +246,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
+            if (!this.shim) {
+                return false;
+            }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
@@ -297,6 +300,10 @@ YUI.add('dd-drop', function(Y) {
                 return false;
             }
             if (this.get('lock')) {
+                return false;
+            }
+            if (!this.shim) {
+                Y.later(100, this, this.sizeShim);
                 return false;
             }
             var node = this.get(NODE),
