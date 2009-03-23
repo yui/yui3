@@ -107,7 +107,7 @@
                             <div class="content">
                                     <div class="" rel="yui:property" resource="#property_currentState">
                                     <h4><a name="property_currentState" property="yui:name">currentState</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_id">
                                     <h4><a name="property_id" property="yui:name">id</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -137,11 +137,29 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_initialState">
                                     <h4><a name="property_initialState" property="yui:name">initialState</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             The module's initial state
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_upcomingState">
+                                    <h4><a name="property_upcomingState" property="yui:name">upcomingState</a>
+                                        - <code>private final <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The module's upcoming state. There can be a slight delay between the
+time a state is changed, and the time a state change is detected.
+This property allows us to not fire the module state changed event
+multiple times, making client code simpler.
                                         </div>
                                     </div>
      
@@ -231,6 +249,7 @@
                                 <li class=""><a href="#property_currentState" title="currentState">currentState</a></li>
                                 <li class=""><a href="#property_id" title="id">id</a></li>
                                 <li class=""><a href="#property_initialState" title="initialState">initialState</a></li>
+                                <li class="private"><a href="#property_upcomingState" title="upcomingState">upcomingState</a></li>
                         </ul>
                     </div>
 
@@ -246,7 +265,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "History", "name": "_checkIframeLoaded", "url": "History.html#method__checkIframeLoaded", "type": "method"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History", "name": "getBookmarkedState", "url": "History.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History", "name": "getCurrentState", "url": "History.html#method_getCurrentState", "type": "method"}, {"access": "private", "host": "History", "name": "_getHash", "url": "History.html#method__getHash", "type": "method"}, {"access": "", "host": "History", "name": "getQueryStringParameter", "url": "History.html#method_getQueryStringParameter", "type": "method"}, {"access": "private", "host": "History", "name": "_handleFQStateChange", "url": "History.html#method__handleFQStateChange", "type": "method"}, {"access": "", "host": "History", "name": "history:globalStateChange", "url": "History.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:moduleStateChange", "url": "History.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:ready", "url": "History.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "private", "host": "History", "name": "_initialize", "url": "History.html#method__initialize", "type": "method"}, {"access": "", "host": "History", "name": "initialize", "url": "History.html#method_initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History", "name": "multiNavigate", "url": "History.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History", "name": "navigate", "url": "History.html#method_navigate", "type": "method"}, {"access": "", "host": "History", "name": "register", "url": "History.html#method_register", "type": "method"}, {"access": "private", "host": "History", "name": "_storeStates", "url": "History.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History", "name": "_updateIFrame", "url": "History.html#method__updateIFrame", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "History", "name": "_checkIframeLoaded", "url": "History.html#method__checkIframeLoaded", "type": "method"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History", "name": "getBookmarkedState", "url": "History.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History", "name": "getCurrentState", "url": "History.html#method_getCurrentState", "type": "method"}, {"access": "private", "host": "History", "name": "_getHash", "url": "History.html#method__getHash", "type": "method"}, {"access": "", "host": "History", "name": "getQueryStringParameter", "url": "History.html#method_getQueryStringParameter", "type": "method"}, {"access": "private", "host": "History", "name": "_handleFQStateChange", "url": "History.html#method__handleFQStateChange", "type": "method"}, {"access": "", "host": "History", "name": "history:globalStateChange", "url": "History.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:moduleStateChange", "url": "History.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:ready", "url": "History.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "private", "host": "History", "name": "_initialize", "url": "History.html#method__initialize", "type": "method"}, {"access": "", "host": "History", "name": "initialize", "url": "History.html#method_initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History", "name": "multiNavigate", "url": "History.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History", "name": "navigate", "url": "History.html#method_navigate", "type": "method"}, {"access": "", "host": "History", "name": "register", "url": "History.html#method_register", "type": "method"}, {"access": "private", "host": "History", "name": "_storeStates", "url": "History.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History.Module", "name": "upcomingState", "url": "History.Module.html#property_upcomingState", "type": "property"}, {"access": "private", "host": "History", "name": "_updateIFrame", "url": "History.html#method__updateIFrame", "type": "method"}];
 </script>
 </body>
 </html>

@@ -206,7 +206,6 @@
 
                 <span class="s1">&#39;dom-style&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">]</span>
-
                 <span class="o">},</span>
 
                 <span class="s1">&#39;dom-screen&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -221,8 +220,8 @@
 
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">],</span>
-            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-base&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
@@ -233,8 +232,10 @@
 
                 <span class="s1">&#39;node-screen&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-screen&#39;</span><span class="o">,</span> <span class="s1">&#39;node-base&#39;</span><span class="o">]</span>
-                <span class="o">},</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
 
+            <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-event-simulate&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node-base&#39;</span><span class="o">,</span> <span class="s1">&#39;event-simulate&#39;</span><span class="o">]</span>
                 <span class="o">}</span>

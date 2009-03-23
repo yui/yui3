@@ -88,10 +88,11 @@ O.size = function(o) {
  * @static
  * @param o an object
  * @param k the key to query
- * @return {boolena} true if the object contains the key
+ * @return {boolean} true if the object contains the key
  */
 O.hasKey = function(o, k) {
-    return (o.hasOwnProperty(k));
+    // return (o.hasOwnProperty(k));
+    return (k in o);
 };
 
 /**

@@ -48,6 +48,7 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
 <span class="c">/**</span>
 <span class="c"> * Provides a mechanism to fetch remote resources and</span>
 <span class="c"> * insert them into a document.</span>
@@ -429,9 +430,9 @@
             <span class="nx">nodes</span><span class="o">:</span> <span class="o">[]</span>
         <span class="o">});</span>
 
-        <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+        <span class="nx">q</span>           <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+        <span class="nx">q</span><span class="o">.</span><span class="nx">win</span>       <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+        <span class="nx">q</span><span class="o">.</span><span class="nx">context</span>   <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="o">)</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
                       <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
 
