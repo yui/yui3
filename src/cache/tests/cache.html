@@ -126,7 +126,7 @@
                     });
                 }, this, true);
                 cache.add(1, "a");
-                this.wait(0);
+                this.wait();
             },
         
             testFlush: function() {
@@ -138,7 +138,7 @@
                 }, this, true);
                 cache.add(1, "a");
                 cache.flush()
-                this.wait(0); 
+                this.wait();
             },
 
             testRequest: function() {
@@ -150,7 +150,7 @@
                 }, this, true);
                 cache.add(1, "a");
                 cache.retrieve(2)
-                this.wait(0); 
+                this.wait();
             },
 
             testRetrieveSuccess: function() {
@@ -163,7 +163,7 @@
                 }, this, true);
                 cache.add(1, "a");
                 cache.retrieve(1)
-                this.wait(0); 
+                this.wait();
             },
 
             testRetrieveFailure: function() {
