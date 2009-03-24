@@ -36,29 +36,7 @@ Y.mix(DS, {
      * @private
      * @default 0     
      */
-    _tId: 0,
-    
-    /**
-     * Indicates null data response.
-     *
-     * @property DataSource.ERROR_DATANULL
-     * @type Number
-     * @static     
-     * @final
-     * @default 0     
-     */
-    ERROR_DATANULL: 0,
-
-    /**
-     * Indicates invalid data response.
-     *
-     * @property DataSource.ERROR_DATAINVALID
-     * @type Number
-     * @static     
-     * @final
-     * @default 1    
-     */
-    ERROR_DATAINVALID: 1
+    _tId: 0
 });
     
     /////////////////////////////////////////////////////////////////////////////
@@ -93,27 +71,6 @@ Y.mix(DSBase, {
         */
         source: {
             value: null
-        },
-        
-        /**
-        * @attribute ERROR_DATAINVALID
-        * @description Error message for invalid data responses.
-        * @type String
-        * @default "Invalid data"
-        */
-        ERROR_DATAINVALID: {
-            value: "Invalid data"
-        },
-
-
-        /**
-        * @attribute ERROR_DATANULL
-        * @description Error message for null data responses.
-        * @type String
-        * @default "Null data"        
-        */
-        ERROR_DATANULL: {
-            value: "Null data"
         }
     },
 

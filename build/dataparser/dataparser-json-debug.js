@@ -30,7 +30,7 @@ Y.mix(JSON, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataParser.JSON.NAME
      * @type String
      * @static
      * @final
@@ -73,9 +73,10 @@ Y.extend(JSON, Y.DataParser.Base, {
      * Overriding parse method traverses JSON data according to given schema.
      *
      * @method _parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @return TBD
+     * @protected
      */
     _parse: function(data) {
         var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,

@@ -72,27 +72,6 @@ Y.mix(Base, {
         */
         schema: {
             value: {}
-        },
-
-        /**
-        * @attribute ERROR_DATAINVALID
-        * @description Error message for invalid data.
-        * @type String
-        * @default "Invalid data"
-        */
-        ERROR_DATAINVALID: {
-            value: "Invalid data"
-        },
-
-
-        /**
-        * @attribute ERROR_DATANULL
-        * @description Error message for null data.
-        * @type String
-        * @default "Null data"
-        */
-        ERROR_DATANULL: {
-            value: "Null data"
         }
     }
 });

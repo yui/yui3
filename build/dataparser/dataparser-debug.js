@@ -31,7 +31,7 @@ Y.mix(Base, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataParser.Base.NAME
      * @type String
      * @static
      * @final
@@ -74,27 +74,6 @@ Y.mix(Base, {
         */
         schema: {
             value: {}
-        },
-
-        /**
-        * @attribute ERROR_DATAINVALID
-        * @description Error message for invalid data.
-        * @type String
-        * @default "Invalid data"
-        */
-        ERROR_DATAINVALID: {
-            value: "Invalid data"
-        },
-
-
-        /**
-        * @attribute ERROR_DATANULL
-        * @description Error message for null data.
-        * @type String
-        * @default "Null data"
-        */
-        ERROR_DATANULL: {
-            value: "Null data"
         }
     }
 });
@@ -127,9 +106,9 @@ Y.extend(Base, Y.Base, {
      * Abstract overridable parse method returns data as-is.
      *
      * @method _parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @protected
      */
     _parse: function(data) {
         return data;
@@ -139,9 +118,9 @@ Y.extend(Base, Y.Base, {
      * Parses data.
      *
      * @method parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @protected
      */
     parse: function(data) {
         var ok = this.fire("parse", null, data);
@@ -196,7 +175,7 @@ Y.mix(JSON, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataParser.JSON.NAME
      * @type String
      * @static
      * @final
@@ -239,9 +218,10 @@ Y.extend(JSON, Y.DataParser.Base, {
      * Overriding parse method traverses JSON data according to given schema.
      *
      * @method _parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @return TBD
+     * @protected
      */
     _parse: function(data) {
         var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
