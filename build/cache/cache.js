@@ -113,17 +113,17 @@ Y.extend(Cache, Y.Base, {
         * @description Fired when an entry is added.
         * @param e {Event.Facade} Event Facade object.
         * @param entry {Object} The cached entry.
-        * @preventable _defAdd
+        * @preventable _handleAdd
         */
-        this.publish("add", {defaultFn: this._defAdd});
+        this.publish("add", {defaultFn: this._handleAdd});
 
         /**
         * @event flush
         * @description Fired when the cache is flushed.
         * @param e {Event.Facade} Event Facade object.
-        * @preventable _defFlush
+        * @preventable _handleFlush
         */
-        this.publish("flush", {defaultFn: this._defFlush});
+        this.publish("flush", {defaultFn: this._handleFlush});
 
         /**
         * @event request
@@ -161,12 +161,12 @@ Y.extend(Cache, Y.Base, {
     /**
      * The default add behavior.
      *
-     * @method _defAdd
+     * @method _handleAdd
      * @param e {Event.Facade} Event Facade object.
      * @param entry {Object} The cached entry.
      * @protected
      */
-    _defAdd: function(e, entry) {
+    _handleAdd: function(e, entry) {
         var entries = this._entries,
             max = this.get("size");
             
@@ -187,11 +187,11 @@ Y.extend(Cache, Y.Base, {
     /**
      * Flushes cache.
      *
-     * @method _defFlush
+     * @method _handleFlush
      * @param e {Event.Facade} Event Facade object.
      * @protected     
      */
-    _defFlush: function(e) {
+    _handleFlush: function(e) {
         this._entries = [];
     },
 
