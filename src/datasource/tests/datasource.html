@@ -334,7 +334,9 @@
                     ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
                 });
 
-                ds.sendRequest("a");
+                ds.sendRequest("a", {success:function(response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                }});
             }
         });
 
