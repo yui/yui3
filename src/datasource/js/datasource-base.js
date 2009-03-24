@@ -70,7 +70,7 @@ Y.mix(DSBase, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.Base.NAME
      * @type String
      * @static     
      * @final
@@ -120,7 +120,7 @@ Y.mix(DSBase, {
     /**
      * Executes a given callback.  The third param determines whether to execute
      *
-     * @method issueCallback
+     * @method DataSource.Base.issueCallback
      * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred

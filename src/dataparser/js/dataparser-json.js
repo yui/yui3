@@ -28,7 +28,7 @@ Y.mix(JSON, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataParser.JSON.NAME
      * @type String
      * @static
      * @final

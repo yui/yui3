@@ -29,7 +29,7 @@ Y.mix(Base, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataParser.Base.NAME
      * @type String
      * @static
      * @final

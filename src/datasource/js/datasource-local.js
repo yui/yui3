@@ -28,7 +28,7 @@ Y.mix(Local, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.Local.NAME
      * @type String
      * @static     
      * @final

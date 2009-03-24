@@ -28,7 +28,7 @@ Y.mix(XHR, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.XHR.NAME
      * @type String
      * @static     
      * @final
