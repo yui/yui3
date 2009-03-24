@@ -56,11 +56,12 @@
                 var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
+                
 
-                ds.sendRequest("a", {success:function(request,response) {
+                ds.sendRequest("a", {success:function(response) {
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});                
-            }           
+            }
         });
 
         var testLocalEvents = new Y.Test.Case({
@@ -83,6 +84,24 @@
                 this.wait();
             },
 
+            testLocalData: function() {
+                var ds = new Y.DataSource.Local({
+                    source: ["a","b","c","d"]
+                });
+
+                ds.subscribe("data", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isArray(o.data, "Expected raw data.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
             testLocalResponse: function() {
                 var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
@@ -93,7 +112,9 @@
                         ASSERT.isNumber(o.tId, "Expected transaction ID.");
                         ASSERT.areSame("a", o.request, "Expected request.");
                         ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isArray(o.response, "Expected response.");
+                        ASSERT.isArray(o.data, "Expected raw data.");
+                        ASSERT.isArray(o.results, "Expected parsed results.");
+                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
                     });
                 }, this, true);
 
@@ -111,6 +132,7 @@
                         ASSERT.isNumber(o.tId, "Expected transaction ID.");
                         ASSERT.areSame("a", o.request, "Expected request.");
                         ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isUndefined(o.results, "Expected undefined results.");
                         ASSERT.isTrue(o.error, "Expected error.");
                     });
                 }, this, true);
@@ -136,14 +158,14 @@
                 });
 
                 ds.sendRequest(null, {
-                    success: function(request,response) {
+                    success: function(o) {
                         this.resume(function() {
-                            ASSERT.isNull(request, "Expected null request.");
-                            ASSERT.isObject(response, "Expected response object.");
-                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, response, "Expected all properties.");
+                            ASSERT.isNull(o.request, "Expected null request.");
+                            ASSERT.isObject(o.results, "Expected response object.");
+                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, o, "Expected all properties.");
                         });
                     },
-                    failure: function(request, response) {
+                    failure: function(o) {
                         this.resume(function() {
                             ASSERT.fail("XHR failure case.");
                         });
@@ -181,7 +203,7 @@
                 this.wait();
             },
 
-            testXHRResponse: function() {
+            testXHRData: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
                     parser: new Y.DataParser.JSON({
@@ -192,18 +214,18 @@
                     })
                 });
 
-                ds.subscribe("response", function(e, o) {
+                ds.subscribe("data", function(e, o) {
                     this.resume(function() {
                         ASSERT.isNumber(o.tId, "Expected transaction ID.");
                         ASSERT.areSame(null, o.request, "Expected request.");
                         ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        //ASSERT.isArray(o.response, "Expected response.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
                     });
                 }, this, true);
 
                 ds.sendRequest(null, "callback");
                 this.wait();
-            }/*,
+            },
 
             testXHRResponse: function() {
                 var ds = new Y.DataSource.XHR({
@@ -221,7 +243,9 @@
                         ASSERT.isNumber(o.tId, "Expected transaction ID.");
                         ASSERT.areSame("a", o.request, "Expected request.");
                         ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isArray(o.response, "Expected response.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
+                        ASSERT.isArray(o.results, "Expected parsed results.");
+                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
                     });
                 }, this, true);
 
@@ -245,14 +269,15 @@
                         ASSERT.isNumber(o.tId, "Expected transaction ID.");
                         ASSERT.areSame("a", o.request, "Expected request.");
                         ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
                         ASSERT.isTrue(o.error, "Expected error.");
                     });
                 }, this, true);
 
-                ds.set("source", undefined);
+                ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
                 this.wait();
-            }*/
+            }
         });
 
         var testCache = new Y.Test.Case({
@@ -277,7 +302,7 @@
                 ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
             },
             
-            testLocalCache: function() {
+            /*testLocalCache: function() {
                 var cache = new Y.Cache({size:3}),
                     ds = new Y.DataSource.Local({
                         source: ["a","b","c","d"],
@@ -295,7 +320,7 @@
                 ds.sendRequest("a", {success:function(request,response) {
                     ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected cached response.");
                 }});
-            }
+            }*/
         });
 
         Y.Test.Runner.add(testClass);

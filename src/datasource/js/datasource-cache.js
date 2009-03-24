@@ -84,7 +84,7 @@ Cacheable.prototype = {
         // Is response already in the Cache?
         var entry = (this.get("cache") && this.get("cache").retrieve(request, callback)) || null;
         if(entry && entry.response) {
-            BASE.issueCallback(callback,[request,entry.response]);
+            BASE.issueCallback(entry.response);
             return new Y.Do.Halt("msg", "newRetVal");
         }
     },

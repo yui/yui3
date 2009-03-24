@@ -74,6 +74,7 @@ Y.extend(JSON, Y.DataParser.Base, {
      * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @return TBD
      */
     _parse: function(data) {
         var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,

@@ -120,8 +120,7 @@ Y.mix(DSBase, {
     },
 
     /**
-     * Executes a given callback.  For object literal callbacks, the third
-     * param determines whether to execute the success handler or failure handler.
+     * Executes a given callback.  The third param determines whether to execute
      *
      * @method issueCallback
      * @param callback {Object} The callback object.
@@ -129,12 +128,12 @@ Y.mix(DSBase, {
      * @param error {Boolean} whether an error occurred
      * @static
      */
-    issueCallback: function (callback, params, error) {
-        if(callback) {
-            var scope = callback.scope || window,
-                callbackFunc = (error && callback.failure) || callback.success;
+    issueCallback: function (response) {
+        if(response.callback) {
+            var scope = response.callback.scope || window,
+                callbackFunc = (response.error && response.callback.failure) || response.callback.success;
             if (callbackFunc) {
-                callbackFunc.apply(scope, params.concat([callback.argument]));
+                callbackFunc.apply(scope, [response]);
             }
         }
     }
@@ -185,7 +184,7 @@ Y.extend(DSBase, Y.Base, {
     */
     _initEvents: function() {
         /**
-         * Fired when a request is sent to the live data source.
+         * Fired when a data request is received.
          *
          * @event request
          * @param e {Event.Facade} Event Facade.         
@@ -196,22 +195,40 @@ Y.extend(DSBase, Y.Base, {
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * </dl>                 
          */
-        this.publish("request", {defaultFn: this._defRequestHandler});
+        this.publish("request", {defaultFn: this._handleRequest});
          
         /**
-         * Fired when a response is received from the live data source.
+         * Fired when raw data is received.
          *
-         * @event response
+         * @event data
          * @param e {Event.Facade} Event Facade.
          * @param o {Object} Object with the following properties:
          * <dl>                          
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+         * <dt>data (Object)</dt> <dd>The raw data.</dd>
          * </dl>                 
          */
-        this.publish("response", {defaultFn: this._defResponseHandler});
+        this.publish("data", {defaultFn: this._handleData});
+
+        /**
+         * Fired when response is returned.
+         *
+         * @event response
+         * @param e {Event.Facade} Event Facade.
+         * @param o {Object} Object with the following properties:
+         * <dl>
+         * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+         * <dt>request (Object)</dt> <dd>The request.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>data (Object)</dt> <dd>The raw data.</dd>
+         * <dt>results (Object)</dt> <dd>Parsed results.</dd>
+         * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
+         * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         * </dl>
+         */
+         this.publish("response", {defaultFn: this._handleResponse});
 
         /**
          * Fired when an error is encountered.
@@ -223,8 +240,10 @@ Y.extend(DSBase, Y.Base, {
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>response (Object)</dt> <dd>The raw response data.</dd>
-         * <dt>error (Object)</dt> <dd>Error data.</dd>
+         * <dt>data (Object)</dt> <dd>The raw data (if available).</dd>
+         * <dt>results (Object)</dt> <dd>Parsed results (if available).</dd>
+         * <dt>meta (Object)</dt> <dd>Parsed meta results data (if available).</dd>
+         * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
          */
 
@@ -236,7 +255,7 @@ Y.extend(DSBase, Y.Base, {
      * method should be implemented by subclasses to achieve more complex
      * behavior such as accessing remote data.
      *
-     * @method _defRequestHandler
+     * @method _handleRequest
      * @protected
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
@@ -246,15 +265,25 @@ Y.extend(DSBase, Y.Base, {
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * </dl>                 
      */
-    _defRequestHandler: function(e, o) {
-        this.fire("response", null, Y.mix(o, {response:this.get("source")}));
+    _handleRequest: function(e, o) {
+        var data = this.get("source");
+        
+        // Problematic data
+        if(LANG.isUndefined(data)) {
+            o.error = true;
+        }
+        if(o.error) {
+            this.fire("error", null, o);
+        }
+
+        this.fire("data", null, Y.mix(o, {data:data}));
     },
 
     /**
-     * Overridable default <code>response</code> event handler receives raw data response and
-     * by default, passes it as-is to returnData.
+     * Overridable default <code>data</code> event handler normalizes raw data
+     * into a response that includes results and meta properties.
      *
-     * @method _defResponseHandler
+     * @method _handleData
      * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
@@ -262,14 +291,45 @@ Y.extend(DSBase, Y.Base, {
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-     * <dt>response (Object)</dt> <dd>The raw response data.</dd>
+     * <dt>data (Object)</dt> <dd>The raw response data.</dd>
      * </dl>                 
      */
-    _defResponseHandler: function(e, o) {
-        this.returnData(o.tId, o.request, o.callback, {results: o.response});
-
+    _handleData: function(e, o) {
+        // Pass through data as-is
+        o.results = o.data;
+        
+        // Normalize
+        if(!o.results) {
+            o.results = [];
+        }
+        if(!o.meta) {
+            o.meta = {};
+        }
+        
+        this.fire("response", null, o);
     },
 
+    /**
+     * Overridable default <code>response</code> event handler returns data as a
+     * normalized response to callabck.
+     *
+     * @method _handleResponse
+     * @protected
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>data (Object)</dt> <dd>Raw data.</dd>
+     * <dt>results (Object)</dt> <dd>Parsed results.</dd>
+     * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+     * </dl>
+     */
+    _handleResponse: function(e, o) {
+        // Send the response back to the callback
+        DSBase.issueCallback(o);
+    },
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
      *
@@ -292,40 +352,7 @@ Y.extend(DSBase, Y.Base, {
         var tId = DS._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         return tId;
-    },
-
-    /**
-     * Overridable method returns data to callback.
-     *
-     * @method returnData
-     * @param tId {Number} Transaction ID.
-     * @param request {Object} Request.
-     * @param callback {Object} Callback object.
-     * @param response {Object} Raw data response.
-     */
-    returnData: function(tId, request, callback, response) {
-        // Problematic response
-        if(!response || LANG.isUndefined(response.results)) {
-            response = {error:true};
-        }
-        // Handle any error
-        if(response.error) {
-            this.fire("error", null, {tId:tId, request:request, response:response, callback:callback, error:response.error});
-        }
-
-        // Normalize
-        response.tId = tId;
-        if(!response.results) {
-            response.results = [];
-        }
-        if(!response.meta) {
-            response.meta = {};
-        }
-
-        // Send the response back to the callback
-        DSBase.issueCallback(callback, [request, response, (callback && callback.argument)], response.error);
     }
-
 });
     
     DS.Base = DSBase;

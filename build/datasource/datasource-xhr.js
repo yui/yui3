@@ -64,7 +64,7 @@ Y.extend(XHR, Y.DataSource.Base, {
      * Overriding <code>request</code> event handler passes query string to IO. Fires
      * <code>response</code> event when response is received.     
      *
-     * @method _defRequestHandler
+     * @method _handleRequest
      * @protected     
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
@@ -74,12 +74,19 @@ Y.extend(XHR, Y.DataSource.Base, {
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * </dl>
      */
-    _defRequestHandler: function(e, o) {
+    _handleRequest: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {
-                    complete: function (id, response, o) {
-                        this.fire("response", null, Y.mix(o, {response:response}));
+                    success: function (id, response, o) {
+                        this.fire("data", null, Y.mix(o, {data:response}));
+                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
+                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                    },
+                    failure: function (id, response, o) {
+                        o.error = true;
+                        this.fire("error", null, Y.mix(o, {data:response}));
+                        this.fire("data", null, Y.mix(o, {data:response}));
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     }
