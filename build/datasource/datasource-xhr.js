@@ -30,7 +30,7 @@ Y.mix(XHR, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.XHR.NAME
      * @type String
      * @static     
      * @final
@@ -65,7 +65,6 @@ Y.extend(XHR, Y.DataSource.Base, {
      * <code>response</code> event when response is received.     
      *
      * @method _handleRequest
-     * @protected     
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -73,6 +72,7 @@ Y.extend(XHR, Y.DataSource.Base, {
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * </dl>
+     * @protected
      */
     _handleRequest: function(e, o) {
         var uri = this.get("source"),

@@ -72,7 +72,7 @@ Y.mix(DSBase, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.Base.NAME
      * @type String
      * @static     
      * @final
@@ -122,7 +122,7 @@ Y.mix(DSBase, {
     /**
      * Executes a given callback.  The third param determines whether to execute
      *
-     * @method issueCallback
+     * @method DataSource.Base.issueCallback
      * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred
@@ -193,7 +193,8 @@ Y.extend(DSBase, Y.Base, {
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * </dl>                 
+         * </dl>
+         * @preventable _handleRequest
          */
         this.publish("request", {defaultFn: this._handleRequest});
          
@@ -208,7 +209,8 @@ Y.extend(DSBase, Y.Base, {
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * <dt>data (Object)</dt> <dd>The raw data.</dd>
-         * </dl>                 
+         * </dl>
+         * @preventable _handleData
          */
         this.publish("data", {defaultFn: this._handleData});
 
@@ -227,6 +229,7 @@ Y.extend(DSBase, Y.Base, {
          * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
          * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
+         * @preventable _handleResponse
          */
          this.publish("response", {defaultFn: this._handleResponse});
 
@@ -256,14 +259,14 @@ Y.extend(DSBase, Y.Base, {
      * behavior such as accessing remote data.
      *
      * @method _handleRequest
-     * @protected
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
      * <dl>                          
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-     * </dl>                 
+     * </dl>
+     * @protected
      */
     _handleRequest: function(e, o) {
         var data = this.get("source");
@@ -287,7 +290,6 @@ Y.extend(DSBase, Y.Base, {
      * into a response that includes results and meta properties.
      *
      * @method _handleData
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -295,7 +297,8 @@ Y.extend(DSBase, Y.Base, {
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * <dt>data (Object)</dt> <dd>The raw response data.</dd>
-     * </dl>                 
+     * </dl>
+     * @protected
      */
     _handleData: function(e, o) {
         // Pass through data as-is
@@ -317,7 +320,6 @@ Y.extend(DSBase, Y.Base, {
      * normalized response to callabck.
      *
      * @method _handleResponse
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -328,6 +330,7 @@ Y.extend(DSBase, Y.Base, {
      * <dt>results (Object)</dt> <dd>Parsed results.</dd>
      * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      * </dl>
+     * @protected
      */
     _handleResponse: function(e, o) {
         // Send the response back to the callback

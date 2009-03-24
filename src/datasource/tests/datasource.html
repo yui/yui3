@@ -302,25 +302,40 @@
                 ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
             },
             
-            /*testLocalCache: function() {
+            testLocalCache: function() {
                 var cache = new Y.Cache({size:3}),
                     ds = new Y.DataSource.Local({
                         source: ["a","b","c","d"],
                         cache: cache
                     });
 
-                ds.sendRequest("a", {success:function(request,response) {
-                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
-                }});
-                
-                ds.subscribe("requestEvent", function() {
-                    ASSERT.fail("Entry is cached -- requestEvent is unexpected");
+                ds.sendRequest("a");
+
+                ds.subscribe("request", function(e, o) {
+                    ASSERT.fail("Entry is cached -- 'request' event is unexpected");
                 });
 
-                ds.sendRequest("a", {success:function(request,response) {
-                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected cached response.");
+                ds.sendRequest("a", {success:function(response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
                 }});
-            }*/
+            },
+
+            testLocalCacheUnset: function() {
+                var cache = new Y.Cache({size:3}),
+                    ds = new Y.DataSource.Local({
+                        source: ["a","b","c","d"],
+                        cache: cache
+                    });
+
+                ds.sendRequest("a");
+                ds.set("cache", null);
+
+                cache.subscribe("retrieve", function(e, o) {
+                    ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
+                });
+
+                ds.sendRequest("a");
+            }
         });
 
         Y.Test.Runner.add(testClass);

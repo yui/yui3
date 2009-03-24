@@ -36,73 +36,59 @@ Cacheable.ATTRS = {
             return ((value instanceof Y.Cache) || (value === null));
         },
         set: function(value) {
-            var i=0,
-                handlers = this._cacheHandlers;
-            
-            // Enabling...
-            if(value !== null) {
-                // for the first time
-                if(handlers === null) {
-                    handlers = [];
-                    handlers.push(Y.before(this._beforeSendRequest, this, "sendRequest"));
-                    handlers.push(Y.before(this._beforeReturnData, this, "returnData"));
-                    this._cacheHandlers = handlers;
-                }
-            }
-            // Disabling
-            else if(handlers !== null){
-                for(;i<handlers; i++) {
-                    Y.detach(handlers[i]);
-                }
-                this._cacheHandlers = null;
-            }
-            
-            //TODO: Handle the destroy() case
+            this.on("request", this._beforeRequest);
+            this.on("response", this._beforeResponse);
+
+            //TODO: Cleanup for destroy()?
         }
     }
 };
     
 Cacheable.prototype = {
     /**
-     * Internal reference to AOP subscriptions, for detaching.
-     *
-     * @property _cacheHandlers
-     * @private
-     * @type Array
-     */
-    _cacheHandlers: null,
-    
-    /**
      * First look for cached response, then send request to live data.
      *
-     * @method _beforeSendRequest
+     * @method _beforeRequest
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * </dl>
      * @protected
-     * @param request {MIXED} Request.
-     * @param callback {Object} Callback object.
      */
-    _beforeSendRequest: function(request, callback) {
+    _beforeRequest: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache") && this.get("cache").retrieve(request, callback)) || null;
+        var entry = (this.get("cache") && this.get("cache").retrieve(o.request, o.callback)) || null;
         if(entry && entry.response) {
-            BASE.issueCallback(entry.response);
-            return new Y.Do.Halt("msg", "newRetVal");
+            e.stopImmediatePropagation();
+            this.fire("response", null, Y.mix(o, entry.response));
+            //BASE.issueCallback(entry.response);
+            //return new Y.Do.Halt("msg", "newRetVal");
         }
     },
     
     /**
      * Adds data to cache before returning data.
      *
-     * @method _beforeReturnData
+     * @method _beforeResponse
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>data (Object)</dt> <dd>Raw data.</dd>
+     * <dt>results (Object)</dt> <dd>Parsed results.</dd>
+     * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+     * </dl>
      * @protected
-     * @param tId {Number} Transaction ID.
-     * @param request {MIXED} Request.
-     * @param callback {Object} Callback object.
-     * @param response {MIXED} Raw data response.
      */
-     _beforeReturnData: function(tId, request, callback, response) {
+     _beforeResponse: function(e, o) {
         // Add to Cache before returning
         if(this.get("cache")) {
-            this.get("cache").add(request, response, (callback && callback.argument));
+            this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
         }
      }
 };

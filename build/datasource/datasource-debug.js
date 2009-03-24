@@ -72,7 +72,7 @@ Y.mix(DSBase, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.Base.NAME
      * @type String
      * @static     
      * @final
@@ -122,7 +122,7 @@ Y.mix(DSBase, {
     /**
      * Executes a given callback.  The third param determines whether to execute
      *
-     * @method issueCallback
+     * @method DataSource.Base.issueCallback
      * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred
@@ -193,7 +193,8 @@ Y.extend(DSBase, Y.Base, {
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * </dl>                 
+         * </dl>
+         * @preventable _handleRequest
          */
         this.publish("request", {defaultFn: this._handleRequest});
          
@@ -208,7 +209,8 @@ Y.extend(DSBase, Y.Base, {
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * <dt>data (Object)</dt> <dd>The raw data.</dd>
-         * </dl>                 
+         * </dl>
+         * @preventable _handleData
          */
         this.publish("data", {defaultFn: this._handleData});
 
@@ -227,6 +229,7 @@ Y.extend(DSBase, Y.Base, {
          * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
          * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
+         * @preventable _handleResponse
          */
          this.publish("response", {defaultFn: this._handleResponse});
 
@@ -256,14 +259,14 @@ Y.extend(DSBase, Y.Base, {
      * behavior such as accessing remote data.
      *
      * @method _handleRequest
-     * @protected
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
      * <dl>                          
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-     * </dl>                 
+     * </dl>
+     * @protected
      */
     _handleRequest: function(e, o) {
         var data = this.get("source");
@@ -287,7 +290,6 @@ Y.extend(DSBase, Y.Base, {
      * into a response that includes results and meta properties.
      *
      * @method _handleData
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -295,7 +297,8 @@ Y.extend(DSBase, Y.Base, {
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * <dt>data (Object)</dt> <dd>The raw response data.</dd>
-     * </dl>                 
+     * </dl>
+     * @protected
      */
     _handleData: function(e, o) {
         // Pass through data as-is
@@ -317,7 +320,6 @@ Y.extend(DSBase, Y.Base, {
      * normalized response to callabck.
      *
      * @method _handleResponse
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -328,6 +330,7 @@ Y.extend(DSBase, Y.Base, {
      * <dt>results (Object)</dt> <dd>Parsed results.</dd>
      * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      * </dl>
+     * @protected
      */
     _handleResponse: function(e, o) {
         // Send the response back to the callback
@@ -398,7 +401,7 @@ Y.mix(Local, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.Local.NAME
      * @type String
      * @static     
      * @final
@@ -459,7 +462,7 @@ Y.mix(XHR, {
     /**
      * Class name.
      *
-     * @property NAME
+     * @property DataSource.XHR.NAME
      * @type String
      * @static     
      * @final
@@ -494,7 +497,6 @@ Y.extend(XHR, Y.DataSource.Base, {
      * <code>response</code> event when response is received.     
      *
      * @method _handleRequest
-     * @protected     
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -502,6 +504,7 @@ Y.extend(XHR, Y.DataSource.Base, {
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * </dl>
+     * @protected
      */
     _handleRequest: function(e, o) {
         var uri = this.get("source"),
@@ -582,73 +585,59 @@ Cacheable.ATTRS = {
             return ((value instanceof Y.Cache) || (value === null));
         },
         set: function(value) {
-            var i=0,
-                handlers = this._cacheHandlers;
-            
-            // Enabling...
-            if(value !== null) {
-                // for the first time
-                if(handlers === null) {
-                    handlers = [];
-                    handlers.push(Y.before(this._beforeSendRequest, this, "sendRequest"));
-                    handlers.push(Y.before(this._beforeReturnData, this, "returnData"));
-                    this._cacheHandlers = handlers;
-                }
-            }
-            // Disabling
-            else if(handlers !== null){
-                for(;i<handlers; i++) {
-                    Y.detach(handlers[i]);
-                }
-                this._cacheHandlers = null;
-            }
-            
-            //TODO: Handle the destroy() case
+            this.on("request", this._beforeRequest);
+            this.on("response", this._beforeResponse);
+
+            //TODO: Cleanup for destroy()?
         }
     }
 };
     
 Cacheable.prototype = {
     /**
-     * Internal reference to AOP subscriptions, for detaching.
-     *
-     * @property _cacheHandlers
-     * @private
-     * @type Array
-     */
-    _cacheHandlers: null,
-    
-    /**
      * First look for cached response, then send request to live data.
      *
-     * @method _beforeSendRequest
+     * @method _beforeRequest
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * </dl>
      * @protected
-     * @param request {MIXED} Request.
-     * @param callback {Object} Callback object.
      */
-    _beforeSendRequest: function(request, callback) {
+    _beforeRequest: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache") && this.get("cache").retrieve(request, callback)) || null;
+        var entry = (this.get("cache") && this.get("cache").retrieve(o.request, o.callback)) || null;
         if(entry && entry.response) {
-            BASE.issueCallback(entry.response);
-            return new Y.Do.Halt("msg", "newRetVal");
+            e.stopImmediatePropagation();
+            this.fire("response", null, Y.mix(o, entry.response));
+            //BASE.issueCallback(entry.response);
+            //return new Y.Do.Halt("msg", "newRetVal");
         }
     },
     
     /**
      * Adds data to cache before returning data.
      *
-     * @method _beforeReturnData
+     * @method _beforeResponse
+     * @param e {Event.Facade} Event Facade.
+     * @param o {Object} Object with the following properties:
+     * <dl>
+     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
+     * <dt>request (Object)</dt> <dd>The request.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>data (Object)</dt> <dd>Raw data.</dd>
+     * <dt>results (Object)</dt> <dd>Parsed results.</dd>
+     * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+     * </dl>
      * @protected
-     * @param tId {Number} Transaction ID.
-     * @param request {MIXED} Request.
-     * @param callback {Object} Callback object.
-     * @param response {MIXED} Raw data response.
      */
-     _beforeReturnData: function(tId, request, callback, response) {
+     _beforeResponse: function(e, o) {
         // Add to Cache before returning
         if(this.get("cache")) {
-            this.get("cache").add(request, response, (callback && callback.argument));
+            this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
         }
      }
 };
@@ -706,7 +695,6 @@ Parsable.prototype = {
      * Overriding <code>data</code> event handler parses raw data into a normalized response.
      *
      * @method _handleData
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -715,6 +703,7 @@ Parsable.prototype = {
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * <dt>data (Object)</dt> <dd>The raw response.</dd>
      * </dl>
+     * @protected
      */
     _handleData: function(e, o) {
         var response = (this.get("parser") && this.get("parser").parse(o.data));

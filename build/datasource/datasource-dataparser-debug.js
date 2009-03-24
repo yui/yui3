@@ -43,7 +43,6 @@ Parsable.prototype = {
      * Overriding <code>data</code> event handler parses raw data into a normalized response.
      *
      * @method _handleData
-     * @protected
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -52,6 +51,7 @@ Parsable.prototype = {
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
      * <dt>data (Object)</dt> <dd>The raw response.</dd>
      * </dl>
+     * @protected
      */
     _handleData: function(e, o) {
         var response = (this.get("parser") && this.get("parser").parse(o.data));

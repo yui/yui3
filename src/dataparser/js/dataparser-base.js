@@ -125,9 +125,9 @@ Y.extend(Base, Y.Base, {
      * Abstract overridable parse method returns data as-is.
      *
      * @method _parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @protected
      */
     _parse: function(data) {
         return data;
@@ -137,9 +137,9 @@ Y.extend(Base, Y.Base, {
      * Parses data.
      *
      * @method parse
-     * @protected
      * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
      * @param e.data {MIXED} Data to parse.
+     * @protected
      */
     parse: function(data) {
         var ok = this.fire("parse", null, data);
