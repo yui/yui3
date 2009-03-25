@@ -87,14 +87,32 @@
     <span class="nx">_tId</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
     
     <span class="nx">run</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="c">// Grab the first callback in the queue</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
         <span class="c">// A callback is present and not currently executing/scheduled</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">isReady</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_processCallback</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">while</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">active</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">isReady</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c">// Grab the first callback in the queue</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">.</span><span class="nx">until</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SHIFT</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">.</span><span class="nx">timeout</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_processSync</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_processAsync</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+            <span class="c">/**</span>
+<span class="c">             * Event fired after the last queued callback is executed.</span>
+<span class="c">             * @event complete</span>
+<span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;complete&#39;</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -113,24 +131,6 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Sets the Queue status to active and passes the callback to the</span>
-<span class="c">     * appropriate executor (synchronous or asynchronous).</span>
-<span class="c">     * </span>
-<span class="c">     * @method _processCallback</span>
-<span class="c">     * @param callback {Object} the callback object</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_processCallback</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">.</span><span class="nx">timeout</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_processSync</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_processAsync</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
 <span class="c">     * Handles the execution of synchronous callbacks.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _processSync</span>
@@ -138,21 +138,10 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_processSync</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        
-        <span class="k">while</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">active</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">isReady</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">callback</span><span class="o">.</span><span class="nx">until</span><span class="o">())</span> <span class="o">{</span>
-            <span class="nx">callback</span><span class="o">.</span><span class="nx">iterations</span><span class="o">--;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EXEC</span><span class="o">,</span><span class="nx">callback</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">isReady</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SHIFT</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">active</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">run</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="nx">callback</span><span class="o">.</span><span class="nx">iterations</span><span class="o">--;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EXEC</span><span class="o">,</span><span class="nx">callback</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -165,24 +154,19 @@
     <span class="nx">_processAsync</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">.</span><span class="nx">until</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SHIFT</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">run</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c">// Set to execute after the configured timeout</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-                <span class="nx">callback</span><span class="o">.</span><span class="nx">iterations</span><span class="o">--;</span>
+        <span class="c">// Set to execute after the configured timeout</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="nx">callback</span><span class="o">.</span><span class="nx">iterations</span><span class="o">--;</span>
 
-                <span class="nx">self</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EXEC</span><span class="o">,</span><span class="nx">callback</span><span class="o">);</span>
+            <span class="nx">self</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EXEC</span><span class="o">,</span><span class="nx">callback</span><span class="o">);</span>
 
-                <span class="nx">self</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="nx">self</span><span class="o">.</span><span class="nx">_tId</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
-                <span class="c">// Loop unless the Queue was paused from inside the callback</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">self</span><span class="o">.</span><span class="nx">active</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">self</span><span class="o">.</span><span class="nx">run</span><span class="o">();</span>
-                <span class="o">}</span>
-            <span class="o">},</span> <span class="nx">callback</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
-        <span class="o">}</span>
+            <span class="c">// Loop unless the Queue was paused from inside the callback</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">self</span><span class="o">.</span><span class="nx">active</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">self</span><span class="o">.</span><span class="nx">run</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span> <span class="nx">callback</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -347,12 +331,6 @@
 <span class="c"> */</span>
 
 <span class="c">/**</span>
-<span class="c"> * Event fired after the last queued callback is executed.  Not</span>
-<span class="c"> * fired if the Queue is stopped via q.stop().</span>
-<span class="c"> * @event complete</span>
-<span class="c"> */</span>
-
-<span class="c">/**</span>
 <span class="c"> * Event fired when callbacks are added to the Queue.</span>
 <span class="c"> *</span>
 <span class="c"> * @event addCallback</span>
@@ -463,7 +441,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processCallback", "url": "Queue.html#method__processCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
 </script>
 </body>
 </html>
