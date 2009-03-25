@@ -9,12 +9,11 @@ YUI.add('datasource-base', function(Y) {
  * @title DataSource Utility
  */
     Y.namespace("DataSource");
-    var DS = Y.DataSource,
-        LANG = Y.Lang,
+    var LANG = Y.Lang,
     
     /**
      * Base class for the YUI DataSource utility.
-     * @class DataSource.Base
+     * @class DataSource
      * @extends Base
      * @constructor
      */    
@@ -27,40 +26,21 @@ YUI.add('datasource-base', function(Y) {
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-    
-Y.mix(DS, { 
-    /**
-     * Global transaction counter.
-     *
-     * @property DataSource._tId
-     * @type Number
-     * @static     
-     * @private
-     * @default 0     
-     */
-    _tId: 0
-});
-    
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Base static properties
-    //
-    /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {    
+Y.mix(DSBase, {
     /**
      * Class name.
      *
-     * @property DataSource.Base.NAME
+     * @property DataSource.NAME
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Base"
+     * @value "DataSource"
      */
-    NAME: "DataSource.Base",
+    NAME: "DataSource",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -77,9 +57,20 @@ Y.mix(DSBase, {
     },
 
     /**
+     * Global transaction counter.
+     *
+     * @property DataSource._tId
+     * @type Number
+     * @static
+     * @private
+     * @default 0
+     */
+    _tId: 0,
+
+    /**
      * Executes a given callback.  The third param determines whether to execute
      *
-     * @method DataSource.Base.issueCallback
+     * @method DataSource.issueCallback
      * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred
@@ -312,14 +303,14 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DS._tId++;
+        var tId = DSBase._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }
 });
     
-    DS.Base = DSBase;
+    Y.DataSource = DSBase;
     
 
 

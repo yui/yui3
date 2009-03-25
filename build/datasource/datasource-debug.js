@@ -9,12 +9,11 @@ YUI.add('datasource-base', function(Y) {
  * @title DataSource Utility
  */
     Y.namespace("DataSource");
-    var DS = Y.DataSource,
-        LANG = Y.Lang,
+    var LANG = Y.Lang,
     
     /**
      * Base class for the YUI DataSource utility.
-     * @class DataSource.Base
+     * @class DataSource
      * @extends Base
      * @constructor
      */    
@@ -27,40 +26,21 @@ YUI.add('datasource-base', function(Y) {
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-    
-Y.mix(DS, { 
-    /**
-     * Global transaction counter.
-     *
-     * @property DataSource._tId
-     * @type Number
-     * @static     
-     * @private
-     * @default 0     
-     */
-    _tId: 0
-});
-    
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Base static properties
-    //
-    /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {    
+Y.mix(DSBase, {
     /**
      * Class name.
      *
-     * @property DataSource.Base.NAME
+     * @property DataSource.NAME
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Base"
+     * @value "DataSource"
      */
-    NAME: "DataSource.Base",
+    NAME: "DataSource",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -77,9 +57,20 @@ Y.mix(DSBase, {
     },
 
     /**
+     * Global transaction counter.
+     *
+     * @property DataSource._tId
+     * @type Number
+     * @static
+     * @private
+     * @default 0
+     */
+    _tId: 0,
+
+    /**
      * Executes a given callback.  The third param determines whether to execute
      *
-     * @method DataSource.Base.issueCallback
+     * @method DataSource.issueCallback
      * @param callback {Object} The callback object.
      * @param params {Array} params to be passed to the callback method
      * @param error {Boolean} whether an error occurred
@@ -312,80 +303,19 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DS._tId++;
+        var tId = DSBase._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }
 });
     
-    DS.Base = DSBase;
+    Y.DataSource = DSBase;
     
 
 
 
 }, '@VERSION@' ,{requires:['base']});
-
-YUI.add('datasource-local', function(Y) {
-
-/**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
- *
- * @module datasource-local
- * @requires datasource-base
- * @title DataSource Local Submodule
- */
-    var LANG = Y.Lang,
-    
-    /**
-     * Local subclass for the YUI DataSource utility.
-     * @class DataSource.Local
-     * @extends DataSource.Base
-     * @constructor
-     */    
-    Local = function() {
-        Local.superclass.constructor.apply(this, arguments);
-    };
-    
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Local static properties
-    //
-    /////////////////////////////////////////////////////////////////////////////
-Y.mix(Local, {    
-    /**
-     * Class name.
-     *
-     * @property DataSource.Local.NAME
-     * @type String
-     * @static     
-     * @final
-     * @value "DataSource.Local"
-     */
-    NAME: "DataSource.Local",
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.Local Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    ATTRS: {
-    }
-});
-    
-Y.extend(Local, Y.DataSource.Base, {
-});
-  
-    Y.DataSource.Local = Local;
-    
-
-
-
-}, '@VERSION@' ,{requires:['datasource-base']});
 
 YUI.add('datasource-xhr', function(Y) {
 
@@ -402,7 +332,7 @@ YUI.add('datasource-xhr', function(Y) {
     /**
      * XHR subclass for the YUI DataSource utility.
      * @class DataSource.XHR
-     * @extends DataSource.Base
+     * @extends DataSource
      * @constructor
      */    
     XHR = function() {
@@ -448,7 +378,7 @@ Y.mix(XHR, {
     }
 });
     
-Y.extend(XHR, Y.DataSource.Base, {
+Y.extend(XHR, Y.DataSource, {
     /**
      * Overriding <code>request</code> event handler passes query string to IO. Fires
      * <code>response</code> event when response is received.     
@@ -505,14 +435,14 @@ Y.extend(XHR, Y.DataSource.Base, {
 YUI.add('datasource-cache', function(Y) {
 
 /**
- * Extends DataSource.Base with caching functionality.
+ * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
  * @requires datasource-base,cache
  * @title DataSource Cache Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds cacheability to the YUI DataSource utility.
@@ -523,7 +453,7 @@ YUI.add('datasource-cache', function(Y) {
 Cacheable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -610,14 +540,14 @@ Y.Base.build(BASE, [Cacheable], {
 YUI.add('datasource-dataparser', function(Y) {
 
 /**
- * Extends DataSource.Base with schema-based parsing functionality.
+ * Extends DataSource with schema-based parsing functionality.
  *
  * @module datasource-dataparser
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds parsability to the YUI DataSource utility.
@@ -628,7 +558,7 @@ YUI.add('datasource-dataparser', function(Y) {
 Parsable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -685,14 +615,14 @@ Y.Base.build(BASE, [Parsable], {
 YUI.add('datasource-polling', function(Y) {
 
 /**
- * Extends DataSource.Base with polling functionality.
+ * Extends DataSource with polling functionality.
  *
  * @module datasource-polling
  * @requires datasource-base
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds polling to the YUI DataSource utility.
@@ -780,5 +710,5 @@ Y.Base.build(BASE, [Pollable], {
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-local','datasource-xhr','datasource-cache', 'datasource-dataparser', 'datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache', 'datasource-dataparser', 'datasource-polling']});
 

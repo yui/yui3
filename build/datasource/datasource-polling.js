@@ -1,14 +1,14 @@
 YUI.add('datasource-polling', function(Y) {
 
 /**
- * Extends DataSource.Base with polling functionality.
+ * Extends DataSource with polling functionality.
  *
  * @module datasource-polling
  * @requires datasource-base
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds polling to the YUI DataSource utility.

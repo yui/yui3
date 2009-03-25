@@ -13,7 +13,7 @@ YUI.add('datasource-xhr', function(Y) {
     /**
      * XHR subclass for the YUI DataSource utility.
      * @class DataSource.XHR
-     * @extends DataSource.Base
+     * @extends DataSource
      * @constructor
      */    
     XHR = function() {
@@ -59,7 +59,7 @@ Y.mix(XHR, {
     }
 });
     
-Y.extend(XHR, Y.DataSource.Base, {
+Y.extend(XHR, Y.DataSource, {
     /**
      * Overriding <code>request</code> event handler passes query string to IO. Fires
      * <code>response</code> event when response is received.     

@@ -1,12 +1,12 @@
 /**
- * Extends DataSource.Base with caching functionality.
+ * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
  * @requires datasource-base,cache
  * @title DataSource Cache Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds cacheability to the YUI DataSource utility.
@@ -17,7 +17,7 @@
 Cacheable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 

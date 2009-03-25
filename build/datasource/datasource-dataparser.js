@@ -1,14 +1,14 @@
 YUI.add('datasource-dataparser', function(Y) {
 
 /**
- * Extends DataSource.Base with schema-based parsing functionality.
+ * Extends DataSource with schema-based parsing functionality.
  *
  * @module datasource-dataparser
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource.Base,
+        BASE = Y.DataSource,
     
     /**
      * Adds parsability to the YUI DataSource utility.
@@ -19,7 +19,7 @@ YUI.add('datasource-dataparser', function(Y) {
 Parsable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.Base Attributes
+    // DataSource Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
