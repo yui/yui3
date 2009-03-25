@@ -35,7 +35,7 @@ Y.on = function(type, f, o) {
     if (o && o._yuievt && o.subscribe) {
         a = Y.Array(arguments, 0, true);
         a.splice(2, 1);
-        return o.subscribe.apply(Y, a);
+        return o.subscribe.apply(o, a);
     // check for the existance of an event adaptor
     } else if (adapt && adapt.on) {
         Y.log('Using adaptor for ' + type, 'info', 'event');
@@ -74,7 +74,7 @@ Y.detach = function(type, f, o) {
     if (o && o._yuievt && o.unsubscribe) {
         a = Y.Array(arguments, 0, true);
         a.splice(2, 1);
-        return o.unsubscribe.apply(Y, a);
+        return o.unsubscribe.apply(o, a);
     } else if (Lang.isObject(type) && type.detach) {
         return type.detach();
     } else {

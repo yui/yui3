@@ -14,10 +14,12 @@ var _protoInit = Y.Queue.prototype._init;
 Y.mix(Y.Queue.prototype, {
 
     _init : function () {
+        _protoInit.apply(this,arguments);
+
         this.before('executeCallback',this._bindIOListeners);
         this.after('executeCallback',this._detachIOStartListener);
 
-        return _protoInit.apply(this,arguments);
+        return this;
     },
 
     /**
@@ -117,6 +119,7 @@ Y.mix(Y.Queue.prototype, {
     _detachIOStartListener : function (callback) {
         if (this._ioStartSub) {
             this._ioStartSub.detach();
+            this._ioStartSub = null;
         }
     },
 
@@ -174,6 +177,8 @@ Y.mix(Y.Queue.prototype, {
         this._ioFailureSub.detach();
         this._ioAbortSub.detach();
         this._shiftSub.detach();
+        this._ioSuccessSub = this._ioFailureSub =
+        this._ioAbortSub   = this._shiftSub     = null;
     }
 },true);
 
