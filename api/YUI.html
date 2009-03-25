@@ -206,6 +206,24 @@ we care about on the Object prototype.
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_lastIndexOf">
+                                    <h4><a name="property_lastIndexOf" property="yui:name">lastIndexOf</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Returns the index of the last item in the array
+that contains the specified value, -1 if the
+value isn't found.
+method Array.lastIndexOf
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -489,6 +507,766 @@ Ex: 'Object.keys'</span>
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the return value from the applied method or null</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.every">
+                                    <h4>
+                                        <a name="method_Array.every">Array.every</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        boolean
+                                            <strong property="yui:name">Array.every</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if every item in the array returns true
+from the supplied function.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.filter">
+                                    <h4>
+                                        <a name="method_Array.filter">Array.filter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">Array.filter</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array.
+Returns a new array containing the items that the supplied
+function returned true for.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The items on which the supplied function
+returned true. If no items matched an empty array is 
+returned.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.find">
+                                    <h4>
+                                        <a name="method_Array.find">Array.find</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        object
+                                            <strong property="yui:name">Array.find</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array,
+searching for the first item that matches the supplied
+function.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to search</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item. 
+Iteration is stopped as soon as this function returns true
+on an item.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the first item that the supplied function
+returns true for, or null if it never returns true</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.grep">
+                                    <h4>
+                                        <a name="method_Array.grep">Array.grep</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">Array.grep</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         pattern
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Iterates over an array, returning a new array of all the elements
+that match the supplied regular expression
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pattern</span>
+                                                        &lt;<span property="yui:type">RegExp</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The regular expression to test against 
+each item</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">All the items in the collection that 
+produce a match against the supplied regular expression. 
+If no items match, an empty array is returned.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.map">
+                                    <h4>
+                                        <a name="method_Array.map">Array.map</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">Array.map</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A new array containing the return value
+of the supplied function for each item in the original
+array.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.partition">
+                                    <h4>
+                                        <a name="method_Array.partition">Array.partition</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">Array.partition</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Partitions an array into two new arrays, one with the items
+that match the supplied function, and one with the items that
+do not.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional execution context of f.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.reduce">
+                                    <h4>
+                                        <a name="method_Array.reduce">Array.reduce</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">Array.reduce</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         init
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array.
+Reduce "folds" the array into a single value.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">init</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The initial value to start from</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item. It
+is responsible for returning the updated value of the
+computation.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.reject">
+                                    <h4>
+                                        <a name="method_Array.reject">Array.reject</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">Array.reject</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The inverse of filter. Executes the supplied function on each item. 
+Returns a new array containing the items that the supplied
+function returned *false* for.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The items on which the supplied function
+returned false.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.some">
+                                    <h4>
+                                        <a name="method_Array.some">Array.some</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        boolean
+                                            <strong property="yui:name">Array.some</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the supplied function on each item in the array.
+Returning true from the processing function will stop the 
+processing of the remaining
+items.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute on each item</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional context object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the function returns true on
+any of the items in the array</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.unique">
+                                    <h4>
+                                        <a name="method_Array.unique">Array.unique</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">Array.unique</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         sort
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns a copy of the array with the duplicate entries removed
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the array to find the subset of uniques for</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">sort</span>
+                                                        &lt;<span property="yui:type">bool</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  flag to denote if the array is sorted or not. Defaults to false, the more general operation</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">a copy of the array with duplicate entries removed</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Array.zip">
+                                    <h4>
+                                        <a name="method_Array.zip">Array.zip</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">Array.zip</strong>
+                                           (
+                                                
+                                                        
+                                                         a
+                                                    
+                                                
+                                                        , 
+                                                         a2
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates an array of arrays by pairing the corresponding
+elements of two arrays together into a new array.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  a collection to iterate over</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">a2</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  another collection whose members will be 
+paired with members of the first parameter</span>
+                                                        </dd>
+                                                </dl>
+
 
 
              
@@ -1228,6 +2006,43 @@ to the signature provided when the event fires.</span>
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">a handle object for 
 unsubscribing to this event.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_set">
+                                    <h4>
+                                        <a name="method_set">set</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">set</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Update style for a rule.  Add the rule if it's not present already.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -2061,6 +2876,7 @@ to the listener.</span>
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
@@ -2077,6 +2893,7 @@ to the listener.</span>
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property__iefix" title="_iefix">_iefix</a></li>
+                                <li class=""><a href="#property_lastIndexOf" title="lastIndexOf">lastIndexOf</a></li>
                         </ul>
                     </div>
 
@@ -2088,6 +2905,17 @@ to the listener.</span>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
                                 <li class=""><a href="#method_after" title="after">after</a></li>
                                 <li class=""><a href="#method_applyTo" title="applyTo">applyTo</a></li>
+                                <li class=""><a href="#method_Array.every" title="Array.every">Array.every</a></li>
+                                <li class=""><a href="#method_Array.filter" title="Array.filter">Array.filter</a></li>
+                                <li class=""><a href="#method_Array.find" title="Array.find">Array.find</a></li>
+                                <li class=""><a href="#method_Array.grep" title="Array.grep">Array.grep</a></li>
+                                <li class=""><a href="#method_Array.map" title="Array.map">Array.map</a></li>
+                                <li class=""><a href="#method_Array.partition" title="Array.partition">Array.partition</a></li>
+                                <li class=""><a href="#method_Array.reduce" title="Array.reduce">Array.reduce</a></li>
+                                <li class=""><a href="#method_Array.reject" title="Array.reject">Array.reject</a></li>
+                                <li class=""><a href="#method_Array.some" title="Array.some">Array.some</a></li>
+                                <li class=""><a href="#method_Array.unique" title="Array.unique">Array.unique</a></li>
+                                <li class=""><a href="#method_Array.zip" title="Array.zip">Array.zip</a></li>
                                 <li class=""><a href="#method_before" title="before">before</a></li>
                                 <li class=""><a href="#method_detach" title="detach">detach</a></li>
                                 <li class=""><a href="#method_error" title="error">error</a></li>
@@ -2098,6 +2926,7 @@ to the listener.</span>
                                 <li class=""><a href="#method_mix" title="mix">mix</a></li>
                                 <li class=""><a href="#method_namespace" title="namespace">namespace</a></li>
                                 <li class=""><a href="#method_on" title="on">on</a></li>
+                                <li class=""><a href="#method_set" title="set">set</a></li>
                                 <li class=""><a href="#method_simulate" title="simulate">simulate</a></li>
                                 <li class=""><a href="#method_stamp" title="stamp">stamp</a></li>
                                 <li class=""><a href="#method_substitute" title="substitute">substitute</a></li>
@@ -2129,7 +2958,7 @@ to the listener.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "before", "url": "YUI.html#method_before", "type": "method"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "detach", "url": "YUI.html#method_detach", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.every", "url": "YUI.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.filter", "url": "YUI.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.find", "url": "YUI.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.grep", "url": "YUI.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.map", "url": "YUI.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.partition", "url": "YUI.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reduce", "url": "YUI.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reject", "url": "YUI.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.some", "url": "YUI.html#method_Array.some", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.unique", "url": "YUI.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.zip", "url": "YUI.html#method_Array.zip", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "before", "url": "YUI.html#method_before", "type": "method"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "detach", "url": "YUI.html#method_detach", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "lastIndexOf", "url": "YUI.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "set", "url": "YUI.html#method_set", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}];
 </script>
 </body>
 </html>
