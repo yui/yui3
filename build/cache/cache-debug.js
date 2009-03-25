@@ -135,8 +135,8 @@ Y.extend(Cache, Y.Base, {
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
-        * @param args {Object} Object literal data payload.
-        * @param args.entry {Object} The retrieved entry.
+        * @param e {Event.Facade} Event Facade object.
+        * @param entry {Object} The retrieved entry.
         */
 
         // Initialize internal values
@@ -238,10 +238,15 @@ Y.extend(Cache, Y.Base, {
      * @method add
      * @param request {Object} Request object.
      * @param response {Object} Response object.
-     * @param payload {Object} Arbitrary data payload.     
+     * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        this.fire("add", null, {request:request, response:response, payload:payload});
+        if(LANG.isValue(request) && LANG.isValue(response)) {
+            this.fire("add", null, {request:request, response:response, payload:payload});
+        }
+        else {
+            Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", this.toString());
+        }
     },
 
     /**
