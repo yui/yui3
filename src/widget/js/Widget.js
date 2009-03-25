@@ -66,7 +66,7 @@ function Widget(config) {
     this._yuid = Y.guid(WIDGET);
     this._strings = {};
 
-    Widget.superclass.constructor.apply(this, arguments);
+    return Widget.superclass.constructor.apply(this, arguments);
 }
 
 /**

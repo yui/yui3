@@ -139,7 +139,7 @@ PluginHost.prototype = {
 
             if (this.hasPlugin(ns)) {
                 // Update config
-                this[ns].setAtts(config);
+                this[ns].setAttrs(config);
             } else {
                 // Create new instance
                 this[ns] = new PluginClass(config);

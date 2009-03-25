@@ -11,7 +11,6 @@ YUI.add('base', function(Y) {
         SEP = ":",
         DESTROY = "destroy",
         INIT = "init",
-        VALUE = "value",
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
@@ -39,7 +38,8 @@ YUI.add('base', function(Y) {
      */
     var Base = function() {
         Y.Attribute.call(this);
-        this.init.apply(this, arguments);
+
+        return this.init.apply(this, arguments);
     };
 
     /**
@@ -109,7 +109,7 @@ YUI.add('base', function(Y) {
      * @static
      * @final
      * @private
-     */    
+     */
     Base._buildCfg = {
         aggregates : ["ATTRS"]
     };
@@ -167,7 +167,7 @@ YUI.add('base', function(Y) {
             if (aggregates) {
                 for (i = 0, l = aggregates.length; i < l; ++i) {
                     var val = aggregates[i];
-                    if (O.owns(main, val)) {
+                    if (main.hasOwnProperty(val)) {
                         builtClass[val] = L.isArray(main[val]) ? [] : {};
                     }
                 }
@@ -200,7 +200,7 @@ YUI.add('base', function(Y) {
 
         return builtClass;
     };
-    
+
     Y.mix(Base.build, {
 
         _template: function(main) {
@@ -298,15 +298,6 @@ YUI.add('base', function(Y) {
      * newly created class, when creating the instance.
      * @return {Object} An instance of the custom class
      */
-    Base.create = function(main, extensions, args) {
-        var c = Base.build(main, extensions),
-            cArgs = Y.Array(arguments, 2, true);
-
-        function F(){}
-        F.prototype = c.prototype;
-
-        return c.apply(new F(), cArgs);
-    };
 
     Base.prototype = {
 
@@ -431,22 +422,75 @@ YUI.add('base', function(Y) {
         /**
          * Returns the top down class hierarchy for this object,
          * with Base being the first class in the array.
-         *
+         * 
+         * @method _getClasses
          * @protected
-         * @return {Function[]} An Array of classes (constructor functions), making up the class heirarchy for this object
+         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object
          */
         _getClasses : function() {
             if (!this._classes) {
-                var c = this.constructor, 
-                    classes = [];
-
-                while (c && c.prototype) {
-                    classes.unshift(c);
-                    c = c.superclass ? c.superclass.constructor : null;
-                }
-                this._classes = classes;
+                this._initHierarchyData();
             }
             return this._classes.concat();
+        },
+
+        /**
+         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.
+         *
+         * @method _getAttrCfgs
+         * @protected
+         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy
+         */
+        _getAttrCfgs : function() {
+            if (!this._attrs) {
+                this._initHierarchyData();
+            }
+            return Y.merge(this._attrs);
+        },
+
+        _filterAttrCfgs : function(clazz, allCfgs) {
+            var cfgs = {};
+
+            if (clazz.ATTRS) {
+                Y.each(clazz.ATTRS, function(v, k) {
+                    if (allCfgs[k]) {
+                        cfgs[k] = allCfgs[k];
+                        delete allCfgs[k];
+                    }
+                });
+            }
+
+            return cfgs;
+        },
+
+        _initHierarchyData : function() {
+            var c = this.constructor, 
+                classes = [],
+                attrs = {};
+
+            while (c && c.prototype) {
+                // Add to classes
+                classes.unshift(c);
+
+                // Add to attributes
+                if (c.ATTRS) {
+                    this._aggregateAttrs(attrs, c.ATTRS, false);
+                }
+                c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            this._classes = classes;
+            this._attrs = attrs;
+        },
+
+        _aggregateAttrs : function(r, s, ov) {
+            Y.each(s, function(v, k) {
+                if (!r[k]) {
+                    r[k] = v;
+                } else {
+                    r[k] = Y.mix(r[k], v, ov);
+                }
+            });
         },
 
         /**
@@ -454,25 +498,20 @@ YUI.add('base', function(Y) {
          * which includes initializing attributes for each class defined 
          * in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
          * method on the prototype of each class in the hierarchy.
-         * 
+         *
          * @method _initHierarchy
          * @param {Object} userConf Object literal containing attribute name/value pairs
          * @private
          */
         _initHierarchy : function(userConf) {
             var constr,
-                classes = this._getClasses();
+                classes = this._getClasses(),
+                mergedCfgs = this._getAttrCfgs();
 
             for (var ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
 
-                if (constr._yuibuild && constr._yuibuild.exts && !constr._yuibuild.dynamic) {
-                    for (var ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
-                        constr._yuibuild.exts[ei].apply(this, arguments);
-                    }
-                }
-
-                this._initAtts(constr.ATTRS, userConf);
+                this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
                 if (O.owns(constr.prototype, INITIALIZER)) {
                     constr.prototype[INITIALIZER].apply(this, arguments);
