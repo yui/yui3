@@ -18,11 +18,16 @@
  * @param config {Object} default callback configuration values
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
  */
-function Queue() {
+function Queue(config) {
     // Factory or Constructor
-    var self = this instanceof Queue ? this : new Queue();
+    var self = this instanceof Queue ? this : new Queue(config);
 
-    return self._init(arguments);
+    // To avoid duplicate initialization
+    if (self === this) {
+        this._init(config);
+    }
+
+    return self.add.apply(self, Y.Array(arguments,1,true));
 }
 
 /**
@@ -57,15 +62,10 @@ Queue.prototype = {
      * Initializes the Queue isntance properties and events.
      *
      * @method _init
-     * @param args {Array} arguments list from constructor
-     * @return {Queue} the Queue instance
+     * @param config {Object} Instance level defaults for all callbacks
      * @protected
      */
-    _init : function (args) {
-        args = Y.Array(args,0,true);
-
-        var config = args.shift();
-
+    _init : function (config) {
         this._q = [];
 
         this._defaults = Y.merge(
@@ -73,10 +73,14 @@ Queue.prototype = {
             { context : this },
             (Y.Lang.isObject(config) ? config : {}));
 
-        this.publish('executeCallback', { defaultFn : this._defExecFn });
-        this.publish('shiftCallback', { defaultFn : this._defShiftFn });
-
-        return this.add.apply(this,args);
+        this.publish('executeCallback', {
+            defaultFn : this._defExecFn,
+            emitFacade: true
+        });
+        this.publish('shiftCallback', {
+            defaultFn : this._defShiftFn,
+            emitFacade: true
+        });
     },
 
     /**
@@ -111,7 +115,8 @@ Queue.prototype = {
      */
     _defExecFn : function (callback) {
         if (Y.Lang.isFunction(callback.fn)) {
-            callback.fn.apply(callback.context, Y.Array(callback.args));
+            var args = 'args' in callback ? Y.Array(callback.args) : [];
+            callback.fn.apply(callback.context, args);
         }
     },
 

@@ -38,14 +38,32 @@ Y.mix(Y.Queue.prototype, {
     _tId : 0,
     
     run : function () {
-        // Grab the first callback in the queue
-        var callback = this._q[0];
+        this.active = true;
 
         // A callback is present and not currently executing/scheduled
-        if (callback && this.isReady()) {
-            this._processCallback(callback);
-        } else if (!callback) {
+        while (this._q.length && this.active && this.isReady()) {
+            // Grab the first callback in the queue
+            var callback = this._q[0];
+
+            if (callback.until()) {
+                this.fire(SHIFT);
+            } else {
+                if (callback.timeout < 0) {
+                    this._processSync(callback);
+                } else {
+                    this._processAsync(callback);
+                    break;
+                }
+            }
+        }
+
+        if (!this._q.length) {
             this.active = false;
+
+            /**
+             * Event fired after the last queued callback is executed.
+             * @event complete
+             */
             this.fire('complete');
         }
 
@@ -64,24 +82,6 @@ Y.mix(Y.Queue.prototype, {
     },
 
     /**
-     * Sets the Queue status to active and passes the callback to the
-     * appropriate executor (synchronous or asynchronous).
-     * 
-     * @method _processCallback
-     * @param callback {Object} the callback object
-     * @protected
-     */
-    _processCallback : function (callback) {
-        this.active = true;
-
-        if (callback.timeout < 0) {
-            this._processSync(callback);
-        } else {
-            this._processAsync(callback);
-        }
-    },
-
-    /**
      * Handles the execution of synchronous callbacks.
      *
      * @method _processSync
@@ -89,21 +89,10 @@ Y.mix(Y.Queue.prototype, {
      * @protected
      */
     _processSync : function (callback) {
-        
-        while (this.active && this.isReady() && !callback.until()) {
-            callback.iterations--;
-            this._tId = -1;
-            this.fire(EXEC,callback);
-            this._tId = 0;
-        }
-
-        if (this.isReady()) {
-            this.fire(SHIFT);
-        }
-
-        if (this.active) {
-            this.run();
-        }
+        callback.iterations--;
+        this._tId = -1;
+        this.fire(EXEC,callback);
+        this._tId = 0;
     },
 
     /**
@@ -116,24 +105,19 @@ Y.mix(Y.Queue.prototype, {
     _processAsync : function (callback) {
         var self = this;
 
-        if (callback.until()) {
-            this.fire(SHIFT);
-            this.run();
-        } else {
-            // Set to execute after the configured timeout
-            this._tId = setTimeout(function () {
-                callback.iterations--;
+        // Set to execute after the configured timeout
+        this._tId = setTimeout(function () {
+            callback.iterations--;
 
-                self.fire(EXEC,callback);
+            self.fire(EXEC,callback);
 
-                self._tId = 0;
+            self._tId = 0;
 
-                // Loop unless the Queue was paused from inside the callback
-                if (self.active) {
-                    self.run();
-                }
-            }, callback.timeout);
-        }
+            // Loop unless the Queue was paused from inside the callback
+            if (self.active) {
+                self.run();
+            }
+        }, callback.timeout);
     },
 
     /**
@@ -295,12 +279,6 @@ Y.augment(Y.Queue,Y.Event.Target,true);
  * Event fired after a callback is shifted from the Queue
  * @event shiftCallback
  * @param callback {Function|Object} The callback passed to <code>add(..)</code>
- */
-
-/**
- * Event fired after the last queued callback is executed.  Not
- * fired if the Queue is stopped via q.stop().
- * @event complete
  */
 
 /**

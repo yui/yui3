@@ -20,11 +20,16 @@ YUI.add('queue-base', function(Y) {
  * @param config {Object} default callback configuration values
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
  */
-function Queue() {
+function Queue(config) {
     // Factory or Constructor
-    var self = this instanceof Queue ? this : new Queue();
+    var self = this instanceof Queue ? this : new Queue(config);
 
-    return self._init(arguments);
+    // To avoid duplicate initialization
+    if (self === this) {
+        this._init(config);
+    }
+
+    return self.add.apply(self, Y.Array(arguments,1,true));
 }
 
 /**
@@ -59,15 +64,10 @@ Queue.prototype = {
      * Initializes the Queue isntance properties and events.
      *
      * @method _init
-     * @param args {Array} arguments list from constructor
-     * @return {Queue} the Queue instance
+     * @param config {Object} Instance level defaults for all callbacks
      * @protected
      */
-    _init : function (args) {
-        args = Y.Array(args,0,true);
-
-        var config = args.shift();
-
+    _init : function (config) {
         this._q = [];
 
         this._defaults = Y.merge(
@@ -75,10 +75,14 @@ Queue.prototype = {
             { context : this },
             (Y.Lang.isObject(config) ? config : {}));
 
-        this.publish('executeCallback', { defaultFn : this._defExecFn });
-        this.publish('shiftCallback', { defaultFn : this._defShiftFn });
-
-        return this.add.apply(this,args);
+        this.publish('executeCallback', {
+            defaultFn : this._defExecFn,
+            emitFacade: true
+        });
+        this.publish('shiftCallback', {
+            defaultFn : this._defShiftFn,
+            emitFacade: true
+        });
     },
 
     /**
@@ -113,7 +117,8 @@ Queue.prototype = {
      */
     _defExecFn : function (callback) {
         if (Y.Lang.isFunction(callback.fn)) {
-            callback.fn.apply(callback.context, Y.Array(callback.args));
+            var args = 'args' in callback ? Y.Array(callback.args) : [];
+            callback.fn.apply(callback.context, args);
         }
     },
 
@@ -254,14 +259,32 @@ Y.mix(Y.Queue.prototype, {
     _tId : 0,
     
     run : function () {
-        // Grab the first callback in the queue
-        var callback = this._q[0];
+        this.active = true;
 
         // A callback is present and not currently executing/scheduled
-        if (callback && this.isReady()) {
-            this._processCallback(callback);
-        } else if (!callback) {
+        while (this._q.length && this.active && this.isReady()) {
+            // Grab the first callback in the queue
+            var callback = this._q[0];
+
+            if (callback.until()) {
+                this.fire(SHIFT);
+            } else {
+                if (callback.timeout < 0) {
+                    this._processSync(callback);
+                } else {
+                    this._processAsync(callback);
+                    break;
+                }
+            }
+        }
+
+        if (!this._q.length) {
             this.active = false;
+
+            /**
+             * Event fired after the last queued callback is executed.
+             * @event complete
+             */
             this.fire('complete');
         }
 
@@ -280,24 +303,6 @@ Y.mix(Y.Queue.prototype, {
     },
 
     /**
-     * Sets the Queue status to active and passes the callback to the
-     * appropriate executor (synchronous or asynchronous).
-     * 
-     * @method _processCallback
-     * @param callback {Object} the callback object
-     * @protected
-     */
-    _processCallback : function (callback) {
-        this.active = true;
-
-        if (callback.timeout < 0) {
-            this._processSync(callback);
-        } else {
-            this._processAsync(callback);
-        }
-    },
-
-    /**
      * Handles the execution of synchronous callbacks.
      *
      * @method _processSync
@@ -305,21 +310,10 @@ Y.mix(Y.Queue.prototype, {
      * @protected
      */
     _processSync : function (callback) {
-        
-        while (this.active && this.isReady() && !callback.until()) {
-            callback.iterations--;
-            this._tId = -1;
-            this.fire(EXEC,callback);
-            this._tId = 0;
-        }
-
-        if (this.isReady()) {
-            this.fire(SHIFT);
-        }
-
-        if (this.active) {
-            this.run();
-        }
+        callback.iterations--;
+        this._tId = -1;
+        this.fire(EXEC,callback);
+        this._tId = 0;
     },
 
     /**
@@ -332,24 +326,19 @@ Y.mix(Y.Queue.prototype, {
     _processAsync : function (callback) {
         var self = this;
 
-        if (callback.until()) {
-            this.fire(SHIFT);
-            this.run();
-        } else {
-            // Set to execute after the configured timeout
-            this._tId = setTimeout(function () {
-                callback.iterations--;
+        // Set to execute after the configured timeout
+        this._tId = setTimeout(function () {
+            callback.iterations--;
 
-                self.fire(EXEC,callback);
+            self.fire(EXEC,callback);
 
-                self._tId = 0;
+            self._tId = 0;
 
-                // Loop unless the Queue was paused from inside the callback
-                if (self.active) {
-                    self.run();
-                }
-            }, callback.timeout);
-        }
+            // Loop unless the Queue was paused from inside the callback
+            if (self.active) {
+                self.run();
+            }
+        }, callback.timeout);
     },
 
     /**
@@ -514,12 +503,6 @@ Y.augment(Y.Queue,Y.Event.Target,true);
  */
 
 /**
- * Event fired after the last queued callback is executed.  Not
- * fired if the Queue is stopped via q.stop().
- * @event complete
- */
-
-/**
  * Event fired when callbacks are added to the Queue.
  *
  * @event addCallback
@@ -577,10 +560,12 @@ var _protoInit = Y.Queue.prototype._init;
 Y.mix(Y.Queue.prototype, {
 
     _init : function () {
+        _protoInit.apply(this,arguments);
+
         this.before('executeCallback',this._bindIOListeners);
         this.after('executeCallback',this._detachIOStartListener);
 
-        return _protoInit.apply(this,arguments);
+        return this;
     },
 
     /**
@@ -680,6 +665,7 @@ Y.mix(Y.Queue.prototype, {
     _detachIOStartListener : function (callback) {
         if (this._ioStartSub) {
             this._ioStartSub.detach();
+            this._ioStartSub = null;
         }
     },
 
@@ -737,6 +723,8 @@ Y.mix(Y.Queue.prototype, {
         this._ioFailureSub.detach();
         this._ioAbortSub.detach();
         this._shiftSub.detach();
+        this._ioSuccessSub = this._ioFailureSub =
+        this._ioAbortSub   = this._shiftSub     = null;
     }
 },true);
 
