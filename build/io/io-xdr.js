@@ -1,9 +1,9 @@
 YUI.add('io-xdr', function(Y) {
 
-   /*
+   /**
     * Extends the IO base class to provide an alternate, Flash transport, for making
     * cross-domain requests.
-	* @module io-base
+	* @module io
 	* @submodule io-xdr
 	*/
 
@@ -26,12 +26,13 @@ YUI.add('io-xdr', function(Y) {
 	* @return void
 	*/
 	function _swf(uri, yid) {
-		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">' +
+		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
+		              uri + '" width="0" height="0">' +
 		     		  '<param name="movie" value="' + uri + '">' +
 		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
                       '<param name="allowScriptAccess" value="sameDomain">' +
 		    	      '</object>';
-		Y.get('body').appendChild(Y.Node.create(XDR_SWF))
+		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
 	};
 
     Y.mix(Y.io, {
@@ -39,12 +40,12 @@ YUI.add('io-xdr', function(Y) {
 	   /**
 		* @description Map of IO transports.
 		*
-		* @property _transportMap
+		* @property _transport
 		* @private
 		* @static
 		* @type object
 		*/
-		_transportMap: {},
+		_transport: {},
 
 	   /**
 		* @description Object that stores callback handlers for cross-domain requests
@@ -69,7 +70,7 @@ YUI.add('io-xdr', function(Y) {
 		* @param {object} c - configuration object for the transaction.
 		* @return object
 		*/
-		_xdr: function(uri, o, c){
+		_xdr: function(uri, o, c) {
 			if (c.on) {
 				this._fn[o.id] = c.on;
 			}
@@ -107,7 +108,7 @@ YUI.add('io-xdr', function(Y) {
 			switch (o.id) {
 				case 'flash':
 					_swf(o.src, o.yid);
-					this._transportMap.flash = Y.config.doc.getElementById('yuiIoSwf');
+					this._transport.flash = Y.config.doc.getElementById('yuiIoSwf');
 					break;
 			}
 		}
