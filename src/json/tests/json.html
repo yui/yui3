@@ -401,6 +401,26 @@ suite.add(new Y.Test.Case({
             Y.JSON.stringify({one:1,two:true,three:false,four:null,five:"String with\nnewline",six :  {nested:-0.12345}}));
     },
 
+    test_stringifyRecursiveObject : function () {
+        var o = { key: 'value' };
+        o.recurse = o;
+
+        Y.Assert.areSame('{"key":"value","recurse":null}',
+            Y.JSON.stringify(o));
+
+        o = [1,2,3];
+        o[3] = o;
+
+        Y.Assert.areSame('[1,2,3,null]', Y.JSON.stringify(o));
+
+        o = [1,2,3,{key:"value",nest:[4,5,6,{foo:"bar"}]}];
+        o[4] = o[3].x = o[3].nest[4] =
+        o[3].nest[3].y = o[3].nest[3].z = o;
+
+        Y.Assert.areSame('[1,2,3,{"key":"value","nest":[4,5,6,{"foo":"bar","y":null,"z":null},null],"x":null},null]',
+            Y.JSON.stringify(o));
+    },
+
     test_stringifyFunction : function () {
         Y.Assert.areSame('{"arr":[null]}',
             Y.JSON.stringify({
