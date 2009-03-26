@@ -8,7 +8,6 @@ YUI.add('datasource-xhr', function(Y) {
  * @requires datasource-base
  * @title DataSource XHR Submodule
  */
-    var LANG = Y.Lang,
     
     /**
      * XHR subclass for the YUI DataSource utility.
@@ -16,7 +15,7 @@ YUI.add('datasource-xhr', function(Y) {
      * @extends DataSource
      * @constructor
      */    
-    XHR = function() {
+    var XHR = function() {
         XHR.superclass.constructor.apply(this, arguments);
     };
     

@@ -7,8 +7,7 @@ YUI.add('datasource-dataparser', function(Y) {
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
-    var LANG = Y.Lang,
-        BASE = Y.DataSource,
+    var BASE = Y.DataSource,
     
     /**
      * Adds parsability to the YUI DataSource utility.

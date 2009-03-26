@@ -323,7 +323,6 @@ YUI.add('datasource-xhr', function(Y) {
  * @requires datasource-base
  * @title DataSource XHR Submodule
  */
-    var LANG = Y.Lang,
     
     /**
      * XHR subclass for the YUI DataSource utility.
@@ -331,7 +330,7 @@ YUI.add('datasource-xhr', function(Y) {
      * @extends DataSource
      * @constructor
      */    
-    XHR = function() {
+    var XHR = function() {
         XHR.superclass.constructor.apply(this, arguments);
     };
     
@@ -435,8 +434,7 @@ YUI.add('datasource-cache', function(Y) {
  * @requires datasource-base,cache
  * @title DataSource Cache Extension
  */
-    var LANG = Y.Lang,
-        BASE = Y.DataSource,
+    var BASE = Y.DataSource,
     
     /**
      * Adds cacheability to the YUI DataSource utility.
@@ -540,8 +538,7 @@ YUI.add('datasource-dataparser', function(Y) {
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
-    var LANG = Y.Lang,
-        BASE = Y.DataSource,
+    var BASE = Y.DataSource,
     
     /**
      * Adds parsability to the YUI DataSource utility.

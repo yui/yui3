@@ -7,8 +7,7 @@ YUI.add('datasource-cache', function(Y) {
  * @requires datasource-base,cache
  * @title DataSource Cache Extension
  */
-    var LANG = Y.Lang,
-        BASE = Y.DataSource,
+    var BASE = Y.DataSource,
     
     /**
      * Adds cacheability to the YUI DataSource utility.

@@ -6,7 +6,6 @@
  * @requires datasource-base
  * @title DataSource XHR Submodule
  */
-    var LANG = Y.Lang,
     
     /**
      * XHR subclass for the YUI DataSource utility.
@@ -14,7 +13,7 @@
      * @extends DataSource
      * @constructor
      */    
-    XHR = function() {
+    var XHR = function() {
         XHR.superclass.constructor.apply(this, arguments);
     };
     

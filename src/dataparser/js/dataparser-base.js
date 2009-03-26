@@ -8,7 +8,6 @@
  */
     Y.namespace("DataParser");
     var DP = Y.DataParser,
-        LANG = Y.Lang,
 
     /**
      * Base class for the YUI DataParser utility.
