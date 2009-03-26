@@ -192,6 +192,7 @@ var _toString = Object.prototype.toString,
     OBJECT    = 'object',
     ARRAY     = 'array',
     REGEXP    = 'regexp',
+    ERROR     = 'error',
     NULL      = 'null',
     DATE      = 'date',
     EMPTY     = '',
@@ -363,6 +364,7 @@ Y.mix(Y.namespace('JSON'),{
                 case NULL    : return NULL;
                 case ARRAY   : return _cyclical(o) ? NULL : _object(o,d,true);
                 case REGEXP  : // intentional fall through
+                case ERROR   : // intentional fall through
                 case OBJECT  : return _cyclical(o) ? NULL : _object(o,d);
                 default      : return undefined;
             }
