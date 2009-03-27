@@ -89,15 +89,14 @@ YUI.add('io-base', function(Y) {
 	* @static
 	* @type object
 	*/
-	_timeout = {};
-
-	//--------------------------------------
-	//  Methods
-	//--------------------------------------
+	_timeout = {},
 
 	// Window reference
 	w = Y.config.win;
 
+	//--------------------------------------
+	//  Methods
+	//--------------------------------------
    /**
 	* @description Method for requesting a transaction. _io() is implemented as
 	* yui.io().  Each transaction may include a configuration object.  Its
@@ -173,11 +172,13 @@ YUI.add('io-base', function(Y) {
     * @return object
 	*/
 	function _io(uri, c) {
-		var c = c || {},
-		o = _create((arguments.length === 3) ? arguments[2] : null, c),
-		m = (c.method) ? c.method.toUpperCase() : 'GET',
-		d = (c.data) ? c.data : null,
-		f;
+		var u, f,
+			// Set default value of argument c to Object if
+			// configuration object "c" does not exist.
+			c = c || {},
+			o = _create((arguments.length === 3) ? arguments[2] : null, c),
+			m = (c.method) ? c.method.toUpperCase() : 'GET',
+			d = (c.data) ? c.data : null;
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
@@ -277,16 +278,15 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioStart(id, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[id]) ? m[id] : null,
-		event;
+			fn = (m && m[id]) ? m[id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.start = fn.start;
-			delete fn;
 		}
 
 		Y.fire(E_START, id);
@@ -310,17 +310,17 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioComplete(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		Y.fire(E_COMPLETE, o.id, o.c);
 		if (c.on.complete) {
 			event = _tPubSub('complete', c);
 			event.fire(o.id, o.c);
 		}
-	}
+	};
 
    /**
 	* @description Fires event "io:success" and creates, fires a
@@ -336,18 +336,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioSuccess(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.success = fn.success;
-			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
+			delete m[o.id];
 		}
 
 		Y.fire(E_SUCCESS, o.id, o.c);
@@ -357,7 +357,7 @@ YUI.add('io-base', function(Y) {
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Fires event "io:failure" and creates, fires a
@@ -373,18 +373,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioFailure(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.failure = fn.failure;
-			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
+			delete m[o.id];
 		}
 
 		Y.fire(E_FAILURE, o.id, o.c);
@@ -394,7 +394,7 @@ YUI.add('io-base', function(Y) {
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Fires event "io:abort" and creates, fires a
@@ -410,16 +410,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioAbort(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if(o && o.c  && !c.xdr) {
 			// Terminate the transaction
+			o.isAbort = true;
 			o.c.abort();
+
 			if (c) {
 				// Clear the timeout poll for this specific transaction.
 				if (c.timeout) {
@@ -430,17 +432,17 @@ YUI.add('io-base', function(Y) {
 
 		if (fn) {
 			c.on.abort = fn.abort;
-			delete fn;
+			delete m[o.id];
 		}
 
 		Y.fire(E_ABORT, o.id);
 		if (c.on.abort) {
 			event = _tPubSub('abort', c);
-			event.fire(id);
+			event.fire(o.id);
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Method that increments _transactionId for each transaction.
@@ -459,7 +461,7 @@ YUI.add('io-base', function(Y) {
 
    /**
 	* @description Method that creates a unique transaction object for each
-	* request..
+	* request.
 	*
 	* @method _create
 	* @private
@@ -473,7 +475,7 @@ YUI.add('io-base', function(Y) {
 		o.id = Y.Lang.isNumber(i) ? i : _id();
 
 		if (c.xdr) {
-			o.c = Y.io._transportMap[c.xdr.use];
+			o.c = Y.io._transport[c.xdr.use];
 		}
 		else if (c.form && c.form.upload) {
 			o.c = {};
@@ -627,12 +629,16 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _readyState(o, c) {
-		if (o.c.readyState === 4) {
+		if (o.c.readyState === 4 && !o.isAbort) {
 			if (c.timeout) {
 				_clearTimeout(o.id);
 			}
-			_ioComplete(o, c);
-			_handleResponse(o, c);
+
+			w.setTimeout(
+				function() {
+					_ioComplete(o, c);
+					_handleResponse(o, c);
+				}, 0);
 		}
 	};
 
@@ -645,7 +651,7 @@ YUI.add('io-base', function(Y) {
 	* @private
 	* @static
     * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to YUI.io().
+    * @param {object} c - Configuration object passed to io().
     * @return void
 	*/
 	function _handleResponse(o, c) {
@@ -662,24 +668,19 @@ YUI.add('io-base', function(Y) {
 			status = 0;
 		}
 
-		/*
-		 * IE reports HTTP 204 as HTTP 1223.
-		 * However, the response data are still available.
-		 *
-		 * setTimeout() is used to prevent transactions from becoming
-		 * synchronous, in IE, when the response data are read from cache
-		 * (e.g., HTTP 304).
-		 */
+		// IE reports HTTP 204 as HTTP 1223.
+		// But, the response data are still available.
 		if (status >= 200 && status < 300 || status === 1223) {
-			w.setTimeout( function() { _ioSuccess(o, c); }, 0);
+			_ioSuccess(o, c);
 		}
 		else {
-			w.setTimeout( function() {_ioFailure(o, c); }, 0);
+			_ioFailure(o, c);
 		}
 	};
 
 	function _destroy(o, isTransport) {
-		// IE6 will throw a "Type Mismatch" error if the event handler is set to "null".
+		// IE, when using XMLHttpRequest as an ActiveX Object, will throw
+		// a "Type Mismatch" error if the event handler is set to "null".
 		if(w.XMLHttpRequest && !isTransport) {
 			if (o.c) {
 				o.c.onreadystatechange = null;
@@ -727,6 +728,7 @@ YUI.add('io-base', function(Y) {
     * @return object
     */
 	Y.io = _io;
+	Y.io.http = _io;
 
 
 
