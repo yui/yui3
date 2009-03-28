@@ -65,7 +65,63 @@ Y.mix(JSON, {
         schema: {
             value: {}
         }
+    },
+
+    /**
+     * Utility function converts JSON locator strings into walkable paths
+     *
+     * @method DataParser.JSON.buildPath
+     * @param locator {String} JSON value locator.
+     * @return {String[]} Walkable path to data value.
+     * @static
+     */
+    buildPath: function(locator) {
+        var path = null,
+            keys = [],
+            i = 0;
+            
+        if (locator) {
+            // Strip the ["string keys"] and [1] array indexes
+            locator = locator.
+                replace(/\[(['"])(.*?)\1\]/g,
+                function (x,$1,$2) {keys[i]=$2;return '.@'+(i++);}).
+                replace(/\[(\d+)\]/g,
+                function (x,$1) {keys[i]=parseInt($1,10)|0;return '.@'+(i++);}).
+                replace(/^\./,''); // remove leading dot
+
+            // Validate against problematic characters.
+            if (!/[^\w\.\$@]/.test(locator)) {
+                path = locator.split('.');
+                for (i=path.length-1; i >= 0; --i) {
+                    if (path[i].charAt(0) === '@') {
+                        path[i] = keys[parseInt(path[i].substr(1),10)];
+                    }
+                }
+            }
+            else {
+            }
+        }
+        return path;
+    },
+
+    /**
+     * Utility function to walk a path and return the value located there.
+     *
+     * @method DataParser.JSON.walkPath
+     * @param path {String[]} Locator path.
+     * @param data {String} Data to traverse.
+     * @return {Object} Data value at location.
+     * @static
+     */
+    walkPath: function (path, data) {
+        var i = 0,
+            len = path.length;
+        for (;i<len;i++) {
+            data = data[path[i]];
+        }
+        return data;
     }
+
 });
 
 Y.extend(JSON, Y.DataParser.Base, {
@@ -79,159 +135,159 @@ Y.extend(JSON, Y.DataParser.Base, {
      * @protected
      */
     _parse: function(data) {
-        var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
-            schema = this.get("schema"),
+        var schema = this.get("schema"),
+            data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             data_out = {results:[],meta:{}};
 
-        if(LANG.isObject(data_in) && schema.resultsList) {
-            var fields          = schema.fields,
-                resultsList     = data_in,
-                results         = [],
-                metaFields      = schema.metaFields || {},
-                fieldParsers    = [],
-                fieldPaths      = [],
-                simpleFields    = [],
-                bError          = false,
-                i,len,j,v,key,parser,path;
+        if(LANG.isObject(data_in) && schema) {
+            // Parse results data
+            data_out = this._parseResults(schema, data_in, data_out);
 
-            // Function to convert the schema's fields into walk paths
-            var buildPath = function (needle) {
-                var path = null, keys = [], i = 0;
-                if (needle) {
-                    // Strip the ["string keys"] and [1] array indexes
-                    needle = needle.
-                        replace(/\[(['"])(.*?)\1\]/g,
-                        function (x,$1,$2) {keys[i]=$2;return '.@'+(i++);}).
-                        replace(/\[(\d+)\]/g,
-                        function (x,$1) {keys[i]=parseInt($1,10)|0;return '.@'+(i++);}).
-                        replace(/^\./,''); // remove leading dot
-
-                    // If the cleaned needle contains invalid characters, the
-                    // path is invalid
-                    if (!/[^\w\.\$@]/.test(needle)) {
-                        path = needle.split('.');
-                        for (i=path.length-1; i >= 0; --i) {
-                            if (path[i].charAt(0) === '@') {
-                                path[i] = keys[parseInt(path[i].substr(1),10)];
-                            }
-                        }
-                    }
-                    else {
-                    }
-                }
-                return path;
-            };
-
-
-            // Function to walk a path and return the pot of gold
-            var walkPath = function (path, origin) {
-                var v=origin,i=0,len=path.length;
-                for (;i<len && v;++i) {
-                    v = v[path[i]];
-                }
-                return v;
-            };
-
-            // Parse the response
-            // Step 1. Pull the resultsList from data_in (default assumes
-            // data_in IS the resultsList)
-            path = buildPath(schema.resultsList);
-            if (path) {
-                resultsList = walkPath(path, data_in);
-                if (resultsList === undefined) {
-                    bError = true;
-                }
-            } else {
-                bError = true;
+            // Parse meta data
+            if(LANG.isObject(schema.metaFields)) {
+                data_out = this._parseMeta(schema.metaFields, data_in, data_out);
             }
-
-            if (!resultsList) {
-                resultsList = [];
-            }
-
-            if (!LANG.isArray(resultsList)) {
-                resultsList = [resultsList];
-            }
-
-            if (!bError) {
-                // Step 2. Parse out field data if identified
-                if(schema.fields) {
-                    var field;
-                    // Build the field parser map and location paths
-                    for (i=0, len=fields.length; i<len; i++) {
-                        field = fields[i];
-                        key    = field.key || field;
-                        parser = ((typeof field.parser === 'function') ?
-                            field.parser :
-                            Y.DataParser[field.parser+'']) || field.converter;
-                        path   = buildPath(key);
-
-                        if (parser) {
-                            fieldParsers[fieldParsers.length] = {key:key,parser:parser};
-                        }
-
-                        if (path) {
-                            if (path.length > 1) {
-                                fieldPaths[fieldPaths.length] = {key:key,path:path};
-                            } else {
-                                simpleFields[simpleFields.length] = {key:key,path:path[0]};
-                            }
-                        } else {
-                        }
-                    }
-
-                    // Process the results, flattening the records and/or applying parsers if needed
-                    for (i = resultsList.length - 1; i >= 0; --i) {
-                        var r = resultsList[i], rec = {};
-                        if(r) {
-                            for (j = simpleFields.length - 1; j >= 0; --j) {
-                                // Bug 1777850: data might be held in an array
-                                rec[simpleFields[j].key] =
-                                        (r[simpleFields[j].path] !== undefined) ?
-                                        r[simpleFields[j].path] : r[j];
-                            }
-    
-                            for (j = fieldPaths.length - 1; j >= 0; --j) {
-                                rec[fieldPaths[j].key] = walkPath(fieldPaths[j].path,r);
-                            }
-    
-                            for (j = fieldParsers.length - 1; j >= 0; --j) {
-                                var p = fieldParsers[j].key;
-                                rec[p] = fieldParsers[j].parser(rec[p]);
-                                if (rec[p] === undefined) {
-                                    rec[p] = null;
-                                }
-                            }
-                        }
-                        results[i] = rec;
-                    }
-                }
-                else {
-                    results = resultsList;
-                }
-
-                // Step 3. Parse out meta data if identified
-                for (key in metaFields) {
-                    if (LANG.hasOwnProperty(metaFields,key)) {
-                        path = buildPath(metaFields[key]);
-                        if (path) {
-                            v = walkPath(path, data_in);
-                            data_out.meta[key] = v;
-                        }
-                    }
-                }
-
-            } else {
-
-                data_out.error = true;
-            }
-
-            data_out.results = results;
         }
         else {
             data_out.error = true;
         }
 
+        return data_out;
+    },
+
+    /**
+     * Schema-parse list of results from full data
+     *
+     * @method _parseResults
+     * @return TBD
+     * @protected
+     */
+    _parseResults: function(schema, data_in, data_out) {
+        if(schema.resultsList) {
+            var bError = false,
+                results = [],
+                path;
+
+            path = JSON.buildPath(schema.resultsList);
+            if(path) {
+                results = JSON.walkPath(path, data_in);
+                if (results === undefined) {
+                    bError = true;
+                }
+                else {
+                    if(LANG.isArray(schema.fields)) {
+                        if(LANG.isArray(schema.fields)) {
+                            results = this._parseFields(schema.fields, results);
+                        }
+                        else {
+                            bError = true;
+                        }
+                    }
+                }
+            }
+            else {
+                bError = true;
+            }
+
+            if (bError) {
+                data_out.error = true;
+            }
+            
+            data_out.results = results;
+        }
+        return data_out;
+    },
+
+    /**
+     * Schema-parse field data out of list of full results
+     *
+     * @method _parseFields
+     * @return TBD
+     * @protected
+     */
+    _parseFields: function(fields, results) {
+        var data_out = [],
+            len = fields.length,
+            i, j,
+            field, key, path, parser,
+            simplePaths = [], complexPaths = [], fieldParsers = [],
+            result, record;
+
+        // First collect hashes of simple paths, complex paths, and parsers
+        for (i=0; i<len; i++) {
+            field = fields[i]; // A field can be a simple string or a hash
+            key = field.key || field; // Find the key
+            
+            // Validate and store locators for later
+            path = JSON.buildPath(key);
+            if (path) {
+                if (path.length === 1) {
+                    simplePaths[simplePaths.length] = {key:key, path:path[0]};
+                } else {
+                    complexPaths[complexPaths.length] = {key:key, path:path};
+                }
+            } else {
+            }
+
+            // Validate and store parsers for later
+            parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataParser[field.parser+''];
+            if (parser) {
+                fieldParsers[fieldParsers.length] = {key:key, parser:parser};
+            }
+        }
+
+        // Traverse list of results, creating records of simple fields,
+        // complex fields, and applying parsers as necessary
+        for (i=results.length-1; i>=0; --i) {
+            record = {};
+            result = results[i];
+            if(result) {
+                // Cycle through simpleLocators
+                for (j=simplePaths.length-1; j>=0; --j) {
+                    // Bug 1777850: The result might be an array instead of object
+                    record[simplePaths[j].key] =
+                            LANG.isUndefined(result[simplePaths[j].path]) ?
+                            result[j] : result[simplePaths[j].path];
+                }
+
+                // Cycle through complexLocators
+                for (j=complexPaths.length - 1; j>=0; --j) {
+                    record[complexPaths[j].key] = JSON.walkPath(complexPaths[j].path, result);
+                }
+
+                // Cycle through fieldParsers
+                for (j=fieldParsers.length-1; j>=0; --j) {
+                    key = fieldParsers[j].key;
+                    record[key] = fieldParsers[j].parser(record[key]);
+                    // Safety net
+                    if (LANG.isUndefined(record[key])) {
+                        record[key] = null;
+                    }
+                }
+            }
+            data_out[i] = record;
+        }
+        
+        return data_out;
+    },
+
+    /**
+     * Parses results data according to schema
+     *
+     * @method _parseResults
+     * @return TBD
+     * @protected
+     */
+    _parseMeta: function(metaFields, data_in, data_out) {
+        var key, path;
+        for(key in metaFields) {
+            if (metaFields.hasOwnProperty(key)) {
+                path = JSON.buildPath(metaFields[key]);
+                if (path && data_in) {
+                    data_out.meta[key] = JSON.walkPath(path, data_in);
+                }
+            }
+        }
         return data_out;
     }
 });

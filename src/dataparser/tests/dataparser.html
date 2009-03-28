@@ -57,6 +57,25 @@
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("alpha", data_out.results[0].name, "Expected first result.");
                 ASSERT.areSame("gamma", data_out.results[2].name, "Expected last result.");
+            },
+            
+            testMeta: function() {
+                var dp = new Y.DataParser.JSON({
+                    schema: {
+                        metaFields: {top:"top", nested:"second.nested"}
+                    }
+                });
+                var data_in = {
+                        top: "foo",
+                        second: {nested: "bar"}
+                    },
+                    data_out = dp.parse(data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
+                ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
             }
         });
             
