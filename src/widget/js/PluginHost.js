@@ -101,7 +101,7 @@ PluginHost.prototype = {
 
         // Class Configuration
         var classes = this._getClasses(), constructor;
-        for (var i = 0; i < classes.length; i++) {
+        for (var i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
             if (constructor.PLUGINS) {
                 this.plug(constructor.PLUGINS);

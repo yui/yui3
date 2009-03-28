@@ -479,18 +479,15 @@ YUI.add('attribute', function(Y) {
                         val = retVal; // setter can change value
                     }
                 }
-
                 // Store value
                 storedVal = { value: val };
-
                 if (conf.get(name, INIT_VALUE) === undefined) {
                     storedVal[INIT_VALUE] = val;
                 }
-
                 conf.add(name, storedVal);
 
-                // Honor normalization
-                e.newVal = this.get(name);
+                // Honor set normalization
+                e.newVal = conf.get(name, VALUE);
             } else {
                 Y.log('Validation failed. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
@@ -628,8 +625,8 @@ YUI.add('attribute', function(Y) {
                 for (attr in cfgs) {
                     if (cfgs.hasOwnProperty(attr)) {
 
-                        // Merge to isolate cfgs
-                        attrCfg = Y.merge(cfgs[attr]);
+                        // Not Merging. Caller is responsible for isolating configs
+                        attrCfg = cfgs[attr];
 
                         // Handle simple, complex and user values, accounting for read-only
                         value = this._getAttrInitVal(attr, attrCfg, values);

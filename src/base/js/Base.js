@@ -5,13 +5,14 @@
      * @module base
      */
     var L = Y.Lang,
-        O = Y.Object,
         SEP = ":",
+        DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
+        LITERAL_CONSTRUCTOR = {}.constructor,
         DESTRUCTOR = "destructor";
 
     var ETP = Y.Event.Target.prototype;
@@ -38,7 +39,7 @@
         Y.log('constructor called', 'life', 'base');
         Y.Attribute.call(this);
 
-        return this.init.apply(this, arguments);
+        this.init.apply(this, arguments);
     };
 
     /**
@@ -112,8 +113,6 @@
     Base._buildCfg = {
         aggregates : ["ATTRS"]
     };
-
-    var _instances = {};
 
     /**
      * <p>
@@ -344,7 +343,6 @@
                 defaultFn:this._defInitFn
             });
             this.fire(INIT, null, config);
-
             return this;
         },
 
@@ -400,9 +398,7 @@
          * @protected
          */
         _defInitFn : function(e, config) {
-            _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
-
             this._set(INITIALIZED, true);
         },
 
@@ -415,14 +411,11 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
-            delete _instances[this._yuid];
-
             this._set(DESTROYED, true);
         },
 
         /**
-         * Returns the top down class hierarchy for this object,
-         * with Base being the first class in the array.
+         * Returns the class hierarchy for this object, with Base being the last class in the array.
          * 
          * @method _getClasses
          * @protected
@@ -432,7 +425,7 @@
             if (!this._classes) {
                 this._initHierarchyData();
             }
-            return this._classes.concat();
+            return this._classes;
         },
 
         /**
@@ -446,9 +439,16 @@
             if (!this._attrs) {
                 this._initHierarchyData();
             }
-            return Y.merge(this._attrs);
+            return this._attrs;
         },
 
+        /**
+         * 
+         * @method _filterAttrCfs
+         * @private
+         * @param {Function} clazz
+         * @param {Objects} allCfgs
+         */
         _filterAttrCfgs : function(clazz, allCfgs) {
             var cfgs = {};
 
@@ -464,34 +464,75 @@
             return cfgs;
         },
 
+        /**
+         * @method _initHierarchyData
+         * @private
+         */
         _initHierarchyData : function() {
             var c = this.constructor, 
                 classes = [],
-                attrs = {};
+                attrs = [];
 
             while (c && c.prototype) {
                 // Add to classes
-                classes.unshift(c);
+                classes[classes.length] = c;
 
                 // Add to attributes
                 if (c.ATTRS) {
-                    this._aggregateAttrs(attrs, c.ATTRS, false);
+                    attrs[attrs.length] = c.ATTRS;
                 }
                 c = c.superclass ? c.superclass.constructor : null;
             }
 
             this._classes = classes;
-            this._attrs = attrs;
+            this._attrs = this._aggregateAttrs(attrs);
         },
 
-        _aggregateAttrs : function(r, s, ov) {
-            Y.each(s, function(v, k) {
-                if (!r[k]) {
-                    r[k] = v;
-                } else {
-                    r[k] = Y.mix(r[k], v, ov);
+        /**
+         * @method _aggregateAttrs
+         * @private
+         * @param {Object} allAttrs
+         */
+        _aggregateAttrs : function(allAttrs) {
+            var attr, attrs, cfg, val, path, i,
+                aggAttrs = {};
+
+            if (allAttrs) {
+                for (i = allAttrs.length-1; i >= 0; --i) {
+                    attrs = allAttrs[i];
+                    for (attr in attrs) {
+                        if (attrs.hasOwnProperty(attr)) {
+    
+                            cfg = Y.merge(attrs[attr]);
+
+                            val = cfg.value;
+                            if (val && !cfg.ref && (LITERAL_CONSTRUCTOR === val.constructor || L.isArray(val))) {
+                                cfg.value = Y.clone(val);
+                            }
+    
+                            if (attr.indexOf(DOT) !== -1) {
+                                path = attr.split(DOT);
+                                attr = path.shift();
+                            } else {
+                                path = null;
+                            }
+    
+                            if (path && aggAttrs[attr] && aggAttrs[attr].value) {
+                                this._setSubAttrVal(path, aggAttrs[attr].value, val);
+                            } else if (!path){
+                                if (!aggAttrs[attr]) {
+                                    aggAttrs[attr] = cfg;
+                                } else {
+                                    // TODO: Need to apply valueFn and merge in "." properties
+                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                }
+                            }
+                        }
+                    }
                 }
-            });
+            }
+
+            return aggAttrs;
         },
 
         /**
@@ -506,16 +547,19 @@
          */
         _initHierarchy : function(userConf) {
             var constr,
+                constrProto,
+                ci,
                 classes = this._getClasses(),
                 mergedCfgs = this._getAttrCfgs();
 
-            for (var ci = 0, cl = classes.length; ci < cl; ci++) {
+            for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
+                constrProto = constr.prototype;
 
                 this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
-                if (O.owns(constr.prototype, INITIALIZER)) {
-                    constr.prototype[INITIALIZER].apply(this, arguments);
+                if (constrProto.hasOwnProperty(INITIALIZER)) {
+                    constrProto[INITIALIZER].apply(this, arguments);
                 }
             }
         },
@@ -529,12 +573,15 @@
          */
         _destroyHierarchy : function() {
             var constr,
+                constrProto,
+                ci, cl,
                 classes = this._getClasses();
 
-            for (var ci = classes.length-1; ci >= 0; ci--) {
+            for (ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
-                if (O.owns(constr.prototype, DESTRUCTOR)) {
-                    constr.prototype[DESTRUCTOR].apply(this, arguments);
+                constrProto = constr.prototype;
+                if (constrProto.hasOwnProperty(DESTRUCTOR)) {
+                    constrProto[DESTRUCTOR].apply(this, arguments);
                 }
             }
         },
@@ -652,6 +699,30 @@
             var a = arguments;
             a[0] = this._prefixEvtType(a[0]);
             return ETP.after.apply(this, a);
+        },
+
+        /**
+         * <p>
+         * Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
+         * </p>
+         *
+         * <p>Subscribers using this method to listen for attribute change events will be notified just
+         * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
+         * invoked.</p>
+         * 
+         * <p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
+         * who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
+         * 
+         * @param {String} type The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
+         * for the attribute "enabled", the event type will be "enabledChange".
+         * @param {Function} fn The subscribed function to invoke
+         * @param {Object} context Optional execution context
+         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.
+         * @method on
+         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.
+         */
+        before : function() {
+            this.subscribe.apply(this, arguments);
         },
 
         /**

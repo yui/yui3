@@ -103,7 +103,7 @@ PluginHost.prototype = {
 
         // Class Configuration
         var classes = this._getClasses(), constructor;
-        for (var i = 0; i < classes.length; i++) {
+        for (var i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
             if (constructor.PLUGINS) {
                 this.plug(constructor.PLUGINS);
@@ -997,12 +997,12 @@ Y.extend(Widget, Y.Base, {
         var classes = this._getClasses(),
             boundingBox = this.get(BOUNDING_BOX),
             contentBox = this.get(CONTENT_BOX),
-            name;
+            name, i;
 
         boundingBox.addClass(Widget.getClassName());
 
         // Start from Widget Sub Class
-        for (var i = 2, l = classes.length; i < l; ++i) {
+        for (i = classes.length-3; i >= 0; i--) {
             name = classes[i].NAME;
             if (name) {
                 boundingBox.addClass(ClassNameManager.getClassName(name.toLowerCase()));
@@ -1427,10 +1427,11 @@ Y.extend(Widget, Y.Base, {
     _getHtmlParser : function() {
         if (!this._HTML_PARSER) {
             var classes = this._getClasses(),
-                parser = {};
+                parser = {},
+                i, p;
 
-            for (var i = 0, l = classes.length; i < l; i++) {
-                var p = classes[i].HTML_PARSER;
+            for (i = classes.length - 1; i >= 0; i--) {
+                p = classes[i].HTML_PARSER;
                 if (p) {
                     Y.mix(parser, p, true);
                 }
