@@ -54,14 +54,14 @@
 <span class="c">     * @module base</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-        <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">SEP</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">,</span>
+        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
         <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
-        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span><span class="o">,</span>
         <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
+        <span class="nx">LITERAL_CONSTRUCTOR</span> <span class="o">=</span> <span class="o">{}.</span><span class="nx">constructor</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
     <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
@@ -87,6 +87,7 @@
     <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 
@@ -157,12 +158,10 @@
 <span class="c">     * @static</span>
 <span class="c">     * @final</span>
 <span class="c">     * @private</span>
-<span class="c">     */</span>    
+<span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;ATTRS&quot;</span><span class="o">]</span>
     <span class="o">};</span>
-
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -215,7 +214,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">main</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -248,7 +247,7 @@
 
         <span class="k">return</span> <span class="nx">builtClass</span><span class="o">;</span>
     <span class="o">};</span>
-    
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span> <span class="o">{</span>
 
         <span class="nx">_template</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">{</span>
@@ -346,15 +345,6 @@
 <span class="c">     * newly created class, when creating the instance.</span>
 <span class="c">     * @return {Object} An instance of the custom class</span>
 <span class="c">     */</span>
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">),</span>
-            <span class="nx">cArgs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-        <span class="k">function</span> <span class="nx">F</span><span class="o">(){}</span>
-        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
-
-        <span class="k">return</span> <span class="nx">c</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">new</span> <span class="nx">F</span><span class="o">(),</span> <span class="nx">cArgs</span><span class="o">);</span>
-    <span class="o">};</span>
 
     <span class="nx">Base</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
@@ -402,7 +392,6 @@
                 <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span>
             <span class="o">});</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
-
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -458,9 +447,7 @@
 <span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchy</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -473,30 +460,128 @@
 <span class="c">         */</span>
         <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
-            <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">];</span>
-
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Returns the top down class hierarchy for this object,</span>
-<span class="c">         * with Base being the first class in the array.</span>
-<span class="c">         *</span>
+<span class="c">         * Returns the class hierarchy for this object, with Base being the last class in the array.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _getClasses</span>
 <span class="c">         * @protected</span>
-<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class heirarchy for this object</span>
+<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object</span>
 <span class="c">         */</span>
         <span class="nx">_getClasses</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span> 
-                    <span class="nx">classes</span> <span class="o">=</span> <span class="o">[];</span>
-
-                <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">classes</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
-                    <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="o">}</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
             <span class="o">}</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">.</span><span class="nx">concat</span><span class="o">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _getAttrCfgs</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy</span>
+<span class="c">         */</span>
+        <span class="nx">_getAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * </span>
+<span class="c">         * @method _filterAttrCfs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Function} clazz</span>
+<span class="c">         * @param {Objects} allCfgs</span>
+<span class="c">         */</span>
+        <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">cfgs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _initHierarchyData</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initHierarchyData</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span> 
+                <span class="nx">classes</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">attrs</span> <span class="o">=</span> <span class="o">[];</span>
+
+            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Add to classes</span>
+<span class="c"></span>                <span class="nx">classes</span><span class="o">[</span><span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+                <span class="c">// Add to attributes</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span><span class="o">[</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_aggregateAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _aggregateAttrs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Object} allAttrs</span>
+<span class="c">         */</span>
+        <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
+                <span class="nx">aggAttrs</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
+    
+                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
+
+                            <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">ref</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">LITERAL_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">{</span>
+                                <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                            <span class="o">}</span>
+    
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">path</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                                <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                            <span class="o">}</span>
+    
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">this</span><span class="o">.</span><span class="nx">_setSubAttrVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
+                                <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                    <span class="c">// TODO: Need to apply valueFn and merge in &quot;.&quot; properties</span>
+<span class="c"></span>                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                <span class="o">}</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">aggAttrs</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -504,28 +589,26 @@
 <span class="c">         * which includes initializing attributes for each class defined </span>
 <span class="c">         * in the class&#39;s static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and invoking the initializer </span>
 <span class="c">         * method on the prototype of each class in the hierarchy.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
 <span class="c">         * @param {Object} userConf Object literal containing attribute name/value pairs</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userConf</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
-                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span>
+                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+                <span class="nx">mergedCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">&amp;&amp;</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ei</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ei</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">ei</span><span class="o">++)</span> <span class="o">{</span>
-                        <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">[</span><span class="nx">ei</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">),</span> <span class="nx">userConf</span><span class="o">);</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">_initAtts</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -539,12 +622,15 @@
 <span class="c">         */</span>
         <span class="nx">_destroyHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span> <span class="nx">cl</span><span class="o">,</span>
                 <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -662,6 +748,30 @@
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
             <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Alias for the Event.Target &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;subscribe&lt;/a&gt; method.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         *</span>
+<span class="c">         * &lt;p&gt;Subscribers using this method to listen for attribute change events will be notified just</span>
+<span class="c">         * &lt;strong&gt;before&lt;/strong&gt; the state of the attribute has been modified, and before the default handler has been</span>
+<span class="c">         * invoked.&lt;/p&gt;</span>
+<span class="c">         * </span>
+<span class="c">         * &lt;p&gt;The &lt;a href=&quot;Event.Target.html#method_after&quot;&gt;after&lt;/a&gt; method, inherited from Event Target, can be used by subscribers</span>
+<span class="c">         * who wish to be notified &lt;strong&gt;after&lt;/strong&gt; the attribute&#39;s value has changed.&lt;/p&gt;</span>
+<span class="c">         * </span>
+<span class="c">         * @param {String} type The event type. For attribute change events, the event type is &quot;[Attribute Name]Change&quot;, e.g.</span>
+<span class="c">         * for the attribute &quot;enabled&quot;, the event type will be &quot;enabledChange&quot;.</span>
+<span class="c">         * @param {Function} fn The subscribed function to invoke</span>
+<span class="c">         * @param {Object} context Optional execution context</span>
+<span class="c">         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.</span>
+<span class="c">         * @method on</span>
+<span class="c">         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.</span>
+<span class="c">         */</span>
+        <span class="nx">before</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -811,7 +921,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "on", "url": "Base.html#method_on", "type": "method"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
 </script>
 </body>
 </html>
