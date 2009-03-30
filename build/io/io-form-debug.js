@@ -1,11 +1,11 @@
 YUI.add('io-form', function(Y) {
 
-   /*
+   /**
     * Extends the IO base class to enable HTML form data serialization, when specified
     * in the transaction's configuration object.
-	* @module io-base
-	* @submodule io-form
-	*/
+    * @module io
+    * @submodule io-form
+    */
 
     Y.mix(Y.io, {
        /**

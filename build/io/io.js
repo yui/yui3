@@ -20,7 +20,7 @@ YUI.add('io-base', function(Y) {
 	* @description This event is fired by YUI.io when a transaction is initiated..
 	* @type Event Custom
 	*/
-	E_START = 'io:start',
+	var E_START = 'io:start',
 
    /**
 	* @event io:complete
@@ -91,185 +91,12 @@ YUI.add('io-base', function(Y) {
 	*/
 	_timeout = {},
 
-   /**
-	* @description Array of transactions queued for processing
-	*
-	* @property _q
-	* @private
-	* @static
-	* @type array
-	*/
-	_q = [],
-
-   /**
-	* @description Property to determine whether the queue is set to
-	* 1 (active) or 0 (inactive).  When inactive, transactions
-	* will be stored in the queue until the queue is set to active.
-	*
-	* @property _qState
-	* @private
-	* @static
-	* @type int
-	*/
-	_qState = 1,
-
-   /**
-	* @description Queue property to set a maximum queue storage size.  When
-	* this property is set, the queue will not store any more transactions
-	* until the queue size os reduced below this threshold. There is no
-	* maximum queue size until it is explicitly set.
-	*
-	* @property _qMaxSize
-	* @private
-	* @static
-	* @type int
-	*/
-	_qMaxSize = false,
-
 	// Window reference
 	w = Y.config.win;
 
 	//--------------------------------------
 	//  Methods
 	//--------------------------------------
-   /**
-	* @description Method for requesting a transaction, and queueing the
-	* request before it is sent to the resource.
-	*
-	* @method _queue
-	* @private
-	* @static
-    * @return int
-	*/
-	function _queue(uri, c) {
-
-		if (_qMaxSize === false || _q.length < _qMaxSize) {
-			var id = _id();
-			_q.push({ uri: uri, id: id, cfg:c });
-		}
-		else {
-			return false;
-		}
-
-		if (_qState === 1) {
-			_shift();
-		}
-
-		return id;
-	};
-
-   /**
-	* @description Method for promoting a transaction to the top of the queue.
-	*
-	* @method _unshift
-	* @private
-	* @static
-    * @return void
-	*/
-	function _unshift(id) {
-		var r;
-
-		for (var i = 0; i < _q.length; i++) {
-			if (_q[i].id === id) {
-				r = _q.splice(i, 1);
-				var p = _q.unshift(r[0]);
-				break;
-			}
-		}
-	};
-
-   /**
-	* @description Method for removing a transaction from the top of the
-	* queue, and sending the transaction to _io().
-	*
-	* @method _shift
-	* @private
-	* @static
-    * @return void
-	*/
-	function _shift() {
-		var c = _q.shift();
-		_io(c.uri, c.cfg, c.id);
-	};
-
-   /**
-	* @description Method to query the current size of the queue, or to
-	* set a maximum queue size.
-	*
-	* @method _size
-	* @private
-	* @static
-    * @return int
-	*/
-	function _size(i) {
-		if (i) {
-			_qMaxSize = i;
-			return i;
-		}
-		else {
-			return _q.length;
-		}
-	};
-
-   /**
-	* @description Method for setting the queue to active. If there are
-	* transactions pending in the queue, they will be processed from the
-	* queue in FIFO order.
-	*
-	* @method _start
-	* @private
-	* @static
-    * @return void
-	*/
-	function _start() {
-		var len = (_q.length > _qMaxSize > 0) ? _qMaxSize : _q.length;
-
-		if (len > 1) {
-			for (var i=0; i < len; i++) {
-				_shift();
-			}
-		}
-		else {
-			_shift();
-		}
-
-	};
-
-   /**
-	* @description Method for setting queue processing to inactive.
-	* Transaction requests to YUI.io.queue() will be stored in the queue, but
-	* not processed until the queue is reset to "active".
-	*
-	* @method _stop
-	* @private
-	* @static
-    * @return void
-	*/
-	function _stop() {
-		_qState = 0;
-	};
-
-   /**
-	* @description Method for removing a specific, pending transaction from
-	* the queue.
-	*
-	* @method _purge
-	* @private
-	* @static
-    * @return void
-	*/
-	function _purge(id) {
-		if (Y.Lang.isNumber(id)) {
-			for (var i = 0; i < _q.length; i++) {
-				if (_q[i].id === id) {
-					_q.splice(i, 1);
-					break;
-				}
-			}
-		}
-	};
-	/* End Queue Functions */
-
    /**
 	* @description Method for requesting a transaction. _io() is implemented as
 	* yui.io().  Each transaction may include a configuration object.  Its
@@ -345,11 +172,13 @@ YUI.add('io-base', function(Y) {
     * @return object
 	*/
 	function _io(uri, c) {
-		var c = c || {},
-		o = _create((arguments.length === 3) ? arguments[2] : null, c),
-		m = (c.method) ? c.method.toUpperCase() : 'GET',
-		d = (c.data) ? c.data : null,
-		f;
+		var u, f,
+			// Set default value of argument c to Object if
+			// configuration object "c" does not exist.
+			c = c || {},
+			o = _create((arguments.length === 3) ? arguments[2] : null, c),
+			m = (c.method) ? c.method.toUpperCase() : 'GET',
+			d = (c.data) ? c.data : null;
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
@@ -410,7 +239,7 @@ YUI.add('io-base', function(Y) {
 			return o.c.readyState !== 4 && o.c.readyState !== 0;
 		}
 		// Do not pass null, in the absence of data, as this
-		// wiil result in a POST request with no Content-Length
+		// will result in a POST request with no Content-Length
 		// defined.
 		_async(o, (d || ''), c);
 
@@ -449,16 +278,15 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioStart(id, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[id]) ? m[id] : null,
-		event;
+			fn = (m && m[id]) ? m[id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.start = fn.start;
-			delete fn;
 		}
 
 		Y.fire(E_START, id);
@@ -476,23 +304,23 @@ YUI.add('io-base', function(Y) {
 	* @method _ioComplete
 	* @private
 	* @static
-	* @param {object} id - transaction object.
+	* @param {object} o - transaction object.
 	* @param {object} c - configuration object for the transaction.
 	*
     * @return void
 	*/
 	function _ioComplete(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		Y.fire(E_COMPLETE, o.id, o.c);
 		if (c.on.complete) {
 			event = _tPubSub('complete', c);
 			event.fire(o.id, o.c);
 		}
-	}
+	};
 
    /**
 	* @description Fires event "io:success" and creates, fires a
@@ -508,18 +336,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioSuccess(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.success = fn.success;
-			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
+			delete m[o.id];
 		}
 
 		Y.fire(E_SUCCESS, o.id, o.c);
@@ -529,7 +357,7 @@ YUI.add('io-base', function(Y) {
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Fires event "io:failure" and creates, fires a
@@ -545,18 +373,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioFailure(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if (fn) {
 			c.on.failure = fn.failure;
-			delete fn;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
+			delete m[o.id];
 		}
 
 		Y.fire(E_FAILURE, o.id, o.c);
@@ -566,7 +394,7 @@ YUI.add('io-base', function(Y) {
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Fires event "io:abort" and creates, fires a
@@ -582,16 +410,18 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _ioAbort(o, c) {
-		// Set default value of argument c, property "on" to Object if
-		// the property is null or undefined.
-		c.on = c.on || {};
 		var m = Y.io._fn || {},
-		fn = (m && m[o.id]) ? m[o.id] : null,
-		event;
+			fn = (m && m[o.id]) ? m[o.id] : null,
+			event;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
 		if(o && o.c  && !c.xdr) {
 			// Terminate the transaction
+			o.isAbort = true;
 			o.c.abort();
+
 			if (c) {
 				// Clear the timeout poll for this specific transaction.
 				if (c.timeout) {
@@ -602,17 +432,17 @@ YUI.add('io-base', function(Y) {
 
 		if (fn) {
 			c.on.abort = fn.abort;
-			delete fn;
+			delete m[o.id];
 		}
 
 		Y.fire(E_ABORT, o.id);
 		if (c.on.abort) {
 			event = _tPubSub('abort', c);
-			event.fire(id);
+			event.fire(o.id);
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-	}
+	};
 
    /**
 	* @description Method that increments _transactionId for each transaction.
@@ -631,7 +461,7 @@ YUI.add('io-base', function(Y) {
 
    /**
 	* @description Method that creates a unique transaction object for each
-	* request..
+	* request.
 	*
 	* @method _create
 	* @private
@@ -721,7 +551,14 @@ YUI.add('io-base', function(Y) {
 
 		for (p in _headers) {
 			if (_headers.hasOwnProperty(p)) {
-				h[p] = _headers[p];
+				if (h[p]) {
+					// Configuration headers will supersede IO preset headers,
+					// if headers match.
+					break;
+				}
+				else {
+					h[p] = _headers[p];
+				}
 			}
 		}
 
@@ -792,12 +629,16 @@ YUI.add('io-base', function(Y) {
     * @return void
 	*/
 	function _readyState(o, c) {
-		if (o.c.readyState === 4) {
+		if (o.c.readyState === 4 && !o.isAbort) {
 			if (c.timeout) {
 				_clearTimeout(o.id);
 			}
-			_ioComplete(o, c);
-			_handleResponse(o, c);
+
+			w.setTimeout(
+				function() {
+					_ioComplete(o, c);
+					_handleResponse(o, c);
+				}, 0);
 		}
 	};
 
@@ -810,7 +651,7 @@ YUI.add('io-base', function(Y) {
 	* @private
 	* @static
     * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to YUI.io().
+    * @param {object} c - Configuration object passed to io().
     * @return void
 	*/
 	function _handleResponse(o, c) {
@@ -827,24 +668,19 @@ YUI.add('io-base', function(Y) {
 			status = 0;
 		}
 
-		/*
-		 * IE reports HTTP 204 as HTTP 1223.
-		 * However, the response data are still available.
-		 *
-		 * setTimeout() is used to prevent transactions from becoming
-		 * synchronous, in IE, when the response data are read from cache
-		 * (e.g., HTTP 304).
-		 */
+		// IE reports HTTP 204 as HTTP 1223.
+		// But, the response data are still available.
 		if (status >= 200 && status < 300 || status === 1223) {
-			w.setTimeout( function() { _ioSuccess(o, c); }, 0);
+			_ioSuccess(o, c);
 		}
 		else {
-			w.setTimeout( function() {_ioFailure(o, c); }, 0);
+			_ioFailure(o, c);
 		}
 	};
 
 	function _destroy(o, isTransport) {
-		// IE6 will throw a "Type Mismatch" error if the event handler is set to "null".
+		// IE, when using XMLHttpRequest as an ActiveX Object, will throw
+		// a "Type Mismatch" error if the event handler is set to "null".
 		if(w.XMLHttpRequest && !isTransport) {
 			if (o.c) {
 				o.c.onreadystatechange = null;
@@ -860,7 +696,8 @@ YUI.add('io-base', function(Y) {
 	_io.success = _ioSuccess;
 	_io.failure = _ioFailure;
 	_io.abort = _ioAbort;
-	_io.timeout = _timeout;
+	_io._id = _id;
+	_io._timeout = _timeout;
 
    	//--------------------------------------
    	//  Begin public interface definition
@@ -880,81 +717,6 @@ YUI.add('io-base', function(Y) {
 	_io.header = _setHeader;
 
    /**
-	* @description Method for requesting a transaction, and queueing the
-	* request before it is sent to the resource. This is the
-	* interface for _queue().
-	*
-	* @method queue
-	* @public
-	* @static
-    * @param {string} uri - qualified path to transaction resource.
-    * @param {object} c - configuration object for the transaction.
-    * @return int
-	*/
-	_io.queue = _queue;
-
-   /**
-	* @description Method to query the current size of the queue, or to
-	* set a maximum queue size.  This is the interface for _size().
-	*
-	* @method size
-	* @public
-	* @static
-	* @param {number} i - Specified maximum size of queue.
-    * @return number
-	*/
-	_io.queue.size = _size;
-
-   /**
-	* @description Method for setting the queue to "active". If there are
-	* transactions pending in the queue, they will be processed from the
-	* queue in FIFO order. This is the interface for _start().
-	*
-	* @method start
-	* @public
-	* @static
-    * @return void
-	*/
-	_io.queue.start = _start;
-
-   /**
-	* @description Method for setting queue processing to inactive.
-	* Transaction requests to YUI.io.queue() will be stored in the queue, but
-	* not processed until the queue is set to "active". This is the
-	* interface for _stop().
-	*
-	* @method stop
-	* @public
-	* @static
-    * @return void
-	*/
-	_io.queue.stop = _stop;
-
-   /**
-	* @description Method for promoting a transaction to the top of the queue.
-	* This is the interface for _unshift().
-	*
-	* @method promote
-	* @public
-	* @static
-	* @param {number} i - ID of queued transaction.
-    * @return void
-	*/
-	_io.queue.promote = _unshift;
-
-   /**
-	* @description Method for removing a specific, pending transaction from
-	* the queue. This is the interface for _purge().
-	*
-	* @method purge
-	* @public
-	* @static
-	* @param {number} i - ID of queued transaction.
-    * @return void
-	*/
-	_io.queue.purge = _purge;
-
-   /**
 	* @description Method for requesting a transaction. This
 	* is the interface for _io().
 	*
@@ -966,6 +728,7 @@ YUI.add('io-base', function(Y) {
     * @return object
     */
 	Y.io = _io;
+	Y.io.http = _io;
 
 
 
@@ -973,10 +736,12 @@ YUI.add('io-base', function(Y) {
 
 YUI.add('io-form', function(Y) {
 
-   /*
-	* @module io-base
-	* @submodule io-form
-	*/
+   /**
+    * Extends the IO base class to enable HTML form data serialization, when specified
+    * in the transaction's configuration object.
+    * @module io
+    * @submodule io-form
+    */
 
     Y.mix(Y.io, {
        /**
@@ -986,7 +751,7 @@ YUI.add('io-form', function(Y) {
         * @method _serialize
         * @private
         * @static
-        * @param {object} f - HTML form object or id.
+        * @param {object} o - HTML form object or id.
         * @return string
         */
         _serialize: function(o) {
@@ -1059,14 +824,17 @@ YUI.add('io-form', function(Y) {
 
 YUI.add('io-xdr', function(Y) {
 
-   /*
-	* @module io-base
+   /**
+    * Extends the IO base class to provide an alternate, Flash transport, for making
+    * cross-domain requests.
+	* @module io
 	* @submodule io-xdr
 	*/
 
    /**
 	* @event io:xdrReady
-	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @description This event is fired by YUI.io when the specified transport is
+	* ready for use.
 	* @type Event Custom
 	*/
 	var E_XDR_READY = 'io:xdrReady';
@@ -1081,13 +849,14 @@ YUI.add('io-xdr', function(Y) {
 	* @param {string} yid - YUI instance id.
 	* @return void
 	*/
-	function swf(uri, yid) {
-		var XDR_SWF = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">' +
+	function _swf(uri, yid) {
+		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
+		              uri + '" width="0" height="0">' +
 		     		  '<param name="movie" value="' + uri + '">' +
 		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
                       '<param name="allowScriptAccess" value="sameDomain">' +
 		    	      '</object>';
-		Y.get('body').appendChild(Y.Node.create(XDR_SWF))
+		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
 	};
 
     Y.mix(Y.io, {
@@ -1113,7 +882,19 @@ YUI.add('io-xdr', function(Y) {
 		*/
 		_fn: {},
 
-		_xdr: function(uri, o, c){
+	   /**
+	   	* @description Method for accessing the transport's interface for making a
+	   	* cross-domain transaction.
+	   	*
+		* @method _xdr
+		* @private
+		* @static
+		* @param {string} uri - qualified path to transaction resource.
+    	* @param {object} o - Transaction object generated by _create() in io-base.
+		* @param {object} c - configuration object for the transaction.
+		* @return object
+		*/
+		_xdr: function(uri, o, c) {
 			if (c.on) {
 				this._fn[o.id] = c.on;
 			}
@@ -1122,25 +903,6 @@ YUI.add('io-xdr', function(Y) {
 			return o;
 		},
 
-	   /**
-		* @description Method to initialize the desired transport medium.
-		*
-		* @method transport
-		* @public
-		* @static
-		* @param {object} o - object of transport configurations.
-		* @return void
-		*/
-		transport: function(o) {
-			switch (o.id) {
-				case 'flash':
-					swf(o.src, o.yid);
-					this._transport.flash = Y.config.doc.getElementById('yuiSwfIo');
-					break;
-				case 'upload':
-					break;
-			}
-		},
 
 	   /**
 		* @description Fires event "io:xdrReady"
@@ -1155,6 +917,24 @@ YUI.add('io-xdr', function(Y) {
 		*/
 		xdrReady: function(id) {
 			Y.fire(E_XDR_READY, id);
+		},
+
+	   /**
+		* @description Method to initialize the desired transport.
+		*
+		* @method transport
+		* @public
+		* @static
+		* @param {object} o - object of transport configurations.
+		* @return void
+		*/
+		transport: function(o) {
+			switch (o.id) {
+				case 'flash':
+					_swf(o.src, o.yid);
+					this._transport.flash = Y.config.doc.getElementById('yuiIoSwf');
+					break;
+			}
 		}
 	});
 
@@ -1162,7 +942,441 @@ YUI.add('io-xdr', function(Y) {
 
 }, '@VERSION@' ,{requires:['io-base']});
 
+YUI.add('io-upload-iframe', function(Y) {
+
+   /**
+   	* Extends the IO base class to enable file uploads, with HTML forms,
+   	* using an iframe as the transport medium.
+	* @module io
+	* @submodule io-upload-iframe
+	*/
+
+	var w = Y.config.win;
+   /**
+	* @description Parses the POST data object and creates hidden form elements
+	* for each key-value, and appends them to the HTML form object.
+	* @method appendData
+	* @private
+	* @static
+	* @param {object} d The key-value hash map.
+	* @return {array} e Array of created fields.
+	*/
+
+	function _addData(f, d) {
+		var e = [],
+			p, i;
+
+		for (p in d) {
+			if (d.hasOwnProperty(d, p)) {
+				e[i] = document.createElement('input');
+				e[i].type = 'hidden';
+				e[i].name = p;
+				e[i].value = d[p].
+				f.appendChild(e[i]);
+			}
+		}
+
+		return e;
+	};
+
+	function _removeData(f, e) {
+		var i, l;
+		if (e && e.length > 0) {
+			for(i = 0, l = e.length; i < l; i++){
+				f.removeChild(e[i]);
+			}
+		}
+	};
+
+	function _create(o, c) {
+		var i = Y.Node.create('<iframe id="ioupload' + o.id + '" name="ioupload' + o.id + '" />'),
+			cfg = {
+				position: 'absolute',
+				top: '-1000',
+				left: '-1000'
+			};
+
+		i.setStyles(cfg);
+		Y.get('body').appendChild(i);
+		// Bind the onload handler to the iframe to detect the file upload response.
+		Y.on("load", function() { _handle(o, c) }, '#ioupload' + o.id);
+	};
+
+	// Create the upload callback handler that fires when the iframe
+	// receives the load event.  Subsequently, the event handler is detached
+	// and the iframe removed from the document.
+	function _handle(o, c) {
+		var p,
+		    b = Y.get('#ioupload' + o.id).get('contentWindow.document.body');
+
+		if (c.timeout) {
+			_clearTimeout(o.id);
+		}
+
+		// When a response Content-Type of "text/plain" is used, Firefox and Safari
+		// will wrap the response string with <pre></pre>.
+		p = b.query('pre:first-child');
+		o.c.responseText = (p) ? p.get('innerHTML') : b.get('innerHTML');
+		Y.io.complete(o, c);
+		// The transaction is complete, so call _destroy to remove
+		// the event listener bound to the iframe transport, and then
+		// destroy the iframe.
+		setTimeout( function() { _destroy(o.id); }, 0);
+	};
+
+   /**
+	* @description Starts timeout count if the configuration object
+	* has a defined timeout property.
+	*
+	* @method _startTimeout
+	* @private
+	* @static
+    * @param {object} o Transaction object generated by _create().
+    * @param {object} c Configuration object passed to YUI.io().
+    * @return void
+	*/
+	function _startTimeout(o, c) {
+		Y.io._timeout[o.id] = w.setTimeout(function() { Y.io.abort(o, c); }, c.timeout);
+	};
+
+   /**
+	* @description Clears the timeout interval started by _startTimeout().
+	*
+	* @method _clearTimeout
+	* @private
+	* @static
+    * @param {number} id - Transaction id.
+    * @return void
+	*/
+	function _clearTimeout(id) {
+		w.clearTimeout(Y.io._timeout[id]);
+		delete Y.io._timeout[id];
+	};
+
+	function _destroy(id) {
+		Y.Event.purgeElement('#ioupload' + id, false);
+		Y.get('body').removeChild(Y.get('#ioupload' + id));
+	};
+
+	Y.mix(Y.io, {
+
+	   /**
+		* @description Uploads HTML form, inclusive of files/attachments, using the
+		* iframe created in createFrame to facilitate the transaction.
+		* @method _upload
+		* @private
+		* @static
+		* @param {o} o The transaction object
+		* @param {object} uri Qualified path to transaction resource.
+		* @param {object} c Configuration object for the transaction.
+		* @return {void}
+		*/
+		_upload: function(o, uri, c) {
+			var f = (typeof c.form.id === 'string') ? document.getElementById(c.form.id) : c.form.id,
+				e, fields, i, p, attr;
+
+			_create(o, c);
+			// Track original HTML form attribute values.
+			attr = {
+				action: f.getAttribute('action'),
+				target: f.getAttribute('target')
+			};
+
+			// Initialize the HTML form properties in case they are
+			// not defined in the HTML form.
+			f.setAttribute('action', uri);
+			f.setAttribute('method', 'POST');
+			f.setAttribute('target', 'ioupload' + o.id );
+			f.setAttribute((Y.UA.ie) ? 'encoding' : 'enctype', 'multipart/form-data');
+
+			if (c.data) {
+				fields = _addData(f, c.data);
+			}
+
+			// Start polling if a callback is present and the timeout
+			// property has been defined.
+			if (c.timeout) {
+				_startTimeout(o, c);
+			}
+
+			// Start file upload.
+			f.submit();
+			Y.io.start(o.id, c);
+
+			if (c.data) {
+				_removeData(f, fields);
+			}
+
+			// Restore HTML form attributes to their original
+			// values prior to file upload.
+			for (p in attr) {
+				if (attr.hasOwnProperty(attr, p)) {
+					if (attr[p]) {
+				  		f.setAttribute(p, f[prop]);
+					}
+					else {
+				  		f.removeAttribute(p);
+					}
+			  	}
+			}
+		}
+	});
 
 
-YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr']});
+
+}, '@VERSION@' ,{requires:['io-base']});
+
+YUI.add('io-queue', function(Y) {
+
+   /*
+    * Extends the IO base class to include basic queue interfaces for transaction
+    * queuing.
+	* @module io-base
+	* @submodule io-queue
+	*/
+
+   /**
+	* @description Array of transactions queued for processing
+	*
+	* @property _q
+	* @private
+	* @static
+	* @type array
+	*/
+	var _q = [],
+
+   /**
+	* @description Property to determine whether the queue is set to
+	* 1 (active) or 0 (inactive).  When inactive, transactions
+	* will be stored in the queue until the queue is set to active.
+	*
+	* @property _qState
+	* @private
+	* @static
+	* @type int
+	*/
+	_qState = 1,
+
+   /**
+	* @description Queue property to set a maximum queue storage size.  When
+	* this property is set, the queue will not store any more transactions
+	* until the queue size os reduced below this threshold. There is no
+	* maximum queue size until it is explicitly set.
+	*
+	* @property _qMaxSize
+	* @private
+	* @static
+	* @type int
+	*/
+	_qMaxSize = false;
+
+   /**
+	* @description Method for requesting a transaction, and queueing the
+	* request before it is sent to the resource.
+	*
+	* @method _queue
+	* @private
+	* @static
+	* @return int
+	*/
+	function _queue(uri, c) {
+
+		if (_qMaxSize === false || _q.length < _qMaxSize) {
+			var id = Y.io._id();
+			_q.push({ uri: uri, id: id, cfg:c });
+		}
+		else {
+			return false;
+		}
+
+		if (_qState === 1) {
+			_shift();
+		}
+
+		return id;
+	};
+
+   /**
+	* @description Method for promoting a transaction to the top of the queue.
+	*
+	* @method _unshift
+	* @private
+	* @static
+	* @return void
+	*/
+	function _unshift(id) {
+		var r;
+
+		for (var i = 0; i < _q.length; i++) {
+			if (_q[i].id === id) {
+				r = _q.splice(i, 1);
+				var p = _q.unshift(r[0]);
+				break;
+			}
+		}
+	};
+
+   /**
+	* @description Method for removing a transaction from the top of the
+	* queue, and sending the transaction to _io().
+	*
+	* @method _shift
+	* @private
+	* @static
+	* @return void
+	*/
+	function _shift() {
+		var c = _q.shift();
+		Y.io(c.uri, c.cfg, c.id);
+	};
+
+   /**
+	* @description Method to query the current size of the queue, or to
+	* set a maximum queue size.
+	*
+	* @method _size
+	* @private
+	* @static
+	* @return int
+	*/
+	function _size(i) {
+		if (i) {
+			_qMaxSize = i;
+			return i;
+		}
+		else {
+			return _q.length;
+		}
+	};
+
+   /**
+	* @description Method for setting the queue to active. If there are
+	* transactions pending in the queue, they will be processed from the
+	* queue in FIFO order.
+	*
+	* @method _start
+	* @private
+	* @static
+	* @return void
+	*/
+	function _start() {
+		var len = (_q.length > _qMaxSize > 0) ? _qMaxSize : _q.length;
+
+		if (len > 1) {
+			for (var i=0; i < len; i++) {
+				_shift();
+			}
+		}
+		else {
+			_shift();
+		}
+
+	};
+
+   /**
+	* @description Method for setting queue processing to inactive.
+	* Transaction requests to YUI.io.queue() will be stored in the queue, but
+	* not processed until the queue is reset to "active".
+	*
+	* @method _stop
+	* @private
+	* @static
+	* @return void
+	*/
+	function _stop() {
+		_qState = 0;
+	};
+
+   /**
+	* @description Method for removing a specific, pending transaction from
+	* the queue.
+	*
+	* @method _purge
+	* @private
+	* @static
+	* @return void
+	*/
+	function _purge(id) {
+		if (Y.Lang.isNumber(id)) {
+			for (var i = 0; i < _q.length; i++) {
+				if (_q[i].id === id) {
+					_q.splice(i, 1);
+					break;
+				}
+			}
+		}
+	};
+
+   /**
+	* @description Method to query the current size of the queue, or to
+	* set a maximum queue size.  This is the interface for _size().
+	*
+	* @method size
+	* @public
+	* @static
+	* @param {number} i - Specified maximum size of queue.
+    * @return number
+	*/
+	_queue.size = _size;
+
+   /**
+	* @description Method for setting the queue to "active". If there are
+	* transactions pending in the queue, they will be processed from the
+	* queue in FIFO order. This is the interface for _start().
+	*
+	* @method start
+	* @public
+	* @static
+    * @return void
+	*/
+	_queue.start = _start;
+
+   /**
+	* @description Method for setting queue processing to inactive.
+	* Transaction requests to YUI.io.queue() will be stored in the queue, but
+	* not processed until the queue is set to "active". This is the
+	* interface for _stop().
+	*
+	* @method stop
+	* @public
+	* @static
+    * @return void
+	*/
+	_queue.stop = _stop;
+
+   /**
+	* @description Method for promoting a transaction to the top of the queue.
+	* This is the interface for _unshift().
+	*
+	* @method promote
+	* @public
+	* @static
+	* @param {number} i - ID of queued transaction.
+    * @return void
+	*/
+	_queue.promote = _unshift;
+
+   /**
+	* @description Method for removing a specific, pending transaction from
+	* the queue. This is the interface for _purge().
+	*
+	* @method purge
+	* @public
+	* @static
+	* @param {number} i - ID of queued transaction.
+    * @return void
+	*/
+	_queue.purge = _purge;
+
+    Y.mix(Y.io, {
+		queue: _queue,
+    }, true);
+
+
+
+}, '@VERSION@' ,{requires:['io-base']});
+
+
+
+YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr', 'io-upload-iframe', 'io-queue']});
 
