@@ -1,5 +1,12 @@
 YUI Custom Events
     Custom event system
 
-3.0.0next
-    - Moved from event
+3.0.0b1
+    - Moved custom event out of event package
+    - Event.Target accepts a prefix configuration.  This is used
+      in all exposed methods to handle shortcuts to event names,
+      e.g., 'click' and 'menu:click' are the same if the prefix
+      is 'menu'
+    - Exposed methods are 'on' for the before moment, 'after' for
+      the after moment, and 'detach' for unsubscribe.  subscribe,
+      before, unsubscribe, and corresponding methods are deprecated.
