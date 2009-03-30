@@ -46,6 +46,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
+        // TODO: IE Name
         return Y.DOM._getDoc(doc).getElementById(id);
     },
 
@@ -63,6 +64,7 @@ Y.DOM = {
         return text || '';
     },
 
+// TODO: pull out sugar (rely on _childBy, byAxis, etc)?
     /**
      * Finds the firstChild of the given HTMLElement. 
      * @method firstChild
@@ -98,7 +100,7 @@ Y.DOM = {
         return Y.DOM._childBy(element, tag, fn, true);
     },
 
-    /**
+    /*
      * Finds all HTMLElement childNodes matching the given tag.
      * @method childrenByTag
      * @param {HTMLElement} element The html element.
@@ -107,17 +109,25 @@ Y.DOM = {
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, all children with the given tag are collected.
      * @return {Array} The collection of child elements.
+     * TODO: deprecate?  Webkit children.tags() returns grandchildren
      */
-    childrenByTag: function() {
+    _childrenByTag: function() {
         if (document[DOCUMENT_ELEMENT].children) {
             return function(element, tag, fn, toArray) { // TODO: keep toArray option?
                 tag = (tag && tag !== '*') ? tag : null;
-                var elements = [];
+                var elements = [],
+                    wrapFn = fn;
                 if (element) {
-                    elements = (tag) ? element.children.tags(tag) : element.children; 
+                    if (tag && !Y.UA.webkit) { // children.tags() broken in safari
+                        elements = element.children.tags(tag); 
+                    } else {
+                        wrapFn = function(el) {
+                            return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                        }
+                    }
 
                     if (fn || toArray) {
-                        elements = Y.DOM.filterElementsBy(elements, fn);
+                        elements = Y.DOM.filterElementsBy(elements, wrapFn);
                     }
                 }
 
@@ -154,7 +164,7 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn);
+        return Y.DOM._childrenByTag(element, null, fn);
     },
 
     /**
@@ -398,6 +408,16 @@ Y.DOM = {
         }
         return ret;
     },
+
+    srcIndex: (document.documentElement.sourceIndex) ?
+        function(node) {
+            return (node && node.sourceIndex) ? node.sourceIndex : null;
+        } :
+        function(node) {
+            return (node && node[OWNER_DOCUMENT]) ? 
+                    [].indexOf.call(node[OWNER_DOCUMENT].
+                            getElementsByTagName('*'), node) : null;
+        },
 
     _create: function(html, doc, tag) {
         tag = tag || 'div';
