@@ -1,0 +1,802 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
+    <style type="text/css" id="styleblock" class="highlight-ignore">
+        h1 {
+            font: normal 125%/1.4 Arial, sans-serif;
+        }
+        .yui-skin-sam .yui-console .yui-console-content {
+            font-size: 10px;
+            width: 32em;
+        }
+        .yui-skin-sam .yui-console .yui-console-bd {
+            height: 50em;
+        }
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background: #070;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background: #700;
+            color: #fff;
+        }
+        .highlight-example {
+            display: inline;
+            float: left;
+            width: 650px;
+        }
+        .highlight-example h2 {
+            display: none;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h1>Tests</h1>
+<div id="testbed"></div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/io/io-base-debug.js"></script>
+<script type="text/javascript" src="../../../build/queue/queue-debug.js"></script>
+<script type="text/javascript">
+YUI({
+    base : '../../../build/',
+    filter : 'debug',
+    useBrowserConsole : false,
+    logInclude : { TestRunner: true }
+}).use('test','console','queue','io-base',function (Y) {
+
+var suite = new Y.Test.Suite("Tests");
+
+function f() {}
+
+if (!window.console) {
+    console = { log: f };
+}
+
+suite.add(new Y.Test.Case({
+    name : "Queue isntantiation",
+
+    test_instantiation : function () {
+        var withNew       = new Y.Queue(),
+            withoutNew    = Y.Queue(),
+            withConfig    = Y.Queue({ timeout: 37 }),
+            withCallbacks = Y.Queue(null,f,f,f,f),
+            withBoth      = Y.Queue({ context : this },f,f,f,f,f,f);
+
+        Y.Assert.areSame(true, withNew instanceof Y.Queue);
+        Y.Assert.areSame(true, withoutNew instanceof Y.Queue);
+
+        Y.Assert.areSame(0, withNew.size());
+        Y.Assert.areSame(0, withNew._q.length);
+        Y.Assert.areSame(0, withoutNew.size());
+        Y.Assert.areSame(0, withoutNew._q.length);
+
+        Y.Assert.areSame(0, withConfig.size());
+        Y.Assert.areSame(37, withConfig._defaults.timeout);
+
+        Y.Assert.areSame(4, withCallbacks.size());
+        Y.Assert.isObject(withCallbacks._q[0]);
+        Y.Assert.areSame(f, withCallbacks._q[0].fn);
+        Y.Assert.areSame(withCallbacks, withCallbacks._q[3].context);
+
+        Y.Assert.areSame(6, withBoth.size());
+        Y.Assert.areSame(f, withBoth._q[4].fn);
+        Y.Assert.areSame(this, withBoth._q[4].context);
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name : "Test API",
+
+    test_chaining : function () {
+        var q = Y.Queue({timeout:10});
+
+        Y.Assert.areSame(q, q.add());
+        Y.Assert.areSame(q, q.add(f));
+        Y.Assert.areSame(q, q.add(f,f,{fn:f,name:'a'},"garbage"));
+
+        Y.Assert.areSame(q, q.pause());
+        Y.Assert.areSame(q, q.promote('a'));
+        Y.Assert.areSame(q, q.remove('a'));
+        Y.Assert.areSame(q, q.run());
+        Y.Assert.areSame(q, q.stop());
+    },
+
+    test_add : function () {
+        var q = Y.Queue(null, f);
+
+        Y.Assert.areSame(1, q.size());
+
+        q = Y.Queue().add(f);
+        Y.Assert.areSame(1, q.size());
+
+        q.add(f,f).add(f,f,f);
+        Y.Assert.areSame(6, q.size());
+
+        q.add("Only functions and objects are allowed",
+              undefined,
+              null,
+              1,
+              true);
+
+        Y.Assert.areSame(6, q.size());
+
+        q.add({},{}); // empty objects are ok, since config can be defaulted
+        Y.Assert.areSame(8, q.size());
+
+        // Add from within a callback
+        var count = 0;
+        function x() {
+            count++;
+        }
+        function addToQueue() {
+            this.add(x);
+        }
+
+        // Three x calls scheduled.  A fourth added during a callback
+        q = Y.Queue({timeout:-1},x,f,x,addToQueue,f,x).run();
+        Y.Assert.areSame(4,count);
+    },
+
+    test_remove : function () {
+        function X() {
+            q.run();
+            results += 'X';
+        }
+
+        var results = '',
+            self = this,
+            q = Y.Queue(null,
+                    function () {
+                        Y.Assert.areSame(9, this.size());
+                        results += 'R';
+                    },
+                    { name: "remove me", fn: X },
+                    {
+                        name: "not removed",
+                        fn: function () {
+                            results += 'E';
+                            this.remove('dup');
+                        },
+                        timeout: 10
+                    },
+                    { name: "dup", fn: X },
+                    function () {
+                        this.remove("fail");
+                        Y.Assert.areSame(4, q.size(),
+                            "remove(n) should defer until callback completion");
+                        results += 'M';
+                    },
+                    { name: "dup", fn: X },
+                    {name: "fail",
+                     fn: function () {
+                            Y.Assert.fail("This callback should have been removed");
+                         }
+                    },
+                    { name: "dup", fn: X },
+                    function () {
+                        Y.Assert.areSame(2, q.size());
+                        results += 'OV';
+                    },
+                    function () {
+                        self.resume(function () {
+                            results += 'E';
+                            Y.Assert.areSame('REMOVE', results);
+                        });
+                    });
+
+        Y.Assert.areSame(10, q.size());
+
+        // Removal when the Queue is inactive is immediate
+        q.remove("remove me");
+        Y.Assert.areSame(9, q.size());
+
+        q.run();
+        Y.Assert.areSame('R',results);
+        Y.Assert.areSame(8, q.size());
+
+        q.remove("not removed");
+        Y.Assert.areSame(8, q.size());
+
+        this.wait();
+    },
+
+    test_promote : function () {
+        function O() {
+            results += 'O';
+        }
+
+        var results = '',
+            self = this,
+            q = Y.Queue(null,
+                    function () {
+                        results += "R";
+                    },
+                    {
+                        name: "p",
+                        fn: function () { results += 'P'; }
+                    },
+                    O,
+                    {
+                        name: 'm',
+                        fn: function () {
+                            if (this.count++ > 3) {
+                                results += 'M';
+                            } else if (!this.count) {
+                                q.promote('o');
+                            }
+                        },
+                        context : { count : 0 },
+                        iterations : 5
+                    },
+                    {
+                        name : 'o',
+                        fn: O,
+                        timeout: 10
+                    },
+                    function () { results += 'E'; },
+                    {
+                        name : 't',
+                        fn : function () {
+                            results += 'T';
+                        }
+                    },
+                    function () {
+                        self.resume(function () {
+                            Y.Assert.areSame('PROMOTE', results);
+                        });
+                    });
+
+        Y.Assert.isUndefined(q._q[0].name);
+
+        q.promote('p');
+        Y.Assert.areSame('p', q._q[0].name);
+
+        q.run();
+        Y.Assert.areSame('PROM', results);
+
+        q.promote('t');
+
+        this.wait();
+    },
+
+    test_pause : function () {
+        var results = '',
+            self = this,
+            q = Y.Queue(null,
+                function () { results += 'P'; },
+                {
+                    fn: function () {
+                        results += 'A';
+                    },
+                    timeout : 10
+                },
+                function () {
+                    results += 'U';
+                },
+                function () {
+                    results += 'S';
+                    this.pause();
+
+                    self.resume(function () {
+                        Y.Assert.areSame('PAUS',results);
+
+                        setTimeout(function () {
+                            q.run();
+                        },10);
+
+                        self.wait();
+                    });
+
+                },
+                function () {
+                    results += 'E';
+                    self.resume(function () {
+                        Y.Assert.areSame('PAUSE',results);
+                    });
+                });
+
+        Y.Assert.areSame(5,q.size());
+        q.run();
+
+        // Test during timeout
+        Y.Assert.areSame('P', results);
+        q.pause();
+
+        setTimeout(function () {
+            self.resume(function () {
+                q.run();
+                self.wait();
+            });
+        }, 20);
+
+        this.wait();
+    },
+
+    test_stop : function () {
+        var results = "",
+            self = this,
+            q = Y.Queue(null,
+                    function () { results += 'S'; },
+                    function () { results += 'T'; },
+                    function () { results += 'O'; },
+                    function () { results += 'P'; },
+                    {
+                        fn: function () {
+                            self.resume(function () {
+                                Y.Assert.fail("Synchronous q.stop() should have cleared this async callback");
+                            });
+                        },
+                        timeout: 10
+                    });
+
+        q.run();
+        q.stop();
+        Y.Assert.areSame('STOP',results);
+        Y.Assert.areSame(0,q.size());
+
+        setTimeout(function () {
+            self.resume(function () {
+                Y.Assert.areSame('STOP',results);
+            });
+        },100);
+
+        q.run();
+
+        this.wait();
+    },
+
+    test_getCallback : function () {
+        var c,
+            q = Y.Queue({fn: function () {}},
+                    { name : 'a', test: 1 },
+                    { name : 'b', test: 2, fn: function () {
+                            this.pause();
+                        }
+                    },
+                    { name : 'c', test: 3 },
+                    { name : 'd', test: 4,
+                      fn: function () {
+                          Y.Assert.areSame(this._q[0], this.getCallback('d'));
+                      }
+                    },
+                    { name : 'a', test: 5 });
+
+        c = q.getCallback('a');
+        Y.Assert.isObject(c);
+        Y.Assert.areSame(1, c.test);
+
+        q.run();
+        c = q.getCallback('a');
+        Y.Assert.isObject(c);
+        Y.Assert.areSame(5, c.test);
+
+        q.run();
+    },
+
+    test_active : function () {
+        var self = this,
+            q = Y.Queue(null,
+                    function () {
+                        Y.Assert.areSame(true, this.active);
+                    },
+                    {
+                        fn: function () {
+                            self.resume(function () {
+                                q.pause();
+                                Y.Assert.areSame(false, q.active);
+                            });
+                        },
+                        timeout: 10
+                    },
+                    function () {
+                        Y.Assert.areSame(true, this.active);
+                    });
+
+        Y.Assert.areSame(false, q.active);
+        q.run();
+
+        Y.Assert.areSame(true, q.active);
+
+        setTimeout(function () {
+            Y.Assert.areSame(false, q.active);
+            q.run(); // run to completion
+            Y.Assert.areSame(false, q.active);
+        },100);
+
+        this.wait();
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name : "Test callback config",
+
+    test_fn : function () {
+        var results = '',
+            q = Y.Queue({ fn: function () { results += 'U' } },
+                    function () { results += 'R'; },
+                    {},
+                    function () { results += 'N'; }).run();
+
+        Y.Assert.areSame("RUN", results);
+
+        q.add({ fn : "results += 'X'" },
+              { fn : /results += 'X'/ },
+              { fn : function () { Y.Assert.areSame("RUN", results); } }).run();
+    },
+
+    test_context : function () {
+        var a = { name : 'a',
+                  test : 'A',
+                  fn : function () {
+                    Y.Assert.areSame('A', this.test);
+                  }
+                },
+
+            q = Y.Queue({ test : 'callbacks exec from Queue ctx by default' },
+                function () { Y.Assert.areSame('X', this.test); },
+                {
+                    fn: function () {
+                        Y.Assert.areSame('X', this.test);
+                        this.test = 'Z';
+                    }
+                },
+                function () { Y.Assert.areSame('Z', this.test); },
+                a,
+                {
+                    fn: function () {
+                        Y.Assert.areSame('B', this.test);
+                    },
+                    context : { test : 'B' }
+                });
+
+        q.getCallback('a').context = a;
+
+        q.test = 'X';
+        q.run();
+    },
+
+    test_args : function () {
+        Y.Queue(null,
+            function () {
+                Y.Assert.areSame(0,arguments.length);
+            },
+            {
+                fn: function () {
+                    Y.ArrayAssert.itemsAreSame([1,2,3],arguments);
+                },
+                args : [1,2,3]
+            },
+            {
+                fn: function () {
+                    Y.ArrayAssert.itemsAreSame(['X'],arguments);
+                },
+                args : 'X'
+            }).run();
+    },
+
+    test_iterations : function () {
+        var results = '',
+            self = this;
+       
+        Y.Queue(null,
+            function () { results += 'A'; },
+            { fn: function () { results += 'B'; } },
+            { fn: function () { results += 'C'; }, iterations: 3 },
+            { fn: function () { results += 'D'; }, iterations: 3, timeout: 10 },
+            { fn: function () {
+                self.resume(function () {
+                    Y.Assert.areSame('ABCCCDDD', results);
+                });
+              }
+            }).run();
+
+        this.wait();
+    },
+
+    test_until : function () {
+        var results = '',
+            self = this;
+       
+        Y.Queue(null,
+            function () { results += 'A'; },
+            {
+                fn: function () {
+                    results += 'B';
+                },
+                until: function () {
+                    this.data = this.data.slice(1);
+                    return !this.data;
+                },
+                data : '1234'
+            },
+            {
+                fn: function () {
+                    results += 'C';
+                },
+                until: function () {
+                    return results.length >= 7;
+                },
+                timeout: 10
+            },
+            { fn: function () {
+                self.resume(function () {
+                    Y.Assert.areSame('ABBBCCC', results);
+                });
+              }
+            }).run();
+
+        Y.Assert.areSame('ABBB', results);
+
+        this.wait();
+    },
+
+    test_timeout : function () {
+        function inc() { ++results; }
+
+        var results = 0,
+            self = this,
+                // default timeout -1 triggers synchronous mode
+            q = Y.Queue(null,
+                inc, // -1 == sync
+                { fn: inc }, // -1 == sync
+                { fn: inc, timeout: 10, iterations: 4 },
+                { fn: inc, timeout: -300, iterations: 4 }, // neg == sync
+                // garbage timeout doesn't throw error, but is async
+                { fn: inc, timeout: 'a',
+                    until: function () {
+                        return results >= 10;
+                    }
+                }).run();
+
+        Y.Assert.areSame(2, results);
+        setTimeout(function () {
+            self.resume(function () {
+                Y.Assert.areSame(10,results);
+            });
+        },500);
+
+        this.wait();
+    },
+
+    test_waitForIOResponse : function () {
+        function good() {
+            var url = 'queue.html?cachebuster='+Y.guid();
+            Y.io(url, {
+                on : {
+                    success : function () { results.success++; },
+                    failure : function () { results.failure++; }
+                }
+            });
+        }
+
+        function bad() {
+            var url = Y.guid() + (Math.random() * 1000) + '.html'; // 404
+            Y.io(url, {
+                on : {
+                    success : function () { results.success++; },
+                    failure : function () { results.failure++; }
+                }
+            });
+        }
+
+        function late() {
+            var url = 'io_timeout.php?cachebuster=' + Y.guid();
+            Y.io(url, {
+                on : {
+                    success : function () { results.success++; },
+                    failure : function () { results.failure++; },
+                    abort   : function () { results.failure++; }
+                },
+                timeout : 10
+            });
+        }
+        
+        function test(s,f,step) {
+            return function () {
+                var msg = "Incorrect number of ",
+                    data;
+
+                if (results.success !== s) {
+                    msg += 'successes';
+                    data = [s,results.success];
+                } else if (results.failure !== f) {
+                    msg += 'failures';
+                    data = [f,results.failure];
+                } else {
+                    msg = '';
+                }
+
+                if (msg) {
+                    msg += ' at step ' + step +
+                           '. Expected ' + data[0] + ', got ' + data[1];
+                    q.stop();
+                    self.resume(function () {
+                        Y.Assert.fail(msg);
+                    });
+                }
+            }
+        }
+
+        var results = { success: 0, failure: 0 },
+            self = this,
+            q = Y.Queue(null,
+                {
+                    fn : good,
+                    waitForIOResponse: true
+                },
+                test(1,0,1),
+                {
+                    fn : function () { good(); good(); good(); },
+                    waitForIOResponse: true
+                },
+                test(4,0,2),
+                {
+                    fn : function () { bad(); good(); late(); },
+                    waitForIOResponse: true
+                },
+                test(5,2,3),
+                {
+                    fn : function () { late(); good(); },
+                    waitForIOResponse: true
+                },
+                test(6,3,4),
+                {
+                    // wait not triggered
+                    fn : function () {
+                        bad(); bad();
+                    }
+                },
+                test(6,3,5),
+                function () { self.resume(function () {}); }).run();
+
+        this.wait();
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name : "Test Events",
+
+    test_events : function () {
+        var results = '',
+            self = this,
+            q = Y.Queue(null,
+                function () { results += 'E'; this.pause(); },
+                {
+                    fn: function () { results += 'E'; },
+                    until: function () { return results.length > 20 },
+                    timeout: 10
+                },
+                {
+                    name: 'x',
+                    fn: function () { results += 'X'; }
+                },
+                {
+                    name: 'v',
+                    fn: function () { results += 'V'; },
+                    iterations: 3
+                },
+                {
+                    fn: function () {
+                        results += 'N';
+                        Y.io(Y.guid() + '.html', { // 404
+                            on : {
+                                failure : function () {
+                                    results += 'T';
+                                }
+                            }
+                        });
+                    },
+                    waitForIOResponse : true
+                });
+
+        q.subscribe('executeCallback',function () { results += '('; });
+        q.after('executeCallback',    function () { results += ')'; });
+        q.subscribe('shiftCallback',  function () { results += '^'; });
+        q.after('shiftCallback',      function () { results += '<'; });
+        q.subscribe('removeCallback', function () { results += '-'; });
+        q.subscribe('pause',          function () { results += '='; });
+        q.subscribe('stop',           function () { results += '*'; });
+
+        q.subscribe('addCallback', function (data) {
+            results += '+';
+            if (!data || data.length !== 4) {
+                self.resume(function () {
+                    Y.Assert.fail("addCallback args not right");
+                });
+            }
+        });
+        q.subscribe('promoteCallback', function () {
+            results += '!';
+            setTimeout(function () {
+                q.run();
+            }, 0);
+        });
+        q.subscribe('complete', function () {
+            results += '.';
+            self.resume(function () {
+                Y.Assert.areSame('+-(E=)!(V)(V)(V)^<^<(E)^<(N)T^<(S*).',results);
+            });
+        });
+
+        q.add(function () { results += 'S'; this.stop(); },f,f,f);
+        q.remove('x');
+
+        q.run();
+        q.promote('v');
+
+        this.wait();
+    },
+
+    test_preventCallback : function () {
+        function inc () { i++; }
+
+        var i = 0, x = 0,
+            q = Y.Queue(null,
+                {
+                    fn: inc,
+                    iterations: 20
+                });
+
+        q.subscribe('executeCallback', function (e) {
+            if (x++ % 2) {
+                e.preventDefault();
+            }
+        });
+
+        q.run();
+
+        Y.Assert.areSame(10,i);
+
+        q = Y.Queue(null, inc, inc, inc, inc, inc, inc, inc, inc, inc, inc);
+        q.subscribe('shiftCallback', function (e) {
+            if (i % 2) {
+                e.preventDefault();
+                q._q[0].iterations++;
+            }
+        });
+
+        q.run();
+
+        Y.Assert.areSame(30, i);
+    }
+}));
+
+
+var yconsole = new Y.Console({
+    contentBox:"log",
+    newestOnTop: false
+}).render();
+
+//yconsole.hideCategory('info');
+yconsole.printLogEntry = function (m) {
+    if (m.category === 'section') {
+        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
+        return this;
+    } else if (m.category === "break") {
+        this._addToConsole(Y.Node.create("<br>"));
+        return this;
+    } else if (m.category === "info") {
+        return this;
+    } else {
+        return Y.Console.prototype.printLogEntry.call(this,m);
+    }
+};
+
+Y.log("Tests","section","TestRunner");
+
+Y.Test.Runner.add(suite);
+
+Y.Test.Runner.run();
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>

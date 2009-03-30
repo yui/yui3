@@ -19,11 +19,18 @@
  * @constructor
  */
 
-    var L = Y.Lang,
-        A = Y.UA,
+        // SHortcuts...
+    var L  = Y.Lang,
+        A  = Y.UA,
         ET = Y.Event.Target,
-        WH = Y.config.win.history,
-        WL = Y.config.win.location,
+        C  = Y.config,
+        WH = C.win.history,
+        WL = C.win.location,
+        DM = C.doc.documentMode,
+
+        encode = encodeURIComponent,
+        decode = decodeURIComponent,
+
         H, G,
 
         // YUI Compressor helper...
@@ -124,14 +131,22 @@
      */
     function _handleFQStateChange(fqstate) {
 
-        var m, modules;
+        var m, modules, globalStateChanged = false;
 
         if (!fqstate) {
+
             Y.Object.each(G._modules, function (module, moduleId) {
-                module.currentState = module.initialState;
-                module.fire(EV_HISTORY_MODULE_STATE_CHANGE, module.currentState);
-                H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
+                if (module.currentState !== module.initialState) {
+                    module.currentState = module.initialState;
+                    module.fire(EV_HISTORY_MODULE_STATE_CHANGE, module.currentState);
+                    globalStateChanged = true;
+                }
             });
+
+            if (globalStateChanged) {
+                H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
+            }
+
             return;
         }
 
@@ -142,13 +157,19 @@
         }
 
         Y.Object.each(G._modules, function (module, moduleId) {
+
             var currentState = modules[moduleId];
+
             if (!currentState || module.currentState !== currentState) {
                 module.currentState = currentState || module.initialState;
                 module.fire(EV_HISTORY_MODULE_STATE_CHANGE, module.currentState);
-                H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
+                globalStateChanged = true;
             }
         });
+
+        if (globalStateChanged) {
+            H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
+        }
     }
 
     /**
@@ -305,7 +326,7 @@
 
         if (A.ie) {
 
-            if (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8) {
+            if (L.isUndefined(DM) || DM < 8) {
 
                 // IE < 8 or IE8 in quirks mode or IE7 standards mode
                 _checkIframeLoaded();
@@ -405,8 +426,8 @@
             }
 
             // Make sure the strings passed in do not contain our separators "," and "|"
-            moduleId = encodeURIComponent(moduleId);
-            initialState = encodeURIComponent(initialState);
+            moduleId = encode(moduleId);
+            initialState = encode(initialState);
 
             module = new H.Module(moduleId, initialState);
             G._modules[moduleId] = module;
@@ -445,7 +466,7 @@
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8)) {
+            if (A.ie && (L.isUndefined(DM) || DM < 8)) {
 
                 historyIFrame = Y.get(historyIFrame);
                 if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== "IFRAME") {
@@ -502,42 +523,41 @@
          */
         multiNavigate: function (states) {
 
-            var currentStates, fqstate;
+            var newStates = [], fqstate, globalStateChanged = false;
 
             if (!G.ready) {
                 Y.log("The browser history utility has not been initialized", "info", "history");
                 return false;
             }
 
-            Y.Object.each(states, function (module, moduleId) {
-                if (!G._modules[moduleId]) {
-                    Y.log("The following module has not been registered with the browser history utility: " + moduleId, "info", "history");
-                }
-            });
-
-            // Generate our new full state string mod1=xxx&mod2=yyy
-            currentStates = [];
-
             Y.Object.each(G._modules, function (module, moduleId) {
-                var currentState;
 
-                if (states[moduleId]) {
-                    currentState = states[decodeURIComponent(moduleId)];
+                var state, decodedModuleId = decode(moduleId);
+
+                if (!Y.Object.owns(states, decodedModuleId)) {
+                    // The caller did not wish to modify the state of this
+                    // module. We must however include it in fqstate!
+                    state = module.currentState;
                 } else {
-                    currentState = decodeURIComponent(module.currentState);
+                    state = encode(states[decodedModuleId]);
+                    if (state !== module.upcomingState) {
+                        module.upcomingState = state;
+                        globalStateChanged = true;
+                    }
                 }
 
-                // Make sure the strings passed in do not contain our separators "," and "|"
-                moduleId = encodeURIComponent(moduleId);
-                currentState = encodeURIComponent(currentState);
-
-                currentStates.push(moduleId + "=" + currentState);
+                newStates.push(moduleId + "=" + state);
             });
 
-            fqstate = currentStates.join("&");
+            if (!globalStateChanged) {
+                // Nothing changed, so don't do anything.
+                return false;
+            }
+
+            fqstate = newStates.join("&");
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (L.isUndefined(Y.config.doc.documentMode) || Y.config.doc.documentMode < 8)) {
+            if (A.ie && (L.isUndefined(DM) || DM < 8)) {
 
                 return _updateIFrame(fqstate);
 
@@ -593,7 +613,7 @@
                 return null;
             }
 
-            return decodeURIComponent(module.currentState);
+            return decode(module.currentState);
         },
 
         /**
@@ -624,7 +644,7 @@
                 REGEXP.lastIndex = 0;
                 while ((m = REGEXP.exec(h))) {
                     if (m[1] === moduleId) {
-                        return decodeURIComponent(m[2]);
+                        return decode(m[2]);
                     }
                 }
             }
@@ -661,7 +681,7 @@
             REGEXP.lastIndex = 0;
             while ((m = REGEXP.exec(q))) {
                 if (m[1] === paramName) {
-                    return decodeURIComponent(m[2]);
+                    return decode(m[2]);
                 }
             }
 
@@ -689,20 +709,34 @@
         /**
          * The module identifier
          * @type String
+         * @final
          */
         this.id = id;
 
         /**
          * The module's initial state
          * @type String
+         * @final
          */
         this.initialState = initialState;
 
         /**
          * The module's current state
          * @type String
+         * @final
          */
         this.currentState = initialState;
+
+        /**
+         * The module's upcoming state. There can be a slight delay between the
+         * time a state is changed, and the time a state change is detected.
+         * This property allows us to not fire the module state changed event
+         * multiple times, making client code simpler.
+         * @type String
+         * @private
+         * @final
+         */
+        this.upcomingState = initialState;
     };
 
     Y.mix(H.Module, ET, false, null, 1);

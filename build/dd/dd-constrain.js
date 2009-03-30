@@ -93,7 +93,7 @@ YUI.add('dd-constrain', function(Y) {
             },
             set: function (r) {
                 if (Y.Lang.isObject(r)) {
-                    if (r.top && r.right && r.left && r.bottom) {
+                    if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
                         var o = {};
                         Y.mix(o, r);
                         return o;

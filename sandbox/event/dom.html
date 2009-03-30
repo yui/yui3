@@ -134,18 +134,15 @@ YUI({
 
 */
 
-/*
+
 
     var ret = Y.on('click', function(e) {
         Y.log(this.get('id') + " click event facade: " + e.target);
     }, '#button2');
 
     Y.log('ret: ' + Y.Lang.dump(ret, 1));
-    */
 
-
-    /*
-    var buts = Y.Node.queryAll('.button');
+    var buts = Y.Node.all('.button');
 
     Y.log('queryAll buttons: ' + Y.Lang.dump(buts.get('length')));
 
@@ -156,7 +153,6 @@ YUI({
     Y.each(buts, function(v, k) {
         Y.log('blah2: ' + v);
     });
-    */
 
 /*
     Y.on('mouseover', function(e) {

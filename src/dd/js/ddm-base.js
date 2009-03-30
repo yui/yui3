@@ -53,6 +53,14 @@
             set: function(mode) {
                 this._setDragMode(mode);
             }           
+        },
+        /**
+        * @attribute multiDrop
+        * @description Allow more than one drop target to be active at a time. Default: true. 
+        * @type Boolean
+        */        
+        multiDrop: {
+            value: true
         }
 
     };

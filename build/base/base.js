@@ -7,17 +7,15 @@ YUI.add('base', function(Y) {
      * @module base
      */
     var L = Y.Lang,
-        O = Y.Object,
         SEP = ":",
+        DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
-        VALUE = "value",
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
+        LITERAL_CONSTRUCTOR = {}.constructor,
         DESTRUCTOR = "destructor";
-
-    var ETP = Y.Event.Target.prototype;
 
     /**
      * <p>
@@ -109,12 +107,10 @@ YUI.add('base', function(Y) {
      * @static
      * @final
      * @private
-     */    
+     */
     Base._buildCfg = {
         aggregates : ["ATTRS"]
     };
-
-    var _instances = {};
 
     /**
      * <p>
@@ -167,7 +163,7 @@ YUI.add('base', function(Y) {
             if (aggregates) {
                 for (i = 0, l = aggregates.length; i < l; ++i) {
                     var val = aggregates[i];
-                    if (O.owns(main, val)) {
+                    if (main.hasOwnProperty(val)) {
                         builtClass[val] = L.isArray(main[val]) ? [] : {};
                     }
                 }
@@ -200,7 +196,7 @@ YUI.add('base', function(Y) {
 
         return builtClass;
     };
-    
+
     Y.mix(Base.build, {
 
         _template: function(main) {
@@ -298,15 +294,6 @@ YUI.add('base', function(Y) {
      * newly created class, when creating the instance.
      * @return {Object} An instance of the custom class
      */
-    Base.create = function(main, extensions, args) {
-        var c = Base.build(main, extensions),
-            cArgs = Y.Array(arguments, 2, true);
-
-        function F(){}
-        F.prototype = c.prototype;
-
-        return c.apply(new F(), cArgs);
-    };
 
     Base.prototype = {
 
@@ -330,6 +317,7 @@ YUI.add('base', function(Y) {
              * @type String
              */
             this.name = this.constructor.NAME;
+            this._yuievt.config.prefix = this.name;
 
             /**
              * <p>
@@ -353,7 +341,6 @@ YUI.add('base', function(Y) {
                 defaultFn:this._defInitFn
             });
             this.fire(INIT, null, config);
-
             return this;
         },
 
@@ -408,9 +395,7 @@ YUI.add('base', function(Y) {
          * @protected
          */
         _defInitFn : function(e, config) {
-            _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
-
             this._set(INITIALIZED, true);
         },
 
@@ -423,30 +408,128 @@ YUI.add('base', function(Y) {
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
-            delete _instances[this._yuid];
-
             this._set(DESTROYED, true);
         },
 
         /**
-         * Returns the top down class hierarchy for this object,
-         * with Base being the first class in the array.
-         *
+         * Returns the class hierarchy for this object, with Base being the last class in the array.
+         * 
+         * @method _getClasses
          * @protected
-         * @return {Function[]} An Array of classes (constructor functions), making up the class heirarchy for this object
+         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object
          */
         _getClasses : function() {
             if (!this._classes) {
-                var c = this.constructor, 
-                    classes = [];
-
-                while (c && c.prototype) {
-                    classes.unshift(c);
-                    c = c.superclass ? c.superclass.constructor : null;
-                }
-                this._classes = classes;
+                this._initHierarchyData();
             }
-            return this._classes.concat();
+            return this._classes;
+        },
+
+        /**
+         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.
+         *
+         * @method _getAttrCfgs
+         * @protected
+         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy
+         */
+        _getAttrCfgs : function() {
+            if (!this._attrs) {
+                this._initHierarchyData();
+            }
+            return this._attrs;
+        },
+
+        /**
+         * 
+         * @method _filterAttrCfs
+         * @private
+         * @param {Function} clazz
+         * @param {Objects} allCfgs
+         */
+        _filterAttrCfgs : function(clazz, allCfgs) {
+            var cfgs = {};
+
+            if (clazz.ATTRS) {
+                Y.each(clazz.ATTRS, function(v, k) {
+                    if (allCfgs[k]) {
+                        cfgs[k] = allCfgs[k];
+                        delete allCfgs[k];
+                    }
+                });
+            }
+
+            return cfgs;
+        },
+
+        /**
+         * @method _initHierarchyData
+         * @private
+         */
+        _initHierarchyData : function() {
+            var c = this.constructor, 
+                classes = [],
+                attrs = [];
+
+            while (c && c.prototype) {
+                // Add to classes
+                classes[classes.length] = c;
+
+                // Add to attributes
+                if (c.ATTRS) {
+                    attrs[attrs.length] = c.ATTRS;
+                }
+                c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            this._classes = classes;
+            this._attrs = this._aggregateAttrs(attrs);
+        },
+
+        /**
+         * @method _aggregateAttrs
+         * @private
+         * @param {Object} allAttrs
+         */
+        _aggregateAttrs : function(allAttrs) {
+            var attr, attrs, cfg, val, path, i,
+                aggAttrs = {};
+
+            if (allAttrs) {
+                for (i = allAttrs.length-1; i >= 0; --i) {
+                    attrs = allAttrs[i];
+                    for (attr in attrs) {
+                        if (attrs.hasOwnProperty(attr)) {
+    
+                            cfg = Y.merge(attrs[attr]);
+
+                            val = cfg.value;
+                            if (val && !cfg.ref && (LITERAL_CONSTRUCTOR === val.constructor || L.isArray(val))) {
+                                cfg.value = Y.clone(val);
+                            }
+    
+                            if (attr.indexOf(DOT) !== -1) {
+                                path = attr.split(DOT);
+                                attr = path.shift();
+                            } else {
+                                path = null;
+                            }
+    
+                            if (path && aggAttrs[attr] && aggAttrs[attr].value) {
+                                this._setSubAttrVal(path, aggAttrs[attr].value, val);
+                            } else if (!path){
+                                if (!aggAttrs[attr]) {
+                                    aggAttrs[attr] = cfg;
+                                } else {
+                                    // TODO: Need to apply valueFn and merge in "." properties
+                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return aggAttrs;
         },
 
         /**
@@ -454,28 +537,26 @@ YUI.add('base', function(Y) {
          * which includes initializing attributes for each class defined 
          * in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
          * method on the prototype of each class in the hierarchy.
-         * 
+         *
          * @method _initHierarchy
          * @param {Object} userConf Object literal containing attribute name/value pairs
          * @private
          */
         _initHierarchy : function(userConf) {
             var constr,
-                classes = this._getClasses();
+                constrProto,
+                ci,
+                classes = this._getClasses(),
+                mergedCfgs = this._getAttrCfgs();
 
-            for (var ci = 0, cl = classes.length; ci < cl; ci++) {
+            for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
+                constrProto = constr.prototype;
 
-                if (constr._yuibuild && constr._yuibuild.exts && !constr._yuibuild.dynamic) {
-                    for (var ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
-                        constr._yuibuild.exts[ei].apply(this, arguments);
-                    }
-                }
+                this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
-                this._initAtts(constr.ATTRS, userConf);
-
-                if (O.owns(constr.prototype, INITIALIZER)) {
-                    constr.prototype[INITIALIZER].apply(this, arguments);
+                if (constrProto.hasOwnProperty(INITIALIZER)) {
+                    constrProto[INITIALIZER].apply(this, arguments);
                 }
             }
         },
@@ -489,12 +570,15 @@ YUI.add('base', function(Y) {
          */
         _destroyHierarchy : function() {
             var constr,
+                constrProto,
+                ci, cl,
                 classes = this._getClasses();
 
-            for (var ci = classes.length-1; ci >= 0; ci--) {
+            for (ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
-                if (O.owns(constr.prototype, DESTRUCTOR)) {
-                    constr.prototype[DESTRUCTOR].apply(this, arguments);
+                constrProto = constr.prototype;
+                if (constrProto.hasOwnProperty(DESTRUCTOR)) {
+                    constrProto[DESTRUCTOR].apply(this, arguments);
                 }
             }
         },
@@ -508,165 +592,6 @@ YUI.add('base', function(Y) {
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * <p>
-         * Subscribe to a custom event hosted by this object.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_subscribe">subscribe</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * 
-         * @method subscribe
-         * @param {String} type The type of event to subscribe to. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn The subscribed callback function, invoked when the event is fired.
-         * @param {Object} context Optional execution context for the callback.
-         * @param {Any*} args* 0..n params to supply to the callback
-         * 
-         * @return {Event.Handle} An event handle which can be used to unsubscribe the subscribed callback.
-         */
-        subscribe : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.subscribe.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Fire a custom event by name.  The callback functions will be executed
-         * from the context specified when the event was created, and with the 
-         * following parameters.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_fire">fire</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * 
-         * @method fire
-         * @param {String|Object} type The type of the event, or an object that contains
-         * a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
-         * the name property of the instance will be used as the default prefix.
-         * @param {Any*} args* 0..n Additional arguments to pass to subscribers.
-         * @return {boolean} The return value from Event Target's <a href="Event.Target.html#method_fire">fire</a> method.
-         *
-         */
-        fire : function() {
-            var a = arguments;
-            if (L.isString(a[0])) {
-                a[0] = this._prefixEvtType(a[0]);
-            } else if (a[0].type){
-                a[0].type = this._prefixEvtType(a[0].type);
-            }
-            return ETP.fire.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Creates a new custom event of the specified type.  If a custom event
-         * by that name already exists, it will not be re-created.  In either
-         * case the custom event is returned. 
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_publish">publish</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         *
-         * @method publish
-         * @param {String} type  The type, or name of the event. If the type does not 
-         * contain a prefix ("prefix:eventType"), the name property of the instance will 
-         * be used as the default prefix.
-         * @param {Object} opts Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)
-         * @return {Event.Custom} The published custom event object
-         */
-        publish : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.publish.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Subscribe to a custom event hosted by this object.  The
-         * supplied callback will execute <em>after</em> any listeners added
-         * via the subscribe method, and after the default function,
-         * if configured for the event, has executed.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_after">after</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method after
-         * @param {String} type The type of event to subscribe to. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn  The subscribed callback function
-         * @param {Object} context Optional execution context for the callback
-         * @param {Any*} args* 0..n params to supply to the callback
-         * @return {Event.Handle} Event handle which can be used to unsubscribe the subscribed callback.
-         */
-        after : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.after.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Unsubscribes one or more listeners the from the specified event.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribe">unsubscribe</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method unsubscribe
-         * @param {String|Object} type Either the handle to the subscriber or the 
-         *                        type of event.  If the type
-         *                        is not specified, it will attempt to remove
-         *                        the listener from all hosted events. If 
-         *                        the type string does not contain a prefix 
-         *                        ("prefix:eventType"), the name property of the 
-         *                        instance will be used as the default prefix.
-         * @param {Function} fn The subscribed function to unsubscribe, if not
-         *                          supplied, all subscribers will be removed.
-         * @param {Object} context The custom object passed to subscribe.  This is
-         *                        optional, but if supplied will be used to
-         *                        disambiguate multiple listeners that are the same
-         *                        (e.g., you subscribe many object using a function
-         *                        that lives on the prototype)
-         * @return {boolean} true if the subscriber was found and detached.
-         */
-        unsubscribe: function(type, fn, context) {
-            var a = arguments;
-            if (L.isString(a[0])) {
-                a[0] = this._prefixEvtType(a[0]);
-            }
-            return ETP.unsubscribe.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Removes all listeners from the specified event.  If the event type
-         * is not specified, all listeners from all hosted custom events will
-         * be removed.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method unsubscribeAll
-         * @param {String} type The type, or name of the event. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix
-         * @return {int} The number of listeners unsubscribed
-         */
-        unsubscribeAll: function(type) {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.unsubscribeAll.apply(this, a);
         },
 
         /**

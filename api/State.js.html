@@ -62,7 +62,6 @@
 <span class="c">     * @class State</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">State</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> 
-
         <span class="c">/**</span>
 <span class="c">         * Hash of attributes</span>
 <span class="c">         * @property data</span>
@@ -128,8 +127,7 @@
 <span class="c">         * @return either the value of the supplied key or an object with</span>
 <span class="c">         * all data.</span>
 <span class="c">         */</span>
-        <span class="c">// get: function(name, key, val) {</span>
-<span class="c"></span>        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
                 <span class="nx">o</span><span class="o">;</span>
 
@@ -147,33 +145,6 @@
 
             <span class="o">}</span>
         <span class="o">}</span>
-
-        <span class="c">// figure out what kind of functionality we may need here</span>
-<span class="c"></span>        <span class="c">// get whole list</span>
-<span class="c"></span>        <span class="c">// get a list of items and values for a given key</span>
-<span class="c"></span>        <span class="c">// get a list of items where a key has the supplied value</span>
-<span class="c"></span>        <span class="c">/*</span>
-<span class="c">        list: function(key, val) {</span>
-<span class="c">            var o = {}, d = this.data, test = !L.isUndefined(val);</span>
-<span class="c"></span>
-<span class="c">            Y.each(this, function(v, k) {</span>
-<span class="c"></span>
-<span class="c">                // verify key</span>
-<span class="c">                if (key &amp;&amp; k !== key) {</span>
-<span class="c">                    return;</span>
-<span class="c">                // verify value.  note, v will be the item names, so this</span>
-<span class="c">                // isn&#39;t working ... need to iterate v items</span>
-<span class="c">                } else if (test &amp;&amp; v !== val) {</span>
-<span class="c">                    return;</span>
-<span class="c">                }</span>
-<span class="c"></span>
-<span class="c">                o[k] = v;</span>
-<span class="c"></span>
-<span class="c">            }, this);</span>
-<span class="c"></span>
-<span class="c">            return o;</span>
-<span class="c">        }</span>
-<span class="c">        */</span>
     <span class="o">};</span>
 </pre></div>
                     </div>
@@ -248,7 +219,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAtt", "url": "Attribute.html#method_addAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "CLONE", "url": "Attribute.html#property_CLONE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_cloneAttVal", "url": "Attribute.html#method__cloneAttVal", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttSet", "url": "Attribute.html#method__defAttSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttChange", "url": "Attribute.html#method__fireAttChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAtts", "url": "Attribute.html#method_getAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttVal", "url": "Attribute.html#method__getSubAttVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAtts", "url": "Attribute.html#method__initAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_initAttVal", "url": "Attribute.html#method__initAttVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "on", "url": "Attribute.html#method_on", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAtt", "url": "Attribute.html#method_removeAtt", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAtts", "url": "Attribute.html#method_setAtts", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttVal", "url": "Attribute.html#method__setSubAttVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrSet", "url": "Attribute.html#method__defAttrSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

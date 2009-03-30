@@ -150,7 +150,7 @@
 
         <span class="c">// Class Configuration</span>
 <span class="c"></span>        <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span> <span class="nx">constructor</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
             <span class="nx">constructor</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">PLUGINS</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">PLUGINS</span><span class="o">);</span>
@@ -188,7 +188,7 @@
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">hasPlugin</span><span class="o">(</span><span class="nx">ns</span><span class="o">))</span> <span class="o">{</span>
                 <span class="c">// Update config</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">setAtts</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">setAttrs</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="c">// Create new instance</span>
 <span class="c"></span>                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PluginClass</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>

@@ -66,7 +66,7 @@ Y.UA = function() {
          *                                   from 2.x via the 10.4.11 OS patch
          *                                   
          * </pre>
-         * http://developer.apple.com/internet/safari/uamatrix.html
+         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
          * @type float
          * @static
