@@ -150,7 +150,7 @@
                     var expectedEvents = ["BeforeMyNewAVal", "AfterMyNewAVal", "BeforePREVENT"];
                     var actualEvents = [];
 
-                    h.before("AChange", function(e) {
+                    h.on("AChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
 
                         if (e.newVal == "PREVENT") {
@@ -176,7 +176,7 @@
                     var expectedEvents = ["BeforeMyNewAVal", "AfterMyNewAVal"];
                     var actualEvents = [];
 
-                    h.before("AChange", function(e) {
+                    h.on("AChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
 
                         Y.Assert.areEqual("A", e.attrName);
@@ -205,7 +205,7 @@
                     var expectedEvents = ["Before1MyNewAVal", "Before2MyNewAVal", "After1MyNewAVal", "After2MyNewAVal", "Before1STOPAFTER", "Before2STOPAFTER", "After1STOPAFTER", "Before1STOPBEFORE"];
                     var actualEvents = [];
 
-                    h.before("AChange", function(e) {
+                    h.on("AChange", function(e) {
                         actualEvents.push("Before1" + e.newVal);
                         if (e.newVal == "STOPBEFORE") {
                             e.stopImmediatePropagation();
@@ -219,7 +219,7 @@
                         }
                     });
 
-                    h.before("AChange", function(e) {
+                    h.on("AChange", function(e) {
                         actualEvents.push("Before2" + e.newVal);
                     });
 
@@ -240,7 +240,7 @@
                     var expectedEvents = ["BeforeAChange"];
                     var actualEvents = [];
 
-                    h.before("AChange", function() {
+                    h.on("AChange", function() {
                         actualEvents.push("BeforeAChange");
                     });
 
@@ -248,19 +248,19 @@
                         actualEvents.push("AfterAChange");
                     });
 
-                    h.before("CChange", function() {
+                    h.on("CChange", function() {
                         actualEvents.push("BeforeCChange");
                     });
 
-                    h.before("CChange", function() {
+                    h.on("CChange", function() {
                         actualEvents.push("BeforeCChange");
                     });
 
-                    h.before("DChange", function() {
+                    h.on("DChange", function() {
                         actualEvents.push("BeforeDChange");
                     });
 
-                    h.before("DChange", function() {
+                    h.on("DChange", function() {
                         actualEvents.push("BeforeDChange");
                     });
 
@@ -274,7 +274,7 @@
                 testEventModify : function() {
                     var h = this.createHost({A:"MyAVal"});
 
-                    h.before("AChange", function(e) {
+                    h.on("AChange", function(e) {
                        Y.Assert.areEqual("MyAVal", e.prevVal);
                        e.newVal = e.newVal.toUpperCase(); 
                     });
@@ -458,11 +458,11 @@
                     var expectedEvents = ["BeforeTryDAgain", "AfterTryDAgain", "BeforeTryEAgain", "AfterTryEAgain"];
                     var actualEvents = [];
 
-                    h.before("DChange", function(e) {
+                    h.on("DChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
                     });
 
-                    h.before("EChange", function(e) {
+                    h.on("EChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
                     });
 
@@ -556,7 +556,7 @@
                     var expectedEvents = ["Beforecomplex.X.A", "Aftercomplex.X.A", "Beforecomplex.Y.A", "Aftercomplex.Y.A", "Beforecomplex.Y", "Aftercomplex.Y"];
                     var actualEvents = [];
 
-                    h.before("complexChange", function(e) {
+                    h.on("complexChange", function(e) {
                         actualEvents.push("Before" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(1111, e.newVal.X.A);
@@ -792,11 +792,11 @@
                     var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain" /* e.newVal is not "get" normalized */ ];
                     var actualEvents = [];
 
-                    h.before("DChange", function(e) {
+                    h.on("DChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
                     });
 
-                    h.before("EChange", function(e) {
+                    h.on("EChange", function(e) {
                         actualEvents.push("Before" + e.newVal);
                     });
 
@@ -892,7 +892,7 @@
                     var expectedEvents = ["Beforecomplex.X.A", "Aftercomplex.X.A", "Beforecomplex.Y.A", "Aftercomplex.Y.A", "Beforecomplex.Y", "Aftercomplex.Y"];
                     var actualEvents = [];
 
-                    h.before("complexChange", function(e) {
+                    h.on("complexChange", function(e) {
                         actualEvents.push("Before" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(11111, e.newVal.X.A);

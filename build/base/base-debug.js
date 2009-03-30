@@ -17,8 +17,6 @@ YUI.add('base', function(Y) {
         LITERAL_CONSTRUCTOR = {}.constructor,
         DESTRUCTOR = "destructor";
 
-    var ETP = Y.Event.Target.prototype;
-
     /**
      * <p>
      * Provides a base class for managed attribute based
@@ -40,7 +38,6 @@ YUI.add('base', function(Y) {
     var Base = function() {
         Y.log('constructor called', 'life', 'base');
         Y.Attribute.call(this);
-
         this.init.apply(this, arguments);
     };
 
@@ -322,6 +319,7 @@ YUI.add('base', function(Y) {
              * @type String
              */
             this.name = this.constructor.NAME;
+            this._yuievt.config.prefix = this.name;
 
             /**
              * <p>
@@ -597,189 +595,6 @@ YUI.add('base', function(Y) {
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * <p>
-         * Subscribe to a custom event hosted by this object.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_subscribe">subscribe</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * 
-         * @method subscribe
-         * @param {String} type The type of event to subscribe to. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn The subscribed callback function, invoked when the event is fired.
-         * @param {Object} context Optional execution context for the callback.
-         * @param {Any*} args* 0..n params to supply to the callback
-         * 
-         * @return {Event.Handle} An event handle which can be used to unsubscribe the subscribed callback.
-         */
-        subscribe : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.subscribe.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Fire a custom event by name.  The callback functions will be executed
-         * from the context specified when the event was created, and with the 
-         * following parameters.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_fire">fire</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * 
-         * @method fire
-         * @param {String|Object} type The type of the event, or an object that contains
-         * a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
-         * the name property of the instance will be used as the default prefix.
-         * @param {Any*} args* 0..n Additional arguments to pass to subscribers.
-         * @return {boolean} The return value from Event Target's <a href="Event.Target.html#method_fire">fire</a> method.
-         *
-         */
-        fire : function() {
-            var a = arguments;
-            if (L.isString(a[0])) {
-                a[0] = this._prefixEvtType(a[0]);
-            } else if (a[0].type){
-                a[0].type = this._prefixEvtType(a[0].type);
-            }
-            return ETP.fire.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Creates a new custom event of the specified type.  If a custom event
-         * by that name already exists, it will not be re-created.  In either
-         * case the custom event is returned. 
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_publish">publish</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         *
-         * @method publish
-         * @param {String} type  The type, or name of the event. If the type does not 
-         * contain a prefix ("prefix:eventType"), the name property of the instance will 
-         * be used as the default prefix.
-         * @param {Object} opts Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)
-         * @return {Event.Custom} The published custom event object
-         */
-        publish : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.publish.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Subscribe to a custom event hosted by this object.  The
-         * supplied callback will execute <em>after</em> any listeners added
-         * via the subscribe method, and after the default function,
-         * if configured for the event, has executed.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_after">after</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method after
-         * @param {String} type The type of event to subscribe to. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn  The subscribed callback function
-         * @param {Object} context Optional execution context for the callback
-         * @param {Any*} args* 0..n params to supply to the callback
-         * @return {Event.Handle} Event handle which can be used to unsubscribe the subscribed callback.
-         */
-        after : function() {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.after.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
-         * </p>
-         *
-         * <p>Subscribers using this method to listen for attribute change events will be notified just
-         * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
-         * invoked.</p>
-         * 
-         * <p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
-         * who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
-         * 
-         * @param {String} type The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
-         * for the attribute "enabled", the event type will be "enabledChange".
-         * @param {Function} fn The subscribed function to invoke
-         * @param {Object} context Optional execution context
-         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.
-         * @method on
-         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.
-         */
-        before : function() {
-            this.subscribe.apply(this, arguments);
-        },
-
-        /**
-         * <p>
-         * Unsubscribes one or more listeners the from the specified event.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribe">unsubscribe</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method unsubscribe
-         * @param {String|Object} type Either the handle to the subscriber or the 
-         *                        type of event.  If the type
-         *                        is not specified, it will attempt to remove
-         *                        the listener from all hosted events. If 
-         *                        the type string does not contain a prefix 
-         *                        ("prefix:eventType"), the name property of the 
-         *                        instance will be used as the default prefix.
-         * @param {Function} fn The subscribed function to unsubscribe, if not
-         *                          supplied, all subscribers will be removed.
-         * @param {Object} context The custom object passed to subscribe.  This is
-         *                        optional, but if supplied will be used to
-         *                        disambiguate multiple listeners that are the same
-         *                        (e.g., you subscribe many object using a function
-         *                        that lives on the prototype)
-         * @return {boolean} true if the subscriber was found and detached.
-         */
-        unsubscribe: function(type, fn, context) {
-            var a = arguments;
-            if (L.isString(a[0])) {
-                a[0] = this._prefixEvtType(a[0]);
-            }
-            return ETP.unsubscribe.apply(this, a);
-        },
-
-        /**
-         * <p>
-         * Removes all listeners from the specified event.  If the event type
-         * is not specified, all listeners from all hosted custom events will
-         * be removed.
-         * </p>
-         * <p>
-         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a> method, to add the name prefix 
-         * of the instance to the event type, if absent.
-         * </p>
-         * @method unsubscribeAll
-         * @param {String} type The type, or name of the event. If 
-         * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix
-         * @return {int} The number of listeners unsubscribed
-         */
-        unsubscribeAll: function(type) {
-            var a = arguments;
-            a[0] = this._prefixEvtType(a[0]);
-            return ETP.unsubscribeAll.apply(this, a);
         },
 
         /**
