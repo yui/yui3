@@ -94,14 +94,12 @@
             if (!DDM._proxy) {
                 DDM._proxy = true;
                 var p = Y.Node.create('<div></div>');
-
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
                     zIndex: '999',
                     top: '-999px',
-                    left: '-999px',
-                    border: this.get('borderStyle')
+                    left: '-999px'
                 });
 
                 var b = Y.Node.get('body');

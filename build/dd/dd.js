@@ -55,6 +55,14 @@ YUI.add('dd-ddm-base', function(Y) {
             set: function(mode) {
                 this._setDragMode(mode);
             }           
+        },
+        /**
+        * @attribute multiDrop
+        * @description Allow more than one drop target to be active at a time. Default: true. 
+        * @type Boolean
+        */        
+        multiDrop: {
+            value: true
         }
 
     };
@@ -578,7 +586,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Boolean}
         */
         isOverTarget: function(drop) {
-            //if (Y.Lang.isObject(this.activeDrag) && drop) { //TODO, check this check..
             if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY;
                 if (xy) {
@@ -697,6 +704,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                 v._deactivateShim.apply(v, []);
             }, this);
         },
+        _dropTimer: null,
         /**
         * @private
         * @method _dropMove
@@ -704,7 +712,14 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _dropMove: function() {
             if (this._hasActiveShim()) {
-                this._handleTargetOver();
+                if (this._dropTimer) {
+                    this._dropTimer.cancel();
+                }
+                if (!Y.UA.ie) {
+                    this._dropTimer = Y.later(0, this, this._handleTargetOver);
+                } else {
+                    this._handleTargetOver();
+                }
             } else {
                 Y.each(this.otherDrops, function(v, k) {
                     v._handleOut.apply(v, []);
@@ -735,13 +750,33 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @private
         * @method _handleTargetOver
         * @description This method execs _handleTargetOver on all valid Drop Targets
-        * @param {Boolean} force Force it to run the first time.
         */
         _handleTargetOver: function() {
             var drops = this._lookup();
-            Y.each(drops, function(v, k) {
-                v._handleTargetOver.call(v);
-            }, this);
+            if (!this.get('multiDrop')) {
+                var over = [];
+                //Get all the targets that are under the cursor
+                Y.each(drops, function(v, k) {
+                    if (this.isOverTarget(v)) {
+                        over[over.length] = v;
+                    }
+                }, this);
+                //Get the best match
+                var match = this.getBestMatch(over, true);
+                if (match[0]) {
+                    //Fire _handleTargetOver for the best match
+                    match[0]._handleTargetOver(match[0]);
+                    //Now fire _handleOut on all the other targets
+                    Y.each(match[1], function(v, k) {
+                        v._handleOut(v, [true]);
+                    }, this);
+                }
+            } else {
+                Y.each(drops, function(v, k) {
+                    v._handleTargetOver.call(v);
+                }, this);
+            }
+            
         },
         /**
         * @private
@@ -1914,14 +1949,12 @@ YUI.add('dd-proxy', function(Y) {
             if (!DDM._proxy) {
                 DDM._proxy = true;
                 var p = Y.Node.create('<div></div>');
-
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
                     zIndex: '999',
                     top: '-999px',
-                    left: '-999px',
-                    border: this.get('borderStyle')
+                    left: '-999px'
                 });
 
                 var b = Y.Node.get('body');
@@ -2117,7 +2150,7 @@ YUI.add('dd-constrain', function(Y) {
             },
             set: function (r) {
                 if (Y.Lang.isObject(r)) {
-                    if (r.top && r.right && r.left && r.bottom) {
+                    if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
                         var o = {};
                         Y.mix(o, r);
                         return o;
@@ -2821,7 +2854,6 @@ YUI.add('dd-drop', function(Y) {
             writeOnce: true,
             value: Y.DD.DDM
         }
-
     };
 
     Y.extend(Drop, Y.Base, {
@@ -2938,12 +2970,16 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
+            if (!this.shim) {
+                return false;
+            }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
             this.shim.setStyles({
                 top: '-999px',
-                left: '-999px'
+                left: '-999px',
+                zIndex: '2'
             });
             this.overTarget = false;
         },
@@ -2989,6 +3025,10 @@ YUI.add('dd-drop', function(Y) {
                 return false;
             }
             if (this.get('lock')) {
+                return false;
+            }
+            if (!this.shim) {
+                Y.later(100, this, this.sizeShim);
                 return false;
             }
             var node = this.get(NODE),
@@ -3044,12 +3084,13 @@ YUI.add('dd-drop', function(Y) {
         */
         _createShim: function() {
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                 width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
                 backgroundColor: 'yellow',
                 opacity: '.5',
-                zIndex: 999,
+                zIndex: '1',
                 overflow: 'hidden',
                 top: '-900px',
                 left: '-900px',
@@ -3079,12 +3120,12 @@ YUI.add('dd-drop', function(Y) {
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
-                    DDM._handleTargetOver();
+                    //TODO - Is this needed??
+                    //DDM._handleTargetOver();
                 }
             } else {
                 this._handleOut();
             }
-            
         },
         /**
         * @private
@@ -3092,6 +3133,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
+            this.shim.setStyle('zIndex', '999');
             DDM._addActiveShim(this);
         },
         /**
@@ -3100,6 +3142,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
+            this.shim.setStyle('zIndex', '1');
             DDM._removeActiveShim(this);
         },
         /**
@@ -3107,17 +3150,22 @@ YUI.add('dd-drop', function(Y) {
         * @method _handleOut
         * @description Handles out of target calls/checks
         */
-        _handleOut: function() {
-            if (!DDM.isOverTarget(this)) {
+        _handleOut: function(force) {
+            if (!DDM.isOverTarget(this) || force) {
                 if (this.overTarget) {
                     this.overTarget = false;
-                    DDM._removeActiveShim(this);
+                    if (!force) {
+                        DDM._removeActiveShim(this);
+                    }
                     if (DDM.activeDrag) {
                         this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
                         DDM.activeDrag.get(NODE).removeClass(DDM.CSS_PREFIX + '-drag-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
+                        if (DDM.activeDrop === this) {
+                            DDM.activeDrop = null;
+                        }
                     }
                 }
             }
