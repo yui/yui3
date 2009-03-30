@@ -64,8 +64,6 @@
         <span class="nx">LITERAL_CONSTRUCTOR</span> <span class="o">=</span> <span class="o">{}.</span><span class="nx">constructor</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
-    <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
-
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
 <span class="c">     * Provides a base class for managed attribute based</span>
@@ -87,7 +85,6 @@
     <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 
@@ -369,6 +366,7 @@
 <span class="c">             * @type String</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">;</span>
 
             <span class="c">/**</span>
 <span class="c">             * &lt;p&gt;</span>
@@ -647,189 +645,6 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Subscribe to a custom event hosted by this object.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;subscribe&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * @method subscribe</span>
-<span class="c">         * @param {String} type The type of event to subscribe to. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn The subscribed callback function, invoked when the event is fired.</span>
-<span class="c">         * @param {Object} context Optional execution context for the callback.</span>
-<span class="c">         * @param {Any*} args* 0..n params to supply to the callback</span>
-<span class="c">         * </span>
-<span class="c">         * @return {Event.Handle} An event handle which can be used to unsubscribe the subscribed callback.</span>
-<span class="c">         */</span>
-        <span class="nx">subscribe</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Fire a custom event by name.  The callback functions will be executed</span>
-<span class="c">         * from the context specified when the event was created, and with the </span>
-<span class="c">         * following parameters.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_fire&quot;&gt;fire&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * @method fire</span>
-<span class="c">         * @param {String|Object} type The type of the event, or an object that contains</span>
-<span class="c">         * a &#39;type&#39; property. If the type does not contain a prefix (&quot;prefix:eventType&quot;),</span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Any*} args* 0..n Additional arguments to pass to subscribers.</span>
-<span class="c">         * @return {boolean} The return value from Event Target&#39;s &lt;a href=&quot;Event.Target.html#method_fire&quot;&gt;fire&lt;/a&gt; method.</span>
-<span class="c">         *</span>
-<span class="c">         */</span>
-        <span class="nx">fire</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">){</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Creates a new custom event of the specified type.  If a custom event</span>
-<span class="c">         * by that name already exists, it will not be re-created.  In either</span>
-<span class="c">         * case the custom event is returned. </span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_publish&quot;&gt;publish&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         *</span>
-<span class="c">         * @method publish</span>
-<span class="c">         * @param {String} type  The type, or name of the event. If the type does not </span>
-<span class="c">         * contain a prefix (&quot;prefix:eventType&quot;), the name property of the instance will </span>
-<span class="c">         * be used as the default prefix.</span>
-<span class="c">         * @param {Object} opts Optional config params (see Event.Target &lt;a href=&quot;Event.Target.html#method_publish&quot;&gt;publish&lt;/a&gt; for details)</span>
-<span class="c">         * @return {Event.Custom} The published custom event object</span>
-<span class="c">         */</span>
-        <span class="nx">publish</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">publish</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Subscribe to a custom event hosted by this object.  The</span>
-<span class="c">         * supplied callback will execute &lt;em&gt;after&lt;/em&gt; any listeners added</span>
-<span class="c">         * via the subscribe method, and after the default function,</span>
-<span class="c">         * if configured for the event, has executed.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_after&quot;&gt;after&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method after</span>
-<span class="c">         * @param {String} type The type of event to subscribe to. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn  The subscribed callback function</span>
-<span class="c">         * @param {Object} context Optional execution context for the callback</span>
-<span class="c">         * @param {Any*} args* 0..n params to supply to the callback</span>
-<span class="c">         * @return {Event.Handle} Event handle which can be used to unsubscribe the subscribed callback.</span>
-<span class="c">         */</span>
-        <span class="nx">after</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Alias for the Event.Target &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;subscribe&lt;/a&gt; method.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         *</span>
-<span class="c">         * &lt;p&gt;Subscribers using this method to listen for attribute change events will be notified just</span>
-<span class="c">         * &lt;strong&gt;before&lt;/strong&gt; the state of the attribute has been modified, and before the default handler has been</span>
-<span class="c">         * invoked.&lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * &lt;p&gt;The &lt;a href=&quot;Event.Target.html#method_after&quot;&gt;after&lt;/a&gt; method, inherited from Event Target, can be used by subscribers</span>
-<span class="c">         * who wish to be notified &lt;strong&gt;after&lt;/strong&gt; the attribute&#39;s value has changed.&lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * @param {String} type The event type. For attribute change events, the event type is &quot;[Attribute Name]Change&quot;, e.g.</span>
-<span class="c">         * for the attribute &quot;enabled&quot;, the event type will be &quot;enabledChange&quot;.</span>
-<span class="c">         * @param {Function} fn The subscribed function to invoke</span>
-<span class="c">         * @param {Object} context Optional execution context</span>
-<span class="c">         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.</span>
-<span class="c">         * @method on</span>
-<span class="c">         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.</span>
-<span class="c">         */</span>
-        <span class="nx">before</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Unsubscribes one or more listeners the from the specified event.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_unsubscribe&quot;&gt;unsubscribe&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method unsubscribe</span>
-<span class="c">         * @param {String|Object} type Either the handle to the subscriber or the </span>
-<span class="c">         *                        type of event.  If the type</span>
-<span class="c">         *                        is not specified, it will attempt to remove</span>
-<span class="c">         *                        the listener from all hosted events. If </span>
-<span class="c">         *                        the type string does not contain a prefix </span>
-<span class="c">         *                        (&quot;prefix:eventType&quot;), the name property of the </span>
-<span class="c">         *                        instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn The subscribed function to unsubscribe, if not</span>
-<span class="c">         *                          supplied, all subscribers will be removed.</span>
-<span class="c">         * @param {Object} context The custom object passed to subscribe.  This is</span>
-<span class="c">         *                        optional, but if supplied will be used to</span>
-<span class="c">         *                        disambiguate multiple listeners that are the same</span>
-<span class="c">         *                        (e.g., you subscribe many object using a function</span>
-<span class="c">         *                        that lives on the prototype)</span>
-<span class="c">         * @return {boolean} true if the subscriber was found and detached.</span>
-<span class="c">         */</span>
-        <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Removes all listeners from the specified event.  If the event type</span>
-<span class="c">         * is not specified, all listeners from all hosted custom events will</span>
-<span class="c">         * be removed.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_unsubscribeAll&quot;&gt;unsubscribeAll&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method unsubscribeAll</span>
-<span class="c">         * @param {String} type The type, or name of the event. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix</span>
-<span class="c">         * @return {int} The number of listeners unsubscribed</span>
-<span class="c">         */</span>
-        <span class="nx">unsubscribeAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribeAll</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
 <span class="c">         * Utility method to prefix the event name with the</span>
 <span class="c">         * name property of the instance, if absent</span>
 <span class="c">         *</span>
@@ -921,7 +736,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "on", "url": "Base.html#method_on", "type": "method"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
 </script>
 </body>
 </html>

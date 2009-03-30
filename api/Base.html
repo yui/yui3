@@ -699,98 +699,6 @@ name property of the instance, if absent
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_after">
-                                    <h4>
-                                        <a name="method_after">after</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong property="yui:name">after</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Subscribe to a custom event hosted by this object.  The
-supplied callback will execute <em>after</em> any listeners added
-via the subscribe method, and after the default function,
-if configured for the event, has executed.
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_after">after</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The type of event to subscribe to. If 
-the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The subscribed callback function</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional execution context for the callback</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">Any*</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Event handle which can be used to unsubscribe the subscribed callback.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_build">
                                     <h4>
                                         <a name="method_build">build</a></h4>
@@ -1018,77 +926,6 @@ from proceeding.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_fire">
-                                    <h4>
-                                        <a name="method_fire">fire</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">fire</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Fire a custom event by name.  The callback functions will be executed
-from the context specified when the event was created, and with the 
-following parameters.
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_fire">fire</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String|Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The type of the event, or an object that contains
-a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
-the name property of the instance will be used as the default prefix.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">Any*</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n Additional arguments to pass to subscribers.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The return value from Event Target's <a href="Event.Target.html#method_fire">fire</a> method.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_init">
                                     <h4>
                                         <a name="method_init">init</a></h4>
@@ -1145,255 +982,6 @@ the class hierarchy.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_on">
-                                    <h4>
-                                        <a name="method_on">on</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong property="yui:name">on</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
-</p>
-<p>Subscribers using this method to listen for attribute change events will be notified just
-<strong>before</strong> the state of the attribute has been modified, and before the default handler has been
-invoked.</p>
-<p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
-who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
-for the attribute "enabled", the event type will be "enabledChange".</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The subscribed function to invoke</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional execution context</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">Any*</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n additional arguments to append to supply to the subscribed function when the event fires.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The handle object for unsubscribing the subscriber from the event.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_publish">
-                                    <h4>
-                                        <a name="method_publish">publish</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Custom
-                                            <strong property="yui:name">publish</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         opts
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Creates a new custom event of the specified type.  If a custom event
-by that name already exists, it will not be re-created.  In either
-case the custom event is returned. 
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_publish">publish</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The type, or name of the event. If the type does not 
-contain a prefix ("prefix:eventType"), the name property of the instance will 
-be used as the default prefix.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">opts</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Custom
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The published custom event object</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_subscribe">
-                                    <h4>
-                                        <a name="method_subscribe">subscribe</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong property="yui:name">subscribe</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Subscribe to a custom event hosted by this object.
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_subscribe">subscribe</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The type of event to subscribe to. If 
-the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The subscribed callback function, invoked when the event is fired.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional execution context for the callback.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">Any*</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">An event handle which can be used to unsubscribe the subscribed callback.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_toString">
                                     <h4>
                                         <a name="method_toString">toString</a></h4>
@@ -1422,155 +1010,6 @@ and the instance ID.
                                                         String
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">String representation for this object</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_unsubscribe">
-                                    <h4>
-                                        <a name="method_unsubscribe">unsubscribe</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">unsubscribe</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Unsubscribes one or more listeners the from the specified event.
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_unsubscribe">unsubscribe</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String|Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Either the handle to the subscriber or the 
-type of event.  If the type
-is not specified, it will attempt to remove
-the listener from all hosted events. If 
-the type string does not contain a prefix 
-("prefix:eventType"), the name property of the 
-instance will be used as the default prefix.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The subscribed function to unsubscribe, if not
-supplied, all subscribers will be removed.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The custom object passed to subscribe.  This is
-optional, but if supplied will be used to
-disambiguate multiple listeners that are the same
-(e.g., you subscribe many object using a function
-that lives on the prototype)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">true if the subscriber was found and detached.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_unsubscribeAll">
-                                    <h4>
-                                        <a name="method_unsubscribeAll">unsubscribeAll</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        int
-                                            <strong property="yui:name">unsubscribeAll</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            <p>
-Removes all listeners from the specified event.  If the event type
-is not specified, all listeners from all hosted custom events will
-be removed.
-</p>
-<p>
-Overrides Event.Target's <a href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a> method, to add the name prefix 
-of the instance to the event type, if absent.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The type, or name of the event. If 
-the type string does not contain a prefix ("prefix:eventType"), 
-the name property of the instance will be used as the default prefix</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        int
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The number of listeners unsubscribed</dd>
                                                 </dl>
 
 
@@ -1625,9 +1064,6 @@ the name property of the instance will be used as the default prefix</span>
                                             <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
                                             <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Attribute.html#method_on">                                        
-                                            <a class="" href="Attribute.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
-                                            </span>
                                             <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
                                             <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
                                             </span>
@@ -1676,6 +1112,9 @@ the name property of the instance will be used as the default prefix</span>
                                             </span>
                                             <span rel="yui:method" resource="Event.Target.html#method_subscribe">                                        
                                             <a class=" deprecated" href="Event.Target.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Event.Target.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="Event.Target.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Event.Target.html#method_unsubscribeAll">                                        
                                             <a class=" deprecated" href="Event.Target.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
@@ -2033,18 +1472,11 @@ has been through the init lifecycle phase.
                                 <li class="private"><a href="#method__initHierarchy" title="_initHierarchy">_initHierarchy</a></li>
                                 <li class="private"><a href="#method__initHierarchyData" title="_initHierarchyData">_initHierarchyData</a></li>
                                 <li class="private"><a href="#method__prefixEvtType" title="_prefixEvtType">_prefixEvtType</a></li>
-                                <li class=""><a href="#method_after" title="after">after</a></li>
                                 <li class=""><a href="#method_build" title="build">build</a></li>
                                 <li class=""><a href="#method_create" title="create">create</a></li>
                                 <li class=""><a href="#method_destroy" title="destroy">destroy</a></li>
-                                <li class=""><a href="#method_fire" title="fire">fire</a></li>
                                 <li class=""><a href="#method_init" title="init">init</a></li>
-                                <li class=""><a href="#method_on" title="on">on</a></li>
-                                <li class=""><a href="#method_publish" title="publish">publish</a></li>
-                                <li class=""><a href="#method_subscribe" title="subscribe">subscribe</a></li>
                                 <li class=""><a href="#method_toString" title="toString">toString</a></li>
-                                <li class=""><a href="#method_unsubscribe" title="unsubscribe">unsubscribe</a></li>
-                                <li class=""><a href="#method_unsubscribeAll" title="unsubscribeAll">unsubscribeAll</a></li>
                         </ul>
                     </div>
 
@@ -2075,7 +1507,7 @@ has been through the init lifecycle phase.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "on", "url": "Base.html#method_on", "type": "method"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
 </script>
 </body>
 </html>
