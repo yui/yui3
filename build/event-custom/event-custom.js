@@ -1380,6 +1380,15 @@ ET.prototype = {
 
         return false;
     },
+
+    /**
+     * detach a listener
+     * @method unsubscribe
+     * @deprecated use detach
+     */
+    unsubscribe: function() {
+        return this.detach.apply(this, arguments);
+    },
     
     /**
      * Removes all listeners from the specified event.  If the event type
@@ -1401,7 +1410,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      * @deprecated use detachAll
      */
-    unsubscribeAll: function(type) {
+    unsubscribeAll: function() {
         return this.detachAll.apply(this, arguments);
     },
 

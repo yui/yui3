@@ -294,30 +294,6 @@
         },
 
         /**
-         * <p>
-         * Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
-         * </p>
-         *
-         * <p>Subscribers using this method to listen for attribute change events will be notified just
-         * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
-         * invoked.</p>
-         * 
-         * <p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
-         * who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
-         * 
-         * @param {String} type The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
-         * for the attribute "enabled", the event type will be "enabledChange".
-         * @param {Function} fn The subscribed function to invoke
-         * @param {Object} context Optional execution context
-         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.
-         * @method on
-         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.
-         */
-        on : function() {
-            return this.subscribe.apply(this, arguments);
-        },
-
-        /**
          * Utility method to help setup the event payload and 
          * fire the attribute change event.
          * 
