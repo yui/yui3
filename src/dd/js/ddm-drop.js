@@ -170,7 +170,6 @@
         * @return {Boolean}
         */
         isOverTarget: function(drop) {
-            //if (Y.Lang.isObject(this.activeDrag) && drop) { //TODO, check this check..
             if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY;
                 if (xy) {
@@ -289,6 +288,7 @@
                 v._deactivateShim.apply(v, []);
             }, this);
         },
+        _dropTimer: null,
         /**
         * @private
         * @method _dropMove
@@ -296,7 +296,14 @@
         */
         _dropMove: function() {
             if (this._hasActiveShim()) {
-                this._handleTargetOver();
+                if (this._dropTimer) {
+                    this._dropTimer.cancel();
+                }
+                if (!Y.UA.ie) {
+                    this._dropTimer = Y.later(0, this, this._handleTargetOver);
+                } else {
+                    this._handleTargetOver();
+                }
             } else {
                 Y.each(this.otherDrops, function(v, k) {
                     v._handleOut.apply(v, []);
@@ -327,13 +334,33 @@
         * @private
         * @method _handleTargetOver
         * @description This method execs _handleTargetOver on all valid Drop Targets
-        * @param {Boolean} force Force it to run the first time.
         */
         _handleTargetOver: function() {
             var drops = this._lookup();
-            Y.each(drops, function(v, k) {
-                v._handleTargetOver.call(v);
-            }, this);
+            if (!this.get('multiDrop')) {
+                var over = [];
+                //Get all the targets that are under the cursor
+                Y.each(drops, function(v, k) {
+                    if (this.isOverTarget(v)) {
+                        over[over.length] = v;
+                    }
+                }, this);
+                //Get the best match
+                var match = this.getBestMatch(over, true);
+                if (match[0]) {
+                    //Fire _handleTargetOver for the best match
+                    match[0]._handleTargetOver(match[0]);
+                    //Now fire _handleOut on all the other targets
+                    Y.each(match[1], function(v, k) {
+                        v._handleOut(v, [true]);
+                    }, this);
+                }
+            } else {
+                Y.each(drops, function(v, k) {
+                    v._handleTargetOver.call(v);
+                }, this);
+            }
+            
         },
         /**
         * @private
