@@ -342,8 +342,22 @@ Y.CustomEvent.prototype = {
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
      * @return {EventHandle} unsubscribe handle
+     * @deprecated use on
      */
     subscribe: function(fn, context) {
+        return this._subscribe(fn, context, arguments, true);
+    },
+
+    /**
+     * Listen for this event
+     * @method on
+     * @param {Function} fn        The function to execute
+     * @param {Object}   context   Specifies the value of the 
+     * 'this' keyword in the listener.
+     * @param args* 0..n params to provide to the listener
+     * @return {EventHandle} unsubscribe handle
+     */
+    on: function(fn, context) {
         return this._subscribe(fn, context, arguments, true);
     },
 
@@ -363,14 +377,14 @@ Y.CustomEvent.prototype = {
     },
 
     /**
-     * Unsubscribes subscribers.
-     * @method unsubscribe
+     * Detach listeners.
+     * @method detach 
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
      * @return {boolean} True if the subscriber was found and detached.
      */
-    unsubscribe: function(fn, context) {
+    detach: function(fn, context) {
 
         // if arg[0] typeof unsubscribe handle
         if (fn && fn.detach) {
@@ -394,6 +408,19 @@ Y.CustomEvent.prototype = {
         }
 
         return found;
+    },
+
+    /**
+     * Detach listeners.
+     * @method unsubscribe
+     * @param {Function} fn  The subscribed function to remove, if not supplied
+     *                       all will be removed
+     * @param {Object}   context The context object passed to subscribe.
+     * @return {boolean} True if the subscriber was found and detached.
+     * @deprecated use detach
+     */
+    unsubscribe: function() {
+        return this.detach.apply(this, arguments);
     },
 
     _getFacade: function(args) {
