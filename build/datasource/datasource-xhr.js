@@ -60,10 +60,10 @@ Y.mix(XHR, {
     
 Y.extend(XHR, Y.DataSource, {
     /**
-     * Overriding <code>request</code> event handler passes query string to IO. Fires
-     * <code>response</code> event when response is received.     
+     * Passes query string to IO. Fires <code>response</code> event when
+     * response is received asynchronously.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -73,7 +73,7 @@ Y.extend(XHR, Y.DataSource, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {

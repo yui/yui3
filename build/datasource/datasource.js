@@ -142,9 +142,9 @@ Y.extend(DSBase, Y.Base, {
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * </dl>
-         * @preventable _handleRequest
+         * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: this._handleRequest});
+        this.publish("request", {defaultFn: this._defRequestFn});
          
         /**
          * Fired when raw data is received.
@@ -158,9 +158,9 @@ Y.extend(DSBase, Y.Base, {
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * <dt>data (Object)</dt> <dd>The raw data.</dd>
          * </dl>
-         * @preventable _handleData
+         * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: this._handleData});
+        this.publish("data", {defaultFn: this._defDataFn});
 
         /**
          * Fired when response is returned.
@@ -177,9 +177,9 @@ Y.extend(DSBase, Y.Base, {
          * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
          * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
-         * @preventable _handleResponse
+         * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: this._handleResponse});
+         this.publish("response", {defaultFn: this._defResponseFn});
 
         /**
          * Fired when an error is encountered.
@@ -201,12 +201,11 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>request</code> event handler manages request/response
-     * transaction. Must fire <code>response</code> event when response is received. This
-     * method should be implemented by subclasses to achieve more complex
-     * behavior such as accessing remote data.
+     * Manages request/response transaction. Must fire <code>response</code>
+     * event when response is received. This method should be implemented by
+     * subclasses to achieve more complex behavior such as accessing remote data.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -216,7 +215,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var data = this.get("source");
         
         // Problematic data
@@ -231,10 +230,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>data</code> event handler normalizes raw data
-     * into a response that includes results and meta properties.
+     * Normalizes raw data into a response that includes results and meta properties.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -245,7 +243,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
+    _defDataFn: function(e, o) {
         // Pass through data as-is
         o.results = o.data;
         
@@ -261,10 +259,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>response</code> event handler returns data as a
-     * normalized response to callabck.
+     * Sends data as a normalized response to callback.
      *
-     * @method _handleResponse
+     * @method _defResponseFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -277,7 +274,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleResponse: function(e, o) {
+    _defResponseFn: function(e, o) {
         // Send the response back to the callback
         DSBase.issueCallback(o);
     },
@@ -375,10 +372,10 @@ Y.mix(XHR, {
     
 Y.extend(XHR, Y.DataSource, {
     /**
-     * Overriding <code>request</code> event handler passes query string to IO. Fires
-     * <code>response</code> event when response is received.     
+     * Passes query string to IO. Fires <code>response</code> event when
+     * response is received asynchronously.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -388,7 +385,7 @@ Y.extend(XHR, Y.DataSource, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {
@@ -570,9 +567,9 @@ Parsable.ATTRS = {
     
 Parsable.prototype = {
     /**
-     * Overriding <code>data</code> event handler parses raw data into a normalized response.
+     * Parses raw data into a normalized response.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -583,7 +580,7 @@ Parsable.prototype = {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
+    _defDataFn: function(e, o) {
         var response = (this.get("parser") && this.get("parser").parse(o.data));
         if(!response) {
             response = {

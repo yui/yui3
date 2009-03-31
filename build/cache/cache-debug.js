@@ -113,17 +113,17 @@ Y.extend(Cache, Y.Base, {
         * @description Fired when an entry is added.
         * @param e {Event.Facade} Event Facade object.
         * @param entry {Object} The cached entry.
-        * @preventable _handleAdd
+        * @preventable _defAddFn
         */
-        this.publish("add", {defaultFn: this._handleAdd});
+        this.publish("add", {defaultFn: this._defAddFn});
 
         /**
         * @event flush
         * @description Fired when the cache is flushed.
         * @param e {Event.Facade} Event Facade object.
-        * @preventable _handleFlush
+        * @preventable _defFlushFn
         */
-        this.publish("flush", {defaultFn: this._handleFlush});
+        this.publish("flush", {defaultFn: this._defFlushFn});
 
         /**
         * @event request
@@ -161,14 +161,14 @@ Y.extend(Cache, Y.Base, {
     /////////////////////////////////////////////////////////////////////////////
 
     /**
-     * The default add behavior.
+     * Adds entry to cache.
      *
-     * @method _handleAdd
+     * @method _defAddFn
      * @param e {Event.Facade} Event Facade object.
      * @param entry {Object} The cached entry.
      * @protected
      */
-    _handleAdd: function(e, entry) {
+    _defAddFn: function(e, entry) {
         var entries = this._entries,
             max = this.get("size");
             
@@ -190,11 +190,11 @@ Y.extend(Cache, Y.Base, {
     /**
      * Flushes cache.
      *
-     * @method _handleFlush
+     * @method _defFlushFn
      * @param e {Event.Facade} Event Facade object.
      * @protected     
      */
-    _handleFlush: function(e) {
+    _defFlushFn: function(e) {
         this._entries = [];
         Y.log("Cache flushed", "info", this.toString());
     },

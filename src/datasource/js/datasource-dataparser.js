@@ -37,9 +37,9 @@ Parsable.ATTRS = {
     
 Parsable.prototype = {
     /**
-     * Overriding <code>data</code> event handler parses raw data into a normalized response.
+     * Parses raw data into a normalized response.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -50,7 +50,7 @@ Parsable.prototype = {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
+    _defDataFn: function(e, o) {
         var response = (this.get("parser") && this.get("parser").parse(o.data));
         if(!response) {
             response = {
