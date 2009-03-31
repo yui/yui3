@@ -81,7 +81,7 @@ YUI.add('widget-position-ext', function(Y) {
              * the Widget will be centered within the node. If set the false, no center positioning is applied.
              */
             centered: {
-                set: function(val) {
+                setter: function(val) {
                     return this._setAlignCenter(val);
                 },
                 value:false
@@ -391,6 +391,7 @@ YUI.add('widget-position-ext', function(Y) {
         };
 
         Y.WidgetPositionExt = PositionExt;
+
 
 
 }, '@VERSION@' ,{requires:['widget', 'widget-position']});
