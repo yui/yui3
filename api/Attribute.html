@@ -73,17 +73,17 @@ Attribute provides managed attribute support.
 </p>
 <p>
 The class is designed to be augmented onto a host class,
-and allows the host to support get/set methods for attributes,
+and allows the host to support getter/setter methods for attributes,
 initial configuration support and attribute change events.
 </p>
 <p>Attributes added to the host can:</p>
 <ul>
 <li>Be defined as read-only.</li>
 <li>Be defined as write-once.</li>
-<li>Be defined with a set function, used to manipulate
+<li>Be defined with a setter function, used to manipulate
 values passed to Attribute's set method, before they are stored.</li>
 <li>Be defined with a validator function, to validate values before they are stored.</li>
-<li>Be defined with a get function, which can be used to manipulate stored values,
+<li>Be defined with a getter function, which can be used to manipulate stored values,
 before they are returned by Attribute's get method.</li>
 </ul>
 <p>See the <a href="#method_addAtt">addAttr</a> method, for details about how to add attributes with
@@ -739,7 +739,7 @@ by attribute the top level attribute name.</dd>
                                         
                                         <div class="description" property="yui:description">
                                             <p>
-Adds an attribute, with the provided configuration to the host object. Intended
+Adds an attribute with the provided configuration to the host object. Intended
 to be used by the host object to setup it's set of available attributes.
 </p>
 <p>
@@ -757,12 +757,12 @@ can only have their values set once, be it through the default configuration,
 constructor configuration arguments, or by invoking set.</dd>
 <dt>setter &#60;Function&#62;</dt>
 <dd>The setter function to be invoked (within the context of the host object) before 
-the attribute is stored by a call to the set method. The value returned by the 
-set function will be the finally stored value.</dd>
+the attribute is stored by a call to the setter method. The value returned by the 
+setter function will be the finally stored value.</dd>
 <dt>getter &#60;Function&#62;</dt>
 <dd>The getter function to be invoked (within the context of the host object) before
-the stored values is returned to a user invoking the get method for the attribute.
-The value returned by the get function is the final value which will be returned to the 
+the stored values is returned to a user invoking the getter method for the attribute.
+The value returned by the getter function is the final value which will be returned to the 
 user when they invoke get.</dd>
 <dt>validator &#60;Function&#62;</dt>
 <dd>The validator function which is invoked prior to setting the stored value. Returning
@@ -830,9 +830,9 @@ so if you need to protect the original values, you will need to merge or clone t
                                         
                                         <div class="description" property="yui:description">
                                             Returns the current value of the attribute. If the attribute
-has been configured with a 'get' handler, this method will delegate
-to the 'get' handler to obtain the value of the attribute.
-The 'get' handler will be passed the current value of the attribute 
+has been configured with a 'getter' function, this method will delegate
+to the 'getter' to obtain the value of the attribute.
+The 'getter' will be passed the current value of the attribute 
 as the only argument.
                                         </div>
 
