@@ -68,7 +68,6 @@ Y.mix(Y.Selector.pseudos, {
     },
 
     'nth-last-child': function(node, m) {
-    console.log('args: ' + arguments);
         return Y.Selector._getNth(node, m[1], null, true);
     },
 
