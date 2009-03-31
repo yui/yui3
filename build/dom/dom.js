@@ -1795,15 +1795,6 @@ var PARENT_NODE = 'parentNode',
         },
 
         /**
-         * Mapping of attributes to aliases, normally to work around HTMLAttributes
-         * that conflict with JS reserved words.
-         * @property attrAliases
-         * @type object
-         */
-        attrAliases: {
-        },
-
-        /**
          * Mapping of shorthand tokens to corresponding attribute selector 
          * @property shorthand
          * @type object
@@ -1821,6 +1812,7 @@ var PARENT_NODE = 'parentNode',
          */
         operators: {
             '': function(node, m) { return Y.DOM.getAttribute(node, m[0]) !== ''; }, // Just test for existence of attribute
+            //'': '.+',
             '=': '^{val}$', // equality
             '~=': '(?:^|\\s+){val}(?:\\s+|$)', // space-delimited
             '|=': '^{val}-?' // optional hyphen-delimited
@@ -2047,6 +2039,17 @@ var PARENT_NODE = 'parentNode',
 
         _parsers: [
             {
+                name: TAG_NAME,
+                re: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
+                fn: function(token, match) {
+                    token.tag = match[1].toUpperCase();
+                    token.prefilter = function(root) {
+                        return root.getElementsByTagName(token.tag);
+                    };
+                    return true;
+                },
+            },
+            {
                 name: ATTRIBUTES,
                 re: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
                 fn: function(token, match) {
@@ -2077,14 +2080,6 @@ var PARENT_NODE = 'parentNode',
 
             },
             {
-                name: TAG_NAME,
-                re: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
-                fn: function(token, match) {
-                    token.tag = match[1].toUpperCase();
-                    return true;
-                },
-            },
-            {
                 name: COMBINATOR,
                 re: /^\s*([>+~]|\s)\s*/,
                 fn: function(token, match) {
@@ -2107,6 +2102,9 @@ var PARENT_NODE = 'parentNode',
                 previous: token,
                 combinator: ' ',
                 tag: '*',
+                prefilter: function(root, m) {
+                    return root.getElementsByTagName('*');
+                },
                 tests: []
             };
         },
@@ -2146,11 +2144,6 @@ var PARENT_NODE = 'parentNode',
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
                             if (!selector[LENGTH] || parser.name === COMBINATOR) {
-                                if (!token.prefilter) {
-                                    token.prefilter = function(root) {
-                                        return root.getElementsByTagName(token.tag);
-                                    }
-                                }
                                 tokens.push(token);
                                 token = Selector._getToken(token);
                             }
@@ -2164,7 +2157,6 @@ var PARENT_NODE = 'parentNode',
             if (selector.length) { // not fully parsed
                 tokens = [];
             }
-            console.log(tokens);
             return tokens;
         },
 
@@ -2190,11 +2182,6 @@ var PARENT_NODE = 'parentNode',
             return selector;
         }
     };
-
-// TODO: IE8 quirks
-if (Y.UA.ie && Y.UA.ie < 8) { // rewrite class for IE < 8
-    SelectorCSS1.attrAliases['class'] = 'className';
-}
 
 Y.mix(Y.Selector, SelectorCSS1, true);
 
@@ -2274,7 +2261,6 @@ Y.mix(Y.Selector.pseudos, {
     },
 
     'nth-last-child': function(node, m) {
-    console.log('args: ' + arguments);
         return Y.Selector._getNth(node, m[1], null, true);
     },
 
