@@ -7,7 +7,6 @@ YUI.add('base', function(Y) {
      * @module base
      */
     var L = Y.Lang,
-        SEP = ":",
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -592,22 +591,6 @@ YUI.add('base', function(Y) {
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * Utility method to prefix the event name with the
-         * name property of the instance, if absent
-         *
-         * @method _prefixEvtType
-         * @private
-         * @param {String} type The event name
-         * @return {String} The prefixed event name
-         */
-        _prefixEvtType: function(type) {
-            if (type.indexOf(SEP) === -1 && this.name) {
-               type = this.name + ":" + type;
-            }
-            return type;
         }
     };
 

@@ -333,8 +333,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
-         * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-         * been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).
+         * (e.g. <code>set("x.y.z", 5)</code>).
          *
          * @param {Any} value The value to apply to the attribute
          * 
