@@ -194,7 +194,7 @@
 <span class="c">    */</span>
     <span class="nx">boundingBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBoundingBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -208,7 +208,7 @@
 <span class="c">    */</span>
     <span class="nx">contentBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setContentBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -306,11 +306,11 @@
 <span class="c">     * @type Object</span>
 <span class="c">     */</span>
     <span class="nx">strings</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setStrings</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">},</span>
 
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getStrings</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">}</span>
