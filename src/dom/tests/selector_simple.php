@@ -22,8 +22,8 @@
 <script>
 onload = function() {
     YUI().use('*', function(Y) {
-    debugger;
-        console.log(Y.Selector.query(':nth-last-child(odd)', document, false));
+        //console.log(Y.Selector.query('ol li', document, false));
+        Y.Selector.query('.even', document, false);
     });
 };
 </script>
@@ -61,7 +61,7 @@ onload = function() {
             <li class="even three-1 four-2 last-four-1" lang="en" id="test-lang-en">foo</li>
         </ol>
         <?php
-            $nest = 0;
+            $nest = 250;
 
             for ($i = 0; $i < $nest; $i++) 
             echo <<<END_OF_HTML
