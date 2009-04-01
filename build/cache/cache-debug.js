@@ -57,23 +57,22 @@ Y.mix(Cache, {
         size: {
             value: 0,
             validator: function(value) {
-                return (LANG.isNumber(value) && (value >= 0));
+                return (LANG.isNumber(value));
             },
             setter: function(value) {
                 // If the cache is full, make room by removing stalest element (index=0)
                 var entries = this._entries;
-                if(LANG.isNumber(value) && value > 0) {
+                if(value > 0) {
                     if(entries) {
                         while(entries.length > value) {
                             entries.shift();
                         }
                     }
-                    return value;
                 }
                 else {
                     this._entries = [];
-                    return 0;
                 }
+                return value;
             }
         }
     }
@@ -172,7 +171,7 @@ Y.extend(Cache, Y.Base, {
         var entries = this._entries,
             max = this.get("size");
             
-        if(!entries || (max === 0)) {
+        if(!entries || (max <= 0)) {
             e.stopImmediatePropagation();
             return;
         }        

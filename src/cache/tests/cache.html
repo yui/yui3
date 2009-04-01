@@ -94,6 +94,17 @@
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
             },
 
+            testsize2toNegative: function() {
+                var cache = new Y.Cache({size:2});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.set("size", -5);
+                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
+                cache.add(3, "c");
+                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
+                ASSERT.areSame(-5, cache.get("size"), "Expected negative value normalized to 0.");
+            },
+
             testRetrieve: function() {
                 var cache = new Y.Cache({size:2}),
                     cachedresponse;

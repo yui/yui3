@@ -35,10 +35,15 @@ Cacheable.ATTRS = {
             return ((value instanceof Y.Cache) || (value === null));
         },
         setter: function(value) {
-            this.on("request", this._beforeRequest);
-            this.on("response", this._beforeResponse);
+            if(value === null) {
+                this.unsubscribe("request", this._beforeRequest);
+                this.unsubscribe("response", this._beforeResponse);
 
-            //TODO: Cleanup for destroy()?
+            }
+            else {
+                this.on("request", this._beforeRequest);
+                this.on("response", this._beforeResponse);
+            }
         }
     }
 };
@@ -59,7 +64,7 @@ Cacheable.prototype = {
      */
     _beforeRequest: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache") && this.get("cache").retrieve(o.request, o.callback)) || null;
+        var entry = (this.get("cache").retrieve(o.request, o.callback)) || null;
         if(entry && entry.response) {
             e.stopImmediatePropagation();
             this.fire("response", null, Y.mix(o, entry.response));
@@ -86,9 +91,7 @@ Cacheable.prototype = {
      */
      _beforeResponse: function(e, o) {
         // Add to Cache before returning
-        if(this.get("cache")) {
-            this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
-        }
+        this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
      }
 };
     
