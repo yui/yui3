@@ -17,7 +17,7 @@
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
 
-        EventTarget = Y.Event.Target;
+        EventTarget = Y.EventTarget;
 
     /**
      * <p>
@@ -109,7 +109,6 @@
                 value = config.value;
                 delete config.value;
             }
-
             config._init = true;
             this._conf.add(name, config);
 
@@ -310,7 +309,7 @@
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttrSet, silent:true});
+            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
 
             var eData = {
                 type: type,
@@ -328,13 +327,13 @@
         },
 
         /**
-         * Default handler implementation for set events
+         * Default handler implementation for Attribute change events
          *
          * @private
-         * @method _defAttrSet
+         * @method _defAttrChangeFn
          * @param {Event.Facade} e The event object for the custom event
          */
-        _defAttrSet : function(e) {
+        _defAttrChangeFn : function(e) {
             var conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
