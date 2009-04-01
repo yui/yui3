@@ -26,9 +26,10 @@ YUI({
 }).use('node', 'dump', 'substitute', function(Y) {
 
 
-    var handle = Y.on('key', function(e) {
+    var handle = Y.on('key', function(e, arg1) {
         Y.log(e.type + ": " + e.charCode + ' -- ' + arguments[1]);
         Y.log(this);
+        Y.log(arg1);
         e.halt();
         // handle.detach();
 
@@ -38,7 +39,7 @@ YUI({
     // }, '#text1', 'press:65+ctrl+shift', Y, 1, 2);
     // }, '#text1', 'down:shift', Y, 1, 2);
     // }, '#text1', 'press:', Y, 1, 2);
-    }, '#text1', 'press:65');
+    }, '#text1', 'press:65', window, 1);
     // }, '#text1', 'down:13');
     //}, '#text1');
 
