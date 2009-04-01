@@ -18,11 +18,11 @@
 YUI().use('*',function (Y) {
     var t = new Y.Transaction({
         on : {
-            complete : function (e,x,y,z) {
-                this.fire('success',null,x,y,z);
+            complete : function (e) {
+                this.fire('success',{ x: e.data });
             },
-            success : function (e,x,y,z) {
-                alert('SUCCESS ' + x + y + z);
+            success : function (e) {
+                alert('SUCCESS ' + e.x.join(" "));
             }
         }
     });
