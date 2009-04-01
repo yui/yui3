@@ -1266,6 +1266,10 @@ var L = Y.Lang,
 
     _getType = function(instance, type) {
 
+        if (!L.isString(type)) {
+            return type;
+        }
+
         var t = type, 
             pre = instance._yuievt.config.prefix;
 
