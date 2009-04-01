@@ -30,7 +30,8 @@
  * @param cfg {Object} 
  */
 function Transaction(cfg) {
-    Transaction.superclass.constructor.apply(this,arguments);
+
+    Transaction.superclass.constructor.call(this, { emitFacade: true });
 
     /**
      * The unique id of this transaction.
@@ -89,10 +90,7 @@ Y.extend(Transaction, Y.Event.Target, {
 
         Y.each(events, function (defFn, ev) {
             args[0] = defFn;
-            this.publish(ev, {
-                emitFacade : true,
-                defaultFn  : Y.bind.apply(Y, args)
-            });
+            this.publish(ev, { defaultFn  : Y.bind.apply(Y, args) });
         }, this);
     },
 
