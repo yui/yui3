@@ -23,6 +23,7 @@
 onload = function() {
     YUI().use('*', function(Y) {
         console.log(Y.Selector.query('#demo.bar p', null, false));
+        console.log(Y.Selector.test(Y.DOM.byId('checkbox-checked'), 'form [type=checkbox]'));
     });
 };
 </script>

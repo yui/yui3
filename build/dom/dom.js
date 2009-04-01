@@ -1728,13 +1728,21 @@ NativeSelector = {
 
     _test: function(node, selector) {
         var ret = false,
+            groups = selector.split(','),
             item;
 
         if (node && node[PARENT_NODE]) {
             node.id = node.id || Y.guid();
-            selector += '#' + node.id; // add ID for uniqueness
-            item = Y.Selector.query(selector, node[PARENT_NODE], true);
-            ret = (item === node);
+            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
+            for (var i = 0, group; group = groups[i++];) {
+                group += '#' + node.id; // add ID for uniqueness
+                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
+                item = Y.Selector.query(group, null, true);
+                ret = (item === node);
+                if (ret) {
+                    break;
+                }
+            }
         }
 
         return ret;
@@ -1903,7 +1911,7 @@ var PARENT_NODE = 'parentNode',
                 root = root || Y.config.doc;
 
                 if (root.nodeType !== 9) { // enforce element scope
-                    selector = '#' + root.id + ' selector';
+                    selector = '#' + root.id + ' ' + selector;
                     root = root.ownerDocument;
                 }
 
@@ -1911,6 +1919,9 @@ var PARENT_NODE = 'parentNode',
                 token = tokens.pop();
 
                 if (token) {
+                    if (deDupe) {
+                        token.deDupe = true; // TODO: better approach?
+                    }
                     if (tokens[0] && tokens[0].id) {
                         root = root.getElementById(tokens[0].id);
                     }
@@ -1963,6 +1974,10 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 result[result.length] = node;
+                if (token.deDupe) {
+                    node._found = true;
+                    Selector._foundCache.push(node);
+                }
                 return true;
             }
             return false;
@@ -2044,10 +2059,12 @@ var PARENT_NODE = 'parentNode',
                         };
                     } else if (document.documentElement.getElementsByClassName && 
                             match[1].indexOf('class') === 0) {
-                        test = true; // skip class test 
-                        token.prefilter = function(root) {
-                            return root.getElementsByClassName(val);
-                        };
+                        if (!token.prefilter) {
+                            token.prefilter = function(root) {
+                                return root.getElementsByClassName(val);
+                            };
+                            test = true; // skip class test 
+                        }
                     }
                     return test;
 

@@ -171,13 +171,21 @@ NativeSelector = {
 
     _test: function(node, selector) {
         var ret = false,
+            groups = selector.split(','),
             item;
 
         if (node && node[PARENT_NODE]) {
             node.id = node.id || Y.guid();
-            selector += '#' + node.id; // add ID for uniqueness
-            item = Y.Selector.query(selector, node[PARENT_NODE], true);
-            ret = (item === node);
+            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
+            for (var i = 0, group; group = groups[i++];) {
+                group += '#' + node.id; // add ID for uniqueness
+                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
+                item = Y.Selector.query(group, null, true);
+                ret = (item === node);
+                if (ret) {
+                    break;
+                }
+            }
         }
 
         return ret;
