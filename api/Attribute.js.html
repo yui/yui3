@@ -66,7 +66,7 @@
         <span class="nx">WRITE_ONCE</span> <span class="o">=</span> <span class="s2">&quot;writeOnce&quot;</span><span class="o">,</span>
         <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="o">,</span>
 
-        <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">;</span>
+        <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -74,17 +74,17 @@
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
 <span class="c">     * The class is designed to be augmented onto a host class,</span>
-<span class="c">     * and allows the host to support get/set methods for attributes,</span>
+<span class="c">     * and allows the host to support getter/setter methods for attributes,</span>
 <span class="c">     * initial configuration support and attribute change events.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;Attributes added to the host can:&lt;/p&gt;</span>
 <span class="c">     * &lt;ul&gt;</span>
 <span class="c">     *     &lt;li&gt;Be defined as read-only.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;Be defined as write-once.&lt;/li&gt;</span>
-<span class="c">     *     &lt;li&gt;Be defined with a set function, used to manipulate</span>
+<span class="c">     *     &lt;li&gt;Be defined with a setter function, used to manipulate</span>
 <span class="c">     *     values passed to Attribute&#39;s set method, before they are stored.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;Be defined with a validator function, to validate values before they are stored.&lt;/li&gt;</span>
-<span class="c">     *     &lt;li&gt;Be defined with a get function, which can be used to manipulate stored values,</span>
+<span class="c">     *     &lt;li&gt;Be defined with a getter function, which can be used to manipulate stored values,</span>
 <span class="c">     *     before they are returned by Attribute&#39;s get method.&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
@@ -104,7 +104,7 @@
     <span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Adds an attribute, with the provided configuration to the host object. Intended</span>
+<span class="c">         * Adds an attribute with the provided configuration to the host object. Intended</span>
 <span class="c">         * to be used by the host object to setup it&#39;s set of available attributes.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
@@ -122,12 +122,12 @@
 <span class="c">         *        constructor configuration arguments, or by invoking set.&lt;/dd&gt;</span>
 <span class="c">         *    &lt;dt&gt;setter &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The setter function to be invoked (within the context of the host object) before </span>
-<span class="c">         *        the attribute is stored by a call to the set method. The value returned by the </span>
-<span class="c">         *        set function will be the finally stored value.&lt;/dd&gt;</span>
+<span class="c">         *        the attribute is stored by a call to the setter method. The value returned by the </span>
+<span class="c">         *        setter function will be the finally stored value.&lt;/dd&gt;</span>
 <span class="c">         *    &lt;dt&gt;getter &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The getter function to be invoked (within the context of the host object) before</span>
-<span class="c">         *    the stored values is returned to a user invoking the get method for the attribute.</span>
-<span class="c">         *    The value returned by the get function is the final value which will be returned to the </span>
+<span class="c">         *    the stored values is returned to a user invoking the getter method for the attribute.</span>
+<span class="c">         *    The value returned by the getter function is the final value which will be returned to the </span>
 <span class="c">         *    user when they invoke get.&lt;/dd&gt;</span>
 <span class="c">         *    &lt;dt&gt;validator &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The validator function which is invoked prior to setting the stored value. Returning</span>
@@ -158,7 +158,6 @@
 <span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
                 <span class="nx">delete</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
             <span class="o">}</span>
-
             <span class="nx">config</span><span class="o">.</span><span class="nx">_init</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
 
@@ -182,9 +181,9 @@
 
         <span class="c">/**</span>
 <span class="c">         * Returns the current value of the attribute. If the attribute</span>
-<span class="c">         * has been configured with a &#39;get&#39; handler, this method will delegate</span>
-<span class="c">         * to the &#39;get&#39; handler to obtain the value of the attribute.</span>
-<span class="c">         * The &#39;get&#39; handler will be passed the current value of the attribute </span>
+<span class="c">         * has been configured with a &#39;getter&#39; function, this method will delegate</span>
+<span class="c">         * to the &#39;getter&#39; to obtain the value of the attribute.</span>
+<span class="c">         * The &#39;getter&#39; will be passed the current value of the attribute </span>
 <span class="c">         * as the only argument.</span>
 <span class="c">         *</span>
 <span class="c">         * @method get</span>
@@ -280,8 +279,7 @@
 <span class="c">         * @param {String} name The name of the attribute. Note, if the </span>
 <span class="c">         * value of the attribute is an Object, dot notation can be used</span>
 <span class="c">         * to set the value of a property within the object </span>
-<span class="c">         * (e.g. &lt;code&gt;set(&quot;x.y.z&quot;, 5)&lt;/code&gt;), if the attribute has not</span>
-<span class="c">         * been declared as an immutable attribute (see &lt;a href=&quot;#property_CLONE&quot;&gt;Attribute.CLONE&lt;/a&gt;).</span>
+<span class="c">         * (e.g. &lt;code&gt;set(&quot;x.y.z&quot;, 5)&lt;/code&gt;).</span>
 <span class="c">         *</span>
 <span class="c">         * @param {Any} value The value to apply to the attribute</span>
 <span class="c">         * </span>
@@ -360,7 +358,7 @@
             <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
 
             <span class="c">// TODO: Publishing temporarily, while we address event bubbling/queuing</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrSet</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrChangeFn</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
 
             <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
                 <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
@@ -378,13 +376,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Default handler implementation for set events</span>
+<span class="c">         * Default handler implementation for Attribute change events</span>
 <span class="c">         *</span>
 <span class="c">         * @private</span>
-<span class="c">         * @method _defAttrSet</span>
+<span class="c">         * @method _defAttrChangeFn</span>
 <span class="c">         * @param {Event.Facade} e The event object for the custom event</span>
 <span class="c">         */</span>
-        <span class="nx">_defAttrSet</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_defAttrChangeFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span>
@@ -730,7 +728,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrSet", "url": "Attribute.html#method__defAttrSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

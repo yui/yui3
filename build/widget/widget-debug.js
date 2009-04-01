@@ -320,7 +320,7 @@ Widget.ATTRS = {
     */
     boundingBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setBoundingBox(node);
         },
         writeOnce: true
@@ -334,7 +334,7 @@ Widget.ATTRS = {
     */
     contentBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setContentBox(node);
         },
         writeOnce: true
@@ -432,11 +432,11 @@ Widget.ATTRS = {
      * @type Object
      */
     strings: {
-        set: function(val) {
+        setter: function(val) {
             return this._setStrings(val, this.get(LOCALE));
         },
 
-        get: function() {
+        getter: function() {
             return this.getStrings(this.get(LOCALE));
         }
     }

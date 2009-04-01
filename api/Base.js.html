@@ -54,7 +54,6 @@
 <span class="c">     * @module base</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-        <span class="nx">SEP</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">,</span>
         <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
         <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
@@ -170,14 +169,6 @@
 <span class="c">     * The cfg object literal supports the following properties</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;dl&gt;</span>
-<span class="c">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
-<span class="c">     *    &lt;dd&gt;</span>
-<span class="c">     *    &lt;p&gt;If true (default), a completely new class</span>
-<span class="c">     *    is created which extends the main class, and acts as the </span>
-<span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
-<span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
-<span class="c">     *    the main class, modifying the main classes prototype.&lt;/p&gt;</span>
-<span class="c">     *    &lt;/dd&gt;</span>
 <span class="c">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
 <span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
 <span class="c">     *    on to the built class, in addition to the default properties build </span>
@@ -570,8 +561,7 @@
                                 <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
                                     <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
                                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                    <span class="c">// TODO: Need to apply valueFn and merge in &quot;.&quot; properties</span>
-<span class="c"></span>                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
                         <span class="o">}</span>
@@ -642,22 +632,6 @@
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Utility method to prefix the event name with the</span>
-<span class="c">         * name property of the instance, if absent</span>
-<span class="c">         *</span>
-<span class="c">         * @method _prefixEvtType</span>
-<span class="c">         * @private</span>
-<span class="c">         * @param {String} type The event name</span>
-<span class="c">         * @return {String} The prefixed event name</span>
-<span class="c">         */</span>
-        <span class="nx">_prefixEvtType</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SEP</span><span class="o">)</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-               <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
@@ -736,7 +710,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
 </script>
 </body>
 </html>
