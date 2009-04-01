@@ -10,7 +10,7 @@ YUI({ base: '../../../build/', filter: 'raw' }).use('console', 'test', function(
         doc = document,
         $ = Y.Selector.query;
 
-    Y.config.useBrowserConsole = false;
+    //Y.config.useBrowserConsole = false;
 
     testSuite.runTest = function(expected, selector, root, firstOnly) {
         expected = expected || [];

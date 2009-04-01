@@ -23,7 +23,7 @@
 onload = function() {
     YUI().use('*', function(Y) {
         //console.log(Y.Selector.query('ol li', document, false));
-        Y.Selector.query('.even', document, false);
+        Y.Selector.query('body, span', document, false);
     });
 };
 </script>

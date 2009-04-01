@@ -6,6 +6,7 @@
 */
 
 Y.Selector._reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
+
 Y.Selector._getNth = function(node, expr, tag, reverse) {
     Y.Selector._reNth.test(expr);
     var a = parseInt(RegExp.$1, 10), // include every _a_ elements (zero means no repeat, just first _a_)
@@ -15,8 +16,7 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
         result = [],
         op;
 
-    var siblings = Y.DOM._childrenByTag(node.parentNode, tag);
-
+    var siblings = node.parentNode.children || Selector._children(node.parentNode); 
     if (oddeven) {
         a = 2; // always every other
         op = '+';
@@ -79,12 +79,8 @@ Y.mix(Y.Selector.pseudos, {
         return Y.Selector._getNth(node, m[1], node.tagName, true);
     },
      
-    'first-child': function(node) {
-        return Y.DOM.children(node.parentNode)[0] === node;
-    },
-
     'last-child': function(node) {
-        var children = Y.DOM.children(node.parentNode);
+        var children = node.children || Y.Selector._children(node.parentNode);
         return children[children.length - 1] === node;
     },
 
@@ -98,7 +94,7 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'only-child': function(node) {
-        var children = Y.DOM.children(node.parentNode);
+        var children = node.children || Y.Selector._children(node.parentNode);
         return children.length === 1 && children[0] === node;
     },
 
@@ -133,7 +129,7 @@ Y.mix(Y.Selector.operators, {
 Y.Selector.combinators['~'] = function(node, token) {
     var sib = node.previousSibling;
     while (sib) {
-        if (sib.nodeType === 1 && Y.Selector._test(sib, null, token.previous)) {
+        if (sib.nodeType === 1 && Y.Selector._testToken(sib, null, null, token.previous)) {
             return true;
         }
         sib = sib.previousSibling;

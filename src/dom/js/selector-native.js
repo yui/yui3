@@ -153,15 +153,11 @@ NativeSelector = {
     },
 
     _filter: function(nodes, selector) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return NativeSelector._brute.filter(nodes, selector);
-        }
-
         var ret = [];
 
         if (nodes && selector) {
             for (var i = 0, node; (node = nodes[i++]);) {
-                if (NativeSelector._native.test(node, selector)) {
+                if (Y.Selector._test(node, selector)) {
                     ret[ret[LENGTH]] = node;
                 }
             }
@@ -174,16 +170,13 @@ NativeSelector = {
     },
 
     _test: function(node, selector) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return NativeSelector._brute.test(node, selector);
-        }
         var ret = false,
             item;
 
         if (node && node[PARENT_NODE]) {
             node.id = node.id || Y.guid();
             selector += '#' + node.id; // add ID for uniqueness
-            item = NativeSelector._native.query(selector, node[PARENT_NODE], true);
+            item = Y.Selector.query(selector, node[PARENT_NODE], true);
             ret = (item === node);
         }
 
@@ -202,6 +195,8 @@ Y.mix(Y.Selector, NativeSelector, true);
 // allow standalone selector-native module
 if (NativeSelector._supportsNative()) {
     Y.Selector.query = NativeSelector._query;
-    Y.Selector.filter = NativeSelector._filter;
-    Y.Selector.test = NativeSelector._test;
+    //Y.Selector.filter = NativeSelector._filter;
+    //Y.Selector.test = NativeSelector._test;
 }
+Y.Selector.test = NativeSelector._test;
+Y.Selector.filter = NativeSelector._filter;

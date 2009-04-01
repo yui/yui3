@@ -46,8 +46,9 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
+        doc = doc || Y.config.doc;
         // TODO: IE Name
-        return Y.DOM._getDoc(doc).getElementById(id);
+        return doc.getElementById(id);
     },
 
     /**
