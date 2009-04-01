@@ -95,6 +95,10 @@
 
     <span class="nx">_getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
+        <span class="o">}</span>
+
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
             <span class="nx">pre</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">;</span>
 
