@@ -80,7 +80,7 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'last-child': function(node) {
-        var children = node.children || Y.Selector._children(node.parentNode);
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
         return children[children.length - 1] === node;
     },
 
@@ -94,7 +94,7 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'only-child': function(node) {
-        var children = node.children || Y.Selector._children(node.parentNode);
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
         return children.length === 1 && children[0] === node;
     },
 

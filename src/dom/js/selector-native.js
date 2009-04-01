@@ -75,41 +75,18 @@ NativeSelector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
-            isDocRoot = (root && root.nodeType === 9),
-            scopeQuery = false,
-            combinator,
-            tmpRoot,
-            tmpSelector;
+            isDocRoot = (root && root.nodeType === 9);
 
         if (root) {
             if (!isDocRoot) {
                 root.id = root.id || Y.guid();
                 // break into separate queries for element scoping
                 for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                    if (NativeSelector._reLead.test(groups[i])) {
-                        combinator = RegExp.$1;
-                        scopeQuery = true;
-                        tmpRoot = root;
-                        tmpSelector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-
-                        if (combinator === '~' || combinator === '+') { // query from parentNode for sibling
-                            if (root[PARENT_NODE]) {
-                                tmpRoot = root[PARENT_NODE];
-                            } else {
-                                Y.log('unable to process initial combinator: ' + combinator +
-                                        ' for root: ' + root + '; requires root[PARENT_NODE]',
-                                        'error', 'Selector');
-                            }
-                        }
-                    } else {
-                        tmpRoot = root;
-                        tmpSelector = groups[i];
-                    }
-                    queries.push({root: tmpRoot, selector: tmpSelector});
+                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
+                    queries.push({root: root.ownerDocument, selector: selector});
                 }
-            }
-            if (!scopeQuery) {
-                queries = [{root: root, selector: selector}]; // run as single query
+            } else {
+                queries.push({root: root, selector: selector});
             }
         }
 

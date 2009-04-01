@@ -256,9 +256,7 @@ onload = function() {
             // $('+ p', myNode) === ('#my-node-id + p');
             // $('~ p', myNode) === ('#my-node-id ~ p');
             testScoped: function() {
-                var paraChildren = Y.DOM.children(Y.DOM.byId('demo'), function(child) {
-                    return (child.tagName === 'P'); 
-                });
+                var paraChildren = Y.DOM._childrenByTag(Y.DOM.byId('demo'), 'p');
 
                 var someChildren = Y.DOM.children(Y.DOM.byId('demo'), function(child) {
                     return (child.tagName === 'P' &&

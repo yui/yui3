@@ -22,7 +22,8 @@
 <script>
 onload = function() {
     YUI().use('*', function(Y) {
-        console.log(Y.Selector.query('#demo.bar p', null, false));
+        console.log(Y.DOM._childrenByTag(Y.DOM.byId('demo'), 'p').length);
+        console.log(Y.Selector.query('p', null, false).length);
         console.log(Y.Selector.test(Y.DOM.byId('checkbox-checked'), 'form [type=checkbox]'));
     });
 };
@@ -42,7 +43,8 @@ onload = function() {
     </div>
 
     <div id="demo2">
-        <div>child of demo2</div>
+        <div>div child of demo2</div>
+        <p>p child of demo2</p>
     </div>
 
     <div id="empty"></div>

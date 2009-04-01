@@ -115,21 +115,20 @@ Y.DOM = {
     _childrenByTag: function() {
         if (document[DOCUMENT_ELEMENT].children) {
             return function(element, tag, fn, toArray) { // TODO: keep toArray option?
-                tag = (tag && tag !== '*') ? tag : null;
+                tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
                 var elements = [],
                     wrapFn = fn;
                 if (element) {
                     if (tag && !Y.UA.webkit) { // children.tags() broken in safari
                         elements = element.children.tags(tag); 
                     } else {
+                        elements = element.children; 
                         wrapFn = function(el) {
                             return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
                         }
                     }
 
-                    if (fn || toArray) {
-                        elements = Y.DOM.filterElementsBy(elements, wrapFn);
-                    }
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
                 }
 
                 return elements;
@@ -1638,38 +1637,18 @@ NativeSelector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
-            isDocRoot = (root && root.nodeType === 9),
-            scopeQuery = false,
-            combinator,
-            tmpRoot,
-            tmpSelector;
+            isDocRoot = (root && root.nodeType === 9);
 
         if (root) {
             if (!isDocRoot) {
                 root.id = root.id || Y.guid();
                 // break into separate queries for element scoping
                 for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                    if (NativeSelector._reLead.test(groups[i])) {
-                        combinator = RegExp.$1;
-                        scopeQuery = true;
-                        tmpRoot = root;
-                        tmpSelector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-
-                        if (combinator === '~' || combinator === '+') { // query from parentNode for sibling
-                            if (root[PARENT_NODE]) {
-                                tmpRoot = root[PARENT_NODE];
-                            } else {
-                            }
-                        }
-                    } else {
-                        tmpRoot = root;
-                        tmpSelector = groups[i];
-                    }
-                    queries.push({root: tmpRoot, selector: tmpSelector});
+                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
+                    queries.push({root: root.ownerDocument, selector: selector});
                 }
-            }
-            if (!scopeQuery) {
-                queries = [{root: root, selector: selector}]; // run as single query
+            } else {
+                queries.push({root: root, selector: selector});
             }
         }
 
@@ -2269,7 +2248,7 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'last-child': function(node) {
-        var children = node.children || Y.Selector._children(node.parentNode);
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
         return children[children.length - 1] === node;
     },
 
@@ -2283,7 +2262,7 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'only-child': function(node) {
-        var children = node.children || Y.Selector._children(node.parentNode);
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
         return children.length === 1 && children[0] === node;
     },
 

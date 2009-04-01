@@ -113,21 +113,20 @@ Y.DOM = {
     _childrenByTag: function() {
         if (document[DOCUMENT_ELEMENT].children) {
             return function(element, tag, fn, toArray) { // TODO: keep toArray option?
-                tag = (tag && tag !== '*') ? tag : null;
+                tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
                 var elements = [],
                     wrapFn = fn;
                 if (element) {
                     if (tag && !Y.UA.webkit) { // children.tags() broken in safari
                         elements = element.children.tags(tag); 
                     } else {
+                        elements = element.children; 
                         wrapFn = function(el) {
                             return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
                         }
                     }
 
-                    if (fn || toArray) {
-                        elements = Y.DOM.filterElementsBy(elements, wrapFn);
-                    }
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
                 }
 
                 return elements;
