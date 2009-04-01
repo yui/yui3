@@ -138,7 +138,7 @@ Y.extend(Transaction, Y.Event.Target, {
         var args = Y.Array(arguments,0,true);
         args.unshift('complete',null);
 
-        this.fire.apply(this,args);
+        this.fire('complete',{ data: Y.Array(arguments,0,true) });
 
         return this;
     },
@@ -152,10 +152,7 @@ Y.extend(Transaction, Y.Event.Target, {
      * @return {Transaction} this transaction object
      */
     abort : function () {
-        var args = Y.Array(arguments,0,true);
-        args.unshift('abort',null);
-
-        this.fire.apply(this,args);
+        this.fire.apply('abort',{ data: Y.Array(arguments,0,true) });
 
         return this;
     },
@@ -169,10 +166,7 @@ Y.extend(Transaction, Y.Event.Target, {
      * @return {Transaction} this transaction object
      */
     error : function () {
-        var args = Y.Array(arguments,0,true);
-        args.unshift('error',null);
-
-        this.fire.apply(this,args);
+        this.fire('error',{ data: Y.Array(arguments,0,true) });
 
         return this;
     }
