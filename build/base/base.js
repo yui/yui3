@@ -7,7 +7,6 @@ YUI.add('base', function(Y) {
      * @module base
      */
     var L = Y.Lang,
-        SEP = ":",
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -122,14 +121,6 @@ YUI.add('base', function(Y) {
      * The cfg object literal supports the following properties
      * </p>
      * <dl>
-     *    <dt>dynamic &#60;boolean&#62;</dt>
-     *    <dd>
-     *    <p>If true (default), a completely new class
-     *    is created which extends the main class, and acts as the 
-     *    host on which the extension classes are augmented.</p>
-     *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main classes prototype.</p>
-     *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
@@ -520,7 +511,6 @@ YUI.add('base', function(Y) {
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    // TODO: Need to apply valueFn and merge in "." properties
                                     aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
                                 }
                             }
@@ -592,22 +582,6 @@ YUI.add('base', function(Y) {
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * Utility method to prefix the event name with the
-         * name property of the instance, if absent
-         *
-         * @method _prefixEvtType
-         * @private
-         * @param {String} type The event name
-         * @return {String} The prefixed event name
-         */
-        _prefixEvtType: function(type) {
-            if (type.indexOf(SEP) === -1 && this.name) {
-               type = this.name + ":" + type;
-            }
-            return type;
         }
     };
 

@@ -79,7 +79,7 @@
              * the Widget will be centered within the node. If set the false, no center positioning is applied.
              */
             centered: {
-                set: function(val) {
+                setter: function(val) {
                     return this._setAlignCenter(val);
                 },
                 value:false
