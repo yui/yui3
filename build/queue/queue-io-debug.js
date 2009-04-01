@@ -16,7 +16,7 @@ Y.mix(Y.Queue.prototype, {
     _init : function () {
         _protoInit.apply(this,arguments);
 
-        this.before('executeCallback',this._bindIOListeners);
+        this.on('executeCallback',this._bindIOListeners);
         this.after('executeCallback',this._detachIOStartListener);
 
         return this;
@@ -103,7 +103,7 @@ Y.mix(Y.Queue.prototype, {
                                     Y.bind(this._ioEndHandler,this));
             this._ioAbortSub   = Y.on('io:abort',
                                     Y.bind(this._ioEndHandler,this));
-            this._shiftSub     = this.before('shiftCallback',
+            this._shiftSub     = this.on('shiftCallback',
                                     this._detachIOListeners);
         }
     },
