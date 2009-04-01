@@ -59,7 +59,7 @@ Y.mix(Cache, {
             validator: function(value) {
                 return (LANG.isNumber(value) && (value >= 0));
             },
-            set: function(value) {
+            setter: function(value) {
                 // If the cache is full, make room by removing stalest element (index=0)
                 var entries = this._entries;
                 if(LANG.isNumber(value) && value > 0) {

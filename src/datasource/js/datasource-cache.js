@@ -34,7 +34,7 @@ Cacheable.ATTRS = {
         validator: function(value) {
             return ((value instanceof Y.Cache) || (value === null));
         },
-        set: function(value) {
+        setter: function(value) {
             this.on("request", this._beforeRequest);
             this.on("response", this._beforeResponse);
 
