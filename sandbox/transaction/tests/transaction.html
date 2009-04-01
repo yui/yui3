@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+</head>
+<body>
+<div class="markup">
+
+</div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/oop/oop.js"></script>
+<script type="text/javascript" src="../../../build/event/event.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/transaction/transaction.js"></script>
+<script type="text/javascript">
+YUI().use('*',function (Y) {
+    var t = new Y.Transaction({
+        on : {
+            complete : function (e,x,y,z) {
+                this.fire('success',null,x,y,z);
+            },
+            success : function (e,x,y,z) {
+                alert('SUCCESS ' + x + y + z);
+            }
+        }
+    });
+    t.complete(1,2,3);
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js" ></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>
