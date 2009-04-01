@@ -17,7 +17,7 @@
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
 
-        EventTarget = Y.Event.Target;
+        EventTarget = Y.EventTarget;
 
     /**
      * <p>
@@ -25,17 +25,17 @@
      * </p>
      * <p>
      * The class is designed to be augmented onto a host class,
-     * and allows the host to support get/set methods for attributes,
+     * and allows the host to support getter/setter methods for attributes,
      * initial configuration support and attribute change events.
      * </p>
      * <p>Attributes added to the host can:</p>
      * <ul>
      *     <li>Be defined as read-only.</li>
      *     <li>Be defined as write-once.</li>
-     *     <li>Be defined with a set function, used to manipulate
+     *     <li>Be defined with a setter function, used to manipulate
      *     values passed to Attribute's set method, before they are stored.</li>
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
-     *     <li>Be defined with a get function, which can be used to manipulate stored values,
+     *     <li>Be defined with a getter function, which can be used to manipulate stored values,
      *     before they are returned by Attribute's get method.</li>
      * </ul>
      *
@@ -55,7 +55,7 @@
     Attribute.prototype = {
         /**
          * <p>
-         * Adds an attribute, with the provided configuration to the host object. Intended
+         * Adds an attribute with the provided configuration to the host object. Intended
          * to be used by the host object to setup it's set of available attributes.
          * </p>
          * <p>
@@ -73,12 +73,12 @@
          *        constructor configuration arguments, or by invoking set.</dd>
          *    <dt>setter &#60;Function&#62;</dt>
          *    <dd>The setter function to be invoked (within the context of the host object) before 
-         *        the attribute is stored by a call to the set method. The value returned by the 
-         *        set function will be the finally stored value.</dd>
+         *        the attribute is stored by a call to the setter method. The value returned by the 
+         *        setter function will be the finally stored value.</dd>
          *    <dt>getter &#60;Function&#62;</dt>
          *    <dd>The getter function to be invoked (within the context of the host object) before
-         *    the stored values is returned to a user invoking the get method for the attribute.
-         *    The value returned by the get function is the final value which will be returned to the 
+         *    the stored values is returned to a user invoking the getter method for the attribute.
+         *    The value returned by the getter function is the final value which will be returned to the 
          *    user when they invoke get.</dd>
          *    <dt>validator &#60;Function&#62;</dt>
          *    <dd>The validator function which is invoked prior to setting the stored value. Returning
@@ -109,7 +109,6 @@
                 value = config.value;
                 delete config.value;
             }
-
             config._init = true;
             this._conf.add(name, config);
 
@@ -133,9 +132,9 @@
 
         /**
          * Returns the current value of the attribute. If the attribute
-         * has been configured with a 'get' handler, this method will delegate
-         * to the 'get' handler to obtain the value of the attribute.
-         * The 'get' handler will be passed the current value of the attribute 
+         * has been configured with a 'getter' function, this method will delegate
+         * to the 'getter' to obtain the value of the attribute.
+         * The 'getter' will be passed the current value of the attribute 
          * as the only argument.
          *
          * @method get
@@ -231,8 +230,7 @@
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
-         * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-         * been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).
+         * (e.g. <code>set("x.y.z", 5)</code>).
          *
          * @param {Any} value The value to apply to the attribute
          * 
@@ -311,7 +309,7 @@
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttrSet, silent:true});
+            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
 
             var eData = {
                 type: type,
@@ -329,13 +327,13 @@
         },
 
         /**
-         * Default handler implementation for set events
+         * Default handler implementation for Attribute change events
          *
          * @private
-         * @method _defAttrSet
+         * @method _defAttrChangeFn
          * @param {Event.Facade} e The event object for the custom event
          */
-        _defAttrSet : function(e) {
+        _defAttrChangeFn : function(e) {
             var conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
