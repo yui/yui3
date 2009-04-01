@@ -169,14 +169,6 @@
 <span class="c">     * The cfg object literal supports the following properties</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;dl&gt;</span>
-<span class="c">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
-<span class="c">     *    &lt;dd&gt;</span>
-<span class="c">     *    &lt;p&gt;If true (default), a completely new class</span>
-<span class="c">     *    is created which extends the main class, and acts as the </span>
-<span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
-<span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
-<span class="c">     *    the main class, modifying the main classes prototype.&lt;/p&gt;</span>
-<span class="c">     *    &lt;/dd&gt;</span>
 <span class="c">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
 <span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
 <span class="c">     *    on to the built class, in addition to the default properties build </span>
@@ -569,8 +561,7 @@
                                 <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
                                     <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
                                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                    <span class="c">// TODO: Need to apply valueFn and merge in &quot;.&quot; properties</span>
-<span class="c"></span>                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
                         <span class="o">}</span>

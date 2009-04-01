@@ -66,7 +66,7 @@
         <span class="nx">WRITE_ONCE</span> <span class="o">=</span> <span class="s2">&quot;writeOnce&quot;</span><span class="o">,</span>
         <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="o">,</span>
 
-        <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">;</span>
+        <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -158,7 +158,6 @@
 <span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
                 <span class="nx">delete</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
             <span class="o">}</span>
-
             <span class="nx">config</span><span class="o">.</span><span class="nx">_init</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
 
@@ -359,7 +358,7 @@
             <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
 
             <span class="c">// TODO: Publishing temporarily, while we address event bubbling/queuing</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrSet</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrChangeFn</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
 
             <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
                 <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
@@ -377,13 +376,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Default handler implementation for set events</span>
+<span class="c">         * Default handler implementation for Attribute change events</span>
 <span class="c">         *</span>
 <span class="c">         * @private</span>
-<span class="c">         * @method _defAttrSet</span>
+<span class="c">         * @method _defAttrChangeFn</span>
 <span class="c">         * @param {Event.Facade} e The event object for the custom event</span>
 <span class="c">         */</span>
-        <span class="nx">_defAttrSet</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_defAttrChangeFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span>
@@ -729,7 +728,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrSet", "url": "Attribute.html#method__defAttrSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>
