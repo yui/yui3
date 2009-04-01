@@ -280,47 +280,6 @@ var PARENT_NODE = 'parentNode',
 
         _brute: {
             /**
-             * Test if the supplied node matches the supplied selector.
-             * @method test
-             *
-             * @param {HTMLElement | String} node An id or node reference to the HTMLElement being tested.
-             * @param {string} selector The CSS Selector to test the node against.
-             * @return{boolean} Whether or not the node matches the selector.
-             * @static
-            
-            test: function(node, selector) {
-                if (!node) {
-                    return false;
-                }
-
-                var groups = selector ? selector.split(',') : [];
-                if (groups[LENGTH] > 1) {
-                    for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                        if ( Selector._test(node, groups[i]) ) { // passes if ANY group matches
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-                return Selector._test(node, selector);
-            },
-             */
-
-            /**
-             * Filters a set of nodes based on a given CSS selector. 
-             * @method filter
-             *
-             * @param {array} nodes A set of nodes/ids to filter. 
-             * @param {string} selector The selector used to test each node.
-             * @return{array} An array of nodes from the supplied array that match the given selector.
-             * @static
-            filter: function(nodes, selector) {
-                var result = Selector._filter(nodes, Selector._tokenize(selector)[0]);
-                return result;
-            },
-             */
-
-            /**
              * Retrieves a set of nodes based on a given CSS selector. 
              * @method query
              *
@@ -336,58 +295,11 @@ var PARENT_NODE = 'parentNode',
                     ret = Selector._query(selector, root, firstOnly);
                 }
 
-/*
-                if (ret.item) {
-                    ret = Selector._toArray(ret);
-                }
-*/
                 Selector._cleanup();
                 return (firstOnly) ? (ret[0] || null) : ret;
             }
 
         },
-/*
-        _test: function(node, selector, token, deDupe) {
-            token = token || Selector._tokenize(selector).pop();
-            var ret = false,
-                i = 0,
-                attr,
-                tag = token.tag,
-                nextTest;
-
-            if ( //token && node && node[TAG_NAME] && // tagName limits to HTMLElements
-                    (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(deDupe && node._found) ) {
-
-                nextTest = token[PREVIOUS] ? 
-                        Selector.combinators[token[PREVIOUS][COMBINATOR]]:
-                        null;
-
-                ret = true; // loop until false or all tests pass
-
-                while (ret && (attr = token.tests[i])) {
-                    if (attr.test.test) {
-                        if (!attr.test.test(node[attr.name])) {
-                            ret = false;
-                            break;
-                        }
-                    } else {
-                        if (!attr.test(node, attr.match)) {
-                            ret = false;
-                            break;
-                        }
-                    }
-                    i++;
-                }
-                if (ret && nextTest) {
-                    ret = nextTest(node, token);
-                }
-            }
-
-            return ret;
-        },
-*/
-
         some: function() { return (Array.prototype.some) ?
             function(nodes, fn, context) {
                 return Array.prototype.some.call(nodes, fn, context);
@@ -401,101 +313,6 @@ var PARENT_NODE = 'parentNode',
                 return false;
             }
         }(),
-
-/*
-// dragons
-        _filter: function(nodes, token, firstOnly, deDupe) {
-            var result = [],
-                foundCache = Selector._foundCache,
-                previous = token[PREVIOUS],
-                nextTest = previous ?
-                        Selector.combinators[previous[COMBINATOR]]
-                        : null,
-                tag = token.tag,
-                tests = token.tests,
-                test,
-                attr,
-                j = 0;
-
-            if (nodes && token) {
-                outer:
-                for (var i = 0, node; node = nodes[i++];) {
-                    j = 0;
-                    if (//node[TAG_NAME] && // tagName limits to HTMLElements
-                            (tag === '*' || tag === node[TAG_NAME]) &&
-                            !(deDupe && node._found) ) {
-                        while ((attr = tests[j])) {
-                            j++;
-                            test = attr.test;
-                            if (test.test) {
-                                if (!test.test(node[attr.name])) {
-                                    continue outer;
-                                }
-                            } else if (!test(node, attr.match)) {
-                                continue outer;
-                            }
-                        }
-
-                        if (nextTest && !nextTest(node, token)) {
-                            continue outer;
-                        }
-*//*
-                        if (nextTest) {
-                            if (previous[COMBINATOR] === ' ') {
-                                var tmpNode = node,
-                                    tmpTag = previous.tag;
-
-                                parent:
-                                while ( (tmpNode = tmpNode[PARENT_NODE]) ) {
-                                    j = 0;
-
-                                    if (tmpTag === '*' || tmpTag === tmpNode[TAG_NAME]) {
-                                        while ((attr = tests[j])) {
-                                            j++;
-                                            test = attr.test;
-                                            if (test.test) {
-                                                if (!test.test(tmpNode[attr.name])) {
-                                                    continue parent;
-                                                }
-                                            } else if (!test(tmpNode, m)) {
-                                                continue parent;
-                                            }
-                                        }
-                                        break parent;
-                                    } else {
-                                        continue parent;
-                                    }
-                                    continue outer; // failed if we made it this far
-                                }
-                            } else if (nextTest(node, token)) {
-                                continue outer;
-                            }
-                        }
-*//*
-
-                        if (deDupe) {
-                            if (node._found) {
-                                continue outer;
-                            }
-                            node._found = true;
-                            foundCache[foundCache[LENGTH]] = node;
-                        }
-
-                        if (firstOnly) {
-                            result = [node];
-                            break outer;
-                        } else {
-                            result[result[LENGTH]] = node;
-                        }
-
-                    }
-
-                }
-            }
-
-            return result;
-        },
-*/
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -602,35 +419,12 @@ var PARENT_NODE = 'parentNode',
 
         combinators: {
             ' ': function(node, token) {
-/*
-                var previous = token.previous,
-                    match = previous.match,
-                    tag = previous ? previous.tag : null;
-
-                outer:
-*/
                 var test = Selector._testToken,
                     previous = token[PREVIOUS];
                 while ( (node = node[PARENT_NODE]) ) {
                     if (test(node, null, null, previous)) {
                         return true;
                     }
-                /*
-                    if (tag && (tag === '*' || tag === node[TAG_NAME])) {
-                        for (var i = 0, test; test = previous.tests[i++];) {
-                            if (test.test.test) {
-                                if (!test.test.test(node[test.name])) {
-                                    continue outer;
-                                }
-                            } else {
-                                if (!test.test(node, match)) {
-                                    continue outer;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                */
                 }  
                 return false;
             },
@@ -814,8 +608,6 @@ Y.mix(Y.Selector, SelectorCSS1, true);
 // only override native when not supported
 if (!Y.Selector._supportsNative()) {
     Y.Selector.query = Selector._brute.query;
-    //Y.Selector.filter = Selector._brute.filter;
-    //Y.Selector.test = Selector._brute.test;
 }
 /*
     an+b = get every _a_th node starting at the _b_th
