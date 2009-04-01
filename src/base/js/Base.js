@@ -11,7 +11,7 @@
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
-        LITERAL_CONSTRUCTOR = {}.constructor,
+        OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DESTRUCTOR = "destructor";
 
     /**
@@ -458,7 +458,7 @@
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
-                            if (val && !cfg.ref && (LITERAL_CONSTRUCTOR === val.constructor || L.isArray(val))) {
+                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
     
