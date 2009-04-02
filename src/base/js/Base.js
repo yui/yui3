@@ -507,7 +507,7 @@
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
-                this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
