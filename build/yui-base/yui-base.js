@@ -1044,6 +1044,15 @@ A.indexOf = (Native.indexOf) ?
         return -1;
     };
 
+/**
+ * Numeric sort convenience function.
+ * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
+ * @method numericSort
+ */
+A.numericSort = function(a, b) { 
+    return (a - b); 
+};
+
 })();
 (function() {
 
