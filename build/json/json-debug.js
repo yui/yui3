@@ -308,10 +308,10 @@ Y.mix(Y.namespace('JSON'),{
         }
 
         // Check for cyclical references
-        function _cyclical(o) {
+        function _cyclicalTest(o) {
             for (var i = pstack.length - 1; i >= 0; --i) {
                 if (pstack[i] === o) {
-                    return true;
+                    throw new Error("JSON.stringify. Cyclical reference");
                 }
             }
             return false;
@@ -378,10 +378,10 @@ Y.mix(Y.namespace('JSON'),{
                 case BOOLEAN : return o+EMPTY;
                 case DATE    : return _date(o);
                 case NULL    : return NULL;
-                case ARRAY   : return _cyclical(o) ? NULL : _object(o,true);
+                case ARRAY   : _cyclicalTest(o); return _object(o,true);
                 case REGEXP  : // intentional fall through
                 case ERROR   : // intentional fall through
-                case OBJECT  : return _cyclical(o) ? NULL : _object(o);
+                case OBJECT  : _cyclicalTest(o); return _object(o);
                 default      : return undefined;
             }
         }
