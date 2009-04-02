@@ -54,6 +54,7 @@
 <span class="c">     * @module base</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+        <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
         <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
@@ -519,7 +520,7 @@
                             <span class="o">}</span>
     
                             <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
-                                <span class="k">this</span><span class="o">.</span><span class="nx">_setSubAttrVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                                <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
                             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
                                 <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
                                     <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>

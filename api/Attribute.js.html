@@ -226,7 +226,7 @@
             <span class="nx">getFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">)</span> <span class="o">||</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GET</span><span class="o">);</span>
 
             <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getSubAttrVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
 
             <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
         <span class="o">},</span>
@@ -341,7 +341,7 @@
             <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
-               <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setSubAttrVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">val</span><span class="o">);</span>
+               <span class="nx">val</span> <span class="o">=</span> <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
 
                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">strPath</span> <span class="o">+</span> <span class="s1">&#39;failed; attribute sub path is invalid&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
@@ -432,70 +432,6 @@
 <span class="c"></span>                <span class="c">// invoked since nothing changed.</span>
 <span class="c"></span>                <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
             <span class="o">}</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Retrieves the sub value at the provided path,</span>
-<span class="c">         * from the value object provided.</span>
-<span class="c">         *</span>
-<span class="c">         * @method _getSubAttrVal</span>
-<span class="c">         * @private</span>
-<span class="c">         *</span>
-<span class="c">         * @param {Array} path  A path array, specifying the object traversal path</span>
-<span class="c">         *                      from which to obtain the sub value.</span>
-<span class="c">         * @param {Object} val  The object from which to extract the property value</span>
-<span class="c">         * @return {Any} The value stored in the path or undefined if not found.</span>
-<span class="c">         */</span>
-        <span class="nx">_getSubAttrVal</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">pl</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
-                <span class="nx">i</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">pl</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">val</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pl</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Sets the sub value at the provided path on the value object.</span>
-<span class="c">         * Returns the modified value object, or undefined if the path is invalid.</span>
-<span class="c">         *</span>
-<span class="c">         * </span>
-<span class="c">         *</span>
-<span class="c">         * @method _setSubAttrVal</span>
-<span class="c">         * @private</span>
-<span class="c">         * </span>
-<span class="c">         * @param {Array} path  A path array, specifying the object traversal path</span>
-<span class="c">         *                      at which to set the sub value.</span>
-<span class="c">         * @param {Object} val  The object on which to set the sub value.</span>
-<span class="c">         * @param {Any} subval  The sub value to set.</span>
-<span class="c">         * @return {Object}     The modified object, with the new sub value set, or </span>
-<span class="c">         *                      undefined, if the path was invalid.</span>
-<span class="c">         */</span>
-        <span class="nx">_setSubAttrVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">subval</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">var</span> <span class="nx">leafIdx</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">,</span>
-                <span class="nx">i</span><span class="o">,</span>
-                <span class="nx">o</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">leafIdx</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">o</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-                <span class="o">}</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">o</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">subval</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -657,7 +593,7 @@
                     <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">path</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">path</span><span class="o">;</span>
                         <span class="nx">subval</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">value</span><span class="o">;</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">_setSubAttrVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">subval</span><span class="o">);</span>
+                        <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">subval</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -743,7 +679,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>
