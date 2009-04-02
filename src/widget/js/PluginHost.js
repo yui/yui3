@@ -101,7 +101,7 @@ PluginHost.prototype = {
 
         // Class Configuration
         var classes = this._getClasses(), constructor;
-        for (var i = 0; i < classes.length; i++) {
+        for (var i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
             if (constructor.PLUGINS) {
                 this.plug(constructor.PLUGINS);
@@ -139,7 +139,7 @@ PluginHost.prototype = {
 
             if (this.hasPlugin(ns)) {
                 // Update config
-                this[ns].setAtts(config);
+                this[ns].setAttrs(config);
             } else {
                 // Create new instance
                 this[ns] = new PluginClass(config);

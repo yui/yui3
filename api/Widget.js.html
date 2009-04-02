@@ -194,7 +194,7 @@
 <span class="c">    */</span>
     <span class="nx">boundingBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBoundingBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -208,7 +208,7 @@
 <span class="c">    */</span>
     <span class="nx">contentBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setContentBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -306,11 +306,11 @@
 <span class="c">     * @type Object</span>
 <span class="c">     */</span>
     <span class="nx">strings</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setStrings</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">},</span>
 
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getStrings</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -875,12 +875,12 @@
         <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
             <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
             <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
-            <span class="nx">name</span><span class="o">;</span>
+            <span class="nx">name</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">());</span>
 
         <span class="c">// Start from Widget Sub Class</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">2</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">3</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">NAME</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">()));</span>
@@ -1309,10 +1309,11 @@
     <span class="nx">_getHtmlParser</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
-                <span class="nx">parser</span> <span class="o">=</span> <span class="o">{};</span>
+                <span class="nx">parser</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">p</span><span class="o">;</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">HTML_PARSER</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
+                <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">HTML_PARSER</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">parser</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                 <span class="o">}</span>

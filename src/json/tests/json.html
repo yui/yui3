@@ -122,7 +122,6 @@ suite.add(new Y.Test.Case({
 
     _should : {
         error : {
-            //test_failOnNonObjectWrapper         : true,
             test_failOnEmptyString              : true,
             test_failOnFunction                 : true,
             test_failOnRegex                    : true,
@@ -235,17 +234,12 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2e-00,data[18]);
         Y.Assert.areSame("rosebud",data[19]);
     },
-    test_failOnNonObjectWrapper : function () {
-        // Technically these should fail as invalid JSON
+    test_nonObjectWrapper : function () {
         Y.Assert.areSame('this is a string',Y.JSON.parse('"this is a string"'));
-        Y.log("Parsed raw string, but should have failed.","warn","TestRunner");
         Y.Assert.areSame(true,Y.JSON.parse('true'));
-        Y.log("Parsed raw boolean, but should have failed.","warn","TestRunner");
         Y.Assert.areSame(12345,Y.JSON.parse("12345"));
         Y.Assert.areSame(1.2345,Y.JSON.parse("1.2345"));
-        Y.log("Parsed raw number, but should have failed.","warn","TestRunner");
         Y.Assert.areSame(null,Y.JSON.parse("null"));
-        Y.log("Parsed raw null, but should have failed.","warn","TestRunner");
     },
     test_failOnEmptyString : function () {
         // parse should throw an error 
@@ -390,6 +384,14 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name : "stringify",
         
+    _should : {
+        error : {
+            test_failOnStringifyCyclicalRef1    : true,
+            test_failOnStringifyCyclicalRef2    : true,
+            test_failOnStringifyCyclicalRef3    : true
+        }
+    },
+
     test_stringifyNatives: function () {
         Y.Assert.areSame('[true,false,null,-0.12345,"string",{"object with one member":["array with one element"]}]',
             Y.JSON.stringify([true,false,null,-0.12345,"string",{"object with one member":["array with one element"]}]));
@@ -397,28 +399,36 @@ suite.add(new Y.Test.Case({
 
     test_stringifyObject : function () {
         // stringify sorts the keys
-        Y.Assert.areSame('{"five":"String with\\nnewline","four":null,"one":1,"six":{"nested":-0.12345},"three":false,"two":true}',
+        Y.Assert.areSame('{"one":1,"two":true,"three":false,"four":null,"five":"String with\\nnewline","six":{"nested":-0.12345}}',
             Y.JSON.stringify({one:1,two:true,three:false,four:null,five:"String with\nnewline",six :  {nested:-0.12345}}));
     },
 
-    test_stringifyRecursiveObject : function () {
+    test_failOnStringifyCyclicalRef1 : function () {
         var o = { key: 'value' };
         o.recurse = o;
 
-        Y.Assert.areSame('{"key":"value","recurse":null}',
-            Y.JSON.stringify(o));
+        // Should throw an error
+        Y.JSON.stringify(o);
+        Y.log("Stringified Object with cyclical reference, but should have failed.","warn","TestRunner");
+    },
 
-        o = [1,2,3];
+    test_failOnStringifyCyclicalRef2 : function () {
+        var o = [1,2,3];
         o[3] = o;
 
-        Y.Assert.areSame('[1,2,3,null]', Y.JSON.stringify(o));
+        // Should throw an error
+        Y.JSON.stringify(o);
+        Y.log("Stringified Array with cyclical reference, but should have failed.","warn","TestRunner");
+    },
 
-        o = [1,2,3,{key:"value",nest:[4,5,6,{foo:"bar"}]}];
+    test_failOnStringifyCyclicalRef3 : function () {
+        var o = [1,2,3,{key:"value",nest:[4,5,6,{foo:"bar"}]}];
         o[4] = o[3].x = o[3].nest[4] =
         o[3].nest[3].y = o[3].nest[3].z = o;
 
-        Y.Assert.areSame('[1,2,3,{"key":"value","nest":[4,5,6,{"foo":"bar","y":null,"z":null},null],"x":null},null]',
-            Y.JSON.stringify(o));
+        // Should throw an error
+        Y.JSON.stringify(o);
+        Y.log("Stringified Object with cyclical reference, but should have failed.","warn","TestRunner");
     },
 
     test_stringifyFunction : function () {
@@ -430,7 +440,7 @@ suite.add(new Y.Test.Case({
     },
 
     test_stringifyRegex : function () {
-        Y.Assert.areSame('{"arr":[{}],"regex":{}}',
+        Y.Assert.areSame('{"regex":{},"arr":[{}]}',
             Y.JSON.stringify({
                 regex : /are treated as objects/,
                 arr   : [ new RegExp("in array") ]
@@ -481,7 +491,7 @@ suite.add(new Y.Test.Case({
                 baz : true
             },["foo"]));
 
-        Y.Assert.areSame('{"baz":true,"foo":[1,2,3,{"baz":true,"foo":"FOO"}]}',
+        Y.Assert.areSame('{"foo":[1,2,3,{"foo":"FOO","baz":true}],"baz":true}',
             Y.JSON.stringify({
                 foo : [
                     1,2,3,{
@@ -501,7 +511,7 @@ suite.add(new Y.Test.Case({
 
     test_whitelistObject : function () {
         // (undocumented) supports an obj literal as well
-        Y.Assert.areSame('{"baz":true,"foo":[1,2,3,{"baz":true,"foo":"FOO"}]}',
+        Y.Assert.areSame('{"foo":[1,2,3,{"foo":"FOO","baz":true}],"baz":true}',
             Y.JSON.stringify({
                 foo : [
                     1,2,3,{
@@ -522,9 +532,9 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name : "depth",
+    name : "formatting",
 
-    test_depthDeeperThanStruct : function () {
+    test_falseyIndents : function () {
         Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
                 foo : [ 2, {
@@ -534,9 +544,8 @@ suite.add(new Y.Test.Case({
                         }]
                     }]
                 }]
-            },null,20));
-    },
-    test_depthEqualsStructDepth : function () {
+            },null,0));
+
         Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
                 foo : [ 2, {
@@ -546,36 +555,77 @@ suite.add(new Y.Test.Case({
                         }]
                     }]
                 }]
-            },null,7));
-    },
-    test_depthShallowerThanStruct : function () {
-        var o = {
-            foo : [ 2, {
-                bar : [ 4, {
-                    baz : [ 6, {
-                        "deep enough" : 7
+            },null,""));
+
+        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
+            Y.JSON.stringify({
+                foo : [ 2, {
+                    bar : [ 4, {
+                        baz : [ 6, {
+                            "deep enough" : 7
+                        }]
                     }]
                 }]
-            }]
-        };
+            },null,false));
+    },
 
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{}]}]}]}',
-            Y.JSON.stringify(o,null,6));
-
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[]}]}]}',
-            Y.JSON.stringify(o,null,5));
-
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{}]}]}',
-            Y.JSON.stringify(o,null,4));
-            
-        Y.Assert.areSame('{"foo":[2,{"bar":[]}]}',
-            Y.JSON.stringify(o,null,3));
-
-        Y.Assert.areSame('{"foo":[2,{}]}', Y.JSON.stringify(o,null,2));
-
-        Y.Assert.areSame('{"foo":[]}',     Y.JSON.stringify(o,null,1));
-
-        Y.Assert.areSame('{}',             Y.JSON.stringify(o,null,0));
+    test_indentNumber : function () {
+        Y.Assert.areSame("{\n\
+  \"foo\":[\n\
+    2,\n\
+    {\n\
+      \"bar\":[\n\
+        4,\n\
+        {\n\
+          \"baz\":[\n\
+            6,\n\
+            {\n\
+              \"deep enough\":7\n\
+            }\n\
+          ]\n\
+        }\n\
+      ]\n\
+    }\n\
+  ]\n\
+}",
+            Y.JSON.stringify({
+                foo : [ 2, {
+                    bar : [ 4, {
+                        baz : [ 6, {
+                            "deep enough" : 7
+                        }]
+                    }]
+                }]
+            },null,2));
+    },
+    test_indentString : function () {
+        Y.Assert.areSame("{\n\
+Xo\"foo\":[\n\
+XoXo2,\n\
+XoXo{\n\
+XoXoXo\"bar\":[\n\
+XoXoXoXo4,\n\
+XoXoXoXo{\n\
+XoXoXoXoXo\"baz\":[\n\
+XoXoXoXoXoXo6,\n\
+XoXoXoXoXoXo{\n\
+XoXoXoXoXoXoXo\"deep enough\":7\n\
+XoXoXoXoXoXo}\n\
+XoXoXoXoXo]\n\
+XoXoXoXo}\n\
+XoXoXo]\n\
+XoXo}\n\
+Xo]\n\
+}",
+            Y.JSON.stringify({
+                foo : [ 2, {
+                    bar : [ 4, {
+                        baz : [ 6, {
+                            "deep enough" : 7
+                        }]
+                    }]
+                }]
+            },null,"Xo"));
     }
 }));
 

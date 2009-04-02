@@ -38,7 +38,7 @@
     /**
      * Static property used to define the default attribute 
      * configuration introduced by WidgetPosition.
-     * 
+     *
      * @property WidgetPosition.ATTRS
      * @static
      * @type Object
@@ -54,10 +54,10 @@
          * xy attribute. Changes in position can be monitored by listening for xyChange events.
          */
         x: {
-            set: function(val) {
+            setter: function(val) {
                 this._setX(val);
             },
-            get: function() {
+            getter: function() {
                 return this._getX();
             }
         },
@@ -71,10 +71,10 @@
          * xy attribute. Changes in position can be monitored by listening for xyChange events.
          */
         y: {
-            set: function(val) {
+            setter: function(val) {
                 this._setY(val);
             },
-            get: function() {
+            getter: function() {
                 return this._getY();
             }
         },

@@ -9,100 +9,54 @@
         CHANGE = "Change",
         GET = "get",
         SET = "set",
+        GETTER = "getter",
+        SETTER = "setter",
         VALUE = "value",
-        CLONE = "clone",
+        INIT = "init",
+        INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
 
-        CLONE_ENUM;
+        EventTarget = Y.EventTarget;
 
     /**
      * <p>
-     * Attribute provides managed attribute support. 
+     * Attribute provides managed attribute support.
      * </p>
      * <p>
-     * The class is designed to be augmented onto a host class, 
-     * and allows the host to support get/set methods for attributes,
+     * The class is designed to be augmented onto a host class,
+     * and allows the host to support getter/setter methods for attributes,
      * initial configuration support and attribute change events.
      * </p>
      * <p>Attributes added to the host can:</p>
      * <ul>
      *     <li>Be defined as read-only.</li>
      *     <li>Be defined as write-once.</li>
-     *     <li>Be defined with a set function, used to manipulate
+     *     <li>Be defined with a setter function, used to manipulate
      *     values passed to Attribute's set method, before they are stored.</li>
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
-     *     <li>Be defined with a get function, which can be used to manipulate stored values,
+     *     <li>Be defined with a getter function, which can be used to manipulate stored values,
      *     before they are returned by Attribute's get method.</li>
-     *     <li>Specify if and how they should be cloned on 'get' (see <a href="#property_CLONE">Attribute.CLONE</a> for supported clone modes).</li>
      * </ul>
      *
-     * <p>See the <a href="#method_addAtt">addAtt</a> method, for details about how to add attributes with
+     * <p>See the <a href="#method_addAtt">addAttr</a> method, for details about how to add attributes with
      * a specific configuration</p>
      *
      * @class Attribute
      * @uses Event.Target
      */
     function Attribute() {
-        Y.Event.Target.call(this, {emitFacade:true});
-        this._conf = this._conf || new Y.State();
-        Y.log('att constructor called', 'info', 'attribute');
+        Y.log('Attribute constructor called', 'info', 'attribute');
+
+        EventTarget.call(this, {emitFacade:true});
+        this._conf = new Y.State();
     }
-
-    /**
-     * <p>
-     * Constants for clone formats supported by Attribute.
-     * </p>
-     * <p>
-     * By default attribute values returned by the get method
-     * are not cloned. However setting the attribute's "clone"
-     * property to:
-     * </p>
-     * <dl>
-     *     <dt>Attribute.CLONE.DEEP</dt>
-     *     <dd>Will result in a deep cloned value being returned
-     *        (using YUI's clone method). This can be expensive for complex
-     *        objects.
-     *     </dd>
-     *     <dt>Attribute.CLONE.SHALLOW</dt>
-     *     <dd>Will result in a shallow cloned value being returned
-     *        (using YUI's merge method).
-     *     </dd>
-     *     <dt>Attribute.CLONE.IMMUTABLE</dt>
-     *     <dd>Will result in a deep cloned value being returned
-     *         when using the get method. Additionally users will
-     *         not be able to set sub values of the attribute 
-     *         using the complex attribute notation (obj.set("x.y.z, 5)).
-     *         However the value of the attribute can be changed, making
-     *         it different from a READONLY attribute.
-     *     </dd>
-     *     <dt>Attribute.CLONE.NONE</dt>
-     *     <dd>
-     *         The value will not be cloned, resulting in a reference
-     *         to the stored value being passed back, if the value is an object.
-     *         This is the default behavior.
-     *     </dd>
-     * </dl>
-     * 
-     * @property CLONE
-     * @static
-     * @final
-     * @type Object
-     */
-    Attribute.CLONE = {
-        NONE : 0,
-        DEEP : 1,
-        SHALLOW : 2,
-        IMMUTABLE: 3
-    };
-
-    CLONE_ENUM = Attribute.CLONE;
 
     Attribute.prototype = {
         /**
          * <p>
-         * Adds an attribute, with the provided configuration to the host object. Intended
+         * Adds an attribute with the provided configuration to the host object. Intended
          * to be used by the host object to setup it's set of available attributes.
          * </p>
          * <p>
@@ -118,84 +72,85 @@
          *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
          *        constructor configuration arguments, or by invoking set.</dd>
-         *    <dt>set &#60;Function&#62;</dt>
+         *    <dt>setter &#60;Function&#62;</dt>
          *    <dd>The setter function to be invoked (within the context of the host object) before 
-         *        the attribute is stored by a call to the set method. The value returned by the 
-         *        set function will be the finally stored value.</dd>
-         *    <dt>get &#60;Function&#62;</dt>
+         *        the attribute is stored by a call to the setter method. The value returned by the 
+         *        setter function will be the finally stored value.</dd>
+         *    <dt>getter &#60;Function&#62;</dt>
          *    <dd>The getter function to be invoked (within the context of the host object) before
-         *    the stored values is returned to a user invoking the get method for the attribute.
-         *    The value returned by the get function is the final value which will be returned to the 
+         *    the stored values is returned to a user invoking the getter method for the attribute.
+         *    The value returned by the getter function is the final value which will be returned to the 
          *    user when they invoke get.</dd>
          *    <dt>validator &#60;Function&#62;</dt>
          *    <dd>The validator function which is invoked prior to setting the stored value. Returning
          *    false from the validator function will prevent the value from being stored</dd>
-         *    <dt>clone &#60;int&#62;</dt>
-         *    <dd>If and how the value returned by a call to the get method, should be de-referenced from
-         *    the stored value. By default values are not cloned, and hence a call to get will return
-         *    a reference to the stored value. See Attribute.CLONE for more details about the clone 
-         *    options available</dd>
          * </dl>
          *
-         * @method addAtt
-         * 
+         * @method addAttr
+         *
          * @param {String} name The attribute key
          * @param {Object} config (optional) An object literal specifying the configuration for the attribute.
          * <strong>NOTE:</strong> The config object is modified when adding an attribute, 
          * so if you need to protect the original values, you will need to merge or clone the object.
-         * 
+         *
+         * @chainable
          */
-        addAtt: function(name, config) {
-            Y.log('adding attribute: ' + name, 'info', 'attribute');
-            var value, hasValue = (VALUE in config);
+        addAttr: function(name, config) {
+            Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
-            if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
-
-            if(hasValue) {
-                value = config.value;
-                delete config.value;
+            if (!this.attrAdded(name)) {
+                config = config || {};
+    
+                var value,
+                    hasValue = (VALUE in config);
+    
+                if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
+    
+                if(hasValue) {
+                    // We'll go through set, don't want to set value in _conf directory
+                    value = config.value;
+                    delete config.value;
+                }
+                config[INIT] = true;
+                this._conf.add(name, config);
+    
+                if (hasValue) {
+                    // Go through set, so that raw values get normalized/validated
+                    this.set(name, value);
+                }
+            } else {
+                Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
 
-            config.initValue = value;
-            this._conf.add(name, config);
-
-            if (hasValue) {
-                this.set(name, value);
-            }
+            return this;
         },
 
         /**
-         * Resets the given attribute or all attributes to the initial value.
+         * Tests if the given attribute has been added to the host
          *
-         * @method reset
-         * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset
+         * @method attrAdded
+         * @param {String} name The name of the attribute to check.
+         * @return boolean, true if an attribute with the given name has been added.
          */
-        reset: function(name) {
-            if (name) {
-                this.set(name, this._conf.data['initValue'][name]);
-            } else {
-                var initVals = this._conf.data['initValue'];
-                Y.each(initVals, function(v, n) {
-                    this._set(n, v);
-                }, this);
-            }
+        attrAdded: function(name) {
+            return !!(this._conf.get(name, INIT));
         },
 
         /**
          * Removes an attribute.
          *
-         * @method removeAtt
+         * @method removeAttr
          * @param {String} name The attribute key
          */
-        removeAtt: function(name) {
+        removeAttr: function(name) {
             this._conf.remove(name);
         },
 
         /**
          * Returns the current value of the attribute. If the attribute
-         * has been configured with a 'get' handler, this method will delegate
-         * to the 'get' handler to obtain the value of the attribute.
-         * The 'get' handler will be passed the current value of the attribute 
+         * has been configured with a 'getter' function, this method will delegate
+         * to the 'getter' to obtain the value of the attribute.
+         * The 'getter' will be passed the current value of the attribute 
          * as the only argument.
          *
          * @method get
@@ -206,12 +161,11 @@
          * 
          * @return {Any} The current value of the attribute
          */
-        get: function(name) {
+        get : function(name) {
 
             var conf = this._conf,
                 path,
                 getFn,
-                clone,
                 val;
 
             if (name.indexOf(DOT) !== -1) {
@@ -220,14 +174,53 @@
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GET);
-            clone = conf.get(name, CLONE);
+            getFn = conf.get(name, GETTER) || conf.get(name, GET);
 
-            val = (clone) ? this._cloneAttVal(val, clone) : val;
             val = (getFn) ? getFn.call(this, val) : val;
-            val = (path) ? this._getSubAttVal(path, val) : val;
+            val = (path) ? O.getValue(val, path) : val;
 
             return val;
+        },
+
+        /**
+         * Sets the value of an attribute.
+         *
+         * @method set
+         * @chainable
+         *
+         * @param {String} name The name of the attribute. Note, if the 
+         * value of the attribute is an Object, dot notation can be used
+         * to set the value of a property within the object (e.g. <code>set("x.y.z", 5)</code>).
+         *
+         * @param {Any} value The value to apply to the attribute
+         *
+         * @param {Object} opts Optional event data. This object will be mixed into
+         * the event facade passed as the first argument to subscribers 
+         * of attribute change events
+         *
+         * @return {Object} Reference to the host object
+         */
+        set : function(name, val, opts) {
+            return this._setAttr(name, val, opts);
+        },
+
+        /**
+         * Resets the given attribute or all attributes to the initial value.
+         *
+         * @method reset
+         * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset.
+         * @chainable
+         */
+        reset : function(name) {
+            if (name) {
+                this._set(name, this._conf.get(name, INIT_VALUE));
+            } else {
+                var initVals = this._conf.data.initValue;
+                Y.each(initVals, function(v, n) {
+                    this._set(n, v);
+                }, this);
+            }
+            return this;
         },
 
         /**
@@ -236,39 +229,44 @@
          * @method _set
          * @protected
          * @chainable
+         *
          * @return {Object} Reference to the host object
          */
-        _set: function(name, val, opts) {
-            return this.set(name, val, opts, true);
+        _set : function(name, val, opts) {
+            return this._setAttr(name, val, opts, true);
         },
 
         /**
-         * Sets the value of an attribute.
+         * Internal set implementation
          *
-         * @method set
+         * @method _setAttr
+         * @protected
          * @chainable
-         * 
+         *
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
-         * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-         * been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).
-         * 
+         * (e.g. <code>set("x.y.z", 5)</code>).
+         *
          * @param {Any} value The value to apply to the attribute
          * 
          * @param {Object} opts Optional event data. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
          * of attribute change events
-         * 
+         *
+         * @param {boolean} force If true, allows the caller to set values for 
+         * readOnly or writeOnce attributes which have already been set.
+         *
          * @return {Object} Reference to the host object
          */
-        set: function(name, val, opts, privateSet) {
+        _setAttr : function(name, val, opts, force) {
             var conf = this._conf,
                 data = conf.data,
+                allowSet = true,
+                initialSet = (!data.value || !(name in data.value)),
                 strPath,
                 path,
-                currVal,
-                initialSet = (!data.value || !(name in data.value));
+                currVal;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -276,95 +274,111 @@
                 name = path.shift();
             }
 
-            if (path && conf.get(name, CLONE) === CLONE_ENUM.IMMUTABLE) {
-                Y.log('set ' + name + ' failed; Attribute is IMMUTABLE. Setting a sub value is not permitted', 'info', 'attribute');
-                return this;
-            }
-
-            if (!initialSet && !privateSet) {
+            if (!initialSet && !force) {
                 if (conf.get(name, WRITE_ONCE)) {
                     Y.log('set ' + name + ' failed; Attribute is writeOnce', 'info', 'attribute');
-                    return this;
+                    allowSet = false;
                 }
                 if (conf.get(name, READ_ONLY)) {
                     Y.log('set ' + name + ' failed; Attribute is readOnly', 'info', 'attribute');
-                    return this;
+                    allowSet = false;
                 }
             }
-
             if (!conf.get(name)) {
-                //Y.log('Set called with unconfigured attribute. Adding a new attribute: ' + name, 'info', 'attribute');
                 Y.log('set ' + name + ' failed; Attribute is not configured', 'info', 'attribute');
-                return this;
+                allowSet = false;
             }
 
             currVal = this.get(name);
 
             if (path) {
-               val = this._setSubAttVal(path, Y.clone(currVal), val);
+               val = O.setValue(Y.clone(currVal), path, val);
+
                if (val === undefined) {
-                   // Path not valid, don't set anything.
                    Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'attribute');
-                   return this;
+                   allowSet = false;
                }
             }
 
-            this._fireAttChange(name, currVal, val, name, strPath, opts);
+            if (allowSet) {
+                this._fireAttrChange(name, currVal, val, name, strPath, opts);
+            }
 
             return this;
         },
 
         /**
-         * <p>
-         * Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
-         * </p>
+         * Utility method to help setup the event payload and 
+         * fire the attribute change event.
          * 
-         * <p>Subscribers using this method to listen for attribute change events will be notified just
-         * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
-         * invoked.</p>
-         * 
-         * <p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
-         * who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
-         * 
-         * @param {String} type The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
-         * for the attribute "enabled", the event type will be "enabledChange".
-         * @param {Function} fn The subscribed function to invoke
-         * @param {Object} context Optional execution context
-         * @param {Any*} args* 0..n additional arguments to append to supply to the subscribed function when the event fires.
-         * @method on
-         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.
+         * @method _fireAttrChange
+         * @private
+         * @param {String} type The event name
+         * @param {Any} currVal The current value of the attribute
+         * @param {Any} newVal The new value of the attribute
+         * @param {String} attrName The name of the attribute
+         * @param {String} strFullPath The full path of the property being changed, 
+         * if this is a sub-attribute value being change
+         * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        on : function() {
-            return this.subscribe.apply(this, arguments);
+        _fireAttrChange : function(type, currVal, newVal, attrName, strFullPath, opts) {
+            type = type + CHANGE;
+
+            // TODO: Publishing temporarily, while we address event bubbling/queuing
+            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
+
+            var eData = {
+                type: type,
+                prevVal: currVal,
+                newVal: newVal,
+                attrName: attrName,
+                subAttrName: strFullPath
+            };
+
+            if (opts) {
+                Y.mix(eData, opts);
+            }
+
+            this.fire(eData);
         },
 
         /**
-         * Default handler implementation for set events
+         * Default handler implementation for Attribute change events
          *
          * @private
-         * @method _defAttSet
+         * @method _defAttrChangeFn
          * @param {Event.Facade} e The event object for the custom event
          */
-        _defAttSet : function(e) {
+        _defAttrChangeFn : function(e) {
             var conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
-                retVal,
                 valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SET);
-
-            if (setFn) {
-                retVal = setFn.call(this, val);
-                if (retVal !== undefined) {
-                    Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
-                    val = retVal; // setter can change value
-                }
-            }
+                setFn = conf.get(name, SETTER) || conf.get(name, SET),
+                storedVal,
+                retVal;
 
             if (!valFn || valFn.call(this, val)) {
-                conf.add(name, { value: val });
+
+                if (setFn) {
+                    retVal = setFn.call(this, val);
+                    if (retVal !== undefined) {
+                        Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
+                        val = retVal; // setter can change value
+                    }
+                }
+                // Store value
+                storedVal = { value: val };
+                if (conf.get(name, INIT_VALUE) === undefined) {
+                    storedVal[INIT_VALUE] = val;
+                }
+                conf.add(name, storedVal);
+
+                // Honor set normalization
                 e.newVal = conf.get(name, VALUE);
             } else {
+                Y.log('Validation failed. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
+
                 // Prevent "after" listeners from being 
                 // invoked since nothing changed.
                 e.stopImmediatePropagation();
@@ -372,98 +386,43 @@
         },
 
         /**
-         * Retrieves the sub value at the provided path,
-         * from the value object provided.
-         *
-         * @method _getSubAttVal
-         * @private
-         *
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      from which to obtain the sub value.
-         * @param {Object} val  The object from which to extract the property value
-         * @return {Any} The value stored in the path or undefined if not found.
-         */
-        _getSubAttVal: function (path, val) {
-            var pl = path.length,
-                i;
-
-            if (pl > 0) {
-                for (i = 0; val !== undefined && i < pl; ++i) {
-                    val = val[path[i]];
-                }
-            }
-
-            return val;
-        },
-
-        /**
-         * Sets the sub value at the provided path on the value object.
-         * Returns the modified value object, or undefined if the path is invalid.
-         *
-         * @method _setSubAttVal
-         * @private
-         * 
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      at which to set the sub value.
-         * @param {Object} val  The object on which to set the sub value.
-         * @param {Any} subval  The sub value to set.
-         * @return {Object}     The modified object, with the new sub value set, or 
-         *                      undefined, if the path was invalid.
-         */
-        _setSubAttVal: function(path, val, subval) {
-
-            var leafIdx = path.length-1,
-                i,
-                o;
-
-            if (leafIdx >= 0) {
-                o = val;
-
-                for (i = 0; o !== undefined && i < leafIdx; ++i) {
-                    o = o[path[i]];
-                }
-
-                // Not preventing new properties from being added
-                if (o !== undefined /* && o[path[i]] !== undefined */) {
-                    o[path[i]] = subval;
-                } else {
-                    val = undefined;
-                }
-            }
-
-            return val;
-        },
-
-        /**
          * Sets multiple attribute values.
-         * 
-         * @method setAtts
-         * @param {Object} atts  A hash of attributes: name/value pairs
+         *
+         * @method setAttrs
+         * @param {Object} attrs  A hash of attributes: name/value pairs
+         * @chainable
          */
-        setAtts: function(atts) {
-            for (var att in atts) {
-                if ( O.owns(atts, att) ) {
-                    this.set(att, atts[att]);
+        setAttrs : function(attrs) {
+            for (var attr in attrs) {
+                if ( attrs.hasOwnProperty(attr) ) {
+                    this.set(attr, attrs[attr]);
                 }
             }
+            return this;
         },
 
         /**
          * Gets multiple attribute values.
          *
-         * @method getAtts
-         * @param {Array} Optional. An array of attribute names, whose values are required. If omitted, all attribute values are
-         * returned.
+         * @method getAttrs
+         * @param {Array | Boolean} attrs Optional. An array of attribute names, whose values are required. If omitted, all attribute values are
+         * returned. If set to true, all attributes modified from their original values are returned.
          * @return {Object} A hash of attributes: name/value pairs
          */
-        getAtts: function(atts) {
-            var o = {}, i, l, att;
-            atts = atts || O.keys(this._conf.data[VALUE]);
+        getAttrs : function(attrs) {
+            var o = {}, i, l, attr, val,
+                modifiedOnly = (attrs === true);
 
-            for (i = 0, l = atts.length; i < l; i++) {
-                // Go through get, to retrieve massaged values and honor cloning
-                att = atts[i];
-                o[att] = this.get(att); 
+            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._conf.data[VALUE]);
+
+            for (i = 0, l = attrs.length; i < l; i++) {
+                // Go through get, to honor cloning/normalization
+                attr = attrs[i];
+                val = this.get(attr);
+
+                if (!modifiedOnly || this._conf.get(attr, VALUE) != this._conf.get(attr, INIT_VALUE)) {
+                    o[attr] = this.get(attr); 
+                }
             }
 
             return o;
@@ -472,34 +431,38 @@
         /**
          * Configures attributes, and sets initial values
          *
-         * @method _initAtts
-         * @protected
-         * 
-         * @param {Object} cfg Attribute configuration object literal
-         * @param {Object} initValues Name/value hash of initial values to apply
+         * @method addAttrs
+         * @chainable
+         *
+         * @param {Object} cfgs Name/value hash of attribute configuration literals.
+         * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
          */
-        _initAtts : function(cfg, initValues) {
-            if (cfg) {
-                var att,
-                    attCfg,
-                    values,
-                    value,
-                    atts = cfg;
+        addAttrs : function(cfgs, values) {
+            if (cfgs) {
+                var attr,
+                    attrCfg,
+                    value;
 
-                values = this._splitAttVals(initValues);
+                values = this._splitAttrVals(values);
 
-                for (att in atts) {
-                    if (O.owns(atts, att)) {
-                        attCfg = Y.merge(atts[att]);
-                        value = this._initAttVal(att, attCfg, values);
+                for (attr in cfgs) {
+                    if (cfgs.hasOwnProperty(attr)) {
+
+                        // Not Merging. Caller is responsible for isolating configs
+                        attrCfg = cfgs[attr];
+
+                        // Handle simple, complex and user values, accounting for read-only
+                        value = this._getAttrInitVal(attr, attrCfg, values);
+
                         if (value !== undefined) {
-                            attCfg.value = value;
+                            attrCfg.value = value;
                         }
 
-                        this.addAtt(att, attCfg);
+                        this.addAttr(attr, attrCfg);
                     }
                 }
             }
+            return this;
         },
 
         /**
@@ -515,15 +478,15 @@
          * by attribute the top level attribute name.
          * @private
          */
-        _splitAttVals: function(valueHash) {
+        _splitAttrVals : function(valueHash) {
             var vals = {},
                 subvals = {},
                 path,
                 attr,
-                v;
+                v, k;
 
-            for (var k in valueHash) {
-                if (O.owns(valueHash, k)) {
+            for (k in valueHash) {
+                if (valueHash.hasOwnProperty(k)) {
                     if (k.indexOf(DOT) !== -1) {
                         path = k.split(DOT);
                         attr = path.shift();
@@ -544,23 +507,20 @@
          * Returns the initial value of the given attribute from
          * either the default configuration provided, or the 
          * over-ridden value if it exists in the initValues 
-         * hash provided.
+         * hash provided, if the attribute is not read-only.
          *
-         * @param {String} att Attribute name
-         * @param {Object} cfg Default attribute configuration
-         * object literal
-         * @param {Object} initVales Initial attribute values, provided 
-         * for the instance
+         * @param {String} attr Attribute name
+         * @param {Object} cfg Default attribute configuration object literal
+         * @param {Object} initValues Name/Value hash of initial attribute values from _splitAttrVals
          *
          * @return {Any} Initial value of the attribute.
          *
-         * @method _initAttVal
+         * @method _getAttrInitVal
          * @private
          */
-        _initAttVal : function(att, cfg, initValues) {
+        _getAttrInitVal : function(attr, cfg, initValues) {
 
-            var hasVal = (VALUE in cfg),
-                val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
+            var val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
                 simple,
                 complex,
                 i,
@@ -570,92 +530,30 @@
                 subvals;
 
             if (!cfg[READ_ONLY] && initValues) {
+
                 // Simple Attributes
                 simple = initValues.simple;
-                if (simple && O.owns(simple, att)) {
-                    hasVal = true;
-                    val = simple[att];
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
                 }
 
-                // Complex Attributes
+                // Complex Attributes (complex values applied, after simple, incase both are set)
                 complex = initValues.complex;
-                if (complex && O.owns(complex, att)) {
-                    hasVal = true;
-                    subvals = complex[att];
+                if (complex && complex.hasOwnProperty(attr)) {
+                    subvals = complex[attr];
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
                         subval = subvals[i].value;
-                        val = this._setSubAttVal(path, val, subval);
+                        O.setValue(val, path, subval);
                     }
                 }
             }
 
             return val;
-        },
-
-        /**
-         * <p>
-         * Clone utility method, which will 
-         * clone the provided value using YUI's 
-         * merge, or clone utilities based
-         * on the clone type provided. See <a href="#property_CLONE">Attribute.CLONE</a>
-         * </p>
-         * 
-         * @method _cloneAttVal
-         * @private 
-         * @param {Any} val Value to clone
-         * @param {int} type Clone type to use, See the CLONE property
-         * @return {Any} The cloned copy of the object, based on the provided type.
-         */
-        _cloneAttVal : function(val, type) {
-            switch(type) {
-                case CLONE_ENUM.SHALLOW:
-                    val = Y.merge(val);
-                    break;
-                case CLONE_ENUM.DEEP:
-                case CLONE_ENUM.IMMUTABLE:
-                    val = Y.clone(val);
-                    break;
-            }
-            return val;
-        },
-
-        /**
-         * Utility method to help setup the event payload and 
-         * fire the attribute change event.
-         * 
-         * @method _fireAttChange
-         * @private
-         * @param {String} type The event name
-         * @param {Any} currVal The current value of the attribute
-         * @param {Any} newVal The new value of the attribute
-         * @param {String} attrName The name of the attribute
-         * @param {String} strFullPath The full path of the property being changed, 
-         * if this is a sub-attribute value being change
-         * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
-         */
-        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, opts) {
-            type = type + CHANGE;
-
-            // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttSet, silent:true});
-
-            var eData = {
-                type: type,
-                prevVal: currVal,
-                newVal: newVal,
-                attrName: attrName,
-                subAttrName: strFullPath
-            };
-
-            if (opts) {
-                Y.mix(eData, opts);
-            }
-
-            this.fire(eData);
         }
     };
 
-    Y.mix(Attribute, Y.Event.Target, false, null, 1);
+    // Basic prototype augment - no lazy constructor invocation.
+    Y.mix(Attribute, EventTarget, false, null, 1);
 
     Y.Attribute = Attribute;

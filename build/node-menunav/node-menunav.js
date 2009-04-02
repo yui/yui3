@@ -110,13 +110,6 @@ var UA = Y.UA,
 	getClassName = Y.ClassNameManager.getClassName,
 
 
-	//	Native types
-
-	TRUE = true,
-	FALSE = false,
-	NULL = null,
-
-
 
 	//	Frequently used strings
 
@@ -280,7 +273,7 @@ var placeInDefaultTabIndex = function (node) {
 
 var isAnchor = function (node) {
 	
-	var bReturnVal = FALSE;
+	var bReturnVal = false;
 	
 	if (node) {
 		bReturnVal = node.get("nodeName").toLowerCase() === LOWERCASE_A;
@@ -538,7 +531,7 @@ var MenuNav = function (config) {
 
 
 		menuNav._autoSubmenuDisplay = 
-					Lang.isBoolean(bAutoSubmenuDisplay) ? bAutoSubmenuDisplay : TRUE;
+					Lang.isBoolean(bAutoSubmenuDisplay) ? bAutoSubmenuDisplay : true;
 
 		menuNav._submenuShowDelay = config.submenuShowDelay || 250;
 		menuNav._submenuHideDelay = config.submenuHideDelay || 250;
@@ -656,7 +649,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Node
 	*/
-	_rootMenu: NULL,	
+	_rootMenu: null,	
 
 
 	/** 
@@ -667,7 +660,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Node
 	*/
-	_activeItem: NULL, 
+	_activeItem: null, 
 
 
 	/** 
@@ -678,7 +671,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Node
 	*/
-	_activeMenu: NULL,
+	_activeMenu: null,
 
 
 	/** 
@@ -688,7 +681,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Boolean
 	*/
-	_hasFocus: FALSE,
+	_hasFocus: false,
 
 
 	//	In gecko-based browsers a mouseover and mouseout event will fire even 
@@ -706,7 +699,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Boolean
 	*/
-	_blockMouseEvent: FALSE,
+	_blockMouseEvent: false,
 
 
 	/** 
@@ -727,7 +720,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Boolean
 	*/
-	_movingToSubmenu: FALSE,
+	_movingToSubmenu: false,
 
 
 	/** 
@@ -737,7 +730,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Object
 	*/
-	_showSubmenuTimer: NULL,
+	_showSubmenuTimer: null,
 
 
 	/** 
@@ -747,7 +740,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Object
 	*/
-	_hideSubmenuTimer: NULL,
+	_hideSubmenuTimer: null,
 
 
 	/** 
@@ -757,7 +750,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Object
 	*/
-	_hideAllSubmenusTimer: NULL,
+	_hideAllSubmenusTimer: null,
 
 
 	/** 
@@ -768,7 +761,7 @@ MenuNav.prototype = {
 	* @protected
 	* @type Node
 	*/
-	_firstItem: NULL,
+	_firstItem: null,
 
 
 	/** 
@@ -779,7 +772,7 @@ MenuNav.prototype = {
 	* @protected
     * @type Boolean
 	*/
-	_autoSubmenuDisplay: TRUE,
+	_autoSubmenuDisplay: true,
 
 
 
@@ -849,7 +842,7 @@ MenuNav.prototype = {
 
 		}
 
-		menuNav._activeItem = NULL;
+		menuNav._activeItem = null;
 	
 	},
 
@@ -920,7 +913,7 @@ MenuNav.prototype = {
 			sID;
 
 
-		setARIARole(menu, (bIsRoot ? "menubar" : MENU));
+		setARIARole(menu, (bIsRoot && isHorizontalMenu(menu) ? "menubar" : MENU));
 
 		if (!bIsRoot) {
 
@@ -939,7 +932,7 @@ MenuNav.prototype = {
 			}
 
 			setARIAProperty(menu, "labelledby", sID);
-			setARIAProperty(menu, HIDDEN, TRUE);
+			setARIAProperty(menu, HIDDEN, true);
 		
 		}
 
@@ -990,7 +983,7 @@ MenuNav.prototype = {
 				}
 
 				setARIARole(oMenuLabel, MENUITEM);
-				setARIAProperty(oMenuLabel, "haspopup", TRUE);
+				setARIAProperty(oMenuLabel, "haspopup", true);
 				removeFromTabIndex(oMenuLabel);
 				
 				oSubmenu = node.next();
@@ -1021,7 +1014,7 @@ MenuNav.prototype = {
 			oItem;
 
 		if (menuNav._useARIA) {
-			setARIAProperty(menu, HIDDEN, FALSE);
+			setARIAProperty(menu, HIDDEN, false);
 		}
 
 		if (isHorizontalMenu(oParentMenu)) {
@@ -1038,7 +1031,7 @@ MenuNav.prototype = {
 			if (UA.ie === 6 && !menu.hasIFrameShim) {
 	
 				menu.appendChild(Y.Node.create(MenuNav.SHIM_TEMPLATE));
-				menu.hasIFrameShim = TRUE;
+				menu.hasIFrameShim = true;
 
 			}
 
@@ -1103,7 +1096,7 @@ MenuNav.prototype = {
 		menu.setStyles({ left: EMPTY_STRING, top: EMPTY_STRING });
 		
 		menu.addClass(CSS_MENU_HIDDEN);
-		setARIAProperty(menu, HIDDEN, TRUE);
+		setARIAProperty(menu, HIDDEN, true);
 		
 	},
 
@@ -1144,7 +1137,7 @@ MenuNav.prototype = {
 
 		if (oShowSubmenuTimer) {
 			oShowSubmenuTimer.cancel();
-			menuNav._showSubmenuTimer = NULL;
+			menuNav._showSubmenuTimer = null;
 		}
 	
 	},
@@ -1163,7 +1156,7 @@ MenuNav.prototype = {
 
 		if (oHideSubmenuTimer) {
 			oHideSubmenuTimer.cancel();
-			menuNav._hideSubmenuTimer = NULL;
+			menuNav._hideSubmenuTimer = null;
 		}
 	
 	},
@@ -1187,7 +1180,7 @@ MenuNav.prototype = {
 
 		if (oHideAllSubmenusTimer) {
 			oHideAllSubmenusTimer.cancel();
-			menuNav._hideAllSubmenusTimer = NULL;
+			menuNav._hideAllSubmenusTimer = null;
 		}
 
 		menuNav._cancelHideSubmenuTimer();
@@ -1196,7 +1189,7 @@ MenuNav.prototype = {
 
 
 		if (menuNav._movingToSubmenu && isHorizontalMenu(menu)) {
-			menuNav._movingToSubmenu = FALSE;
+			menuNav._movingToSubmenu = false;
 		}
 
 	},
@@ -1421,8 +1414,8 @@ MenuNav.prototype = {
 			oActiveMenu = menuNav._activeMenu,
 			oRootMenu = menuNav._rootMenu,
 			oTarget = event.target,
-			oFocusedItem = getItem(oTarget, TRUE),
-			bPreventDefault = FALSE,
+			oFocusedItem = getItem(oTarget, true),
+			bPreventDefault = false,
 			nKeyCode = event.keyCode,
 			oSubmenu,
 			oParentMenu,
@@ -1475,11 +1468,11 @@ MenuNav.prototype = {
 
 				}
 				else if (!menuNav._isRoot(oActiveMenu)) {
-					menuNav._hideMenu(oActiveMenu, TRUE);
+					menuNav._hideMenu(oActiveMenu, true);
 				}
 
 
-				bPreventDefault = TRUE;
+				bPreventDefault = true;
 
 			break;
 
@@ -1534,7 +1527,7 @@ MenuNav.prototype = {
 				
 				}
 
-				bPreventDefault = TRUE;
+				bPreventDefault = true;
 
 			break;
 
@@ -1549,7 +1542,7 @@ MenuNav.prototype = {
 				menuNav._setActiveItem(oNextItem);
 				focusItem(oNextItem);
 
-				bPreventDefault = TRUE;
+				bPreventDefault = true;
 
 			break;
 
@@ -1578,8 +1571,8 @@ MenuNav.prototype = {
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			oTarget = event.target,
-			oFocusedItem = getItem(oTarget, TRUE),
-			bPreventDefault = FALSE,
+			oFocusedItem = getItem(oTarget, true),
+			bPreventDefault = false,
 			nKeyCode = event.keyCode,
 			oNextItem,
 			oSubmenu;
@@ -1597,7 +1590,7 @@ MenuNav.prototype = {
 				menuNav._setActiveItem(oNextItem);
 				focusItem(oNextItem);
 
-				bPreventDefault = TRUE;
+				bPreventDefault = true;
 
 			break;
 
@@ -1614,7 +1607,7 @@ MenuNav.prototype = {
 						menuNav._setActiveItem(getFirstItem(oSubmenu));
 					}
 
-					bPreventDefault = TRUE;
+					bPreventDefault = true;
 				
 				}
 
@@ -1677,29 +1670,29 @@ MenuNav.prototype = {
 
 
 		if (menuNav._blockMouseEvent) {
-			menuNav._blockMouseEvent = FALSE;
+			menuNav._blockMouseEvent = false;
 		}
 		else {
 
 			oTarget = event.target;
-			oMenu = getMenu(oTarget, TRUE);
-			oMenuLabel = getMenuLabel(oTarget, TRUE);
-			oMenuItem = getMenuItem(oTarget, TRUE);
+			oMenu = getMenu(oTarget, true);
+			oMenuLabel = getMenuLabel(oTarget, true);
+			oMenuItem = getMenuItem(oTarget, true);
 
 
 			if (handleMouseOverForNode(oMenu, oTarget)) {
 
 				menuNav._onMenuMouseOver(oMenu, event);
 
-				oMenu[HANDLED_MOUSEOVER] = TRUE;
-				oMenu[HANDLED_MOUSEOUT] = FALSE;
+				oMenu[HANDLED_MOUSEOVER] = true;
+				oMenu[HANDLED_MOUSEOUT] = false;
 
 				oParentMenu = getParentMenu(oMenu);
 
 				if (oParentMenu) {
 
-					oParentMenu[HANDLED_MOUSEOUT] = TRUE;
-					oParentMenu[HANDLED_MOUSEOVER] = FALSE;
+					oParentMenu[HANDLED_MOUSEOUT] = true;
+					oParentMenu[HANDLED_MOUSEOVER] = false;
 		
 				}
 			
@@ -1709,8 +1702,8 @@ MenuNav.prototype = {
 
 				menuNav._onMenuLabelMouseOver(oMenuLabel, event);
 
-				oMenuLabel[HANDLED_MOUSEOVER] = TRUE;
-				oMenuLabel[HANDLED_MOUSEOUT] = FALSE;
+				oMenuLabel[HANDLED_MOUSEOVER] = true;
+				oMenuLabel[HANDLED_MOUSEOUT] = false;
 	
 			}
 
@@ -1718,8 +1711,8 @@ MenuNav.prototype = {
 	
 				menuNav._onMenuItemMouseOver(oMenuItem, event);
 
-				oMenuItem[HANDLED_MOUSEOVER] = TRUE;
-				oMenuItem[HANDLED_MOUSEOUT] = FALSE;
+				oMenuItem[HANDLED_MOUSEOVER] = true;
+				oMenuItem[HANDLED_MOUSEOUT] = false;
 				
 			}
 
@@ -1738,7 +1731,7 @@ MenuNav.prototype = {
 			
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
-			bMovingToSubmenu = FALSE,
+			bMovingToSubmenu = false,
 			oTarget,
 			oRelatedTarget,
 			oMenu,
@@ -1752,17 +1745,17 @@ MenuNav.prototype = {
 		
 		oTarget = event.target;
 		oRelatedTarget = event.relatedTarget;
-		oMenu = getMenu(oTarget, TRUE);
-		oMenuLabel = getMenuLabel(oTarget, TRUE);
-		oMenuItem = getMenuItem(oTarget, TRUE);
+		oMenu = getMenu(oTarget, true);
+		oMenuLabel = getMenuLabel(oTarget, true);
+		oMenuItem = getMenuItem(oTarget, true);
 
 
 		if (handleMouseOutForNode(oMenuLabel, oRelatedTarget)) {
 
 			menuNav._onMenuLabelMouseOut(oMenuLabel, event);
 
-			oMenuLabel[HANDLED_MOUSEOUT] = TRUE;
-			oMenuLabel[HANDLED_MOUSEOVER] = FALSE;
+			oMenuLabel[HANDLED_MOUSEOUT] = true;
+			oMenuLabel[HANDLED_MOUSEOVER] = false;
 
 		}
 
@@ -1770,8 +1763,8 @@ MenuNav.prototype = {
 
 			menuNav._onMenuItemMouseOut(oMenuItem, event);
 
-			oMenuItem[HANDLED_MOUSEOUT] = TRUE;
-			oMenuItem[HANDLED_MOUSEOVER] = FALSE;
+			oMenuItem[HANDLED_MOUSEOUT] = true;
+			oMenuItem[HANDLED_MOUSEOVER] = false;
 			
 		}
 
@@ -1782,7 +1775,7 @@ MenuNav.prototype = {
 
 			if (oSubmenu && (oRelatedTarget === oSubmenu || oSubmenu.contains(oRelatedTarget))) {
 
-				bMovingToSubmenu = TRUE;
+				bMovingToSubmenu = true;
 
 			}
 		
@@ -1793,8 +1786,8 @@ MenuNav.prototype = {
 
 			menuNav._onMenuMouseOut(oMenu, event);				
 
-			oMenu[HANDLED_MOUSEOUT] = TRUE;
-			oMenu[HANDLED_MOUSEOVER] = FALSE;
+			oMenu[HANDLED_MOUSEOUT] = true;
+			oMenu[HANDLED_MOUSEOVER] = false;
 		
 		}
 	
@@ -1812,7 +1805,7 @@ MenuNav.prototype = {
 
 		var menuNav = this,
 			oTarget = event.target,
-			oMenuLabel = getMenuLabel(oTarget, TRUE),
+			oMenuLabel = getMenuLabel(oTarget, true),
 			sType = event.type,
 			oAnchor,
 			oSubmenu,
@@ -1855,7 +1848,7 @@ MenuNav.prototype = {
 							//	"_hasFocus" flag to true.
 	
 							if (UA.webkit && !menuNav._hasFocus) {
-								menuNav._hasFocus = TRUE;
+								menuNav._hasFocus = true;
 							}
 
 
@@ -1947,9 +1940,9 @@ MenuNav.prototype = {
 
 				if (!menuNav._isRoot(oActiveMenu)) {
 
-					menuNav._hideMenu(oActiveMenu, TRUE);
+					menuNav._hideMenu(oActiveMenu, true);
 					event.stopPropagation();
-					menuNav._blockMouseEvent = UA.gecko ? TRUE : FALSE;
+					menuNav._blockMouseEvent = UA.gecko ? true : false;
 
 				}
 				else if (oActiveItem) {
@@ -2002,7 +1995,7 @@ MenuNav.prototype = {
 			//	following line corrects the problem.
 
 			if (UA.webkit) {
-				menuNav._hasFocus = FALSE;
+				menuNav._hasFocus = false;
 				menuNav._clearActiveItem();
 			}
 		
@@ -2033,9 +2026,9 @@ MenuNav.prototype = {
 				//	First time the menu has been focused, need to setup focused state and  
 				//	established active active descendant
 	
-				menuNav._hasFocus = TRUE;
+				menuNav._hasFocus = true;
 	
-				oActiveItem = getItem(oTarget, TRUE);
+				oActiveItem = getItem(oTarget, true);
 	
 				if (oActiveItem) {	
 					menuNav._setActiveItem(oActiveItem);
@@ -2048,7 +2041,7 @@ MenuNav.prototype = {
 
 			menuNav._clearActiveItem();
 			
-			menuNav._hasFocus = FALSE;
+			menuNav._hasFocus = false;
 
 
 			if (oFirstItem && bUseARIA) {

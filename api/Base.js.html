@@ -55,16 +55,14 @@
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
         <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
-        <span class="nx">SEP</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">,</span>
+        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
         <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
-        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span><span class="o">,</span>
         <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
+        <span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
-
-    <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -84,11 +82,11 @@
 <span class="c">     *</span>
 <span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
 <span class="c">     */</span>
-    <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">function</span> <span class="nx">Base</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="o">}</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -157,12 +155,10 @@
 <span class="c">     * @static</span>
 <span class="c">     * @final</span>
 <span class="c">     * @private</span>
-<span class="c">     */</span>    
+<span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;ATTRS&quot;</span><span class="o">]</span>
     <span class="o">};</span>
-
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -174,14 +170,6 @@
 <span class="c">     * The cfg object literal supports the following properties</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;dl&gt;</span>
-<span class="c">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
-<span class="c">     *    &lt;dd&gt;</span>
-<span class="c">     *    &lt;p&gt;If true (default), a completely new class</span>
-<span class="c">     *    is created which extends the main class, and acts as the </span>
-<span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
-<span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
-<span class="c">     *    the main class, modifying the main classes prototype.&lt;/p&gt;</span>
-<span class="c">     *    &lt;/dd&gt;</span>
 <span class="c">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
 <span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
 <span class="c">     *    on to the built class, in addition to the default properties build </span>
@@ -192,40 +180,34 @@
 <span class="c">     *</span>
 <span class="c">     * @method build</span>
 <span class="c">     * @static</span>
+<span class="c">     * @param {Function} main The name of the new class</span>
 <span class="c">     * @param {Function} main The main class on which to base the built class</span>
 <span class="c">     * @param {Function[]} extensions The set of extension classes which will be</span>
 <span class="c">     * augmented/aggregated to the built class.</span>
-<span class="c">     * @param {Object} cfg</span>
+<span class="c">     * @param {Object} cfg Optional. Configuration for the class.</span>
 <span class="c">     * @return {Function} A custom class, created from the provided main and extension classes</span>
 <span class="c">     */</span>
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span>
-
             <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_getClass</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">),</span>
             <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_getAggregates</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">),</span>
-            <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">,</span>
-
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">main</span><span class="o">.</span><span class="nx">NAME</span><span class="o">,</span>
-
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">;</span>
+            <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">;</span>
 
         <span class="c">// Shallow isolate aggregates</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
-                    <span class="o">}</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">main</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
                 <span class="o">}</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
             <span class="o">}</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// Augment/Aggregate</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
@@ -235,20 +217,15 @@
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
             <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
         <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasImpl</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_hasImpl</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">main</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span>
+        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="o">;</span>
 
         <span class="k">return</span> <span class="nx">builtClass</span><span class="o">;</span>
     <span class="o">};</span>
-    
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span> <span class="o">{</span>
 
         <span class="nx">_template</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">{</span>
@@ -258,15 +235,17 @@
                 <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
                 <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span> 
-                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
+                    <span class="nx">i</span><span class="o">;</span>
 
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
                     <span class="nx">f</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">BuiltClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">);</span>
+
             <span class="k">return</span> <span class="nx">BuiltClass</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -282,20 +261,16 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="nx">_getClass</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="c">// Create dynamic class or just modify main class</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">dynamic</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="nx">builtClass</span> <span class="o">=</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">:</span> <span class="nx">main</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">);</span>
 
             <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="o">{</span>
                 <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-                <span class="nx">exts</span> <span class="o">:</span> <span class="o">[],</span>
-                <span class="nx">dynamic</span> <span class="o">:</span> <span class="nx">dynamic</span>
+                <span class="nx">exts</span> <span class="o">:</span> <span class="o">[]</span>
             <span class="o">};</span>
 
             <span class="k">return</span> <span class="nx">builtClass</span><span class="o">;</span>
@@ -304,10 +279,11 @@
         <span class="nx">_getAggregates</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="o">[],</span>
                 <span class="nx">cfgAggr</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">),</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="o">;</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="o">,</span>
+                <span class="nx">classAggr</span><span class="o">;</span>
 
             <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">classAggr</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">;</span>
+                <span class="nx">classAggr</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">classAggr</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">classAggr</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -321,40 +297,6 @@
             <span class="k">return</span> <span class="nx">aggr</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">});</span>
-
-    <span class="c">/**</span>
-<span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Creates a new object instance, based on a dynamically created custom class.</span>
-<span class="c">     * The custom class is created from the main class passed in as the first parameter </span>
-<span class="c">     * along with the list of extension classes passed in</span>
-<span class="c">     * as the second parameter using &lt;a href=&quot;#method_build&quot;&gt;Base.build&lt;/a&gt; </span>
-<span class="c">     * with &quot;dynamic&quot; set to true. See the documentation for Base.build method </span>
-<span class="c">     * to see how the main class and extension classes are used.</span>
-<span class="c">     * &lt;/p&gt;</span>
-<span class="c">     *</span>
-<span class="c">     * &lt;p&gt;Any arguments following the 2nd argument are passed as arguments to the </span>
-<span class="c">     * constructor of the newly created class used to create the instance.&lt;/p&gt;</span>
-<span class="c">     * </span>
-<span class="c">     * @method create</span>
-<span class="c">     * @static</span>
-<span class="c">     *</span>
-<span class="c">     * @param {Function} main The main class on which the instance it to be </span>
-<span class="c">     * based. This class will be extended to create the class for the custom instance</span>
-<span class="c">     * @param {Array} extensions The list of extension classes used to augment the</span>
-<span class="c">     * main class with.</span>
-<span class="c">     * @param {Any*} args* 0..n arguments to pass to the constructor of the </span>
-<span class="c">     * newly created class, when creating the instance.</span>
-<span class="c">     * @return {Object} An instance of the custom class</span>
-<span class="c">     */</span>
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">),</span>
-            <span class="nx">cArgs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-        <span class="k">function</span> <span class="nx">F</span><span class="o">(){}</span>
-        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
-
-        <span class="k">return</span> <span class="nx">c</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">new</span> <span class="nx">F</span><span class="o">(),</span> <span class="nx">cArgs</span><span class="o">);</span>
-    <span class="o">};</span>
 
     <span class="nx">Base</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
@@ -379,6 +321,7 @@
 <span class="c">             * @type String</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">;</span>
 
             <span class="c">/**</span>
 <span class="c">             * &lt;p&gt;</span>
@@ -402,7 +345,6 @@
                 <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span>
             <span class="o">});</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
-
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -458,9 +400,7 @@
 <span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchy</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -473,30 +413,127 @@
 <span class="c">         */</span>
         <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
-            <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">];</span>
-
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Returns the top down class hierarchy for this object,</span>
-<span class="c">         * with Base being the first class in the array.</span>
-<span class="c">         *</span>
+<span class="c">         * Returns the class hierarchy for this object, with Base being the last class in the array.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _getClasses</span>
 <span class="c">         * @protected</span>
-<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class heirarchy for this object</span>
+<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object</span>
 <span class="c">         */</span>
         <span class="nx">_getClasses</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span> 
-                    <span class="nx">classes</span> <span class="o">=</span> <span class="o">[];</span>
-
-                <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">classes</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
-                    <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="o">}</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
             <span class="o">}</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">.</span><span class="nx">concat</span><span class="o">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _getAttrCfgs</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy</span>
+<span class="c">         */</span>
+        <span class="nx">_getAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * </span>
+<span class="c">         * @method _filterAttrCfs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Function} clazz</span>
+<span class="c">         * @param {Objects} allCfgs</span>
+<span class="c">         */</span>
+        <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">cfgs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _initHierarchyData</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initHierarchyData</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span> 
+                <span class="nx">classes</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">attrs</span> <span class="o">=</span> <span class="o">[];</span>
+
+            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Add to classes</span>
+<span class="c"></span>                <span class="nx">classes</span><span class="o">[</span><span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+                <span class="c">// Add to attributes</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span><span class="o">[</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_aggregateAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _aggregateAttrs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Object} allAttrs</span>
+<span class="c">         */</span>
+        <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
+                <span class="nx">aggAttrs</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
+    
+                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
+
+                            <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">useRef</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">{</span>
+                                <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                            <span class="o">}</span>
+    
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">path</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                                <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                            <span class="o">}</span>
+    
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
+                                <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                <span class="o">}</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">aggAttrs</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -504,28 +541,26 @@
 <span class="c">         * which includes initializing attributes for each class defined </span>
 <span class="c">         * in the class&#39;s static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and invoking the initializer </span>
 <span class="c">         * method on the prototype of each class in the hierarchy.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
 <span class="c">         * @param {Object} userConf Object literal containing attribute name/value pairs</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userConf</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
-                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span>
+                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+                <span class="nx">mergedCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">&amp;&amp;</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ei</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ei</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">ei</span><span class="o">++)</span> <span class="o">{</span>
-                        <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">[</span><span class="nx">ei</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">),</span> <span class="nx">userConf</span><span class="o">);</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">_initAtts</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -539,12 +574,15 @@
 <span class="c">         */</span>
         <span class="nx">_destroyHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span> <span class="nx">cl</span><span class="o">,</span>
                 <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -558,181 +596,6 @@
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Subscribe to a custom event hosted by this object.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_subscribe&quot;&gt;subscribe&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * @method subscribe</span>
-<span class="c">         * @param {String} type The type of event to subscribe to. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn The subscribed callback function, invoked when the event is fired.</span>
-<span class="c">         * @param {Object} context Optional execution context for the callback.</span>
-<span class="c">         * @param {Any*} args* 0..n params to supply to the callback</span>
-<span class="c">         * </span>
-<span class="c">         * @return {Event.Handle} An event handle which can be used to unsubscribe the subscribed callback.</span>
-<span class="c">         */</span>
-        <span class="nx">subscribe</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Fire a custom event by name.  The callback functions will be executed</span>
-<span class="c">         * from the context specified when the event was created, and with the </span>
-<span class="c">         * following parameters.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_fire&quot;&gt;fire&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * </span>
-<span class="c">         * @method fire</span>
-<span class="c">         * @param {String|Object} type The type of the event, or an object that contains</span>
-<span class="c">         * a &#39;type&#39; property. If the type does not contain a prefix (&quot;prefix:eventType&quot;),</span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Any*} args* 0..n Additional arguments to pass to subscribers.</span>
-<span class="c">         * @return {boolean} The return value from Event Target&#39;s &lt;a href=&quot;Event.Target.html#method_fire&quot;&gt;fire&lt;/a&gt; method.</span>
-<span class="c">         *</span>
-<span class="c">         */</span>
-        <span class="nx">fire</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">){</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Creates a new custom event of the specified type.  If a custom event</span>
-<span class="c">         * by that name already exists, it will not be re-created.  In either</span>
-<span class="c">         * case the custom event is returned. </span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_publish&quot;&gt;publish&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         *</span>
-<span class="c">         * @method publish</span>
-<span class="c">         * @param {String} type  The type, or name of the event. If the type does not </span>
-<span class="c">         * contain a prefix (&quot;prefix:eventType&quot;), the name property of the instance will </span>
-<span class="c">         * be used as the default prefix.</span>
-<span class="c">         * @param {Object} opts Optional config params (see Event.Target &lt;a href=&quot;Event.Target.html#method_publish&quot;&gt;publish&lt;/a&gt; for details)</span>
-<span class="c">         * @return {Event.Custom} The published custom event object</span>
-<span class="c">         */</span>
-        <span class="nx">publish</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">publish</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Subscribe to a custom event hosted by this object.  The</span>
-<span class="c">         * supplied callback will execute &lt;em&gt;after&lt;/em&gt; any listeners added</span>
-<span class="c">         * via the subscribe method, and after the default function,</span>
-<span class="c">         * if configured for the event, has executed.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_after&quot;&gt;after&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method after</span>
-<span class="c">         * @param {String} type The type of event to subscribe to. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn  The subscribed callback function</span>
-<span class="c">         * @param {Object} context Optional execution context for the callback</span>
-<span class="c">         * @param {Any*} args* 0..n params to supply to the callback</span>
-<span class="c">         * @return {Event.Handle} Event handle which can be used to unsubscribe the subscribed callback.</span>
-<span class="c">         */</span>
-        <span class="nx">after</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Unsubscribes one or more listeners the from the specified event.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_unsubscribe&quot;&gt;unsubscribe&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method unsubscribe</span>
-<span class="c">         * @param {String|Object} type Either the handle to the subscriber or the </span>
-<span class="c">         *                        type of event.  If the type</span>
-<span class="c">         *                        is not specified, it will attempt to remove</span>
-<span class="c">         *                        the listener from all hosted events. If </span>
-<span class="c">         *                        the type string does not contain a prefix </span>
-<span class="c">         *                        (&quot;prefix:eventType&quot;), the name property of the </span>
-<span class="c">         *                        instance will be used as the default prefix.</span>
-<span class="c">         * @param {Function} fn The subscribed function to unsubscribe, if not</span>
-<span class="c">         *                          supplied, all subscribers will be removed.</span>
-<span class="c">         * @param {Object} context The custom object passed to subscribe.  This is</span>
-<span class="c">         *                        optional, but if supplied will be used to</span>
-<span class="c">         *                        disambiguate multiple listeners that are the same</span>
-<span class="c">         *                        (e.g., you subscribe many object using a function</span>
-<span class="c">         *                        that lives on the prototype)</span>
-<span class="c">         * @return {boolean} true if the subscriber was found and detached.</span>
-<span class="c">         */</span>
-        <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Removes all listeners from the specified event.  If the event type</span>
-<span class="c">         * is not specified, all listeners from all hosted custom events will</span>
-<span class="c">         * be removed.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides Event.Target&#39;s &lt;a href=&quot;Event.Target.html#method_unsubscribeAll&quot;&gt;unsubscribeAll&lt;/a&gt; method, to add the name prefix </span>
-<span class="c">         * of the instance to the event type, if absent.</span>
-<span class="c">         * &lt;/p&gt;</span>
-<span class="c">         * @method unsubscribeAll</span>
-<span class="c">         * @param {String} type The type, or name of the event. If </span>
-<span class="c">         * the type string does not contain a prefix (&quot;prefix:eventType&quot;), </span>
-<span class="c">         * the name property of the instance will be used as the default prefix</span>
-<span class="c">         * @return {int} The number of listeners unsubscribed</span>
-<span class="c">         */</span>
-        <span class="nx">unsubscribeAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-            <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribeAll</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Utility method to prefix the event name with the</span>
-<span class="c">         * name property of the instance, if absent</span>
-<span class="c">         *</span>
-<span class="c">         * @method _prefixEvtType</span>
-<span class="c">         * @private</span>
-<span class="c">         * @param {String} type The event name</span>
-<span class="c">         * @return {String} The prefixed event name</span>
-<span class="c">         */</span>
-        <span class="nx">_prefixEvtType</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SEP</span><span class="o">)</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-               <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
@@ -811,7 +674,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Base", "name": "after", "url": "Base.html#method_after", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "create", "url": "Base.html#method_create", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "fire", "url": "Base.html#method_fire", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_prefixEvtType", "url": "Base.html#method__prefixEvtType", "type": "method"}, {"access": "", "host": "Base", "name": "publish", "url": "Base.html#method_publish", "type": "method"}, {"access": "", "host": "Base", "name": "subscribe", "url": "Base.html#method_subscribe", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribe", "url": "Base.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Base", "name": "unsubscribeAll", "url": "Base.html#method_unsubscribeAll", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
 </script>
 </body>
 </html>
