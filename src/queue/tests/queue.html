@@ -42,13 +42,14 @@
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../../build/io/io-base-debug.js"></script>
 <script type="text/javascript" src="../../../build/queue/queue-debug.js"></script>
+<script type="text/javascript" src="../../../build/queue/queue-io-debug.js"></script>
 <script type="text/javascript">
 YUI({
     base : '../../../build/',
     filter : 'debug',
     useBrowserConsole : false,
     logInclude : { TestRunner: true }
-}).use('test','console','queue','io-base',function (Y) {
+}).use('test','console','queue','queue-io','io-base',function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
 
