@@ -200,24 +200,28 @@ YUI.add('attribute', function(Y) {
         addAttr: function(name, config) {
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
-            config = config || {};
-
-            var value,
-                hasValue = (VALUE in config);
-
-            if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
-
-            if(hasValue) {
-                // We'll go through set, don't want to set value in _conf directory
-                value = config.value;
-                delete config.value;
-            }
-            config[INIT] = true;
-            this._conf.add(name, config);
-
-            if (hasValue) {
-                // Go through set, so that raw values get normalized/validated
-                this.set(name, value);
+            if (!this.attrAdded(name)) {
+                config = config || {};
+    
+                var value,
+                    hasValue = (VALUE in config);
+    
+                if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
+    
+                if(hasValue) {
+                    // We'll go through set, don't want to set value in _conf directory
+                    value = config.value;
+                    delete config.value;
+                }
+                config[INIT] = true;
+                this._conf.add(name, config);
+    
+                if (hasValue) {
+                    // Go through set, so that raw values get normalized/validated
+                    this.set(name, value);
+                }
+            } else {
+                Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
 
             return this;

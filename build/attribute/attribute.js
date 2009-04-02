@@ -198,23 +198,26 @@ YUI.add('attribute', function(Y) {
          */
         addAttr: function(name, config) {
 
-            config = config || {};
-
-            var value,
-                hasValue = (VALUE in config);
-
-
-            if(hasValue) {
-                // We'll go through set, don't want to set value in _conf directory
-                value = config.value;
-                delete config.value;
-            }
-            config[INIT] = true;
-            this._conf.add(name, config);
-
-            if (hasValue) {
-                // Go through set, so that raw values get normalized/validated
-                this.set(name, value);
+            if (!this.attrAdded(name)) {
+                config = config || {};
+    
+                var value,
+                    hasValue = (VALUE in config);
+    
+    
+                if(hasValue) {
+                    // We'll go through set, don't want to set value in _conf directory
+                    value = config.value;
+                    delete config.value;
+                }
+                config[INIT] = true;
+                this._conf.add(name, config);
+    
+                if (hasValue) {
+                    // Go through set, so that raw values get normalized/validated
+                    this.set(name, value);
+                }
+            } else {
             }
 
             return this;
