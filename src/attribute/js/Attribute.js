@@ -12,6 +12,7 @@
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
+        INIT = "init",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
@@ -109,7 +110,7 @@
                 value = config.value;
                 delete config.value;
             }
-            config._init = true;
+            config[INIT] = true;
             this._conf.add(name, config);
 
             if (hasValue) {
@@ -118,6 +119,17 @@
             }
 
             return this;
+        },
+
+        /**
+         * Tests if the given attribute has been added to the host
+         *
+         * @method attrAdded
+         * @param {String} name The name of the attribute to check.
+         * @return boolean, true if an attribute with the given name has been added.
+         */
+        attrAdded: function(name) {
+            return !!(this._conf.get(name, INIT));
         },
 
         /**
@@ -479,14 +491,13 @@
         /**
          * Configures attributes, and sets initial values
          *
-         * @method _initAttrs
-         * @protected
+         * @method addAttrs
          * @chainable
          *
          * @param {Object} cfgs Name/value hash of attribute configuration literals.
          * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
          */
-        _initAttrs : function(cfgs, values) {
+        addAttrs : function(cfgs, values) {
             if (cfgs) {
                 var attr,
                     attrCfg,
