@@ -275,7 +275,7 @@ YUI.add('attribute', function(Y) {
             getFn = conf.get(name, GETTER) || conf.get(name, GET);
 
             val = (getFn) ? getFn.call(this, val) : val;
-            val = (path) ? this._getSubAttrVal(path, val) : val;
+            val = (path) ? O.getValue(val, path) : val;
 
             return val;
         },
@@ -387,7 +387,7 @@ YUI.add('attribute', function(Y) {
             currVal = this.get(name);
 
             if (path) {
-               val = this._setSubAttrVal(path, Y.clone(currVal), val);
+               val = O.setValue(Y.clone(currVal), path, val);
 
                if (val === undefined) {
                    allowSet = false;
@@ -475,70 +475,6 @@ YUI.add('attribute', function(Y) {
                 // invoked since nothing changed.
                 e.stopImmediatePropagation();
             }
-        },
-
-        /**
-         * Retrieves the sub value at the provided path,
-         * from the value object provided.
-         *
-         * @method _getSubAttrVal
-         * @private
-         *
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      from which to obtain the sub value.
-         * @param {Object} val  The object from which to extract the property value
-         * @return {Any} The value stored in the path or undefined if not found.
-         */
-        _getSubAttrVal : function (path, val) {
-            var pl = path.length,
-                i;
-
-            if (pl > 0) {
-                for (i = 0; val !== undefined && i < pl; ++i) {
-                    val = val[path[i]];
-                }
-            }
-
-            return val;
-        },
-
-        /**
-         * Sets the sub value at the provided path on the value object.
-         * Returns the modified value object, or undefined if the path is invalid.
-         *
-         * 
-         *
-         * @method _setSubAttrVal
-         * @private
-         * 
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      at which to set the sub value.
-         * @param {Object} val  The object on which to set the sub value.
-         * @param {Any} subval  The sub value to set.
-         * @return {Object}     The modified object, with the new sub value set, or 
-         *                      undefined, if the path was invalid.
-         */
-        _setSubAttrVal : function(path, val, subval) {
-
-            var leafIdx = path.length-1,
-                i,
-                o;
-
-            if (leafIdx >= 0) {
-                o = val;
-
-                for (i = 0; o !== undefined && i < leafIdx; ++i) {
-                    o = o[path[i]];
-                }
-
-                if (o !== undefined) {
-                    o[path[i]] = subval;
-                } else {
-                    val = undefined;
-                }
-            }
-
-            return val;
         },
 
         /**
@@ -700,7 +636,7 @@ YUI.add('attribute', function(Y) {
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
                         subval = subvals[i].value;
-                        this._setSubAttrVal(path, val, subval);
+                        O.setValue(val, path, subval);
                     }
                 }
             }

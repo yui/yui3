@@ -5,6 +5,7 @@
      * @module base
      */
     var L = Y.Lang,
+        O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -470,7 +471,7 @@
                             }
     
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
-                                this._setSubAttrVal(path, aggAttrs[attr].value, val);
+                                O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
