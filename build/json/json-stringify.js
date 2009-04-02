@@ -23,6 +23,8 @@ var _toString = Object.prototype.toString,
     OPEN_A    = '[',
     CLOSE_A   = ']',
     COMMA     = ',',
+    COMMA_CR  = ",\n",
+    CR        = "\n",
     COLON     = ':',
     QUOTE     = '"';
 
@@ -79,29 +81,38 @@ Y.mix(Y.namespace('JSON'),{
      * Converts an arbitrary value to a JSON string representation.
      * Cyclical object or array references are replaced with null.
      * If a whitelist is provided, only matching object keys will be included.
-     * If a depth limit is provided, objects and arrays at that depth will
-     * be stringified as empty.
+     * If a positive integer or non-empty string is passed as the third
+     * parameter, the output will be formatted with carriage returns and
+     * indentation for readability.  If a String is passed (such as "\t") it
+     * will be used once for each indentation level.  If a number is passed,
+     * that number of spaces will be used.
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
-     * @param d {number} (optional) depth limit to recurse objects/arrays
-     *                   (practical minimum 1)
+     * @param ind {Number|String} (optional) indentation character or depth of
+     *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
      * @public
      */
-    stringify : function (o,w,d) {
+    stringify : function (o,w,ind) {
 
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
             rep    = Y.Lang.isFunction(w) ? w : null,
             pstack = [], // Processing stack used for cyclical ref protection
-            _date = Y.JSON.dateToString; // Use configured date serialization
+            _date  = Y.JSON.dateToString; // Use configured date serialization
 
         if (rep || typeof w !== 'object') {
             w = undefined;
+        }
+
+        if (ind) {
+            ind = Y.Lang.isNumber(ind) ? new Array(ind+1).join(" ") :
+                  Y.Lang.isString(ind) ? ind :
+                  null;
         }
 
         // escape encode special characters
@@ -127,49 +138,53 @@ Y.mix(Y.namespace('JSON'),{
             return false;
         }
 
-        function _object(o,d,arr) {
+        function _indent(s) {
+            return s.replace(/^/gm,ind);
+        }
+
+        function _object(o,arr) {
             // Add the object to the processing stack
             pstack.push(o);
 
             var a = [], i, j, len, k, v;
 
-            // Only recurse if we're above depth config
-            if (d > 0) {
-                if (arr) { // Array
-                    for (i = o.length - 1; i >= 0; --i) {
-                        a[i] = _stringify(o,i,d-1) || NULL;
-                    }
-                } else {   // Object
+            if (arr) { // Array
+                for (i = o.length - 1; i >= 0; --i) {
+                    a[i] = _stringify(o,i) || NULL;
+                }
+            } else {   // Object
+                // If whitelist provided, take only those keys
+                k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
 
-                    // If whitelist provided, take only those keys
-                    k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
-
-                    for (i = 0, j = 0, len = k.length; i < len; ++i) {
-                        if (typeof k[i] === STRING) {
-                            v = _stringify(o,k[i],d-1);
-                            if (v) {
-                                a[j++] = _string(k[i]) + COLON + v;
-                            }
+                for (i = 0, j = 0, len = k.length; i < len; ++i) {
+                    if (typeof k[i] === STRING) {
+                        v = _stringify(o,k[i]);
+                        if (v) {
+                            a[j++] = _string(k[i]) + COLON + v;
                         }
                     }
-
-                    a.sort();
                 }
             }
 
             // remove the array from the stack
             pstack.pop();
 
-            return arr ?
-                OPEN_A + a.join(COMMA) + CLOSE_A :
-                OPEN_O + a.join(COMMA) + CLOSE_O;
+            if (ind) {
+                return arr ?
+                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
+                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
+            } else {
+                return arr ?
+                    OPEN_A + a.join(COMMA) + CLOSE_A :
+                    OPEN_O + a.join(COMMA) + CLOSE_O;
+            }
         }
 
-        // Worker function.  Fork behavior on data type and recurse objects and
-        // arrays per the configured depth.
-        function _stringify(h,key,d) {
+        // Worker function.  Fork behavior on data type and recurse objects.
+        function _stringify(h,key) {
             var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
-                t = Y.Lang.type(o);
+                t = Y.Lang.type(o),
+                s;
 
             if (t === OBJECT) {
                 if (/String|Number|Boolean/.test(_toString.call(o))) {
@@ -184,19 +199,16 @@ Y.mix(Y.namespace('JSON'),{
                 case BOOLEAN : return o+EMPTY;
                 case DATE    : return _date(o);
                 case NULL    : return NULL;
-                case ARRAY   : return _cyclical(o) ? NULL : _object(o,d,true);
+                case ARRAY   : return _cyclical(o) ? NULL : _object(o,true);
                 case REGEXP  : // intentional fall through
                 case ERROR   : // intentional fall through
-                case OBJECT  : return _cyclical(o) ? NULL : _object(o,d);
+                case OBJECT  : return _cyclical(o) ? NULL : _object(o);
                 default      : return undefined;
             }
         }
 
-        // Default depth to POSITIVE_INFINITY
-        d = d >= 0 ? d : 1/0;
-
         // process the input
-        return _stringify({'':o},EMPTY,d);
+        return _stringify({'':o},EMPTY);
     }
 });
 
