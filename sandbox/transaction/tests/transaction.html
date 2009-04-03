@@ -6,24 +6,45 @@
 </head>
 <body>
 
+<div id="report"></div>
+
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="transaction.js"></script>
+<!--script type="text/javascript" src="../../../build/transaction/transaction.js"></script-->
 <script type="text/javascript">
-YUI().use('*',function (Y) {
+YUI({
+    base: '../../../build/'
+}).use('node','transaction',function (Y) {
     var t = new Y.Transaction({
         on : {
-            complete : function (e) {
-                this.fire('success',{ x: e.data });
+            start : function (e) {
+                //var self = this;
+                setTimeout(function () {
+                    // Have to repackage the payload because getEventFacade
+                    // explicitly does not mix in other EventFacades, though
+                    // a passed facade will be present in e.details
+                    t.fire('success',{ info: e.info });
+                    t.fire('end',{ info: e.info });
+                },1000);
             },
-            success : function (e) {
-                alert('SUCCESS ' + e.x.join(" "));
+            success : function (e, msg_from_args) {
+                alert('SUCCESS ' + e.info + ' ' + msg_from_args + ' ' + this.goo);
             }
-        }
+        },
+        context : { goo : 'glop' },
+        args : ["and goodbye"]
     });
-    t.complete(1,2,3);
+    t.start({ info : "Hi there" });
+
+    t.on('success', function (e) {
+        confirm("fire the default handler?") || e.preventDefault();
+    });
+
+    t.after('end', function (e,msg_from_args) {
+        // msg_from_args is bound to the default handler, and is not accessible
+        // to the event subscribers
+        Y.get('#report').set('innerHTML', 'Transaction completed: ' + msg_from_args);
+    });
 });
 </script>
 <script type="text/javascript" src="dpSyntaxHighlighter.js" ></script>
