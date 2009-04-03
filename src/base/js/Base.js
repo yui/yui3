@@ -1,11 +1,11 @@
     /**
-     * Base class support for objects requiring
-     * managed attributes and acting as event targets
+     * Base class support for objects requiring managed attributes and acting as event targets.
+     *
+     * Also provides the an augmentable PluginHost interface.
      *
      * @module base
      */
-    var L = Y.Lang,
-        O = Y.Object,
+    var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -29,7 +29,7 @@
      *
      * @constructor
      * @class Base
-     * @uses Attribute
+     * @uses Attribute, PluginHost
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -108,7 +108,7 @@
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS"]
+        aggregates : ["ATTRS", "PLUGINS"]
     };
 
     /**
@@ -295,6 +295,9 @@
                 queuable:false,
                 defaultFn:this._defInitFn
             });
+
+            Y.PluginHost.call(this);
+
             this.fire(INIT, null, config);
             return this;
         },
@@ -550,7 +553,9 @@
         }
     };
 
+    // straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
+    Y.mix(Base, Y.PluginHost, false, null, 1);
 
     Base.prototype.constructor = Base;
     Y.Base = Base;
