@@ -17,6 +17,7 @@
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
+        INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
 
@@ -52,6 +53,10 @@
         EventTarget.call(this, {emitFacade:true});
         this._conf = new Y.State();
     }
+
+    Attribute.INVALID_VALUE = {};
+
+    INVALID_VALUE = Attribute.INVALID_VALUE;
 
     Attribute.prototype = {
         /**
@@ -350,23 +355,29 @@
          * @param {Event.Facade} e The event object for the custom event
          */
         _defAttrChangeFn : function(e) {
-            var conf = this._conf,
+
+            var allowSet = true,
+                conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
                 setFn = conf.get(name, SETTER) || conf.get(name, SET),
-                storedVal,
-                retVal;
+                storedVal;
 
             if (!valFn || valFn.call(this, val)) {
-
                 if (setFn) {
-                    retVal = setFn.call(this, val);
-                    if (retVal !== undefined) {
+                    val = setFn.call(this, val);
+                    if (val === INVALID_VALUE) {
+                        allowSet = false;
+                    } else {
                         Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
-                        val = retVal; // setter can change value
                     }
                 }
+            } else {
+                allowSet = false;
+            }
+
+            if (allowSet) {
                 // Store value
                 storedVal = { value: val };
                 if (conf.get(name, INIT_VALUE) === undefined) {
@@ -377,7 +388,7 @@
                 // Honor set normalization
                 e.newVal = conf.get(name, VALUE);
             } else {
-                Y.log('Validation failed. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
+                Y.log('Validation failed or Setter returned Attribute.INVALID_VALUE. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
                 // Prevent "after" listeners from being 
                 // invoked since nothing changed.
