@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FIXME</title>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/event-simulate/event-simulate.js"></script>
+<script type="text/javascript" src="../../../build/event/event.js"></script>
+<script type="text/javascript" src="../../../build/oop/oop.js"></script>
+<script type="text/javascript" src="../../../build/base/base.js"></script>
+<script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
+<script type="text/javascript" src="../../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
+
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<div id="demo">demo</div>
+<p>lorem</p>
+<p title="ipsum">ipsum</p>
+<p>dolor</p>
+<p>sit</p>
+<script type="text/javascript">
+YUI().use('*', function(Y) {
+    var a = ['foo', 'bar', 'baz:', 'fool'],
+        b = ['foo', 'baz', 'boo', 'bool'];
+
+    console.log(Y.Array.diff(a, b));
+    nodelist = Y.all('p');
+    nodelist.set('style.color', 'red');
+    node = Y.get('p[title]');
+    node.set('style.color', 'red');
+    console.log(node);
+
+/*
+1. set title on all nodes
+   store initial value === prevVal
+2. provide prevVal array in handler
+3. fire node titleChange
+4. fire nodelist titleChange
+*/
+
+    node.on('titleChange', function(e) {
+        console.log('node title change: ' + e.target._yuid);
+    });
+
+    nodelist.on('titleChange', function(e) {
+        console.log('nodelist title change');
+    });
+
+    node.on('click', function(e) {
+        //e.preventDefault();
+        console.log('node click');
+    });
+
+    nodelist.set('title', 'foo');
+
+    node.after('title change', function(e) {
+        console.log('node after title change');
+    });
+    //console.log(nodelist.get('title'));
+});
+</script>
+</body>
+</html>
