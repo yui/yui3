@@ -119,6 +119,7 @@ YUI.add('attribute', function(Y) {
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
+        INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
 
@@ -153,6 +154,10 @@ YUI.add('attribute', function(Y) {
         EventTarget.call(this, {emitFacade:true});
         this._conf = new Y.State();
     }
+
+    Attribute.INVALID_VALUE = {};
+
+    INVALID_VALUE = Attribute.INVALID_VALUE;
 
     Attribute.prototype = {
         /**
@@ -444,22 +449,28 @@ YUI.add('attribute', function(Y) {
          * @param {Event.Facade} e The event object for the custom event
          */
         _defAttrChangeFn : function(e) {
-            var conf = this._conf,
+
+            var allowSet = true,
+                conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
                 setFn = conf.get(name, SETTER) || conf.get(name, SET),
-                storedVal,
-                retVal;
+                storedVal;
 
             if (!valFn || valFn.call(this, val)) {
-
                 if (setFn) {
-                    retVal = setFn.call(this, val);
-                    if (retVal !== undefined) {
-                        val = retVal; // setter can change value
+                    val = setFn.call(this, val);
+                    if (val === INVALID_VALUE) {
+                        allowSet = false;
+                    } else {
                     }
                 }
+            } else {
+                allowSet = false;
+            }
+
+            if (allowSet) {
                 // Store value
                 storedVal = { value: val };
                 if (conf.get(name, INIT_VALUE) === undefined) {
