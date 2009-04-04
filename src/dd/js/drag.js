@@ -133,7 +133,7 @@
         * @type Node
         */
         node: {
-            set: function(node) {
+            setter: function(node) {
                 var n = Y.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
@@ -149,7 +149,7 @@
         * @type Node
         */
         dragNode: {
-            set: function(node) {
+            setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
@@ -188,12 +188,13 @@
         */
         lock: {
             value: false,
-            set: function(lock) {
+            setter: function(lock) {
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-locked');
                 }
+                return lock;
             }
         },
         /**
@@ -254,8 +255,12 @@
         */
         target: {
             value: false,
-            set: function(config) {
-                this._handleTarget(config);
+            setter: function(config) {
+                Y.later(0, this, function(config) {
+                    this._handleTarget(config);
+                }, config);
+
+                return config;
             }
         },
         /**
@@ -265,7 +270,7 @@
         */
         dragMode: {
             value: null,
-            set: function(mode) {
+            setter: function(mode) {
                 return DDM._setDragMode(mode);
             }
         },
@@ -276,7 +281,7 @@
         */
         groups: {
             value: ['default'],
-            get: function() {
+            getter: function() {
                 if (!this._groups) {
                     this._groups = {};
                 }
@@ -286,11 +291,12 @@
                 });
                 return ret;
             },
-            set: function(g) {
+            setter: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
                     this._groups[v] = true;
                 }, this);
+                return g;
             }
         },
         /**
@@ -300,7 +306,7 @@
         */
         handles: {
             value: null,
-            set: function(g) {
+            setter: function(g) {
                 if (g) {
                     this._handles = {};
                     Y.each(g, function(v, k) {
@@ -768,7 +774,6 @@
             if (Y.Lang.isString(str)) {
                 this._invalids[str] = true;
                 this.fire(EV_ADD_INVALID, { handle: str });
-            } else {
             }
             return this;
         },
@@ -778,9 +783,7 @@
         * @description Internal init handler
         */
         initializer: function() {
-            //TODO give the node instance a copy of this object
-            //Not supported in PR1 due to Y.Node.get calling a new under the hood.
-            //this.get(NODE).dd = this;
+            this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
                 var id = Y.stamp(this.get(NODE));
@@ -790,7 +793,9 @@
 
             this._invalids = Y.clone(this._invalidsDefault, true);
 
-            this._createEvents();
+            //this._createEvents();
+            Y.later(100, this, this._createEvents);
+            
             
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
@@ -919,6 +924,7 @@
                     this.get(DRAG_NODE).setXY(xy);
                 } else {
                     DDM.setXY(this.get(DRAG_NODE), diffXY);
+                    //this.get(DRAG_NODE).setXY(xy);
                 }
                 this.realXY = xy;
             }

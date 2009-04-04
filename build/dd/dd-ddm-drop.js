@@ -65,15 +65,14 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @method syncActiveShims
         * @description This method will sync the position of the shims on the Drop Targets that are currently active.
         * @param {Boolean} force Resize/sync all Targets.
-        * @return {Array} drops The list of Drop Targets that was just synced.
         */
         syncActiveShims: function(force) {
-            var drops = ((force) ? this.targets : this._lookup());
-            Y.each(drops, function(v, k) {
-                v.sizeShim.call(v);
-            }, this);
-
-            return drops;
+            Y.later(0, this, function(force) {
+                var drops = ((force) ? this.targets : this._lookup());
+                Y.each(drops, function(v, k) {
+                    v.sizeShim.call(v);
+                }, this);
+            }, force);
         },
         /**
         * @private
@@ -339,30 +338,9 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _handleTargetOver: function() {
             var drops = this._lookup();
-            if (!this.get('multiDrop')) {
-                var over = [];
-                //Get all the targets that are under the cursor
-                Y.each(drops, function(v, k) {
-                    if (this.isOverTarget(v)) {
-                        over[over.length] = v;
-                    }
-                }, this);
-                //Get the best match
-                var match = this.getBestMatch(over, true);
-                if (match[0]) {
-                    //Fire _handleTargetOver for the best match
-                    match[0]._handleTargetOver(match[0]);
-                    //Now fire _handleOut on all the other targets
-                    Y.each(match[1], function(v, k) {
-                        v._handleOut(v, [true]);
-                    }, this);
-                }
-            } else {
-                Y.each(drops, function(v, k) {
-                    v._handleTargetOver.call(v);
-                }, this);
-            }
-            
+            Y.each(drops, function(v, k) {
+                v._handleTargetOver.call(v);
+            }, this);
         },
         /**
         * @private

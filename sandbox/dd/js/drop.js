@@ -72,7 +72,7 @@ YUI.add('dd-drop', function(Y) {
         * @type Node
         */        
         node: {
-            set: function(node) {
+            setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drop: Invalid Node Given: ' + node);
@@ -87,11 +87,12 @@ YUI.add('dd-drop', function(Y) {
         */        
         groups: {
             value: ['default'],
-            set: function(g) {
+            setter: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
                     this._groups[v] = true;
                 }, this);
+                return g;
             }
         },   
         /**
@@ -101,7 +102,7 @@ YUI.add('dd-drop', function(Y) {
         */
         padding: {
             value: '0',
-            set: function(p) {
+            setter: function(p) {
                 return DDM.cssSizestoObject(p);
             }
         },
@@ -112,12 +113,13 @@ YUI.add('dd-drop', function(Y) {
         */        
         lock: {
             value: false,
-            set: function(lock) {
+            setter: function(lock) {
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-drop-locked');
                 } else {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
+                return lock;
             }
         },
         /**

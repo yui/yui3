@@ -47,8 +47,9 @@
         */
         proxy: {
             value: false,
-            set: function(v) {
+            setter: function(v) {
                 this._setProxy(v);
+                return v;
             }
         },        
         /**

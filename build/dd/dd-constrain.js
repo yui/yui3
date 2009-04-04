@@ -82,7 +82,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2region: {
             value: false,
-            get: function(r) {
+            getter: function(r) {
                 if (Y.Lang.isObject(r)) {
                     var o = {};
                     Y.mix(o, r);
@@ -91,7 +91,7 @@ YUI.add('dd-constrain', function(Y) {
                     return false;
                 }
             },
-            set: function (r) {
+            setter: function (r) {
                 if (Y.Lang.isObject(r)) {
                     if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
                         var o = {};
@@ -103,6 +103,7 @@ YUI.add('dd-constrain', function(Y) {
                 } else if (r !== false) {
                     return false;
                 }
+                return r;
             }
         },
         /**
@@ -112,7 +113,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         gutter: {
             value: '0',
-            set: function(gutter) {
+            setter: function(gutter) {
                 return Y.DD.DDM.cssSizestoObject(gutter);
             }
         },
@@ -123,7 +124,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2node: {
             value: false,
-            set: function(n) {
+            setter: function(n) {
                 if (!this.get('constrain2region')) {
                     var node = Y.Node.get(n);
                     if (node) {
