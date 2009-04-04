@@ -1,11 +1,16 @@
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
+ * Provides the base Widget class
  *
  * @module widget
  */
 
 // Local Constants
-var WIDGET = "widget",
+var L = Y.Lang,
+    O = Y.Object,
+    Node = Y.Node,
+    ClassNameManager = Y.ClassNameManager,
+
+    WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
@@ -33,12 +38,8 @@ var WIDGET = "widget",
 
     ContentUpdate = "contentUpdate",
 
-    O = Y.Object,
-    Node = Y.Node,
-    ClassNameManager = Y.ClassNameManager;
-
-// Widget nodeid-to-instance map for now, 1-to-1.
-var _instances = {};
+    // Widget nodeid-to-instance map for now, 1-to-1.
+    _instances = {};
 
 /**
  * A base class for widgets, providing:
@@ -49,7 +50,6 @@ var _instances = {};
  *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
  *        disabled, hasFocus, strings</li>
- *    <li>Plugin registration and activation support</li>
  * </ul>
  *
  * @param config {Object} Object literal specifying widget configuration 
@@ -58,7 +58,6 @@ var _instances = {};
  * @class Widget
  * @constructor
  * @extends Base
- * @uses PluginHost
  */
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
@@ -83,7 +82,7 @@ function Widget(config) {
  * @private
  */
 Widget._buildCfg = {
-    aggregates : ["PLUGINS", "HTML_PARSER"]
+    aggregates : ["HTML_PARSER"]
 };
 
 /**
@@ -408,8 +407,6 @@ Y.extend(Widget, Y.Base, {
         if (htmlConfig) {
             Y.aggregate(config, htmlConfig, false);
         }
-
-        Y.PluginHost.call(this, config);
     },
 
     /**
@@ -1284,7 +1281,5 @@ Y.extend(Widget, Y.Base, {
  * @static
  */
 Widget.PLUGINS = [];
-
-Y.mix(Widget, Y.PluginHost, false, null, 1); // straightup augment, no wrapper functions
 
 Y.Widget = Widget;
