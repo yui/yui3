@@ -15,6 +15,7 @@ YUI.add('dd-drag', function(Y) {
 
     var DDM = Y.DD.DDM,
         NODE = 'node',
+        DRAGGING = 'dragging',
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
@@ -626,11 +627,8 @@ YUI.add('dd-drag', function(Y) {
                 this._setStartPosition([ev.pageX, ev.pageY]);
 
                 DDM.activeDrag = this;
-
-                var self = this;
-                this._clickTimeout = setTimeout(function() {
-                    self._timeoutCheck.call(self);
-                }, this.get('clickTimeThresh'));
+                
+                this._clickTimeout = Y.later(this.get('clickTimeThresh'), this, this._timeoutCheck);
             }
             this.fire(EV_AFTER_MOUSE_DOWN, { ev: ev });
         },
@@ -836,7 +834,7 @@ YUI.add('dd-drag', function(Y) {
         * @chainable
         */
         start: function() {
-            if (!this.get('lock') && !this.get('dragging')) {
+            if (!this.get('lock') && !this.get(DRAGGING)) {
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
@@ -854,7 +852,7 @@ YUI.add('dd-drag', function(Y) {
                     bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
                     left: xy[0]
                 };
-                this.set('dragging', true);
+                this.set(DRAGGING, true);
             }
             return this;
         },
@@ -866,14 +864,21 @@ YUI.add('dd-drag', function(Y) {
         */
         end: function() {
             this._endTime = (new Date()).getTime();
-            clearTimeout(this._clickTimeout);
+            if (this._clickTimeout) {
+                this._clickTimeout.cancel();
+            }
             this._dragThreshMet = false;
             this._fromTimeout = false;
-            if (!this.get('lock') && this.get('dragging')) {
-                this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
+            if (!this.get('lock') && this.get(DRAGGING)) {
+                this.fire(EV_END, {
+                    pageX: this.lastXY[0],
+                    pageY: this.lastXY[1],
+                    startTime: this._startTime,
+                    endTime: this._endTime
+                });
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-dragging');
-            this.set('dragging', false);
+            this.set(DRAGGING, false);
             this.deltaXY = [0, 0];
             this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
 
@@ -909,7 +914,7 @@ YUI.add('dd-drag', function(Y) {
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(xy, noFire) {
-            if (!this.get('dragging')) {
+            if (!this.get(DRAGGING)) {
                 noFire = true;
             }
             var diffXY = [], diffXY2 = [];
@@ -976,9 +981,10 @@ YUI.add('dd-drag', function(Y) {
                         this.start();
                         this._alignNode([ev.pageX, ev.pageY]);
                     }
-                
                 } else {
-                    clearTimeout(this._clickTimeout);
+                    if (this._clickTimeout) {
+                        this._clickTimeout.cancel();
+                    }
                     this._alignNode([ev.pageX, ev.pageY]);
                 }
             }
@@ -990,7 +996,7 @@ YUI.add('dd-drag', function(Y) {
         * @chainable
         */
         stopDrag: function() {
-            if (this.get('dragging')) {
+            if (this.get(DRAGGING)) {
                 DDM._end();
             }
             return this;
