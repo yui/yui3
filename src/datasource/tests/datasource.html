@@ -20,7 +20,10 @@
         filter: "debug",
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("dump", "test", "console", "io-base", "cache", "base", "json", "dataparser", "datasource", function(Y) {
+    }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "dataparser", "datasource", function(Y) {
+
+// TODO: remove later
+Y.augment(Y.Base, Y.PluginHost);
 
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
@@ -39,14 +42,16 @@
             name: "Class Tests",
         
             testConstructor: function() {
-                var ds = new Y.DataSource();
-                ASSERT.areSame((ds instanceof Y.DataSource), true);
+                var ds = new Y.DataSource.Local();
+                ASSERT.areSame((ds instanceof Y.Base), true, "Expected Base instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected Local instance.");
             },
 
             testConstructorXHR: function() {
                 var ds = new Y.DataSource.XHR();
-                ASSERT.areSame((ds instanceof Y.DataSource), true);
-                ASSERT.areSame((ds instanceof Y.DataSource.XHR), true);
+                ASSERT.areSame((ds instanceof Y.Base), true, "Expected Base instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected Local instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.XHR), true, "Expected XHR instance.");
             }
         });
         
@@ -54,7 +59,7 @@
             name: "DataSource Tests",
 
             testLocalDefaults: function() {
-                var ds = new Y.DataSource({
+                var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
                 
@@ -69,7 +74,7 @@
             name: "DataSource Event Tests",
 
             testLocalRequest: function() {
-                var ds = new Y.DataSource({
+                var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
                 
@@ -86,7 +91,7 @@
             },
 
             testLocalData: function() {
-                var ds = new Y.DataSource({
+                var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
 
@@ -104,7 +109,7 @@
             },
 
             testLocalResponse: function() {
-                var ds = new Y.DataSource({
+                var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
 
@@ -124,7 +129,7 @@
             },
 
             testLocalError: function() {
-                var ds = new Y.DataSource({
+                var ds = new Y.DataSource.Local({
                     source: ["a","b","c","d"]
                 });
 
@@ -226,7 +231,7 @@
 
                 ds.sendRequest(null, "callback");
                 this.wait();
-            },
+            }/*,
 
             testXHRResponse: function() {
                 var ds = new Y.DataSource.XHR({
@@ -278,61 +283,71 @@
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
                 this.wait();
-            }
+            }*/
         });
 
         var testCache = new Y.Test.Case({
             name: "DataSource Cache Tests",
 
             testCacheDefaultSize: function() {
-                var ds = new Y.DataSource({cache: new Y.Cache()});
-                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
+                //var ds = new Y.DataSource.Local({cache: new Y.Cache()});
+                var ds = new Y.DataSource.Local();
+                ds.plug(Y.plugin.DataSourceCache);
+                ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.cache.get("size"), 0, "Expected 0 size in Cache.");
+
+                //ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                //ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
             },
 
             testCacheInitSize: function() {
-                var ds = new Y.DataSource({cache: new Y.Cache({size:3})});
-                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
+                //var ds = new Y.DataSource.Local({cache: new Y.Cache({size:3})});
+                var ds = new Y.DataSource.Local();
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
+                ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.cache.get("size"), 3, "Expected 3 size in Cache.");
+
+                //ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                //ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
             },
 
-            testSetCache: function() {
-                var ds = new Y.DataSource();
-                ds.set("cache",new Y.Cache({size:5}));
-                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
+            testCacheSetSize: function() {
+                var ds = new Y.DataSource.Local();
+                //ds.set("cache",new Y.Cache({size:5}));
+                ds.plug({fn:Y.plugin.DataSourceCache});
+                ds.cache.set("size", 5);
+                ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.cache.get("size"), 5, "Expected 5 size in Cache.");
             },
             
             testLocalCache: function() {
-                var cache = new Y.Cache({size:3}),
-                    ds = new Y.DataSource({
-                        source: ["a","b","c","d"],
-                        cache: cache
+                var ds = new Y.DataSource.Local({
+                        source: ["a","b","c","d"]
                     });
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
 
                 ds.sendRequest("a");
 
-                ds.subscribe("request", function(e, o) {
-                    ASSERT.fail("Entry is cached -- 'request' event is unexpected");
+                ds.subscribe("data", function(e, o) {
+                    ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
                 });
 
                 ds.sendRequest("a");
             },
 
-            testLocalCacheUnset: function() {
-                var cache = new Y.Cache({size:3}),
-                    ds = new Y.DataSource({
-                        source: ["a","b","c","d"],
-                        cache: cache
+            testLocalCacheUnplug: function() {
+                var ds = new Y.DataSource.Local({
+                        source: ["a","b","c","d"]
                     });
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
 
                 ds.sendRequest("a");
-                ds.set("cache", null);
 
-                cache.subscribe("retrieve", function(e, o) {
+                ds.cache.subscribe("retrieve", function(e, o) {
                     ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
                 });
 
+                ds.unplug("cache");
                 ds.sendRequest("a");
             }
         });

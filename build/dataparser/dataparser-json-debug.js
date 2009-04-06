@@ -8,25 +8,24 @@ YUI.add('dataparser-json', function(Y) {
  * @requires json, dataparser-base
  * @title DataParser JSON Submodule
  */
-    var LANG = Y.Lang,
+var LANG = Y.Lang,
 
-    /**
-     * JSON subclass for the YUI DataParser utility.
-     * @class DataParser.JSON
-     * @extends DataParser.Base
-     * @constructor
-     */
-    JSON = function() {
-        JSON.superclass.constructor.apply(this, arguments);
-    };
-
+/**
+ * JSON subclass for the YUI DataParser utility.
+ * @class DataParser.JSON
+ * @extends DataParser.Base
+ * @constructor
+ */
+DPJSON = function() {
+    DPJSON.superclass.constructor.apply(this, arguments);
+};
 
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataParser.JSON static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(JSON, {
+Y.mix(DPJSON, {
     /**
      * Class name.
      *
@@ -125,7 +124,7 @@ Y.mix(JSON, {
 
 });
 
-Y.extend(JSON, Y.DataParser.Base, {
+Y.extend(DPJSON, Y.DataParser.Base, {
     /**
      * Overriding parse method traverses JSON data according to given schema.
      *
@@ -170,9 +169,9 @@ Y.extend(JSON, Y.DataParser.Base, {
                 results = [],
                 path;
 
-            path = JSON.buildPath(schema.resultsList);
+            path = DPJSON.buildPath(schema.resultsList);
             if(path) {
-                results = JSON.walkPath(path, data_in);
+                results = DPJSON.walkPath(path, data_in);
                 if (results === undefined) {
                     bError = true;
                 }
@@ -222,7 +221,7 @@ Y.extend(JSON, Y.DataParser.Base, {
             key = field.key || field; // Find the key
             
             // Validate and store locators for later
-            path = JSON.buildPath(key);
+            path = DPJSON.buildPath(key);
             if (path) {
                 if (path.length === 1) {
                     simplePaths[simplePaths.length] = {key:key, path:path[0]};
@@ -256,7 +255,7 @@ Y.extend(JSON, Y.DataParser.Base, {
 
                 // Cycle through complexLocators
                 for (j=complexPaths.length - 1; j>=0; --j) {
-                    record[complexPaths[j].key] = JSON.walkPath(complexPaths[j].path, result);
+                    record[complexPaths[j].key] = DPJSON.walkPath(complexPaths[j].path, result);
                 }
 
                 // Cycle through fieldParsers
@@ -286,9 +285,9 @@ Y.extend(JSON, Y.DataParser.Base, {
         var key, path;
         for(key in metaFields) {
             if (metaFields.hasOwnProperty(key)) {
-                path = JSON.buildPath(metaFields[key]);
+                path = DPJSON.buildPath(metaFields[key]);
                 if (path && data_in) {
-                    data_out.meta[key] = JSON.walkPath(path, data_in);
+                    data_out.meta[key] = DPJSON.walkPath(path, data_in);
                 }
             }
         }
@@ -296,7 +295,7 @@ Y.extend(JSON, Y.DataParser.Base, {
     }
 });
 
-    Y.DataParser.JSON = JSON;
+Y.DataParser.JSON = DPJSON;
 
 
 

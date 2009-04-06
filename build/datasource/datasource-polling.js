@@ -8,7 +8,6 @@ YUI.add('datasource-polling', function(Y) {
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource,
     
     /**
      * Adds polling to the YUI DataSource utility.
@@ -84,9 +83,7 @@ Pollable.prototype = {
     }
 };
     
-Y.Base.build(BASE, [Pollable], {
-    dynamic: false
-});
+//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable]);
 
 
 

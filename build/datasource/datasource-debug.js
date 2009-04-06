@@ -8,25 +8,24 @@ YUI.add('datasource-base', function(Y) {
  * @requires base
  * @title DataSource Utility
  */
-    Y.namespace("DataSource");
-    var LANG = Y.Lang,
+var LANG = Y.Lang,
     
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource
-     * @extends Base
-     * @constructor
-     */    
-    DSBase = function() {
-        DSBase.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * Base class for the YUI DataSource utility.
+ * @class DataSource
+ * @extends Base
+ * @constructor
+ */    
+DSLocal = function() {
+    DSLocal.superclass.constructor.apply(this, arguments);
+};
     
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {
+Y.mix(DSLocal, {
     /**
      * Class name.
      *
@@ -34,9 +33,9 @@ Y.mix(DSBase, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource"
+     * @value "DataSource.Local"
      */
-    NAME: "DataSource",
+    NAME: "DataSource.Local",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -87,7 +86,7 @@ Y.mix(DSBase, {
     }
 });
     
-Y.extend(DSBase, Y.Base, {
+Y.extend(DSLocal, Y.Base, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -144,7 +143,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: this._defRequestFn});
+        //this.publish("request", {defaultFn: this._defRequestFn});
+        this.publish("request", {defaultFn:function(e, o){
+            this._defRequestFn(e, o);
+        }});
          
         /**
          * Fired when raw data is received.
@@ -160,7 +162,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: this._defDataFn});
+        //this.publish("data", {defaultFn: this._defDataFn});
+         this.publish("data", {defaultFn:function(e, o){
+            this._defDataFn(e, o);
+        }});
 
         /**
          * Fired when response is returned.
@@ -179,7 +184,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: this._defResponseFn});
+         //this.publish("response", {defaultFn: this._defResponseFn});
+         this.publish("response", {defaultFn:function(e, o){
+            this._defResponseFn(e, o);
+        }});
 
         /**
          * Fired when an error is encountered.
@@ -279,7 +287,7 @@ Y.extend(DSBase, Y.Base, {
      */
     _defResponseFn: function(e, o) {
         // Send the response back to the callback
-        DSBase.issueCallback(o);
+        DSLocal.issueCallback(o);
     },
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
@@ -300,14 +308,15 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DSBase._tId++;
+        var tId = DSLocal._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }
 });
     
-    Y.DataSource = DSBase;
+Y.namespace("DataSource");
+Y.DataSource.Local = DSLocal;
     
 
 
@@ -325,15 +334,15 @@ YUI.add('datasource-xhr', function(Y) {
  * @title DataSource XHR Submodule
  */
     
-    /**
-     * XHR subclass for the YUI DataSource utility.
-     * @class DataSource.XHR
-     * @extends DataSource
-     * @constructor
-     */    
-    var XHR = function() {
-        XHR.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * XHR subclass for the YUI DataSource utility.
+ * @class DataSource.XHR
+ * @extends DataSource
+ * @constructor
+ */    
+var DSXHR = function() {
+    DSXHR.superclass.constructor.apply(this, arguments);
+};
     
 
     /////////////////////////////////////////////////////////////////////////////
@@ -341,7 +350,7 @@ YUI.add('datasource-xhr', function(Y) {
     // DataSource.XHR static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(XHR, {    
+Y.mix(DSXHR, {
     /**
      * Class name.
      *
@@ -374,7 +383,7 @@ Y.mix(XHR, {
     }
 });
     
-Y.extend(XHR, Y.DataSource, {
+Y.extend(DSXHR, Y.DataSource.Local, {
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -421,7 +430,7 @@ Y.extend(XHR, Y.DataSource, {
     }
 });
   
-    Y.DataSource.XHR = XHR;
+Y.DataSource.XHR = DSXHR;
     
 
 
@@ -434,57 +443,68 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires datasource-base,cache
+ * @requires plugin, cache
  * @title DataSource Cache Extension
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds cacheability to the YUI DataSource utility.
-     * @class Cacheable
-     */    
-    Cacheable = function() {};
 
-Cacheable.ATTRS = {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Instance of Y.Cache. Caching is useful to reduce the number of server
-     * connections.  Recommended only for data sources that return comprehensive
-     * results for queries or when stale data is not an issue.
-     *
-     * @attribute cache
-     * @type Y.Cache
-     * @default null
-     */
-    cache: {
-        value: null,
-        validator: function(value) {
-            return ((value instanceof Y.Cache) || (value === null));
-        },
-        setter: function(value) {
-            if(value === null) {
-                this.unsubscribe("request", this._beforeRequest);
-                this.unsubscribe("response", this._beforeResponse);
-
-            }
-            else {
-                this.on("request", this._beforeRequest);
-                this.on("response", this._beforeResponse);
-            }
-        }
-    }
+/**
+ * Adds cacheability to the YUI DataSource utility.
+ * @class DataSourceCache
+ */    
+var DataSourceCache = function() {
+    DataSourceCache.superclass.constructor.apply(this, arguments);
 };
-    
-Cacheable.prototype = {
+
+Y.mix(DataSourceCache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
+    /**
+     * Class name.
+     *
+     * @property DataParser.Base.NAME
+     * @type String
+     * @static
+     * @final
+     * @value "DataSourceCache"
+     */
+    NAME: "DataSourceCache",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(DataSourceCache, Y.Cache, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function(config) {
+        this.doBefore("_defRequestFn", this._beforeDefRequestFn);
+        this.doBefore("_defResponseFn", this._beforeDefResponseFn);
+    },
+
     /**
      * First look for cached response, then send request to live data.
      *
-     * @method _beforeRequest
+     * @method _beforeDefRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -494,12 +514,12 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-    _beforeRequest: function(e, o) {
+    _beforeDefRequestFn: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache").retrieve(o.request, o.callback)) || null;
+        var entry = (this.retrieve(o.request)) || null;
         if(entry && entry.response) {
-            e.stopImmediatePropagation();
-            this.fire("response", null, Y.mix(o, entry.response));
+            this._owner.fire("response", null, Y.mix(o, entry.response));
+            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
             //BASE.issueCallback(entry.response);
             //return new Y.Do.Halt("msg", "newRetVal");
         }
@@ -521,19 +541,18 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-     _beforeResponse: function(e, o) {
+     _beforeDefResponseFn: function(e, o) {
         // Add to Cache before returning
-        this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
+        this.add(o.request, o, (o.callback && o.callback.argument));
      }
-};
-    
-Y.Base.build(BASE, [Cacheable], {
-    dynamic: false
 });
 
+Y.namespace('plugin');
+Y.plugin.DataSourceCache = DataSourceCache;
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base']});
 
 YUI.add('datasource-dataparser', function(Y) {
 
@@ -544,13 +563,12 @@ YUI.add('datasource-dataparser', function(Y) {
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds parsability to the YUI DataSource utility.
-     * @class Parsable
-     */    
-    Parsable = function() {};
+
+/**
+ * Adds parsability to the YUI DataSource utility.
+ * @class Parsable
+ */    
+var Parsable = function() {};
 
 Parsable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
@@ -601,9 +619,7 @@ Parsable.prototype = {
     }
 };
     
-Y.Base.build(BASE, [Parsable], {
-    dynamic: false
-});
+//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Parsable]);
 
 
 
@@ -619,7 +635,6 @@ YUI.add('datasource-polling', function(Y) {
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource,
     
     /**
      * Adds polling to the YUI DataSource utility.
@@ -697,9 +712,7 @@ Pollable.prototype = {
     }
 };
     
-Y.Base.build(BASE, [Pollable], {
-    dynamic: false
-});
+//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable]);
 
 
 

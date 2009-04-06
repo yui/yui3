@@ -5,28 +5,39 @@ YUI.add('cache', function(Y) {
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
- * @requires base
+ * @requires plugin
  * @title Cache Utility
  */
-    var LANG = Y.Lang,
-    
-    /**
-     * Base class for the YUI Cache utility.
-     * @class Cache
-     * @extends Base
-     * @constructor
-     */    
-    Cache = function() {
-        Cache.superclass.constructor.apply(this, arguments);
-    };
-    
+var LANG = Y.Lang,
 
+/**
+ * Base class for the YUI Cache utility.
+ * @class Cache
+ * @extends Plugin
+ * @constructor
+ */    
+Cache = function() {
+    Cache.superclass.constructor.apply(this, arguments);
+};
+    
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(Cache, {    
+Y.mix(Cache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
     
     /**
      * Class name.
@@ -78,7 +89,7 @@ Y.mix(Cache, {
     }
 });
     
-Y.extend(Cache, Y.Base, {
+Y.extend(Cache, Y.Plugin, {
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache private properties
@@ -295,10 +306,9 @@ Y.extend(Cache, Y.Base, {
     }
 });
     
-    Y.namespace("Cache");
-    Y.Cache = Cache;
+Y.Cache = Cache;
     
 
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@' ,{requires:['plugin']});

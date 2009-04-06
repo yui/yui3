@@ -7,13 +7,12 @@ YUI.add('datasource-dataparser', function(Y) {
  * @requires datasource-base,dataparser-base
  * @title DataSource DataParser Extension
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds parsability to the YUI DataSource utility.
-     * @class Parsable
-     */    
-    Parsable = function() {};
+
+/**
+ * Adds parsability to the YUI DataSource utility.
+ * @class Parsable
+ */    
+var Parsable = function() {};
 
 Parsable.ATTRS = {
     /////////////////////////////////////////////////////////////////////////////
@@ -64,9 +63,7 @@ Parsable.prototype = {
     }
 };
     
-Y.Base.build(BASE, [Parsable], {
-    dynamic: false
-});
+//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Parsable]);
 
 
 

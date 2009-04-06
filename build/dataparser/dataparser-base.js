@@ -8,25 +8,23 @@ YUI.add('dataparser-base', function(Y) {
  * @requires base
  * @title DataParser Utility
  */
-    Y.namespace("DataParser");
-    var DP = Y.DataParser,
 
-    /**
-     * Base class for the YUI DataParser utility.
-     * @class DataParser.Base
-     * @extends Base
-     * @constructor
-     */
-    Base = function() {
-        Base.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * Base class for the YUI DataParser utility.
+ * @class DataParser.Base
+ * @extends Base
+ * @constructor
+ */
+var DPBase = function() {
+    DPBase.superclass.constructor.apply(this, arguments);
+};
 
     /////////////////////////////////////////////////////////////////////////////
     //
     // Base static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(Base, {
+Y.mix(DPBase, {
     /**
      * Class name.
      *
@@ -77,7 +75,7 @@ Y.mix(Base, {
     }
 });
 
-Y.extend(Base, Y.Base, {
+Y.extend(DPBase, Y.Base, {
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -129,7 +127,8 @@ Y.extend(Base, Y.Base, {
     }
 });
 
-    DP.Base = Base;
+Y.namespace("DataParser");
+Y.DataParser.Base = DPBase;
 
 
     

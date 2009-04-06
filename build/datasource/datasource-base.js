@@ -8,25 +8,24 @@ YUI.add('datasource-base', function(Y) {
  * @requires base
  * @title DataSource Utility
  */
-    Y.namespace("DataSource");
-    var LANG = Y.Lang,
+var LANG = Y.Lang,
     
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource
-     * @extends Base
-     * @constructor
-     */    
-    DSBase = function() {
-        DSBase.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * Base class for the YUI DataSource utility.
+ * @class DataSource
+ * @extends Base
+ * @constructor
+ */    
+DSLocal = function() {
+    DSLocal.superclass.constructor.apply(this, arguments);
+};
     
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {
+Y.mix(DSLocal, {
     /**
      * Class name.
      *
@@ -34,9 +33,9 @@ Y.mix(DSBase, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource"
+     * @value "DataSource.Local"
      */
-    NAME: "DataSource",
+    NAME: "DataSource.Local",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -87,7 +86,7 @@ Y.mix(DSBase, {
     }
 });
     
-Y.extend(DSBase, Y.Base, {
+Y.extend(DSLocal, Y.Base, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -144,7 +143,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: this._defRequestFn});
+        //this.publish("request", {defaultFn: this._defRequestFn});
+        this.publish("request", {defaultFn:function(e, o){
+            this._defRequestFn(e, o);
+        }});
          
         /**
          * Fired when raw data is received.
@@ -160,7 +162,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: this._defDataFn});
+        //this.publish("data", {defaultFn: this._defDataFn});
+         this.publish("data", {defaultFn:function(e, o){
+            this._defDataFn(e, o);
+        }});
 
         /**
          * Fired when response is returned.
@@ -179,7 +184,10 @@ Y.extend(DSBase, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: this._defResponseFn});
+         //this.publish("response", {defaultFn: this._defResponseFn});
+         this.publish("response", {defaultFn:function(e, o){
+            this._defResponseFn(e, o);
+        }});
 
         /**
          * Fired when an error is encountered.
@@ -276,7 +284,7 @@ Y.extend(DSBase, Y.Base, {
      */
     _defResponseFn: function(e, o) {
         // Send the response back to the callback
-        DSBase.issueCallback(o);
+        DSLocal.issueCallback(o);
     },
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
@@ -297,13 +305,14 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DSBase._tId++;
+        var tId = DSLocal._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         return tId;
     }
 });
     
-    Y.DataSource = DSBase;
+Y.namespace("DataSource");
+Y.DataSource.Local = DSLocal;
     
 
 
