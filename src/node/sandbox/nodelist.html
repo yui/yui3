@@ -10,7 +10,7 @@
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/base/base.js"></script>
 <script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <style type="text/css">
@@ -18,22 +18,22 @@
 </style>
 </head>
 <body>
-<div id="demo">demo</div>
-<p>lorem</p>
-<p title="ipsum">ipsum</p>
-<p>dolor</p>
-<p>sit</p>
+<div id="demo">
+    <p>lorem</p>
+    <p title="ipsum">ipsum</p>
+    <p>dolor</p>
+    <p>sit</p>
+</div>
+
 <script type="text/javascript">
 YUI().use('*', function(Y) {
     var a = ['foo', 'bar', 'baz:', 'fool'],
         b = ['foo', 'baz', 'boo', 'bool'];
 
-    console.log(Y.Array.diff(a, b));
     nodelist = Y.all('p');
-    nodelist.set('style.color', 'red');
+    //nodelist.set('style.color', 'red');
+
     node = Y.get('p[title]');
-    node.set('style.color', 'red');
-    console.log(node);
 
 /*
 1. set title on all nodes
@@ -43,24 +43,31 @@ YUI().use('*', function(Y) {
 4. fire nodelist titleChange
 */
 
-    node.on('titleChange', function(e) {
-        console.log('node title change: ' + e.target._yuid);
+    node.on('innerHTMLChange', function(e) {
+        e.preventDefault();
+        e.newVal = 'hijacked val';
+        this._defAttrChangeFn(e);
+console.log(e);
+        console.log('Node: ' + e.type + ': ' + e.target._yuid);
+    });
+    //node.set('innerHTML', 'new content from Node');
+
+    node.after('innerHTMLChange', function(e) {
+        console.log('Node: afterInnerHTMLChange');
     });
 
-    nodelist.on('titleChange', function(e) {
-        console.log('nodelist title change');
+    nodelist.on('innerHTMLChange', function(e) {
+        //console.log('NodeList: ' + e.type + ': ' + e.target);
     });
 
-    node.on('click', function(e) {
+    nodelist.on('click', function(e) {
         //e.preventDefault();
         console.log('node click');
     });
 
-    nodelist.set('title', 'foo');
+    nodelist.set('innerHTML', 'new content from NodeList');
 
-    node.after('title change', function(e) {
-        console.log('node after title change');
-    });
+    Y.get('#demo').addNode('<p>foo</p>');
     //console.log(nodelist.get('title'));
 });
 </script>

@@ -99,7 +99,6 @@ YUI.add('attribute', function(Y) {
             }
         }
     };
-
     /**
      * Managed Attribute Provider
      * @module attribute
@@ -660,7 +659,6 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, EventTarget, false, null, 1);
 
     Y.Attribute = Attribute;
-
 
 
 }, '@VERSION@' ,{requires:['event-custom']});
