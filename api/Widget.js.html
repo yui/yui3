@@ -48,13 +48,18 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides the base Widget class along with an augmentable PluginHost interface</span>
+<span class="c"> * Provides the base Widget class</span>
 <span class="c"> *</span>
 <span class="c"> * @module widget</span>
 <span class="c"> */</span>
 
 <span class="c">// Local Constants</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">WIDGET</span> <span class="o">=</span> <span class="s2">&quot;widget&quot;</span><span class="o">,</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
+    <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span>
+    <span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">,</span>
+
+    <span class="nx">WIDGET</span> <span class="o">=</span> <span class="s2">&quot;widget&quot;</span><span class="o">,</span>
     <span class="nx">CONTENT</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="o">,</span>
     <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s2">&quot;visible&quot;</span><span class="o">,</span>
     <span class="nx">HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">,</span>
@@ -82,12 +87,8 @@
 
     <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="o">,</span>
 
-    <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
-    <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span>
-    <span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">;</span>
-
-<span class="c">// Widget nodeid-to-instance map for now, 1-to-1.</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
+    <span class="c">// Widget nodeid-to-instance map for now, 1-to-1.</span>
+<span class="c"></span>    <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">/**</span>
 <span class="c"> * A base class for widgets, providing:</span>
@@ -98,7 +99,6 @@
 <span class="c"> *        widgets: renderer, renderUI, bindUI, syncUI&lt;/li&gt;</span>
 <span class="c"> *    &lt;li&gt;Support for common widget attributes, such as boundingBox, contentBox, visible, </span>
 <span class="c"> *        disabled, hasFocus, strings&lt;/li&gt;</span>
-<span class="c"> *    &lt;li&gt;Plugin registration and activation support&lt;/li&gt;</span>
 <span class="c"> * &lt;/ul&gt;</span>
 <span class="c"> *</span>
 <span class="c"> * @param config {Object} Object literal specifying widget configuration </span>
@@ -107,7 +107,6 @@
 <span class="c"> * @class Widget</span>
 <span class="c"> * @constructor</span>
 <span class="c"> * @extends Base</span>
-<span class="c"> * @uses PluginHost</span>
 <span class="c"> */</span>
 <span class="k">function</span> <span class="nx">Widget</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
@@ -132,7 +131,7 @@
 <span class="c"> * @private</span>
 <span class="c"> */</span>
 <span class="nx">Widget</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;PLUGINS&quot;</span><span class="o">,</span> <span class="s2">&quot;HTML_PARSER&quot;</span><span class="o">]</span>
+    <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;HTML_PARSER&quot;</span><span class="o">]</span>
 <span class="o">};</span>
 
 <span class="c">/**</span>
@@ -194,7 +193,7 @@
 <span class="c">    */</span>
     <span class="nx">boundingBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBoundingBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -208,7 +207,7 @@
 <span class="c">    */</span>
     <span class="nx">contentBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setContentBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -306,11 +305,11 @@
 <span class="c">     * @type Object</span>
 <span class="c">     */</span>
     <span class="nx">strings</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setStrings</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">},</span>
 
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getStrings</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -457,8 +456,6 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">htmlConfig</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">config</span><span class="o">,</span> <span class="nx">htmlConfig</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
         <span class="o">}</span>
-
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">PluginHost</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -875,12 +872,12 @@
         <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
             <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
             <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
-            <span class="nx">name</span><span class="o">;</span>
+            <span class="nx">name</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">());</span>
 
         <span class="c">// Start from Widget Sub Class</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">2</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">3</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">NAME</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">()));</span>
@@ -1309,10 +1306,11 @@
     <span class="nx">_getHtmlParser</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
-                <span class="nx">parser</span> <span class="o">=</span> <span class="o">{};</span>
+                <span class="nx">parser</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">p</span><span class="o">;</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">HTML_PARSER</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
+                <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">HTML_PARSER</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">parser</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -1333,8 +1331,6 @@
 <span class="c"> */</span>
 <span class="nx">Widget</span><span class="o">.</span><span class="nx">PLUGINS</span> <span class="o">=</span> <span class="o">[];</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Widget</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span> <span class="c">// straightup augment, no wrapper functions</span>
-<span class="c"></span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">;</span>
 </pre></div>
                     </div>
@@ -1391,6 +1387,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="Base.js.html" title="Base.js">Base.js</a></li>
                                 <li class=""><a href="PluginHost.js.html" title="PluginHost.js">PluginHost.js</a></li>
                                 <li class="selected"><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
                         </ul>

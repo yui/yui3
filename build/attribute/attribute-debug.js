@@ -464,15 +464,17 @@ YUI.add('attribute', function(Y) {
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
                 setFn = conf.get(name, SETTER) || conf.get(name, SET),
-                storedVal;
+                storedVal,
+                retVal;
 
             if (!valFn || valFn.call(this, val)) {
                 if (setFn) {
-                    val = setFn.call(this, val);
-                    if (val === INVALID_VALUE) {
+                    retVal = setFn.call(this, val);
+                    if (retVal === INVALID_VALUE) {
                         allowSet = false;
-                    } else {
+                    } else if (retVal !== undefined){
                         Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
+                        val = retVal;
                     }
                 }
             } else {

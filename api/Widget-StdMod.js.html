@@ -196,7 +196,7 @@
 <span class="c">         * in the header. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
 <span class="c">         */</span>
         <span class="nx">headerContent</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">live</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStdModContent</span><span class="o">(</span><span class="nx">STD_HEADER</span><span class="o">);</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">live</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="nx">live</span><span class="o">;</span>
             <span class="o">}</span>
@@ -210,7 +210,7 @@
 <span class="c">         * in the footer. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
 <span class="c">         */</span>
         <span class="nx">footerContent</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">live</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStdModContent</span><span class="o">(</span><span class="nx">STD_FOOTER</span><span class="o">);</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">live</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="nx">live</span><span class="o">;</span>
             <span class="o">}</span>
@@ -224,7 +224,7 @@
 <span class="c">         * in the body. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
 <span class="c">         */</span>
         <span class="nx">bodyContent</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">live</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStdModContent</span><span class="o">(</span><span class="nx">STD_BODY</span><span class="o">);</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">live</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="nx">live</span><span class="o">;</span>
             <span class="o">}</span>
