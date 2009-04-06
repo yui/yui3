@@ -16,16 +16,16 @@ var LANG = Y.Lang,
  * @extends DataParser.Base
  * @constructor
  */
-DPJSON = function() {
-    DPJSON.superclass.constructor.apply(this, arguments);
-};
+DPJSON = {
+    //DPJSON.superclass.constructor.apply(this, arguments);
+//};
 
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataParser.JSON static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DPJSON, {
+//Y.mix(DPJSON, {
     /**
      * Class name.
      *
@@ -35,7 +35,7 @@ Y.mix(DPJSON, {
      * @final
      * @value "DataParser.JSON"
      */
-    NAME: "DataParser.JSON",
+    //NAME: "DataParser.JSON",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ Y.mix(DPJSON, {
     //
     /////////////////////////////////////////////////////////////////////////////
 
-    ATTRS: {
+    //ATTRS: {
         /**
         * @attribute schema
         * @description Object literal schema definition:
@@ -61,10 +61,10 @@ Y.mix(DPJSON, {
         * @type Object
         * @default {}
         */
-        schema: {
-            value: {}
-        }
-    },
+        //schema: {
+            //value: {}
+        //}
+    //},
 
     /**
      * Utility function converts JSON locator strings into walkable paths
@@ -119,23 +119,22 @@ Y.mix(DPJSON, {
             data = data[path[i]];
         }
         return data;
-    }
+    },
 
-});
+//});
 
-Y.extend(DPJSON, Y.DataParser.Base, {
+//Y.extend(DPJSON, Y.DataParser.Base, {
     /**
      * Overriding parse method traverses JSON data according to given schema.
      *
      * @method _parse
-     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
-     * @param e.data {MIXED} Data to parse.
+     * @param schema {Object} Schema to parse against.
+     * @param data {Object} Data to parse.
      * @return TBD
      * @protected
      */
-    _parse: function(data) {
-        var schema = this.get("schema"),
-            data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
+    _parse: function(schema, data) {
+        var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             data_out = {results:[],meta:{}};
 
         if(LANG.isObject(data_in) && schema) {
@@ -289,7 +288,9 @@ Y.extend(DPJSON, Y.DataParser.Base, {
         }
         return data_out;
     }
-});
+//});
+};
+Y.mix(DPJSON, Y.DataParser.Base);
 
 Y.DataParser.JSON = DPJSON;
 

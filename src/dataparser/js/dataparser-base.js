@@ -3,26 +3,21 @@
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @requires base
  * @title DataParser Utility
  */
 
 /**
  * Base class for the YUI DataParser utility.
  * @class DataParser.Base
- * @extends Base
- * @constructor
+ * @static
  */
-var DPBase = function() {
-    DPBase.superclass.constructor.apply(this, arguments);
-};
-
+var DPBase = {
     /////////////////////////////////////////////////////////////////////////////
     //
     // Base static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DPBase, {
+    
     /**
      * Class name.
      *
@@ -32,7 +27,7 @@ Y.mix(DPBase, {
      * @final
      * @value "DataParser.Base"
      */
-    NAME: "DataParser.Base",
+    //NAME: "DataParser.Base",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -40,7 +35,7 @@ Y.mix(DPBase, {
     //
     /////////////////////////////////////////////////////////////////////////////
 
-    ATTRS: {
+    //ATTRS: {
         /**
         * @attribute schema
         * @description Object literal schema definition takes a combination of
@@ -67,19 +62,19 @@ Y.mix(DPBase, {
         * @type Object
         * @default {}
         */
-        schema: {
-            value: {}
-        }
-    }
-});
+        //schema: {
+            //value: {}
+        //}
+    //}
+//});
 
-Y.extend(DPBase, Y.Base, {
+//Y.extend(DPBase, Y.Base, {
     /**
     * @method initializer
     * @description Internal init() handler.
     * @private
     */
-    initializer: function() {
+    //initializer: function() {
         /**
          * Fired when data is received to parse.
          *
@@ -95,35 +90,39 @@ Y.extend(DPBase, Y.Base, {
          * @param e {Event.Facade} Event Facade.
          * @param e.data {MIXED} Data.
          */
-    },
+    //},
 
     /**
      * Abstract overridable parse method returns data as-is.
      *
      * @method _parse
-     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
-     * @param e.data {MIXED} Data to parse.
+     * @param schema {Object} Schema to parse against.
+     * @param data {Object} Data to parse.
+     * @return TBD
      * @protected
      */
-    _parse: function(data) {
+   _parse: function(schema, data) {
         return data;
     },
 
     /**
-     * Parses data.
+     * Parses data against schema.
      *
      * @method parse
-     * @param e {Event.Facade} Custom Event Facade for <code>request</code> event.
-     * @param e.data {MIXED} Data to parse.
+     * @param schema {Object} Schema to parse against.
+     * @param data {Object} Data to parse.
+     * @return TBD
      * @protected
      */
-    parse: function(data) {
+    parse: function(schema, data) {
         var ok = this.fire("parse", null, data);
         if(ok) {
-            return this._parse(data);
+            return this._parse(schema, data);
         }
     }
-});
+};
+
+Y.augment(DPBase, Y.Event.Target);
 
 Y.namespace("DataParser");
 Y.DataParser.Base = DPBase;

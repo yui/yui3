@@ -31,26 +31,23 @@
             Y.Test.Runner.run();
         }, btnRun);
 
-        
 
         var testJSON = new Y.Test.Case({
             name: "JSON Tests",
         
             testResults: function() {
-                var dp = new Y.DataParser.JSON({
-                    schema: {
+                var schema = {
                         resultsList: "response",
                         fields: ["name", "number", "letter"]
-                    }
-                });
-                var data_in = {
+                    },
+                    data_in = {
                         response: [
                             {name: "alpha", number: 1, letter: "a"},
                             {name: "beta", number: 2, letter: "b"},
                             {name: "gamma", number: 3, letter: "c"}
                         ]
                     },
-                    data_out = dp.parse(data_in);
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
                     
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
@@ -60,16 +57,14 @@
             },
             
             testMeta: function() {
-                var dp = new Y.DataParser.JSON({
-                        schema: {
-                            metaFields: {top:"top", nested:"second.nested"}
-                        }
-                    }),
+                var schema = {
+                        metaFields: {top:"top", nested:"second.nested"}
+                    },
                     data_in = {
                         top: "foo",
                         second: {nested: "bar"}
                     },
-                    data_out = dp.parse(data_in);
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
                 ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
@@ -79,19 +74,17 @@
             },
             
             testComplex: function() {
-                var dp = new Y.DataParser.JSON({
-                        schema: {
-                            metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
-                            resultsList:"response['data array'][0].response['i t e m s']",
-                            fields: [
-                                "name",
-                                "['customer.data']['alert(\'id\')']",
-                                "['customer.data']['phone/email']",
-                                "['array-pets'][0].name",
-                                "['array-pets']"
-                            ]
-                        }
-                    }),
+                var schema = {
+                        metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
+                        resultsList:"response['data array'][0].response['i t e m s']",
+                        fields: [
+                            "name",
+                            "['customer.data']['alert(\'id\')']",
+                            "['customer.data']['phone/email']",
+                            "['array-pets'][0].name",
+                            "['array-pets']"
+                        ]
+                    },
                     data_in = {
                         request: "orig request",
                         response: {
@@ -151,7 +144,7 @@
                             }
                         }
                     },
-                    data_out = dp.parse(data_in);
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
 
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(2, data_out.results.length, "Expected 2 results.");
