@@ -1,0 +1,351 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DataSource Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>DataSource Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/cache/cache.js"></script>
+<script type="text/javascript" src="../../../build/dataparser/dataparser.js"></script>
+<script type="text/javascript" src="../../../build/datasource/datasource.js" id="src_ds"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        useConsole: true,
+        insertBefore: "src_ds"
+    }).use("dump", "test", "console", "io-base", "cache", "base", "json", "dataparser", "datasource", function(Y) {
+
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            OBJECTASSERT = Y.ObjectAssert,
+            BTNRUN = Y.get("#btnRun");
+
+        // Set up the page
+        
+        BTNRUN.set("disabled", false);
+        Y.on("click", function() {
+            Y.Test.Runner.run();
+        }, BTNRUN);
+        var myConsole = new Y.Console().render();
+ 
+        var testClass = new Y.Test.Case({
+            name: "Class Tests",
+        
+            testConstructor: function() {
+                var ds = new Y.DataSource();
+                ASSERT.areSame((ds instanceof Y.DataSource), true);
+            },
+
+            testConstructorXHR: function() {
+                var ds = new Y.DataSource.XHR();
+                ASSERT.areSame((ds instanceof Y.DataSource), true);
+                ASSERT.areSame((ds instanceof Y.DataSource.XHR), true);
+            }
+        });
+        
+        var testLocal = new Y.Test.Case({
+            name: "DataSource Tests",
+
+            testLocalDefaults: function() {
+                var ds = new Y.DataSource({
+                    source: ["a","b","c","d"]
+                });
+                
+
+                ds.sendRequest("a", {success:function(response) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                }});                
+            }
+        });
+
+        var testLocalEvents = new Y.Test.Case({
+            name: "DataSource Event Tests",
+
+            testLocalRequest: function() {
+                var ds = new Y.DataSource({
+                    source: ["a","b","c","d"]
+                });
+                
+                ds.subscribe("request", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testLocalData: function() {
+                var ds = new Y.DataSource({
+                    source: ["a","b","c","d"]
+                });
+
+                ds.subscribe("data", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isArray(o.data, "Expected raw data.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testLocalResponse: function() {
+                var ds = new Y.DataSource({
+                    source: ["a","b","c","d"]
+                });
+
+                ds.subscribe("response", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isArray(o.data, "Expected raw data.");
+                        ASSERT.isArray(o.results, "Expected parsed results.");
+                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testLocalError: function() {
+                var ds = new Y.DataSource({
+                    source: ["a","b","c","d"]
+                });
+
+                ds.subscribe("error", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isUndefined(o.results, "Expected undefined results.");
+                        ASSERT.isTrue(o.error, "Expected error.");
+                    });
+                }, this, true);
+
+                ds.set("source", undefined);
+                ds.sendRequest("a", "callback");
+                this.wait();
+            }
+        });
+
+        var testXHR = new Y.Test.Case({
+            name: "DataSource.XHR Tests",
+
+            testXHRDefaults: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+                });
+
+                ds.sendRequest(null, {
+                    success: function(o) {
+                        this.resume(function() {
+                            ASSERT.isNull(o.request, "Expected null request.");
+                            ASSERT.isObject(o.results, "Expected response object.");
+                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, o, "Expected all properties.");
+                        });
+                    },
+                    failure: function(o) {
+                        this.resume(function() {
+                            ASSERT.fail("XHR failure case.");
+                        });
+                    },
+                    scope: this
+                });                
+
+                this.wait(); // On a slow connection: this.wait(5000);
+            }
+        });
+
+        var testXHREvents = new Y.Test.Case({
+            name: "DataSource.XHR Event Tests",
+
+            testXHRRequest: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+                });
+
+                ds.subscribe("request", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame(null, o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                    });
+                }, this, true);
+
+                ds.sendRequest(null, "callback");
+                this.wait();
+            },
+
+            testXHRData: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+                });
+
+                ds.subscribe("data", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame(null, o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
+                    });
+                }, this, true);
+
+                ds.sendRequest(null, "callback");
+                this.wait();
+            },
+
+            testXHRResponse: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+                });
+
+                ds.subscribe("response", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
+                        ASSERT.isArray(o.results, "Expected parsed results.");
+                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
+                    });
+                }, this, true);
+
+                ds.sendRequest("a", "callback");
+                this.wait();
+            },
+
+            testXHRError: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    parser: new Y.DataParser.JSON({
+                        schema: {
+                            resultsList: "ResultSet.Result",
+                            fields: ["Title"]
+                        }
+                    })
+                });
+
+                ds.subscribe("error", function(e, o) {
+                    this.resume(function() {
+                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", o.request, "Expected request.");
+                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isObject(o.data, "Expected raw data.");
+                        ASSERT.isTrue(o.error, "Expected error.");
+                    });
+                }, this, true);
+
+                ds.set("source", "foo");
+                ds.sendRequest("a", "callback");
+                this.wait();
+            }
+        });
+
+        var testCache = new Y.Test.Case({
+            name: "DataSource Cache Tests",
+
+            testCacheDefaultSize: function() {
+                var ds = new Y.DataSource({cache: new Y.Cache()});
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
+            },
+
+            testCacheInitSize: function() {
+                var ds = new Y.DataSource({cache: new Y.Cache({size:3})});
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
+            },
+
+            testSetCache: function() {
+                var ds = new Y.DataSource();
+                ds.set("cache",new Y.Cache({size:5}));
+                ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
+                ASSERT.areSame(ds.get("cache").get("size"), 5, "Expected 5 size in Cache.");
+            },
+            
+            testLocalCache: function() {
+                var cache = new Y.Cache({size:3}),
+                    ds = new Y.DataSource({
+                        source: ["a","b","c","d"],
+                        cache: cache
+                    });
+
+                ds.sendRequest("a");
+
+                ds.subscribe("request", function(e, o) {
+                    ASSERT.fail("Entry is cached -- 'request' event is unexpected");
+                });
+
+                ds.sendRequest("a");
+            },
+
+            testLocalCacheUnset: function() {
+                var cache = new Y.Cache({size:3}),
+                    ds = new Y.DataSource({
+                        source: ["a","b","c","d"],
+                        cache: cache
+                    });
+
+                ds.sendRequest("a");
+                ds.set("cache", null);
+
+                cache.subscribe("retrieve", function(e, o) {
+                    ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
+                });
+
+                ds.sendRequest("a");
+            }
+        });
+
+        Y.Test.Runner.add(testClass);
+        Y.Test.Runner.add(testLocal);
+        Y.Test.Runner.add(testLocalEvents);
+        Y.Test.Runner.add(testXHR);
+        Y.Test.Runner.add(testXHREvents);
+        Y.Test.Runner.add(testCache);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

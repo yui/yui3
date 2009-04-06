@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        This class represents an instance of the browser history utility.
+                        This class represents a browser history module.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -107,7 +107,7 @@
                             <div class="content">
                                     <div class="" rel="yui:property" resource="#property_currentState">
                                     <h4><a name="property_currentState" property="yui:name">currentState</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_id">
                                     <h4><a name="property_id" property="yui:name">id</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -137,11 +137,29 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_initialState">
                                     <h4><a name="property_initialState" property="yui:name">initialState</a>
-                                        - <code><span property="yui:type">String</span></code>
+                                        - <code>final <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             The module's initial state
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_upcomingState">
+                                    <h4><a name="property_upcomingState" property="yui:name">upcomingState</a>
+                                        - <code>private final <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The module's upcoming state. There can be a slight delay between the
+time a state is changed, and the time a state change is detected.
+This property allows us to not fire the module state changed event
+multiple times, making client code simpler.
                                         </div>
                                     </div>
      
@@ -156,758 +174,10 @@
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
-                        <div class="section method details">
-                            <h3 id="methods">Methods</h3>
-                            <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__checkIframeLoaded">
-                                    <h4>
-                                        <a name="method__checkIframeLoaded">_checkIframeLoaded</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_checkIframeLoaded</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Periodically checks whether our internal IFrame is ready to be used
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__getHash">
-                                    <h4>
-                                        <a name="method__getHash">_getHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        string
-                                            <strong property="yui:name">_getHash</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns the portion of the hash after the '#' symbol.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        string
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The hash portion of the document's location</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__handleFQStateChange">
-                                    <h4>
-                                        <a name="method__handleFQStateChange">_handleFQStateChange</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_handleFQStateChange</strong>
-                                           (
-                                                
-                                                        
-                                                         fqstate
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Sets the new currentState attribute of all modules depending on the new fully
-qualified state. Also notifies the modules which current state has changed.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fqstate</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> fully qualified state</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__initialize">
-                                    <h4>
-                                        <a name="method__initialize">_initialize</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_initialize</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finish up the initialization of the browser utility library.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__storeStates">
-                                    <h4>
-                                        <a name="method__storeStates">_storeStates</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_storeStates</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Stores the initial state and current state for all registered modules.
-On Safari, we also store all the fully qualified states visited by
-the application within a single browser session. The storage takes
-place in the form field specified during initialization.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__updateIFrame">
-                                    <h4>
-                                        <a name="method__updateIFrame">_updateIFrame</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">_updateIFrame</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Update the IFrame with our new state.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">true if successful. false otherwise.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getBookmarkedState">
-                                    <h4>
-                                        <a name="method_getBookmarkedState">getBookmarkedState</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        string
-                                            <strong property="yui:name">getBookmarkedState</strong>
-                                           (
-                                                
-                                                        
-                                                         moduleId
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns the state of a module according to the URL fragment
-identifier. This method is useful to initialize your modules
-if your application was bookmarked from a particular state.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">moduleId</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Non-empty string representing your module.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        string
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The bookmarked state of the specified module.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getCurrentState">
-                                    <h4>
-                                        <a name="method_getCurrentState">getCurrentState</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        string
-                                            <strong property="yui:name">getCurrentState</strong>
-                                           (
-                                                
-                                                        
-                                                         moduleId
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns the current state of the specified module.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">moduleId</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Non-empty string representing your module.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        string
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The current state of the specified module.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getQueryStringParameter">
-                                    <h4>
-                                        <a name="method_getQueryStringParameter">getQueryStringParameter</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        string
-                                            <strong property="yui:name">getQueryStringParameter</strong>
-                                           (
-                                                
-                                                        
-                                                         paramName
-                                                    
-                                                
-                                                        , 
-                                                         queryString
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns the value of the specified query string parameter.
-This method is not used internally by the Browser History Manager.
-However, it is provided here as a helper since many applications
-using the Browser History Manager will want to read the value of
-url parameters to initialize themselves.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">paramName</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Name of the parameter we want to look up.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">queryString</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional URL to look at. If not specified,
-this method uses the URL in the address bar.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        string
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The value of the specified parameter, or null.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_initialize">
-                                    <h4>
-                                        <a name="method_initialize">initialize</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">initialize</strong>
-                                           (
-                                                
-                                                        
-                                                         stateField
-                                                    
-                                                
-                                                        , 
-                                                         historyIFrame
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Initializes the Browser History Manager. Call this method
-from a script block located right after the opening body tag.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">stateField</span>
-                                                        &lt;<span property="yui:type">string|HTML Element</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> <input type="hidden"> used
-to store application states. Must be in the static markup.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">historyIFrame</span>
-                                                        &lt;<span property="yui:type">string|HTML Element</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> IFrame used to store
-the history (only required for IE6/7)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_multiNavigate">
-                                    <h4>
-                                        <a name="method_multiNavigate">multiNavigate</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">multiNavigate</strong>
-                                           (
-                                                
-                                                        
-                                                         states
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Stores a new entry in the browser history by changing the state
-of several registered modules in one atomic operation.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">states</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Associative array of module-state pairs to set simultaneously.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Indicates whether the new state was successfully added to the history.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_navigate">
-                                    <h4>
-                                        <a name="method_navigate">navigate</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        boolean
-                                            <strong property="yui:name">navigate</strong>
-                                           (
-                                                
-                                                        
-                                                         module
-                                                    
-                                                
-                                                        , 
-                                                         state
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Stores a new entry in the browser history by changing the state of a registered module.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">module</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Non-empty string representing your module.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">state</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> String representing the new state of the specified module.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Indicates whether the new state was successfully added to the history.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_register">
-                                    <h4>
-                                        <a name="method_register">register</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        History.Module
-                                            <strong property="yui:name">register</strong>
-                                           (
-                                                
-                                                        
-                                                         moduleId
-                                                    
-                                                
-                                                        , 
-                                                         initialState
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Registers a new module.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">moduleId</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Non-empty string uniquely identifying the
-module you wish to register.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">initialState</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The initial state of the specified
-module corresponding to its earliest history entry.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        History.Module
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The newly registered module</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                     </div>
 
                     <div rel="yui:events" resource="#events">
-                        <div class="section method details">
-                            <h3 id="events">Events</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_history:globalStateChange">
-                                    <h4>
-                                        <a name="event_history:globalStateChange">history:globalStateChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">history:globalStateChange</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the global state of the page has changed (that is,
-when the state of at least one browser history module has changed)
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_history:moduleStateChange">
-                                    <h4>
-                                        <a name="event_history:moduleStateChange">history:moduleStateChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">history:moduleStateChange</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the state of a history module object has changed
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_history:ready">
-                                    <h4>
-                                        <a name="event_history:ready">history:ready</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">history:ready</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the browser history utility is ready
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
 
                     </div>
@@ -961,7 +231,7 @@ when the state of at least one browser history module has changed)
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="History.Module.html" title="History.Module">History.Module</a></li>
+                                <li class=""><a href="History.html" title="History">History</a></li>
                                 <li class="selected"><a href="History.Module.html" title="History.Module">History.Module</a></li>
                         </ul>
                     </div>
@@ -979,36 +249,11 @@ when the state of at least one browser history module has changed)
                                 <li class=""><a href="#property_currentState" title="currentState">currentState</a></li>
                                 <li class=""><a href="#property_id" title="id">id</a></li>
                                 <li class=""><a href="#property_initialState" title="initialState">initialState</a></li>
+                                <li class="private"><a href="#property_upcomingState" title="upcomingState">upcomingState</a></li>
                         </ul>
                     </div>
 
-                    <div id="methodsList" class="module">
-                        <h4>Methods</h4>
-                        <ul class="content">        
-                                <li class="private"><a href="#method__checkIframeLoaded" title="_checkIframeLoaded">_checkIframeLoaded</a></li>
-                                <li class="private"><a href="#method__getHash" title="_getHash">_getHash</a></li>
-                                <li class="private"><a href="#method__handleFQStateChange" title="_handleFQStateChange">_handleFQStateChange</a></li>
-                                <li class="private"><a href="#method__initialize" title="_initialize">_initialize</a></li>
-                                <li class="private"><a href="#method__storeStates" title="_storeStates">_storeStates</a></li>
-                                <li class="private"><a href="#method__updateIFrame" title="_updateIFrame">_updateIFrame</a></li>
-                                <li class=""><a href="#method_getBookmarkedState" title="getBookmarkedState">getBookmarkedState</a></li>
-                                <li class=""><a href="#method_getCurrentState" title="getCurrentState">getCurrentState</a></li>
-                                <li class=""><a href="#method_getQueryStringParameter" title="getQueryStringParameter">getQueryStringParameter</a></li>
-                                <li class=""><a href="#method_initialize" title="initialize">initialize</a></li>
-                                <li class=""><a href="#method_multiNavigate" title="multiNavigate">multiNavigate</a></li>
-                                <li class=""><a href="#method_navigate" title="navigate">navigate</a></li>
-                                <li class=""><a href="#method_register" title="register">register</a></li>
-                        </ul>
-                    </div>
 
-                    <div id="eventsList" class="module">
-                        <h4>Events</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#event_history:globalStateChange" title="history:globalStateChange">history:globalStateChange</a></li>
-                                <li class=""><a href="#event_history:moduleStateChange" title="history:moduleStateChange">history:moduleStateChange</a></li>
-                                <li class=""><a href="#event_history:ready" title="history:ready">history:ready</a></li>
-                        </ul>
-                    </div>
 
 
             </div>
@@ -1020,7 +265,7 @@ when the state of at least one browser history module has changed)
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "History.Module", "name": "_checkIframeLoaded", "url": "History.Module.html#method__checkIframeLoaded", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_checkIframeLoaded", "url": "History.Module.html#method__checkIframeLoaded", "type": "method"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History.Module", "name": "getBookmarkedState", "url": "History.Module.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History.Module", "name": "getBookmarkedState", "url": "History.Module.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History.Module", "name": "getCurrentState", "url": "History.Module.html#method_getCurrentState", "type": "method"}, {"access": "", "host": "History.Module", "name": "getCurrentState", "url": "History.Module.html#method_getCurrentState", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_getHash", "url": "History.Module.html#method__getHash", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_getHash", "url": "History.Module.html#method__getHash", "type": "method"}, {"access": "", "host": "History.Module", "name": "getQueryStringParameter", "url": "History.Module.html#method_getQueryStringParameter", "type": "method"}, {"access": "", "host": "History.Module", "name": "getQueryStringParameter", "url": "History.Module.html#method_getQueryStringParameter", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_handleFQStateChange", "url": "History.Module.html#method__handleFQStateChange", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_handleFQStateChange", "url": "History.Module.html#method__handleFQStateChange", "type": "method"}, {"access": "", "host": "History.Module", "name": "history:globalStateChange", "url": "History.Module.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History.Module", "name": "history:globalStateChange", "url": "History.Module.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History.Module", "name": "history:moduleStateChange", "url": "History.Module.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History.Module", "name": "history:moduleStateChange", "url": "History.Module.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History.Module", "name": "history:ready", "url": "History.Module.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "history:ready", "url": "History.Module.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "private", "host": "History.Module", "name": "_initialize", "url": "History.Module.html#method__initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialize", "url": "History.Module.html#method_initialize", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_initialize", "url": "History.Module.html#method__initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialize", "url": "History.Module.html#method_initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History.Module", "name": "multiNavigate", "url": "History.Module.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History.Module", "name": "multiNavigate", "url": "History.Module.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History.Module", "name": "navigate", "url": "History.Module.html#method_navigate", "type": "method"}, {"access": "", "host": "History.Module", "name": "navigate", "url": "History.Module.html#method_navigate", "type": "method"}, {"access": "", "host": "History.Module", "name": "register", "url": "History.Module.html#method_register", "type": "method"}, {"access": "", "host": "History.Module", "name": "register", "url": "History.Module.html#method_register", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_storeStates", "url": "History.Module.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_storeStates", "url": "History.Module.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_updateIFrame", "url": "History.Module.html#method__updateIFrame", "type": "method"}, {"access": "private", "host": "History.Module", "name": "_updateIFrame", "url": "History.Module.html#method__updateIFrame", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "History", "name": "_checkIframeLoaded", "url": "History.html#method__checkIframeLoaded", "type": "method"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History", "name": "getBookmarkedState", "url": "History.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History", "name": "getCurrentState", "url": "History.html#method_getCurrentState", "type": "method"}, {"access": "private", "host": "History", "name": "_getHash", "url": "History.html#method__getHash", "type": "method"}, {"access": "", "host": "History", "name": "getQueryStringParameter", "url": "History.html#method_getQueryStringParameter", "type": "method"}, {"access": "private", "host": "History", "name": "_handleFQStateChange", "url": "History.html#method__handleFQStateChange", "type": "method"}, {"access": "", "host": "History", "name": "history:globalStateChange", "url": "History.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:moduleStateChange", "url": "History.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:ready", "url": "History.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "private", "host": "History", "name": "_initialize", "url": "History.html#method__initialize", "type": "method"}, {"access": "", "host": "History", "name": "initialize", "url": "History.html#method_initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History", "name": "multiNavigate", "url": "History.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History", "name": "navigate", "url": "History.html#method_navigate", "type": "method"}, {"access": "", "host": "History", "name": "register", "url": "History.html#method_register", "type": "method"}, {"access": "private", "host": "History", "name": "_storeStates", "url": "History.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History.Module", "name": "upcomingState", "url": "History.Module.html#property_upcomingState", "type": "property"}, {"access": "private", "host": "History", "name": "_updateIFrame", "url": "History.html#method__updateIFrame", "type": "method"}];
 </script>
 </body>
 </html>

@@ -398,7 +398,7 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                queuable: true,
+                queuable: false,
                 emitFacade: true,
                 bubbles: true
             });
@@ -425,7 +425,7 @@ YUI.add('dd-drag', function(Y) {
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -709,7 +709,7 @@ YUI.add('dd-drag', function(Y) {
                 this._fromTimeout = true;
                 this._dragThreshMet = true;
                 this.start();
-                this._moveNode([this._ev_md.pageX, this._ev_md.pageY], true);
+                this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
             }
         },
         /**
@@ -831,7 +831,6 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get('dragging')) {
-                this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
@@ -849,7 +848,7 @@ YUI.add('dd-drag', function(Y) {
                     bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
                     left: xy[0]
                 };
-                
+                this.set('dragging', true);
             }
             return this;
         },
@@ -887,15 +886,28 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
-        * @method _moveNode
-        * @description This method performs the actual element move.
+        * @method _alignNode
+        * @description This method performs the alignment before the element move.
         * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _moveNode: function(eXY, noFire) {
+        _alignNode: function(eXY, noFire) {
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
+            this._moveNode(xy, noFire);
+        },
+        /**
+        * @private
+        * @method _moveNode
+        * @description This method performs the actual element move.
+        * @param {Array} eXY The XY to move the element to, usually comes from the _alignNode method.
+        * @param {Boolean} noFire If true, the drag:drag event will not fire.
+        */
+        _moveNode: function(xy, noFire) {
+            if (!this.get('dragging')) {
+                noFire = true;
+            }
+            var diffXY = [], diffXY2 = [];
 
-            //This will probably kill your machine ;)
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
@@ -955,12 +967,12 @@ YUI.add('dd-drag', function(Y) {
                     if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                         this._dragThreshMet = true;
                         this.start();
-                        this._moveNode([ev.pageX, ev.pageY]);
+                        this._alignNode([ev.pageX, ev.pageY]);
                     }
                 
                 } else {
                     clearTimeout(this._clickTimeout);
-                    this._moveNode([ev.pageX, ev.pageY]);
+                    this._alignNode([ev.pageX, ev.pageY]);
                 }
             }
         },

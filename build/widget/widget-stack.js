@@ -95,7 +95,7 @@ YUI.add('widget-stack', function(Y) {
          */
         zIndex: {
             value:0,
-            set: function(val) {
+            setter: function(val) {
                 return this._setZIndex(val);
             }
         }

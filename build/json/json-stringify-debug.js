@@ -7,11 +7,28 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var isA = Y.Lang.isArray;
+var _toString = Object.prototype.toString,
+    STRING    = 'string',
+    NUMBER    = 'number',
+    BOOLEAN   = 'boolean',
+    OBJECT    = 'object',
+    ARRAY     = 'array',
+    REGEXP    = 'regexp',
+    ERROR     = 'error',
+    NULL      = 'null',
+    DATE      = 'date',
+    EMPTY     = '',
+    OPEN_O    = '{',
+    CLOSE_O   = '}',
+    OPEN_A    = '[',
+    CLOSE_A   = ']',
+    COMMA     = ',',
+    COMMA_CR  = ",\n",
+    CR        = "\n",
+    COLON     = ':',
+    QUOTE     = '"';
 
-Y.JSON = Y.JSON || {};
-
-Y.mix(Y.JSON,{
+Y.mix(Y.namespace('JSON'),{
     /**
      * Regex used to capture characters that need escaping before enclosing
      * their containing string in quotes.
@@ -52,145 +69,146 @@ Y.mix(Y.JSON,{
             return v < 10 ? '0' + v : v;
         }
 
-        return '"' + d.getUTCFullYear()   + '-' +
-            _zeroPad(d.getUTCMonth() + 1) + '-' +
-            _zeroPad(d.getUTCDate())      + 'T' +
-            _zeroPad(d.getUTCHours())     + ':' +
-            _zeroPad(d.getUTCMinutes())   + ':' +
-            _zeroPad(d.getUTCSeconds())   + 'Z"';
+        return QUOTE + d.getUTCFullYear()   + '-' +
+              _zeroPad(d.getUTCMonth() + 1) + '-' +
+              _zeroPad(d.getUTCDate())      + 'T' +
+              _zeroPad(d.getUTCHours())     + COLON +
+              _zeroPad(d.getUTCMinutes())   + COLON +
+              _zeroPad(d.getUTCSeconds())   + 'Z' + QUOTE;
     },
 
     /**
      * Converts an arbitrary value to a JSON string representation.
      * Cyclical object or array references are replaced with null.
      * If a whitelist is provided, only matching object keys will be included.
-     * If a depth limit is provided, objects and arrays at that depth will
-     * be stringified as empty.
+     * If a positive integer or non-empty string is passed as the third
+     * parameter, the output will be formatted with carriage returns and
+     * indentation for readability.  If a String is passed (such as "\t") it
+     * will be used once for each indentation level.  If a number is passed,
+     * that number of spaces will be used.
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
-     * @param d {number} (optional) depth limit to recurse objects/arrays
-     *                   (practical minimum 1)
+     * @param ind {Number|String} (optional) indentation character or depth of
+     *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
      * @public
      */
-    stringify : function (o,w,d) {
+    stringify : function (o,w,ind) {
 
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
-            rep    = typeof w === 'function' ? w : null,
-            pstack = []; // Processing stack used for cyclical ref protection
+            rep    = Y.Lang.isFunction(w) ? w : null,
+            pstack = [], // Processing stack used for cyclical ref protection
+            _date  = Y.JSON.dateToString; // Use configured date serialization
 
         if (rep || typeof w !== 'object') {
             w = undefined;
         }
 
+        if (ind) {
+            ind = Y.Lang.isNumber(ind) ? new Array(ind+1).join(" ") :
+                  Y.Lang.isString(ind) ? ind :
+                  null;
+        }
+
         // escape encode special characters
-        var _char = function (c) {
+        function _char(c) {
             if (!m[c]) {
                 m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
             }
             return m[c];
-        };
+        }
 
         // Enclose the escaped string in double quotes
-        var _string = function (s) {
-            return '"' + s.replace(str_re, _char) + '"';
-        };
+        function _string(s) {
+            return QUOTE + s.replace(str_re, _char) + QUOTE;
+        }
 
-        // Use the configured date conversion
-        var _date = Y.JSON.dateToString;
-    
-        // Worker function.  Fork behavior on data type and recurse objects and
-        // arrays per the configured depth.
-        var _stringify = function (h,key,d) {
-            var o = typeof rep === 'function' ? rep.call(h,key,h[key]) : h[key],
-                t = typeof o,
-                i,len,j, // array iteration
-                k,v,     // object iteration
-                a;       // composition array for performance over string concat
-
-            // String
-            if (t === 'string') {
-                return _string(o);
-            }
-
-            // native boolean and Boolean instance
-            if (t === 'boolean' || o instanceof Boolean) {
-                return String(o);
-            }
-
-            // native number and Number instance
-            if (t === 'number' || o instanceof Number) {
-                return isFinite(o) ? String(o) : 'null';
-            }
-
-            // Date
-            if (o instanceof Date) {
-                return _date(o);
-            }
-
-            // Object types
-            if (t === 'object') {
-                if (!o) {
-                    return 'null';
+        // Check for cyclical references
+        function _cyclicalTest(o) {
+            for (var i = pstack.length - 1; i >= 0; --i) {
+                if (pstack[i] === o) {
+                    throw new Error("JSON.stringify. Cyclical reference");
                 }
+            }
+            return false;
+        }
 
-                // Check for cyclical references
-                for (i = pstack.length - 1; i >= 0; --i) {
-                    if (pstack[i] === o) {
-                        return 'null';
+        function _indent(s) {
+            return s.replace(/^/gm,ind);
+        }
+
+        function _object(o,arr) {
+            // Add the object to the processing stack
+            pstack.push(o);
+
+            var a = [], i, j, len, k, v;
+
+            if (arr) { // Array
+                for (i = o.length - 1; i >= 0; --i) {
+                    a[i] = _stringify(o,i) || NULL;
+                }
+            } else {   // Object
+                // If whitelist provided, take only those keys
+                k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
+
+                for (i = 0, j = 0, len = k.length; i < len; ++i) {
+                    if (typeof k[i] === STRING) {
+                        v = _stringify(o,k[i]);
+                        if (v) {
+                            a[j++] = _string(k[i]) + COLON + v;
+                        }
                     }
                 }
-
-                // Add the object to the processing stack
-                pstack[pstack.length] = o;
-
-                a = [];
-
-                // Only recurse if we're above depth config
-                if (d > 0) {
-                    // Array
-                    if (isA(o)) {
-                        for (i = o.length - 1; i >= 0; --i) {
-                            a[i] = _stringify(o,i,d-1) || 'null';
-                        }
-
-                    // Object
-                    } else {
-                        // If whitelist provided, take only those keys
-                        k = isA(w) ? w : Y.Object.keys(w||o);
-
-                        for (i = 0, j = 0, len = k.length; i < len; ++i) {
-                            if (typeof k[i] === 'string') {
-                                v = _stringify(o,k[i],d-1);
-                                if (v) {
-                                    a[j++] = _string(k[i]) + ':' + v;
-                                }
-                            }
-                        }
-
-                        a.sort();
-                    }
-                }
-
-                // remove the array from the stack
-                pstack.pop();
-
-                return isA(o) ? '['+a.join(',')+']' : '{'+a.join(',')+'}';
             }
 
-            return undefined; // invalid input
-        };
+            // remove the array from the stack
+            pstack.pop();
 
-        // Default depth to POSITIVE_INFINITY
-        d = d >= 0 ? d : 1/0;
+            if (ind) {
+                return arr ?
+                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
+                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
+            } else {
+                return arr ?
+                    OPEN_A + a.join(COMMA) + CLOSE_A :
+                    OPEN_O + a.join(COMMA) + CLOSE_O;
+            }
+        }
+
+        // Worker function.  Fork behavior on data type and recurse objects.
+        function _stringify(h,key) {
+            var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
+                t = Y.Lang.type(o),
+                s;
+
+            if (t === OBJECT) {
+                if (/String|Number|Boolean/.test(_toString.call(o))) {
+                    o = o.valueOf();
+                    t = Y.Lang.type(o);
+                }
+            }
+
+            switch (t) {
+                case STRING  : return _string(o);
+                case NUMBER  : return isFinite(o) ? o+EMPTY : NULL;
+                case BOOLEAN : return o+EMPTY;
+                case DATE    : return _date(o);
+                case NULL    : return NULL;
+                case ARRAY   : _cyclicalTest(o); return _object(o,true);
+                case REGEXP  : // intentional fall through
+                case ERROR   : // intentional fall through
+                case OBJECT  : _cyclicalTest(o); return _object(o);
+                default      : return undefined;
+            }
+        }
 
         // process the input
-        return _stringify({'':o},'',d);
+        return _stringify({'':o},EMPTY);
     }
 });
 

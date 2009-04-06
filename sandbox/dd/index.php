@@ -248,7 +248,7 @@ var yConfig2 = {
         Base: true,
         Attribute: true,
         augment: true
-    }, 
+    },
     throwFail: true,
     debug: false
 };
@@ -362,6 +362,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         //console.log('DDM:drag:drag :: ', e);
     });
     
+    //Y.DD.DDM.set('multiDrop', false);
 
 /* //Event Hijacking
     Y.Event._nativeAdd = Y.Event.nativeAdd;
@@ -395,9 +396,14 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     //}).addHandle('h2');
     
-    dd.on('drag:drag', function() {
-        //console.log('drag:drag', arguments);
+    /*
+    dd.on('drag:start', function() {
+        console.log('start-event: ', (new Date()).getTime());        
     });
+    dd.on('drag:drag', function() {
+        console.log('drag-event: ', (new Date()).getTime());        
+    });
+    */
     //}).addHandle('h2')._bubbles.beforeMouseDown.subscribe('drag:beforeMouseDown', function(e) {
     /*
     dd.on('drag:mouseDown', function(e) {
@@ -554,7 +560,6 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         Y.DD.DDM._noShim = false;
     });
 
-
     
     //var b = Y.Node.get('#play');
     var b = document.getElementById('play');
@@ -565,12 +570,16 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         el.innerHTML = 'Drop on Me (#' + i + ')';
         b.appendChild(el);
         
+        var start = (new Date()).getTime();
         var drop = new Y.DD.Drop( {
+            zIndex: i,
             node: el,
             groups: [((i % 2) ? 'two' : 'one')]
             //lock: ((i % 2) ? true : false)//,
             //padding: '0'
         });
+        var end = (new Date()).getTime();
+        //console.log(i, ': ', (end - start));
         /*
         drop.on('drop:enter', function(ev) {
             //Y.log('drop:enter :: ', this.get('node').get('id'));

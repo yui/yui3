@@ -68,7 +68,6 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
-
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node)[WIDTH];
@@ -78,7 +77,6 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll vertically 
      * @method docScrollX
-
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -88,7 +86,6 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll horizontally 
      * @method docScrollY
-
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -361,8 +358,6 @@ Y.mix(Y.DOM, {
         return { height: root.scrollHeight, width: root.scrollWidth };
     }
 });
-
-
 /**
  * Adds position and region management functionality to DOM.
  * @module dom

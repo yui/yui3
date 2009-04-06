@@ -54,6 +54,38 @@
         }
     );
 
+    Y.Node.getters.scrollLeft = function(node) {
+        return ('scrollLeft' in node) ? node.scrollLeft : Y.DOM.docScrollX(node);
+    };
+
+    Y.Node.getters.scrollTop = function(node) {
+        return ('scrollTop' in node) ? node.scrollTop : Y.DOM.docScrollY(node);
+    };
+
+    Y.Node.setters.scrollLeft = function(node, val) {
+        if (node) {
+            if ('scrollLeft' in node) {
+                node.scrollLeft = val;
+            } else if (node.document || node[NODE_TYPE] === 9) {
+                Y.DOM._getWin(node).scrollTo(val, Y.DOM.docScrollY(node)); // scroll window if win or doc
+            }
+        } else {
+            Y.log('unable to set scrollLeft for ' + node, 'error', 'Node');
+        }
+    };
+
+    Y.Node.setters.scrollTop = function(node, val) {
+        if (node) {
+            if ('scrollTop' in node) {
+                node.scrollTop = val;
+            } else if (node.document || node[NODE_TYPE] === 9) {
+                Y.DOM._getWin(node).scrollTo(Y.DOM.docScrollX(node), val); // scroll window if win or doc
+            }
+        } else {
+            Y.log('unable to set scrollTop for ' + node, 'error', 'Node');
+        }
+    };
+
     Y.Node.addDOMMethods([
     /**
      * Gets the current position of the node in page coordinates. 

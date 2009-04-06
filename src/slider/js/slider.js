@@ -32,7 +32,6 @@ var SLIDER = 'slider',
     COMPLETE = 'complete',
 
     L = Y.Lang,
-    isArray  = L.isArray,
     isBoolean= L.isBoolean,
     isString = L.isString,
     isNumber = L.isNumber,
@@ -48,9 +47,7 @@ var SLIDER = 'slider',
     M        = Math,
     max      = M.max,
     round    = M.round,
-    floor    = M.floor,
-    ceil     = M.ceil,
-    abs      = M.abs;
+    floor    = M.floor;
 
 /**
  * Create a slider to represent an integer value between a given minimum and
@@ -145,7 +142,7 @@ Y.mix(Slider, {
             validator : function (v) {
                 return this._validateNewAxis(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setAxisFn(v);
             }
         },
@@ -193,7 +190,7 @@ Y.mix(Slider, {
             validator : function (v) {
                 return this._validateNewValue(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setValueFn(v);
             }
         },
@@ -212,7 +209,7 @@ Y.mix(Slider, {
             validator : function (v) {
                 return this._validateNewRail(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setRailFn(v);
             }
         },
@@ -237,7 +234,7 @@ Y.mix(Slider, {
             validator : function (v) {
                 return this._validateNewThumb(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setThumbFn(v);
             }
         },
@@ -265,7 +262,7 @@ Y.mix(Slider, {
             validator : function (v) {
                 return this._validateNewThumbImage(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setThumbImageFn(v);
             }
         },
@@ -641,9 +638,10 @@ Y.extend(Slider, Y.Widget, {
             xy[xyIndex] += this._thumbOffset;
 
             dd._setStartPosition(xy);
+            dd.set('activeHandle',dd.get('dragNode'));
 
             dd.start();
-            dd._moveNode([e.pageX,e.pageY]);
+            dd._alignNode([e.pageX,e.pageY]);
         }
     },
 
@@ -713,11 +711,11 @@ Y.extend(Slider, Y.Widget, {
      * the Slider's disabled attribute.
      *
      * @method _imageLoaded
-     * @param e {Event} load or error event fired by the thumbImage
      * @param img {Node} The thumbImage Node
+     * @param e {Event} load or error event fired by the thumbImage
      * @protected
      */
-    _imageLoaded : function (e,img) {
+    _imageLoaded : function (img,e) {
         var error = (e.type.toLowerCase().indexOf('error') > -1);
 
         if (this._stall) {
@@ -970,8 +968,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _validateNewAxis : function (v) {
-        return isString(v) &&
-               v.length === 1 && 'xy'.indexOf(v.toLowerCase()) > -1;
+        return isString(v) && 'xXyY'.indexOf(v.charAt(0)) > -1;
     },
 
     /**
@@ -1077,7 +1074,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setAxisFn : function (v) {
-        return isString(v) ? v.toLowerCase().charAt(0) : null;
+        return v.charAt(0).toLowerCase();
     },
 
     /**
@@ -1088,13 +1085,7 @@ Y.extend(Slider, Y.Widget, {
      * @return {Number} rounded value or configured min if non-number input
      * @protected
      */
-    _setValueFn : function (v) {
-        if (!isNumber(v)) { 
-            v = this.get(MIN);
-        }
-
-        return round(v);
-    },
+    _setValueFn : function (v) { return v; },
 
     /**
      * Setter applied to the input when updating the rail attribute.  Input can
@@ -1106,7 +1097,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setRailFn : function (v) {
-        return v ? Y.get(v) : null;
+        return Y.get(v) || null;
     },
 
     /**
@@ -1119,7 +1110,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setThumbFn : function (v) {
-        return v ? Y.get(v) : null;
+        return Y.get(v) || null;
     },
 
     /**
@@ -1247,7 +1238,7 @@ Y.extend(Slider, Y.Widget, {
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
-        dd._moveNode([xy,xy],true);
+        dd._alignNode([xy,xy],true);
     },
 
 

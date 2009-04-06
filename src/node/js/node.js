@@ -338,8 +338,11 @@
          * @chainable
          */
         each: function(fn, context) {
+            var instance = this;
             context = context || this;
-            Node[this._yuid](fn, 0, context);
+            Y.each(Node[this._yuid](), function(node, index) {
+                return fn.call(context, Y.get(node), index, instance);
+            });
         },
 
         /**
@@ -502,7 +505,7 @@
         set: function(node, prop, val) {
             if (prop.indexOf('.') < 0) {
                 if (prop in Node.setters) { // use custom setter
-                    Node.setters[prop](this, prop, val);  // passing Node instance
+                    Node.setters[prop](node, val, prop);  // passing Node instance
                 } else if (node[prop] !== undefined) { // no expandos 
                     node[prop] = val;
                 } else {

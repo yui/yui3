@@ -1,48 +1,89 @@
-YUI.add('queue', function(Y) {
+YUI.add('queue-base', function(Y) {
 
 /**
- * Mechanism to execute a series of callbacks in a non-blocking queue.  Each
- * callback is executed via setTimout unless configured with a negative
- * timeout, in which case it is run in blocking mode in the same execution
- * thread as the previous callback.  Callbacks can be function references or
- * object literals with the following keys:
- * <ul>
- *    <li><code>fn</code> - {Function} REQUIRED the callback function.</li>
- *    <li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
- *    <li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
- *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>
- * </ul>
+ * Mechanism to execute a series of callbacks in sequence.
+ * Callbacks can be function references or object literals with the following
+ * keys:
+ * <dl>
+ *    <dt>fn</dt>
+ *      <dd>{Function} REQUIRED the callback function.</dd>
+ *    <dt>context</dt>
+ *      <dd>{Object} the desired execution context of the callback function</dd>
+ *    <dt>args</dt>
+ *      <dd>{Array} list of arguments to pass to the callback function</dd>
+ * </dl>
  *
  * @module queue
+ * @submodule queue-base
  * @class Queue
  * @constructor
+ * @param config {Object} default callback configuration values
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
  */
-Y.Queue = function () {
+function Queue(config) {
     // Factory or Constructor
-    var me = this instanceof Y.Queue ? this : new Y.Queue();
+    var self = this instanceof Queue ? this : new Queue(config);
 
-    /**
-     * The callback queue
-     * @property q
-     * @type {Array}
+    // To avoid duplicate initialization
+    if (self === this) {
+        this._init(config);
+    }
+
+    return self.add.apply(self, Y.Array(arguments,1,true));
+}
+
+/**
+ * Defaults used to fill unset callback configuration values.
+ *
+ * @property Queue.defaults
+ * @type {Object}
+ * @static
+ */
+Queue.defaults = {};
+
+Queue.prototype = {
+    /** 
+     * Callback defaults for this instance.  Initially populated from the
+     * static Queue.defaults collection.
+     *
+     * @property defaults
+     * @type {Object}
      * @protected
      */
-    me.q = [];
+    _defaults : null,
 
-    return me.add.apply(me,arguments);
-};
-
-Y.Queue.prototype = {
     /**
-     * Timeout id used to pause or stop execution and indicate the execution
-     * state of the Queue.  0 indicates paused or stopped, negatives indicate
-     * blocking execution, and positives indicate non-blocking execution.
-     * @property id
-     * @type {number}
+     * Indicates the execution state of the Queue.
+     *
+     * @property active
+     * @type {Boolean}
+     */
+    active : false,
+
+    /**
+     * Initializes the Queue isntance properties and events.
+     *
+     * @method _init
+     * @param config {Object} Instance level defaults for all callbacks
      * @protected
      */
-    id   : 0,
+    _init : function (config) {
+        this._q = [];
+
+        this._defaults = Y.merge(
+            Queue.defaults,
+            { context : this },
+            (Y.Lang.isObject(config) ? config : {}));
+
+        this.publish('executeCallback', {
+            defaultFn : this._defExecFn,
+            emitFacade: true
+        });
+        this.publish('shiftCallback', {
+            defaultFn : this._defShiftFn,
+            emitFacade: true
+        });
+    },
 
     /**
      * Execute the queue callbacks (also resumes paused Queue).
@@ -50,71 +91,19 @@ Y.Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     run : function () {
-        // Grab the first callback in the queue
-        var c  = this.q[0],
-            fn;
+        this.active = true;
 
-        // If there is no callback in the queue or the Queue is currently
-        // in an execution mode, return
-        if (!c) {
-            /**
-             * Event fired after the last queued callback is executed.  Not
-             * fired if the Queue is stopped via q.stop().
-             * @event end
-             */
-            this.fire('end');
-            return this;
-        } else if (this.id) {
-            return this;
+        // Grab the first callback in the queue
+        var callback = this._q.shift();
+
+        // A callback is present and not currently executing/scheduled
+        while (callback && this.active) {
+            this._defExecFn(callback);
+            callback = this._q.shift();
         }
 
-        fn = c.fn || c;
-
-        if (typeof fn === 'function') {
-            var ms   = c.timeout || 0,
-                me   = this;
-
-            // Execute immediately if the callback timeout is negative.
-            if (ms < 0) {
-                this.id = ms;
-                if (c.until) { // test .until condition
-                    for (;!c.until();) {
-                        this._exec(fn,c);
-                    }
-                } else if (c.iterations) { // test .iterations
-                    for (;c.iterations-- > 0;) {
-                        this._exec(fn,c);
-                    }
-                } else { // single shot callback
-                    this._exec(fn,c);
-                }
-                this._shift();
-                this.id = 0;
-                return this.run();
-            } else {
-                if (c.until) { // test .until condition
-                    if (c.until()) {
-                        // Move to the next callback
-                        this._shift();
-                        return this.run();
-                    }
-                } else if (!c.iterations || !--c.iterations) { // .iterations
-                    this._shift();
-                }
-
-                // Set to execute after the configured timeout
-                this.id = setTimeout(function () {
-                    me._exec(fn,c);
-
-                    // Loop unless the Queue was paused from inside the callback
-                    if (me.id) {
-                        // Indicate ready to run state
-                        me.id = 0;
-                        // Start the fun all over again
-                        me.run();
-                    }
-                },ms);
-            }
+        if (!this.size()) {
+            this.active = false;
         }
 
         return this;
@@ -122,68 +111,62 @@ Y.Queue.prototype = {
 
     /**
      * Executes the callback function
-     * @method _exec
-     * @param fn {Function} the function to execute
-     * @param c {Object|Function} the callback as defined during add(c)
+     * @method _defExecFn
+     * @param callback {Object} the callback object
      * @protected
      */
-    _exec : function (fn,c) {
-        /**
-         * Fired before a callback is executed
-         * @event beforeCallback
-         * @param o {Object} Object literal with the following keys:
-         * <dl>
-         * <dt>fn</dt><dd>The function about to be executed</dd>
-         * <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-         * </dl>
-         */
-        this.fire('beforeCallback',{fn:fn,callback:c});
-
-        fn.call(this);
-
-        /**
-         * Fired before a callback is executed
-         * @event afterCallback
-         * @param o {Object} Object literal with the following keys:
-         * <dl>
-         * <dt>fn</dt><dd>The function just executed</dd>
-         * <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
-         * </dl>
-         */
-        this.fire('afterCallback',{fn:fn,callback:c});
+    _defExecFn : function (callback) {
+        if (Y.Lang.isFunction(callback.fn)) {
+            var args = 'args' in callback ? Y.Array(callback.args) : [];
+            callback.fn.apply(callback.context, args);
+        }
     },
 
     /**
-     * Shifts the first callback off the Queue
-     * @method _shift
-     * @private
-     */
-    _shift : function () {
-        /**
-         * Fired after a callback is shifted from the Queue
-         * @event shiftCallback
-         * @param callback {Function|Object} The callback passed to <code>add(..)</code>
-         */
-        this.fire('shiftCallback',this.q.shift());
-    },
-    
-    /**
-     * Add any number of callbacks to the end of the queue
+     * Add any number of callbacks to the end of the queue.  Callbacks passed
+     * in as functions will be wrapped in a callback object with defaulted
+     * config values.
+     *
      * @method add
      * @param callback* {Function|Object} Any number of callbacks
      * @return {Queue} the Queue instance
      */
-    add  : function () {
-        var callbacks = Y.Array(arguments,0,true);
-        this.q.splice.apply(this.q,[this.q.length,0].concat(callbacks));
+    add : function () {
+        var callbacks = Y.Array(arguments,0,true), i, len, c, added = [];
 
-        /**
-         * Fired from within <code>add(..)</code> after callbacks are queued
-         * @event addCallback
-         * @param callbacks {Array} Array of callbacks passed to <code>add(..)</code>
-         */
-        this.fire('addCallback',callbacks);
+        for (i = 0, len = callbacks.length; i < len; ++i) {
+            c = this._prepareCallback(callbacks[i]);
+
+            if (Y.Lang.isObject(c)) {
+                this._q.push(c);
+                added.push(c);
+            }
+        }
+
+        this.fire('addCallback',added);
+
         return this;
+    },
+
+    /**
+     * Normalizes the callback into object literal form with required key:value
+     * pairs dfaulted to functional values.
+     *
+     * @method _prepareCallback
+     * @param callback {Object|Function} the raw callback
+     * @return {Object} the normalized callback object
+     * @protected
+     */
+    _prepareCallback : function (callback) {
+        if (Y.Lang.isFunction(callback)) {
+            callback = { fn : callback };
+        }
+
+        if (Y.Lang.isObject(callback)) {
+            callback = Y.merge(this._defaults, callback);
+        }
+
+        return callback;
     },
 
     /**
@@ -195,14 +178,8 @@ Y.Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     pause: function () {
-        clearTimeout(this.id);
-        this.id = 0;
+        this.active = false;
 
-        /**
-         * Fired after Queue is paused
-         * @event pause
-         */
-        this.fire('pause');
         return this;
     },
 
@@ -213,18 +190,361 @@ Y.Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     stop : function () { 
-        this.pause();
-        this.q = [];
+        this.active = false;
+        this._q = [];
+
+        return this;
+    },
+
+    /**
+     * Returns the number of items in the queue.  Callbacks configured with
+     * <code>iterations</code> or <code>until</code> are counted only once.
+     *
+     * @method size
+     * @return {Number} the number of currently queued callbacks
+     */
+    size : function () {
+        return this._q.length;
+    },
+
+    // Placeholder stubs for event methods to allow for less code replacement
+    // in extension.
+    publish : function () {},
+    fire : function () {}
+};
+
+Y.Queue = Queue;
+
+
+}, '@VERSION@' );
+YUI.add('queue-full', function(Y) {
+
+var EXEC  = 'executeCallback',
+    SHIFT = 'shiftCallback';
+
+/**
+ * Mechanism for executing a series of callbacks in sequential order.  Supports
+ * simple synchronous queueing as well as queuing callbacks across setTimeout.
+ * Callback iteration, specifying context and callback arguments, retrieval,
+ * removal, and promotion of queued callbacks.
+ *
+ * Pass in a configuration object with the same keys as a callback object (see
+ * the add method) to set the default values for those keys on all callbacks
+ * added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
+ *
+ * @module queue
+ * @submodule queue-full
+ * @for Queue
+ */
+
+
+Y.mix(Y.Queue.defaults, {
+    iterations : 1,
+    timeout    : -1,
+    until      : function () {
+        this.iterations |= 0;
+        return this.iterations <= 0;
+    }
+},true);
+
+Y.mix(Y.Queue.prototype, {
+
+    /**
+     * Flag used to indicate the Queue is currently executing a callback.
+     *
+     * @property _tId
+     * @type {Number}
+     * @protected
+     */
+    _tId : 0,
+    
+    run : function () {
+        this.active = true;
+
+        // A callback is present and not currently executing/scheduled
+        while (this._q.length && this.active && this.isReady()) {
+            // Grab the first callback in the queue
+            var callback = this._q[0];
+
+            if (callback.until()) {
+                this.fire(SHIFT);
+            } else {
+                if (callback.timeout < 0) {
+                    this._processSync(callback);
+                } else {
+                    this._processAsync(callback);
+                    break;
+                }
+            }
+        }
+
+        if (!this._q.length) {
+            this.active = false;
+
+            /**
+             * Event fired after the last queued callback is executed.
+             * @event complete
+             */
+            this.fire('complete');
+        }
+
+        return this;
+    },
+
+    /**
+     * Determines if the Queue is in a state that will allow for callback
+     * execution.
+     *
+     * @method isReady
+     * @return {Boolean} true if callbacks can be run now
+     */
+    isReady : function () {
+        return !this._tId;
+    },
+
+    /**
+     * Handles the execution of synchronous callbacks.
+     *
+     * @method _processSync
+     * @param callback {Object} the callback object to execute
+     * @protected
+     */
+    _processSync : function (callback) {
+        callback.iterations--;
+        this._tId = -1;
+        this.fire(EXEC,callback);
+        this._tId = 0;
+    },
+
+    /**
+     * Handles the execution of asynchronous callbacks.
+     *
+     * @method _processAsync
+     * @param callback {Object} the callback object to execute
+     * @protected
+     */
+    _processAsync : function (callback) {
+        var self = this;
+
+        // Set to execute after the configured timeout
+        this._tId = setTimeout(function () {
+            callback.iterations--;
+
+            self.fire(EXEC,callback);
+
+            self._tId = 0;
+
+            // Loop unless the Queue was paused from inside the callback
+            if (self.active) {
+                self.run();
+            }
+        }, callback.timeout);
+    },
+
+    /**
+     * Shifts the first callback off the Queue
+     * @method _defShiftFn
+     * @protected
+     */
+    _defShiftFn : function () {
+        this._q.shift();
+    },
+    
+    pause: function () {
+        clearTimeout(this._tId);
+        this._tId = 0;
+
+        this.active = false;
+
+        /**
+         * Fired after Queue is paused
+         * @event pause
+         */
+        this.fire('pause');
+
+        return this;
+    },
+
+    stop : function () { 
+        clearTimeout(this._tId);
+        this._tId = 0;
+
+        this.active = false;
+        this._q = [];
 
         /**
          * Fired after Queue is stopped
          * @event stop
          */
         this.fire('stop');
+
         return this;
+    },
+
+    /**
+     * Retrieve a callback by its name.  Useful to modify the configuration
+     * while the Queue is running.
+     *
+     * @method getCallback
+     * @param name {String} the name assigned to the callback
+     * @return {Object} the callback object
+     */
+    getCallback : function (name) {
+        for (var i = 0, len = this._q.length; i < len; ++i) {
+            if (this._q[i].name === name) {
+                return this._q[i];
+            }
+        }
+
+        return null;
+    },
+
+    /**
+     * Promotes the named callback to the top of the queue. If a callback is
+     * currently executing or looping (via until or iterations), the promotion
+     * is scheduled to occur after the current callback has completed.
+     *
+     * @method promote
+     * @param name {String|Object} the callback object or a callback's name
+     * @return {Queue} the Queue instance
+     */
+    promote : function (name) {
+        if (!this.isReady()) {
+            var e = this.after(SHIFT, function () {
+                        this._promote(name);
+                        e.detach();
+                    },this);
+        } else {
+            this._promote(name);
+        }
+
+        return this;
+    },
+
+    /**
+     * Promotes the named callback to the top of the queue.
+     *
+     * @method _promote
+     * @param name {String|Object} the callback object or a callback's name
+     * @return {Queue} the Queue instance
+     * @protected
+     */
+    _promote : function (name) {
+        var i,len,c;
+
+        for (i = 0, len = this._q.length; i < len; ++i) {
+            if (this._q[i] === name || this._q[i].name === name) {
+                c = this._q.splice(i,1)[0];
+                this._q.unshift(c);
+                this.fire('promoteCallback', c);
+                break;
+            }
+        }
+    },
+
+    /**
+     * Removes the callback from the queue.  If the Queue is active, the
+     * removal is scheduled to occur after the current callback has completed.
+     *
+     * @method remove
+     * @param name {String|Object} the callback object or a callback's name
+     * @return {Queue} the Queue instance
+     */
+    remove : function (name) {
+        // Can't return the removed callback because of the deferral until
+        // current callback is complete
+        if (!this.isReady()) {
+            var e = this.after(SHIFT, function () {
+                        this._remove(name);
+                        e.detach();
+                    },this);
+        } else {
+            this._remove(name);
+        }
+
+        return this;
+    },
+
+    /**
+     * Removes the callback from the queue.
+     *
+     * @method remove
+     * @param name {String|Object} the callback object or a callback's name
+     * @return {Object} the callback object or null if not found
+     * @protected
+     */
+    _remove : function (name) {
+        for (var i = 0, len = this._q.length; i < len; ++i) {
+            if (this._q[i] === name || this._q[i].name === name) {
+                this.fire('removeCallback',this._q.splice(i,1));
+                len--;
+            }
+        }
     }
-};
-Y.augment(Y.Queue,Y.Event.Target);
+},true);
+
+Y.augment(Y.Queue,Y.Event.Target,true);
+
+// APIdoc changes made applicable by this module
+
+/**
+ * Event used to trigger the execution of the callback.  Subscribe to this
+ * event and call e.preventDefault() to prevent the callback execution.  Doing
+ * so will not stop or pause the Queue.
+ *
+ * @event executeCallback
+ * @param callback {Object} the callback object that will be executed
+ */
+
+/**
+ * Event fired after a callback is shifted from the Queue
+ * @event shiftCallback
+ * @param callback {Function|Object} The callback passed to <code>add(..)</code>
+ */
+
+/**
+ * Event fired when callbacks are added to the Queue.
+ *
+ * @event addCallback
+ * @param callbacks {Array} array of added callback objects
+ */
+
+/**
+ * Add any number of callbacks to the end of the queue.  Callbacks passed
+ * in as functions will be wrapped in a callback object.
+ *
+ * Callbacks can be function references or object literals with these keys:
+ * <dl>
+ *    <dt>fn</dt>
+ *      <dd>{Function} REQUIRED the callback function.</dd>
+ *    <dt>name</dt>
+ *      <dd>{String} a reference name to use for promotion or access</dd>
+ *    <dt>context</dt>
+ *      <dd>{Object} the context from which to call the callback function.</dd>
+ *    <dt>timeout</dt>
+ *      <dd>{number} millisecond delay to wait after previous callback
+ *          completion before executing this callback.  Negative
+ *          values cause immediate blocking execution.  Default 0.</dd>
+ *    <dt>until</dt>
+ *      <dd>{Function} boolean function executed before each iteration.
+ *          Return true to indicate callback completion.</dd>
+ *    <dt>iterations</dt>
+ *      <dd>{Number} number of times to execute the callback before
+ *          proceeding to the next callback in the queue.
+ *          Incompatible with <code>until</code>.</dd>
+ *    <dt>args</dt>
+ *      <dd>{Array} array of arguments passed to callback function</dd>
+ * </dl>
+ *
+ * @method add
+ * @param callback* {Function|Object} Any number of callbacks
+ * @return {Queue} the Queue instance
+ */
 
 
-}, '@VERSION@' ,{requires:['event']});
+
+}, '@VERSION@' ,{requires:['queue-base', 'event']});
+
+
+YUI.add('queue', function(Y){}, '@VERSION@' ,{use:['queue-base', 'queue-full']});
+

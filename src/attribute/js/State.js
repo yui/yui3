@@ -13,7 +13,6 @@
      * @class State
      */
     Y.State = function() { 
-
         /**
          * Hash of attributes
          * @property data
@@ -79,7 +78,6 @@
          * @return either the value of the supplied key or an object with
          * all data.
          */
-        // get: function(name, key, val) {
         get: function(name, key) {
             var d = this.data,
                 o;
@@ -98,31 +96,4 @@
 
             }
         }
-
-        // figure out what kind of functionality we may need here
-        // get whole list
-        // get a list of items and values for a given key
-        // get a list of items where a key has the supplied value
-        /*
-        list: function(key, val) {
-            var o = {}, d = this.data, test = !L.isUndefined(val);
-
-            Y.each(this, function(v, k) {
-
-                // verify key
-                if (key && k !== key) {
-                    return;
-                // verify value.  note, v will be the item names, so this
-                // isn't working ... need to iterate v items
-                } else if (test && v !== val) {
-                    return;
-                }
-
-                o[k] = v;
-
-            }, this);
-
-            return o;
-        }
-        */
     };

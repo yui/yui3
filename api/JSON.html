@@ -161,8 +161,8 @@ their containing string in quotes.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Replace certain Unicode characters that JavaScript may handle incorrectly
-during eval--either by deleting them or treating them as line endings--with
-escae sequences.
+during eval--either by deleting them or treating them as line
+endings--with escape sequences.
 IMPORTANT NOTE: This regex will be used to modify the input if a match is
 found.
                                         </div>
@@ -316,6 +316,121 @@ different format.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method_escapeException">
+                                    <h4>
+                                        <a name="method_escapeException">escapeException</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">escapeException</strong>
+                                           (
+                                                
+                                                        
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Replaces specific unicode characters with their appropriate \unnnn format.
+Some browsers ignore certain characters during eval.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Unicode character</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the \unnnn escapement of the character</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method_handleParseError">
+                                    <h4>
+                                        <a name="method_handleParseError">handleParseError</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">handleParseError</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         reviver
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Hook for plugins to add more detailed error reporting.  Note this will
+only catch a subset of JSON format errors.  Others are expressed via
+failure to eval.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the JSON string</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">reviver</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (optional) the reviver passed to parse(..)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_parse">
                                     <h4>
                                         <a name="method_parse">parse</a></h4>
@@ -357,7 +472,8 @@ different format.
                                                         <code><span property="yui:name">reviver</span>
                                                         &lt;<span property="yui:type">function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (optional) function(k,v) passed each key value pair of object literals, allowing pruning or altering values</span>
+                                                        <span property="yui:description">  (optional) function(k,v) passed each key value
+pair of object literals, allowing pruning or altering values</span>
                                                         </dd>
                                                 </dl>
 
@@ -398,7 +514,7 @@ different format.
                                                     
                                                 
                                                         , 
-                                                         d
+                                                         ind
                                                     
                                                 
                                             )
@@ -408,8 +524,11 @@ different format.
                                             Converts an arbitrary value to a JSON string representation.
 Cyclical object or array references are replaced with null.
 If a whitelist is provided, only matching object keys will be included.
-If a depth limit is provided, objects and arrays at that depth will
-be stringified as empty.
+If a positive integer or non-empty string is passed as the third
+parameter, the output will be formatted with carriage returns and
+indentation for readability.  If a String is passed (such as "\t") it
+will be used once for each indentation level.  If a number is passed,
+that number of spaces will be used.
                                         </div>
 
                                         <div class="description">
@@ -431,11 +550,11 @@ keys to include, or a replacer function to modify the
 raw value before serialization</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">d</span>
-                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        <code><span property="yui:name">ind</span>
+                                                        &lt;<span property="yui:type">Number|String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (optional) depth limit to recurse objects/arrays
-(practical minimum 1)</span>
+                                                        <span property="yui:description">  (optional) indentation character or depth of
+spaces to format the output.</span>
                                                         </dd>
                                                 </dl>
 
@@ -544,6 +663,8 @@ raw value before serialization</span>
                         <ul class="content">        
                                 <li class="private"><a href="#method__revive" title="_revive">_revive</a></li>
                                 <li class=""><a href="#method_dateToString" title="dateToString">dateToString</a></li>
+                                <li class="private"><a href="#method_escapeException" title="escapeException">escapeException</a></li>
+                                <li class="protected"><a href="#method_handleParseError" title="handleParseError">handleParseError</a></li>
                                 <li class=""><a href="#method_parse" title="parse">parse</a></li>
                                 <li class=""><a href="#method_stringify" title="stringify">stringify</a></li>
                         </ul>
@@ -560,7 +681,7 @@ raw value before serialization</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "protected", "host": "JSON", "name": "handleParseError", "url": "JSON.html#method_handleParseError", "type": "method"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

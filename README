@@ -34,12 +34,17 @@ The source tree for YUI includes the following directories:
      assets, ActionScript files) for the library. src also contains (or
      will contain) all module-specific documentation, tests and examples.
      All modifications to the library and its documentation should take 
-     place in this directory.  (You will find in the src directory files
-     like build.xml that are used in the build process.  We have not
-     yet released the build tool that builds components or the build
-     tool that builds the library generally; we are working on
-     documenting those tools for public use and they will appear on
-     GitHub shortly.
+     place in this directory.
+
+     The src directory also contains build.xml files, which can be 
+     used to build individual modules using the YUI component build 
+     tool. The YUI component build tool is part of the YUI "builder" 
+     project, also available on GitHub:
+
+         http://github.com/yui/builder
+
+     The README in the componentbuild directory of the builder project
+     covers installation and use of the build tool.
 
 Code found in the development head is always a work in progress and
 should be treated as experimental.

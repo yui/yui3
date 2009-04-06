@@ -1,11 +1,16 @@
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
+ * Provides the base Widget class
  *
  * @module widget
  */
 
 // Local Constants
-var WIDGET = "widget",
+var L = Y.Lang,
+    O = Y.Object,
+    Node = Y.Node,
+    ClassNameManager = Y.ClassNameManager,
+
+    WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
@@ -33,12 +38,8 @@ var WIDGET = "widget",
 
     ContentUpdate = "contentUpdate",
 
-    O = Y.Object,
-    Node = Y.Node,
-    ClassNameManager = Y.ClassNameManager;
-
-// Widget nodeid-to-instance map for now, 1-to-1.
-var _instances = {};
+    // Widget nodeid-to-instance map for now, 1-to-1.
+    _instances = {};
 
 /**
  * A base class for widgets, providing:
@@ -49,7 +50,6 @@ var _instances = {};
  *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
  *        disabled, hasFocus, strings</li>
- *    <li>Plugin registration and activation support</li>
  * </ul>
  *
  * @param config {Object} Object literal specifying widget configuration 
@@ -58,7 +58,6 @@ var _instances = {};
  * @class Widget
  * @constructor
  * @extends Base
- * @uses PluginHost
  */
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
@@ -83,7 +82,7 @@ function Widget(config) {
  * @private
  */
 Widget._buildCfg = {
-    aggregates : ["PLUGINS", "HTML_PARSER"]
+    aggregates : ["HTML_PARSER"]
 };
 
 /**
@@ -145,7 +144,7 @@ Widget.ATTRS = {
     */
     boundingBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setBoundingBox(node);
         },
         writeOnce: true
@@ -159,7 +158,7 @@ Widget.ATTRS = {
     */
     contentBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setContentBox(node);
         },
         writeOnce: true
@@ -257,11 +256,11 @@ Widget.ATTRS = {
      * @type Object
      */
     strings: {
-        set: function(val) {
+        setter: function(val) {
             return this._setStrings(val, this.get(LOCALE));
         },
 
-        get: function() {
+        getter: function() {
             return this.getStrings(this.get(LOCALE));
         }
     }
@@ -408,8 +407,6 @@ Y.extend(Widget, Y.Base, {
         if (htmlConfig) {
             Y.aggregate(config, htmlConfig, false);
         }
-
-        Y.PluginHost.call(this, config);
     },
 
     /**
@@ -826,12 +823,12 @@ Y.extend(Widget, Y.Base, {
         var classes = this._getClasses(),
             boundingBox = this.get(BOUNDING_BOX),
             contentBox = this.get(CONTENT_BOX),
-            name;
+            name, i;
 
         boundingBox.addClass(Widget.getClassName());
 
         // Start from Widget Sub Class
-        for (var i = 2, l = classes.length; i < l; ++i) {
+        for (i = classes.length-3; i >= 0; i--) {
             name = classes[i].NAME;
             if (name) {
                 boundingBox.addClass(ClassNameManager.getClassName(name.toLowerCase()));
@@ -1260,10 +1257,11 @@ Y.extend(Widget, Y.Base, {
     _getHtmlParser : function() {
         if (!this._HTML_PARSER) {
             var classes = this._getClasses(),
-                parser = {};
+                parser = {},
+                i, p;
 
-            for (var i = 0, l = classes.length; i < l; i++) {
-                var p = classes[i].HTML_PARSER;
+            for (i = classes.length - 1; i >= 0; i--) {
+                p = classes[i].HTML_PARSER;
                 if (p) {
                     Y.mix(parser, p, true);
                 }
@@ -1283,7 +1281,5 @@ Y.extend(Widget, Y.Base, {
  * @static
  */
 Widget.PLUGINS = [];
-
-Y.mix(Widget, Y.PluginHost, false, null, 1); // straightup augment, no wrapper functions
 
 Y.Widget = Widget;

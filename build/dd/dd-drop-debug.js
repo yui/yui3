@@ -50,8 +50,11 @@ YUI.add('dd-drop', function(Y) {
     var Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
-        this._createShim();
+
+        //DD init speed up.
+        Y.later(100, this, this._createShim);
         DDM._regTarget(this);
+
         /* TODO
         if (Dom.getStyle(this.el, 'position') == 'fixed') {
             Event.on(window, 'scroll', function() {
@@ -127,7 +130,6 @@ YUI.add('dd-drop', function(Y) {
             writeOnce: true,
             value: Y.DD.DDM
         }
-
     };
 
     Y.extend(Drop, Y.Base, {
@@ -151,7 +153,7 @@ YUI.add('dd-drop', function(Y) {
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
-                    queuable: true
+                    queuable: false
                 });
             }, this);
 
@@ -215,7 +217,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function() {
-            this._createEvents();
+            //this._createEvents();
+            Y.later(100, this, this._createEvents);
+
             var node = this.get(NODE);
             if (!node.get('id')) {
                 var id = Y.stamp(node);
@@ -242,12 +246,16 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
+            if (!this.shim) {
+                return false;
+            }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
             this.shim.setStyles({
                 top: '-999px',
-                left: '-999px'
+                left: '-999px',
+                zIndex: '2'
             });
             this.overTarget = false;
         },
@@ -293,6 +301,10 @@ YUI.add('dd-drop', function(Y) {
                 return false;
             }
             if (this.get('lock')) {
+                return false;
+            }
+            if (!this.shim) {
+                Y.later(100, this, this.sizeShim);
                 return false;
             }
             var node = this.get(NODE),
@@ -347,14 +359,14 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
-            //var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                 width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
                 backgroundColor: 'yellow',
                 opacity: '.5',
-                zIndex: 999,
+                zIndex: '1',
                 overflow: 'hidden',
                 top: '-900px',
                 left: '-900px',
@@ -384,12 +396,12 @@ YUI.add('dd-drop', function(Y) {
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
-                    DDM._handleTargetOver();
+                    //TODO - Is this needed??
+                    //DDM._handleTargetOver();
                 }
             } else {
                 this._handleOut();
             }
-            
         },
         /**
         * @private
@@ -397,6 +409,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
+            this.shim.setStyle('zIndex', '999');
             DDM._addActiveShim(this);
         },
         /**
@@ -405,6 +418,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
+            this.shim.setStyle('zIndex', '1');
             DDM._removeActiveShim(this);
         },
         /**
@@ -412,17 +426,22 @@ YUI.add('dd-drop', function(Y) {
         * @method _handleOut
         * @description Handles out of target calls/checks
         */
-        _handleOut: function() {
-            if (!DDM.isOverTarget(this)) {
+        _handleOut: function(force) {
+            if (!DDM.isOverTarget(this) || force) {
                 if (this.overTarget) {
                     this.overTarget = false;
-                    DDM._removeActiveShim(this);
+                    if (!force) {
+                        DDM._removeActiveShim(this);
+                    }
                     if (DDM.activeDrag) {
                         this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
                         DDM.activeDrag.get(NODE).removeClass(DDM.CSS_PREFIX + '-drag-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
+                        if (DDM.activeDrop === this) {
+                            DDM.activeDrop = null;
+                        }
                     }
                 }
             }

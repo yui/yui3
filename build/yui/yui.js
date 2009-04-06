@@ -252,14 +252,15 @@ YUI.prototype = {
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string
-     * @return {YUI} the YUI instance
-     *
+     * @param details optional config data: 
      * requires   - features that should be present before loading
      * optional   - optional features that should be present if load optional defined
      * use  - features that should be attached automatically
      * skinnable  -
      * rollup
      * omit - features that should not be loaded if this module is present
+     * @return {YUI} the YUI instance
+     *
      */
     add: function(name, fn, version, details) {
 
@@ -1043,6 +1044,15 @@ A.indexOf = (Native.indexOf) ?
         return -1;
     };
 
+/**
+ * Numeric sort convenience function.
+ * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
+ * @method numericSort
+ */
+A.numericSort = function(a, b) { 
+    return (a - b); 
+};
+
 })();
 (function() {
 
@@ -1293,10 +1303,11 @@ O.size = function(o) {
  * @static
  * @param o an object
  * @param k the key to query
- * @return {boolena} true if the object contains the key
+ * @return {boolean} true if the object contains the key
  */
 O.hasKey = function(o, k) {
-    return (o.hasOwnProperty(k));
+    // return (o.hasOwnProperty(k));
+    return (k in o);
 };
 
 /**
@@ -1352,6 +1363,61 @@ O.each = function (o, f, c, proto) {
     }
     return Y;
 };
+
+
+/**
+ * Retrieves the sub value at the provided path,
+ * from the value object provided.
+ *
+ * @method getValue
+ * @param o The object from which to extract the property value
+ * @param path {Array} A path array, specifying the object traversal path
+ * from which to obtain the sub value.
+ * @return {Any} The value stored in the path, undefined if not found.
+ * Returns the source object if an empty path is provided.
+ */
+O.getValue = function (o, path) {
+    var p=Y.Array(path), l=p.length, i;
+
+    for (i=0; o !== undefined && i < l; i=i+1) {
+        o = o[p[i]];
+    }
+
+    return o;
+};
+
+/**
+ * Sets the sub-attribute value at the provided path on the 
+ * value object.  Returns the modified value object, or 
+ * undefined if the path is invalid.
+ *
+ * @method setValue
+ * @param o             The object on which to set the sub value.
+ * @param path {Array}  A path array, specifying the object traversal path
+ *                      at which to set the sub value.
+ * @param val {Any}     The new value for the sub-attribute.
+ * @return {Object}     The modified object, with the new sub value set, or 
+ *                      undefined, if the path was invalid.
+ */
+O.setValue = function(o, path, val) {
+
+    var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
+
+    if (leafIdx >= 0) {
+        for (i=0; ref !== undefined && i < leafIdx; i=i+1) {
+            ref = ref[p[i]];
+        }
+
+        if (ref !== undefined) {
+            ref[p[i]] = val;
+        } else {
+            return undefined;
+        }
+    }
+
+    return o;
+};
+
 
 })();
 /**
@@ -1422,7 +1488,7 @@ Y.UA = function() {
          *                                   from 2.x via the 10.4.11 OS patch
          *                                   
          * </pre>
-         * http://developer.apple.com/internet/safari/uamatrix.html
+         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
          * @type float
          * @static
@@ -1586,6 +1652,7 @@ Y.UA = function() {
 YUI.add('get', function(Y) {
 
 (function() {
+
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -1958,9 +2025,9 @@ Y.Get = function() {
             nodes: []
         });
 
-        q = queues[id];
-        q.win = q.win || Y.config.win;
-        q.context = q.context || q;
+        q           = queues[id];
+        q.win       = q.win || Y.config.win;
+        q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
@@ -2405,7 +2472,6 @@ var BASE = 'base',
 
                 'dom-style': {
                     requires: ['dom-base']
-
                 },
 
                 'dom-screen': {
@@ -2420,8 +2486,8 @@ var BASE = 'base',
 
         node: {
             requires: ['dom'],
-            submodules: {
 
+            submodules: {
                 'node-base': {
                     requires: ['dom-base', 'selector']
                 },
@@ -2432,8 +2498,10 @@ var BASE = 'base',
 
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
-                },
+                }
+            },
 
+            plugins: {
                 'node-event-simulate': {
                     requires: ['node-base', 'event-simulate']
                 }

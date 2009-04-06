@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI Event Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>Event Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        useConsole: true
+    }).use("dump", "test", "console", "event-custom", function(Y) {
+
+        var button = Y.get('#btnRun');
+
+        // Set up the page
+        button.set("disabled", false);
+        Y.on("click", function() {
+            Y.Test.Runner.run();
+        }, button);
+
+        var myConsole = new Y.Console().render();
+ 
+        var testEventTarget = new Y.Test.Case({
+            name: "Event.Target tests",
+        
+            testAugment: function() {
+
+                var fired = false;
+
+                var O = function(id) {
+                    this.id = id;
+                    Y.log('O constructor executed ' + id);
+                }
+
+                O.prototype = {
+                    oOo: function(ok) {
+                        Y.log('oOo');
+                    }
+                }
+
+                // pass configuration info into Event.Target with the following
+                // construct
+                Y.augment(O, Y.Event.Target, null, null, {
+                    emitFacade: true
+                });
+
+                var o = new O();
+                o.on('testAugment', function(e, arg1, arg2) {
+                    Y.Assert.isTrue(this instanceof O);
+                    Y.Assert.isTrue(e instanceof Y.Event.Facade);
+                    Y.Assert.isTrue(e.foo === 'afoo');
+                    Y.Assert.isTrue(e.details[1] === 1);
+                    Y.Assert.isTrue(arg1 === 1);
+                    Y.Assert.isTrue(arg2 === 2);
+                    fired = true;
+                });
+
+                o.fire('testAugment', { foo: 'afoo' }, 1, 2);
+
+                Y.Assert.isTrue(fired);
+            },
+
+            testExtend: function() {
+
+                var fired = false;
+
+                var Base = function() {
+                    Y.log('Base constructor executed');
+                    arguments.callee.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(Base, Y.Event.Target, {
+                    base: function() {
+                        Y.log('all your base...');
+                    }
+                });
+
+                var b = new Base();
+                b.on('testExtend', function(arg1, arg2) {
+                    Y.Assert.isTrue(this instanceof Base);
+                    Y.Assert.isTrue(arg1 === 1);
+                    Y.Assert.isTrue(arg2 === 2);
+                    fired = true;
+                });
+
+                b.fire('testExtend', 1, 2);
+
+                Y.Assert.isTrue(fired);
+            },
+
+            testPrefix: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                var O = function(id) {
+                    this.id = id;
+                    Y.log('O constructor executed ' + id);
+                }
+
+                O.prototype = {
+                    oOo: function(ok) {
+                        Y.log('oOo');
+                    }
+                }
+
+                // pass configuration info into Event.Target with the following
+                // construct
+                Y.augment(O, Y.Event.Target, null, null, {
+                    emitFacade: true,
+                    prefix: 'prefix'
+                });
+
+                var o = new O();
+                o.on('testPrefix', function(e, arg1, arg2) {
+                    Y.Assert.isTrue(this instanceof O);
+                    fired1 = true;
+                });
+
+                o.on('prefix:testPrefix', function(e, arg1, arg2) {
+                    Y.Assert.isTrue(this instanceof O);
+                    fired2 = true;
+                });
+
+                o.fire('testPrefix', { foo: 'afoo' }, 1, 2);
+
+                Y.Assert.isTrue(fired1);
+                // Y.Assert.isTrue(fired2);
+
+                fired1 = false;
+                fired2 = false;
+
+                o.fire('prefix:testPrefix', { foo: 'afoo' }, 1, 2);
+                Y.Assert.isTrue(fired1);
+                Y.Assert.isTrue(fired2);
+            }
+
+
+        });
+        
+
+        Y.Test.Runner.add(testEventTarget);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

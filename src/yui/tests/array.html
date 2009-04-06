@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI Array Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>Array Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        useConsole: true
+    }).use("dump", "test", "console", "event-custom", function(Y) {
+
+        var button = Y.get('#btnRun');
+
+        // Set up the page
+        button.set("disabled", false);
+        Y.on("click", function() {
+            Y.Test.Runner.run();
+        }, button);
+
+        var myConsole = new Y.Console().render();
+
+        var testObject = new Y.Test.Case({
+            name: "Array tests",
+        
+            testNumericSort: function() {
+                Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
+            }
+            
+        });
+        
+
+        Y.Test.Runner.add(testObject);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

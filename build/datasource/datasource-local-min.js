@@ -1,0 +1,1 @@
+YUI.add("datasource-local",function(B){var A=B.Lang,C=function(){C.superclass.constructor.apply(this,arguments);};B.mix(C,{NAME:"DataSource.Local",ATTRS:{}});B.extend(C,B.DataSource.Base,{});B.DataSource.Local=C;},"@VERSION@",{requires:["datasource-base"]});
