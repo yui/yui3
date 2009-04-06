@@ -21,15 +21,16 @@
 */
 var DIFF_DELIM = '__::__';
 Y.Array._diff = function(a, b) {
-    var strA = DIFF_DELIM + a.join(DIFF_DELIM + DIFF_DELIM) + DIFF_DELIM,
-        strB = DIFF_DELIM +  b.join(DIFF_DELIM + '|' + DIFF_DELIM) + DIFF_DELIM,
-        reB = Y.DOM._getRegExp('(' + strB + ')', 'g'),
-        reStart = Y.DOM._getRegExp('^' + DIFF_DELIM),
-        reEnd = Y.DOM._getRegExp(DIFF_DELIM + '$'),
-        strDiff = strA.replace(reB,'').replace(reStart, '').replace(reEnd, ''),
-        diff = strDiff.split(DIFF_DELIM + DIFF_DELIM);
-
-    return diff;
+    if (a.join && b.join) {
+        return DIFF_DELIM + a.join(DIFF_DELIM + DIFF_DELIM) + DIFF_DELIM.
+                replace(Y.DOM._getRegExp('(' + DIFF_DELIM +
+                b.join(DIFF_DELIM + '|' + DIFF_DELIM) + DIFF_DELIM + ')', 'g'),'').
+                replace(Y.DOM._getRegExp('^' + DIFF_DELIM), '').
+                replace(Y.DOM._getRegExp(DIFF_DELIM + '$'), '').
+                split(DIFF_DELIM + DIFF_DELIM);
+        } else {
+            Y.log('invalid arg passed to diff: ' + a + ' or ' + b, 'warn', 'Array');
+        }
 };
 
 Y.Array.diff = function(a, b) {
@@ -39,13 +40,16 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var g_nodes = [],
+// "globals"
+var g_nodelists = [],
     g_slice = Array.prototype.slice,
+
+    UID = '_yuid',
 
     NodeList = function(config) {
         NodeList.superclass.constructor.apply(this, arguments);
     };
-
+// end "globals"
 
 NodeList.NAME = 'NodeList';
 
@@ -58,7 +62,7 @@ NodeList.ATTRS = {
 NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
-    var nodes = g_nodes[instance._yuid];
+    var nodes = g_nodelists[instance[UID]];
     if (nodes && nodes.length) {
         Y.Array.each(nodes, fn, context || instance);
     } else {
@@ -68,32 +72,33 @@ NodeList.each = function(instance, fn, context) {
 
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
+    var tmp = NodeList._tmpNode =
+            NodeList._tmpNode || Y.Node.create('<div>');
     NodeList.each(this, function(node) {
-    var instance = Y.Node._instances[node._yuid];
+        var instance = Y.Node._instances[node[UID]];
         // TODO: use node.set if instance exists
-        if (instance) {
-            instance.set(attr, val);
-        } else {
-            node[attr] = val;
+        if (!instance) {
+            g_nodes[tmp[UID]] = node;
+            instance = tmp;
         }
+        instance.set(attr, val);
     });
 };
 
 // call with instance context
 NodeList.DEFAULT_GETTER = function(attr) {
-    var ret = [],
-        instance,
-        val;
+    var tmp = NodeList._tmpNode =
+            NodeList._tmpNode || Y.Node.create('<div>'),
+        ret = [];
 
     // TODO: use node.get if instance exists
     NodeList.each(this, function(node) {
-        instance = Y.Node._instances[node._yuid];
-        if (instance) {
-            val = instance.get(attr);
-        } else {
-            val = node[attr];
+        var instance = Y.Node._instances[node[UID]];
+        if (!instance) {
+            g_nodes[tmp[UID]] = node;
+            instance = tmp;
         }
-        ret[ret.length] = val;
+        ret[ret.length] = instance.get(attr);
     });
     return ret;
 };
@@ -110,8 +115,8 @@ Y.mix(NodeList.prototype, {
             nodes = Y.Selector.query(nodes, doc);
         }
 
-        NodeList._instances[this._yuid] = this;
-        g_nodes[this._yuid] = nodes;
+        NodeList._instances[this[UID]] = this;
+        g_nodelists[this[UID]] = nodes;
     },
 
     // TODO: move to Attribute
@@ -139,7 +144,7 @@ Y.mix(NodeList.prototype, {
         var args = g_slice.call(arguments, 0),
             ret;
 
-        args.splice(2, 0, g_nodes[this._yuid]);
+        args.splice(2, 0, g_nodelists[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
             Y.Event.attach.apply(Y.Event, args);
         }
@@ -148,31 +153,31 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this._yuid] = [];
-        delete NodeList._instances[this._yuid];
+        g_nodelists[this[UID]] = [];
+        delete NodeList._instances[this[UID]];
     },
 
     refresh: function() {
         var doc;
         if (this._query) {
-            if (g_nodes[this._yuid] &&
-                g_nodes[this._yuid][0] && 
-                g_nodes[this._yuid][0].ownerDocument) {
-                doc = g_nodes[this._yuid][0].ownerDocument;
+            if (g_nodelists[this[UID]] &&
+                    g_nodelists[this[UID]][0] && 
+                    g_nodelists[this[UID]][0].ownerDocument) {
+                doc = g_nodelists[this[UID]][0].ownerDocument;
             }
 
-            g_nodes[this._yuid] = Y.Selector.query(this._query, doc || Y.config.doc);        
+            g_nodelists[this[UID]] = Y.Selector.query(this._query, doc || Y.config.doc);        
         }
     },
 
     size: function() {
-        return g_nodes[this._yuid].length;
+        return g_nodelists[this[UID]].length;
     },
 
     toString: function() {
         var str = '',
-            errorMsg = this._yuid + ': not bound to any nodes',
-            nodes = g_nodes[this._yuid] || {};
+            errorMsg = this[UID] + ': not bound to any nodes',
+            nodes = g_nodelists[this[UID]] || {};
 
         if (nodes) {
             var node = nodes[0];
@@ -193,17 +198,20 @@ Y.mix(NodeList.prototype, {
     },
 
     _addDOMAttr: function(attr) {
-        // TODO: block non-dom attributes/properties
-        this.addAttr(attr, {
-            getter: function() {
-                return NodeList.DEFAULT_GETTER.call(this, attr);
-            },
+        var nodes = g_nodelists[this[UID]] || [];
+        // for efficiency, only test if first node has DOM property 
+        if (nodes[0] && nodes[0][attr] !== undefined) {
+            this.addAttr(attr, {
+                getter: function() {
+                    return NodeList.DEFAULT_GETTER.call(this, attr);
+                },
 
-            setter: function(val) {
-                NodeList.DEFAULT_SETTER.call(this, attr, val);
-            },
-            //value: val
-        });
+                setter: function(val) {
+                    NodeList.DEFAULT_SETTER.call(this, attr, val);
+                },
+                //value: val
+            });
+        }
     }
 }, true);
 
