@@ -13,10 +13,10 @@
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        PROXY = 'proxy';
-     
+        PROXY = 'proxy',
+        proto,
 
-    var Proxy = function() {
+    Proxy = function() {
         Proxy.superclass.constructor.apply(this, arguments);
 
     };
@@ -70,7 +70,7 @@
         }
     };
 
-    var proto = {
+    proto = {
         /**
         * @private
         * @method _setProxy
@@ -94,7 +94,10 @@
         _createFrame: function() {
             if (!DDM._proxy) {
                 DDM._proxy = true;
-                var p = Y.Node.create('<div></div>');
+
+                var p = Y.Node.create('<div></div>'),
+                b = Y.Node.get('body');
+
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
@@ -103,7 +106,6 @@
                     left: '-999px'
                 });
 
-                var b = Y.Node.get('body');
                 b.insertBefore(p, b.get('firstChild'));
                 p.set('id', Y.stamp(p));
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
@@ -117,7 +119,7 @@
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function() {
-            var n = this.get(NODE);
+            var n = this.get(NODE), ah, cur;
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
@@ -125,7 +127,7 @@
                 });
             }
 
-            var ah = DDM.activeDrag.get('activeHandle'),
+            ah = DDM.activeDrag.get('activeHandle');
             cur = ah.getStyle('cursor');
             if (cur == 'auto') {
                 cur = DDM.get('dragCursor');

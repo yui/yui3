@@ -632,7 +632,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Object or Array} 
         */
         getBestMatch: function(drops, all) {
-            var biggest = null, area = 0;
+            var biggest = null, area = 0, out;
 
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
@@ -646,7 +646,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                 }
             }, this);
             if (all) {
-                var out = [];
+                out = [];
                 //TODO Sort the others in numeric order by area covered..
                 Y.each(drops, function(v, k) {
                     if (v !== biggest) {
@@ -664,7 +664,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..
         */
         _deactivateTargets: function() {
-            var other = [],
+            var other = [], tmp,
                 activeDrag = this.activeDrag,
                 activeDrop = this.activeDrop;
             
@@ -675,7 +675,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                     other = this.otherDrops;
                     delete other[activeDrop];
                 } else {
-                    var tmp = this.getBestMatch(this.otherDrops, true);
+                    tmp = this.getBestMatch(this.otherDrops, true);
                     activeDrop = tmp[0];
                     other = tmp[1];
                 }
@@ -696,7 +696,6 @@ YUI.add('dd-ddm-drop', function(Y) {
                 v._deactivateShim.apply(v, []);
             }, this);
         },
-        _dropTimer: null,
         /**
         * @private
         * @method _dropMove
@@ -704,14 +703,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _dropMove: function() {
             if (this._hasActiveShim()) {
-                if (this._dropTimer) {
-                    this._dropTimer.cancel();
-                }
-                if (!Y.UA.ie) {
-                    this._dropTimer = Y.later(0, this, this._handleTargetOver);
-                } else {
-                    this._handleTargetOver();
-                }
+                this._handleTargetOver();
             } else {
                 Y.each(this.otherDrops, function(v, k) {
                     v._handleOut.apply(v, []);
@@ -765,7 +757,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @param {Object} drop The Target to remove from the targets collection
         */
         _unregTarget: function(drop) {
-            var targets = [];
+            var targets = [], vdrops;
             Y.each(this.targets, function(v, k) {
                 if (v != drop) {
                     targets[targets.length] = v;
@@ -773,7 +765,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             }, this);
             this.targets = targets;
 
-            var vdrops = [];
+            vdrops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
                     vdrops[vdrops.length] = v;
@@ -898,9 +890,7 @@ YUI.add('dd-drag', function(Y) {
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_DRAG = 'drag:drag';
-
-
+        EV_DRAG = 'drag:drag',
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
@@ -932,7 +922,7 @@ YUI.add('dd-drag', function(Y) {
         * @type Event.Custom
         */
     
-    var Drag = function() {
+    Drag = function() {
         Drag.superclass.constructor.apply(this, arguments);
 
         DDM._regDrag(this);
@@ -1452,7 +1442,9 @@ YUI.add('dd-drag', function(Y) {
         validClick: function(ev) {
             var r = false,
             tar = ev.target,
-            hTest = null;
+            hTest = null,
+            els = null,
+            set = false;
             if (this._handles) {
                 Y.each(this._handles, function(i, n) {
                     if (Y.Lang.isString(n)) {
@@ -1482,8 +1474,8 @@ YUI.add('dd-drag', function(Y) {
             }
             if (r) {
                 if (hTest) {
-                    var els = ev.currentTarget.queryAll(hTest),
-                        set = false;
+                    els = ev.currentTarget.queryAll(hTest);
+                    set = false;
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
@@ -1714,7 +1706,7 @@ YUI.add('dd-drag', function(Y) {
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _alignNode: function(eXY, noFire) {
-            var xy = this._align(eXY), diffXY = [], diffXY2 = [];
+            var xy = this._align(eXY);
             this._moveNode(xy, noFire);
         },
         /**
@@ -1728,7 +1720,7 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get(DRAGGING)) {
                 noFire = true;
             }
-            var diffXY = [], diffXY2 = [];
+            var diffXY = [], diffXY2 = [], startXY = null;
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -1757,7 +1749,7 @@ YUI.add('dd-drag', function(Y) {
                 left: xy[0]
             };
 
-            var startXY = this.nodeXY;
+            startXY = this.nodeXY;
             if (!noFire) {
                 this.fire(EV_DRAG, {
                     pageX: xy[0],
@@ -1785,8 +1777,8 @@ YUI.add('dd-drag', function(Y) {
             } else {
                 this.mouseXY = [ev.pageX, ev.pageY];
                 if (!this._dragThreshMet) {
-                    var diffX = Math.abs(this.startXY[0] - ev.pageX);
-                    var diffY = Math.abs(this.startXY[1] - ev.pageY);
+                    var diffX = Math.abs(this.startXY[0] - ev.pageX),
+                    diffY = Math.abs(this.startXY[1] - ev.pageY);
                     if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                         this._dragThreshMet = true;
                         this.start();
@@ -1851,10 +1843,10 @@ YUI.add('dd-proxy', function(Y) {
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        PROXY = 'proxy';
-     
+        PROXY = 'proxy',
+        proto,
 
-    var Proxy = function() {
+    Proxy = function() {
         Proxy.superclass.constructor.apply(this, arguments);
 
     };
@@ -1908,7 +1900,7 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
 
-    var proto = {
+    proto = {
         /**
         * @private
         * @method _setProxy
@@ -1932,7 +1924,10 @@ YUI.add('dd-proxy', function(Y) {
         _createFrame: function() {
             if (!DDM._proxy) {
                 DDM._proxy = true;
-                var p = Y.Node.create('<div></div>');
+
+                var p = Y.Node.create('<div></div>'),
+                b = Y.Node.get('body');
+
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
@@ -1941,7 +1936,6 @@ YUI.add('dd-proxy', function(Y) {
                     left: '-999px'
                 });
 
-                var b = Y.Node.get('body');
                 b.insertBefore(p, b.get('firstChild'));
                 p.set('id', Y.stamp(p));
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
@@ -1955,7 +1949,7 @@ YUI.add('dd-proxy', function(Y) {
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function() {
-            var n = this.get(NODE);
+            var n = this.get(NODE), ah, cur;
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
@@ -1963,7 +1957,7 @@ YUI.add('dd-proxy', function(Y) {
                 });
             }
 
-            var ah = DDM.activeDrag.get('activeHandle'),
+            ah = DDM.activeDrag.get('activeHandle');
             cur = ah.getStyle('cursor');
             if (cur == 'auto') {
                 cur = DDM.get('dragCursor');
@@ -2057,10 +2051,10 @@ YUI.add('dd-constrain', function(Y) {
 
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
-        OFFSET_WIDTH = 'offsetWidth';
+        OFFSET_WIDTH = 'offsetWidth',
+        proto = null,
 
-
-    var C = function() {
+    C = function() {
         C.superclass.constructor.apply(this, arguments);
 
     };
@@ -2186,7 +2180,7 @@ YUI.add('dd-constrain', function(Y) {
         }
     };
 
-    var proto = {
+    proto = {
         start: function() {
             C.superclass.start.apply(this, arguments);
             this._regionCache = null;
@@ -2213,7 +2207,9 @@ YUI.add('dd-constrain', function(Y) {
         * @return {Object}
         */
         getRegion: function(inc) {
-            var r = {};
+            var r = {}, oh = null, ow = null,
+                g = this.get('gutter');
+
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
                     Y.on('resize', this._cacheRegion, this, true, window);
@@ -2227,7 +2223,7 @@ YUI.add('dd-constrain', function(Y) {
             } else {
                 return false;
             }
-            var g = this.get('gutter');
+
             Y.each(g, function(i, n) {
                 if ((n == 'right') || (n == 'bottom')) {
                     r[n] -= i;
@@ -2236,8 +2232,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
             });
             if (inc) {
-                var oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                    ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -2355,7 +2351,8 @@ YUI.add('dd-constrain', function(Y) {
         * @return The tick position
         */
         _calcTickArray: function(pos, ticks, off1, off2) {
-            var i = 0, len = ticks.length, next = 0;
+            var i = 0, len = ticks.length, next = 0,
+                diff1, diff2, ret;
 
             if (!ticks || (ticks.length === 0)) {
                 return pos;
@@ -2365,9 +2362,9 @@ YUI.add('dd-constrain', function(Y) {
                 for (i = 0; i < len; i++) {
                     next = (i + 1);
                     if (ticks[next] && ticks[next] >= pos) {
-                        var diff1 = pos - ticks[i],
-                            diff2 = ticks[next] - pos;
-                        var ret = (diff2 > diff1) ? ticks[i] : ticks[next];
+                        diff1 = pos - ticks[i];
+                        diff2 = ticks[next] - pos;
+                        ret = (diff2 > diff1) ? ticks[i] : ticks[next];
                         if (off1 && off2) {
                             if (ret > off2) {
                                 if (ticks[i]) {
@@ -2507,7 +2504,7 @@ YUI.add('dd-drop', function(Y) {
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_DROP_EXIT = 'drop:exit';
+        EV_DROP_EXIT = 'drop:exit',
 
         /**
         * @event drop:hit
@@ -2517,7 +2514,7 @@ YUI.add('dd-drop', function(Y) {
         */
         
 
-    var Drop = function() {
+    Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
 
@@ -2692,9 +2689,9 @@ YUI.add('dd-drop', function(Y) {
             //this._createEvents();
             Y.later(100, this, this._createEvents);
 
-            var node = this.get(NODE);
+            var node = this.get(NODE), id;
             if (!node.get('id')) {
-                var id = Y.stamp(node);
+                id = Y.stamp(node);
                 node.set('id', id);
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
@@ -2783,7 +2780,8 @@ YUI.add('dd-drop', function(Y) {
                 nh = node.get(OFFSET_HEIGHT),
                 nw = node.get(OFFSET_WIDTH),
                 xy = node.getXY(),
-                p = this.get('padding');
+                p = this.get('padding'),
+                dd, dH, dW;
 
 
             //Apply padding
@@ -2795,9 +2793,9 @@ YUI.add('dd-drop', function(Y) {
 
             if (DDM.activeDrag.get('dragMode') === DDM.INTERSECT) {
                 //Intersect Mode, make the shim bigger
-                var dd = DDM.activeDrag,
-                    dH = dd.get(NODE).get(OFFSET_HEIGHT),
-                    dW = dd.get(NODE).get(OFFSET_WIDTH);
+                dd = DDM.activeDrag;
+                dH = dd.get(NODE).get(OFFSET_HEIGHT);
+                dW = dd.get(NODE).get(OFFSET_WIDTH);
                 
                 nh = (nh + dH);
                 nw = (nw + dW);

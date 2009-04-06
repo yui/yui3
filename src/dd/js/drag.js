@@ -85,9 +85,7 @@
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_DRAG = 'drag:drag';
-
-
+        EV_DRAG = 'drag:drag',
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
@@ -119,7 +117,7 @@
         * @type Event.Custom
         */
     
-    var Drag = function() {
+    Drag = function() {
         Drag.superclass.constructor.apply(this, arguments);
 
         DDM._regDrag(this);
@@ -639,7 +637,9 @@
         validClick: function(ev) {
             var r = false,
             tar = ev.target,
-            hTest = null;
+            hTest = null,
+            els = null,
+            set = false;
             if (this._handles) {
                 Y.each(this._handles, function(i, n) {
                     if (Y.Lang.isString(n)) {
@@ -669,8 +669,8 @@
             }
             if (r) {
                 if (hTest) {
-                    var els = ev.currentTarget.queryAll(hTest),
-                        set = false;
+                    els = ev.currentTarget.queryAll(hTest);
+                    set = false;
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
                             set = true;
@@ -901,7 +901,7 @@
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _alignNode: function(eXY, noFire) {
-            var xy = this._align(eXY), diffXY = [], diffXY2 = [];
+            var xy = this._align(eXY);
             this._moveNode(xy, noFire);
         },
         /**
@@ -915,7 +915,7 @@
             if (!this.get(DRAGGING)) {
                 noFire = true;
             }
-            var diffXY = [], diffXY2 = [];
+            var diffXY = [], diffXY2 = [], startXY = null;
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -944,7 +944,7 @@
                 left: xy[0]
             };
 
-            var startXY = this.nodeXY;
+            startXY = this.nodeXY;
             if (!noFire) {
                 this.fire(EV_DRAG, {
                     pageX: xy[0],
@@ -972,8 +972,8 @@
             } else {
                 this.mouseXY = [ev.pageX, ev.pageY];
                 if (!this._dragThreshMet) {
-                    var diffX = Math.abs(this.startXY[0] - ev.pageX);
-                    var diffY = Math.abs(this.startXY[1] - ev.pageY);
+                    var diffX = Math.abs(this.startXY[0] - ev.pageX),
+                    diffY = Math.abs(this.startXY[1] - ev.pageY);
                     if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                         this._dragThreshMet = true;
                         this.start();
