@@ -23,15 +23,16 @@ YUI.add('node', function(Y) {
 */
 var DIFF_DELIM = '__::__';
 Y.Array._diff = function(a, b) {
-    var strA = DIFF_DELIM + a.join(DIFF_DELIM + DIFF_DELIM) + DIFF_DELIM,
-        strB = DIFF_DELIM +  b.join(DIFF_DELIM + '|' + DIFF_DELIM) + DIFF_DELIM,
-        reB = Y.DOM._getRegExp('(' + strB + ')', 'g'),
-        reStart = Y.DOM._getRegExp('^' + DIFF_DELIM),
-        reEnd = Y.DOM._getRegExp(DIFF_DELIM + '$'),
-        strDiff = strA.replace(reB,'').replace(reStart, '').replace(reEnd, ''),
-        diff = strDiff.split(DIFF_DELIM + DIFF_DELIM);
-
-    return diff;
+    if (a.join && b.join) {
+        return DIFF_DELIM + a.join(DIFF_DELIM + DIFF_DELIM) + DIFF_DELIM.
+                replace(Y.DOM._getRegExp('(' + DIFF_DELIM +
+                b.join(DIFF_DELIM + '|' + DIFF_DELIM) + DIFF_DELIM + ')', 'g'),'').
+                replace(Y.DOM._getRegExp('^' + DIFF_DELIM), '').
+                replace(Y.DOM._getRegExp(DIFF_DELIM + '$'), '').
+                split(DIFF_DELIM + DIFF_DELIM);
+        } else {
+            Y.log('invalid arg passed to diff: ' + a + ' or ' + b, 'warn', 'Array');
+        }
 };
 
 Y.Array.diff = function(a, b) {
@@ -41,13 +42,16 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var g_nodes = [],
+// "globals"
+var g_nodelists = [],
     g_slice = Array.prototype.slice,
+
+    UID = '_yuid',
 
     NodeList = function(config) {
         NodeList.superclass.constructor.apply(this, arguments);
     };
-
+// end "globals"
 
 NodeList.NAME = 'NodeList';
 
@@ -60,7 +64,7 @@ NodeList.ATTRS = {
 NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
-    var nodes = g_nodes[instance._yuid];
+    var nodes = g_nodelists[instance[UID]];
     if (nodes && nodes.length) {
         Y.Array.each(nodes, fn, context || instance);
     } else {
@@ -70,32 +74,33 @@ NodeList.each = function(instance, fn, context) {
 
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
+    var tmp = NodeList._tmpNode =
+            NodeList._tmpNode || Y.Node.create('<div>');
     NodeList.each(this, function(node) {
-    var instance = Y.Node._instances[node._yuid];
+        var instance = Y.Node._instances[node[UID]];
         // TODO: use node.set if instance exists
-        if (instance) {
-            instance.set(attr, val);
-        } else {
-            node[attr] = val;
+        if (!instance) {
+            g_nodes[tmp[UID]] = node;
+            instance = tmp;
         }
+        instance.set(attr, val);
     });
 };
 
 // call with instance context
 NodeList.DEFAULT_GETTER = function(attr) {
-    var ret = [],
-        instance,
-        val;
+    var tmp = NodeList._tmpNode =
+            NodeList._tmpNode || Y.Node.create('<div>'),
+        ret = [];
 
     // TODO: use node.get if instance exists
     NodeList.each(this, function(node) {
-        instance = Y.Node._instances[node._yuid];
-        if (instance) {
-            val = instance.get(attr);
-        } else {
-            val = node[attr];
+        var instance = Y.Node._instances[node[UID]];
+        if (!instance) {
+            g_nodes[tmp[UID]] = node;
+            instance = tmp;
         }
-        ret[ret.length] = val;
+        ret[ret.length] = instance.get(attr);
     });
     return ret;
 };
@@ -112,8 +117,8 @@ Y.mix(NodeList.prototype, {
             nodes = Y.Selector.query(nodes, doc);
         }
 
-        NodeList._instances[this._yuid] = this;
-        g_nodes[this._yuid] = nodes;
+        NodeList._instances[this[UID]] = this;
+        g_nodelists[this[UID]] = nodes;
     },
 
     // TODO: move to Attribute
@@ -141,7 +146,7 @@ Y.mix(NodeList.prototype, {
         var args = g_slice.call(arguments, 0),
             ret;
 
-        args.splice(2, 0, g_nodes[this._yuid]);
+        args.splice(2, 0, g_nodelists[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
             Y.Event.attach.apply(Y.Event, args);
         }
@@ -150,31 +155,31 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this._yuid] = [];
-        delete NodeList._instances[this._yuid];
+        g_nodelists[this[UID]] = [];
+        delete NodeList._instances[this[UID]];
     },
 
     refresh: function() {
         var doc;
         if (this._query) {
-            if (g_nodes[this._yuid] &&
-                g_nodes[this._yuid][0] && 
-                g_nodes[this._yuid][0].ownerDocument) {
-                doc = g_nodes[this._yuid][0].ownerDocument;
+            if (g_nodelists[this[UID]] &&
+                    g_nodelists[this[UID]][0] && 
+                    g_nodelists[this[UID]][0].ownerDocument) {
+                doc = g_nodelists[this[UID]][0].ownerDocument;
             }
 
-            g_nodes[this._yuid] = Y.Selector.query(this._query, doc || Y.config.doc);        
+            g_nodelists[this[UID]] = Y.Selector.query(this._query, doc || Y.config.doc);        
         }
     },
 
     size: function() {
-        return g_nodes[this._yuid].length;
+        return g_nodelists[this[UID]].length;
     },
 
     toString: function() {
         var str = '',
-            errorMsg = this._yuid + ': not bound to any nodes',
-            nodes = g_nodes[this._yuid] || {};
+            errorMsg = this[UID] + ': not bound to any nodes',
+            nodes = g_nodelists[this[UID]] || {};
 
         if (nodes) {
             var node = nodes[0];
@@ -195,17 +200,20 @@ Y.mix(NodeList.prototype, {
     },
 
     _addDOMAttr: function(attr) {
-        // TODO: block non-dom attributes/properties
-        this.addAttr(attr, {
-            getter: function() {
-                return NodeList.DEFAULT_GETTER.call(this, attr);
-            },
+        var nodes = g_nodelists[this[UID]] || [];
+        // for efficiency, only test if first node has DOM property 
+        if (nodes[0] && nodes[0][attr] !== undefined) {
+            this.addAttr(attr, {
+                getter: function() {
+                    return NodeList.DEFAULT_GETTER.call(this, attr);
+                },
 
-            setter: function(val) {
-                NodeList.DEFAULT_SETTER.call(this, attr, val);
-            },
-            //value: val
-        });
+                setter: function(val) {
+                    NodeList.DEFAULT_SETTER.call(this, attr, val);
+                },
+                //value: val
+            });
+        }
     }
 }, true);
 
@@ -220,107 +228,144 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodelist.size() ? nodelist : null;
 };
-    /**
-     * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
-     * @module node
-     * @submodule node-base
-     */    
+/**
+ * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
+ * @module node
+ * @submodule node-base
+ */    
 
-    /**
-     * The NodeList class provides a wrapper for manipulating DOM NodeLists.
-     * NodeList properties can be accessed via the set/get methods.
-     * Use Y.get() to retrieve NodeList instances.
-     *
-     * <strong>NOTE:</strong> NodeList properties are accessed using
-     * the <code>set</code> and <code>get</code> methods.
-     *
-     * @class NodeList
-     * @constructor
-     */
+/**
+ * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+ * NodeList properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve NodeList instances.
+ *
+ * <strong>NOTE:</strong> NodeList properties are accessed using
+ * the <code>set</code> and <code>get</code> methods.
+ *
+ * @class NodeList
+ * @constructor
+ */
 
+// "globals"
 var g_nodes = [],
     g_slice = Array.prototype.slice,
 
+    DOT = '.',
     NODE_NAME = 'nodeName',
+    UID = '_yuid',
 
-Node = function() {
-    Node.superclass.constructor.apply(this, arguments);
-};
+    Node = function(config) {
+        this[UID] = Y.stamp(config.node);
+        g_nodes[this[UID]] = config.node;
+        Node._instances[this[UID]] = this;
+
+        SuperConstr.apply(this, arguments);
+    },
+
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype;
+// end "globals"
 
 Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
     click: true
-
 };
 
-Node._instances = [];
+Node._instances = {};
+
+Node.getDOMNode = function(instance) {
+    return g_nodes[instance[UID]];
+};
 
 Node.get = function(node, doc, restrict) {
-    var instance = Node._instances[node.id] || new Node({
-        node: node,
-        doc: doc,
-        restrict: restrict
-    });
+    var instance = null;
+    node = (typeof node === 'string') ? Y.Selector.query(node, doc, true) : node;
 
-    // null node returns null instance
-    return (g_nodes[instance._yuid]) ? instance : null;
+    if (node) {
+        instance = Node._instances[node[UID]] || // reuse exising instances
+                new Node({
+                    node: node,
+                    restricted: restrict
+                });
+    }
+    return instance;
+};
+
+Node.create = function() {
+    return Y.get(Y.DOM.create.apply(Y.DOM, arguments));
 };
 
 Node.ATTRS = {
+/*
     style: {
+        setter: function(val, e) {
+            var node = g_nodes[this[UID]],
+                name = e.attrName,
+                path;
+
+            if (node) {
+               if (typeof val === 'string' && name.indexOf(DOT) > -1) {
+                    path = name.split('.');
+                    Y.DOM.setStyle(node, path[1], val);
+                } else { // assume multiple styles
+                    Y.DOM.setStyles(node, val);
+                }
+            } else {
+                Y.log('unable to set style: ' + name + ' on node :' + this, 'warn', 'Node');
+            }
+        },
         value: {}
+    },
+*/
+    restricted: {
+        writeOnce: true,
+        value: false
     }
 };
 
 // call with instance context
-Node.DEFAULT_SETTER = function(attr, val) {
-    var node = g_nodes[this._yuid];
-    //node[attr] = val;
+Node.DEFAULT_SETTER = function(name, val) {
+    var node = g_nodes[this[UID]],
+        strPath, path;
+
+    if (name.indexOf(DOT) !== -1) {
+        strPath = name;
+        path = name.split(DOT);
+        name = path.shift();
+
+        if (path) {
+           val = Y.Object.setValue(node[name], path, val);
+
+           if (val === undefined) {
+               Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'attribute');
+               allowSet = false;
+           }
+        }
+    } else {
+        node[name] = val;    
+    }
+    return val;
 };
 
 // call with instance context
 Node.DEFAULT_GETTER = function(attr) {
-    var node = g_nodes[this._yuid];
+    var node = g_nodes[this[UID]];
     return node[attr];
 };
 
 Y.extend(Node, Y.Base);
 
 Y.mix(Node.prototype, {
-    initializer: function(config) {
-        var doc = config.doc || Y.config.doc,
-            node = config.node || null,
-            uid;
-
-        if (typeof node === 'string') {
-            node = Y.Selector.query(node, doc, true);
-        }
-
-        if (node) {
-            uid = node._yuid || Y.guid();
-            try {
-            } catch(e) {
-                // IE: expandos only allowed on HTMLElements
-            }
-
-            this._yuid = uid;
-            Node._instances[uid] = this;
-            g_nodes[uid] = node;
-        } else {
-            Y.log('node not found: ' + config.node, 'error', 'Node');
-        }
-    },
-
     // TODO: move to Attribute
     hasAttr: function(attr) {
-        return this._conf.get(attr);  
+        return !!this._conf.get(attr);  
     },
 
     toString: function() {
         var str = '',
-            errorMsg = this._yuid + ': not bound to a node',
-            node = g_nodes[this._yuid] || {};
+            errorMsg = this[UID] + ': not bound to a node',
+            node = g_nodes[this[UID]];
 
         if (node) {
             str += node[NODE_NAME];
@@ -333,12 +378,13 @@ Y.mix(Node.prototype, {
             }
 
             // TODO: add yuid?
+            str += ' ' + this[UID];
         }
         return str || errorMsg;
     },
 
     _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this._yuid],
+        var domNode = g_nodes[this[UID]],
             topAttr = attr.split('.')[0]; // support foo.bar
 
         if (domNode && domNode[topAttr] !== undefined) {
@@ -348,7 +394,7 @@ Y.mix(Node.prototype, {
                 },
 
                 setter: function(val) {
-                    Node.DEFAULT_SETTER.call(this, attr, val);
+                    return Node.DEFAULT_SETTER.call(this, attr, val);
                 }
             });
         } else {
@@ -356,16 +402,19 @@ Y.mix(Node.prototype, {
         }
     },
 
-    on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0),
-            ret;
+    addNode: function(node, position) {
+        //return Y.DOM.insertNode(node, position);
+    },
 
-        args.splice(2, 0, g_nodes[this._yuid]);
+    on: function(type, fn, context, arg) {
+        var args = g_slice.call(arguments, 0);
+
+        args.splice(2, 0, g_nodes[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
             Y.Event.attach.apply(Y.Event, args);
         }
 
-        return Node.superclass.constructor.prototype.on.apply(this, arguments);
+        return SuperConstrProto.on.apply(this, arguments);
     },
 
     get: function(attr) {
@@ -373,7 +422,7 @@ Y.mix(Node.prototype, {
             this._addDOMAttr(attr);
         }
 
-        return Node.superclass.constructor.prototype.get.apply(this, arguments);
+        return SuperConstrProto.get.apply(this, arguments);
     },
 
     set: function(attr, val) {
@@ -381,12 +430,12 @@ Y.mix(Node.prototype, {
             this._addDOMAttr(attr);
         }
 
-        Node.superclass.constructor.prototype.set.apply(this, arguments);
+        SuperConstrProto.set.apply(this, arguments);
     },
 
     destructor: function() {
-        g_nodes[this._yuid] = [];
-        delete Node._instances[this._yuid];
+        g_nodes[this[UID]] = [];
+        delete Node._instances[this[UID]];
     }
 }, true);
 
