@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI: DragDrop</title>
+</head>
+<body class="yui-skin-sam">
+<script type="text/javascript" src="../../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
+
+<p>This test creates a class with 18 attributes and extends from Y.Base. (basic principle of Y.DD.Drag without the setters doing anything)</p>
+<p>Looping over 30 items and creating 2 objects per loop (one Drag and one Drop), yelds about 30ms per creation.</p>
+<div id="results"></div>
+
+<script>
+var yConfig = {
+    base: '../../../build/',
+    allowRollup: false,
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
+};
+
+YUI(yConfig).use('base', 'node', function(Y) {
+    var res = document.getElementById('results');
+    var Test = function() {
+        if (Test.superclass) {
+            Test.superclass.constructor.apply(this, arguments);
+        }
+    };
+    Test.NAME = 'drag';
+    /*{{{ Test.ATTRS */
+    Test.ATTRS = {
+        /**
+        * @attribute node
+        * @description Y.Node instanace to use as the element to initiate a drag operation
+        * @type Node
+        */
+        node: {
+            setter: function(node) {
+                return n;
+            }
+        },
+        /**
+        * @attribute dragNode
+        * @description Y.Node instanace to use as the draggable element, defaults to node
+        * @type Node
+        */
+        dragNode: {
+            setter: function(node) {
+                return n;
+            }
+        },
+        /**
+        * @attribute offsetNode
+        * @description Offset the drag element by the difference in cursor position: default true
+        * @type Boolean
+        */
+        offsetNode: {
+            value: true
+        },
+        /**
+        * @attribute clickPixelThresh
+        * @description The number of pixels to move to start a drag operation, default is 3.
+        * @type Number
+        */
+        clickPixelThresh: {
+            value: 3
+        },
+        /**
+        * @attribute clickTimeThresh
+        * @description The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+        * @type Number
+        */
+        clickTimeThresh: {
+            value: 3
+        },
+        /**
+        * @attribute lock
+        * @description Set to lock this drag element so that it can't be dragged: default false.
+        * @type Boolean
+        */
+        lock: {
+            value: false,
+            setter: function(lock) {
+                return lock;
+            }
+        },
+        /**
+        * @attribute data
+        * @description A payload holder to store arbitrary data about this drag object, can be used to store any value.
+        * @type Mixed
+        */
+        data: {
+            value: false
+        },
+        /**
+        * @attribute move
+        * @description If this is false, the drag element will not move with the cursor: default true. Can be used to "resize" the element.
+        * @type Boolean
+        */
+        move: {
+            value: true
+        },
+        /**
+        * @attribute useShim
+        * @description Use the protective shim on all drag operations: default true. Only works with dd-ddm, not dd-ddm-base.
+        * @type Boolean
+        */
+        useShim: {
+            value: true
+        },
+        /**
+        * @attribute activeHandle
+        * @description This config option is set by Drag to inform you of which handle fired the drag event (in the case that there are several handles): default false.
+        * @type Node
+        */
+        activeHandle: {
+            value: false
+        },
+        /**
+        * @attribute primaryButtonOnly
+        * @description By default a drag operation will only begin if the mousedown occurred with the primary mouse button. Setting this to false will allow for all mousedown events to trigger a drag.
+        * @type Boolean
+        */
+        primaryButtonOnly: {
+            value: true
+        },
+        /**
+        * @attribute dragging
+        * @description This attribute is not meant to be used by the implementor, it is meant to be used as an Event tracker so you can listen for it to change.
+        * @type Boolean
+        */
+        dragging: {
+            value: false
+        },
+        parent: {
+            value: false
+        },
+        /**
+        * @attribute target
+        * @description This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
+        * @type Boolean
+        */
+        target: {
+            value: false,
+            setter: function(config) {
+
+                return config;
+            }
+        },
+        /**
+        * @attribute dragMode
+        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of this Drag instance.
+        * @type String
+        */
+        dragMode: {
+            value: null,
+            setter: function(mode) {
+                return false;
+            }
+        },
+        /**
+        * @attribute groups
+        * @description Array of groups to add this drag into.
+        * @type Array
+        */
+        groups: {
+            value: ['default'],
+            getter: function() {
+                return false;
+            },
+            setter: function(g) {
+                return g;
+            }
+        },
+        /**
+        * @attribute handles
+        * @description Array of valid handles to add. Adding something here will set all handles, even if previously added with addHandle
+        * @type Array
+        */
+        handles: {
+            value: null,
+            setter: function(g) {
+                return g;
+            }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: null
+        }
+    };
+    /* }}} */
+    
+    Y.extend(Test, Y.Base, {
+        foo: function() {}
+    });
+
+    for (var i = 0; i < 30; i++) {
+        var start = new Date().getTime();
+        new Test();
+        var end1 = new Date().getTime();
+        new Test();
+        var end = new Date().getTime();
+        res.innerHTML += '#' + i + '(a): ' + (end1 - start) + 'ms';
+        res.innerHTML += ' :: (b): ' + (end - start) + 'ms<br>';
+        
+    }
+});
+</script>
+</body>
+</html>
