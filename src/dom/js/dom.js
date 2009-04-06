@@ -29,11 +29,9 @@ var NODE_TYPE = 'nodeType',
     TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
-    UNDEFINED = undefined;
+    UNDEFINED = undefined,
 
-var re_tag = /<([a-z]+)/i;
-
-var templateCache = {};
+    re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
     /**
@@ -331,13 +329,55 @@ Y.DOM = {
         return Y.DOM.contains(doc.documentElement, element);
     },
 
-// TODO: dont return collection
-    create: function(html, doc) {
+    /**
+     * Inserts the new node as the previous sibling of the reference node 
+     * @method insertBefore
+     * @param {String | HTMLElement} newNode The node to be inserted
+     * @param {String | HTMLElement} referenceNode The node to insert the new node before 
+     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
+     */
+    insertBefore: function(newNode, referenceNode) {
+        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
+            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            return null;
+        }
+        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+    },
+
+    /**
+     * Inserts the new node as the next sibling of the reference node 
+     * @method insertAfter
+     * @param {String | HTMLElement} newNode The node to be inserted
+     * @param {String | HTMLElement} referenceNode The node to insert the new node after 
+     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
+     */
+    insertAfter: function(newNode, referenceNode) {
+        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
+            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            return null;
+        }       
+
+        if (referenceNode[NEXT_SIBLING]) {
+            return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
+        } else {
+            return referenceNode[PARENT_NODE].appendChild(newNode);
+        }
+    },
+
+    /**
+     * Creates a new dom node using the provided markup string. 
+     * @method create
+     * @param {String} html The markup used to create the element
+     * @param {HTMLDocument} doc An optional document context 
+     * @param {Boolean} execScripts Whether or not any provided scripts should be executed.
+     * If execScripts is false, all scripts are stripped.
+     */
+    create: function(html, doc, execScripts) {
         doc = doc || Y.config.doc;
-        var m = re_tag.exec(html);
-        var create = Y.DOM._create,
+        var m = re_tag.exec(html),
+            create = Y.DOM._create,
             custom = Y.DOM.creators,
-            tag, ret;
+            tag, node;
 
         if (m && custom[m[1]]) {
             if (typeof custom[m[1]] === 'function') {
@@ -346,9 +386,10 @@ Y.DOM = {
                 tag = custom[m[1]];
             }
         }
-        ret = create(html, doc, tag);
-        return (ret.childNodes.length > 1) ? ret.childNodes : ret.childNodes[0]; // collection or item
-        //return ret.firstChild;
+
+        node = create(html, doc, tag);
+
+        return node;
     },
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
@@ -397,11 +438,91 @@ Y.DOM = {
         return ret;
     },
 
-    _create: function(html, doc, tag) {
-        tag = tag || 'div';
-        var frag = templateCache[tag] || doc.createElement(tag);
+    _create: function(html, doc, fragTag) {
+        fragTag = fragTag || 'div';
+        var frag = doc.createElement(fragTag);
         frag.innerHTML = Y.Lang.trim(html);
-        return frag;
+        return frag.removeChild(frag[FIRST_CHILD]);
+    },
+
+    innerHTML: function(node, content, execScripts) {
+        Y.DOM.insertNode(node, content, 'innerHTML', execScripts);
+    },
+
+    insertNode: function(node, content, where, execScripts) {
+        var scripts,
+            newNode = Y.DOM.create(content);
+
+        switch(where) {
+            case 'innerHTML': 
+                node.innerHTML = content; // TODO: purge?
+                newNode = node;
+                break;
+            case 'beforeBegin':
+                Y.DOM.insertBefore(newNode, node);
+                break;
+            case 'afterBegin':
+                Y.DOM.insertBefore(newNode, node[FIRST_CHILD]);
+                break;
+            case 'afterEnd':
+                Y.DOM.insertAfter(newNode, node);
+                break;
+            default: // and 'beforeEnd'
+                node.appendChild(newNode);
+        }
+
+        if (execScripts) {
+            if (newNode.nodeName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
+                scripts = [newNode]; // execute the new script
+            } else {
+                scripts = newNode.getElementsByTagName('script');
+            }
+            Y.DOM._execScripts(scripts);
+        } else { // prevent any scripts from being injected
+            Y.DOM._stripScripts(newNode);
+        }
+
+        return newNode;
+    },
+
+    _stripScripts: function(node) {
+        var scripts = node.getElementsByTagName('script');
+        for (var i = 0, script; script = scripts[i++];) {
+            script.parentNode.removeChild(script);
+        }
+    },
+
+    _execScripts: function(scripts, startIndex) {
+        var newScript;
+        startIndex = startIndex || 0;
+
+        for (var i = startIndex, script; script = scripts[i++];) {
+            newScript = script.ownerDocument.createElement('script');
+            script.parentNode.replaceChild(newScript, script);
+            if (script.text) {
+                newScript.text = script.text;
+            } else if (script.src) {
+                newScript.src = script.src;
+
+                 // "pause" while loading to ensure exec order 
+                // FF reports typeof onload as "undefined", so try IE first
+                if (typeof newScript.onreadystatechange !== 'undefined') {
+                    newScript.onreadystatechange = function() {
+                        if (/loaded|complete/.test(script.readyState)) {
+                            event.srcElement.onreadystatechange = null; 
+                            // timer to help ensure exec order
+                            setTimeout(function() {Y.DOM._execScripts(scripts, i++)}, 0);
+                        }
+                    };
+                } else {
+                    newScript.onload = function(e) {
+                        e.target.onload = null; 
+                        Y.DOM._execScripts(scripts, i++);
+                    };
+                }
+                return; // NOTE: early return to chain async loading
+            }
+        }
     },
 
     /**
@@ -513,31 +634,31 @@ Y.DOM = {
 (function() {
     var creators = Y.DOM.creators,
         create = Y.DOM.create,
-        re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/;
+        re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
 
-    var TABLE_OPEN = '<table>',
+        TABLE_OPEN = '<table>',
         TABLE_CLOSE = '</table>';
 
     if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
         Y.mix(creators, {
             option: function(html, doc) {
                 var frag = create('<select>' + html + '</select>');
-                return frag;
+                return frag[FIRST_CHILD];
             },
 
             tr: function(html, doc) {
                 var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
-                return frag.firstChild;
+                return frag[FIRST_CHILD];
             },
 
             td: function(html, doc) {
                 var frag = creators.tr('<tr>' + html + '</tr>', doc);
-                return frag.firstChild;
+                return frag[FIRST_CHILD];
             }, 
 
             tbody: function(html, doc) {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-                return frag;
+                return frag[FIRST_CHILD];
             },
 
             legend: 'fieldset'
@@ -547,22 +668,32 @@ Y.DOM = {
     }
 
     if (Y.UA.ie) {
-        // TODO: allow multiples ("<link><link>")
-        creators.col = creators.script = creators.link = Y.DOM._IESimpleCreate; 
+        creators.col = creators.link = Y.DOM._IESimpleCreate;
 
+        Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
-        creators.tbody = function(html, doc) {
-            var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-            var tb = frag.children.tags('tbody')[0];
-            if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
-                tb.parentNode.removeChild(tb);
+            tbody: function(html, doc) {
+                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
+                    tb = frag.children.tags('tbody')[0];
+
+                if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
+                    tb[PARENT_NODE].removeChild(tb);
+                }
+                return frag;
+            },
+
+            script: function(html, doc) {
+                var frag = doc.createElement('div');
+
+                frag.innerHTML = '-' + html;
+                return frag.removeChild(frag[FIRST_CHILD][NEXT_SIBLING]);
             }
-            return frag;
-        };
+
+        });
 
     }
 
-    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
+    if (Y.UA.gecko || Y.UA.ie) {
         Y.mix(creators, {
                 th: creators.td,
                 thead: creators.tbody,
