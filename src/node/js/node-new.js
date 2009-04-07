@@ -49,6 +49,14 @@ Node.getDOMNode = function(instance) {
     return g_nodes[instance[UID]];
 };
 
+Node.importMethod = function(host, name) {
+    if (host && name) {
+        Node.prototype[name] = function() {
+            var args = g_slice.call(arguments); 
+        };
+    }
+};
+
 Node.get = function(node, doc, restrict) {
     var instance = null;
     node = (typeof node === 'string') ? Y.Selector.query(node, doc, true) : node;

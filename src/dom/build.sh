@@ -24,6 +24,14 @@ echo "Building dom-screen"
 echo "****************************************"
 ant -q all
 
+ln -sf build.selector-native.xml build.xml
+wait
+ln -sf build.selector-native.properties build.properties
+echo "****************************************"
+echo "Building selector-native"
+echo "****************************************"
+ant -q all
+
 ln -sf build.selector.xml build.xml
 wait
 ln -sf build.selector.properties build.properties

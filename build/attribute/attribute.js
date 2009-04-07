@@ -108,8 +108,6 @@ YUI.add('attribute', function(Y) {
 
         DOT = ".",
         CHANGE = "Change",
-        GET = "get",
-        SET = "set",
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
@@ -276,7 +274,7 @@ YUI.add('attribute', function(Y) {
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GETTER) || conf.get(name, GET);
+            getFn = conf.get(name, GETTER);
 
             val = (getFn) ? getFn.call(this, val) : val;
             val = (path) ? O.getValue(val, path) : val;
@@ -454,7 +452,7 @@ YUI.add('attribute', function(Y) {
                 name = e.attrName,
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SETTER) || conf.get(name, SET),
+                setFn = conf.get(name, SETTER),
                 storedVal,
                 retVal;
 

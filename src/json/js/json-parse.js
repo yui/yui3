@@ -23,7 +23,18 @@
  * @static
  */
 
+
 // All internals kept private for security reasons
+
+
+    /*
+     * Alias to native browser implementation of the JSON object if available.
+     *
+     * @property Native
+     * @type {Object}
+     * @private
+     */
+var Native = Y.config.win.JSON,
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -35,7 +46,7 @@
      * @type {RegExp}
      * @private
      */
-var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
 
     /**
@@ -72,55 +83,65 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/;
+    _INVALID = /[^\],:{}\s]/,
+    
+    /**
+     * Test for JSON string of simple data string, number, boolean, or null.
+     * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
+     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
+     *
+     * @property _SIMPLE
+     * @type {RegExp}
+     * @protected
+     */
+    _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
 
-/**
- * Traverses nested objects, applying a reviver function to each (key,value)
- * from the scope if the key:value's containing object.  The value returned
- * from the function will replace the original value in the key:value pair.
- * If the value returned is undefined, the key will be omitted from the
- * returned object.
- * @method _revive
- * @param data {MIXED} Any JavaScript data
- * @param reviver {Function} filter or mutation function
- * @return {MIXED} The results of the filtered data
- * @private
- */
-function _revive(data, reviver) {
-    var walk = function (o,key) {
-        var k,v,value = o[key];
-        if (value && typeof value === 'object') {
-            for (k in value) {
-                if (value.hasOwnProperty(k)) {
-                    v = walk(value, k);
-                    if (v === undefined) {
-                        delete value[k];
-                    } else {
-                        value[k] = v;
+    /**
+     * Replaces specific unicode characters with their appropriate \unnnn
+     * format. Some browsers ignore certain characters during eval.
+     *
+     * @method escapeException
+     * @param c {String} Unicode character
+     * @return {String} the \unnnn escapement of the character
+     * @private
+     */
+    _escapeException = function (c) {
+        return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+    },
+
+    /**
+     * Traverses nested objects, applying a reviver function to each (key,value)
+     * from the scope if the key:value's containing object.  The value returned
+     * from the function will replace the original value in the key:value pair.
+     * If the value returned is undefined, the key will be omitted from the
+     * returned object.
+     * @method _revive
+     * @param data {MIXED} Any JavaScript data
+     * @param reviver {Function} filter or mutation function
+     * @return {MIXED} The results of the filtered data
+     * @private
+     */
+    _revive = function (data, reviver) {
+        var walk = function (o,key) {
+            var k,v,value = o[key];
+            if (value && typeof value === 'object') {
+                for (k in value) {
+                    if (value.hasOwnProperty(k)) {
+                        v = walk(value, k);
+                        if (v === undefined) {
+                            delete value[k];
+                        } else {
+                            value[k] = v;
+                        }
                     }
                 }
             }
-        }
-        return reviver.call(o,key,value);
-    };
+            return reviver.call(o,key,value);
+        };
 
-    return typeof reviver === 'function' ? walk({'':data},'') : data;
-}
+        return typeof reviver === 'function' ? walk({'':data},'') : data;
+    },
 
-/**
- * Replaces specific unicode characters with their appropriate \unnnn format.
- * Some browsers ignore certain characters during eval.
- *
- * @method escapeException
- * @param c {String} Unicode character
- * @return {String} the \unnnn escapement of the character
- * @private
- */
-function escapeException(c) {
-    return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-}
-
-Y.mix(Y.namespace('JSON'),{
     /**
      * Parse a JSON string, returning the native JavaScript representation.
      * @param s {string} JSON string data
@@ -132,15 +153,16 @@ Y.mix(Y.namespace('JSON'),{
      * @static
      * @public
      */
-    parse : function (s,reviver) {
-        // Ensure valid JSON
+    // JavaScript implementation in lieu of native browser support.  Based on
+    // the json2.js library from http://json.org
+    _parse = function (s,reviver) {
         if (typeof s === 'string') {
             // Replace certain Unicode characters that are otherwise handled
             // incorrectly by some browser implementations.
             // NOTE: This modifies the input if such characters are found!
-            s = s.replace(_UNICODE_EXCEPTIONS, escapeException);
+            s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
-            // Test for validity
+            // Test for any remaining invalid characters
             if (!_INVALID.test(s.replace(_ESCAPES,'@').
                                  replace(_VALUES,']').
                                  replace(_BRACKETS,''))) {
@@ -151,24 +173,35 @@ Y.mix(Y.namespace('JSON'),{
             }
         }
 
-        // The text is not JSON parsable
-        Y.JSON.handleParseError(s,reviver);
-
         throw new SyntaxError('JSON.parse');
     },
+    
+    test;
 
-    /**
-     * Hook for plugins to add more detailed error reporting.  Note this will
-     * only catch a subset of JSON format errors.  Others are expressed via
-     * failure to eval.
-     *
-     * @method handleParseError
-     * @param s {String} the JSON string
-     * @param reviver {Function} (optional) the reviver passed to parse(..)
-     * @static
-     * @protected
-     */
-    handleParseError : function (s,reviver) {
-        Y.log("Invalid JSON passed to parse","warn","JSON");
+
+// Test the level of native browser support
+if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
+    try {
+        test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
+        switch (test.x) {
+            case 1 : // Reviver not supported (currently FF3.1b2)
+                _parse = function (s,reviver) {
+                    return _SIMPLE.test(s) ?
+                            eval('(' + s + ')') :
+                            _revive(Native.parse(s), reviver);
+                };
+                break;
+
+            case 2 : // Full support (currently IE8)
+                _parse = function (s, reviver) {
+                    return Native.parse(s, reviver);
+                };
+                break;
+
+            // default is JS implementation
+        }
     }
-});
+    catch (e) {} // defer to JS implementation
+}
+
+Y.mix(Y.namespace('JSON'),{ parse : _parse });
