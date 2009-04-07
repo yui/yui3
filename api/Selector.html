@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dom  Selector   (YUI Library)</title>
+	<title>API: selector  Selector   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>Selector Utility&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dom.html" title="dom">dom</a>
+            &gt; <a href="./module_selector.html" title="selector">selector</a>
                  &gt; Selector 
                 
         <form onsubmit="return false">
@@ -79,24 +79,6 @@ that conflict with JS reserved words.
                                     </div>
      
                                         
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_document">
-                                    <h4><a name="property_document" property="yui:name">document</a>
-                                        - <code><span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Default document for use queries
-                                        </div>
-                                    </div>
-     
-                                        
-                                    <div class="default" property="yui:defaultValue">
-                                        Default Value: window.document
-                                    </div>        
 
 
                                     <hr />
@@ -299,9 +281,9 @@ Combinator is attached to left-hand selector.
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">root</span>
-                                                        &lt;<span property="yui:type">HTMLElement | String</span>&gt;
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> optional An id or HTMLElement to start the query from. Defaults to Selector.document.</span>
+                                                        <span property="yui:description"> optional An HTMLElement to start the query from. Defaults to Y.config.doc</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">firstOnly</span>
@@ -418,7 +400,7 @@ Combinator is attached to left-hand selector.
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
-                                <li class="selected"><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -432,6 +414,8 @@ Combinator is attached to left-hand selector.
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class="selected"><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css1.html" title="selector-css1">selector-css1</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
@@ -447,7 +431,6 @@ Combinator is attached to left-hand selector.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
                                 <li class="selected"><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
@@ -455,14 +438,7 @@ Combinator is attached to left-hand selector.
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
-                                <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
-                                <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
-                                <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
-                                <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
-                                <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
                                 <li class=""><a href="dom.js.html" title="dom.js">dom.js</a></li>
-                                <li class=""><a href="selector.js.html" title="selector.js">selector.js</a></li>
                         </ul>
                     </div>
 
@@ -470,7 +446,6 @@ Combinator is attached to left-hand selector.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_attrAliases" title="attrAliases">attrAliases</a></li>
-                                <li class=""><a href="#property_document" title="document">document</a></li>
                                 <li class=""><a href="#property_operators" title="operators">operators</a></li>
                                 <li class=""><a href="#property_pseudos" title="pseudos">pseudos</a></li>
                                 <li class=""><a href="#property_shorthand" title="shorthand">shorthand</a></li>
@@ -498,7 +473,7 @@ Combinator is attached to left-hand selector.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "", "host": "Selector", "name": "document", "url": "Selector.html#property_document", "type": "property"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}];
 </script>
 </body>
 </html>

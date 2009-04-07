@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dom   dom-region.js  (YUI Library)</title>
+	<title>API: dom   selector-css3.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                 
-                 &gt; dom-region.js (source view) 
+                 &gt; selector-css3.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,163 +47,145 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds position and region management functionality to DOM.</span>
-<span class="c"> * @module dom</span>
-<span class="c"> * @submodule dom-screen</span>
-<span class="c"> * @for DOM</span>
-<span class="c"> */</span>
+<div class="highlight" ><pre><span class="c">/*</span>
+<span class="c">    an+b = get every _a_th node starting at the _b_th</span>
+<span class="c">    0n+b = no repeat (&quot;0&quot; and &quot;n&quot; may both be omitted (together) , e.g. &quot;0n+1&quot; or &quot;1&quot;, not &quot;0+1&quot;), return only the _b_th element</span>
+<span class="c">    1n+b =  get every element starting from b (&quot;1&quot; may may be omitted, e.g. &quot;1n+0&quot; or &quot;n+0&quot; or &quot;n&quot;)</span>
+<span class="c">    an+0 = get every _a_th element, &quot;0&quot; may be omitted </span>
+<span class="c">*/</span>
 
-<span class="k">var</span> <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>
-    <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
-    <span class="nx">TOP</span> <span class="o">=</span> <span class="s1">&#39;top&#39;</span><span class="o">,</span>
-    <span class="nx">RIGHT</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span><span class="o">,</span>
-    <span class="nx">BOTTOM</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span><span class="o">,</span>
-    <span class="nx">LEFT</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span><span class="o">,</span>
-    <span class="nx">TAG_NAME</span> <span class="o">=</span> <span class="s1">&#39;tagName&#39;</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span> <span class="o">=</span> <span class="sr">/^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/</span><span class="o">;</span>
 
-<span class="k">var</span> <span class="nx">getOffsets</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r1</span><span class="o">,</span> <span class="nx">r2</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">r1</span><span class="o">[</span><span class="nx">TOP</span><span class="o">],</span> <span class="nx">r2</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]),</span>
-        <span class="nx">r</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">r1</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">],</span> <span class="nx">r2</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]),</span>
-        <span class="nx">b</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">r1</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">],</span> <span class="nx">r2</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]),</span>
-        <span class="nx">l</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">r1</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">],</span> <span class="nx">r2</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]),</span>
-        <span class="nx">ret</span> <span class="o">=</span> <span class="o">{};</span>
-    
-    <span class="nx">ret</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
-    <span class="nx">ret</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">;</span>
-    <span class="nx">ret</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">=</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="nx">ret</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">l</span><span class="o">;</span>
-    <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">expr</span><span class="o">);</span>
+    <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nb">RegExp</span><span class="o">.</span><span class="nx">$1</span><span class="o">,</span> <span class="m">10</span><span class="o">),</span> <span class="c">// include every _a_ elements (zero means no repeat, just first _a_)</span>
+<span class="c"></span>        <span class="nx">n</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">.</span><span class="nx">$2</span><span class="o">,</span> <span class="c">// &quot;n&quot;</span>
+<span class="c"></span>        <span class="nx">oddeven</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">.</span><span class="nx">$3</span><span class="o">,</span> <span class="c">// &quot;odd&quot; or &quot;even&quot;</span>
+<span class="c"></span>        <span class="nx">b</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nb">RegExp</span><span class="o">.</span><span class="nx">$4</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">||</span> <span class="m">0</span><span class="o">,</span> <span class="c">// start scan from element _b_</span>
+<span class="c"></span>        <span class="nx">result</span> <span class="o">=</span> <span class="o">[],</span>
+        <span class="nx">op</span><span class="o">;</span>
+
+    <span class="k">var</span> <span class="nx">siblings</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">children</span> <span class="o">||</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span> 
+    <span class="k">if</span> <span class="o">(</span><span class="nx">oddeven</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span> <span class="c">// always every other</span>
+<span class="c"></span>        <span class="nx">op</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">;</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span><span class="o">;</span>
+        <span class="nx">b</span> <span class="o">=</span> <span class="o">(</span><span class="nx">oddeven</span> <span class="o">===</span> <span class="s1">&#39;odd&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span> <span class="nb">isNaN</span><span class="o">(</span><span class="nx">a</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span> <span class="c">// start from the first or no repeat</span>
+<span class="c"></span>    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// just the first</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">b</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span> <span class="o">+</span> <span class="m">1</span><span class="o">;</span> 
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">siblings</span><span class="o">[</span><span class="nx">b</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">reverse</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">reverse</span><span class="o">;</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(!</span><span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">-</span> <span class="m">1</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">-=</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
 <span class="o">};</span>
 
-<span class="k">var</span> <span class="nx">DOM</span> <span class="o">=</span> <span class="nx">DOM</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">;</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Returns an Object literal containing the following about this element: (top, right, bottom, left)</span>
-<span class="c">     * @method region</span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     @return {Object} Object literal containing the following about this element: (top, right, bottom, left)</span>
-<span class="c">     */</span>
-    <span class="nx">region</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">getXY</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="s1">&#39;0&#39;</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
-                <span class="s1">&#39;1&#39;</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
-                <span class="nx">top</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
-                <span class="nx">right</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OFFSET_WIDTH</span><span class="o">],</span>
-                <span class="nx">bottom</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OFFSET_HEIGHT</span><span class="o">],</span>
-                <span class="nx">left</span><span class="o">:</span> <span class="nx">x</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
-                <span class="nx">height</span><span class="o">:</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OFFSET_HEIGHT</span><span class="o">],</span>
-                <span class="nx">width</span><span class="o">:</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OFFSET_WIDTH</span><span class="o">]</span>
-            <span class="o">};</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">pseudos</span><span class="o">,</span> <span class="o">{</span>
+    <span class="s1">&#39;root&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span> <span class="o">===</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Find the intersect information for the passes nodes.</span>
-<span class="c">     * @method intersect</span>
-<span class="c">     * @param {HTMLElement} element The first element </span>
-<span class="c">     * @param {HTMLElement | Object} element2 The element or region to check the interect with</span>
-<span class="c">     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)</span>
-<span class="c">     @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)</span>
-<span class="c">     */</span>
-    <span class="nx">intersect</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">altRegion</span> <span class="o">||</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">region</span> <span class="o">=</span> <span class="o">{};</span>
-
-        <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node2</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">node2</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">node2</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">}</span>
-        
-        <span class="k">var</span> <span class="nx">off</span> <span class="o">=</span> <span class="nx">getOffsets</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
-        <span class="k">return</span> <span class="o">{</span>
-            <span class="nx">top</span><span class="o">:</span> <span class="nx">off</span><span class="o">[</span><span class="nx">TOP</span><span class="o">],</span>
-            <span class="nx">right</span><span class="o">:</span> <span class="nx">off</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">],</span>
-            <span class="nx">bottom</span><span class="o">:</span> <span class="nx">off</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">],</span>
-            <span class="nx">left</span><span class="o">:</span> <span class="nx">off</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">],</span>
-            <span class="nx">area</span><span class="o">:</span> <span class="o">((</span><span class="nx">off</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">-</span> <span class="nx">off</span><span class="o">[</span><span class="nx">TOP</span><span class="o">])</span> <span class="o">*</span> <span class="o">(</span><span class="nx">off</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">-</span> <span class="nx">off</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">])),</span>
-            <span class="nx">yoff</span><span class="o">:</span> <span class="o">((</span><span class="nx">off</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">-</span> <span class="nx">off</span><span class="o">[</span><span class="nx">TOP</span><span class="o">])),</span>
-            <span class="nx">xoff</span><span class="o">:</span> <span class="o">(</span><span class="nx">off</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">-</span> <span class="nx">off</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]),</span>
-            <span class="nx">inRegion</span><span class="o">:</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span>
-        <span class="o">};</span>
-        
-    <span class="o">},</span>
-    <span class="c">/**</span>
-<span class="c">     * Check if any part of this node is in the passed region</span>
-<span class="c">     * @method inRegion</span>
-<span class="c">     * @param {Object} node2 The node to get the region from or an Object literal of the region</span>
-<span class="c">     * $param {Boolean} all Should all of the node be inside the region</span>
-<span class="c">     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-<span class="c">     * @return {Boolean} True if in region, false if not.</span>
-<span class="c">     */</span>
-    <span class="nx">inRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">region</span> <span class="o">=</span> <span class="o">{},</span>
-            <span class="nx">r</span> <span class="o">=</span> <span class="nx">altRegion</span> <span class="o">||</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-
-        <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node2</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">node2</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">node2</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">}</span>
-            
-        <span class="k">if</span> <span class="o">(</span><span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">(</span>
-                <span class="nx">r</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]</span>   <span class="o">&gt;=</span> <span class="nx">region</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]</span>   <span class="o">&amp;&amp;</span>
-                <span class="nx">r</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span>  <span class="o">&lt;=</span> <span class="nx">region</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span>  <span class="o">&amp;&amp;</span> 
-                <span class="nx">r</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]</span>    <span class="o">&gt;=</span> <span class="nx">region</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]</span>    <span class="o">&amp;&amp;</span> 
-                <span class="nx">r</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">&lt;=</span> <span class="nx">region</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span>  <span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">off</span> <span class="o">=</span> <span class="nx">getOffsets</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">off</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="nx">off</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">off</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="nx">off</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">])</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">}</span>
-            
-        <span class="o">}</span>
+    <span class="s1">&#39;nth-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Check if any part of this element is in the viewport</span>
-<span class="c">     * @method inViewportRegion</span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {Boolean} all Should all of the node be inside the region</span>
-<span class="c">     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-<span class="c">     * @return {Boolean} True if in region, false if not.</span>
-<span class="c">     */</span>
-    <span class="nx">inViewportRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">viewportRegion</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">);</span>
-            
+    <span class="s1">&#39;nth-last-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)</span>
-<span class="c">     * @method viewportRegion</span>
-<span class="c">     @return {Object} Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)</span>
-<span class="c">     */</span>
-    <span class="nx">viewportRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
-        <span class="nx">r</span><span class="o">[</span><span class="nx">TOP</span><span class="o">]</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="nx">r</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">winWidth</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">+</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="nx">r</span><span class="o">[</span><span class="nx">BOTTOM</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">+</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">winHeight</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span>
-        <span class="nx">r</span><span class="o">[</span><span class="nx">LEFT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="s1">&#39;nth-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
+    <span class="o">},</span>
+     
+    <span class="s1">&#39;nth-last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="o">},</span>
+     
+    <span class="s1">&#39;last-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">children</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="o">[</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
+    <span class="o">},</span>
 
-        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
+    <span class="s1">&#39;first-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childrenByTag</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span>
+    <span class="o">},</span>
+     
+    <span class="s1">&#39;last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childrenByTag</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="o">[</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">];</span>
+    <span class="o">},</span>
+     
+    <span class="s1">&#39;only-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">children</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">children</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="s1">&#39;only-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childrenByTag</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">).</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="s1">&#39;empty&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="s1">&#39;not&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+    <span class="o">},</span>
+
+    <span class="s1">&#39;contains&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">innerText</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">text</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="s1">&#39;checked&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">checked</span> <span class="o">===</span> <span class="kc">true</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">operators</span><span class="o">,</span> <span class="o">{</span>
+    <span class="s1">&#39;^=&#39;</span><span class="o">:</span> <span class="s1">&#39;^{val}&#39;</span><span class="o">,</span> <span class="c">// Match starts with value</span>
+<span class="c"></span>    <span class="s1">&#39;$=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}$&#39;</span><span class="o">,</span> <span class="c">// Match ends with value</span>
+<span class="c"></span>    <span class="s1">&#39;*=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}&#39;</span> <span class="c">// Match contains value as substring </span>
+<span class="c"></span><span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">combinators</span><span class="o">[</span><span class="s1">&#39;~&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">sib</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">previousSibling</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="nx">sib</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">sib</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_testToken</span><span class="o">(</span><span class="nx">sib</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">token</span><span class="o">.</span><span class="nx">previous</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="nx">sib</span> <span class="o">=</span> <span class="nx">sib</span><span class="o">.</span><span class="nx">previousSibling</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
 </pre></div>
                     </div>
 			</div>
@@ -262,11 +244,11 @@
                         <ul class="content">        
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
                                 <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
-                                <li class="selected"><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
+                                <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
                                 <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
                                 <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
                                 <li class=""><a href="selector-css1.js.html" title="selector-css1.js">selector-css1.js</a></li>
-                                <li class=""><a href="selector-css3.js.html" title="selector-css3.js">selector-css3.js</a></li>
+                                <li class="selected"><a href="selector-css3.js.html" title="selector-css3.js">selector-css3.js</a></li>
                                 <li class=""><a href="selector-native.js 
 /Y.namespace('Selector'); // allow native module to standalone
 var PARENT_NODE = 'parentNode',

@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dom   dom.js  (YUI Library)</title>
+	<title>API: selector   dom.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>Selector Utility&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dom.html" title="dom">dom</a>
+            &gt; <a href="./module_selector.html" title="selector">selector</a>
                 
                  &gt; dom.js (source view) 
         <form onsubmit="return false">
@@ -93,7 +93,9 @@
 <span class="c">     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. </span>
 <span class="c">     */</span>
     <span class="nx">byId</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">).</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
+        <span class="c">// TODO: IE Name</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -110,7 +112,8 @@
         <span class="k">return</span> <span class="nx">text</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
+<span class="c">// TODO: pull out sugar (rely on _childBy, byAxis, etc)?</span>
+<span class="c"></span>    <span class="c">/**</span>
 <span class="c">     * Finds the firstChild of the given HTMLElement. </span>
 <span class="c">     * @method firstChild</span>
 <span class="c">     * @param {HTMLElement} element The html element. </span>
@@ -145,7 +148,7 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childBy</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
+    <span class="c">/*</span>
 <span class="c">     * Finds all HTMLElement childNodes matching the given tag.</span>
 <span class="c">     * @method childrenByTag</span>
 <span class="c">     * @param {HTMLElement} element The html element.</span>
@@ -154,18 +157,25 @@
 <span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
 <span class="c">     * If no function is given, all children with the given tag are collected.</span>
 <span class="c">     * @return {Array} The collection of child elements.</span>
+<span class="c">     * TODO: deprecate?  Webkit children.tags() returns grandchildren</span>
 <span class="c">     */</span>
-    <span class="nx">childrenByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">_childrenByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">].</span><span class="nx">children</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">toArray</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: keep toArray option?</span>
-<span class="c"></span>                <span class="nx">tag</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">tag</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="o">[];</span>
+<span class="c"></span>                <span class="nx">tag</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">tag</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="o">[],</span>
+                    <span class="nx">wrapFn</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">elements</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span><span class="o">)</span> <span class="o">?</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">.</span><span class="nx">tags</span><span class="o">(</span><span class="nx">tag</span><span class="o">)</span> <span class="o">:</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">;</span> 
-
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">toArray</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">filterElementsBy</span><span class="o">(</span><span class="nx">elements</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span> <span class="c">// children.tags() broken in safari</span>
+<span class="c"></span>                        <span class="nx">elements</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">.</span><span class="nx">tags</span><span class="o">(</span><span class="nx">tag</span><span class="o">);</span> 
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">elements</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">;</span> 
+                        <span class="nx">wrapFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="nx">el</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">el</span><span class="o">));</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
+
+                    <span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">filterElementsBy</span><span class="o">(</span><span class="nx">elements</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">return</span> <span class="nx">elements</span><span class="o">;</span>
@@ -201,7 +211,7 @@
 <span class="c">     * @return {Array} The collection of child elements.</span>
 <span class="c">     */</span>
     <span class="nx">children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">childrenByTag</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childrenByTag</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -446,6 +456,16 @@
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="nx">srcIndex</span><span class="o">:</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">sourceIndex</span><span class="o">)</span> <span class="o">?</span>
+        <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">sourceIndex</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">sourceIndex</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span> <span class="o">:</span>
+        <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">])</span> <span class="o">?</span> 
+                    <span class="o">[].</span><span class="nx">indexOf</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">].</span>
+                            <span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;*&#39;</span><span class="o">),</span> <span class="nx">node</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">},</span>
+
     <span class="nx">_create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;div&#39;</span><span class="o">;</span>
         <span class="k">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">templateCache</span><span class="o">[</span><span class="nx">tag</span><span class="o">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="nx">tag</span><span class="o">);</span>
@@ -641,7 +661,7 @@
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
-                                <li class="selected"><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -655,6 +675,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class="selected"><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css1.html" title="selector-css1">selector-css1</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
@@ -670,7 +692,6 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
                                 <li class=""><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
@@ -678,14 +699,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
-                                <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
-                                <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
-                                <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
-                                <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
-                                <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
                                 <li class="selected"><a href="dom.js.html" title="dom.js">dom.js</a></li>
-                                <li class=""><a href="selector.js.html" title="selector.js">selector.js</a></li>
                         </ul>
                     </div>
 
@@ -702,7 +716,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "ancestor", "url": "DOM.html#method_ancestor", "type": "method"}, {"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "byTag", "url": "DOM.html#method_byTag", "type": "method"}, {"access": "", "host": "DOM", "name": "children", "url": "DOM.html#method_children", "type": "method"}, {"access": "", "host": "DOM", "name": "childrenByTag", "url": "DOM.html#method_childrenByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "Selector", "name": "document", "url": "Selector.html#property_document", "type": "property"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "DOM", "name": "filterElementsBy", "url": "DOM.html#method_filterElementsBy", "type": "method"}, {"access": "", "host": "DOM", "name": "firstByTag", "url": "DOM.html#method_firstByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "firstChild", "url": "DOM.html#method_firstChild", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "lastChild", "url": "DOM.html#method_lastChild", "type": "method"}, {"access": "", "host": "DOM", "name": "next", "url": "DOM.html#method_next", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "DOM", "name": "previous", "url": "DOM.html#method_previous", "type": "method"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Selector", "name": "attrAliases", "url": "Selector.html#property_attrAliases", "type": "property"}, {"access": "", "host": "Selector", "name": "filter", "url": "Selector.html#method_filter", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "pseudos", "url": "Selector.html#property_pseudos", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "test", "url": "Selector.html#method_test", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}];
 </script>
 </body>
 </html>
