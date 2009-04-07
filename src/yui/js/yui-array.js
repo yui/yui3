@@ -32,20 +32,29 @@ var L = Y.Lang, Native = Array.prototype,
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-A = function(o, i, al) {
-    var t = (al) ? 2 : Y.Array.test(o);
+A = function(o, startIdx, al) {
+    var t = (al) ? 2 : Y.Array.test(o), i, l, a;
 
     // switch (t) {
     //     case 1:
-    //         // return (i) ? o.slice(i) : o;
+    //         // return (startIdx) ? o.slice(startIdx) : o;
     //     case 2:
-    //         return Native.slice.call(o, i || 0);
+    //         return Native.slice.call(o, startIdx || 0);
     //     default:
     //         return [o];
     // }
 
     if (t) {
-        return Native.slice.call(o, i || 0);
+        try {
+            return Native.slice.call(o, startIdx || 0);
+        // IE errors when trying to slice element collections
+        } catch(e) {
+            a=[];
+            for (i=0, l=o.length; i<l; i=i+1) {
+                a.push(o[i]);
+            }
+            return a;
+        }
     } else {
         return [o];
     }
