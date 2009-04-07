@@ -47,7 +47,6 @@ YUI().use('*', function(Y) {
         e.preventDefault();
         e.newVal = 'hijacked val';
         this._defAttrChangeFn(e);
-console.log(e);
         console.log('Node: ' + e.type + ': ' + e.target._yuid);
     });
     //node.set('innerHTML', 'new content from Node');
@@ -60,14 +59,21 @@ console.log(e);
         //console.log('NodeList: ' + e.type + ': ' + e.target);
     });
 
-    nodelist.on('click', function(e) {
+    var onClick = function(e) {
         //e.preventDefault();
         console.log('node click');
-    });
+    };
+    nodelist.on('click', onClick);
 
+    Y.get('#demo').addNode('<p>injected content</p>');
+
+    nodelist.on('refresh', function(e) {
+        e.added.on('click', onClick);
+
+    });
+    nodelist.refresh();
     nodelist.set('innerHTML', 'new content from NodeList');
 
-    Y.get('#demo').addNode('<p>foo</p>');
     //console.log(nodelist.get('title'));
 });
 </script>

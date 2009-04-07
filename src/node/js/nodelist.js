@@ -16,21 +16,24 @@
      * @constructor
      */
 
-/* Array._diff
-    from: http://www.deepakg.com/prog/2009/01/ruby-like-difference-between-two-arrays-in-javascript/
-*/
-var DIFF_DELIM = '__::__';
 Y.Array._diff = function(a, b) {
-    if (a.join && b.join) {
-        return DIFF_DELIM + a.join(DIFF_DELIM + DIFF_DELIM) + DIFF_DELIM.
-                replace(Y.DOM._getRegExp('(' + DIFF_DELIM +
-                b.join(DIFF_DELIM + '|' + DIFF_DELIM) + DIFF_DELIM + ')', 'g'),'').
-                replace(Y.DOM._getRegExp('^' + DIFF_DELIM), '').
-                replace(Y.DOM._getRegExp(DIFF_DELIM + '$'), '').
-                split(DIFF_DELIM + DIFF_DELIM);
-        } else {
-            Y.log('invalid arg passed to diff: ' + a + ' or ' + b, 'warn', 'Array');
+    var removed = [],
+        present = false;
+
+    outer:
+    for (var i = 0, lenA = a.length; i < lenA; i++) {
+        present = false;
+        for (var j = 0, lenB = b.length; j < lenB; j++) {
+            if (a[i] === b[j]) {
+                present = true;
+                continue outer;
+            }
         }
+        if (!present) {
+            removed[removed.length] = a[i];
+        }
+    }
+    return removed;
 };
 
 Y.Array.diff = function(a, b) {
@@ -47,6 +50,18 @@ var g_nodelists = [],
     UID = '_yuid',
 
     NodeList = function(config) {
+        var doc = config.doc || Y.config.doc,
+            nodes = config.nodes || [];
+
+        if (typeof nodes === 'string') {
+            this._query = nodes;
+            nodes = Y.Selector.query(nodes, doc);
+        }
+
+        Y.stamp(this);
+        NodeList._instances[this[UID]] = this;
+        g_nodelists[this[UID]] = nodes;
+
         NodeList.superclass.constructor.apply(this, arguments);
     };
 // end "globals"
@@ -94,7 +109,7 @@ NodeList.DEFAULT_GETTER = function(attr) {
     // TODO: use node.get if instance exists
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
-        if (!instance) {
+        if (!instance) { // reuse tmp instance
             g_nodes[tmp[UID]] = node;
             instance = tmp;
         }
@@ -107,16 +122,6 @@ Y.extend(NodeList, Y.Base);
 
 Y.mix(NodeList.prototype, {
     initializer: function(config) {
-        var doc = config.doc || Y.config.doc,
-            nodes = config.nodes || [];
-
-        if (typeof nodes === 'string') {
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes, doc);
-        }
-
-        NodeList._instances[this[UID]] = this;
-        g_nodelists[this[UID]] = nodes;
     },
 
     // TODO: move to Attribute
@@ -126,7 +131,7 @@ Y.mix(NodeList.prototype, {
 
     get: function(attr) {
         if (!this.hasAttr(attr)) {
-            this._addDOMAttr(attr);
+            this._addAttr(attr);
         }
 
         return NodeList.superclass.constructor.prototype.get.apply(this, arguments);
@@ -134,7 +139,7 @@ Y.mix(NodeList.prototype, {
 
     set: function(attr, val) {
         if (!this.hasAttr(attr)) {
-            this._addDOMAttr(attr);
+            this._addAttr(attr);
         }
 
         NodeList.superclass.constructor.prototype.set.apply(this, arguments);
@@ -158,7 +163,9 @@ Y.mix(NodeList.prototype, {
     },
 
     refresh: function() {
-        var doc;
+        var doc,
+            diff,
+            oldList = g_nodelists[this[UID]];
         if (this._query) {
             if (g_nodelists[this[UID]] &&
                     g_nodelists[this[UID]][0] && 
@@ -167,6 +174,10 @@ Y.mix(NodeList.prototype, {
             }
 
             g_nodelists[this[UID]] = Y.Selector.query(this._query, doc || Y.config.doc);        
+            diff = Y.Array.diff(oldList, g_nodelists[this[UID]]); 
+            diff.added = diff.added ? Y.all(diff.added) : null;
+            diff.removed = diff.removed ? Y.all(diff.removed) : null;
+            this.fire('refresh', diff);
         }
     },
 
@@ -177,9 +188,9 @@ Y.mix(NodeList.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
-            nodes = g_nodelists[this[UID]] || {};
+            nodes = g_nodelists[this[UID]];
 
-        if (nodes) {
+        if (nodes && nodes[0]) {
             var node = nodes[0];
             str += node[NODE_NAME];
             if (node.id) {
@@ -197,21 +208,17 @@ Y.mix(NodeList.prototype, {
         return str || errorMsg;
     },
 
-    _addDOMAttr: function(attr) {
+    _addAttr: function(attr) {
         var nodes = g_nodelists[this[UID]] || [];
-        // for efficiency, only test if first node has DOM property 
-        if (nodes[0] && nodes[0][attr] !== undefined) {
-            this.addAttr(attr, {
-                getter: function() {
-                    return NodeList.DEFAULT_GETTER.call(this, attr);
-                },
+        this.addAttr(attr, {
+            getter: function() {
+                return NodeList.DEFAULT_GETTER.call(this, attr);
+            },
 
-                setter: function(val) {
-                    NodeList.DEFAULT_SETTER.call(this, attr, val);
-                },
-                //value: val
-            });
-        }
+            setter: function(val) {
+                NodeList.DEFAULT_SETTER.call(this, attr, val);
+            }
+        });
     }
 }, true);
 

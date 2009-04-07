@@ -88,6 +88,14 @@ Node.ATTRS = {
         value: {}
     },
 */
+    text: {
+        getter: function() {
+            return Y.DOM.getText(g_nodes[this[UID]]);
+        },
+
+        readOnly: true
+    },
+
     restricted: {
         writeOnce: true,
         value: false
@@ -172,19 +180,31 @@ Y.mix(Node.prototype, {
         }
     },
 
-    addNode: function(node, position) {
-        //return Y.DOM.insertNode(node, position);
+    addNode: function(content, where) {
+        return Y.DOM.insertNode(g_nodes[this[UID]], content, where);
     },
 
     on: function(type, fn, context, arg) {
         var args = g_slice.call(arguments, 0);
-
         args.splice(2, 0, g_nodes[this[UID]]);
+
         if (Node.DOM_EVENTS[type]) {
             Y.Event.attach.apply(Y.Event, args);
         }
 
         return SuperConstrProto.on.apply(this, arguments);
+    },
+
+   /**
+     * Detaches a DOM event handler. 
+     * @method detach
+     * @param {String} type The type of DOM Event
+     * @param {Function} fn The handler to call when the event fires 
+     */
+    detach: function(type, fn) {
+        var args = _slice.call(arguments, 0);
+        args.splice(2, 0, g_nodes[this[UID]]);
+        return Y.Event.detach.apply(Y.Event, args);
     },
 
     get: function(attr) {
