@@ -313,8 +313,8 @@
             }
         });
 
-        var testCache = new Y.Test.Case({
-            name: "DataSource Cache Tests",
+        var testCaching = new Y.Test.Case({
+            name: "DataSource Caching Tests",
 
             testCacheDefaultSize: function() {
                 var ds = new Y.DataSource.Local();
@@ -370,13 +370,24 @@
             }
         });
 
-        Y.Test.Runner.add(testClass);
+        var testPolling = new Y.Test.Case({
+            name: "DataSource Polling Tests",
+
+            testClass: function() {
+                var ds = new Y.DataSource.Local();
+                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method.");
+                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method.");
+            }
+        });
+
+        /*Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
-        Y.Test.Runner.add(testLocalEvents);
+        Y.Test.Runner.add(testLocalEvents);*/
         Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testXHREvents);
         Y.Test.Runner.add(testXHRJSONParser);
-        //Y.Test.Runner.add(testCache);
+        Y.Test.Runner.add(testCaching);
+        //Y.Test.Runner.add(testPolling);
         Y.Test.Runner.run();
     });
 })();

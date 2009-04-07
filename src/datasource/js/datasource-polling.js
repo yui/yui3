@@ -83,4 +83,4 @@ Pollable.prototype = {
     }
 };
     
-//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable]);
+Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:false});
