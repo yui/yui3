@@ -234,7 +234,7 @@
 <span class="c">     */</span>
     <span class="nx">detachAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -567,20 +567,20 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">}</span>
     
-    <span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">],</span> <span class="nx">a</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
 
+    <span class="c">// check for the existance of an event adaptor</span>
+<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="c">// check to see if the target is an Event.Target.  If so,</span>
 <span class="c"></span>    <span class="c">// delegate to it (the Event.Target should handle whether</span>
 <span class="c"></span>    <span class="c">// or not the prefix was included);</span>
-<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-    <span class="c">// check for the existance of an event adaptor</span>
-<span class="c"></span>    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+<span class="c"></span>    <span class="c">// } else if (o &amp;&amp; !(o instanceof YUI) &amp;&amp; o.getEvent) {</span>
+<span class="c"></span>    <span class="c">//     a = Y.Array(arguments, 0, true);</span>
+<span class="c"></span>    <span class="c">//     a.splice(2, 1);</span>
+<span class="c"></span>    <span class="c">//     return o.on.apply(o, a);</span>
+<span class="c"></span>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
         <span class="c">// the pattern for custom events is &#39;prefix:event&#39;,</span>
 <span class="c"></span>        <span class="c">// however it is possible to have an event adaptor that</span>
 <span class="c"></span>        <span class="c">// doesn&#39;t do anything special for subscribe.</span>
@@ -611,10 +611,10 @@
 
     <span class="k">var</span> <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">],</span> <span class="nx">a</span><span class="o">;</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
     <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -723,8 +723,8 @@
                                 <li class=""><a href="Do.AlterReturn.html" title="Do.AlterReturn">Do.AlterReturn</a></li>
                                 <li class=""><a href="Do.Error.html" title="Do.Error">Do.Error</a></li>
                                 <li class=""><a href="Do.Halt.html" title="Do.Halt">Do.Halt</a></li>
-                                <li class=""><a href="Do.Halt.html" title="Do.Halt">Do.Halt</a></li>
                                 <li class=""><a href="Do.Method.html" title="Do.Method">Do.Method</a></li>
+                                <li class=""><a href="Do.Prevent.html" title="Do.Prevent">Do.Prevent</a></li>
                                 <li class=""><a href="Event.html" title="Event">Event</a></li>
                                 <li class=""><a href="Event.Custom.html" title="Event.Custom">Event.Custom</a></li>
                                 <li class=""><a href="Event.Target.html" title="Event.Target">Event.Target</a></li>

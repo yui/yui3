@@ -183,8 +183,7 @@ Y.mix(Y.namespace('JSON'),{
         // Worker function.  Fork behavior on data type and recurse objects.
         function _stringify(h,key) {
             var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
-                t = Y.Lang.type(o),
-                s;
+                t = Y.Lang.type(o);
 
             if (t === OBJECT) {
                 if (/String|Number|Boolean/.test(_toString.call(o))) {

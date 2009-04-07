@@ -95,6 +95,7 @@
 <span class="c">             * @param {Object} config Configuration object literal for the plugin</span>
 <span class="c">             */</span>
             <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_owner</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">;</span>

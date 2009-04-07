@@ -544,6 +544,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     Y.Node.get('#test').on('click', function() {
         Y.DD.DDM._noShim = true;
         Y.log('_setStartPosition:', 'info', 'Dav Test');
+        dd.set('activeHandle', dd.get('node'));
         dd._setStartPosition(dd.get('node').getXY());
         Y.log('DDM::activeDrag:', 'info', 'Dav Test');
         Y.DD.DDM.activeDrag = dd;
