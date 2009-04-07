@@ -185,7 +185,7 @@ ET.prototype = {
      */
     detachAll: function(type) {
         type = _getType(this, type);
-        return this.unsubscribe(type);
+        return this.detach(type);
     },
 
     /**
@@ -520,17 +520,17 @@ Y.on = function(type, f, o) {
     
     var adapt = Y.Env.eventAdaptors[type], a;
 
+    // check for the existance of an event adaptor
+    if (adapt && adapt.on) {
+        Y.log('Using adaptor for ' + type, 'info', 'event');
+        return adapt.on.apply(Y, arguments);
     // check to see if the target is an Event.Target.  If so,
     // delegate to it (the Event.Target should handle whether
     // or not the prefix was included);
-    if (o && o._yuievt && o.subscribe) {
+    } else if (o && !(o instanceof YUI) && o.getEvent) {
         a = Y.Array(arguments, 0, true);
         a.splice(2, 1);
         return o.on.apply(o, a);
-    // check for the existance of an event adaptor
-    } else if (adapt && adapt.on) {
-        Y.log('Using adaptor for ' + type, 'info', 'event');
-        return adapt.on.apply(Y, arguments);
     } else {
         // the pattern for custom events is 'prefix:event',
         // however it is possible to have an event adaptor that
@@ -562,10 +562,10 @@ Y.detach = function(type, f, o) {
 
     var adapt = Y.Env.eventAdaptors[type], a;
 
-    if (o && o._yuievt && o.unsubscribe) {
+    if (o && o._yuievt && o.detach) {
         a = Y.Array(arguments, 0, true);
         a.splice(2, 1);
-        return o.unsubscribe.apply(o, a);
+        return o.detach.apply(o, a);
     } else if (L.isObject(type) && type.detach) {
         return type.detach();
     } else {

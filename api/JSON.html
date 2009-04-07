@@ -514,7 +514,7 @@ pair of object literals, allowing pruning or altering values</span>
                                                     
                                                 
                                                         , 
-                                                         d
+                                                         ind
                                                     
                                                 
                                             )
@@ -524,8 +524,11 @@ pair of object literals, allowing pruning or altering values</span>
                                             Converts an arbitrary value to a JSON string representation.
 Cyclical object or array references are replaced with null.
 If a whitelist is provided, only matching object keys will be included.
-If a depth limit is provided, objects and arrays at that depth will
-be stringified as empty.
+If a positive integer or non-empty string is passed as the third
+parameter, the output will be formatted with carriage returns and
+indentation for readability.  If a String is passed (such as "\t") it
+will be used once for each indentation level.  If a number is passed,
+that number of spaces will be used.
                                         </div>
 
                                         <div class="description">
@@ -547,11 +550,11 @@ keys to include, or a replacer function to modify the
 raw value before serialization</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">d</span>
-                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        <code><span property="yui:name">ind</span>
+                                                        &lt;<span property="yui:type">Number|String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (optional) depth limit to recurse objects/arrays
-(practical minimum 1)</span>
+                                                        <span property="yui:description">  (optional) indentation character or depth of
+spaces to format the output.</span>
                                                         </dd>
                                                 </dl>
 

@@ -63,15 +63,14 @@
         * @method syncActiveShims
         * @description This method will sync the position of the shims on the Drop Targets that are currently active.
         * @param {Boolean} force Resize/sync all Targets.
-        * @return {Array} drops The list of Drop Targets that was just synced.
         */
         syncActiveShims: function(force) {
-            var drops = ((force) ? this.targets : this._lookup());
-            Y.each(drops, function(v, k) {
-                v.sizeShim.call(v);
-            }, this);
-
-            return drops;
+            Y.later(0, this, function(force) {
+                var drops = ((force) ? this.targets : this._lookup());
+                Y.each(drops, function(v, k) {
+                    v.sizeShim.call(v);
+                }, this);
+            }, force);
         },
         /**
         * @private
@@ -224,7 +223,7 @@
         * @return {Object or Array} 
         */
         getBestMatch: function(drops, all) {
-            var biggest = null, area = 0;
+            var biggest = null, area = 0, out;
 
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
@@ -238,7 +237,7 @@
                 }
             }, this);
             if (all) {
-                var out = [];
+                out = [];
                 //TODO Sort the others in numeric order by area covered..
                 Y.each(drops, function(v, k) {
                     if (v !== biggest) {
@@ -256,7 +255,7 @@
         * @description This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..
         */
         _deactivateTargets: function() {
-            var other = [],
+            var other = [], tmp,
                 activeDrag = this.activeDrag,
                 activeDrop = this.activeDrop;
             
@@ -267,7 +266,7 @@
                     other = this.otherDrops;
                     delete other[activeDrop];
                 } else {
-                    var tmp = this.getBestMatch(this.otherDrops, true);
+                    tmp = this.getBestMatch(this.otherDrops, true);
                     activeDrop = tmp[0];
                     other = tmp[1];
                 }
@@ -288,7 +287,6 @@
                 v._deactivateShim.apply(v, []);
             }, this);
         },
-        _dropTimer: null,
         /**
         * @private
         * @method _dropMove
@@ -296,14 +294,7 @@
         */
         _dropMove: function() {
             if (this._hasActiveShim()) {
-                if (this._dropTimer) {
-                    this._dropTimer.cancel();
-                }
-                if (!Y.UA.ie) {
-                    this._dropTimer = Y.later(0, this, this._handleTargetOver);
-                } else {
-                    this._handleTargetOver();
-                }
+                this._handleTargetOver();
             } else {
                 Y.each(this.otherDrops, function(v, k) {
                     v._handleOut.apply(v, []);
@@ -337,30 +328,9 @@
         */
         _handleTargetOver: function() {
             var drops = this._lookup();
-            if (!this.get('multiDrop')) {
-                var over = [];
-                //Get all the targets that are under the cursor
-                Y.each(drops, function(v, k) {
-                    if (this.isOverTarget(v)) {
-                        over[over.length] = v;
-                    }
-                }, this);
-                //Get the best match
-                var match = this.getBestMatch(over, true);
-                if (match[0]) {
-                    //Fire _handleTargetOver for the best match
-                    match[0]._handleTargetOver(match[0]);
-                    //Now fire _handleOut on all the other targets
-                    Y.each(match[1], function(v, k) {
-                        v._handleOut(v, [true]);
-                    }, this);
-                }
-            } else {
-                Y.each(drops, function(v, k) {
-                    v._handleTargetOver.call(v);
-                }, this);
-            }
-            
+            Y.each(drops, function(v, k) {
+                v._handleTargetOver.call(v);
+            }, this);
         },
         /**
         * @private
@@ -378,7 +348,7 @@
         * @param {Object} drop The Target to remove from the targets collection
         */
         _unregTarget: function(drop) {
-            var targets = [];
+            var targets = [], vdrops;
             Y.each(this.targets, function(v, k) {
                 if (v != drop) {
                     targets[targets.length] = v;
@@ -386,7 +356,7 @@
             }, this);
             this.targets = targets;
 
-            var vdrops = [];
+            vdrops = [];
             Y.each(this.validDrops, function(v, k) {
                 if (v !== drop) {
                     vdrops[vdrops.length] = v;

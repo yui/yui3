@@ -263,6 +263,85 @@ if configured for the event, has executed.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_detach">
+                                    <h4>
+                                        <a name="method_detach">detach</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong property="yui:name">detach</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Detach one or more listeners the from the specified event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">    Either the handle to the subscriber or the 
+type of event.  If the type
+is not specified, it will attempt to remove
+the listener from all hosted events.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">    The subscribed function to unsubscribe, if not
+supplied, all subscribers will be removed.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">     The custom object passed to subscribe.  This is
+optional, but if supplied will be used to
+disambiguate multiple listeners that are the same
+(e.g., you subscribe many object using a function
+that lives on the prototype)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the subscriber was found and detached.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_fire">
                                     <h4>
                                         <a name="method_fire">fire</a></h4>
@@ -385,6 +464,87 @@ falsy value otherwise
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_on">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">on</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Subscribe to a custom event hosted by this object
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">       The type of the event</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The callback</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The execution context</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_publish">
                                     <h4>
                                         <a name="method_publish">publish</a></h4>
@@ -444,6 +604,9 @@ case the custom event is returned.
 </li>
 <li>
 'emitFacade': whether or not this event emits a facade (false)
+</li>
+<li>
+'prefix': the prefix for this targets events, e.g., 'menu' in 'menu:click' 
 </li>
 <li>
 'fireOnce': if an event is configured to fire once, new subscribers after
@@ -538,7 +701,7 @@ the fire will be notified immediately.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_subscribe">
+                                    <div class=" deprecated" rel="yui:method" resource="#method_subscribe">
                                     <h4>
                                         <a name="method_subscribe">subscribe</a></h4>
                                     <div class="detail" >
@@ -549,59 +712,15 @@ the fire will be notified immediately.
                                         void
                                             <strong property="yui:name">subscribe</strong>
                                            (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Subscribe to a custom event hosted by this object
+                                            subscribe to an event
                                         </div>
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">       The type of the event</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The callback</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The execution context</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n params to supply to the callback</span>
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -613,13 +732,16 @@ the fire will be notified immediately.
 
 
              
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> use on
+                                            </div>        
 
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_unsubscribe">
+                                    <div class=" deprecated" rel="yui:method" resource="#method_unsubscribe">
                                     <h4>
                                         <a name="method_unsubscribe">unsubscribe</a></h4>
                                     <div class="detail" >
@@ -627,78 +749,39 @@ the fire will be notified immediately.
                                         
                                         
                                         
-                                        boolean
+                                        void
                                             <strong property="yui:name">unsubscribe</strong>
                                            (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Unsubscribes one or more listeners the from the specified event
+                                            detach a listener
                                         </div>
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">string|Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">    Either the handle to the subscriber or the 
-type of event.  If the type
-is not specified, it will attempt to remove
-the listener from all hosted events.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">    The subscribed function to unsubscribe, if not
-supplied, all subscribers will be removed.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">     The custom object passed to subscribe.  This is
-optional, but if supplied will be used to
-disambiguate multiple listeners that are the same
-(e.g., you subscribe many object using a function
-that lives on the prototype)</span>
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        boolean
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">true if the subscriber was found and detached.</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
              
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> use detach
+                                            </div>        
 
                                         </div>
 
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_unsubscribeAll">
+                                    <div class=" deprecated" rel="yui:method" resource="#method_unsubscribeAll">
                                     <h4>
                                         <a name="method_unsubscribeAll">unsubscribeAll</a></h4>
                                     <div class="detail" >
@@ -745,6 +828,9 @@ be removed.
 
 
              
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> use detachAll
+                                            </div>        
 
                                         </div>
 
@@ -849,13 +935,15 @@ be removed.
                                 <li class=""><a href="#method_addTarget" title="addTarget">addTarget</a></li>
                                 <li class=""><a href="#method_after" title="after">after</a></li>
                                 <li class=""><a href="#method_bubble" title="bubble">bubble</a></li>
+                                <li class=""><a href="#method_detach" title="detach">detach</a></li>
                                 <li class=""><a href="#method_fire" title="fire">fire</a></li>
                                 <li class=""><a href="#method_getEvent" title="getEvent">getEvent</a></li>
+                                <li class=""><a href="#method_on" title="on">on</a></li>
                                 <li class=""><a href="#method_publish" title="publish">publish</a></li>
                                 <li class=""><a href="#method_removeTarget" title="removeTarget">removeTarget</a></li>
-                                <li class=""><a href="#method_subscribe" title="subscribe">subscribe</a></li>
-                                <li class=""><a href="#method_unsubscribe" title="unsubscribe">unsubscribe</a></li>
-                                <li class=""><a href="#method_unsubscribeAll" title="unsubscribeAll">unsubscribeAll</a></li>
+                                <li class=" deprecated"><a href="#method_subscribe" title="subscribe">subscribe</a></li>
+                                <li class=" deprecated"><a href="#method_unsubscribe" title="unsubscribe">unsubscribe</a></li>
+                                <li class=" deprecated"><a href="#method_unsubscribeAll" title="unsubscribeAll">unsubscribeAll</a></li>
                         </ul>
                     </div>
 
@@ -870,7 +958,7 @@ be removed.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Event.Target", "name": "addTarget", "url": "Event.Target.html#method_addTarget", "type": "method"}, {"access": "", "host": "Event.Target", "name": "after", "url": "Event.Target.html#method_after", "type": "method"}, {"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "Event.Target", "name": "bubble", "url": "Event.Target.html#method_bubble", "type": "method"}, {"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "Event", "name": "click", "url": "Event.html#method_click", "type": "method"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "dblclick", "url": "Event.html#method_dblclick", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event.Target", "name": "fire", "url": "Event.Target.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event.Target", "name": "getEvent", "url": "Event.Target.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "keydown", "url": "Event.html#method_keydown", "type": "method"}, {"access": "", "host": "Event", "name": "keypress", "url": "Event.html#method_keypress", "type": "method"}, {"access": "", "host": "Event", "name": "keyup", "url": "Event.html#method_keyup", "type": "method"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "", "host": "Event", "name": "mousedown", "url": "Event.html#method_mousedown", "type": "method"}, {"access": "", "host": "Event", "name": "mousemove", "url": "Event.html#method_mousemove", "type": "method"}, {"access": "", "host": "Event", "name": "mouseout", "url": "Event.html#method_mouseout", "type": "method"}, {"access": "", "host": "Event", "name": "mouseover", "url": "Event.html#method_mouseover", "type": "method"}, {"access": "", "host": "Event", "name": "mouseup", "url": "Event.html#method_mouseup", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event.Target", "name": "publish", "url": "Event.Target.html#method_publish", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "", "host": "Event.Target", "name": "removeTarget", "url": "Event.Target.html#method_removeTarget", "type": "method"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "Event.Target", "name": "subscribe", "url": "Event.Target.html#method_subscribe", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "time", "url": "EventFacade.html#property_time", "type": "property"}, {"access": "private", "host": "Event", "name": "_tryPreloadAttach", "url": "Event.html#method__tryPreloadAttach", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "", "host": "Event.Target", "name": "unsubscribe", "url": "Event.Target.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Event.Target", "name": "unsubscribeAll", "url": "Event.Target.html#method_unsubscribeAll", "type": "method"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Event.Target", "name": "addTarget", "url": "Event.Target.html#method_addTarget", "type": "method"}, {"access": "", "host": "Event.Target", "name": "after", "url": "Event.Target.html#method_after", "type": "method"}, {"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "Event.Target", "name": "bubble", "url": "Event.Target.html#method_bubble", "type": "method"}, {"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "Event", "name": "click", "url": "Event.html#method_click", "type": "method"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "dblclick", "url": "Event.html#method_dblclick", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event.Target", "name": "detach", "url": "Event.Target.html#method_detach", "type": "method"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event.Target", "name": "fire", "url": "Event.Target.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event.Target", "name": "getEvent", "url": "Event.Target.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "keydown", "url": "Event.html#method_keydown", "type": "method"}, {"access": "", "host": "Event", "name": "keypress", "url": "Event.html#method_keypress", "type": "method"}, {"access": "", "host": "Event", "name": "keyup", "url": "Event.html#method_keyup", "type": "method"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "", "host": "Event", "name": "mousedown", "url": "Event.html#method_mousedown", "type": "method"}, {"access": "", "host": "Event", "name": "mousemove", "url": "Event.html#method_mousemove", "type": "method"}, {"access": "", "host": "Event", "name": "mouseout", "url": "Event.html#method_mouseout", "type": "method"}, {"access": "", "host": "Event", "name": "mouseover", "url": "Event.html#method_mouseover", "type": "method"}, {"access": "", "host": "Event", "name": "mouseup", "url": "Event.html#method_mouseup", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event.Target", "name": "on", "url": "Event.Target.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event.Target", "name": "publish", "url": "Event.Target.html#method_publish", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "", "host": "Event.Target", "name": "removeTarget", "url": "Event.Target.html#method_removeTarget", "type": "method"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "Event.Target", "name": "subscribe", "url": "Event.Target.html#method_subscribe", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "time", "url": "EventFacade.html#property_time", "type": "property"}, {"access": "private", "host": "Event", "name": "_tryPreloadAttach", "url": "Event.html#method__tryPreloadAttach", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "", "host": "Event.Target", "name": "unsubscribe", "url": "Event.Target.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "Event.Target", "name": "unsubscribeAll", "url": "Event.Target.html#method_unsubscribeAll", "type": "method"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>
