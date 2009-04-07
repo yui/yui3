@@ -142,7 +142,7 @@ Y.mix(NodeList.prototype, {
             this._addAttr(attr);
         }
 
-        NodeList.superclass.constructor.prototype.set.apply(this, arguments);
+        return NodeList.superclass.constructor.prototype.set.apply(this, arguments);
     },
 
     on: function(type, fn, context, arg) {

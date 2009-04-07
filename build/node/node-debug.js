@@ -144,7 +144,7 @@ Y.mix(NodeList.prototype, {
             this._addAttr(attr);
         }
 
-        NodeList.superclass.constructor.prototype.set.apply(this, arguments);
+        return NodeList.superclass.constructor.prototype.set.apply(this, arguments);
     },
 
     on: function(type, fn, context, arg) {
@@ -259,6 +259,7 @@ var g_nodes = [],
 
     DOT = '.',
     NODE_NAME = 'nodeName',
+    TAG_NAME = 'tagName',
     UID = '_yuid',
 
     Node = function(config) {
@@ -331,6 +332,30 @@ Node.ATTRS = {
         },
 
         readOnly: true
+    },
+
+    /**
+     * Returns a NodeList instance. 
+     * @property children
+     * @type NodeList
+     */
+    'children': {
+        getter: function() {
+            var node = g_nodes[this[UID]],
+                children = node.children;
+
+            if (children === undefined) {
+                var childNodes = node.childNodes;
+                children = [];
+
+                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                    if (childNodes[i][TAG_NAME]) {
+                        children[children.length] = childNodes[i];
+                    }
+                }
+            }
+            return Y.all(children);
+        }
     },
 
     restricted: {
@@ -457,7 +482,7 @@ Y.mix(Node.prototype, {
             this._addDOMAttr(attr);
         }
 
-        SuperConstrProto.set.apply(this, arguments);
+        return SuperConstrProto.set.apply(this, arguments);
     },
 
     destructor: function() {
