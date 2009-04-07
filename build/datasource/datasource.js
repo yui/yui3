@@ -437,8 +437,8 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires plugin, cache
- * @title DataSource Cache Extension
+ * @requires plugin, datasource-base, cache
+ * @title DataSource Cache Plugin
  */
 
 /**
@@ -546,47 +546,78 @@ Y.plugin.DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
 
-YUI.add('datasource-dataparser', function(Y) {
+YUI.add('datasource-jsonparser', function(Y) {
 
 /**
- * Extends DataSource with schema-based parsing functionality.
+ * Extends DataSource with schema-based JSON parsing functionality.
  *
- * @module datasource-dataparser
- * @requires datasource-base,dataparser-base
- * @title DataSource DataParser Extension
+ * @module datasource-jsonparser
+ * @requires plugin, datasource-base, dataparser-json
+ * @title DataSource JSONParser Plugin
  */
 
 /**
  * Adds parsability to the YUI DataSource utility.
- * @class Parsable
+ * @class DataSourceJSONParser
  */    
-var Parsable = function() {};
+var DataSourceJSONParser = function() {
+    DataSourceJSONParser.superclass.constructor.apply(this, arguments);
+};
 
-Parsable.ATTRS = {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
+Y.mix(DataSourceJSONParser, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "parser",
 
     /**
-     * Instance of DataParser.
+     * Class name.
      *
-     * @attribute parser
-     * @type Y.DataParser.Base
-     * @default null
+     * @property DataParser.Base.NAME
+     * @type String
+     * @static
+     * @final
+     * @value "DataSourceCache"
      */
-    parser: {
-        value: null,
-        validator: function(value) {
-            return ((value instanceof Y.DataParser.Base) || (value === null));
+    NAME: "DataSourceJSONParser",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+        parser: {
+            readOnly: true,
+            value: Y.DataParser.JSON,
+            useRef: true
+        },
+        schema: {
+            //value: {}
         }
     }
-};
-    
-Parsable.prototype = {
+});
+
+Y.extend(DataSourceJSONParser, Y.Plugin, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function(config) {
+        this.doBefore("_defDataFn", this._beforeDefDataFn);
+    },
+
     /**
      * Parses raw data into a normalized response.
      *
@@ -601,23 +632,25 @@ Parsable.prototype = {
      * </dl>
      * @protected
      */
-    _defDataFn: function(e, o) {
-        var response = (this.get("parser") && this.get("parser").parse(o.data));
+    _beforeDefDataFn: function(e, o) {
+        var response = (this.get("parser").parse(this.get("schema"), o.data));
         if(!response) {
             response = {
                 meta: {},
                 results: o.data
             };
         }
-        this.fire("response", null, Y.mix(o, response));
+        this._owner.fire("response", null, Y.mix(o, response));
+        return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
-};
+});
     
-//Y.DataSource.Local = Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Parsable]);
+Y.namespace('plugin');
+Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
 
 
 
-}, '@VERSION@' ,{requires:['datasource', 'dataparser']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataparser-json']});
 
 YUI.add('datasource-polling', function(Y) {
 
@@ -712,5 +745,5 @@ Pollable.prototype = {
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache', 'datasource-dataparser', 'datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache','datasource-jsonparser','datasource-polling']});
 

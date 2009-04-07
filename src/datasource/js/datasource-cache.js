@@ -2,8 +2,8 @@
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires plugin, cache
- * @title DataSource Cache Extension
+ * @requires plugin, datasource-base, cache
+ * @title DataSource Cache Plugin
  */
 
 /**

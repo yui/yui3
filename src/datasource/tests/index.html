@@ -25,7 +25,8 @@
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
-            BTNRUN = Y.get("#btnRun");
+            BTNRUN = Y.get("#btnRun"),
+            WAITTIMEOUT = undefined; // On a slow connection set to 5000
 
         // Set up the page
         
@@ -151,15 +152,9 @@
 
             testXHRDefaults: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10"
                 });
-
+                
                 ds.sendRequest(null, {
                     success: function(o) {
                         this.resume(function() {
@@ -176,7 +171,7 @@
                     scope: this
                 });                
 
-                this.wait(); // On a slow connection: this.wait(5000);
+                this.wait(WAITTIMEOUT);
             }
         });
 
@@ -186,13 +181,13 @@
             testXHRRequest: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
                 });
+                ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
+                    schema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                }});
 
                 ds.subscribe("request", function(e, o) {
                     this.resume(function() {
@@ -203,19 +198,19 @@
                 }, this, true);
 
                 ds.sendRequest(null, "callback");
-                this.wait();
+                this.wait(WAITTIMEOUT);
             },
 
             testXHRData: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
                 });
+                ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
+                    schema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                }});
 
                 ds.subscribe("data", function(e, o) {
                     this.resume(function() {
@@ -227,19 +222,19 @@
                 }, this, true);
 
                 ds.sendRequest(null, "callback");
-                this.wait();
-            }/*,
+                this.wait(WAITTIMEOUT);
+            },
 
             testXHRResponse: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
                 });
+                ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
+                    schema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                }});
 
                 ds.subscribe("response", function(e, o) {
                     this.resume(function() {
@@ -253,19 +248,19 @@
                 }, this, true);
 
                 ds.sendRequest("a", "callback");
-                this.wait();
+                this.wait(WAITTIMEOUT);
             },
 
             testXHRError: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
-                    parser: new Y.DataParser.JSON({
-                        schema: {
-                            resultsList: "ResultSet.Result",
-                            fields: ["Title"]
-                        }
-                    })
                 });
+                ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
+                    schema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                }});
 
                 ds.subscribe("error", function(e, o) {
                     this.resume(function() {
@@ -279,38 +274,64 @@
 
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
-                this.wait();
-            }*/
+                this.wait(WAITTIMEOUT);
+            }
+        });
+
+        var testXHRJSONParser = new Y.Test.Case({
+            name: "DataSource.XHR JSONParser Tests",
+
+            testPlug: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10"
+                });
+                ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
+                    schema: {
+                        resultsList: "ResultSet.Result",
+                        fields: ["Title"]
+                    }
+                }});
+
+                ds.sendRequest(null, {
+                    success: function(o) {
+                        this.resume(function() {
+                            ASSERT.isNull(o.request, "Expected null request.");
+                            ASSERT.isArray(o.results, "Expected results array.");
+                            ASSERT.areSame(10, o.results.length, "Expected 10 results.")
+                            ASSERT.isNotUndefined(o.results[0].Title, "Expected Title property")
+                        });
+                    },
+                    failure: function(o) {
+                        this.resume(function() {
+                            ASSERT.fail("XHR failure case.");
+                        });
+                    },
+                    scope: this
+                });
+
+                this.wait(WAITTIMEOUT);
+            }
         });
 
         var testCache = new Y.Test.Case({
             name: "DataSource Cache Tests",
 
             testCacheDefaultSize: function() {
-                //var ds = new Y.DataSource.Local({cache: new Y.Cache()});
                 var ds = new Y.DataSource.Local();
                 ds.plug(Y.plugin.DataSourceCache);
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.cache.get("size"), 0, "Expected 0 size in Cache.");
-
-                //ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
-                //ASSERT.areSame(ds.get("cache").get("size"), 0, "Expected 0 size in Cache.");
             },
 
             testCacheInitSize: function() {
-                //var ds = new Y.DataSource.Local({cache: new Y.Cache({size:3})});
                 var ds = new Y.DataSource.Local();
                 ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
                 ASSERT.areSame(ds.cache.get("size"), 3, "Expected 3 size in Cache.");
-
-                //ASSERT.areSame((ds.get("cache") instanceof Y.Cache), true, "Expected Cache instance.");
-                //ASSERT.areSame(ds.get("cache").get("size"), 3, "Expected 3 size in Cache.");
             },
 
             testCacheSetSize: function() {
                 var ds = new Y.DataSource.Local();
-                //ds.set("cache",new Y.Cache({size:5}));
                 ds.plug({fn:Y.plugin.DataSourceCache});
                 ds.cache.set("size", 5);
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
@@ -354,7 +375,8 @@
         Y.Test.Runner.add(testLocalEvents);
         Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testXHREvents);
-        Y.Test.Runner.add(testCache);
+        Y.Test.Runner.add(testXHRJSONParser);
+        //Y.Test.Runner.add(testCache);
         Y.Test.Runner.run();
     });
 })();
