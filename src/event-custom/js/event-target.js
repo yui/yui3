@@ -518,7 +518,7 @@ Y.on = function(type, f, o) {
         return Y.Do.before.apply(Y.Do, arguments);
     }
     
-    var adapt = Y.Env.eventAdaptors[type], a;
+    var adapt = Y.Env.eventAdaptors[type];
 
     // check for the existance of an event adaptor
     if (adapt && adapt.on) {
@@ -527,10 +527,10 @@ Y.on = function(type, f, o) {
     // check to see if the target is an Event.Target.  If so,
     // delegate to it (the Event.Target should handle whether
     // or not the prefix was included);
-    } else if (o && !(o instanceof YUI) && o.getEvent) {
-        a = Y.Array(arguments, 0, true);
-        a.splice(2, 1);
-        return o.on.apply(o, a);
+    // } else if (o && !(o instanceof YUI) && o.getEvent) {
+    //     a = Y.Array(arguments, 0, true);
+    //     a.splice(2, 1);
+    //     return o.on.apply(o, a);
     } else {
         // the pattern for custom events is 'prefix:event',
         // however it is possible to have an event adaptor that
