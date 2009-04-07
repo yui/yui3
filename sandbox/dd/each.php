@@ -42,9 +42,12 @@ var yConfig = {
 YUI(yConfig).use('node', function(Y) {
     var demo = Y.get('#demo');
     var lis = demo.getElementsByTagName('li');
+    var count = 0;
     lis.each(function(item) {
-        item.setStyle('border', '1px solid red');
+        count++;
+        //item.setStyle('border', '1px solid red');
     });
+    alert(count + ' items');
 });
 
 </script>
