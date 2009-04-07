@@ -152,7 +152,7 @@
 
             testXHRDefaults: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10"
+                    source: "./php/ysearch_json_madonna.php"
                 });
                 
                 ds.sendRequest(null, {
@@ -180,7 +180,7 @@
 
             testXHRRequest: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    source: "./php/ysearch_json_madonna.php",
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
@@ -203,7 +203,7 @@
 
             testXHRData: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    source: "./php/ysearch_json_madonna.php",
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
@@ -227,7 +227,7 @@
 
             testXHRResponse: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    source: "./php/ysearch_json_madonna.php",
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
@@ -253,7 +253,7 @@
 
             testXHRError: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10",
+                    source: "./php/ysearch_json_madonna.php",
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
@@ -283,7 +283,7 @@
 
             testPlug: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "/yui/2.6.0/examples/autocomplete/assets/php/ysearch_proxy.php?query=madonna&output=json&results=10"
+                    source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
@@ -380,9 +380,9 @@
             }
         });
 
-        /*Y.Test.Runner.add(testClass);
+        Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
-        Y.Test.Runner.add(testLocalEvents);*/
+        Y.Test.Runner.add(testLocalEvents);
         Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testXHREvents);
         Y.Test.Runner.add(testXHRJSONParser);
