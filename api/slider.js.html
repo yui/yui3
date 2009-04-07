@@ -191,7 +191,7 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewAxis</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAxisFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -239,7 +239,7 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewValue</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setValueFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -258,7 +258,7 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewRail</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setRailFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -283,7 +283,7 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewThumb</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setThumbFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -311,7 +311,7 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewThumbImage</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setThumbImageFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -687,9 +687,10 @@
             <span class="nx">xy</span><span class="o">[</span><span class="nx">xyIndex</span><span class="o">]</span> <span class="o">+=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_thumbOffset</span><span class="o">;</span>
 
             <span class="nx">dd</span><span class="o">.</span><span class="nx">_setStartPosition</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">,</span><span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">));</span>
 
             <span class="nx">dd</span><span class="o">.</span><span class="nx">start</span><span class="o">();</span>
-            <span class="nx">dd</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_alignNode</span><span class="o">([</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -1016,8 +1017,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_validateNewAxis</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
-               <span class="nx">v</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;xy&#39;</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">())</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;xXyY&#39;</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">))</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1123,7 +1123,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_setAxisFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">?</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">v</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">();</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1134,13 +1134,7 @@
 <span class="c">     * @return {Number} rounded value or configured min if non-number input</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_setValueFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span> 
-            <span class="nx">v</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">round</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="nx">_setValueFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="nx">v</span><span class="o">;</span> <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Setter applied to the input when updating the rail attribute.  Input can</span>
@@ -1152,7 +1146,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_setRailFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">v</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1165,7 +1159,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_setThumbFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">v</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1293,7 +1287,7 @@
         <span class="nx">dd</span><span class="o">.</span><span class="nx">_setStartPosition</span><span class="o">(</span><span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">getXY</span><span class="o">());</span>
 
         <span class="c">// stickX/stickY config on DD instance will negate off-axis move</span>
-<span class="c"></span>        <span class="nx">dd</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">xy</span><span class="o">,</span><span class="nx">xy</span><span class="o">],</span><span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>        <span class="nx">dd</span><span class="o">.</span><span class="nx">_alignNode</span><span class="o">([</span><span class="nx">xy</span><span class="o">,</span><span class="nx">xy</span><span class="o">],</span><span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
 

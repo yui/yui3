@@ -6,8 +6,15 @@ The JSON Utility
         json-parse     - Parse valid JSON strings into JavaScript objects
         json-stringify - Serialize JavaScipt objects into valid JSON strings
 
-3.0.0pr1
-    Initial release
+3.0.0 beta1
+    * Leverages native JSON.parse if available
+    * Stringify API change. Third argument changed from depth control to indent
+      (Per the ECMA 3.1 spec)
+    * Stringify now throws an Error if the object has cyclical references
+      (Per the ECMA 3.1 spec)
 
 3.0.0pr2
     No changes
+
+3.0.0pr1
+    Initial release

@@ -7,8 +7,6 @@
 
         DOT = ".",
         CHANGE = "Change",
-        GET = "get",
-        SET = "set",
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
@@ -179,7 +177,7 @@
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GETTER) || conf.get(name, GET);
+            getFn = conf.get(name, GETTER);
 
             val = (getFn) ? getFn.call(this, val) : val;
             val = (path) ? O.getValue(val, path) : val;
@@ -361,16 +359,18 @@
                 name = e.attrName,
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SETTER) || conf.get(name, SET),
-                storedVal;
+                setFn = conf.get(name, SETTER),
+                storedVal,
+                retVal;
 
             if (!valFn || valFn.call(this, val)) {
                 if (setFn) {
-                    val = setFn.call(this, val);
-                    if (val === INVALID_VALUE) {
+                    retVal = setFn.call(this, val);
+                    if (retVal === INVALID_VALUE) {
                         allowSet = false;
-                    } else {
+                    } else if (retVal !== undefined){
                         Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
+                        val = retVal;
                     }
                 }
             } else {
@@ -388,7 +388,7 @@
                 // Honor set normalization
                 e.newVal = conf.get(name, VALUE);
             } else {
-                Y.log('Validation failed or Setter returned Attribute.INVALID_VALUE. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
+                Y.log('Validation failed or setter returned Attribute.INVALID_VALUE. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
                 // Prevent "after" listeners from being 
                 // invoked since nothing changed.

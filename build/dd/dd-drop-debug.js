@@ -37,7 +37,7 @@ YUI.add('dd-drop', function(Y) {
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_DROP_EXIT = 'drop:exit';
+        EV_DROP_EXIT = 'drop:exit',
 
         /**
         * @event drop:hit
@@ -47,7 +47,7 @@ YUI.add('dd-drop', function(Y) {
         */
         
 
-    var Drop = function() {
+    Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
 
@@ -73,7 +73,7 @@ YUI.add('dd-drop', function(Y) {
         * @type Node
         */        
         node: {
-            set: function(node) {
+            setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drop: Invalid Node Given: ' + node);
@@ -88,11 +88,12 @@ YUI.add('dd-drop', function(Y) {
         */        
         groups: {
             value: ['default'],
-            set: function(g) {
+            setter: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
                     this._groups[v] = true;
                 }, this);
+                return g;
             }
         },   
         /**
@@ -102,7 +103,7 @@ YUI.add('dd-drop', function(Y) {
         */
         padding: {
             value: '0',
-            set: function(p) {
+            setter: function(p) {
                 return DDM.cssSizestoObject(p);
             }
         },
@@ -113,12 +114,13 @@ YUI.add('dd-drop', function(Y) {
         */        
         lock: {
             value: false,
-            set: function(lock) {
+            setter: function(lock) {
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-drop-locked');
                 } else {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
+                return lock;
             }
         },
         /**
@@ -220,9 +222,9 @@ YUI.add('dd-drop', function(Y) {
             //this._createEvents();
             Y.later(100, this, this._createEvents);
 
-            var node = this.get(NODE);
+            var node = this.get(NODE), id;
             if (!node.get('id')) {
-                var id = Y.stamp(node);
+                id = Y.stamp(node);
                 node.set('id', id);
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
@@ -311,7 +313,8 @@ YUI.add('dd-drop', function(Y) {
                 nh = node.get(OFFSET_HEIGHT),
                 nw = node.get(OFFSET_WIDTH),
                 xy = node.getXY(),
-                p = this.get('padding');
+                p = this.get('padding'),
+                dd, dH, dW;
 
 
             //Apply padding
@@ -323,9 +326,9 @@ YUI.add('dd-drop', function(Y) {
 
             if (DDM.activeDrag.get('dragMode') === DDM.INTERSECT) {
                 //Intersect Mode, make the shim bigger
-                var dd = DDM.activeDrag,
-                    dH = dd.get(NODE).get(OFFSET_HEIGHT),
-                    dW = dd.get(NODE).get(OFFSET_WIDTH);
+                dd = DDM.activeDrag;
+                dH = dd.get(NODE).get(OFFSET_HEIGHT);
+                dW = dd.get(NODE).get(OFFSET_WIDTH);
                 
                 nh = (nh + dH);
                 nw = (nw + dW);
