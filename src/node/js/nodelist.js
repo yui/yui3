@@ -124,13 +124,48 @@ Y.mix(NodeList.prototype, {
     initializer: function(config) {
     },
 
-    // TODO: move to Attribute
-    hasAttr: function(attr) {
-        return this._conf.get(attr);  
+    /**
+     * Retrieves the Node instance at the given index. 
+     * @method item
+     *
+     * @param {Number} index The index of the target Node.
+     * @return {Node} The Node instance at the given index.
+     */
+    item: function(index) {
+        var nodes = g_nodelists[this[UID]] || [];
+        return Y.get(nodes[index]);
+    },
+
+    /**
+     * Applies the given function to each Node in the NodeList.
+     * @method each
+     * @param {Function} fn The function to apply 
+     * @param {Object} context optional An optional context to apply the function with
+     * Default context is the NodeList instance
+     * @return {NodeList} NodeList containing the updated collection 
+     * @chainable
+     */
+    each: function(fn, context) {
+        var instance = this;
+        context = context || this;
+        Y.each(g_nodelists[this[UID]], function(node, index) {
+            return fn.call(context, Y.get(node), index, instance);
+        });
+    },
+
+    /**
+     * Filters the NodeList instance down to only nodes matching the given selector.
+     * @method filter
+     * @param {String} selector The selector to filter against
+     * @return {NodeList} NodeList containing the updated collection 
+     * @see Selector
+     */
+    filter: function(selector) {
+        return Node.scrubVal(Selector.filter(g_nodelists[this[UID]], selector), this);
     },
 
     get: function(attr) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addAttr(attr);
         }
 
@@ -138,7 +173,7 @@ Y.mix(NodeList.prototype, {
     },
 
     set: function(attr, val) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addAttr(attr);
         }
 
@@ -181,6 +216,11 @@ Y.mix(NodeList.prototype, {
         }
     },
 
+    /**
+     * Returns the current number of items in the NodeList.
+     * @method size
+     * @return {Int} The number of items in the NodeList. 
+     */
     size: function() {
         return g_nodelists[this[UID]].length;
     },

@@ -22,6 +22,7 @@ var g_nodes = [],
 
     DOT = '.',
     NODE_NAME = 'nodeName',
+    NODE_TYPE = 'nodeTypType',
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
@@ -49,11 +50,61 @@ Node.getDOMNode = function(instance) {
     return g_nodes[instance[UID]];
 };
 
-Node.importMethod = function(host, name) {
-    if (host && name) {
-        Node.prototype[name] = function() {
-            var args = g_slice.call(arguments); 
-        };
+Node.scrubVal = function(val, node, depth) {
+    if (val !== undefined) {
+        if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+            if (val !== null && (
+                    NODE_TYPE in val || // dom node
+                    val.item || // dom collection or Node instance
+                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
+                    val.document) // window TODO: restrict?
+                ) { 
+                if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
+                    val = null; // not allowed to go outside of root node
+                } else {
+                    if (val[NODE_TYPE] || val.document) { // node or window
+                        val = Y.get(val);
+                    } else { // assume nodeList
+                        val = Y.all(val);
+                    }
+                }
+            } else {
+                depth = (depth === undefined) ? 4 : depth;
+                if (depth > 0) {
+                    for (var i in val) { // TODO: test this and pull hasOwnProperty check if safe?
+                        if (val.hasOwnProperty && val.hasOwnProperty(i)) {
+                            val[i] = Node.scrubVal(val[i], node, --depth);
+                        }
+                    }
+                }
+                
+            }
+        }
+    } else {
+        val = node; // for chaining
+    }
+
+    return val;
+};
+
+Node.importMethod = function(host, name, altName) {
+    if (typeof name === 'string') {
+        altName = altName || name;
+        console.log(arguments);
+        if (host && host[name] && typeof host[name] === 'function') {
+            Node.prototype[altName] = function() {
+                var args = g_slice.call(arguments),
+                    ret;
+
+                args.unshift(g_nodes[this[UID]]);
+                ret = Node.scrubVal(host[name].apply(host, args), this);
+                return ret;
+            };
+        }
+    } else {
+        Y.each(name, function(n) {
+            Node.importMethod(host, n);
+        });
     }
 };
 
@@ -103,6 +154,13 @@ Node.ATTRS = {
         },
 
         readOnly: true
+    },
+
+    'options': {
+        getter: function() {
+            var node = g_nodes[this[UID]];
+            return (node) ? Y.all(node.getElementsByTagName('option')) : [];
+        }
     },
 
     /**
@@ -168,11 +226,6 @@ Node.DEFAULT_GETTER = function(attr) {
 Y.extend(Node, Y.Base);
 
 Y.mix(Node.prototype, {
-    // TODO: move to Attribute
-    hasAttr: function(attr) {
-        return !!this._conf.get(attr);  
-    },
-
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
@@ -241,7 +294,7 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addDOMAttr(attr);
         }
 
@@ -249,11 +302,26 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addDOMAttr(attr);
         }
 
         return SuperConstrProto.set.apply(this, arguments);
+    },
+
+    // TODO: safe enough? 
+    invoke: function(node, method, a, b, c, d, e) {
+        var ret;
+
+        if (a) { // first 2 may be Node instances
+            a = (a[NODE_TYPE]) ? a : Node.getDOMNode(a);
+            if (b) {
+                b = (b[NODE_TYPE]) ? b : Node.getDOMNode(b);
+            }
+        }
+
+        ret = node[method](a, b, c, d, e);    
+        return ret;
     },
 
     destructor: function() {

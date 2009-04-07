@@ -18,8 +18,8 @@
 </style>
 </head>
 <body>
-<div id="demo">
-    <p>lorem</p>
+<div id="demo" class="foo">
+    <p id="lorem">lorem</p>
     <p title="ipsum">ipsum</p>
     <p>dolor</p>
     <p>sit</p>
@@ -75,6 +75,13 @@ YUI().use('*', function(Y) {
     nodelist.set('innerHTML', 'new content from NodeList');
 
     console.log(Y.get('#demo').get('children').set('innerHTML', 'foo'));
+    console.log(Y.get('#demo').hasClass('foo'));
+    console.log(Y.get('#demo').addClass('bar'));
+    console.log(Y.get('#demo').hasClass('bar'));
+    console.log(nodelist.item(0).get('id'));
+    nodelist.each(function(n) {
+        n.set('innerHTML', 'set by nodelist.each()');
+    });
 });
 </script>
 </body>

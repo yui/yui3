@@ -11,7 +11,6 @@
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
@@ -23,7 +22,7 @@
 onload = function() {
     YUI().use('*', function(Y) {
         //console.log(Y.Selector.query('ol li', document, false));
-        Y.Selector.query('body, span', document, false);
+        console.log(Y.Selector.query('.first', document.body, true));
     });
 };
 </script>
@@ -31,7 +30,7 @@ onload = function() {
 
 </style>
 </head>
-<body class="body-node" id="body">
+<body class="body-node">
 <span lang="en-us"></span>
     <div id="demo" class="foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>

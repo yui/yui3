@@ -125,13 +125,48 @@ Y.mix(NodeList.prototype, {
     initializer: function(config) {
     },
 
-    // TODO: move to Attribute
-    hasAttr: function(attr) {
-        return this._conf.get(attr);  
+    /**
+     * Retrieves the Node instance at the given index. 
+     * @method item
+     *
+     * @param {Number} index The index of the target Node.
+     * @return {Node} The Node instance at the given index.
+     */
+    item: function(index) {
+        var nodes = g_nodelists[this[UID]] || [];
+        return Y.get(nodes[index]);
+    },
+
+    /**
+     * Applies the given function to each Node in the NodeList.
+     * @method each
+     * @param {Function} fn The function to apply 
+     * @param {Object} context optional An optional context to apply the function with
+     * Default context is the NodeList instance
+     * @return {NodeList} NodeList containing the updated collection 
+     * @chainable
+     */
+    each: function(fn, context) {
+        var instance = this;
+        context = context || this;
+        Y.each(g_nodelists[this[UID]], function(node, index) {
+            return fn.call(context, Y.get(node), index, instance);
+        });
+    },
+
+    /**
+     * Filters the NodeList instance down to only nodes matching the given selector.
+     * @method filter
+     * @param {String} selector The selector to filter against
+     * @return {NodeList} NodeList containing the updated collection 
+     * @see Selector
+     */
+    filter: function(selector) {
+        return Node.scrubVal(Selector.filter(g_nodelists[this[UID]], selector), this);
     },
 
     get: function(attr) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addAttr(attr);
         }
 
@@ -139,7 +174,7 @@ Y.mix(NodeList.prototype, {
     },
 
     set: function(attr, val) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addAttr(attr);
         }
 
@@ -182,6 +217,11 @@ Y.mix(NodeList.prototype, {
         }
     },
 
+    /**
+     * Returns the current number of items in the NodeList.
+     * @method size
+     * @return {Int} The number of items in the NodeList. 
+     */
     size: function() {
         return g_nodelists[this[UID]].length;
     },
@@ -258,6 +298,7 @@ var g_nodes = [],
 
     DOT = '.',
     NODE_NAME = 'nodeName',
+    NODE_TYPE = 'nodeTypType',
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
@@ -283,6 +324,64 @@ Node._instances = {};
 
 Node.getDOMNode = function(instance) {
     return g_nodes[instance[UID]];
+};
+
+Node.scrubVal = function(val, node, depth) {
+    if (val !== undefined) {
+        if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
+            if (val !== null && (
+                    NODE_TYPE in val || // dom node
+                    val.item || // dom collection or Node instance
+                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
+                    val.document) // window TODO: restrict?
+                ) { 
+                if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
+                    val = null; // not allowed to go outside of root node
+                } else {
+                    if (val[NODE_TYPE] || val.document) { // node or window
+                        val = Y.get(val);
+                    } else { // assume nodeList
+                        val = Y.all(val);
+                    }
+                }
+            } else {
+                depth = (depth === undefined) ? 4 : depth;
+                if (depth > 0) {
+                    for (var i in val) { // TODO: test this and pull hasOwnProperty check if safe?
+                        if (val.hasOwnProperty && val.hasOwnProperty(i)) {
+                            val[i] = Node.scrubVal(val[i], node, --depth);
+                        }
+                    }
+                }
+                
+            }
+        }
+    } else {
+        val = node; // for chaining
+    }
+
+    return val;
+};
+
+Node.importMethod = function(host, name, altName) {
+    if (typeof name === 'string') {
+        altName = altName || name;
+        console.log(arguments);
+        if (host && host[name] && typeof host[name] === 'function') {
+            Node.prototype[altName] = function() {
+                var args = g_slice.call(arguments),
+                    ret;
+
+                args.unshift(g_nodes[this[UID]]);
+                ret = Node.scrubVal(host[name].apply(host, args), this);
+                return ret;
+            };
+        }
+    } else {
+        Y.each(name, function(n) {
+            Node.importMethod(host, n);
+        });
+    }
 };
 
 Node.get = function(node, doc, restrict) {
@@ -330,6 +429,13 @@ Node.ATTRS = {
         },
 
         readOnly: true
+    },
+
+    'options': {
+        getter: function() {
+            var node = g_nodes[this[UID]];
+            return (node) ? Y.all(node.getElementsByTagName('option')) : [];
+        }
     },
 
     /**
@@ -394,11 +500,6 @@ Node.DEFAULT_GETTER = function(attr) {
 Y.extend(Node, Y.Base);
 
 Y.mix(Node.prototype, {
-    // TODO: move to Attribute
-    hasAttr: function(attr) {
-        return !!this._conf.get(attr);  
-    },
-
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
@@ -466,7 +567,7 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addDOMAttr(attr);
         }
 
@@ -474,7 +575,7 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        if (!this.hasAttr(attr)) {
+        if (!this.attrAdded(attr)) {
             this._addDOMAttr(attr);
         }
 
@@ -489,6 +590,59 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
+/**
+ * Extended Node interface for managing classNames.
+ * @module node
+ * @submodule node
+ * @for Node
+ */
+
+    var methods = [
+        /**
+         * Determines whether the node has the given className.
+         * @method hasClass
+         * @param {String} className the class name to search for
+         * @return {Boolean} Whether or not the node has the given class. 
+         */
+        'hasClass',
+
+        /**
+         * Adds a class name to the node.
+         * @method addClass         
+         * @param {String} className the class name to add to the node's class attribute
+         * @chainable
+         */
+        'addClass',
+
+        /**
+         * Removes a class name from the node.
+         * @method removeClass         
+         * @param {String} className the class name to remove from the node's class attribute
+         * @chainable
+         */
+        'removeClass',
+
+        /**
+         * Replace a class with another class.
+         * If no oldClassName is present, the newClassName is simply added.
+         * @method replaceClass  
+         * @param {String} oldClassName the class name to be replaced
+         * @param {String} newClassName the class name that will be replacing the old class name
+         * @chainable
+         */
+        'replaceClass',
+
+        /**
+         * If the className exists on the node it is removed, if it doesn't exist it is added.
+         * @method toggleClass  
+         * @param {String} className the class name to be toggled
+         * @chainable
+         */
+        'toggleClass'
+    ];
+
+    Y.Node.importMethod(Y.DOM, methods);
+    //Y.NodeList.importMethod(Y.DOM, methods);
 
 
 }, '@VERSION@' ,{requires:['dom']});
