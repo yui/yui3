@@ -269,7 +269,7 @@ Y.Do.Halt = function(msg, retVal) {
 /**
  * Return a Prevent object when you want to prevent the wrapped function
  * from executing, but want the remaining listeners to execute
- * @class Do.Halt
+ * @class Do.Prevent
  */
 Y.Do.Prevent = function(msg) {
     this.msg = msg;

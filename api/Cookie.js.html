@@ -102,7 +102,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">options</span><span class="o">)){</span>
                 <span class="c">//expiration date</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">options</span><span class="o">.</span><span class="nx">expires</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="o">){</span>
-                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;; expires=&quot;</span> <span class="o">+</span> <span class="nx">options</span><span class="o">.</span><span class="nx">expires</span><span class="o">.</span><span class="nx">toGMTString</span><span class="o">();</span>
+                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;; expires=&quot;</span> <span class="o">+</span> <span class="nx">options</span><span class="o">.</span><span class="nx">expires</span><span class="o">.</span><span class="nx">toUTCString</span><span class="o">();</span>
                 <span class="o">}</span>
             
                 <span class="c">//path</span>

@@ -48,6 +48,7 @@ YUI.add('plugin', function(Y) {
              * @param {Object} config Configuration object literal for the plugin
              */
             initializer : function(config) {
+                config = config || {};
 
                 if (config.owner) {
                     this._owner = config.owner;
@@ -136,6 +137,7 @@ YUI.add('plugin', function(Y) {
 
         Y.extend(Plugin, Y.Base, proto);
         Y.Plugin = Plugin;
+
 
 
 }, '@VERSION@' ,{requires:['base']});
