@@ -533,6 +533,7 @@ var PARENT_NODE = 'parentNode',
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
+                query = selector, // original query for debug report
                 tokens = [],    // array of tokens
                 found = false,  // whether or not any matches were found this pass
                 test,
@@ -576,7 +577,7 @@ var PARENT_NODE = 'parentNode',
             } while (found && selector.length);
 
             if (!found || selector.length) { // not fully parsed
-                Y.log('unsupported token encountered in: ' + selector, 'warn', 'Selector');
+                Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
             }
             return tokens;
