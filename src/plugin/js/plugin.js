@@ -46,6 +46,7 @@
              * @param {Object} config Configuration object literal for the plugin
              */
             initializer : function(config) {
+                config = config || {};
 
                 if (config.owner) {
                     this._owner = config.owner;

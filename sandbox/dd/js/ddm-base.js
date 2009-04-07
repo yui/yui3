@@ -51,17 +51,10 @@ YUI.add('dd-ddm-base', function(Y) {
         */        
         dragMode: {
             value: 'point',
-            set: function(mode) {
+            setter: function(mode) {
                 this._setDragMode(mode);
+                return mode;
             }           
-        },
-        /**
-        * @attribute multiDrop
-        * @description Allow more than one drop target to be active at a time. Default: true. 
-        * @type Boolean
-        */        
-        multiDrop: {
-            value: true
         }
 
     };

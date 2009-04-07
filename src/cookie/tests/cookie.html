@@ -281,7 +281,7 @@ YUI({
             testCreateCookieStringSimpleWithExpiry : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie._createCookieString("name", "value", true, { expires: expires });
-                Assert.areEqual("name=value; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual("name=value; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
             },
     
             testCreateCookieStringSimpleWithInvalidExpiry : function(){
@@ -292,7 +292,7 @@ YUI({
             testCreateCookieStringSimpleWithAll : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie._createCookieString("name", "value", true, { expires: expires, domain : "yahoo.com", path: "/", secure: true });
-                Assert.areEqual("name=value; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual("name=value; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
             },
     
             testCreateCookieStringComplex : function(){            
@@ -328,7 +328,7 @@ YUI({
                 var value = "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?";
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie._createCookieString(name, value, true, { expires : expires });
-                Assert.areEqual(encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual(encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
             },
             
             testCreateCookieStringComplexWithAll : function(){
@@ -336,7 +336,7 @@ YUI({
                 var value = "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?";
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie._createCookieString(name, value, true, { expires: expires, domain : "yahoo.com", path: "/", secure: true });
-                Assert.areEqual(encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual(encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
             },
             
             testCreateCookieHashString1 : function (){
@@ -987,7 +987,7 @@ YUI({
             testSetSimpleWithExpiry : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.set("name", "value", { expires: expires });
-                Assert.areEqual("name=value; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual("name=value; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
                 Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             },
     
@@ -1000,7 +1000,7 @@ YUI({
             testSetSimpleWithAll : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.set("name", "value", { expires: expires, domain : "yahoo.com", path: "/", secure: true });
-                Assert.areEqual("name=value; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual("name=value; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
                 //won't work unless the page is loaded from that domain
                 //Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             },
@@ -1049,7 +1049,7 @@ YUI({
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.set(name, value, { expires : expires });
                 var result = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-                Assert.areEqual(result + "; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual(result + "; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
                 Assert.areEqual(result, document.cookie, "Cookie was not set to document.");
             },
             
@@ -1059,7 +1059,7 @@ YUI({
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.set(name, value, { expires: expires, domain : "yahoo.com", path: "/", secure: true });
                 var result = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-                Assert.areEqual(result + "; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual(result + "; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
                 //won't work unless the page is loaded from that domain
                 //Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             }
@@ -1176,7 +1176,7 @@ YUI({
             testSetSubSimpleWithExpiry : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSub("name", "sub", "value", { expires: expires });
-                Assert.areEqual("name=sub=value; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual("name=sub=value; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
                 Assert.areEqual("name=sub=value", document.cookie, "Cookie was not set to document.");
             },
     
@@ -1189,7 +1189,7 @@ YUI({
             testSetSubSimpleWithAll : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSub("name", "sub", "value", { expires: expires, domain : "yahoo.com", path: "/", secure: true });
-                Assert.areEqual("name=sub=value; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual("name=sub=value; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
                 //won't work unless the page is loaded from that domain
                 //Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             },
@@ -1244,7 +1244,7 @@ YUI({
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSub(name, value, { expires : expires });
                 var result = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-                Assert.areEqual(result + "; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual(result + "; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
                 Assert.areEqual(result, document.cookie, "Cookie was not set to document.");
             },
             
@@ -1254,7 +1254,7 @@ YUI({
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSub(name, value, { expires: expires, domain : "yahoo.com", path: "/", secure: true });
                 var result = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-                Assert.areEqual(result + "; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual(result + "; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
                 //won't work unless the page is loaded from that domain
                 //Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             }*/
@@ -1359,7 +1359,7 @@ YUI({
             testSetSubsSimpleWithExpiry : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSubs("data", {a: "b",c: "d",e: "f",g: "h"}, { expires: expires });
-                Assert.areEqual("data=a=b&c=d&e=f&g=h; expires=" + expires.toGMTString(), text, "Cookie string is incorrect.");
+                Assert.areEqual("data=a=b&c=d&e=f&g=h; expires=" + expires.toUTCString(), text, "Cookie string is incorrect.");
                 Assert.areEqual("data=a=b&c=d&e=f&g=h", document.cookie, "Cookie was not set to document.");
             },
     
@@ -1372,7 +1372,7 @@ YUI({
             testSetSubsSimpleWithAll : function(){
                 var expires = new Date("Wed, 01 Jan 2070 00:00:00 GMT");
                 var text = Y.Cookie.setSubs("data", {a: "b",c: "d",e: "f",g: "h"}, { expires: expires, domain : "yahoo.com", path: "/", secure: true });
-                Assert.areEqual("data=a=b&c=d&e=f&g=h; expires=" + expires.toGMTString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
+                Assert.areEqual("data=a=b&c=d&e=f&g=h; expires=" + expires.toUTCString() + "; path=/; domain=yahoo.com; secure", text, "Cookie string is incorrect.");
                 //won't work unless the page is loaded from that domain
                 //Assert.areEqual("name=value", document.cookie, "Cookie was not set to document.");
             },

@@ -87,7 +87,7 @@
     <span class="c">/**</span>
 <span class="c">     * Static property used to define the default attribute </span>
 <span class="c">     * configuration introduced by WidgetPosition.</span>
-<span class="c">     * </span>
+<span class="c">     *</span>
 <span class="c">     * @property WidgetPosition.ATTRS</span>
 <span class="c">     * @static</span>
 <span class="c">     * @type Object</span>
@@ -103,10 +103,10 @@
 <span class="c">         * xy attribute. Changes in position can be monitored by listening for xyChange events.</span>
 <span class="c">         */</span>
         <span class="nx">x</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_setX</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getX</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -120,10 +120,10 @@
 <span class="c">         * xy attribute. Changes in position can be monitored by listening for xyChange events.</span>
 <span class="c">         */</span>
         <span class="nx">y</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_setY</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">},</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getY</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>

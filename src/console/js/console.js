@@ -56,11 +56,11 @@ var getCN = Y.ClassNameManager.getClassName,
     L = Y.Lang,
     isString   = L.isString,
     isNumber   = L.isNumber,
-    isObject   = L.isObject,
     merge      = Y.merge,
     substitute = Y.substitute,
     create     = Y.Node.create;
     
+
 /**
  * Console creates a visualization for messages logged through calls to a YUI
  * instance's <code>Y.log( message, category, source )</code> method.  The
@@ -99,7 +99,7 @@ Y.mix(Console, {
      * @type Number
      * @static
      */
-    LOG_LEVEL_INFO  : 3,
+    LOG_LEVEL_INFO  : 30,
 
     /**
      * Static identifier for logLevel configuration setting to allow only
@@ -110,7 +110,7 @@ Y.mix(Console, {
      * @type Number
      * @static
      */
-    LOG_LEVEL_WARN  : 2,
+    LOG_LEVEL_WARN  : 20,
 
     /**
      * Static identifier for logLevel configuration setting to allow only
@@ -121,7 +121,7 @@ Y.mix(Console, {
      * @type Number
      * @static
      */
-    LOG_LEVEL_ERROR : 1,
+    LOG_LEVEL_ERROR : 10,
 
     /**
      * Map (object) of classNames used to populate the placeholders in the
@@ -395,11 +395,11 @@ Y.mix(Console, {
          * @default Y.config.logLevel or Console.LOG_LEVEL_INFO
          */
         logLevel : {
-            value : Y.config.logLevel,
+            value : Y.config.logLevel || 30,
             validator : function (v) {
                 return this._validateNewLogLevel(v);
             },
-            set : function (v) {
+            setter : function (v) {
                 return this._setLogLevel(v);
             }
         },
@@ -482,9 +482,25 @@ Y.mix(Console, {
             readOnly: true
         }
 
-    }
+    },
+
+    /**
+     * Used to normalize input values for available logLevels.
+     *
+     * @property Console._logLevels
+     * @type Object
+     * @protected
+     */
+    _logLevels : {}
 
 });
+
+Console._logLevels[INFO] = Console.LOG_LEVEL_INFO;
+Console._logLevels[WARN] = Console.LOG_LEVEL_WARN;
+Console._logLevels[ERROR] = Console.LOG_LEVEL_ERROR;
+Console._logLevels[Console.LOG_LEVEL_INFO]  = Console.LOG_LEVEL_INFO;
+Console._logLevels[Console.LOG_LEVEL_WARN]  = Console.LOG_LEVEL_WARN;
+Console._logLevels[Console.LOG_LEVEL_ERROR] = Console.LOG_LEVEL_ERROR;
 
 Y.extend(Console,Y.Widget,{
 
@@ -976,18 +992,7 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _setLogLevel : function (v) {
-        if (isString(v)) {
-            v = v.toLowerCase();
-            v = v === ERROR ?
-                        Console.LOG_LEVEL_ERROR :
-                        v === WARN ?
-                            Console.LOG_LEVEL_WARN :
-                            Console.LOG_LEVEL_INFO;
-        } else if (!isNumber(v)) {
-            v = Console.LOG_LEVEL_INFO;
-        }
-
-        return v;
+        return Console._logLevels[(v+'').toLowerCase()];
     },
 
     /**
@@ -1000,9 +1005,7 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _validateNewLogLevel : function (v) {
-        return v === Console.LOG_LEVEL_INFO ||
-               v === Console.LOG_LEVEL_WARN ||
-               v === Console.LOG_LEVEL_ERROR;
+        return (v+'').toLowerCase() in Console._logLevels;
     },
 
     /**

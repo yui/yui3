@@ -252,14 +252,15 @@ YUI.prototype = {
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string
-     * @return {YUI} the YUI instance
-     *
+     * @param details optional config data: 
      * requires   - features that should be present before loading
      * optional   - optional features that should be present if load optional defined
      * use  - features that should be attached automatically
      * skinnable  -
      * rollup
      * omit - features that should not be loaded if this module is present
+     * @return {YUI} the YUI instance
+     *
      */
     add: function(name, fn, version, details) {
 

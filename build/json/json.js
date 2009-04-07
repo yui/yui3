@@ -25,7 +25,18 @@ YUI.add('json-parse', function(Y) {
  * @static
  */
 
+
 // All internals kept private for security reasons
+
+
+    /*
+     * Alias to native browser implementation of the JSON object if available.
+     *
+     * @property Native
+     * @type {Object}
+     * @private
+     */
+var Native = Y.config.win.JSON,
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -37,7 +48,7 @@ YUI.add('json-parse', function(Y) {
      * @type {RegExp}
      * @private
      */
-var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
 
     /**
@@ -74,55 +85,65 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/;
+    _INVALID = /[^\],:{}\s]/,
+    
+    /**
+     * Test for JSON string of simple data string, number, boolean, or null.
+     * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
+     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
+     *
+     * @property _SIMPLE
+     * @type {RegExp}
+     * @protected
+     */
+    _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
 
-/**
- * Traverses nested objects, applying a reviver function to each (key,value)
- * from the scope if the key:value's containing object.  The value returned
- * from the function will replace the original value in the key:value pair.
- * If the value returned is undefined, the key will be omitted from the
- * returned object.
- * @method _revive
- * @param data {MIXED} Any JavaScript data
- * @param reviver {Function} filter or mutation function
- * @return {MIXED} The results of the filtered data
- * @private
- */
-function _revive(data, reviver) {
-    var walk = function (o,key) {
-        var k,v,value = o[key];
-        if (value && typeof value === 'object') {
-            for (k in value) {
-                if (value.hasOwnProperty(k)) {
-                    v = walk(value, k);
-                    if (v === undefined) {
-                        delete value[k];
-                    } else {
-                        value[k] = v;
+    /**
+     * Replaces specific unicode characters with their appropriate \unnnn
+     * format. Some browsers ignore certain characters during eval.
+     *
+     * @method escapeException
+     * @param c {String} Unicode character
+     * @return {String} the \unnnn escapement of the character
+     * @private
+     */
+    _escapeException = function (c) {
+        return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+    },
+
+    /**
+     * Traverses nested objects, applying a reviver function to each (key,value)
+     * from the scope if the key:value's containing object.  The value returned
+     * from the function will replace the original value in the key:value pair.
+     * If the value returned is undefined, the key will be omitted from the
+     * returned object.
+     * @method _revive
+     * @param data {MIXED} Any JavaScript data
+     * @param reviver {Function} filter or mutation function
+     * @return {MIXED} The results of the filtered data
+     * @private
+     */
+    _revive = function (data, reviver) {
+        var walk = function (o,key) {
+            var k,v,value = o[key];
+            if (value && typeof value === 'object') {
+                for (k in value) {
+                    if (value.hasOwnProperty(k)) {
+                        v = walk(value, k);
+                        if (v === undefined) {
+                            delete value[k];
+                        } else {
+                            value[k] = v;
+                        }
                     }
                 }
             }
-        }
-        return reviver.call(o,key,value);
-    };
+            return reviver.call(o,key,value);
+        };
 
-    return typeof reviver === 'function' ? walk({'':data},'') : data;
-}
+        return typeof reviver === 'function' ? walk({'':data},'') : data;
+    },
 
-/**
- * Replaces specific unicode characters with their appropriate \unnnn format.
- * Some browsers ignore certain characters during eval.
- *
- * @method escapeException
- * @param c {String} Unicode character
- * @return {String} the \unnnn escapement of the character
- * @private
- */
-function escapeException(c) {
-    return '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-}
-
-Y.mix(Y.namespace('JSON'),{
     /**
      * Parse a JSON string, returning the native JavaScript representation.
      * @param s {string} JSON string data
@@ -134,15 +155,16 @@ Y.mix(Y.namespace('JSON'),{
      * @static
      * @public
      */
-    parse : function (s,reviver) {
-        // Ensure valid JSON
+    // JavaScript implementation in lieu of native browser support.  Based on
+    // the json2.js library from http://json.org
+    _parse = function (s,reviver) {
         if (typeof s === 'string') {
             // Replace certain Unicode characters that are otherwise handled
             // incorrectly by some browser implementations.
             // NOTE: This modifies the input if such characters are found!
-            s = s.replace(_UNICODE_EXCEPTIONS, escapeException);
+            s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
-            // Test for validity
+            // Test for any remaining invalid characters
             if (!_INVALID.test(s.replace(_ESCAPES,'@').
                                  replace(_VALUES,']').
                                  replace(_BRACKETS,''))) {
@@ -153,26 +175,38 @@ Y.mix(Y.namespace('JSON'),{
             }
         }
 
-        // The text is not JSON parsable
-        Y.JSON.handleParseError(s,reviver);
-
         throw new SyntaxError('JSON.parse');
     },
+    
+    test;
 
-    /**
-     * Hook for plugins to add more detailed error reporting.  Note this will
-     * only catch a subset of JSON format errors.  Others are expressed via
-     * failure to eval.
-     *
-     * @method handleParseError
-     * @param s {String} the JSON string
-     * @param reviver {Function} (optional) the reviver passed to parse(..)
-     * @static
-     * @protected
-     */
-    handleParseError : function (s,reviver) {
+
+// Test the level of native browser support
+if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
+    try {
+        test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
+        switch (test.x) {
+            case 1 : // Reviver not supported (currently FF3.1b2)
+                _parse = function (s,reviver) {
+                    return _SIMPLE.test(s) ?
+                            eval('(' + s + ')') :
+                            _revive(Native.parse(s), reviver);
+                };
+                break;
+
+            case 2 : // Full support (currently IE8)
+                _parse = function (s, reviver) {
+                    return Native.parse(s, reviver);
+                };
+                break;
+
+            // default is JS implementation
+        }
     }
-});
+    catch (e) {} // defer to JS implementation
+}
+
+Y.mix(Y.namespace('JSON'),{ parse : _parse });
 
 
 }, '@VERSION@' );
@@ -201,6 +235,8 @@ var _toString = Object.prototype.toString,
     OPEN_A    = '[',
     CLOSE_A   = ']',
     COMMA     = ',',
+    COMMA_CR  = ",\n",
+    CR        = "\n",
     COLON     = ':',
     QUOTE     = '"';
 
@@ -257,29 +293,38 @@ Y.mix(Y.namespace('JSON'),{
      * Converts an arbitrary value to a JSON string representation.
      * Cyclical object or array references are replaced with null.
      * If a whitelist is provided, only matching object keys will be included.
-     * If a depth limit is provided, objects and arrays at that depth will
-     * be stringified as empty.
+     * If a positive integer or non-empty string is passed as the third
+     * parameter, the output will be formatted with carriage returns and
+     * indentation for readability.  If a String is passed (such as "\t") it
+     * will be used once for each indentation level.  If a number is passed,
+     * that number of spaces will be used.
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
-     * @param d {number} (optional) depth limit to recurse objects/arrays
-     *                   (practical minimum 1)
+     * @param ind {Number|String} (optional) indentation character or depth of
+     *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
      * @public
      */
-    stringify : function (o,w,d) {
+    stringify : function (o,w,ind) {
 
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
             rep    = Y.Lang.isFunction(w) ? w : null,
             pstack = [], // Processing stack used for cyclical ref protection
-            _date = Y.JSON.dateToString; // Use configured date serialization
+            _date  = Y.JSON.dateToString; // Use configured date serialization
 
         if (rep || typeof w !== 'object') {
             w = undefined;
+        }
+
+        if (ind) {
+            ind = Y.Lang.isNumber(ind) ? new Array(ind+1).join(" ") :
+                  Y.Lang.isString(ind) ? ind :
+                  null;
         }
 
         // escape encode special characters
@@ -296,56 +341,59 @@ Y.mix(Y.namespace('JSON'),{
         }
 
         // Check for cyclical references
-        function _cyclical(o) {
+        function _cyclicalTest(o) {
             for (var i = pstack.length - 1; i >= 0; --i) {
                 if (pstack[i] === o) {
-                    return true;
+                    throw new Error("JSON.stringify. Cyclical reference");
                 }
             }
             return false;
         }
 
-        function _object(o,d,arr) {
+        function _indent(s) {
+            return s.replace(/^/gm,ind);
+        }
+
+        function _object(o,arr) {
             // Add the object to the processing stack
             pstack.push(o);
 
             var a = [], i, j, len, k, v;
 
-            // Only recurse if we're above depth config
-            if (d > 0) {
-                if (arr) { // Array
-                    for (i = o.length - 1; i >= 0; --i) {
-                        a[i] = _stringify(o,i,d-1) || NULL;
-                    }
-                } else {   // Object
+            if (arr) { // Array
+                for (i = o.length - 1; i >= 0; --i) {
+                    a[i] = _stringify(o,i) || NULL;
+                }
+            } else {   // Object
+                // If whitelist provided, take only those keys
+                k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
 
-                    // If whitelist provided, take only those keys
-                    k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
-
-                    for (i = 0, j = 0, len = k.length; i < len; ++i) {
-                        if (typeof k[i] === STRING) {
-                            v = _stringify(o,k[i],d-1);
-                            if (v) {
-                                a[j++] = _string(k[i]) + COLON + v;
-                            }
+                for (i = 0, j = 0, len = k.length; i < len; ++i) {
+                    if (typeof k[i] === STRING) {
+                        v = _stringify(o,k[i]);
+                        if (v) {
+                            a[j++] = _string(k[i]) + COLON + v;
                         }
                     }
-
-                    a.sort();
                 }
             }
 
             // remove the array from the stack
             pstack.pop();
 
-            return arr ?
-                OPEN_A + a.join(COMMA) + CLOSE_A :
-                OPEN_O + a.join(COMMA) + CLOSE_O;
+            if (ind) {
+                return arr ?
+                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
+                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
+            } else {
+                return arr ?
+                    OPEN_A + a.join(COMMA) + CLOSE_A :
+                    OPEN_O + a.join(COMMA) + CLOSE_O;
+            }
         }
 
-        // Worker function.  Fork behavior on data type and recurse objects and
-        // arrays per the configured depth.
-        function _stringify(h,key,d) {
+        // Worker function.  Fork behavior on data type and recurse objects.
+        function _stringify(h,key) {
             var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
                 t = Y.Lang.type(o);
 
@@ -362,19 +410,16 @@ Y.mix(Y.namespace('JSON'),{
                 case BOOLEAN : return o+EMPTY;
                 case DATE    : return _date(o);
                 case NULL    : return NULL;
-                case ARRAY   : return _cyclical(o) ? NULL : _object(o,d,true);
+                case ARRAY   : _cyclicalTest(o); return _object(o,true);
                 case REGEXP  : // intentional fall through
                 case ERROR   : // intentional fall through
-                case OBJECT  : return _cyclical(o) ? NULL : _object(o,d);
+                case OBJECT  : _cyclicalTest(o); return _object(o);
                 default      : return undefined;
             }
         }
 
-        // Default depth to POSITIVE_INFINITY
-        d = d >= 0 ? d : 1/0;
-
         // process the input
-        return _stringify({'':o},EMPTY,d);
+        return _stringify({'':o},EMPTY);
     }
 });
 

@@ -17,18 +17,42 @@ YUI.add('dd-scroll', function(Y) {
 
     },
     SCROLL_TOP = 'scrollTop',
-    SCROLL_LEFT = 'scrollLeft';
+    SCROLL_LEFT = 'scrollLeft',
+    OFFSET_WIDTH = 'offsetWidth',
+    OFFSET_HEIGHT = 'offsetHeight';
+
     S.NAME = 'DragScroll';
     
 
     S.ATTRS = {
+        parentScroll: {
+            value: false,
+            setter: function(node) {
+                if (node) {
+                    var n = Y.get(node);
+                    if (!n) {
+                        Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    } else {
+                        n = n.item(0);
+                    }
+                    return n;
+                }
+                return false;
+            }
+        },
         /**
-        * @attribute scrollWindow
+        * @attribute windowScroll
         * @description Turn on window scroll support
         * @type Boolean
         */
         windowScroll: {
-            value: false
+            value: false,
+            setter: function(scroll) {
+                if (scroll) {
+                    this.set('parentScroll', window);
+                }
+                return scroll;
+            }
         },
         /**
         * @attribute buffer
@@ -44,7 +68,7 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         scrollDelay: {
-            value: 90
+            value: 900
         }
     };
 
@@ -80,20 +104,25 @@ YUI.add('dd-scroll', function(Y) {
         */        
         _getVPRegion: function() {
             var r = {};
-            if (!this._vpRegionCache) {
-                var n = Y.Node.get(window),
-                b = this.get('buffer');
+            //if (!this._vpRegionCache) {
+                var n = this.get('parentScroll'),
+                b = this.get('buffer'),
+                ws = this.get('windowScroll'),
+                w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
+                h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
+                t = ((ws) ? n.get(SCROLL_TOP) : n.getXY()[1]),
+                l = ((ws) ? n.get(SCROLL_LEFT) : n.getXY()[0]);
 
                 r = {
-                    top: n.get(SCROLL_TOP) + b,
-                    right: n.get('winWidth') + n.get(SCROLL_LEFT) - b,
-                    bottom: (n.get('winHeight') + n.get(SCROLL_TOP)) - b,
-                    left: n.get(SCROLL_LEFT) + b
+                    top: t + b,
+                    right: (n.get(w) + l) - b,
+                    bottom: (n.get(h) + t) - b,
+                    left: l + b
                 };
                 this._vpRegionCache = r;
-            } else {
-                r = this._vpRegionCache;
-            }
+            //} else {
+            //    r = this._vpRegionCache;
+            //}
             return r;
         },
         initializer: function() {
@@ -112,19 +141,20 @@ YUI.add('dd-scroll', function(Y) {
                 xy = this.realXY,
                 scroll = false,
                 b = this.get('buffer'),
-                win = Y.Node.get(window),
+                win = this.get('parentScroll'),
                 sTop = win.get(SCROLL_TOP),
                 sLeft = win.get(SCROLL_LEFT),
                 w = this._dimCache.w,
                 h = this._dimCache.h,
-                bottom = this.realXY[1] + h,
-                top = this.realXY[1],
-                right = this.realXY[0] + w,
-                left = this.realXY[0],
-                nt = xy[1],
-                nl = xy[0],
+                bottom = xy[1] + h,
+                top = xy[1],
+                right = xy[0] + w,
+                left = xy[0],
+                nt = top,
+                nl = left,
                 st = sTop,
                 sl = sLeft;
+
 
             if (left <= r.left) {
                 scroll = true;
@@ -140,12 +170,22 @@ YUI.add('dd-scroll', function(Y) {
                 scroll = true;
                 nt = xy[1] + b;
                 st = sTop + b;
+
             }
             if (top <= r.top) {
                 scroll = true;
                 nt = xy[1] - b;
                 st = sTop - b;
             }
+
+            if (st < 0) {
+                st = 0;
+            }
+
+            if (sl < 0) {
+                sl = 0;
+            }
+
             if (nt < 0) {
                 nt = xy[1];
             }
@@ -153,6 +193,11 @@ YUI.add('dd-scroll', function(Y) {
                 nl = xy[0];
             }
             if (move) {
+                console.log(r.top, top);
+                console.log('xy', xy[0], xy[1]);
+                console.log('scroll', sLeft, sTop);
+                console.log('moveNode', nl, nt);
+                console.log('set scroll', sl, st);
                 this._moveNode([nl, nt]);
                 win.set(SCROLL_TOP, st);
                 win.set(SCROLL_LEFT, sl);
@@ -193,7 +238,7 @@ YUI.add('dd-scroll', function(Y) {
                 //Only call align if we are not scrolling..
                 xy = S.superclass._align.apply(this, arguments);
             }
-            if (this.get('windowScroll')) {
+            if (this.get('parentScroll')) {
                 if (!this._scrolling) {
                     this._checkWinScroll();
                 }
@@ -208,8 +253,8 @@ YUI.add('dd-scroll', function(Y) {
         _setDimCache: function() {
             var node = this.get('dragNode');
             this._dimCache = {
-                h: node.get('offsetHeight'),
-                w: node.get('offsetWidth')
+                h: node.get(OFFSET_HEIGHT),
+                w: node.get(OFFSET_WIDTH)
             };
         },
         start: function() {

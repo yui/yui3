@@ -63,7 +63,7 @@
     <span class="nx">_init</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="nx">_protoInit</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">(</span><span class="s1">&#39;executeCallback&#39;</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">_bindIOListeners</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;executeCallback&#39;</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">_bindIOListeners</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;executeCallback&#39;</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">_detachIOStartListener</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -150,7 +150,7 @@
                                     <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_ioEndHandler</span><span class="o">,</span><span class="k">this</span><span class="o">));</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_ioAbortSub</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;io:abort&#39;</span><span class="o">,</span>
                                     <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_ioEndHandler</span><span class="o">,</span><span class="k">this</span><span class="o">));</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_shiftSub</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">(</span><span class="s1">&#39;shiftCallback&#39;</span><span class="o">,</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_shiftSub</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;shiftCallback&#39;</span><span class="o">,</span>
                                     <span class="k">this</span><span class="o">.</span><span class="nx">_detachIOListeners</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>

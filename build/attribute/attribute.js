@@ -109,17 +109,17 @@ YUI.add('attribute', function(Y) {
 
         DOT = ".",
         CHANGE = "Change",
-        GET = "get",
-        SET = "set",
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
+        INIT = "init",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
+        INVALID_VALUE,
 
-        EventTarget = Y.Event.Target;
+        EventTarget = Y.EventTarget;
 
     /**
      * <p>
@@ -127,17 +127,17 @@ YUI.add('attribute', function(Y) {
      * </p>
      * <p>
      * The class is designed to be augmented onto a host class,
-     * and allows the host to support get/set methods for attributes,
+     * and allows the host to support getter/setter methods for attributes,
      * initial configuration support and attribute change events.
      * </p>
      * <p>Attributes added to the host can:</p>
      * <ul>
      *     <li>Be defined as read-only.</li>
      *     <li>Be defined as write-once.</li>
-     *     <li>Be defined with a set function, used to manipulate
+     *     <li>Be defined with a setter function, used to manipulate
      *     values passed to Attribute's set method, before they are stored.</li>
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
-     *     <li>Be defined with a get function, which can be used to manipulate stored values,
+     *     <li>Be defined with a getter function, which can be used to manipulate stored values,
      *     before they are returned by Attribute's get method.</li>
      * </ul>
      *
@@ -153,10 +153,14 @@ YUI.add('attribute', function(Y) {
         this._conf = new Y.State();
     }
 
+    Attribute.INVALID_VALUE = {};
+
+    INVALID_VALUE = Attribute.INVALID_VALUE;
+
     Attribute.prototype = {
         /**
          * <p>
-         * Adds an attribute, with the provided configuration to the host object. Intended
+         * Adds an attribute with the provided configuration to the host object. Intended
          * to be used by the host object to setup it's set of available attributes.
          * </p>
          * <p>
@@ -174,12 +178,12 @@ YUI.add('attribute', function(Y) {
          *        constructor configuration arguments, or by invoking set.</dd>
          *    <dt>setter &#60;Function&#62;</dt>
          *    <dd>The setter function to be invoked (within the context of the host object) before 
-         *        the attribute is stored by a call to the set method. The value returned by the 
-         *        set function will be the finally stored value.</dd>
+         *        the attribute is stored by a call to the setter method. The value returned by the 
+         *        setter function will be the finally stored value.</dd>
          *    <dt>getter &#60;Function&#62;</dt>
          *    <dd>The getter function to be invoked (within the context of the host object) before
-         *    the stored values is returned to a user invoking the get method for the attribute.
-         *    The value returned by the get function is the final value which will be returned to the 
+         *    the stored values is returned to a user invoking the getter method for the attribute.
+         *    The value returned by the getter function is the final value which will be returned to the 
          *    user when they invoke get.</dd>
          *    <dt>validator &#60;Function&#62;</dt>
          *    <dd>The validator function which is invoked prior to setting the stored value. Returning
@@ -197,27 +201,40 @@ YUI.add('attribute', function(Y) {
          */
         addAttr: function(name, config) {
 
-            config = config || {};
-
-            var value,
-                hasValue = (VALUE in config);
-
-
-            if(hasValue) {
-                // We'll go through set, don't want to set value in _conf directory
-                value = config.value;
-                delete config.value;
-            }
-
-            config._init = true;
-            this._conf.add(name, config);
-
-            if (hasValue) {
-                // Go through set, so that raw values get normalized/validated
-                this.set(name, value);
+            if (!this.attrAdded(name)) {
+                config = config || {};
+    
+                var value,
+                    hasValue = (VALUE in config);
+    
+    
+                if(hasValue) {
+                    // We'll go through set, don't want to set value in _conf directory
+                    value = config.value;
+                    delete config.value;
+                }
+                config[INIT] = true;
+                this._conf.add(name, config);
+    
+                if (hasValue) {
+                    // Go through set, so that raw values get normalized/validated
+                    this.set(name, value);
+                }
+            } else {
             }
 
             return this;
+        },
+
+        /**
+         * Tests if the given attribute has been added to the host
+         *
+         * @method attrAdded
+         * @param {String} name The name of the attribute to check.
+         * @return boolean, true if an attribute with the given name has been added.
+         */
+        attrAdded: function(name) {
+            return !!(this._conf.get(name, INIT));
         },
 
         /**
@@ -232,9 +249,9 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Returns the current value of the attribute. If the attribute
-         * has been configured with a 'get' handler, this method will delegate
-         * to the 'get' handler to obtain the value of the attribute.
-         * The 'get' handler will be passed the current value of the attribute 
+         * has been configured with a 'getter' function, this method will delegate
+         * to the 'getter' to obtain the value of the attribute.
+         * The 'getter' will be passed the current value of the attribute 
          * as the only argument.
          *
          * @method get
@@ -258,10 +275,10 @@ YUI.add('attribute', function(Y) {
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GETTER) || conf.get(name, GET);
+            getFn = conf.get(name, GETTER);
 
             val = (getFn) ? getFn.call(this, val) : val;
-            val = (path) ? this._getSubAttrVal(path, val) : val;
+            val = (path) ? O.getValue(val, path) : val;
 
             return val;
         },
@@ -330,8 +347,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
-         * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-         * been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).
+         * (e.g. <code>set("x.y.z", 5)</code>).
          *
          * @param {Any} value The value to apply to the attribute
          * 
@@ -374,7 +390,7 @@ YUI.add('attribute', function(Y) {
             currVal = this.get(name);
 
             if (path) {
-               val = this._setSubAttrVal(path, Y.clone(currVal), val);
+               val = O.setValue(Y.clone(currVal), path, val);
 
                if (val === undefined) {
                    allowSet = false;
@@ -406,7 +422,7 @@ YUI.add('attribute', function(Y) {
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttrSet, silent:true});
+            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
 
             var eData = {
                 type: type,
@@ -424,29 +440,37 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Default handler implementation for set events
+         * Default handler implementation for Attribute change events
          *
          * @private
-         * @method _defAttrSet
+         * @method _defAttrChangeFn
          * @param {Event.Facade} e The event object for the custom event
          */
-        _defAttrSet : function(e) {
-            var conf = this._conf,
+        _defAttrChangeFn : function(e) {
+
+            var allowSet = true,
+                conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
                 valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SETTER) || conf.get(name, SET),
+                setFn = conf.get(name, SETTER),
                 storedVal,
                 retVal;
 
             if (!valFn || valFn.call(this, val)) {
-
                 if (setFn) {
                     retVal = setFn.call(this, val);
-                    if (retVal !== undefined) {
-                        val = retVal; // setter can change value
+                    if (retVal === INVALID_VALUE) {
+                        allowSet = false;
+                    } else if (retVal !== undefined){
+                        val = retVal;
                     }
                 }
+            } else {
+                allowSet = false;
+            }
+
+            if (allowSet) {
                 // Store value
                 storedVal = { value: val };
                 if (conf.get(name, INIT_VALUE) === undefined) {
@@ -462,70 +486,6 @@ YUI.add('attribute', function(Y) {
                 // invoked since nothing changed.
                 e.stopImmediatePropagation();
             }
-        },
-
-        /**
-         * Retrieves the sub value at the provided path,
-         * from the value object provided.
-         *
-         * @method _getSubAttrVal
-         * @private
-         *
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      from which to obtain the sub value.
-         * @param {Object} val  The object from which to extract the property value
-         * @return {Any} The value stored in the path or undefined if not found.
-         */
-        _getSubAttrVal : function (path, val) {
-            var pl = path.length,
-                i;
-
-            if (pl > 0) {
-                for (i = 0; val !== undefined && i < pl; ++i) {
-                    val = val[path[i]];
-                }
-            }
-
-            return val;
-        },
-
-        /**
-         * Sets the sub value at the provided path on the value object.
-         * Returns the modified value object, or undefined if the path is invalid.
-         *
-         * 
-         *
-         * @method _setSubAttrVal
-         * @private
-         * 
-         * @param {Array} path  A path array, specifying the object traversal path
-         *                      at which to set the sub value.
-         * @param {Object} val  The object on which to set the sub value.
-         * @param {Any} subval  The sub value to set.
-         * @return {Object}     The modified object, with the new sub value set, or 
-         *                      undefined, if the path was invalid.
-         */
-        _setSubAttrVal : function(path, val, subval) {
-
-            var leafIdx = path.length-1,
-                i,
-                o;
-
-            if (leafIdx >= 0) {
-                o = val;
-
-                for (i = 0; o !== undefined && i < leafIdx; ++i) {
-                    o = o[path[i]];
-                }
-
-                if (o !== undefined) {
-                    o[path[i]] = subval;
-                } else {
-                    val = undefined;
-                }
-            }
-
-            return val;
         },
 
         /**
@@ -574,14 +534,13 @@ YUI.add('attribute', function(Y) {
         /**
          * Configures attributes, and sets initial values
          *
-         * @method _initAttrs
-         * @protected
+         * @method addAttrs
          * @chainable
          *
          * @param {Object} cfgs Name/value hash of attribute configuration literals.
          * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
          */
-        _initAttrs : function(cfgs, values) {
+        addAttrs : function(cfgs, values) {
             if (cfgs) {
                 var attr,
                     attrCfg,
@@ -688,7 +647,7 @@ YUI.add('attribute', function(Y) {
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
                         subval = subvals[i].value;
-                        this._setSubAttrVal(path, val, subval);
+                        O.setValue(val, path, subval);
                     }
                 }
             }
@@ -704,4 +663,4 @@ YUI.add('attribute', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event']});
+}, '@VERSION@' ,{requires:['event-custom']});

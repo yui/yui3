@@ -1,18 +1,18 @@
     /**
-     * Base class support for objects requiring
-     * managed attributes and acting as event targets
+     * Base class support for objects requiring managed attributes and acting as event targets.
+     *
+     * Also provides the an augmentable PluginHost interface.
      *
      * @module base
      */
-    var L = Y.Lang,
-        SEP = ":",
+    var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
-        LITERAL_CONSTRUCTOR = {}.constructor,
+        OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DESTRUCTOR = "destructor";
 
     /**
@@ -29,15 +29,15 @@
      *
      * @constructor
      * @class Base
-     * @uses Attribute
+     * @uses Attribute, PluginHost
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
-    var Base = function() {
+    function Base() {
         Y.log('constructor called', 'life', 'base');
         Y.Attribute.call(this);
         this.init.apply(this, arguments);
-    };
+    }
 
     /**
      * <p>
@@ -108,7 +108,7 @@
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS"]
+        aggregates : ["ATTRS", "PLUGINS"]
     };
 
     /**
@@ -121,14 +121,6 @@
      * The cfg object literal supports the following properties
      * </p>
      * <dl>
-     *    <dt>dynamic &#60;boolean&#62;</dt>
-     *    <dd>
-     *    <p>If true (default), a completely new class
-     *    is created which extends the main class, and acts as the 
-     *    host on which the extension classes are augmented.</p>
-     *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main classes prototype.</p>
-     *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
@@ -139,40 +131,34 @@
      *
      * @method build
      * @static
+     * @param {Function} main The name of the new class
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
-     * @param {Object} cfg
+     * @param {Object} cfg Optional. Configuration for the class.
      * @return {Function} A custom class, created from the provided main and extension classes
      */
-    Base.build = function(main, extensions, cfg) {
+    Base.build = function(name, main, extensions, cfg) {
 
         var build = Base.build,
-
             builtClass = build._getClass(main, cfg),
             aggregates = build._getAggregates(main, cfg),
-            dynamic = builtClass._yuibuild.dynamic,
-
-            key = main.NAME,
-
-            i, l;
+            i, l, val, extClass;
 
         // Shallow isolate aggregates
-        if (dynamic) {
-            if (aggregates) {
-                for (i = 0, l = aggregates.length; i < l; ++i) {
-                    var val = aggregates[i];
-                    if (main.hasOwnProperty(val)) {
-                        builtClass[val] = L.isArray(main[val]) ? [] : {};
-                    }
+        if (aggregates) {
+            for (i = 0, l = aggregates.length; i < l; ++i) {
+                val = aggregates[i];
+                if (main.hasOwnProperty(val)) {
+                    builtClass[val] = L.isArray(main[val]) ? [] : {};
                 }
-                Y.aggregate(builtClass, main, true, aggregates);
             }
+            Y.aggregate(builtClass, main, true, aggregates);
         }
 
         // Augment/Aggregate
         for (i = 0, l = extensions.length; i < l; i++) {
-            var extClass = extensions[i];
+            extClass = extensions[i];
 
             if (aggregates) {
                 Y.aggregate(builtClass, extClass, true, aggregates);
@@ -182,16 +168,11 @@
             Y.mix(builtClass, extClass, true, null, 1);
 
             builtClass._yuibuild.exts.push(extClass);
-            key = key + ":" + Y.stamp(extClass);
         }
 
-        builtClass._yuibuild.id = key;
         builtClass.prototype.hasImpl = build._hasImpl;
-
-        if (dynamic) {
-            builtClass.NAME = main.NAME;
-            builtClass.prototype.constructor = builtClass;
-        }
+        builtClass.NAME = name;
+        builtClass.prototype.constructor = builtClass;
 
         return builtClass;
     };
@@ -205,15 +186,17 @@
                 BuiltClass.superclass.constructor.apply(this, arguments);
 
                 var f = BuiltClass._yuibuild.exts, 
-                    l = f.length;
+                    l = f.length,
+                    i;
 
-                for (var i = 0; i < l; i++) {
+                for (i = 0; i < l; i++) {
                     f[i].apply(this, arguments);
                 }
 
                 return this;
             }
             Y.extend(BuiltClass, main);
+
             return BuiltClass;
         },
 
@@ -229,20 +212,16 @@
                     }
                 }
             }
-
             return false;
         },
 
         _getClass : function(main, cfg) {
 
-            // Create dynamic class or just modify main class
-            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? Base.build._template(main) : main;
+            var builtClass = Base.build._template(main);
 
             builtClass._yuibuild = {
                 id: null,
-                exts : [],
-                dynamic : dynamic
+                exts : []
             };
 
             return builtClass;
@@ -251,10 +230,11 @@
         _getAggregates : function(main, cfg) {
             var aggr = [],
                 cfgAggr = (cfg && cfg.aggregates),
-                c = main;
+                c = main,
+                classAggr;
 
             while (c && c.prototype) {
-                var classAggr = c._buildCfg && c._buildCfg.aggregates;
+                classAggr = c._buildCfg && c._buildCfg.aggregates;
                 if (classAggr) {
                     aggr = aggr.concat(classAggr);
                 }
@@ -268,31 +248,6 @@
             return aggr;
         }
     });
-
-    /**
-     * <p>
-     * Creates a new object instance, based on a dynamically created custom class.
-     * The custom class is created from the main class passed in as the first parameter 
-     * along with the list of extension classes passed in
-     * as the second parameter using <a href="#method_build">Base.build</a> 
-     * with "dynamic" set to true. See the documentation for Base.build method 
-     * to see how the main class and extension classes are used.
-     * </p>
-     *
-     * <p>Any arguments following the 2nd argument are passed as arguments to the 
-     * constructor of the newly created class used to create the instance.</p>
-     * 
-     * @method create
-     * @static
-     *
-     * @param {Function} main The main class on which the instance it to be 
-     * based. This class will be extended to create the class for the custom instance
-     * @param {Array} extensions The list of extension classes used to augment the
-     * main class with.
-     * @param {Any*} args* 0..n arguments to pass to the constructor of the 
-     * newly created class, when creating the instance.
-     * @return {Object} An instance of the custom class
-     */
 
     Base.prototype = {
 
@@ -340,6 +295,9 @@
                 queuable:false,
                 defaultFn:this._defInitFn
             });
+
+            Y.PluginHost.call(this);
+
             this.fire(INIT, null, config);
             return this;
         },
@@ -504,7 +462,7 @@
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
-                            if (val && !cfg.ref && (LITERAL_CONSTRUCTOR === val.constructor || L.isArray(val))) {
+                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
     
@@ -516,12 +474,11 @@
                             }
     
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
-                                this._setSubAttrVal(path, aggAttrs[attr].value, val);
+                                O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    // TODO: Need to apply valueFn and merge in "." properties
                                     aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
                                 }
                             }
@@ -554,7 +511,7 @@
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
-                this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
@@ -593,26 +550,12 @@
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * Utility method to prefix the event name with the
-         * name property of the instance, if absent
-         *
-         * @method _prefixEvtType
-         * @private
-         * @param {String} type The event name
-         * @return {String} The prefixed event name
-         */
-        _prefixEvtType: function(type) {
-            if (type.indexOf(SEP) === -1 && this.name) {
-               type = this.name + ":" + type;
-            }
-            return type;
         }
     };
 
+    // straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
+    Y.mix(Base, Y.PluginHost, false, null, 1);
 
     Base.prototype.constructor = Base;
     Y.Base = Base;

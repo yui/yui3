@@ -73,17 +73,17 @@ Attribute provides managed attribute support.
 </p>
 <p>
 The class is designed to be augmented onto a host class,
-and allows the host to support get/set methods for attributes,
+and allows the host to support getter/setter methods for attributes,
 initial configuration support and attribute change events.
 </p>
 <p>Attributes added to the host can:</p>
 <ul>
 <li>Be defined as read-only.</li>
 <li>Be defined as write-once.</li>
-<li>Be defined with a set function, used to manipulate
+<li>Be defined with a setter function, used to manipulate
 values passed to Attribute's set method, before they are stored.</li>
 <li>Be defined with a validator function, to validate values before they are stored.</li>
-<li>Be defined with a get function, which can be used to manipulate stored values,
+<li>Be defined with a getter function, which can be used to manipulate stored values,
 before they are returned by Attribute's get method.</li>
 </ul>
 <p>See the <a href="#method_addAtt">addAttr</a> method, for details about how to add attributes with
@@ -99,16 +99,16 @@ a specific configuration</p>
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__defAttrSet">
+                                    <div class="private" rel="yui:method" resource="#method__defAttrChangeFn">
                                     <h4>
-                                        <a name="method__defAttrSet">_defAttrSet</a></h4>
+                                        <a name="method__defAttrChangeFn">_defAttrChangeFn</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_defAttrSet</strong>
+                                            <strong property="yui:name">_defAttrChangeFn</strong>
                                            (
                                                 
                                                         
@@ -119,7 +119,7 @@ a specific configuration</p>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Default handler implementation for set events
+                                            Default handler implementation for Attribute change events
                                         </div>
 
                                         <div class="description">
@@ -327,133 +327,6 @@ hash provided, if the attribute is not read-only.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__getSubAttrVal">
-                                    <h4>
-                                        <a name="method__getSubAttrVal">_getSubAttrVal</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        Any
-                                            <strong property="yui:name">_getSubAttrVal</strong>
-                                           (
-                                                
-                                                        
-                                                         path
-                                                    
-                                                
-                                                        , 
-                                                         val
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Retrieves the sub value at the provided path,
-from the value object provided.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">path</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  A path array, specifying the object traversal path
-from which to obtain the sub value.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">val</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The object from which to extract the property value</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Any
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The value stored in the path or undefined if not found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__initAttrs">
-                                    <h4>
-                                        <a name="method__initAttrs">_initAttrs</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_initAttrs</strong>
-                                           (
-                                                
-                                                        
-                                                         cfgs
-                                                    
-                                                
-                                                        , 
-                                                         values
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Configures attributes, and sets initial values
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">cfgs</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Name/value hash of attribute configuration literals.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">values</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__set">
                                     <h4>
                                         <a name="method__set">_set</a></h4>
@@ -540,8 +413,7 @@ from which to obtain the sub value.</span>
                                                         <span property="yui:description"> The name of the attribute. Note, if the 
 value of the attribute is an Object, dot notation can be used
 to set the value of a property within the object 
-(e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).</span>
+(e.g. <code>set("x.y.z", 5)</code>).</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">value</span>
@@ -577,80 +449,6 @@ readOnly or writeOnce attributes which have already been set.</span>
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
                                             </div>        
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__setSubAttrVal">
-                                    <h4>
-                                        <a name="method__setSubAttrVal">_setSubAttrVal</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">_setSubAttrVal</strong>
-                                           (
-                                                
-                                                        
-                                                         path
-                                                    
-                                                
-                                                        , 
-                                                         val
-                                                    
-                                                
-                                                        , 
-                                                         subval
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Sets the sub value at the provided path on the value object.
-Returns the modified value object, or undefined if the path is invalid.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">path</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  A path array, specifying the object traversal path
-at which to set the sub value.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">val</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The object on which to set the sub value.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">subval</span>
-                                                        &lt;<span property="yui:type">Any</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The sub value to set.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The modified object, with the new sub value set, or 
-undefined, if the path was invalid.</dd>
-                                                </dl>
-
 
              
 
@@ -739,7 +537,7 @@ by attribute the top level attribute name.</dd>
                                         
                                         <div class="description" property="yui:description">
                                             <p>
-Adds an attribute, with the provided configuration to the host object. Intended
+Adds an attribute with the provided configuration to the host object. Intended
 to be used by the host object to setup it's set of available attributes.
 </p>
 <p>
@@ -757,12 +555,12 @@ can only have their values set once, be it through the default configuration,
 constructor configuration arguments, or by invoking set.</dd>
 <dt>setter &#60;Function&#62;</dt>
 <dd>The setter function to be invoked (within the context of the host object) before 
-the attribute is stored by a call to the set method. The value returned by the 
-set function will be the finally stored value.</dd>
+the attribute is stored by a call to the setter method. The value returned by the 
+setter function will be the finally stored value.</dd>
 <dt>getter &#60;Function&#62;</dt>
 <dd>The getter function to be invoked (within the context of the host object) before
-the stored values is returned to a user invoking the get method for the attribute.
-The value returned by the get function is the final value which will be returned to the 
+the stored values is returned to a user invoking the getter method for the attribute.
+The value returned by the getter function is the final value which will be returned to the 
 user when they invoke get.</dd>
 <dt>validator &#60;Function&#62;</dt>
 <dd>The validator function which is invoked prior to setting the stored value. Returning
@@ -809,6 +607,114 @@ so if you need to protect the original values, you will need to merge or clone t
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_addAttrs">
+                                    <h4>
+                                        <a name="method_addAttrs">addAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">addAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         cfgs
+                                                    
+                                                
+                                                        , 
+                                                         values
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Configures attributes, and sets initial values
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfgs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Name/value hash of attribute configuration literals.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">values</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_attrAdded">
+                                    <h4>
+                                        <a name="method_attrAdded">attrAdded</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">attrAdded</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Tests if the given attribute has been added to the host
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute to check.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_get">
                                     <h4>
                                         <a name="method_get">get</a></h4>
@@ -830,9 +736,9 @@ so if you need to protect the original values, you will need to merge or clone t
                                         
                                         <div class="description" property="yui:description">
                                             Returns the current value of the attribute. If the attribute
-has been configured with a 'get' handler, this method will delegate
-to the 'get' handler to obtain the value of the attribute.
-The 'get' handler will be passed the current value of the attribute 
+has been configured with a 'getter' function, this method will delegate
+to the 'getter' to obtain the value of the attribute.
+The 'getter' will be passed the current value of the attribute 
 as the only argument.
                                         </div>
 
@@ -1276,16 +1182,15 @@ of attribute change events</span>
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#method__defAttrSet" title="_defAttrSet">_defAttrSet</a></li>
+                                <li class="private"><a href="#method__defAttrChangeFn" title="_defAttrChangeFn">_defAttrChangeFn</a></li>
                                 <li class="private"><a href="#method__fireAttrChange" title="_fireAttrChange">_fireAttrChange</a></li>
                                 <li class="private"><a href="#method__getAttrInitVal" title="_getAttrInitVal">_getAttrInitVal</a></li>
-                                <li class="private"><a href="#method__getSubAttrVal" title="_getSubAttrVal">_getSubAttrVal</a></li>
-                                <li class="protected"><a href="#method__initAttrs" title="_initAttrs">_initAttrs</a></li>
                                 <li class="protected"><a href="#method__set" title="_set">_set</a></li>
                                 <li class="protected"><a href="#method__setAttr" title="_setAttr">_setAttr</a></li>
-                                <li class="private"><a href="#method__setSubAttrVal" title="_setSubAttrVal">_setSubAttrVal</a></li>
                                 <li class="private"><a href="#method__splitAttrValues" title="_splitAttrValues">_splitAttrValues</a></li>
                                 <li class=""><a href="#method_addAttr" title="addAttr">addAttr</a></li>
+                                <li class=""><a href="#method_addAttrs" title="addAttrs">addAttrs</a></li>
+                                <li class=""><a href="#method_attrAdded" title="attrAdded">attrAdded</a></li>
                                 <li class=""><a href="#method_get" title="get">get</a></li>
                                 <li class=""><a href="#method_getAttrs" title="getAttrs">getAttrs</a></li>
                                 <li class=""><a href="#method_removeAttr" title="removeAttr">removeAttr</a></li>
@@ -1306,7 +1211,7 @@ of attribute change events</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_defAttrSet", "url": "Attribute.html#method__defAttrSet", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getSubAttrVal", "url": "Attribute.html#method__getSubAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_initAttrs", "url": "Attribute.html#method__initAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setSubAttrVal", "url": "Attribute.html#method__setSubAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

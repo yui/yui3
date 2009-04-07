@@ -16,10 +16,10 @@ YUI.add('dd-constrain', function(Y) {
 
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
-        OFFSET_WIDTH = 'offsetWidth';
+        OFFSET_WIDTH = 'offsetWidth',
+        proto = null,
 
-
-    var C = function() {
+    C = function() {
         C.superclass.constructor.apply(this, arguments);
 
     };
@@ -82,7 +82,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2region: {
             value: false,
-            get: function(r) {
+            getter: function(r) {
                 if (Y.Lang.isObject(r)) {
                     var o = {};
                     Y.mix(o, r);
@@ -91,7 +91,7 @@ YUI.add('dd-constrain', function(Y) {
                     return false;
                 }
             },
-            set: function (r) {
+            setter: function (r) {
                 if (Y.Lang.isObject(r)) {
                     if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
                         var o = {};
@@ -103,6 +103,7 @@ YUI.add('dd-constrain', function(Y) {
                 } else if (r !== false) {
                     return false;
                 }
+                return r;
             }
         },
         /**
@@ -112,7 +113,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         gutter: {
             value: '0',
-            set: function(gutter) {
+            setter: function(gutter) {
                 return Y.DD.DDM.cssSizestoObject(gutter);
             }
         },
@@ -123,7 +124,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2node: {
             value: false,
-            set: function(n) {
+            setter: function(n) {
                 if (!this.get('constrain2region')) {
                     var node = Y.Node.get(n);
                     if (node) {
@@ -144,7 +145,7 @@ YUI.add('dd-constrain', function(Y) {
         }
     };
 
-    var proto = {
+    proto = {
         start: function() {
             C.superclass.start.apply(this, arguments);
             this._regionCache = null;
@@ -171,7 +172,9 @@ YUI.add('dd-constrain', function(Y) {
         * @return {Object}
         */
         getRegion: function(inc) {
-            var r = {};
+            var r = {}, oh = null, ow = null,
+                g = this.get('gutter');
+
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
                     Y.on('resize', this._cacheRegion, this, true, window);
@@ -185,7 +188,7 @@ YUI.add('dd-constrain', function(Y) {
             } else {
                 return false;
             }
-            var g = this.get('gutter');
+
             Y.each(g, function(i, n) {
                 if ((n == 'right') || (n == 'bottom')) {
                     r[n] -= i;
@@ -194,8 +197,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
             });
             if (inc) {
-                var oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                    ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -313,7 +316,8 @@ YUI.add('dd-constrain', function(Y) {
         * @return The tick position
         */
         _calcTickArray: function(pos, ticks, off1, off2) {
-            var i = 0, len = ticks.length, next = 0;
+            var i = 0, len = ticks.length, next = 0,
+                diff1, diff2, ret;
 
             if (!ticks || (ticks.length === 0)) {
                 return pos;
@@ -323,9 +327,9 @@ YUI.add('dd-constrain', function(Y) {
                 for (i = 0; i < len; i++) {
                     next = (i + 1);
                     if (ticks[next] && ticks[next] >= pos) {
-                        var diff1 = pos - ticks[i],
-                            diff2 = ticks[next] - pos;
-                        var ret = (diff2 > diff1) ? ticks[i] : ticks[next];
+                        diff1 = pos - ticks[i];
+                        diff2 = ticks[next] - pos;
+                        ret = (diff2 > diff1) ? ticks[i] : ticks[next];
                         if (off1 && off2) {
                             if (ret > off2) {
                                 if (ticks[i]) {

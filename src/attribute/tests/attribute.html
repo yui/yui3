@@ -123,7 +123,10 @@
                 },
 
                 F: {
-                    value:"ExtFVal"
+                    value:"ExtFVal",
+                    setter: function(val) {
+                        return (Y.Lang.isString(val)) ? val : Y.Attribute.INVALID_VALUE;
+                    }
                 },
 
                 "complex.X.A" : {
@@ -784,6 +787,12 @@
 
                     h.set("B", true);
                     Y.Assert.areEqual("two", h.get("B")); // Validation should prevent the attribute from being set
+
+                    h.set("F", "MyNewFVal");
+                    Y.Assert.areEqual("MyNewFVal", h.get("F"));
+
+                    h.set("F", 3);
+                    Y.Assert.areEqual("MyNewFVal", h.get("F"));  // Validation should prevent the attribute from being set
                 },
 
                 testPrivateSet : function() {
@@ -951,7 +960,6 @@
             new Y.Console({
 
                 boundingBox:"#console",
-                logLevel:3,
                 verbose : false,
                 printTimeout: 0,
                 newestOnTop : false,

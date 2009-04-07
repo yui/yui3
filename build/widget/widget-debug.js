@@ -1,186 +1,18 @@
 YUI.add('widget', function(Y) {
 
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
- *
- * @module widget
- */
-
-/**
- * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods and performing
- * instantiation and cleanup during the init and destroy lifecycle phases respectively.
- *
- * @class PluginHost
- */
-
-var L = Y.Lang;
-
-function PluginHost(config) {
-    this._plugins = {};
-
-    this.after("init", function(e, cfg) {this._initPlugins(cfg);});
-    this.after("destroy", this._destroyPlugins);
-}
-
-PluginHost.prototype = {
-
-    /**
-     * Register and instantiate a plugin with the Widget.
-     * 
-     * @method plug
-     * @chainable
-     * @param p {String | Object |Array} Accepts the registered 
-     * namespace for the Plugin or an object literal with an "fn" property
-     * specifying the Plugin class and a "cfg" property specifying
-     * the configuration for the Plugin.
-     * <p>
-     * Additionally an Array can also be passed in, with either the above String or 
-     * Object literal values, allowing for multiple plugin registration in 
-     * a single call.
-     * </p>
-     */
-    plug: function(p) {
-        if (p) {
-            if (L.isArray(p)) {
-                var ln = p.length;
-                for (var i = 0; i < ln; i++) {
-                    this.plug(p[i]);
-                }
-            } else if (L.isFunction(p)) {
-                this._plug(p);
-            } else {
-                this._plug(p.fn, p.cfg);
-            }
-        }
-        return this;
-    },
-
-    /**
-     * Unregister and destroy a plugin already instantiated with the Widget.
-     * 
-     * @method unplug
-     * @param {String} ns The namespace key for the Plugin. If not provided,
-     * all registered plugins are unplugged.
-     * @chainable
-     */
-    unplug: function(ns) {
-        if (ns) {
-            this._unplug(ns);
-        } else {
-            for (ns in this._plugins) {
-                if (Y.Object.owns(this._plugins, ns)) {
-                    this._unplug(ns);
-                }
-            }
-        }
-        return this;
-    },
-
-    /**
-     * Determines if a plugin has been registered and instantiated 
-     * for this widget.
-     * 
-     * @method hasPlugin
-     * @public
-     * @return {Boolean} returns true, if the plugin has been applied
-     * to this widget.
-     */
-    hasPlugin : function(ns) {
-        return (this._plugins[ns] && this[ns]);
-    },
-
-    /**
-     * Initializes static plugins registered on the host (the
-     * "PLUGINS" static property) and any plugins passed in 
-     * for the instance through the "plugins" configuration property.
-     *
-     * @method _initPlugins
-     * @param {Config} the user configuration object for the host.
-     * @private
-     */
-    _initPlugins: function(config) {
-
-        // Class Configuration
-        var classes = this._getClasses(), constructor;
-        for (var i = classes.length - 1; i >= 0; i--) {
-            constructor = classes[i];
-            if (constructor.PLUGINS) {
-                this.plug(constructor.PLUGINS);
-            }
-        }
-
-        // User Configuration
-        if (config && config.plugins) {
-            this.plug(config.plugins);
-        }
-    },
-
-    /**
-     * Private method used to unplug and destroy all plugins on the host
-     * @method _destroyPlugins
-     * @private
-     */
-    _destroyPlugins: function() {
-        this._unplug();
-    },
-
-    /**
-     * Private method used to instantiate and attach plugins to the host
-     * @method _plug
-     * @param {Function} PluginClass The plugin class to instantiate
-     * @param {Object} config The configuration object for the plugin
-     * @private
-     */
-    _plug: function(PluginClass, config) {
-        if (PluginClass && PluginClass.NS) {
-            var ns = PluginClass.NS;
-
-            config = config || {};
-            config.owner = this;
-
-            if (this.hasPlugin(ns)) {
-                // Update config
-                this[ns].setAttrs(config);
-            } else {
-                // Create new instance
-                this[ns] = new PluginClass(config);
-                this._plugins[ns] = PluginClass;
-            }
-        }
-    },
-
-    /**
-     * Private method used to unregister and destroy a plugin already instantiated with the host.
-     *
-     * @method _unplug
-     * @private
-     * @param {String} ns The namespace key for the Plugin. If not provided,
-     * all registered plugins are unplugged.
-     */
-    _unplug : function(ns) {
-        if (ns) {
-            if (this[ns]) {
-                this[ns].destroy();
-                delete this[ns];
-            }
-            if (this._plugins[ns]) {
-                delete this._plugins[ns];
-            }
-        }
-    }
-};
-
-Y.PluginHost = PluginHost;
-
-/**
- * Provides the base Widget class along with an augmentable PluginHost interface
+ * Provides the base Widget class
  *
  * @module widget
  */
 
 // Local Constants
-var WIDGET = "widget",
+var L = Y.Lang,
+    O = Y.Object,
+    Node = Y.Node,
+    ClassNameManager = Y.ClassNameManager,
+
+    WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
@@ -208,12 +40,8 @@ var WIDGET = "widget",
 
     ContentUpdate = "contentUpdate",
 
-    O = Y.Object,
-    Node = Y.Node,
-    ClassNameManager = Y.ClassNameManager;
-
-// Widget nodeid-to-instance map for now, 1-to-1.
-var _instances = {};
+    // Widget nodeid-to-instance map for now, 1-to-1.
+    _instances = {};
 
 /**
  * A base class for widgets, providing:
@@ -224,7 +52,6 @@ var _instances = {};
  *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
  *        disabled, hasFocus, strings</li>
- *    <li>Plugin registration and activation support</li>
  * </ul>
  *
  * @param config {Object} Object literal specifying widget configuration 
@@ -233,7 +60,6 @@ var _instances = {};
  * @class Widget
  * @constructor
  * @extends Base
- * @uses PluginHost
  */
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
@@ -258,7 +84,7 @@ function Widget(config) {
  * @private
  */
 Widget._buildCfg = {
-    aggregates : ["PLUGINS", "HTML_PARSER"]
+    aggregates : ["HTML_PARSER"]
 };
 
 /**
@@ -320,7 +146,7 @@ Widget.ATTRS = {
     */
     boundingBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setBoundingBox(node);
         },
         writeOnce: true
@@ -334,7 +160,7 @@ Widget.ATTRS = {
     */
     contentBox: {
         value:null,
-        set: function(node) {
+        setter: function(node) {
             return this._setContentBox(node);
         },
         writeOnce: true
@@ -432,11 +258,11 @@ Widget.ATTRS = {
      * @type Object
      */
     strings: {
-        set: function(val) {
+        setter: function(val) {
             return this._setStrings(val, this.get(LOCALE));
         },
 
-        get: function() {
+        getter: function() {
             return this.getStrings(this.get(LOCALE));
         }
     }
@@ -583,8 +409,6 @@ Y.extend(Widget, Y.Base, {
         if (htmlConfig) {
             Y.aggregate(config, htmlConfig, false);
         }
-
-        Y.PluginHost.call(this, config);
     },
 
     /**
@@ -1459,8 +1283,6 @@ Y.extend(Widget, Y.Base, {
  * @static
  */
 Widget.PLUGINS = [];
-
-Y.mix(Widget, Y.PluginHost, false, null, 1); // straightup augment, no wrapper functions
 
 Y.Widget = Widget;
 

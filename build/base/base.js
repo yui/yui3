@@ -1,20 +1,193 @@
 YUI.add('base', function(Y) {
 
+/**
+ * Provides the base Widget class along with an augmentable PluginHost interface
+ *
+ * @module widget
+ */
+
+/**
+ * An augmentable class, which when added to a "Base" based class, allows 
+ * the class to support Plugins, providing plug and unplug methods and performing
+ * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ *
+ * @class PluginHost
+ */
+
+var L = Y.Lang;
+
+function PluginHost(config) {
+    this._plugins = {};
+
+    this.after("init", function(e, cfg) {this._initPlugins(cfg);});
+    this.after("destroy", this._destroyPlugins);
+}
+
+PluginHost.prototype = {
+
     /**
-     * Base class support for objects requiring
-     * managed attributes and acting as event targets
+     * Register and instantiate a plugin with the Widget.
+     * 
+     * @method plug
+     * @chainable
+     * @param p {String | Object |Array} Accepts the registered 
+     * namespace for the Plugin or an object literal with an "fn" property
+     * specifying the Plugin class and a "cfg" property specifying
+     * the configuration for the Plugin.
+     * <p>
+     * Additionally an Array can also be passed in, with either the above String or 
+     * Object literal values, allowing for multiple plugin registration in 
+     * a single call.
+     * </p>
+     */
+    plug: function(p) {
+        if (p) {
+            if (L.isArray(p)) {
+                var ln = p.length;
+                for (var i = 0; i < ln; i++) {
+                    this.plug(p[i]);
+                }
+            } else if (L.isFunction(p)) {
+                this._plug(p);
+            } else {
+                this._plug(p.fn, p.cfg);
+            }
+        }
+        return this;
+    },
+
+    /**
+     * Unregister and destroy a plugin already instantiated with the Widget.
+     * 
+     * @method unplug
+     * @param {String} ns The namespace key for the Plugin. If not provided,
+     * all registered plugins are unplugged.
+     * @chainable
+     */
+    unplug: function(ns) {
+        if (ns) {
+            this._unplug(ns);
+        } else {
+            for (ns in this._plugins) {
+                if (Y.Object.owns(this._plugins, ns)) {
+                    this._unplug(ns);
+                }
+            }
+        }
+        return this;
+    },
+
+    /**
+     * Determines if a plugin has been registered and instantiated 
+     * for this widget.
+     * 
+     * @method hasPlugin
+     * @public
+     * @return {Boolean} returns true, if the plugin has been applied
+     * to this widget.
+     */
+    hasPlugin : function(ns) {
+        return (this._plugins[ns] && this[ns]);
+    },
+
+    /**
+     * Initializes static plugins registered on the host (the
+     * "PLUGINS" static property) and any plugins passed in 
+     * for the instance through the "plugins" configuration property.
+     *
+     * @method _initPlugins
+     * @param {Config} the user configuration object for the host.
+     * @private
+     */
+    _initPlugins: function(config) {
+
+        // Class Configuration
+        var classes = this._getClasses(), constructor;
+        for (var i = classes.length - 1; i >= 0; i--) {
+            constructor = classes[i];
+            if (constructor.PLUGINS) {
+                this.plug(constructor.PLUGINS);
+            }
+        }
+
+        // User Configuration
+        if (config && config.plugins) {
+            this.plug(config.plugins);
+        }
+    },
+
+    /**
+     * Private method used to unplug and destroy all plugins on the host
+     * @method _destroyPlugins
+     * @private
+     */
+    _destroyPlugins: function() {
+        this._unplug();
+    },
+
+    /**
+     * Private method used to instantiate and attach plugins to the host
+     * @method _plug
+     * @param {Function} PluginClass The plugin class to instantiate
+     * @param {Object} config The configuration object for the plugin
+     * @private
+     */
+    _plug: function(PluginClass, config) {
+        if (PluginClass && PluginClass.NS) {
+            var ns = PluginClass.NS;
+
+            config = config || {};
+            config.owner = this;
+
+            if (this.hasPlugin(ns)) {
+                // Update config
+                this[ns].setAttrs(config);
+            } else {
+                // Create new instance
+                this[ns] = new PluginClass(config);
+                this._plugins[ns] = PluginClass;
+            }
+        }
+    },
+
+    /**
+     * Private method used to unregister and destroy a plugin already instantiated with the host.
+     *
+     * @method _unplug
+     * @private
+     * @param {String} ns The namespace key for the Plugin. If not provided,
+     * all registered plugins are unplugged.
+     */
+    _unplug : function(ns) {
+        if (ns) {
+            if (this[ns]) {
+                this[ns].destroy();
+                delete this[ns];
+            }
+            if (this._plugins[ns]) {
+                delete this._plugins[ns];
+            }
+        }
+    }
+};
+
+Y.PluginHost = PluginHost;
+
+    /**
+     * Base class support for objects requiring managed attributes and acting as event targets.
+     *
+     * Also provides the an augmentable PluginHost interface.
      *
      * @module base
      */
-    var L = Y.Lang,
-        SEP = ":",
+    var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
-        LITERAL_CONSTRUCTOR = {}.constructor,
+        OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DESTRUCTOR = "destructor";
 
     /**
@@ -31,14 +204,14 @@ YUI.add('base', function(Y) {
      *
      * @constructor
      * @class Base
-     * @uses Attribute
+     * @uses Attribute, PluginHost
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
-    var Base = function() {
+    function Base() {
         Y.Attribute.call(this);
         this.init.apply(this, arguments);
-    };
+    }
 
     /**
      * <p>
@@ -109,7 +282,7 @@ YUI.add('base', function(Y) {
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS"]
+        aggregates : ["ATTRS", "PLUGINS"]
     };
 
     /**
@@ -122,14 +295,6 @@ YUI.add('base', function(Y) {
      * The cfg object literal supports the following properties
      * </p>
      * <dl>
-     *    <dt>dynamic &#60;boolean&#62;</dt>
-     *    <dd>
-     *    <p>If true (default), a completely new class
-     *    is created which extends the main class, and acts as the 
-     *    host on which the extension classes are augmented.</p>
-     *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main classes prototype.</p>
-     *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
@@ -140,40 +305,34 @@ YUI.add('base', function(Y) {
      *
      * @method build
      * @static
+     * @param {Function} main The name of the new class
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
-     * @param {Object} cfg
+     * @param {Object} cfg Optional. Configuration for the class.
      * @return {Function} A custom class, created from the provided main and extension classes
      */
-    Base.build = function(main, extensions, cfg) {
+    Base.build = function(name, main, extensions, cfg) {
 
         var build = Base.build,
-
             builtClass = build._getClass(main, cfg),
             aggregates = build._getAggregates(main, cfg),
-            dynamic = builtClass._yuibuild.dynamic,
-
-            key = main.NAME,
-
-            i, l;
+            i, l, val, extClass;
 
         // Shallow isolate aggregates
-        if (dynamic) {
-            if (aggregates) {
-                for (i = 0, l = aggregates.length; i < l; ++i) {
-                    var val = aggregates[i];
-                    if (main.hasOwnProperty(val)) {
-                        builtClass[val] = L.isArray(main[val]) ? [] : {};
-                    }
+        if (aggregates) {
+            for (i = 0, l = aggregates.length; i < l; ++i) {
+                val = aggregates[i];
+                if (main.hasOwnProperty(val)) {
+                    builtClass[val] = L.isArray(main[val]) ? [] : {};
                 }
-                Y.aggregate(builtClass, main, true, aggregates);
             }
+            Y.aggregate(builtClass, main, true, aggregates);
         }
 
         // Augment/Aggregate
         for (i = 0, l = extensions.length; i < l; i++) {
-            var extClass = extensions[i];
+            extClass = extensions[i];
 
             if (aggregates) {
                 Y.aggregate(builtClass, extClass, true, aggregates);
@@ -183,16 +342,11 @@ YUI.add('base', function(Y) {
             Y.mix(builtClass, extClass, true, null, 1);
 
             builtClass._yuibuild.exts.push(extClass);
-            key = key + ":" + Y.stamp(extClass);
         }
 
-        builtClass._yuibuild.id = key;
         builtClass.prototype.hasImpl = build._hasImpl;
-
-        if (dynamic) {
-            builtClass.NAME = main.NAME;
-            builtClass.prototype.constructor = builtClass;
-        }
+        builtClass.NAME = name;
+        builtClass.prototype.constructor = builtClass;
 
         return builtClass;
     };
@@ -206,15 +360,17 @@ YUI.add('base', function(Y) {
                 BuiltClass.superclass.constructor.apply(this, arguments);
 
                 var f = BuiltClass._yuibuild.exts, 
-                    l = f.length;
+                    l = f.length,
+                    i;
 
-                for (var i = 0; i < l; i++) {
+                for (i = 0; i < l; i++) {
                     f[i].apply(this, arguments);
                 }
 
                 return this;
             }
             Y.extend(BuiltClass, main);
+
             return BuiltClass;
         },
 
@@ -230,20 +386,16 @@ YUI.add('base', function(Y) {
                     }
                 }
             }
-
             return false;
         },
 
         _getClass : function(main, cfg) {
 
-            // Create dynamic class or just modify main class
-            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? Base.build._template(main) : main;
+            var builtClass = Base.build._template(main);
 
             builtClass._yuibuild = {
                 id: null,
-                exts : [],
-                dynamic : dynamic
+                exts : []
             };
 
             return builtClass;
@@ -252,10 +404,11 @@ YUI.add('base', function(Y) {
         _getAggregates : function(main, cfg) {
             var aggr = [],
                 cfgAggr = (cfg && cfg.aggregates),
-                c = main;
+                c = main,
+                classAggr;
 
             while (c && c.prototype) {
-                var classAggr = c._buildCfg && c._buildCfg.aggregates;
+                classAggr = c._buildCfg && c._buildCfg.aggregates;
                 if (classAggr) {
                     aggr = aggr.concat(classAggr);
                 }
@@ -269,31 +422,6 @@ YUI.add('base', function(Y) {
             return aggr;
         }
     });
-
-    /**
-     * <p>
-     * Creates a new object instance, based on a dynamically created custom class.
-     * The custom class is created from the main class passed in as the first parameter 
-     * along with the list of extension classes passed in
-     * as the second parameter using <a href="#method_build">Base.build</a> 
-     * with "dynamic" set to true. See the documentation for Base.build method 
-     * to see how the main class and extension classes are used.
-     * </p>
-     *
-     * <p>Any arguments following the 2nd argument are passed as arguments to the 
-     * constructor of the newly created class used to create the instance.</p>
-     * 
-     * @method create
-     * @static
-     *
-     * @param {Function} main The main class on which the instance it to be 
-     * based. This class will be extended to create the class for the custom instance
-     * @param {Array} extensions The list of extension classes used to augment the
-     * main class with.
-     * @param {Any*} args* 0..n arguments to pass to the constructor of the 
-     * newly created class, when creating the instance.
-     * @return {Object} An instance of the custom class
-     */
 
     Base.prototype = {
 
@@ -340,6 +468,9 @@ YUI.add('base', function(Y) {
                 queuable:false,
                 defaultFn:this._defInitFn
             });
+
+            Y.PluginHost.call(this);
+
             this.fire(INIT, null, config);
             return this;
         },
@@ -503,7 +634,7 @@ YUI.add('base', function(Y) {
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
-                            if (val && !cfg.ref && (LITERAL_CONSTRUCTOR === val.constructor || L.isArray(val))) {
+                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
     
@@ -515,12 +646,11 @@ YUI.add('base', function(Y) {
                             }
     
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
-                                this._setSubAttrVal(path, aggAttrs[attr].value, val);
+                                O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    // TODO: Need to apply valueFn and merge in "." properties
                                     aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
                                 }
                             }
@@ -553,7 +683,7 @@ YUI.add('base', function(Y) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
-                this._initAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
@@ -592,26 +722,12 @@ YUI.add('base', function(Y) {
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * Utility method to prefix the event name with the
-         * name property of the instance, if absent
-         *
-         * @method _prefixEvtType
-         * @private
-         * @param {String} type The event name
-         * @return {String} The prefixed event name
-         */
-        _prefixEvtType: function(type) {
-            if (type.indexOf(SEP) === -1 && this.name) {
-               type = this.name + ":" + type;
-            }
-            return type;
         }
     };
 
+    // straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
+    Y.mix(Base, Y.PluginHost, false, null, 1);
 
     Base.prototype.constructor = Base;
     Y.Base = Base;
