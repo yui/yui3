@@ -2,7 +2,7 @@
  * The DataParser utility provides a common configurable interface for widgets to
  * parse a variety of data against a given schema.
  *
- * @module dataparser-json
+ * @module dataparser
  * @requires json, dataparser-base
  * @title DataParser JSON Submodule
  */
@@ -84,11 +84,12 @@ DPJSON = {
      * @method _parse
      * @param schema {Object} Schema to parse against.
      * @param data {Object} Data to parse.
-     * @return TBD
+     * @return {Object} Schema-parsed data.
+     * @static
      * @protected
      */
     _parse: function(schema, data) {
-        vardata_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
+        var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             data_out = {results:[],meta:{}};
 
         if(LANG.isObject(data_in) && schema) {
@@ -112,7 +113,8 @@ DPJSON = {
      * Schema-parse list of results from full data
      *
      * @method _parseResults
-     * @return TBD
+     * @return {Array} Array of results.
+     * @static
      * @protected
      */
     _parseResults: function(schema, data_in, data_out) {
@@ -130,7 +132,7 @@ DPJSON = {
                 else {
                     if(LANG.isArray(schema.fields)) {
                         if(LANG.isArray(schema.fields)) {
-                            results = this._parseFields(schema.fields, results);
+                            results = this._filterFieldValues(schema.fields, results);
                         }
                         else {
                             bError = true;
@@ -155,11 +157,12 @@ DPJSON = {
     /**
      * Schema-parse field data out of list of full results
      *
-     * @method _parseFields
-     * @return TBD
+     * @method _filterFieldValues
+     * @return {Array} Array of field-filtered results.
+     * @static
      * @protected
      */
-    _parseFields: function(fields, results) {
+    _filterFieldValues: function(fields, results) {
         var data_out = [],
             len = fields.length,
             i, j,
@@ -229,8 +232,9 @@ DPJSON = {
     /**
      * Parses results data according to schema
      *
-     * @method _parseResults
-     * @return TBD
+     * @method _parseMeta
+     * @return {Object} Schema-parsed meta data.
+     * @static
      * @protected
      */
     _parseMeta: function(metaFields, data_in, data_out) {

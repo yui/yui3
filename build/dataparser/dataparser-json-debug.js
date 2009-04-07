@@ -4,7 +4,7 @@ YUI.add('dataparser-json', function(Y) {
  * The DataParser utility provides a common configurable interface for widgets to
  * parse a variety of data against a given schema.
  *
- * @module dataparser-json
+ * @module dataparser
  * @requires json, dataparser-base
  * @title DataParser JSON Submodule
  */
@@ -17,55 +17,13 @@ var LANG = Y.Lang,
  * @constructor
  */
 DPJSON = {
-    //DPJSON.superclass.constructor.apply(this, arguments);
-//};
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataParser.JSON static properties
+    // DataParser.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
-//Y.mix(DPJSON, {
-    /**
-     * Class name.
-     *
-     * @property DataParser.JSON.NAME
-     * @type String
-     * @static
-     * @final
-     * @value "DataParser.JSON"
-     */
-    //NAME: "DataParser.JSON",
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource.XHR Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    //ATTRS: {
-        /**
-        * @attribute schema
-        * @description Object literal schema definition:
-            <dl>
-                <dt>resultsList {String}</dt>
-                    <dd>Pointer to array of tabular data</dd>
-                <dt>fields {String[] | Object []}</dt>
-                    <dd>Array of field names (aka keys), or array of object literals such as:
-                    {key:"fieldname", parser:Date.parse}</dd>
-                <dt>metaFields {Object}</dt>
-                    <dd>Hash of field names (aka keys) to include in the
-                    oParsedResponse.meta collection</dd>
-            </dl>
-        * @type Object
-        * @default {}
-        */
-        //schema: {
-            //value: {}
-        //}
-    //},
-
+    
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
@@ -122,16 +80,14 @@ DPJSON = {
         return data;
     },
 
-//});
-
-//Y.extend(DPJSON, Y.DataParser.Base, {
     /**
      * Overriding parse method traverses JSON data according to given schema.
      *
      * @method _parse
      * @param schema {Object} Schema to parse against.
      * @param data {Object} Data to parse.
-     * @return TBD
+     * @return {Object} Schema-parsed data.
+     * @static
      * @protected
      */
     _parse: function(schema, data) {
@@ -159,7 +115,8 @@ DPJSON = {
      * Schema-parse list of results from full data
      *
      * @method _parseResults
-     * @return TBD
+     * @return {Array} Array of results.
+     * @static
      * @protected
      */
     _parseResults: function(schema, data_in, data_out) {
@@ -177,7 +134,7 @@ DPJSON = {
                 else {
                     if(LANG.isArray(schema.fields)) {
                         if(LANG.isArray(schema.fields)) {
-                            results = this._parseFields(schema.fields, results);
+                            results = this._filterFieldValues(schema.fields, results);
                         }
                         else {
                             bError = true;
@@ -202,11 +159,12 @@ DPJSON = {
     /**
      * Schema-parse field data out of list of full results
      *
-     * @method _parseFields
-     * @return TBD
+     * @method _filterFieldValues
+     * @return {Array} Array of field-filtered results.
+     * @static
      * @protected
      */
-    _parseFields: function(fields, results) {
+    _filterFieldValues: function(fields, results) {
         var data_out = [],
             len = fields.length,
             i, j,
@@ -276,8 +234,9 @@ DPJSON = {
     /**
      * Parses results data according to schema
      *
-     * @method _parseResults
-     * @return TBD
+     * @method _parseMeta
+     * @return {Object} Schema-parsed meta data.
+     * @static
      * @protected
      */
     _parseMeta: function(metaFields, data_in, data_out) {
@@ -292,13 +251,10 @@ DPJSON = {
         }
         return data_out;
     }
-//});
 };
 Y.mix(DPJSON, Y.DataParser.Base);
 
 Y.DataParser.JSON = DPJSON;
-
-
 
 
 
