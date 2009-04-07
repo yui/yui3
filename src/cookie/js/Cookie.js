@@ -53,7 +53,7 @@
             if (isObject(options)){
                 //expiration date
                 if (options.expires instanceof Date){
-                    text += "; expires=" + options.expires.toGMTString();
+                    text += "; expires=" + options.expires.toUTCString();
                 }
             
                 //path
