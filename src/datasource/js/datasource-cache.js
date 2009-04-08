@@ -2,52 +2,68 @@
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires datasource-base,cache
- * @title DataSource Cache Extension
+ * @requires plugin, datasource-base, cache
+ * @title DataSource Cache Plugin
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds cacheability to the YUI DataSource utility.
-     * @class Cacheable
-     */    
-    Cacheable = function() {};
 
-Cacheable.ATTRS = {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Instance of Y.Cache. Caching is useful to reduce the number of server
-     * connections.  Recommended only for data sources that return comprehensive
-     * results for queries or when stale data is not an issue.
-     *
-     * @attribute cache
-     * @type Y.Cache
-     * @default null
-     */
-    cache: {
-        value: null,
-        validator: function(value) {
-            return ((value instanceof Y.Cache) || (value === null));
-        },
-        set: function(value) {
-            this.on("request", this._beforeRequest);
-            this.on("response", this._beforeResponse);
-
-            //TODO: Cleanup for destroy()?
-        }
-    }
+/**
+ * Adds cacheability to the YUI DataSource utility.
+ * @class DataSourceCache
+ */    
+var DataSourceCache = function() {
+    DataSourceCache.superclass.constructor.apply(this, arguments);
 };
-    
-Cacheable.prototype = {
+
+Y.mix(DataSourceCache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
+    /**
+     * Class name.
+     *
+     * @property DataParser.Base.NAME
+     * @type String
+     * @static
+     * @final
+     * @value "DataSourceCache"
+     */
+    NAME: "DataSourceCache",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(DataSourceCache, Y.Cache, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function(config) {
+        this.doBefore("_defRequestFn", this._beforeDefRequestFn);
+        this.doBefore("_defResponseFn", this._beforeDefResponseFn);
+    },
+
     /**
      * First look for cached response, then send request to live data.
      *
-     * @method _beforeRequest
+     * @method _beforeDefRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -57,12 +73,12 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-    _beforeRequest: function(e, o) {
+    _beforeDefRequestFn: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache") && this.get("cache").retrieve(o.request, o.callback)) || null;
+        var entry = (this.retrieve(o.request)) || null;
         if(entry && entry.response) {
-            e.stopImmediatePropagation();
-            this.fire("response", null, Y.mix(o, entry.response));
+            this._owner.fire("response", null, Y.mix(o, entry.response));
+            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
             //BASE.issueCallback(entry.response);
             //return new Y.Do.Halt("msg", "newRetVal");
         }
@@ -84,14 +100,11 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-     _beforeResponse: function(e, o) {
+     _beforeDefResponseFn: function(e, o) {
         // Add to Cache before returning
-        if(this.get("cache")) {
-            this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
-        }
+        this.add(o.request, o, (o.callback && o.callback.argument));
      }
-};
-    
-Y.Base.build(BASE, [Cacheable], {
-    dynamic: false
 });
+
+Y.namespace('plugin');
+Y.plugin.DataSourceCache = DataSourceCache;

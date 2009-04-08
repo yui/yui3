@@ -1902,6 +1902,9 @@ var PARENT_NODE = 'parentNode',
                 root = root || Y.config.doc;
 
                 if (root.nodeType !== 9) { // enforce element scope
+                    if (!root.id) {
+                        root.id = Y.guid();
+                    }
                     selector = '#' + root.id + ' ' + selector;
                     root = root.ownerDocument;
                 }

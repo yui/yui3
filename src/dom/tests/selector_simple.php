@@ -23,7 +23,7 @@
 onload = function() {
     YUI().use('*', function(Y) {
         //console.log(Y.Selector.query('ol li', document, false));
-        Y.Selector.query('body, span', document, false);
+        console.log(Y.Selector.query('.foo', document.body, true));
     });
 };
 </script>
@@ -31,7 +31,7 @@ onload = function() {
 
 </style>
 </head>
-<body class="body-node" id="body">
+<body class="body-node">
 <span lang="en-us"></span>
     <div id="demo" class="foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
