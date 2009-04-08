@@ -62,7 +62,7 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            Y.log(t);
+            // Y.log(t);
         }
 
         parts = t.split(/,\s*/);
@@ -90,6 +90,8 @@ var L = Y.Lang,
             targets: {},
 
             config: o,
+
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
                 context: this, 
@@ -143,7 +145,7 @@ ET.prototype = {
 
             }, this);
 
-            return (Y.config.chainOn) ? this : ret;
+            return (this._yuievt.chain) ? this : ret;
 
         } else if (L.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
@@ -182,14 +184,16 @@ ET.prototype = {
 
         if (detachkey) {
 
-            key = parts.join();
+            key = parts[0] + parts[1];
             if (!store[key]) {
                 store[key] = [];
             }
             store[key].push(handle);
+
+            // Y.log('storing: ' + key);
         }
 
-        return (Y.config.chainOn) ? this : handle;
+        return (this._yuievt.chain) ? this : handle;
 
     },
 
@@ -226,7 +230,7 @@ ET.prototype = {
         evts = this._yuievt.events, ce, i, ret = true;
 
         if (detachkey) {
-            key = parts.join(); 
+            key = parts[0] + parts[1]; 
             details = Y.Env.eventHandles[key];
             if (details) {
                 while (details.length) {
@@ -234,13 +238,14 @@ ET.prototype = {
                     handle.detach();
                 }
 
-                return this;
+                return (this._yuievt.chain) ? this : true;
             }
         }
 
         // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
-            return type.detach();
+            ret = type.detach();
+            return (this._yuievt.chain) ? this : true;
         }
 
         type = parts[1];
@@ -271,7 +276,7 @@ ET.prototype = {
             return ret;
         }
 
-        return this;
+        return (this._yuievt.chain) ? this : false;
     },
 
     /**
@@ -479,7 +484,7 @@ ET.prototype = {
         // clear target for next fire()
         ce.target = null;
 
-        return ret;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**
