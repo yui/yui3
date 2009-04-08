@@ -3,28 +3,39 @@
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
- * @requires base
+ * @requires plugin
  * @title Cache Utility
  */
-    var LANG = Y.Lang,
-    
-    /**
-     * Base class for the YUI Cache utility.
-     * @class Cache
-     * @extends Base
-     * @constructor
-     */    
-    Cache = function() {
-        Cache.superclass.constructor.apply(this, arguments);
-    };
-    
+var LANG = Y.Lang,
 
+/**
+ * Base class for the YUI Cache utility.
+ * @class Cache
+ * @extends Plugin
+ * @constructor
+ */    
+Cache = function() {
+    Cache.superclass.constructor.apply(this, arguments);
+};
+    
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(Cache, {    
+Y.mix(Cache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
     
     /**
      * Class name.
@@ -55,29 +66,28 @@ Y.mix(Cache, {
         size: {
             value: 0,
             validator: function(value) {
-                return (LANG.isNumber(value) && (value >= 0));
+                return (LANG.isNumber(value));
             },
-            set: function(value) {
+            setter: function(value) {
                 // If the cache is full, make room by removing stalest element (index=0)
                 var entries = this._entries;
-                if(LANG.isNumber(value) && value > 0) {
+                if(value > 0) {
                     if(entries) {
                         while(entries.length > value) {
                             entries.shift();
                         }
                     }
-                    return value;
                 }
                 else {
                     this._entries = [];
-                    return 0;
                 }
+                return value;
             }
         }
     }
 });
     
-Y.extend(Cache, Y.Base, {
+Y.extend(Cache, Y.Plugin, {
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache private properties
@@ -111,17 +121,17 @@ Y.extend(Cache, Y.Base, {
         * @description Fired when an entry is added.
         * @param e {Event.Facade} Event Facade object.
         * @param entry {Object} The cached entry.
-        * @preventable _handleAdd
+        * @preventable _defAddFn
         */
-        this.publish("add", {defaultFn: this._handleAdd});
+        this.publish("add", {defaultFn: this._defAddFn});
 
         /**
         * @event flush
         * @description Fired when the cache is flushed.
         * @param e {Event.Facade} Event Facade object.
-        * @preventable _handleFlush
+        * @preventable _defFlushFn
         */
-        this.publish("flush", {defaultFn: this._handleFlush});
+        this.publish("flush", {defaultFn: this._defFlushFn});
 
         /**
         * @event request
@@ -159,18 +169,18 @@ Y.extend(Cache, Y.Base, {
     /////////////////////////////////////////////////////////////////////////////
 
     /**
-     * The default add behavior.
+     * Adds entry to cache.
      *
-     * @method _handleAdd
+     * @method _defAddFn
      * @param e {Event.Facade} Event Facade object.
      * @param entry {Object} The cached entry.
      * @protected
      */
-    _handleAdd: function(e, entry) {
+    _defAddFn: function(e, entry) {
         var entries = this._entries,
             max = this.get("size");
             
-        if(!entries || (max === 0)) {
+        if(!entries || (max <= 0)) {
             e.stopImmediatePropagation();
             return;
         }        
@@ -188,11 +198,11 @@ Y.extend(Cache, Y.Base, {
     /**
      * Flushes cache.
      *
-     * @method _handleFlush
+     * @method _defFlushFn
      * @param e {Event.Facade} Event Facade object.
      * @protected     
      */
-    _handleFlush: function(e) {
+    _defFlushFn: function(e) {
         this._entries = [];
         Y.log("Cache flushed", "info", this.toString());
     },
@@ -303,6 +313,5 @@ Y.extend(Cache, Y.Base, {
     }
 });
     
-    Y.namespace("Cache");
-    Y.Cache = Cache;
+Y.Cache = Cache;
     

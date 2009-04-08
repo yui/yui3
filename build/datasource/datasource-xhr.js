@@ -9,15 +9,15 @@ YUI.add('datasource-xhr', function(Y) {
  * @title DataSource XHR Submodule
  */
     
-    /**
-     * XHR subclass for the YUI DataSource utility.
-     * @class DataSource.XHR
-     * @extends DataSource
-     * @constructor
-     */    
-    var XHR = function() {
-        XHR.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * XHR subclass for the YUI DataSource utility.
+ * @class DataSource.XHR
+ * @extends DataSource
+ * @constructor
+ */    
+var DSXHR = function() {
+    DSXHR.superclass.constructor.apply(this, arguments);
+};
     
 
     /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ YUI.add('datasource-xhr', function(Y) {
     // DataSource.XHR static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(XHR, {    
+Y.mix(DSXHR, {
     /**
      * Class name.
      *
@@ -58,12 +58,12 @@ Y.mix(XHR, {
     }
 });
     
-Y.extend(XHR, Y.DataSource, {
+Y.extend(DSXHR, Y.DataSource.Local, {
     /**
-     * Overriding <code>request</code> event handler passes query string to IO. Fires
-     * <code>response</code> event when response is received.     
+     * Passes query string to IO. Fires <code>response</code> event when
+     * response is received asynchronously.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -73,7 +73,7 @@ Y.extend(XHR, Y.DataSource, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {
@@ -103,7 +103,7 @@ Y.extend(XHR, Y.DataSource, {
     }
 });
   
-    Y.DataSource.XHR = XHR;
+Y.DataSource.XHR = DSXHR;
     
 
 
