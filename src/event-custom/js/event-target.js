@@ -481,7 +481,7 @@ ET.prototype = {
         // clear target for next fire()
         ce.target = null;
 
-        return ret;
+        return (Y.config.chainOn) ? this : ret;
     },
 
     /**
