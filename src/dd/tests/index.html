@@ -3,7 +3,8 @@
 <head>
     <title>DragDrop Tests</title>
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../../build/test/test-min.js"></script>    
+    <script type="text/javascript" src="../../../build/test/test.js"></script>
+    <script type="text/javascript" src="../../../build/dd/dd-debug.js"></script>
 
 <style>
     /* TO make sure the test will run in an iframe*/
@@ -41,8 +42,20 @@
     </div>
 </body>
     <script type="text/javascript">
+        var dd_events = [
+            'drag:drag',
+            'drag:drophit',
+            'drag:end',
+            'drag:start',
+            'drag:enter',
+            'drag:over',
+            'drop:over',
+            'drop:enter',
+            'drop:hit'
+        ],
+        moveCount = 728;
 
-        var Y = new YUI({
+        YUI({
             base: '../../../build/',
             logExclude: {
                 'YUI': true,
@@ -51,7 +64,7 @@
                 Attribute: true,
                 augment: true
             }
-        }).use('dd', "test", 'substitute', function(Y) {
+        }).use('dd', 'test', 'substitute', function(Y) {
 
                 _count = {};
                 _data = {
@@ -69,7 +82,6 @@
                         _count[e.type] = 0;
                     }
                     _count[e.type]++;
-
                 };
 
 
@@ -86,7 +98,7 @@
 
                 },
                 test_drag_setup: function() {
-                    dd = new Y.DD.Drag({ node: '#drag' });
+                    dd = new Y.DD.Drag({ node: '#drag', mode: 'intersect' });
                     Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
                     Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
                 },
@@ -102,9 +114,10 @@
                     Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
                 },
                 test_drag_setup_events: function() {
-                    Y.each(dd._yuievt.events, function(v, k) {
-                        var handle = dd.on(k, _handleCount);
-                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drag:handle [' + k + ']: Handle Instance');
+                    Y.each(dd_events, function(v) {
+                        _count[v] = 0;
+                        var handle = dd.on(v, _handleCount);
+                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drag:handle [' + v + ']: Handle Instance');
                     });
                 },
                 test_drop_setup: function() {
@@ -113,34 +126,35 @@
                     Y.Assert.isTrue(drop.get('node').hasClass('yui-dd-drop'), 'drop: Drop Instance ClassName');
                 },
                 test_drop_setup_events: function() {
-                    Y.each(drop._yuievt.events, function(v, k) {
-                        var handle = drop.on(k, _handleCount);
-                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drop:handle [' + k + ']: Handle Instance');
+                    Y.each(dd_events, function(v) {
+                        var handle = drop.on(v, _handleCount);
+                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drop:handle [' + v + ']: Handle Instance');
                     });
                 },
                 test_drag_move: function() {
-                    _resetCount();
+                    //_resetCount();
                     Y.DD.DDM._noShim = true;
                     dd._dragThreshMet = true;
+                    dd.set('activeHandle', dd.get('node'));                    
                     dd._setStartPosition(dd.get('node').getXY());
                     Y.DD.DDM.activeDrag = dd;
                     dd.start();
-                    for (var i = 0; i < 727; i++) {
+                    for (var i = 0; i < moveCount; i++) {
                         Y.DD.DDM._move({ pageX: i, pageY: 110 });
                     }
                     dd.end();
                     dd._handleMouseUp();
                     Y.DD.DDM._noShim = false;
-                    Y.Assert.areSame(_count['drag:drag'], 727, 'drag:drag should fire 727 times');
-                    Y.Assert.areSame(_count['drag:drophit'], 1, 'drag:drophit should fire 1 time');
-                    Y.Assert.areSame(_count['drag:end'], 1, 'drag:end should fire 1 time');
-                    Y.Assert.areSame(_count['drag:start'], 1, 'drag:start should fire 1 time');
-                    Y.Assert.areSame(_count['drag:enter'], 1, 'drag:enter should fire 1 time');
-                    Y.Assert.areSame(_count['drag:over'], 30, 'drag:over should fire 30 times');
+                    Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
+                    Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
+                    Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
 
-                    Y.Assert.areSame(_count['drop:over'], 30, 'drop:over should fire 30 times');
-                    Y.Assert.areSame(_count['drop:enter'], 1, 'drop:enter should fire 1 time');
-                    Y.Assert.areSame(_count['drop:hit'], 1, 'drop:hit should fire 1 time');
+                    Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
+                    Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
+                    Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
                 },
                 test_drag_destroy: function() {
                     dd.destroy();
@@ -156,35 +170,36 @@
                     Y.Assert.isTrue(p.hasClass('yui-dd-proxy'), 'proxy: Proxy Node Instance ClassName');
                 },
                 test_proxy_setup_events: function() {
-                    Y.each(proxy._yuievt.events, function(v, k) {
-                        var handle = proxy.on(k, _handleCount);
-                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'proxy:handle [' + k + ']: Handle Instance');
+                    Y.each(dd_events, function(v) {
+                        var handle = proxy.on(v, _handleCount);
+                        Y.Assert.isInstanceOf(Y.EventHandle, handle, 'proxy:handle [' + v + ']: Handle Instance');
                     });
                 },
                 test_proxy_move: function() {
                     _resetCount();
                     Y.DD.DDM._noShim = true;
                     proxy._dragThreshMet = true;
+                    proxy.set('activeHandle', proxy.get('node'));                    
                     proxy._setStartPosition(dd.get('node').getXY());
                     Y.DD.DDM.activeDrag = proxy;
                     proxy.start();
-                    for (var i = 0; i < 727; i++) {
+                    for (var i = 0; i < moveCount; i++) {
                         Y.DD.DDM._move({ pageX: i, pageY: 110 });
                     }
                     proxy.end();
                     proxy._handleMouseUp();
                     Y.DD.DDM._noShim = false;
                     
-                    Y.Assert.areSame(_count['drag:drag'], 727, 'drag:drag should fire 727 times');
-                    Y.Assert.areSame(_count['drag:drophit'], 1, 'drag:drophit should fire 1 time');
-                    Y.Assert.areSame(_count['drag:end'], 1, 'drag:end should fire 1 time');
-                    Y.Assert.areSame(_count['drag:start'], 1, 'drag:start should fire 1 time');
-                    Y.Assert.areSame(_count['drag:enter'], 1, 'drag:enter should fire 1 time');
-                    Y.Assert.areSame(_count['drag:over'], 30, 'drag:over should fire 30 times');
+                    Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
+                    Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
+                    Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
+                    Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
 
-                    Y.Assert.areSame(_count['drop:over'], 30, 'drop:over should fire 30 times');
-                    Y.Assert.areSame(_count['drop:enter'], 1, 'drop:enter should fire 1 time');
-                    Y.Assert.areSame(_count['drop:hit'], 1, 'drop:hit should fire 1 time');
+                    Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
+                    Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
+                    Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
                 },
                 test_proxy_destroy: function() {
                     proxy.destroy();

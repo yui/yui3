@@ -331,8 +331,10 @@ YUI.add('dd-ddm', function(Y) {
         * @description Activates the shim
         */
         _pg_activate: function() {
-            var ah = this.activeDrag.get('activeHandle'),
-            cur = ah.getStyle('cursor');
+            var ah = this.activeDrag.get('activeHandle'), cur = 'auto';
+            if (ah) {
+                cur = ah.getStyle('cursor');
+            }
             if (cur == 'auto') {
                 cur = this.get('dragCursor');
             }
@@ -717,7 +719,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Array} The valid Drop Targets that are in the viewport.
         */
         _lookup: function() {
-            if (!this.useHash) {
+            if (!this.useHash || this._noShim) {
                 return this.validDrops;
             }
             var drops = [];
@@ -1209,7 +1211,8 @@ YUI.add('dd-drag', function(Y) {
                 defaultFn: this._handleMouseDown,
                 queuable: false,
                 emitFacade: true,
-                bubbles: true
+                bubbles: true,
+                prefix: 'drag'
             });
             
             var ev = [
@@ -1234,7 +1237,8 @@ YUI.add('dd-drag', function(Y) {
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: false
+                    queuable: false,
+                    prefix: 'drag'
                 });
             }, this);
 
@@ -1949,16 +1953,18 @@ YUI.add('dd-proxy', function(Y) {
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function() {
-            var n = this.get(NODE), ah, cur;
+            var n = this.get(NODE), ah, cur = 'auto';
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
                     width: n.get('offsetWidth') + 'px'
                 });
             }
-
+            
             ah = DDM.activeDrag.get('activeHandle');
-            cur = ah.getStyle('cursor');
+            if (ah) {
+                cur = ah.getStyle('cursor');
+            }
             if (cur == 'auto') {
                 cur = DDM.get('dragCursor');
             }
@@ -2622,7 +2628,8 @@ YUI.add('dd-drop', function(Y) {
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
-                    queuable: false
+                    queuable: false,
+                    prefix: 'drop'
                 });
             }, this);
 
@@ -2909,9 +2916,9 @@ YUI.add('dd-drop', function(Y) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        if (DDM.activeDrop === this) {
-                            DDM.activeDrop = null;
-                        }
+                        //if (DDM.activeDrop === this) {
+                        //    DDM.activeDrop = null;
+                        //}
                     }
                 }
             }
