@@ -2021,6 +2021,9 @@ var PARENT_NODE = 'parentNode',
                 root = root || Y.config.doc;
 
                 if (root.nodeType !== 9) { // enforce element scope
+                    if (!root.id) {
+                        root.id = Y.guid();
+                    }
                     selector = '#' + root.id + ' ' + selector;
                     root = root.ownerDocument;
                 }
@@ -2220,6 +2223,7 @@ var PARENT_NODE = 'parentNode',
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
+                query = selector, // original query for debug report
                 tokens = [],    // array of tokens
                 found = false,  // whether or not any matches were found this pass
                 test,

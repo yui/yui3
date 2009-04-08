@@ -8,25 +8,24 @@ YUI.add('datasource-base', function(Y) {
  * @requires base
  * @title DataSource Utility
  */
-    Y.namespace("DataSource");
-    var LANG = Y.Lang,
+var LANG = Y.Lang,
     
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource
-     * @extends Base
-     * @constructor
-     */    
-    DSBase = function() {
-        DSBase.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * Base class for the YUI DataSource utility.
+ * @class DataSource
+ * @extends Base
+ * @constructor
+ */    
+DSLocal = function() {
+    DSLocal.superclass.constructor.apply(this, arguments);
+};
     
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {
+Y.mix(DSLocal, {
     /**
      * Class name.
      *
@@ -34,9 +33,9 @@ Y.mix(DSBase, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource"
+     * @value "DataSource.Local"
      */
-    NAME: "DataSource",
+    NAME: "DataSource.Local",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -87,7 +86,7 @@ Y.mix(DSBase, {
     }
 });
     
-Y.extend(DSBase, Y.Base, {
+Y.extend(DSLocal, Y.Base, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -142,9 +141,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * </dl>
-         * @preventable _handleRequest
+         * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: this._handleRequest});
+        //this.publish("request", {defaultFn: this._defRequestFn});
+        this.publish("request", {defaultFn:function(e, o){
+            this._defRequestFn(e, o);
+        }});
          
         /**
          * Fired when raw data is received.
@@ -158,9 +160,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * <dt>data (Object)</dt> <dd>The raw data.</dd>
          * </dl>
-         * @preventable _handleData
+         * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: this._handleData});
+        //this.publish("data", {defaultFn: this._defDataFn});
+         this.publish("data", {defaultFn:function(e, o){
+            this._defDataFn(e, o);
+        }});
 
         /**
          * Fired when response is returned.
@@ -177,9 +182,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
          * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
-         * @preventable _handleResponse
+         * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: this._handleResponse});
+         //this.publish("response", {defaultFn: this._defResponseFn});
+         this.publish("response", {defaultFn:function(e, o){
+            this._defResponseFn(e, o);
+        }});
 
         /**
          * Fired when an error is encountered.
@@ -201,12 +209,11 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>request</code> event handler manages request/response
-     * transaction. Must fire <code>response</code> event when response is received. This
-     * method should be implemented by subclasses to achieve more complex
-     * behavior such as accessing remote data.
+     * Manages request/response transaction. Must fire <code>response</code>
+     * event when response is received. This method should be implemented by
+     * subclasses to achieve more complex behavior such as accessing remote data.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -216,7 +223,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var data = this.get("source");
         
         // Problematic data
@@ -231,10 +238,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>data</code> event handler normalizes raw data
-     * into a response that includes results and meta properties.
+     * Normalizes raw data into a response that includes results and meta properties.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -245,7 +251,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
+    _defDataFn: function(e, o) {
         // Pass through data as-is
         o.results = o.data;
         
@@ -261,10 +267,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>response</code> event handler returns data as a
-     * normalized response to callabck.
+     * Sends data as a normalized response to callback.
      *
-     * @method _handleResponse
+     * @method _defResponseFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -277,9 +282,9 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleResponse: function(e, o) {
+    _defResponseFn: function(e, o) {
         // Send the response back to the callback
-        DSBase.issueCallback(o);
+        DSLocal.issueCallback(o);
     },
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
@@ -300,13 +305,14 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DSBase._tId++;
+        var tId = DSLocal._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         return tId;
     }
 });
     
-    Y.DataSource = DSBase;
+Y.namespace("DataSource");
+Y.DataSource.Local = DSLocal;
     
 
 
@@ -324,15 +330,15 @@ YUI.add('datasource-xhr', function(Y) {
  * @title DataSource XHR Submodule
  */
     
-    /**
-     * XHR subclass for the YUI DataSource utility.
-     * @class DataSource.XHR
-     * @extends DataSource
-     * @constructor
-     */    
-    var XHR = function() {
-        XHR.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * XHR subclass for the YUI DataSource utility.
+ * @class DataSource.XHR
+ * @extends DataSource
+ * @constructor
+ */    
+var DSXHR = function() {
+    DSXHR.superclass.constructor.apply(this, arguments);
+};
     
 
     /////////////////////////////////////////////////////////////////////////////
@@ -340,7 +346,7 @@ YUI.add('datasource-xhr', function(Y) {
     // DataSource.XHR static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(XHR, {    
+Y.mix(DSXHR, {
     /**
      * Class name.
      *
@@ -373,12 +379,12 @@ Y.mix(XHR, {
     }
 });
     
-Y.extend(XHR, Y.DataSource, {
+Y.extend(DSXHR, Y.DataSource.Local, {
     /**
-     * Overriding <code>request</code> event handler passes query string to IO. Fires
-     * <code>response</code> event when response is received.     
+     * Passes query string to IO. Fires <code>response</code> event when
+     * response is received asynchronously.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -388,7 +394,7 @@ Y.extend(XHR, Y.DataSource, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var uri = this.get("source"),
             cfg = {
                 on: {
@@ -418,7 +424,7 @@ Y.extend(XHR, Y.DataSource, {
     }
 });
   
-    Y.DataSource.XHR = XHR;
+Y.DataSource.XHR = DSXHR;
     
 
 
@@ -431,52 +437,68 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires datasource-base,cache
- * @title DataSource Cache Extension
+ * @requires plugin, datasource-base, cache
+ * @title DataSource Cache Plugin
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds cacheability to the YUI DataSource utility.
-     * @class Cacheable
-     */    
-    Cacheable = function() {};
 
-Cacheable.ATTRS = {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Instance of Y.Cache. Caching is useful to reduce the number of server
-     * connections.  Recommended only for data sources that return comprehensive
-     * results for queries or when stale data is not an issue.
-     *
-     * @attribute cache
-     * @type Y.Cache
-     * @default null
-     */
-    cache: {
-        value: null,
-        validator: function(value) {
-            return ((value instanceof Y.Cache) || (value === null));
-        },
-        set: function(value) {
-            this.on("request", this._beforeRequest);
-            this.on("response", this._beforeResponse);
-
-            //TODO: Cleanup for destroy()?
-        }
-    }
+/**
+ * Adds cacheability to the YUI DataSource utility.
+ * @class DataSourceCache
+ */    
+var DataSourceCache = function() {
+    DataSourceCache.superclass.constructor.apply(this, arguments);
 };
-    
-Cacheable.prototype = {
+
+Y.mix(DataSourceCache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
+    /**
+     * Class name.
+     *
+     * @property DataParser.Base.NAME
+     * @type String
+     * @static
+     * @final
+     * @value "DataSourceCache"
+     */
+    NAME: "DataSourceCache",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+
+    }
+});
+
+Y.extend(DataSourceCache, Y.Cache, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function(config) {
+        this.doBefore("_defRequestFn", this._beforeDefRequestFn);
+        this.doBefore("_defResponseFn", this._beforeDefResponseFn);
+    },
+
     /**
      * First look for cached response, then send request to live data.
      *
-     * @method _beforeRequest
+     * @method _beforeDefRequestFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -486,12 +508,12 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-    _beforeRequest: function(e, o) {
+    _beforeDefRequestFn: function(e, o) {
         // Is response already in the Cache?
-        var entry = (this.get("cache") && this.get("cache").retrieve(o.request, o.callback)) || null;
+        var entry = (this.retrieve(o.request)) || null;
         if(entry && entry.response) {
-            e.stopImmediatePropagation();
-            this.fire("response", null, Y.mix(o, entry.response));
+            this._owner.fire("response", null, Y.mix(o, entry.response));
+            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
             //BASE.issueCallback(entry.response);
             //return new Y.Do.Halt("msg", "newRetVal");
         }
@@ -513,66 +535,93 @@ Cacheable.prototype = {
      * </dl>
      * @protected
      */
-     _beforeResponse: function(e, o) {
+     _beforeDefResponseFn: function(e, o) {
         // Add to Cache before returning
-        if(this.get("cache")) {
-            this.get("cache").add(o.request, o, (o.callback && o.callback.argument));
-        }
+        this.add(o.request, o, (o.callback && o.callback.argument));
      }
-};
-    
-Y.Base.build(BASE, [Cacheable], {
-    dynamic: false
 });
 
+Y.namespace('plugin');
+Y.plugin.DataSourceCache = DataSourceCache;
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
 
-YUI.add('datasource-dataparser', function(Y) {
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
+
+YUI.add('datasource-jsonparser', function(Y) {
 
 /**
- * Extends DataSource with schema-based parsing functionality.
+ * Extends DataSource with schema-based JSON parsing functionality.
  *
- * @module datasource-dataparser
- * @requires datasource-base,dataparser-base
- * @title DataSource DataParser Extension
+ * @module datasource-jsonparser
+ * @requires plugin, datasource-base, dataparser-json
+ * @title DataSource JSONParser Plugin
  */
-    var BASE = Y.DataSource,
-    
-    /**
-     * Adds parsability to the YUI DataSource utility.
-     * @class Parsable
-     */    
-    Parsable = function() {};
 
-Parsable.ATTRS = {
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSource Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
+/**
+ * Adds parsability to the YUI DataSource utility.
+ * @class DataSourceJSONParser
+ */    
+var DataSourceJSONParser = function() {
+    DataSourceJSONParser.superclass.constructor.apply(this, arguments);
+};
 
+Y.mix(DataSourceJSONParser, {
     /**
-     * Instance of DataParser.
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
      *
-     * @attribute parser
-     * @type Y.DataParser.Base
-     * @default null
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
      */
-    parser: {
-        value: null,
-        validator: function(value) {
-            return ((value instanceof Y.DataParser.Base) || (value === null));
+    NS: "parser",
+
+    /**
+     * Class name.
+     *
+     * @property DataParser.Base.NAME
+     * @type String
+     * @static
+     * @final
+     * @value "DataSourceCache"
+     */
+    NAME: "DataSourceJSONParser",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+        parser: {
+            readOnly: true,
+            value: Y.DataParser.JSON,
+            useRef: true
+        },
+        schema: {
+            //value: {}
         }
     }
-};
-    
-Parsable.prototype = {
+});
+
+Y.extend(DataSourceJSONParser, Y.Plugin, {
     /**
-     * Overriding <code>data</code> event handler parses raw data into a normalized response.
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function(config) {
+        this.doBefore("_defDataFn", this._beforeDefDataFn);
+    },
+
+    /**
+     * Parses raw data into a normalized response.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -583,25 +632,25 @@ Parsable.prototype = {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
-        var response = (this.get("parser") && this.get("parser").parse(o.data));
+    _beforeDefDataFn: function(e, o) {
+        var response = (this.get("parser").parse(this.get("schema"), o.data));
         if(!response) {
             response = {
                 meta: {},
                 results: o.data
             };
         }
-        this.fire("response", null, Y.mix(o, response));
+        this._owner.fire("response", null, Y.mix(o, response));
+        return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
-};
-    
-Y.Base.build(BASE, [Parsable], {
-    dynamic: false
 });
+    
+Y.namespace('plugin');
+Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
 
 
 
-}, '@VERSION@' ,{requires:['datasource', 'dataparser']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataparser-json']});
 
 YUI.add('datasource-polling', function(Y) {
 
@@ -613,7 +662,6 @@ YUI.add('datasource-polling', function(Y) {
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
-        BASE = Y.DataSource,
     
     /**
      * Adds polling to the YUI DataSource utility.
@@ -689,9 +737,7 @@ Pollable.prototype = {
     }
 };
     
-Y.Base.build(BASE, [Pollable], {
-    dynamic: false
-});
+Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:false});
 
 
 
@@ -699,5 +745,5 @@ Y.Base.build(BASE, [Pollable], {
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache', 'datasource-dataparser', 'datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache','datasource-jsonparser','datasource-polling']});
 

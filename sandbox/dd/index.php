@@ -353,11 +353,11 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     //Y.DD.DDM.useHash = false;
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
 
-    /*
+    
     Y.DD.DDM.on('drop:over', function(e) {
-        console.log('DDM:drop:over :: ', arguments);
+        //console.log('DDM:drop:over :: ', arguments);
     });
-    */
+    
     Y.DD.DDM.on('drag:drag', function(e) {
         //console.log('DDM:drag:drag :: ', e);
     });
@@ -442,11 +442,11 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     */
 
     dd.on('drag:drophit', function(e) {
-        //console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
+        console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
     });
     
     dd.on('drag:dropmiss', function() {
-        //console.log('drag:dropmiss', arguments);
+        console.log('drag:dropmiss', arguments);
     });
     
     

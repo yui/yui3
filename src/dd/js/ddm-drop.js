@@ -308,7 +308,7 @@
         * @return {Array} The valid Drop Targets that are in the viewport.
         */
         _lookup: function() {
-            if (!this.useHash) {
+            if (!this.useHash || this._noShim) {
                 return this.validDrops;
             }
             var drops = [];

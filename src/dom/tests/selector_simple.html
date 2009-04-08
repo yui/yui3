@@ -22,9 +22,8 @@
 <script>
 onload = function() {
     YUI().use('*', function(Y) {
-        console.log(Y.DOM._childrenByTag(Y.DOM.byId('demo'), 'p').length);
-        console.log(Y.Selector.query('p', null, false).length);
-        console.log(Y.Selector.test(Y.DOM.byId('checkbox-checked'), 'form [type=checkbox]'));
+        console.log(Y.Selector.query('.foo-foo-foo', Y.DOM.byId('body'), true));
+        console.log(Y.get('body').query('.foo-foo-foo'));
     });
 };
 </script>
@@ -34,7 +33,7 @@ onload = function() {
 </head>
 <body class="body-node" id="body">
 <span lang="en-us"></span>
-    <div id="demo" class="foo" title="this is a demo">
+    <div id="demo" class="foo-foo-foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
         <p class="para">lorem ipsum</p>
         <p class="para last">lorem ipsum</p>

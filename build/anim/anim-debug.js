@@ -121,9 +121,7 @@ YUI.add('anim', function(Y) {
          */
         node: {
             setter: function(node) {
-console.log('setter: ', node);
-                node = Y.Node.get(node);
-console.log('setter: ', node);
+                node = Y.get(node);
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');
@@ -150,7 +148,7 @@ console.log('setter: ', node);
         easing: {
             value: Y.Anim.DEFAULT_EASING,
 
-            set: function(val) {
+            setter: function(val) {
                 if (typeof val === 'string' && Y.Easing) {
                     return Y.Easing[val];
                 }

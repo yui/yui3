@@ -15,22 +15,22 @@
 
    /**
 	* @event io:start
-	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @description This event is fired by YUI.io when a transaction is initiated.
 	* @type Event Custom
 	*/
 	var E_START = 'io:start',
 
    /**
 	* @event io:complete
-	* @description This event is fired by YUI.io when a transaction is complete and
-	* all response data are available.
+	* @description This event is fired by YUI.io when a transaction is complete.
+	* Response status and data are accessible, if available.
 	* @type Event Custom
 	*/
 	E_COMPLETE = 'io:complete',
 
    /**
 	* @event io:success
-	* @description This event is fired by YUI.io when a transaction is complete and
+	* @description This event is fired by YUI.io when a transaction is complete, and
 	* the HTTP status resolves to HTTP2xx.
 	* @type Event Custom
 	*/
@@ -38,19 +38,19 @@
 
    /**
 	* @event io:failure
-	* @description This event is fired by YUI.io when a transaction is complete and
+	* @description This event is fired by YUI.io when a transaction is complete, and
 	* the HTTP status resolves to HTTP4xx, 5xx and above.
 	* @type Event Custom
 	*/
 	E_FAILURE = 'io:failure',
 
    /**
-	* @event io:abort
-	* @description This event is fired by YUI.io when a transaction is aborted
-	* explicitly or by a defined config.timeout.
+	* @event io:end
+	* @description This event signifies the end of the transaction lifecycle.  The
+	* transaction transport is destroyed.
 	* @type Event Custom
 	*/
-	E_ABORT = 'io:abort',
+	E_END = 'io:end',
 
 	//--------------------------------------
 	//  Properties
@@ -128,9 +128,10 @@
     *     success - This event fires when the response status resolves to
     *               HTTP 2xx.
     *     failure - This event fires when the response status resolves to
-    *               HTTP 4xx, 5xx, and beyond.
-    *	  abort - This even is fired when a transaction abort is fire by
-    *             timeout, or when it is manually aborted.
+    *               HTTP 4xx, 5xx; and, for all transaction exceptions,
+    *               including aborted transactions and transaction timeouts.
+    *	  end -  This even is fired at the conclusion of the transaction
+	*			 lifecycle, after a success or failure resolution.
     *
     *     The properties are:
     *     {
@@ -138,7 +139,7 @@
 	*       complete: function(id, responseobject, args){},
 	*       success: function(id, responseobject, args){},
 	*       failure: function(id, responseobject, args){},
-	*       abort: function(id, args){}
+	*       end: function(id, args){}
 	*     }
 	*	  Each property can reference a function or be written as an
 	*     inline function.
@@ -177,6 +178,13 @@
 			o = _create((arguments.length === 3) ? arguments[2] : null, c),
 			m = (c.method) ? c.method.toUpperCase() : 'GET',
 			d = (c.data) ? c.data : null;
+
+		o.abort = function () {
+			c.xdr ? o.c.abort(o.id, c) : _ioCancel(o, 'abort');
+		}
+		o.isInProgress = function() {
+			return o.c.readyState !== 4 && o.c.readyState !== 0;
+		}
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
@@ -220,25 +228,14 @@
 		// If config.timeout is defined, and the request is standard XHR,
 		// initialize timeout polling.
 		if (c.timeout) {
-			_startTimeout(o, c);
+			_startTimeout(o, c.timeout);
 		}
 		/* End Configuration Properties */
 
 		o.c.onreadystatechange = function() { _readyState(o, c); };
-		try {
-			_open(o.c, m, uri);
-		}
-		catch (e) {
-		}
+		try { _open(o.c, m, uri); } catch (e) {}
 		_setHeaders(o.c, (c.headers || {}));
 
-		o.abort = function () {
-			_ioAbort(o, c);
-		}
-
-		o.isInProgress = function() {
-			return o.c.readyState !== 4 && o.c.readyState !== 0;
-		}
 		// Do not pass null, in the absence of data, as this
 		// will result in a POST request with no Content-Length
 		// defined.
@@ -254,7 +251,7 @@
 	* @private
 	* @static
 	* @param {string} e - event to be published
-	* @param {object} c - configuration object for the transaction.
+	* @param {object} c - configuration data subset for event subscription.
 	*
     * @return void
 	*/
@@ -291,12 +288,14 @@
 		}
 
 		Y.fire(E_START, id);
+
 		if (c.on.start) {
 			event = _tPubSub('start', c);
 			event.fire(id);
 		}
 		Y.log('Transaction ' + id + ' started.', 'info', 'io');
 	};
+
 
    /**
 	* @description Fires event "io:complete" and creates, fires a
@@ -312,15 +311,22 @@
     * @return void
 	*/
 	function _ioComplete(o, c) {
-		var event;
+		var r = Y.clone(o.c),
+			event;
 			// Set default value of argument c, property "on" to Object if
 			// the property is null or undefined.
 			c.on = c.on || {};
 
-		Y.fire(E_COMPLETE, o.id, o.c);
+		if (o.status) {
+			r.status = 0;
+			r.statusText = o.status;
+		}
+
+		Y.fire(E_COMPLETE, o.id, r);
+
 		if (c.on.complete) {
 			event = _tPubSub('complete', c);
-			event.fire(o.id, o.c);
+			event.fire(o.id, r);
 		}
 		Y.log('Transaction ' + o.id + ' completed.', 'info', 'io');
 	};
@@ -350,17 +356,17 @@
 			c.on.success = fn.success;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
-			delete m[o.id];
 		}
 
 		Y.fire(E_SUCCESS, o.id, o.c);
+
 		if (c.on.success) {
 			event = _tPubSub('success', c);
 			event.fire(o.id, o.c);
 		}
 
-		_destroy(o, (c.xdr) ? true : false );
 		Y.log('HTTP Status evaluates to Success. The transaction is: ' + o.id, 'info', 'io');
+		_ioEnd(o, c);
 	};
 
    /**
@@ -382,39 +388,45 @@
 			event;
 			// Set default value of argument c, property "on" to Object if
 			// the property is null or undefined.
-			c.on = c.on || {};
+			c.on = c.on || {},
+			r = Y.clone(o.c);
 
 		if (fn) {
 			c.on.failure = fn.failure;
 			//Decode the response from IO.swf
 			o.c.responseText = decodeURI(o.c.responseText);
-			delete m[o.id];
 		}
 
-		Y.fire(E_FAILURE, o.id, o.c);
+		if (o.status) {
+			r.status = 0;
+			r.statusText = o.status;
+		}
+
+		Y.fire(E_FAILURE, o.id, r);
+
 		if (c.on.failure) {
 			event = _tPubSub('failure', c);
-			event.fire(o.id, o.c);
+			event.fire(o.id, r);
 		}
 
-		_destroy(o, (c.xdr) ? true : false );
 		Y.log('HTTP Status evaluates to Failure. The transaction is: ' + o.id, 'info', 'io');
+		_ioEnd(o, c);
 	};
 
    /**
-	* @description Fires event "io:abort" and creates, fires a
-	* transaction-specific "abort" event, if config.on.abort is
+	* @description Fires event "io:end" and creates, fires a
+	* transaction-specific "end" event, if config.on.end is
 	* defined.
 	*
-	* @method _ioAbort
+	* @method _ioEnd
 	* @private
 	* @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to YUI.io().
+	* @param {object} o - transaction object.
+	* @param {object} c - configuration object for the transaction.
 	*
     * @return void
 	*/
-	function _ioAbort(o, c) {
+	function _ioEnd(o, c) {
 		var m = Y.io._fn || {},
 			fn = (m && m[o.id]) ? m[o.id] : null,
 			event;
@@ -422,32 +434,42 @@
 			// the property is null or undefined.
 			c.on = c.on || {};
 
-		if(o && o.c  && !c.xdr) {
-			// Terminate the transaction
-			o.isAbort = true;
-			o.c.abort();
-
-			if (c) {
-				// Clear the timeout poll for this specific transaction.
-				if (c.timeout) {
-					_clearTimeout(o.id);
-				}
-			}
-		}
-
 		if (fn) {
-			c.on.abort = fn.abort;
+			c.on.end = fn.end;
 			delete m[o.id];
 		}
 
-		Y.fire(E_ABORT, o.id);
-		if (c.on.abort) {
-			event = _tPubSub('abort', c);
-			event.fire(o.id);
+		Y.fire(E_END, o.id);
+
+		if (c.on.end) {
+			event = _tPubSub('end', c);
+			event.fire(o.id, c);
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-		Y.log('Transaction has timed out or explicitly aborted. The transaction is: ' + o.id, 'info', 'io');
+		Y.log('Transaction ' + o.id + ' ended.', 'info', 'io');
+	};
+
+   /**
+	* @description Terminates a transaction due to an explicit abort or
+	* timeout.
+	*
+	* @method _ioCancel
+	* @private
+	* @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @param {string} s - Identifies timed out or aborted transaction.
+	*
+    * @return void
+	*/
+	function _ioCancel(o, s) {
+		if (o && o.c) {
+			o.isCancel = true;
+			o.status = s;
+			o.c.abort();
+		}
+		Y.log('Transaction cancelled due to time out or explicitly aborted. The transaction is: ' + o.id, 'info', 'io');
 	};
 
    /**
@@ -610,8 +632,8 @@
     * @param {object} c - Configuration object passed to YUI.io().
     * @return void
 	*/
-	function _startTimeout(o, c) {
-		_timeout[o.id] = w.setTimeout(function() { _ioAbort(o, c); }, c.timeout);
+	function _startTimeout(o, timeout) {
+		_timeout[o.id] = w.setTimeout(function() { _ioCancel(o, 'timeout'); }, timeout);
 	};
 
    /**
@@ -639,7 +661,7 @@
     * @return void
 	*/
 	function _readyState(o, c) {
-		if (o.c.readyState === 4 && !o.isAbort) {
+		if (o.c.readyState === 4) {
 			if (c.timeout) {
 				_clearTimeout(o.id);
 			}
@@ -706,9 +728,7 @@
 	_io.complete = _ioComplete;
 	_io.success = _ioSuccess;
 	_io.failure = _ioFailure;
-	_io.abort = _ioAbort;
 	_io._id = _id;
-	_io._timeout = _timeout;
 
    	//--------------------------------------
    	//  Begin public interface definition
