@@ -241,10 +241,12 @@
                     fired5 = true;
                 };
 
-                YUI({ chainOn: true }).use('*', function(Y2) {
+                // configure chaining via global default or on the event target
+                YUI({ /* chain: true */ }).use('*', function(Y2) {
 
                     var o = new Y2.EventTarget({
-                        prefix: 'foo'
+                        prefix: 'foo',
+                        chain : true
                     });
 
                     // without event target prefix manipulation (incomplete now)
