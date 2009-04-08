@@ -357,12 +357,12 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+
     /**
      * Detaches this subscriber
      * @method detach
      */
     detach: function() {
-
         if (this.evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
             this.evt._delete(this.sub);
@@ -1288,7 +1288,7 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            Y.log(t);
+            // Y.log(t);
         }
 
         parts = t.split(/,\s*/);
@@ -1316,6 +1316,8 @@ var L = Y.Lang,
             targets: {},
 
             config: o,
+
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
                 context: this, 
@@ -1369,7 +1371,7 @@ ET.prototype = {
 
             }, this);
 
-            return (Y.config.chainOn) ? this : ret;
+            return (this._yuievt.chain) ? this : ret;
 
         } else if (L.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
@@ -1380,11 +1382,9 @@ ET.prototype = {
         after = parts[2];
 
         if (this instanceof YUI) {
-
             adapt = Y.Env.eventAdaptors[type];
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
-
                 Y.log('Using adaptor for ' + type, 'info', 'event');
                 return adapt.on.apply(Y, arguments);
             // check to see if the target is an Event.Target.  If so,
@@ -1410,14 +1410,16 @@ ET.prototype = {
 
         if (detachkey) {
 
-            key = parts.join();
+            key = parts[0] + parts[1];
             if (!store[key]) {
                 store[key] = [];
             }
             store[key].push(handle);
+
+            // Y.log('storing: ' + key);
         }
 
-        return (Y.config.chainOn) ? this : handle;
+        return (this._yuievt.chain) ? this : handle;
 
     },
 
@@ -1454,7 +1456,7 @@ ET.prototype = {
         evts = this._yuievt.events, ce, i, ret = true;
 
         if (detachkey) {
-            key = parts.join(); 
+            key = parts[0] + parts[1]; 
             details = Y.Env.eventHandles[key];
             if (details) {
                 while (details.length) {
@@ -1462,18 +1464,20 @@ ET.prototype = {
                     handle.detach();
                 }
 
-                return this;
+                return (this._yuievt.chain) ? this : true;
             }
         }
 
+        // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
-            return type.detach();
+            ret = type.detach();
+            return (this._yuievt.chain) ? this : true;
         }
 
         type = parts[1];
         adapt = Y.Env.eventAdaptors[type];
 
-        // If this is an event handle, use it to detach
+        // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
@@ -1498,7 +1502,7 @@ ET.prototype = {
             return ret;
         }
 
-        return this;
+        return (this._yuievt.chain) ? this : false;
     },
 
     /**
@@ -1690,9 +1694,6 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t, {
-                //     configured: false
-                // });
                 ce = this.publish(t);
                 ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
 
@@ -1703,20 +1704,13 @@ ET.prototype = {
             return true;
         }
 
-        // Provide this object's subscribers the object they are listening to.
-        // ce.currentTarget = this;
-
-        // This this the target unless target is current not null
-        // (set in bubble()).
-        // ce.target = ce.target || this;
-
         a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
         ret = ce.fire.apply(ce, a);
 
         // clear target for next fire()
         ce.target = null;
 
-        return ret;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**

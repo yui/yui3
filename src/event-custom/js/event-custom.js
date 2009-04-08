@@ -53,12 +53,12 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+
     /**
      * Detaches this subscriber
      * @method detach
      */
     detach: function() {
-
         if (this.evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
             this.evt._delete(this.sub);
