@@ -5,8 +5,6 @@ YUI.add('datasource-local', function(Y) {
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
- * @requires base
- * @title DataSource Utility
  */
 var LANG = Y.Lang,
     
@@ -29,7 +27,7 @@ Y.mix(DSLocal, {
     /**
      * Class name.
      *
-     * @property DataSource.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -88,30 +86,11 @@ Y.mix(DSLocal, {
     
 Y.extend(DSLocal, Y.Base, {
     /**
-    * @property _queue
-    * @description Object literal to manage asynchronous request/response
-    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
-        <dl>
-            <dt>interval {Number}</dt>
-                <dd>Interval ID of in-progress queue.</dd>
-            <dt>conn</dt>
-                <dd>In-progress connection identifier (if applicable).</dd>
-            <dt>requests {Object[]}</dt>
-                <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
-        </dl>
-    * @type Object
-    * @default {interval:null, conn:null, requests:[]}    
-    * @private     
-    */
-    _queue: null,
-    
-    /**
     * @method initializer
     * @description Internal init() handler.
     * @private        
     */
     initializer: function() {
-        this._queue = {interval:null, conn:null, requests:[]};
         this._initEvents();
     },
 
@@ -326,14 +305,12 @@ YUI.add('datasource-xhr', function(Y) {
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
- * @requires datasource-local
- * @title DataSource XHR
  */
     
 /**
  * XHR subclass for the YUI DataSource utility.
  * @class DataSource.XHR
- * @extends DataSource
+ * @extends DataSource.Local
  * @constructor
  */    
 var DSXHR = function() {
@@ -350,7 +327,7 @@ Y.mix(DSXHR, {
     /**
      * Class name.
      *
-     * @property DataSource.XHR.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -380,6 +357,33 @@ Y.mix(DSXHR, {
 });
     
 Y.extend(DSXHR, Y.DataSource.Local, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function() {
+        this._queue = {interval:null, conn:null, requests:[]};
+    },
+
+    /**
+    * @property _queue
+    * @description Object literal to manage asynchronous request/response
+    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+        <dl>
+            <dt>interval {Number}</dt>
+                <dd>Interval ID of in-progress queue.</dd>
+            <dt>conn</dt>
+                <dd>In-progress connection identifier (if applicable).</dd>
+            <dt>requests {Object[]}</dt>
+                <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+        </dl>
+    * @type Object
+    * @default {interval:null, conn:null, requests:[]}
+    * @private
+    */
+    _queue: null,
+
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -436,14 +440,13 @@ YUI.add('datasource-cache', function(Y) {
 /**
  * Extends DataSource with caching functionality.
  *
- * @module datasource-cache
- * @requires plugin, datasource-local, cache
- * @title DataSource Cache Plugin
+ * @module datasource
  */
 
 /**
  * Adds cacheability to the YUI DataSource utility.
  * @class DataSourceCache
+ * @extends Cache
  */    
 var DataSourceCache = function() {
     DataSourceCache.superclass.constructor.apply(this, arguments);
@@ -465,7 +468,7 @@ Y.mix(DataSourceCache, {
     /**
      * Class name.
      *
-     * @property DataParser.Base.NAME
+     * @property NAME
      * @type String
      * @static
      * @final
@@ -551,14 +554,13 @@ YUI.add('datasource-jsonparser', function(Y) {
 /**
  * Extends DataSource with schema-based JSON parsing functionality.
  *
- * @module datasource-jsonparser
- * @requires plugin, datasource-local, dataparser-json
- * @title DataSource JSONParser Plugin
+ * @module datasource
  */
 
 /**
  * Adds parsability to the YUI DataSource utility.
  * @class DataSourceJSONParser
+ * @extends Plugin
  */    
 var DataSourceJSONParser = function() {
     DataSourceJSONParser.superclass.constructor.apply(this, arguments);
@@ -573,18 +575,18 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "cache"
+     * @value "parser"
      */
     NS: "parser",
 
     /**
      * Class name.
      *
-     * @property DataParser.Base.NAME
+     * @property NAME
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "DataSourceJSONParser"
      */
     NAME: "DataSourceJSONParser",
 
@@ -655,15 +657,14 @@ YUI.add('datasource-polling', function(Y) {
 /**
  * Extends DataSource with polling functionality.
  *
- * @module datasource-polling
- * @requires datasource-local
- * @title DataSource Polling Extension
+ * @module datasource
  */
     var LANG = Y.Lang,
     
     /**
      * Adds polling to the YUI DataSource utility.
      * @class Pollable
+     * @extends DataSource.Local
      */    
     Pollable = function() {};
 

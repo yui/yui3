@@ -2,6 +2,7 @@
  * Extends DataSource with caching functionality.
  *
  * @module datasource
+ * @submodule datasource-cache
  */
 
 /**

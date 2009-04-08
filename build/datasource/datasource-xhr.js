@@ -5,14 +5,12 @@ YUI.add('datasource-xhr', function(Y) {
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
- * @requires datasource-local
- * @title DataSource XHR
  */
     
 /**
  * XHR subclass for the YUI DataSource utility.
  * @class DataSource.XHR
- * @extends DataSource
+ * @extends DataSource.Local
  * @constructor
  */    
 var DSXHR = function() {
@@ -29,7 +27,7 @@ Y.mix(DSXHR, {
     /**
      * Class name.
      *
-     * @property DataSource.XHR.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -59,6 +57,33 @@ Y.mix(DSXHR, {
 });
     
 Y.extend(DSXHR, Y.DataSource.Local, {
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @private
+    */
+    initializer: function() {
+        this._queue = {interval:null, conn:null, requests:[]};
+    },
+
+    /**
+    * @property _queue
+    * @description Object literal to manage asynchronous request/response
+    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+        <dl>
+            <dt>interval {Number}</dt>
+                <dd>Interval ID of in-progress queue.</dd>
+            <dt>conn</dt>
+                <dd>In-progress connection identifier (if applicable).</dd>
+            <dt>requests {Object[]}</dt>
+                <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+        </dl>
+    * @type Object
+    * @default {interval:null, conn:null, requests:[]}
+    * @private
+    */
+    _queue: null,
+
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.

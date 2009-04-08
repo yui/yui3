@@ -2,6 +2,7 @@
  * Extends DataSource with polling functionality.
  *
  * @module datasource
+ * @submodule datasource-polling
  */
     var LANG = Y.Lang,
     

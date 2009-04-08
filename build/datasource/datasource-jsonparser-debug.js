@@ -3,14 +3,13 @@ YUI.add('datasource-jsonparser', function(Y) {
 /**
  * Extends DataSource with schema-based JSON parsing functionality.
  *
- * @module datasource-jsonparser
- * @requires plugin, datasource-local, dataparser-json
- * @title DataSource JSONParser Plugin
+ * @module datasource
  */
 
 /**
  * Adds parsability to the YUI DataSource utility.
  * @class DataSourceJSONParser
+ * @extends Plugin
  */    
 var DataSourceJSONParser = function() {
     DataSourceJSONParser.superclass.constructor.apply(this, arguments);
@@ -25,18 +24,18 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "cache"
+     * @value "parser"
      */
     NS: "parser",
 
     /**
      * Class name.
      *
-     * @property DataParser.Base.NAME
+     * @property NAME
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "DataSourceJSONParser"
      */
     NAME: "DataSourceJSONParser",
 
