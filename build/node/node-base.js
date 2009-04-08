@@ -926,7 +926,7 @@ YUI.add('node-base', function(Y) {
  * @for Node
  */
 
-    Y.Node.addDOMMethods([
+    var methods = [
         /**
          * Determines whether the node has the given className.
          * @method hasClass
@@ -968,7 +968,10 @@ YUI.add('node-base', function(Y) {
          * @chainable
          */
         'toggleClass'
-    ]);
+    ];
+
+    Y.Node.importMethod(Y.DOM, methods);
+    Y.NodeList.importMethod(Y.Node.prototype, methods);
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector']});

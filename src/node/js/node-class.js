@@ -50,4 +50,4 @@
     ];
 
     Y.Node.importMethod(Y.DOM, methods);
-    //Y.NodeList.importMethod(Y.DOM, methods);
+    Y.NodeList.importMethod(Y.Node.prototype, methods);

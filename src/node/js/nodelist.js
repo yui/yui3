@@ -44,7 +44,7 @@ Y.Array.diff = function(a, b) {
 };
 
 // "globals"
-var g_nodelists = [],
+var g_nodelists = {},
     g_slice = Array.prototype.slice,
 
     UID = '_yuid',
@@ -62,6 +62,9 @@ var g_nodelists = [],
         NodeList._instances[this[UID]] = this;
         g_nodelists[this[UID]] = nodes;
 
+        if (config.restricted) {
+            g_restrict = this[UID];
+        }
         NodeList.superclass.constructor.apply(this, arguments);
     };
 // end "globals"
@@ -72,6 +75,10 @@ NodeList.ATTRS = {
     style: {
         value: {}
     }
+};
+
+NodeList.getDOMNodes = function(nodeList) {
+    return g_nodelists[nodeList[UID]];
 };
 
 NodeList._instances = [];
@@ -85,13 +92,56 @@ NodeList.each = function(instance, fn, context) {
     }
 };
 
+NodeList.addMethod = function(name, fn, context) {
+    if (name) {
+        var tmp = NodeList._tmpNode =
+                NodeList._tmpNode || Y.Node.create('<div>');
+
+        NodeList.prototype[name] = function() {
+            var ret = [],
+                args = arguments;
+
+            NodeList.each(this, function(node) {
+                var instance = Y.Node._instances[node[UID]],
+                    ctx,
+                    result;
+
+                if (!instance) {
+                    g_nodes[tmp[UID]] = node;
+                    instance = tmp;
+                }
+                ctx = context || instance;
+                result = fn.apply(ctx, args);
+                if (result !== undefined) {
+                    ret[ret.length] = result;
+                }
+            });
+
+            // TODO: remove tmp pointer
+            return ret.length ? ret : this;
+        };
+    } else {
+        Y.log('unable to add method: ' + name, 'warn', 'Node');
+    }
+};
+
+NodeList.importMethod = function(host, name, altName) {
+    if (typeof name === 'string') {
+        altName = altName || name;
+        NodeList.addMethod(name, host[name]);
+    } else {
+        Y.each(name, function(n) {
+            NodeList.importMethod(host, n);
+        });
+    }
+};
+
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
     var tmp = NodeList._tmpNode =
             NodeList._tmpNode || Y.Node.create('<div>');
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
-        // TODO: use node.set if instance exists
         if (!instance) {
             g_nodes[tmp[UID]] = node;
             instance = tmp;
@@ -106,7 +156,6 @@ NodeList.DEFAULT_GETTER = function(attr) {
             NodeList._tmpNode || Y.Node.create('<div>'),
         ret = [];
 
-    // TODO: use node.get if instance exists
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
         if (!instance) { // reuse tmp instance
@@ -115,6 +164,7 @@ NodeList.DEFAULT_GETTER = function(attr) {
         }
         ret[ret.length] = instance.get(attr);
     });
+
     return ret;
 };
 
@@ -166,7 +216,8 @@ Y.mix(NodeList.prototype, {
 
     get: function(attr) {
         if (!this.attrAdded(attr)) {
-            this._addAttr(attr);
+            //this._addAttr(attr);
+            return NodeList.DEFAULT_GETTER.call(this, attr);
         }
 
         return NodeList.superclass.constructor.prototype.get.apply(this, arguments);
@@ -264,12 +315,12 @@ Y.mix(NodeList.prototype, {
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {
-    var nodelist = new NodeList({
+    var nodeList = new NodeList({
         nodes: nodes,
         doc: doc,
         restrict: restrict
     });
 
     // zero-length result returns null
-    return nodelist.size() ? nodelist : null;
+    return nodeList.size() ? nodeList : null;
 };

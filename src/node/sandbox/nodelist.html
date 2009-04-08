@@ -51,6 +51,20 @@ YUI().use('*', function(Y) {
     });
     //node.set('innerHTML', 'new content from Node');
 
+
+    //node.setStyle('color', 'red');
+    nodelist.setStyle('color', 'red');
+
+    console.log(Y.all('body').get('nodeName'));
+/*
+    console.log(Y.get('body').get('firstChild.nodeName'));
+
+    Y.get('body').on('firstChildChange', function(e) {
+        console.log(e);
+        e.preventDefault();
+    });
+    console.log(Y.get('body').set('firstChild.nextSibling.innerHTML', 'foo'));
+
     node.after('innerHTMLChange', function(e) {
         console.log('Node: afterInnerHTMLChange');
     });
@@ -82,6 +96,7 @@ YUI().use('*', function(Y) {
     nodelist.each(function(n) {
         n.set('innerHTML', 'set by nodelist.each()');
     });
+    */
 });
 </script>
 </body>
