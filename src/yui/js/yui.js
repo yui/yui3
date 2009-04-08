@@ -550,12 +550,14 @@ YUI.prototype = {
      * @return {string} the guid
      */
     guid: function(pre) {
-        var e = this.Env, p = (pre) || e._pre;
-        return p            + '-' + 
-               this.version + '-' + 
-               e._yidx      + '-' + 
-               (e._uidx++)  + '-' + 
-               _startTime;
+        var e = this.Env, p = (pre) || e._pre,
+            id = p + '-' + 
+                   this.version + '-' + 
+                   e._yidx      + '-' + 
+                   (e._uidx++)  + '-' + 
+                   _startTime;
+
+            return id.replace(/\./g, '_');
     },
 
     /**
