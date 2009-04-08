@@ -143,6 +143,55 @@
                 o.fire('prefix:testPrefix', { foo: 'afoo' }, 1, 2);
                 Y.Assert.isTrue(fired1);
                 Y.Assert.isTrue(fired2);
+            },
+
+            testDetachKey: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                Y.on('handle, test:event', function(e, arg1, arg2) {
+                    fired1 = true;
+                });
+
+                // one listener
+                Y.fire('test:event', { foo: 'afoo' }, 1, 2);
+
+                Y.Assert.isTrue(fired1);
+                Y.Assert.isFalse(fired2);
+
+                Y.detach('handle, test:event');
+
+                fired1 = false;
+                fired2 = false;
+
+                Y.on('handle, test:event', function(e, arg1, arg2) {
+                    fired2 = true;
+                });
+
+                // first lisener detached, added a new listener
+                Y.fire('test:event', { foo: 'afoo' }, 1, 2);
+
+                Y.Assert.isFalse(fired1);
+                Y.Assert.isTrue(fired2);
+
+                fired1 = false;
+                fired2 = false;
+
+                // @TODO detach bucket not working for after listeners
+                Y.after('handle, test:event', function(e, arg1, arg2) {
+                // Y.on('handle, test:event', function(e, arg1, arg2) {
+                    fired1 = true;
+                });
+
+                Y.detach('handle, test:event');
+
+                // added another listener, then detached both
+                Y.fire('test:event', { foo: 'afoo' }, 1, 2);
+
+                Y.Assert.isFalse(fired1);
+                Y.Assert.isFalse(fired2);
+
             }
 
 

@@ -62,7 +62,7 @@ var L = Y.Lang,
         if (i > -1) {
             after = true;
             t = t.substr(AFTER_PREFIX.length);
-            Y.log(t);
+            // Y.log(t);
         }
 
         parts = t.split(/,\s*/);
@@ -182,11 +182,13 @@ ET.prototype = {
 
         if (detachkey) {
 
-            key = parts.join();
+            key = parts[0] + parts[1];
             if (!store[key]) {
                 store[key] = [];
             }
             store[key].push(handle);
+
+            // Y.log('storing: ' + key);
         }
 
         return (Y.config.chainOn) ? this : handle;
@@ -226,7 +228,7 @@ ET.prototype = {
         evts = this._yuievt.events, ce, i, ret = true;
 
         if (detachkey) {
-            key = parts.join(); 
+            key = parts[0] + parts[1]; 
             details = Y.Env.eventHandles[key];
             if (details) {
                 while (details.length) {

@@ -1372,11 +1372,9 @@ ET.prototype = {
         after = parts[2];
 
         if (this instanceof YUI) {
-
             adapt = Y.Env.eventAdaptors[type];
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
-
                 return adapt.on.apply(Y, arguments);
             // check to see if the target is an Event.Target.  If so,
             // delegate to it (the Event.Target should handle whether
@@ -1400,11 +1398,12 @@ ET.prototype = {
 
         if (detachkey) {
 
-            key = parts.join();
+            key = parts[0] + parts[1];
             if (!store[key]) {
                 store[key] = [];
             }
             store[key].push(handle);
+
         }
 
         return (Y.config.chainOn) ? this : handle;
@@ -1444,7 +1443,7 @@ ET.prototype = {
         evts = this._yuievt.events, ce, i, ret = true;
 
         if (detachkey) {
-            key = parts.join(); 
+            key = parts[0] + parts[1]; 
             details = Y.Env.eventHandles[key];
             if (details) {
                 while (details.length) {
@@ -1456,6 +1455,7 @@ ET.prototype = {
             }
         }
 
+        // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
             return type.detach();
         }
@@ -1463,7 +1463,7 @@ ET.prototype = {
         type = parts[1];
         adapt = Y.Env.eventAdaptors[type];
 
-        // If this is an event handle, use it to detach
+        // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
@@ -1680,9 +1680,6 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t, {
-                //     configured: false
-                // });
                 ce = this.publish(t);
                 ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
 
@@ -1692,13 +1689,6 @@ ET.prototype = {
             // otherwise there is nothing to be done
             return true;
         }
-
-        // Provide this object's subscribers the object they are listening to.
-        // ce.currentTarget = this;
-
-        // This this the target unless target is current not null
-        // (set in bubble()).
-        // ce.target = ce.target || this;
 
         a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
         ret = ce.fire.apply(ce, a);
