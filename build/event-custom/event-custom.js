@@ -1451,13 +1451,14 @@ ET.prototype = {
                     handle.detach();
                 }
 
-                return this;
+                return (Y.config.chainOn) ? this : true;
             }
         }
 
         // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
-            return type.detach();
+            ret = type.detach();
+            return (Y.config.chainOn) ? this : true;
         }
 
         type = parts[1];
@@ -1488,7 +1489,7 @@ ET.prototype = {
             return ret;
         }
 
-        return this;
+        return (Y.config.chainOn) ? this : false;
     },
 
     /**
