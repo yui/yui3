@@ -120,8 +120,10 @@ YUI.add('anim-base', function(Y) {
          * @type Node
          */
         node: {
-            set: function(node) {
+            setter: function(node) {
+console.log('setter: ', node);
                 node = Y.Node.get(node);
+console.log('setter: ', node);
                 this._node = node;
                 if (!node) {
                 }

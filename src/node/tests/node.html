@@ -216,7 +216,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Assert.areEqual(null, node.get('nodeValue'), 'nodeValue === null');
 
-console.log(nodes.get('nodeName'));
             Assert.areEqual('DIV', node.get('nodeName'), 'nodeName === "DIV"');
             Assert.areEqual('UL', nodes.get('nodeName')[0], 'nodeName === "UL"');
             Assert.areEqual('LI', nodes.get('nodeName')[nodes.size() - 1], 'nodeName === "UL"');

@@ -118,8 +118,10 @@
          * @type Node
          */
         node: {
-            set: function(node) {
+            setter: function(node) {
+console.log('setter: ', node);
                 node = Y.Node.get(node);
+console.log('setter: ', node);
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');

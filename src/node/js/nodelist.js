@@ -71,12 +71,6 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
-NodeList.ATTRS = {
-    style: {
-        value: {}
-    }
-};
-
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };
@@ -171,9 +165,6 @@ NodeList.DEFAULT_GETTER = function(attr) {
 Y.extend(NodeList, Y.Base);
 
 Y.mix(NodeList.prototype, {
-    initializer: function(config) {
-    },
-
     /**
      * Retrieves the Node instance at the given index. 
      * @method item
@@ -182,8 +173,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        var nodes = g_nodelists[this[UID]] || [];
-        return Y.get(nodes[index]);
+        return Y.get((g_nodelists[this[UID]] || [])[index]);
     },
 
     /**
@@ -215,9 +205,11 @@ Y.mix(NodeList.prototype, {
     },
 
     get: function(attr) {
-        if (!this.attrAdded(attr)) {
+        if (!this.attrAdded(attr) && (!this._conf.data.getter || !this._conf.data.getter[attr])) {
+        //if (!this.attrAdded(attr)) {
             //this._addAttr(attr);
             return NodeList.DEFAULT_GETTER.call(this, attr);
+            //return NodeList.DEFAULT_GETTER.call(this, attr);
         }
 
         return NodeList.superclass.constructor.prototype.get.apply(this, arguments);
@@ -300,8 +292,7 @@ Y.mix(NodeList.prototype, {
     },
 
     _addAttr: function(attr) {
-        var nodes = g_nodelists[this[UID]] || [];
-        this.addAttr(attr, {
+        this.addAttr(attr.split(DOT)[0], {
             getter: function() {
                 return NodeList.DEFAULT_GETTER.call(this, attr);
             },
@@ -315,10 +306,11 @@ Y.mix(NodeList.prototype, {
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {
+    // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
         doc: doc,
-        restrict: restrict
+        restricted: restrict
     });
 
     // zero-length result returns null

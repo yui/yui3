@@ -80,13 +80,12 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    if (val !== undefined) {
+    if (val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
-            if (val !== null && (
-                    NODE_TYPE in val || // dom node
+            if (    NODE_TYPE in val || // dom node
                     val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document) // window TODO: restrict?
+                    val.document // window TODO: restrict?
                 ) { 
                 if (node && g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
@@ -109,7 +108,7 @@ Node.scrubVal = function(val, node, depth) {
                 
             }
         }
-    } else {
+    } else if (val === undefined) {
         val = node; // for chaining
     }
 
@@ -338,9 +337,9 @@ Y.mix(Node.prototype, {
 
     set: function(attr, val) {
         if (!this.attrAdded(attr)) {
-            if (attr.indexOf(DOT) < 0) { // not registering chained properties 
+            if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else {
+            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -482,6 +481,47 @@ Y.mix(Node.prototype, {
     destructor: function() {
         g_nodes[this[UID]] = [];
         delete Node._instances[this[UID]];
+    },
+
+    /**
+     * Applies the given function to each Node in the NodeList.
+     * @method each
+     * @deprecated Use NodeList
+     * @param {Function} fn The function to apply 
+     * @param {Object} context optional An optional context to apply the function with
+     * Default context is the NodeList instance
+     * @return {NodeList} NodeList containing the updated collection 
+     * @chainable
+     */
+    each: function(fn, context) {
+        context = context || this;
+        console.log('each is deprecated on Node', 'warn', 'Node');
+        return fn.call(context, this);
+    },
+
+    /**
+     * Retrieves the Node instance at the given index. 
+     * @method item
+     * @deprecated Use NodeList
+     *
+     * @param {Number} index The index of the target Node.
+     * @return {Node} The Node instance at the given index.
+     */
+    item: function(index) {
+        console.log('item is deprecated on Node', 'warn', 'Node');
+        return this;
+    },
+
+    /**
+     * Returns the current number of items in the Node.
+     * @method size
+     * @deprecated Use NodeList
+     * @return {Int} The number of items in the Node. 
+     */
+
+    size: function() {
+        console.log('size is deprecated on Node', 'warn', 'Node');
+        return g_nodes[this[UID]] ? 1 : 0;
     }
 }, true);
 
