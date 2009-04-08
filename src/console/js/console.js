@@ -5,60 +5,62 @@
  */
 
 var getCN = Y.ClassNameManager.getClassName,
-    CONSOLE        = 'console',
-    ENTRY          = 'entry',
-    RESET          = 'reset',
     CHECKED        = 'checked',
-    TITLE          = 'title',
-    PAUSE          = 'pause',
-    PAUSED         = 'paused',
     CLEAR          = 'clear',
-    INFO           = 'info',
-    WARN           = 'warn',
-    ERROR          = 'error',
-    INNER_HTML     = 'innerHTML',
     CLICK          = 'click',
+    COLLAPSED      = 'collapsed',
+    CONSOLE        = 'console',
     CONTENT_BOX    = 'contentBox',
     DISABLED       = 'disabled',
-    START_TIME     = 'startTime',
-    LAST_TIME      = 'lastTime',
+    ENTRY          = 'entry',
     ENTRY_TEMPLATE = 'entryTemplate',
-    RENDERED       = 'rendered',
+    ERROR          = 'error',
+    INFO           = 'info',
+    INNER_HTML     = 'innerHTML',
+    LAST_TIME      = 'lastTime',
+    PAUSE          = 'pause',
+    PAUSED         = 'paused',
+    RESET          = 'reset',
+    START_TIME     = 'startTime',
+    TITLE          = 'title',
+    WARN           = 'warn',
 
     DOT = '.',
 
-    C_ENTRY            = getCN(CONSOLE,ENTRY),
-    C_PAUSE            = getCN(CONSOLE,PAUSE),
-    C_CHECKBOX         = getCN(CONSOLE,'checkbox'),
     C_BUTTON           = getCN(CONSOLE,'button'),
+    C_CHECKBOX         = getCN(CONSOLE,'checkbox'),
     C_CLEAR            = getCN(CONSOLE,CLEAR),
-    C_PAUSE_LABEL      = getCN(CONSOLE,PAUSE,'label'),
-    C_ENTRY_META       = getCN(CONSOLE,ENTRY,'meta'),
-    C_ENTRY_CAT        = getCN(CONSOLE,ENTRY,'cat'),
-    C_ENTRY_SRC        = getCN(CONSOLE,ENTRY,'src'),
-    C_ENTRY_TIME       = getCN(CONSOLE,ENTRY,'time'),
-    C_ENTRY_CONTENT    = getCN(CONSOLE,ENTRY,'content'),
+    C_COLLAPSE         = getCN(CONSOLE,'collapse'),
+    C_COLLAPSED        = getCN(CONSOLE,COLLAPSED),
+    C_CONSOLE_CONTROLS = getCN(CONSOLE,'controls'),
     C_CONSOLE_HD       = getCN(CONSOLE,'hd'),
     C_CONSOLE_BD       = getCN(CONSOLE,'bd'),
     C_CONSOLE_FT       = getCN(CONSOLE,'ft'),
-    C_CONSOLE_CONTROLS = getCN(CONSOLE,'controls'),
     C_CONSOLE_TITLE    = getCN(CONSOLE,TITLE),
+    C_ENTRY            = getCN(CONSOLE,ENTRY),
+    C_ENTRY_CAT        = getCN(CONSOLE,ENTRY,'cat'),
+    C_ENTRY_CONTENT    = getCN(CONSOLE,ENTRY,'content'),
+    C_ENTRY_META       = getCN(CONSOLE,ENTRY,'meta'),
+    C_ENTRY_SRC        = getCN(CONSOLE,ENTRY,'src'),
+    C_ENTRY_TIME       = getCN(CONSOLE,ENTRY,'time'),
+    C_PAUSE            = getCN(CONSOLE,PAUSE),
+    C_PAUSE_LABEL      = getCN(CONSOLE,PAUSE,'label'),
 
     RE_INLINE_SOURCE = /^(\S+)\s/,
     RE_AMP = /&/g,
-    RE_LT  = /</g,
     RE_GT  = />/g,
+    RE_LT  = /</g,
 
     ESC_AMP = '&#38;',
-    ESC_LT  = '&#60;',
     ESC_GT  = '&#62;',
+    ESC_LT  = '&#60;',
     
     L = Y.Lang,
-    isString   = L.isString,
+    create     = Y.Node.create,
     isNumber   = L.isNumber,
+    isString   = L.isString,
     merge      = Y.merge,
-    substitute = Y.substitute,
-    create     = Y.Node.create;
+    substitute = Y.substitute;
     
 
 /**
@@ -166,6 +168,7 @@ Y.mix(Console, {
      *   <li>console_pause_label_class</li>
      *   <li>console_button_class</li>
      *   <li>console_clear_class</li>
+     *   <li>console_collapse_class</li>
      *   <li>console_title_class</li>
      * </ul>
      *
@@ -183,6 +186,7 @@ Y.mix(Console, {
         console_pause_label_class : C_PAUSE_LABEL,
         console_button_class   : C_BUTTON,
         console_clear_class    : C_CLEAR,
+        console_collapse_class : C_COLLAPSE,
         console_title_class    : C_CONSOLE_TITLE
     },
 
@@ -195,6 +199,7 @@ Y.mix(Console, {
      *   <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>str_title - pulled from attribute strings.title</li>
+     *   <li>str_collapse - pulled from attribute strings.collapse</li>
      * </ul>
      *
      * @property Console.HEADER_TEMPLATE
@@ -204,6 +209,11 @@ Y.mix(Console, {
     HEADER_TEMPLATE :
         '<div class="{console_hd_class}">'+
             '<h4 class="{console_title_class}">{str_title}</h4>'+
+            '<div class="{console_controls_class}">'+
+                '<button type="button" class="'+
+                    '{console_button_class} {console_collapse_class}">{str_collapse}'+
+                '</button>'+
+            '</div>'+
         '</div>',
 
     /**
@@ -240,9 +250,9 @@ Y.mix(Console, {
                         '{console_pause_class}" value="1" id="{id_guid}"> '+
                 '<label for="{id_guid}" class="{console_pause_label_class}">'+
                     '{str_pause}</label>' +
-                '<input type="button" class="'+
-                    '{console_button_class} {console_clear_class}" '+
-                    'value="{str_clear}">'+
+                '<button type="button" class="'+
+                    '{console_button_class} {console_clear_class}">{str_clear}'+
+                '</button>'+
             '</div>'+
         '</div>',
 
@@ -316,6 +326,8 @@ Y.mix(Console, {
          *   <li>title : &quot;Log Console&quot;</li>
          *   <li>pause : &quot;Pause&quot;</li>
          *   <li>clear : &quot;Clear&quot;</li>
+         *   <li>collapse : &quot;Collapse&quot;</li>
+         *   <li>expand : &quot;Expand&quot;</li>
          * </ul>
          *
          * @attribute strings
@@ -325,7 +337,9 @@ Y.mix(Console, {
             value : {
                 title : "Log Console",
                 pause : "Pause",
-                clear : "Clear"
+                clear : "Clear",
+                collapse : "Collapse",
+                expand   : "Expand"
             }
         },
 
@@ -480,6 +494,17 @@ Y.mix(Console, {
         lastTime : {
             value : new Date(),
             readOnly: true
+        },
+
+        /**
+         * Controls the collapsed state of the Console
+         *
+         * @attribute collapsed
+         * @type Boolean
+         * @default false
+         */
+        collapsed : {
+            value : false
         }
 
     },
@@ -594,18 +619,42 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
+     * Collapses the UI.
+     *
+     * @method collapse
+     * @chainable
+     */
+    collapse : function () {
+        this.set(COLLAPSED, true);
+    },
+
+    /**
+     * Expands the UI if collapsed.
+     *
+     * @method collapse
+     * @chainable
+     */
+    expand : function () {
+        this.set(COLLAPSED, false);
+    },
+
+    /**
      * Outputs all buffered messages to the console UI.
      * 
      * @method printBuffer
      * @chainable
      */
     printBuffer: function () {
+        var messages = this.buffer,
+            debug = Y.config.debug,
+            i,len;
+
+        // turn off logging system
+        Y.config.debug = false;
+
         if (!this.get(PAUSED) && this.get('rendered')) {
 
             this._clearTimeout();
-
-            var messages = this.buffer,
-                i,len;
 
             this.buffer = [];
 
@@ -614,8 +663,16 @@ Y.extend(Console,Y.Widget,{
                 this.printLogEntry(messages[i]);
             }
 
+            if (this.get('scrollIntoView')) {
+                this.scrollToLatest();
+            }
+
             this._trimOldEntries();
+
         }
+
+        // restore logging system
+        Y.config.debug = debug;
 
         return this;
     },
@@ -703,6 +760,7 @@ Y.extend(Console,Y.Widget,{
      */
     syncUI : function () {
         this.set(PAUSED,this.get(PAUSED));
+        this.set(COLLAPSED,this.get(COLLAPSED));
     },
 
     /**
@@ -712,16 +770,20 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     bindUI : function () {
+        this.get(CONTENT_BOX).query('button.'+C_COLLAPSE).
+            on(CLICK,this._onCollapseClick,this);
+
         this.get(CONTENT_BOX).query('input[type=checkbox].'+C_PAUSE).
             on(CLICK,this._onPauseClick,this);
 
-        this.get(CONTENT_BOX).query('input[type=button].'+C_CLEAR).
+        this.get(CONTENT_BOX).query('button.'+C_CLEAR).
             on(CLICK,this._onClearClick,this);
         
         // Attribute changes
         this.after('stringsChange',       this._afterStringsChange);
         this.after('pausedChange',        this._afterPausedChange);
         this.after('consoleLimitChange',  this._afterConsoleLimitChange);
+        this.after('collapsedChange',     this._afterCollapsedChange);
     },
 
     
@@ -734,6 +796,7 @@ Y.extend(Console,Y.Widget,{
     _initHead : function () {
         var cb   = this.get(CONTENT_BOX),
             info = merge(Console.CHROME_CLASSES, {
+                        str_collapse : this.get('strings.collapse'),
                         str_title : this.get('strings.title')
                     });
 
@@ -862,17 +925,23 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _addToConsole : function (node) {
-        var toTop = this.get('newestOnTop'),
-            bd    = this._body,
-            scrollTop;
+        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
 
-        bd.insertBefore(node,toTop ? bd.get('firstChild') : null);
+        this._body.insertBefore(node, sib);
+    },
 
-        if (this.get('scrollIntoView')) {
-            scrollTop = toTop ? 0 : bd.get('scrollHeight');
+    /**
+     * Scrolls to the most recent entry
+     *
+     * @method scrollToLatest
+     * @chainable
+     */
+    scrollToLatest : function () {
+        var scrollTop = this.get('newestOnTop') ?
+                            0 :
+                            this._body.get('scrollHeight');
 
-            bd.set('scrollTop', scrollTop);
-        }
+        this._body.set('scrollTop', scrollTop);
     },
 
     /**
@@ -902,23 +971,36 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _trimOldEntries : function () {
-        var bd = this._body;
+        var bd = this._body,
+            limit = this.get('consoleLimit'),
+            debug = Y.config.debug,
+            entries,e,i,l;
 
         if (bd) {
-            var entries = bd.queryAll(DOT+C_ENTRY),
-                i = entries ? entries.size() - this.get('consoleLimit') : 0;
+            // Turn off the logging system for the duration of this operation
+            // to prevent an infinite loop
+            Y.config.debug = false;
 
-            if (i > 0) {
+            entries = bd.queryAll(DOT+C_ENTRY);
+            l = entries ? entries.size() - limit : 0;
+
+            if (l) {
                 if (this.get('newestOnTop')) {
-                    for (var l = entries.size(); i<l; i++) {
-                        bd.removeChild(entries.item(i));
-                    }
+                    i = limit;
+                    l = entries.size();
                 } else {
-                    for (;i>=0;--i) {
-                        bd.removeChild(entries.item(i));
+                    i = 0;
+                }
+
+                for (;i < l; ++i) {
+                    e = entries.item(i);
+                    if (e) {
+                        e.get('parentNode').removeChild(e);
                     }
                 }
             }
+
+            Y.config.debug = debug;
         }
     },
 
@@ -961,9 +1043,7 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _onPauseClick : function (e) {
-        var paused = e.target.get(CHECKED);
-
-        this.set(PAUSED,paused,{ src: Y.Widget.UI_SRC });
+        this.set(PAUSED,e.target.get(CHECKED));
     },
 
     /**
@@ -976,6 +1056,18 @@ Y.extend(Console,Y.Widget,{
      */
     _onClearClick : function (e) {
         this.clearConsole();
+    },
+
+    /**
+     * Event handler for clicking on the Collapse/Expand button. Sets the
+     * &quot;collapsed&quot; attribute accordingly
+     *
+     * @method _onClearClick
+     * @param e {Event} DOM event facade for the click event
+     * @protected
+     */
+    _onCollapseClick : function (e) {
+        this.set(COLLAPSED, !this.get(COLLAPSED));
     },
 
 
@@ -1054,10 +1146,11 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _afterPausedChange : function (e) {
-        var paused = e.newVal;
+        var paused = e.newVal,
+            node;
 
         if (e.src !== Y.Widget.SRC_UI) {
-            var node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
+            node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
             if (node) {
                 node.set(CHECKED,paused);
             }
@@ -1066,8 +1159,7 @@ Y.extend(Console,Y.Widget,{
         if (!paused) {
             this._schedulePrint();
         } else if (this._timeout) {
-            clearTimeout(this._timeout);
-            this._timeout = null;
+            this._clearTimeout();
         }
     },
 
@@ -1083,6 +1175,26 @@ Y.extend(Console,Y.Widget,{
         this._trimOldEntries();
     },
 
+
+    /**
+     * Updates the className of the contentBox, which should trigger CSS to
+     * hide or show the body and footer sections depending on the new value.
+     *
+     * @method _afterCollapsedChange
+     * @param e {Event} Custom event for the attribute change
+     * @protected
+     */
+    _afterCollapsedChange : function (e) {
+        var cb     = this.get(CONTENT_BOX),
+            button = cb.queryAll('button.'+C_COLLAPSE),
+            method = e.newVal ? 'addClass' : 'removeClass',
+            str    = this.get('strings.'+(e.newVal ? 'expand' : 'collapse'));
+
+        cb[method](C_COLLAPSED);
+        if (button) {
+            button.set('innerHTML',str);
+        }
+    },
 
     /**
      * Responds to log events by normalizing qualifying messages and passing

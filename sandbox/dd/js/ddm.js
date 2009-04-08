@@ -48,8 +48,10 @@ YUI.add('dd-ddm', function(Y) {
         * @description Activates the shim
         */
         _pg_activate: function() {
-            var ah = this.activeDrag.get('activeHandle'),
-            cur = ah.getStyle('cursor');
+            var ah = this.activeDrag.get('activeHandle'), cur = 'auto';
+            if (ah) {
+                cur = ah.getStyle('cursor');
+            }
             if (cur == 'auto') {
                 cur = this.get('dragCursor');
             }

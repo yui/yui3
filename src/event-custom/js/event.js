@@ -5,6 +5,7 @@
  */
 
 
+Y.Env.eventHandles  = {};
 Y.Env.eventAdaptors = {};
 
 

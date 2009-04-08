@@ -35,7 +35,8 @@
             name: "Class Tests",
         
             testDefaults: function() {
-                var cache = new Y.Cache();
+                // TODO: remove empty config
+                var cache = new Y.Cache({});
                 cache.add(1, "a");
                 ASSERT.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
                 ASSERT.areSame(0, cache.get("size"), "Expected default size of 0.");
@@ -43,7 +44,8 @@
             },
 
             testDestructor: function() {
-                var cache = new Y.Cache();
+                // TODO: remove empty config
+                var cache = new Y.Cache({});
                 cache.destroy();
                 ASSERT.isNull(cache.getEntries(), "Expected null array.");
             }
@@ -53,7 +55,8 @@
             name: "Basic Tests",
 
             testsize0: function() {
-                var cache = new Y.Cache();
+                // TODO: remove empty config
+                var cache = new Y.Cache({});
                 ASSERT.areSame(0, cache.get("size"), "Expected size to be 0.");
                 
                 cache.add(1, "a");
@@ -92,6 +95,17 @@
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
                 cache.add(3, "c");
                 ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
+            },
+
+            testsize2toNegative: function() {
+                var cache = new Y.Cache({size:2});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.set("size", -5);
+                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
+                cache.add(3, "c");
+                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
+                ASSERT.areSame(-5, cache.get("size"), "Expected negative value normalized to 0.");
             },
 
             testRetrieve: function() {
