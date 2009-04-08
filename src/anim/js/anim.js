@@ -118,8 +118,8 @@
          * @type Node
          */
         node: {
-            set: function(node) {
-                node = Y.Node.get(node);
+            setter: function(node) {
+                node = Y.get(node);
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');
@@ -146,7 +146,7 @@
         easing: {
             value: Y.Anim.DEFAULT_EASING,
 
-            set: function(val) {
+            setter: function(val) {
                 if (typeof val === 'string' && Y.Easing) {
                     return Y.Easing[val];
                 }
