@@ -288,6 +288,44 @@
 
                     h.set("A", "MyNewAVal");
                     Y.Assert.areEqual("MYNEWAVAL", h.get("A"));
+                },
+
+                testEventSameValue : function() {
+                    var h = this.createHost({A:"MyAVal"});
+
+                    var expectedEvents = ["BeforeAChange", "BeforeAChange", "BeforeAChange", "AfterAChange", "BeforeComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange"];
+                    var actualEvents = [];
+
+                    h.on("AChange", function(e) {
+                        actualEvents.push("BeforeAChange");
+                    });
+
+                    h.after("AChange", function(e) {
+                        actualEvents.push("AfterAChange");
+                        Y.Assert.areNotSame(e.newVal, e.preVal);
+                    });
+
+                    h.on("complexChange", function(e) {
+                        actualEvents.push("BeforeComplexChange");
+                    });
+
+                    h.after("complexChange", function(e) {
+                        actualEvents.push("AfterComplexChange");
+                        if (!e.subAttrName) {
+                            Y.Assert.areNotSame(e.newVal, e.preVal, "Should not fire after event if object values are same");
+                        }
+                    });
+
+                    h.set("A", h.get("A"));     // No Change
+                    h.set("A", "MyAVal");       // No Change
+                    h.set("A", "MyNewAVal");    // Change
+
+                    h.set("complex", h.get("complex"));          // No Change
+                    h.set("complex.Z.A", 3);                     // Change, even though value of complex is unchanged, we don't deep compare objects.
+                    h.set("complex", Y.clone(h.get("complex"))); // Change, obj reference differs
+                    h.set("complex", {A:1, B:2, C:3});           // Change, obj reference differs
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
             };
 
