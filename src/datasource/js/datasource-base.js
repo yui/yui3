@@ -6,25 +6,24 @@
  * @requires base
  * @title DataSource Utility
  */
-    Y.namespace("DataSource");
-    var LANG = Y.Lang,
+var LANG = Y.Lang,
     
-    /**
-     * Base class for the YUI DataSource utility.
-     * @class DataSource
-     * @extends Base
-     * @constructor
-     */    
-    DSBase = function() {
-        DSBase.superclass.constructor.apply(this, arguments);
-    };
+/**
+ * Base class for the YUI DataSource utility.
+ * @class DataSource
+ * @extends Base
+ * @constructor
+ */    
+DSLocal = function() {
+    DSLocal.superclass.constructor.apply(this, arguments);
+};
     
     /////////////////////////////////////////////////////////////////////////////
     //
     // DataSource static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSBase, {
+Y.mix(DSLocal, {
     /**
      * Class name.
      *
@@ -32,9 +31,9 @@ Y.mix(DSBase, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource"
+     * @value "DataSource.Local"
      */
-    NAME: "DataSource",
+    NAME: "DataSource.Local",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -85,7 +84,7 @@ Y.mix(DSBase, {
     }
 });
     
-Y.extend(DSBase, Y.Base, {
+Y.extend(DSLocal, Y.Base, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -140,9 +139,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * </dl>
-         * @preventable _handleRequest
+         * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: this._handleRequest});
+        //this.publish("request", {defaultFn: this._defRequestFn});
+        this.publish("request", {defaultFn:function(e, o){
+            this._defRequestFn(e, o);
+        }});
          
         /**
          * Fired when raw data is received.
@@ -156,9 +158,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
          * <dt>data (Object)</dt> <dd>The raw data.</dd>
          * </dl>
-         * @preventable _handleData
+         * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: this._handleData});
+        //this.publish("data", {defaultFn: this._defDataFn});
+         this.publish("data", {defaultFn:function(e, o){
+            this._defDataFn(e, o);
+        }});
 
         /**
          * Fired when response is returned.
@@ -175,9 +180,12 @@ Y.extend(DSBase, Y.Base, {
          * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
          * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
          * </dl>
-         * @preventable _handleResponse
+         * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: this._handleResponse});
+         //this.publish("response", {defaultFn: this._defResponseFn});
+         this.publish("response", {defaultFn:function(e, o){
+            this._defResponseFn(e, o);
+        }});
 
         /**
          * Fired when an error is encountered.
@@ -199,12 +207,11 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>request</code> event handler manages request/response
-     * transaction. Must fire <code>response</code> event when response is received. This
-     * method should be implemented by subclasses to achieve more complex
-     * behavior such as accessing remote data.
+     * Manages request/response transaction. Must fire <code>response</code>
+     * event when response is received. This method should be implemented by
+     * subclasses to achieve more complex behavior such as accessing remote data.
      *
-     * @method _handleRequest
+     * @method _defRequestFn
      * @param e {Event.Facade} Event Facade.         
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -214,7 +221,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleRequest: function(e, o) {
+    _defRequestFn: function(e, o) {
         var data = this.get("source");
         
         // Problematic data
@@ -232,10 +239,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>data</code> event handler normalizes raw data
-     * into a response that includes results and meta properties.
+     * Normalizes raw data into a response that includes results and meta properties.
      *
-     * @method _handleData
+     * @method _defDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>                          
@@ -246,7 +252,7 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleData: function(e, o) {
+    _defDataFn: function(e, o) {
         // Pass through data as-is
         o.results = o.data;
         
@@ -262,10 +268,9 @@ Y.extend(DSBase, Y.Base, {
     },
 
     /**
-     * Overridable default <code>response</code> event handler returns data as a
-     * normalized response to callabck.
+     * Sends data as a normalized response to callback.
      *
-     * @method _handleResponse
+     * @method _defResponseFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -278,9 +283,9 @@ Y.extend(DSBase, Y.Base, {
      * </dl>
      * @protected
      */
-    _handleResponse: function(e, o) {
+    _defResponseFn: function(e, o) {
         // Send the response back to the callback
-        DSBase.issueCallback(o);
+        DSLocal.issueCallback(o);
     },
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
@@ -301,12 +306,13 @@ Y.extend(DSBase, Y.Base, {
      * @return {Number} Transaction ID.
      */
     sendRequest: function(request, callback) {
-        var tId = DSBase._tId++;
+        var tId = DSLocal._tId++;
         this.fire("request", null, {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }
 });
     
-    Y.DataSource = DSBase;
+Y.namespace("DataSource");
+Y.DataSource.Local = DSLocal;
     

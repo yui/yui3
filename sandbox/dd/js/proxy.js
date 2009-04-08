@@ -120,16 +120,18 @@ YUI.add('dd-proxy', function(Y) {
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function() {
-            var n = this.get(NODE), ah, cur;
+            var n = this.get(NODE), ah, cur = 'auto';
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
                     width: n.get('offsetWidth') + 'px'
                 });
             }
-
+            
             ah = DDM.activeDrag.get('activeHandle');
-            cur = ah.getStyle('cursor');
+            if (ah) {
+                cur = ah.getStyle('cursor');
+            }
             if (cur == 'auto') {
                 cur = DDM.get('dragCursor');
             }

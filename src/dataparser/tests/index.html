@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DataParser Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>DataParser Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/dataparser/dataparser-debug.js" id="buildsrc"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        useConsole: true,
+        insertBefore: "buildsrc"
+    }).use("console", "test", "dump", "dataparser", function(Y) {
+        
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            btnRun = Y.get("#btnRun"),
+            myConsole = new Y.Console().render();
+            
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+
+
+        var testJSON = new Y.Test.Case({
+            name: "JSON Tests",
+        
+            testResults: function() {
+                var schema = {
+                        resultsList: "response",
+                        fields: ["name", "number", "letter"]
+                    },
+                    data_in = {
+                        response: [
+                            {name: "alpha", number: 1, letter: "a"},
+                            {name: "beta", number: 2, letter: "b"},
+                            {name: "gamma", number: 3, letter: "c"}
+                        ]
+                    },
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+                    
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("alpha", data_out.results[0].name, "Expected first result.");
+                ASSERT.areSame("gamma", data_out.results[2].name, "Expected last result.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+            },
+            
+            testMeta: function() {
+                var schema = {
+                        metaFields: {top:"top", nested:"second.nested"}
+                    },
+                    data_in = {
+                        top: "foo",
+                        second: {nested: "bar"}
+                    },
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
+                ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
+            },
+            
+            testComplex: function() {
+                var schema = {
+                        metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
+                        resultsList:"response['data array'][0].response['i t e m s']",
+                        fields: [
+                            "name",
+                            "['customer.data']['alert(\'id\')']",
+                            "['customer.data']['phone/email']",
+                            "['array-pets'][0].name",
+                            "['array-pets']"
+                        ]
+                    },
+                    data_in = {
+                        request: "orig request",
+                        response: {
+                            "meta-total": 3,
+                            "data array" : [{
+                                position: "array.item.0",
+                                "response": {
+                                    "i t e m s":
+                                    [
+                                        { // result 0
+                                            name: "Bob",
+                                            "customer.data":
+                                            {
+                                                "alert('id')":10,
+                                                "phone/email": "123-4567",
+                                                "catch":true
+                                            },
+                                            "array-pets":
+                                            [
+                                                { //  pet 0
+                                                    "name":"Brutus",
+                                                    "breed": "bulldog"
+                                                },
+                                                { //  pet 1
+                                                    "name":"Bobo",
+                                                    "breed": "bernese"
+                                                }
+                                            ]
+                                        },
+                                        { // result 1
+                                            name: "Fran",
+                                            "customer.data": { "alert('id')":11, "phone/email": "234-5678", "catch":false},
+                                            "array-pets":
+                                            [
+                                                { //  pet 0
+                                                    "name":"Fido",
+                                                    "breed": "french poodle"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                position: "array.item.1",
+                                "response": {
+                                    "message": {
+                                        type: "xyz",
+                                        error: false
+                                    }
+                                }
+                            }],
+
+                            metaid: {
+                                id:1234,
+                                date: new Date()
+                            }
+                        }
+                    },
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(2, data_out.results.length, "Expected 2 results.");
+                ASSERT.areSame(10, data_out.results[0]["['customer.data']['alert(\'id\')']"], "Expected first id.");
+                ASSERT.areSame("234-5678", data_out.results[1]["['customer.data']['phone/email']"], "Expected second phone/email.");
+                ASSERT.areSame("Fido", data_out.results[1]["['array-pets'][0].name"], "Expected nested array item data.");
+                ASSERT.isArray(data_out.results[0]["['array-pets']"], "Expected array.");
+                ASSERT.areSame(2, data_out.results[0]["['array-pets']"].length, "Expected array length.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
+                ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
+                ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
+            }
+        });
+            
+        
+        Y.Test.Runner.add(testJSON);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

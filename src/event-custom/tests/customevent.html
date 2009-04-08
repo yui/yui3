@@ -15,7 +15,9 @@
     YUI({
         base: "../../../build/",
         filter: "debug",
-        useConsole: true
+        useConsole: true,
+        // logInclude: ['event', 'test']
+        // logExclude: ['Dom', 'Selector', 'Node']
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.get('#btnRun');
@@ -141,8 +143,96 @@
                 o.fire('prefix:testPrefix', { foo: 'afoo' }, 1, 2);
                 Y.Assert.isTrue(fired1);
                 Y.Assert.isTrue(fired2);
-            }
+            },
 
+            testDetachKey: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                Y.on('handle, test:event', function() {
+                    fired1 = true;
+                });
+
+                // one listener
+                Y.fire('test:event');
+                Y.Assert.isTrue(fired1);
+                Y.Assert.isFalse(fired2);
+
+                Y.detach('handle, test:event');
+
+                fired1 = false;
+                fired2 = false;
+
+                Y.on('handle, test:event', function() {
+                    fired2 = true;
+                });
+
+                // first lisener detached, added a new listener
+                Y.fire('test:event');
+                Y.Assert.isFalse(fired1);
+                Y.Assert.isTrue(fired2);
+
+                Y.detach('handle,test:event');
+                fired1 = false;
+                fired2 = false;
+
+                Y.after('handle, test:event', function() {
+                    Y.Assert.isTrue(fired1);
+                    fired2 = true;
+                });
+
+                Y.on('handle, test:event', function() {
+                    Y.Assert.isFalse(fired2);
+                    fired1 = true;
+                });
+
+                // testing on and after order
+                Y.fire('test:event');
+
+                fired1 = false;
+                fired2 = false;
+
+                // spaces after the comma or lack thereof should have
+                // no effect on the addition or removal of listeners
+                Y.detach('handle,test:event');
+
+                // added both an on listener and an after listener,
+                // then detached both
+                Y.fire('test:event');
+                Y.Assert.isFalse(fired1);
+                Y.Assert.isFalse(fired2);
+
+            },
+
+            testChain: function() {
+                YUI({ chainOn: true }).use('*', function(Y) {
+
+                    var fired1 = false,
+                        fired2 = false,
+                        fired3 = false;
+
+                    var f1 = function() {
+                        Y.Assert.isTrue(fired2);
+                        fired1 = true;
+                    };
+
+                    var f2 = function() {
+                        Y.Assert.isFalse(fired1);
+                        fired2 = true;
+                    };
+                    var f3 = function() {
+                        fired3 = true;
+                    };
+
+                    Y.after('p:e', f1).on('p:e', f2).on('p:e2', f3).fire('p:e').fire('p:e2');
+
+                    Y.Assert.isTrue(fired1);
+                    Y.Assert.isTrue(fired2);
+                    Y.Assert.isTrue(fired3);
+                    
+                });
+            }
 
         });
         

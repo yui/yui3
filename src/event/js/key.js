@@ -19,9 +19,11 @@
 Y.Env.eventAdaptors.key = {
 
     on: function(type, fn, id, spec, o) {
+        console.log("spec:" + spec);
 
         var a = Y.Array(arguments, 0, true),
             parsed, etype, criteria, ename;
+
 
         if (!spec || spec.indexOf(':') == -1) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
@@ -39,6 +41,8 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
         // the name of the custom event that will be created for the spec
         ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
+
+        ename = ename.replace(/,/g, '_');
 
         if (!Y.getEvent(ename)) {
 

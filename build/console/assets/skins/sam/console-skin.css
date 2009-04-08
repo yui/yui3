@@ -20,13 +20,14 @@
     height: 2em;
     line-height: 2em;
     padding: 0 1ex;
+    position: relative;
 }
 .yui-skin-sam .yui-console-title {
     font-size: 100%;
     line-height: 2em;
     margin: 0;
 }
-.yui-skin-sam .yui-console-controls input,
+.yui-skin-sam .yui-console-controls button,
 .yui-skin-sam .yui-console-controls label {
     height: 2em;
     vertical-align: middle;
@@ -51,6 +52,12 @@
 .yui-skin-sam .yui-console-hd .yui-console-controls {
     position: absolute;
     right: 0;
+    top: 0;
+}
+
+.yui-skin-sam .yui-console .yui-console-collapsed .yui-console-bd,
+.yui-skin-sam .yui-console .yui-console-collapsed .yui-console-ft {
+    display: none;
 }
 
 /* Log entries */
