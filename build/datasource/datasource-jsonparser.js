@@ -4,6 +4,7 @@ YUI.add('datasource-jsonparser', function(Y) {
  * Extends DataSource with schema-based JSON parsing functionality.
  *
  * @module datasource
+ * @submodule datasource-dataparser
  */
 
 /**

@@ -75,7 +75,7 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (response) {
         if(response.callback) {
-            var scope = response.callback.scope || window,
+            var scope = response.callback.scope || this,
                 callbackFunc = (response.error && response.callback.failure) || response.callback.success;
             if (callbackFunc) {
                 callbackFunc.apply(scope, [response]);

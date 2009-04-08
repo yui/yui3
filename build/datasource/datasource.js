@@ -75,7 +75,7 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (response) {
         if(response.callback) {
-            var scope = response.callback.scope || window,
+            var scope = response.callback.scope || this,
                 callbackFunc = (response.error && response.callback.failure) || response.callback.success;
             if (callbackFunc) {
                 callbackFunc.apply(scope, [response]);
@@ -441,6 +441,7 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource
+ * @submodule datasource-cache
  */
 
 /**
@@ -555,6 +556,7 @@ YUI.add('datasource-jsonparser', function(Y) {
  * Extends DataSource with schema-based JSON parsing functionality.
  *
  * @module datasource
+ * @submodule datasource-dataparser
  */
 
 /**
@@ -658,6 +660,7 @@ YUI.add('datasource-polling', function(Y) {
  * Extends DataSource with polling functionality.
  *
  * @module datasource
+ * @submodule datasource-polling
  */
     var LANG = Y.Lang,
     
