@@ -206,30 +206,61 @@
             },
 
             testChain: function() {
-                YUI({ chainOn: true }).use('*', function(Y) {
 
-                    var fired1 = false,
-                        fired2 = false,
-                        fired3 = false;
+                var fired1 = false,
+                    fired2 = false,
+                    fired3 = false,
+                    fired4 = false,
+                    fired5 = false;
 
-                    var f1 = function() {
-                        Y.Assert.isTrue(fired2);
-                        fired1 = true;
-                    };
-
-                    var f2 = function() {
-                        Y.Assert.isFalse(fired1);
-                        fired2 = true;
-                    };
-                    var f3 = function() {
-                        fired3 = true;
-                    };
-
-                    Y.after('p:e', f1).on('p:e', f2).on('p:e2', f3).fire('p:e').fire('p:e2');
-
-                    Y.Assert.isTrue(fired1);
+                // should be executed once, after f2
+                var f1 = function() {
                     Y.Assert.isTrue(fired2);
-                    Y.Assert.isTrue(fired3);
+                    fired1 = true;
+                };
+
+                // should be executed once, before f1
+                var f2 = function() {
+                    Y.Assert.isFalse(fired1);
+                    fired2 = true;
+                };
+
+                // should be executed once, different event from f1 and f2
+                var f3 = function() {
+                    fired3 = true;
+                };
+
+                // detached before fired, should not executed
+                var f4 = function() {
+                    fired4 = true;
+                };
+
+                // should fire once, preserving the custom prefix rather
+                // than using the configured event target prefix
+                var f5 = function() {
+                    fired5 = true;
+                };
+
+                // configure chaining via global default or on the event target
+                YUI({ /* chain: true */ }).use('*', function(Y2) {
+
+                    var o = new Y2.EventTarget({
+                        prefix: 'foo',
+                        chain : true
+                    });
+
+                    // without event target prefix manipulation (incomplete now)
+                    // @TODO an error here is throwing an uncaught exception rather than failing the test
+                    // Y2.after('p:e', f1).on('p:e', f2).on('p:e2', f3).on('detacher, p:e', f4).detach('detacher, p:e').fire('p:e').fire('p:e2');
+
+                    // with event target prefix manipulation
+o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('detach,e').fire('foo:e').fire('e2').on('pre:e', f5).fire('pre:e');
+
+                    Y.Assert.isTrue(fired1);  // verifies chaining, on/after order, and adding the event target prefix
+                    Y.Assert.isTrue(fired2);  // verifies chaining, on/after order, and accepting the prefix in the event name
+                    Y.Assert.isTrue(fired3);  // verifies no interaction between events, and prefix manipulation
+                    Y.Assert.isFalse(fired4); // verifies detach
+                    Y.Assert.isTrue(fired5);  // verifies custom prefix
                     
                 });
             }

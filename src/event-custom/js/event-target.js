@@ -91,6 +91,8 @@ var L = Y.Lang,
 
             config: o,
 
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
+
             defaults: {
                 context: this, 
                 host: this,
@@ -143,7 +145,7 @@ ET.prototype = {
 
             }, this);
 
-            return (Y.config.chainOn) ? this : ret;
+            return (this._yuievt.chain) ? this : ret;
 
         } else if (L.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
@@ -191,7 +193,7 @@ ET.prototype = {
             // Y.log('storing: ' + key);
         }
 
-        return (Y.config.chainOn) ? this : handle;
+        return (this._yuievt.chain) ? this : handle;
 
     },
 
@@ -236,13 +238,14 @@ ET.prototype = {
                     handle.detach();
                 }
 
-                return this;
+                return (this._yuievt.chain) ? this : true;
             }
         }
 
         // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
-            return type.detach();
+            ret = type.detach();
+            return (this._yuievt.chain) ? this : true;
         }
 
         type = parts[1];
@@ -273,7 +276,7 @@ ET.prototype = {
             return ret;
         }
 
-        return this;
+        return (this._yuievt.chain) ? this : false;
     },
 
     /**
@@ -481,7 +484,7 @@ ET.prototype = {
         // clear target for next fire()
         ce.target = null;
 
-        return (Y.config.chainOn) ? this : ret;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**
