@@ -15,7 +15,9 @@
     YUI({
         base: "../../../build/",
         filter: "debug",
-        useConsole: true
+        useConsole: true,
+        // logInclude: ['event', 'test']
+        // logExclude: ['Dom', 'Selector', 'Node']
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.get('#btnRun');
