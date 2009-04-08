@@ -140,6 +140,8 @@
 
             <span class="nx">config</span><span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
 
+            <span class="nx">chain</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;chain&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">chain</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chain</span><span class="o">,</span>
+
             <span class="nx">defaults</span><span class="o">:</span> <span class="o">{</span>
                 <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span> 
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
@@ -192,7 +194,7 @@
 
             <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
 
-            <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
+            <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
 
         <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
@@ -240,7 +242,7 @@
             <span class="c">// Y.log(&#39;storing: &#39; + key);</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">handle</span><span class="o">;</span>
+        <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">handle</span><span class="o">;</span>
 
     <span class="o">},</span>
 
@@ -285,14 +287,14 @@
                     <span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
                 <span class="o">}</span>
 
-                <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="c">// If this is an event handle, use it to detach</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
@@ -323,7 +325,7 @@
             <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -531,7 +533,7 @@
         <span class="c">// clear target for next fire()</span>
 <span class="c"></span>        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
-        <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chainOn</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
+        <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
