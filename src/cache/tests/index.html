@@ -39,77 +39,77 @@
                 var cache = new Y.Cache({});
                 cache.add(1, "a");
                 ASSERT.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
-                ASSERT.areSame(0, cache.get("size"), "Expected default size of 0.");
-                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
+                ASSERT.areSame(0, cache.get("max"), "Expected default max of 0.");
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
             },
 
             testDestructor: function() {
                 // TODO: remove empty config
                 var cache = new Y.Cache({});
                 cache.destroy();
-                ASSERT.isNull(cache.getEntries(), "Expected null array.");
+                ASSERT.isNull(cache.get("entries"), "Expected null array.");
             }
         });
         
         var testBasic = new Y.Test.Case({
             name: "Basic Tests",
 
-            testsize0: function() {
+            testmax0: function() {
                 // TODO: remove empty config
                 var cache = new Y.Cache({});
-                ASSERT.areSame(0, cache.get("size"), "Expected size to be 0.");
+                ASSERT.areSame(0, cache.get("max"), "Expected max to be 0.");
                 
                 cache.add(1, "a");
-                ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
+                ASSERT.areSame(0, cache.get("size"), "Expected 0 entries.");
                 ASSERT.isNull(cache.retrieve(1), "Expected null cached response.");
             },
 
-            testsize2: function() {
-                var cache = new Y.Cache({size:2});
-                ASSERT.areSame(2, cache.get("size"), "Expected size to be 2.");
+            testmax2: function() {
+                var cache = new Y.Cache({max:2});
+                ASSERT.areSame(2, cache.get("max"), "Expected max to be 2.");
                 
                 cache.add(1, "a");
-                ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
+                ASSERT.areSame(1, cache.get("size"), "Expected 1 entry.");
                 cache.add(2, "b");
-                ASSERT.areSame(2, cache.getEntries().length, "Expected 2 entries.");
+                ASSERT.areSame(2, cache.get("size"), "Expected 2 entries.");
                 cache.add(3, "c");
-                ASSERT.areSame(2, cache.getEntries().length, "Expected 2 entries (still).");
+                ASSERT.areSame(2, cache.get("size"), "Expected 2 entries (still).");
             },
         
-            testsize2to1: function() {
-                var cache = new Y.Cache({size:2});
+            testmax2to1: function() {
+                var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
                 cache.add(2, "b");
-                cache.set("size", 1);
-                ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
+                cache.set("max", 1);
+                ASSERT.areSame(1, cache.get("size"), "Expected 1 entry.");
 
                 cache.add(3, "c");
-                ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry (still).");
+                ASSERT.areSame(1, cache.get("size"), "Expected 1 entry (still).");
             },
 
-            testsize2to0: function() {
-                var cache = new Y.Cache({size:2});
+            testmax2to0: function() {
+                var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
                 cache.add(2, "b");
-                cache.set("size", 0);
-                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
+                cache.set("max", 0);
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
                 cache.add(3, "c");
-                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array (still).");
             },
 
-            testsize2toNegative: function() {
-                var cache = new Y.Cache({size:2});
+            testmax2toNegative: function() {
+                var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
                 cache.add(2, "b");
-                cache.set("size", -5);
-                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array.");
+                cache.set("max", -5);
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
                 cache.add(3, "c");
-                ARRAYASSERT.isEmpty(cache.getEntries(), "Expected empty array (still).");
-                ASSERT.areSame(-5, cache.get("size"), "Expected negative value normalized to 0.");
+                ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array (still).");
+                ASSERT.areSame(-5, cache.get("max"), "Expected negative value normalized to 0.");
             },
 
             testRetrieve: function() {
-                var cache = new Y.Cache({size:2}),
+                var cache = new Y.Cache({max:2}),
                     cachedresponse;
                 cache.add(1, "a");
                 cache.add(2, "b");
@@ -121,11 +121,11 @@
             },
 
             testFlush: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.add(1, "a");
                 cache.add(2, "b");
                 cache.flush();
-                ASSERT.areSame(0, cache.getEntries().length, "Expected empty cache.");
+                ASSERT.areSame(0, cache.get("size"), "Expected empty cache.");
             }
         });
     
@@ -133,7 +133,7 @@
             name: "Event Tests",
 
             testAdd: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("add", function(e, entry) {
                     this.resume(function() {
                         ASSERT.areSame(1, entry.request);
@@ -145,7 +145,7 @@
             },
         
             testFlush: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("flush", function(e) {
                     this.resume(function() {
                         // This function intentionally left blank
@@ -157,7 +157,7 @@
             },
 
             testRequest: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("request", function(e, request) {
                     this.resume(function() {
                         ASSERT.areSame(2, request);
@@ -169,7 +169,7 @@
             },
 
             testRetrieveSuccess: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("retrieve", function(e, entry) {
                     this.resume(function() {
                         ASSERT.areSame(1, entry.request);
@@ -182,7 +182,7 @@
             },
 
             testRetrieveFailure: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("retrieve", function(e, entry) {
                     this.resume(function() {
                         ASSERT.fail();
@@ -196,18 +196,18 @@
             },
 
             testCancelAdd: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("add", function(e, entry) {
                     e.preventDefault();
                 }, this, true);
                 cache.add(1, "a");
                 
                 // Test the cancel
-                ASSERT.areSame(0, cache.getEntries().length, "Expected 0 entries.");
+                ASSERT.areSame(0, cache.get("size"), "Expected 0 entries.");
             },
 
             testCancelFlush: function() {
-                var cache = new Y.Cache({size:2});
+                var cache = new Y.Cache({max:2});
                 cache.on("flush", function(e) {
                     e.preventDefault();
                 }, this, true);
@@ -215,7 +215,7 @@
                 cache.flush();
                 
                 // Test the cancel
-                ASSERT.areSame(1, cache.getEntries().length, "Expected 1 entry.");
+                ASSERT.areSame(1, cache.get("size"), "Expected 1 entry.");
             }
         });
 
@@ -223,21 +223,21 @@
             name: "Entry Management Tests",
 
             testAllowDuplicateEntries: function() {
-                var cache = new Y.Cache({size:3});
+                var cache = new Y.Cache({max:3});
                 cache.add(1, "a");
                 cache.add(2, "b");
                 cache.add(1, "a");
-                ASSERT.areSame(3, cache.getEntries().length, "Expected 3 entries.");
+                ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
             },
         
             testFreshness: function() {
-                var cache = new Y.Cache({size:3});
+                var cache = new Y.Cache({max:3});
                 cache.add(1, "a");
                 cache.add(2, "b");
                 cache.add(3, "c");
                 cache.retrieve(1);
-                ASSERT.areSame(3, cache.getEntries().length, "Expected 3 entries.");
-                ASSERT.areSame(1, cache.getEntries()[2].request, "Expected entry to be refreshed.");
+                ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
+                ASSERT.areSame(1, cache.get("entries")[2].request, "Expected entry to be refreshed.");
             },
             
             testPayload: function() {

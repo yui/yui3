@@ -316,33 +316,33 @@
         var testCaching = new Y.Test.Case({
             name: "DataSource Caching Tests",
 
-            testCacheDefaultSize: function() {
+            testCacheDefaultMax: function() {
                 var ds = new Y.DataSource.Local();
                 ds.plug(Y.plugin.DataSourceCache);
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.cache.get("size"), 0, "Expected 0 size in Cache.");
+                ASSERT.areSame(ds.cache.get("max"), 0, "Expected 0 max in Cache.");
             },
 
-            testCacheInitSize: function() {
+            testCacheInitMax: function() {
                 var ds = new Y.DataSource.Local();
-                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{max:3}});
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.cache.get("size"), 3, "Expected 3 size in Cache.");
+                ASSERT.areSame(ds.cache.get("max"), 3, "Expected 3 max in Cache.");
             },
 
-            testCacheSetSize: function() {
+            testCacheSetMax: function() {
                 var ds = new Y.DataSource.Local();
                 ds.plug({fn:Y.plugin.DataSourceCache});
-                ds.cache.set("size", 5);
+                ds.cache.set("max", 5);
                 ASSERT.areSame((ds.cache instanceof Y.Cache), true, "Expected Cache instance.");
-                ASSERT.areSame(ds.cache.get("size"), 5, "Expected 5 size in Cache.");
+                ASSERT.areSame(ds.cache.get("max"), 5, "Expected 5 max in Cache.");
             },
             
             testLocalCache: function() {
                 var ds = new Y.DataSource.Local({
                         source: ["a","b","c","d"]
                     });
-                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{max:3}});
 
                 ds.sendRequest("a");
 
@@ -357,7 +357,7 @@
                 var ds = new Y.DataSource.Local({
                         source: ["a","b","c","d"]
                     });
-                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{size:3}});
+                ds.plug({fn:Y.plugin.DataSourceCache, cfg:{max:3}});
 
                 ds.sendRequest("a");
 

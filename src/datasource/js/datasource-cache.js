@@ -79,8 +79,6 @@ Y.extend(DataSourceCache, Y.Cache, {
         if(entry && entry.response) {
             this._owner.fire("response", null, Y.mix(o, entry.response));
             return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
-            //BASE.issueCallback(entry.response);
-            //return new Y.Do.Halt("msg", "newRetVal");
         }
     },
     
