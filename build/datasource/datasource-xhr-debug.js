@@ -4,9 +4,9 @@ YUI.add('datasource-xhr', function(Y) {
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
- * @module datasource-xhr
- * @requires datasource-base
- * @title DataSource XHR Submodule
+ * @module datasource
+ * @requires datasource-local
+ * @title DataSource XHR
  */
     
 /**

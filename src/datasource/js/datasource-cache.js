@@ -1,14 +1,13 @@
 /**
  * Extends DataSource with caching functionality.
  *
- * @module datasource-cache
- * @requires plugin, datasource-base, cache
- * @title DataSource Cache Plugin
+ * @module datasource
  */
 
 /**
  * Adds cacheability to the YUI DataSource utility.
  * @class DataSourceCache
+ * @extends Cache
  */    
 var DataSourceCache = function() {
     DataSourceCache.superclass.constructor.apply(this, arguments);
@@ -30,7 +29,7 @@ Y.mix(DataSourceCache, {
     /**
      * Class name.
      *
-     * @property DataParser.Base.NAME
+     * @property NAME
      * @type String
      * @static
      * @final

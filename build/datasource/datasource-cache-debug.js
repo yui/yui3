@@ -4,7 +4,7 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires plugin, datasource-base, cache
+ * @requires plugin, datasource-local, cache
  * @title DataSource Cache Plugin
  */
 

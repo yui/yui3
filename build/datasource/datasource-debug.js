@@ -1,4 +1,4 @@
-YUI.add('datasource-base', function(Y) {
+YUI.add('datasource-local', function(Y) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
@@ -12,7 +12,7 @@ var LANG = Y.Lang,
     
 /**
  * Base class for the YUI DataSource utility.
- * @class DataSource
+ * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
@@ -329,9 +329,9 @@ YUI.add('datasource-xhr', function(Y) {
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
- * @module datasource-xhr
- * @requires datasource-base
- * @title DataSource XHR Submodule
+ * @module datasource
+ * @requires datasource-local
+ * @title DataSource XHR
  */
     
 /**
@@ -443,7 +443,7 @@ YUI.add('datasource-cache', function(Y) {
  * Extends DataSource with caching functionality.
  *
  * @module datasource-cache
- * @requires plugin, datasource-base, cache
+ * @requires plugin, datasource-local, cache
  * @title DataSource Cache Plugin
  */
 
@@ -558,7 +558,7 @@ YUI.add('datasource-jsonparser', function(Y) {
  * Extends DataSource with schema-based JSON parsing functionality.
  *
  * @module datasource-jsonparser
- * @requires plugin, datasource-base, dataparser-json
+ * @requires plugin, datasource-local, dataparser-json
  * @title DataSource JSONParser Plugin
  */
 
@@ -625,7 +625,7 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
     /**
      * Parses raw data into a normalized response.
      *
-     * @method _defDataFn
+     * @method _beforeDefDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>
@@ -662,7 +662,7 @@ YUI.add('datasource-polling', function(Y) {
  * Extends DataSource with polling functionality.
  *
  * @module datasource-polling
- * @requires datasource-base
+ * @requires datasource-local
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,
@@ -751,5 +751,5 @@ Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:f
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-base','datasource-xhr','datasource-cache','datasource-jsonparser','datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-xhr','datasource-cache','datasource-jsonparser','datasource-polling']});
 

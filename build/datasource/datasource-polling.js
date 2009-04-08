@@ -4,7 +4,7 @@ YUI.add('datasource-polling', function(Y) {
  * Extends DataSource with polling functionality.
  *
  * @module datasource-polling
- * @requires datasource-base
+ * @requires datasource-local
  * @title DataSource Polling Extension
  */
     var LANG = Y.Lang,

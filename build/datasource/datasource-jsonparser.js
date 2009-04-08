@@ -4,7 +4,7 @@ YUI.add('datasource-jsonparser', function(Y) {
  * Extends DataSource with schema-based JSON parsing functionality.
  *
  * @module datasource-jsonparser
- * @requires plugin, datasource-base, dataparser-json
+ * @requires plugin, datasource-local, dataparser-json
  * @title DataSource JSONParser Plugin
  */
 
@@ -71,7 +71,7 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
     /**
      * Parses raw data into a normalized response.
      *
-     * @method _defDataFn
+     * @method _beforeDefDataFn
      * @param e {Event.Facade} Event Facade.
      * @param o {Object} Object with the following properties:
      * <dl>

@@ -3,8 +3,6 @@
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @requires json, dataparser-base
- * @title DataParser JSON Submodule
  */
 var LANG = Y.Lang,
 
@@ -12,7 +10,7 @@ var LANG = Y.Lang,
  * JSON subclass for the YUI DataParser utility.
  * @class DataParser.JSON
  * @extends DataParser.Base
- * @constructor
+ * @static
  */
 DPJSON = {
 

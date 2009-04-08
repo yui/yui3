@@ -3,8 +3,6 @@
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
- * @requires plugin
- * @title Cache Utility
  */
 var LANG = Y.Lang,
 
@@ -44,9 +42,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "cache'
+     * @value "Cache'
      */
-    NAME: "cache",
+    NAME: "Cache",
 
 
     ATTRS: {

@@ -1,18 +1,14 @@
-YUI.add('datasource-base', function(Y) {
-
 /**
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
- * @requires base
- * @title DataSource Utility
  */
 var LANG = Y.Lang,
     
 /**
  * Base class for the YUI DataSource utility.
- * @class DataSource
+ * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
@@ -29,7 +25,7 @@ Y.mix(DSLocal, {
     /**
      * Class name.
      *
-     * @property DataSource.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -318,7 +314,3 @@ Y.extend(DSLocal, Y.Base, {
 Y.namespace("DataSource");
 Y.DataSource.Local = DSLocal;
     
-
-
-
-}, '@VERSION@' ,{requires:['base']});

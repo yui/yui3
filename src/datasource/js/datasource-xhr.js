@@ -2,15 +2,13 @@
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
- * @module datasource-xhr
- * @requires datasource-base
- * @title DataSource XHR Submodule
+ * @module datasource
  */
     
 /**
  * XHR subclass for the YUI DataSource utility.
  * @class DataSource.XHR
- * @extends DataSource
+ * @extends DataSource.Local
  * @constructor
  */    
 var DSXHR = function() {
@@ -27,7 +25,7 @@ Y.mix(DSXHR, {
     /**
      * Class name.
      *
-     * @property DataSource.XHR.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
