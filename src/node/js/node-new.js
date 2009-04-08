@@ -522,7 +522,19 @@ Y.mix(Node.prototype, {
     size: function() {
         Y.log('size is deprecated on Node', 'warn', 'Node');
         return g_nodes[this[UID]] ? 1 : 0;
-    }
+    },
+
+    addEventListener: function() {
+        var args = g_slice.call(arguments);
+        args.unshift(g_nodes[this[UID]]);
+        return Y.Event.nativeAdd.apply(Y.Event, args);
+    },
+    
+    removeEventListener: function() {
+        args.unshift(g_nodes[this[UID]]);
+        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+    },
+
 }, true);
 
 Y.Array.each([

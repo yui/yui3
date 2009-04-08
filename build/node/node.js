@@ -519,7 +519,19 @@ Y.mix(Node.prototype, {
 
     size: function() {
         return g_nodes[this[UID]] ? 1 : 0;
-    }
+    },
+
+    addEventListener: function() {
+        var args = g_slice.call(arguments);
+        args.unshift(g_nodes[this[UID]]);
+        return Y.Event.nativeAdd.apply(Y.Event, args);
+    },
+    
+    removeEventListener: function() {
+        args.unshift(g_nodes[this[UID]]);
+        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+    },
+
 }, true);
 
 Y.Array.each([
@@ -848,7 +860,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         context = context || this;
-        Y.each(g_nodelists[this[UID]], function(node, index) {
+        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             return fn.call(context, Y.get(node), index, instance);
         });
     },
@@ -963,6 +975,11 @@ Y.mix(NodeList.prototype, {
         });
     }
 }, true);
+
+NodeList.importMethod(Y.Node.prototype, [
+    'addEventListener',
+    'removeEventListener'
+]);
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {
@@ -1295,4 +1312,4 @@ Y.Node.importMethod(Y.DOM, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['dom']});
+}, '@VERSION@' ,{requires:['dom', 'base']});

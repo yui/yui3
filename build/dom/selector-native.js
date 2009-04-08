@@ -77,38 +77,18 @@ NativeSelector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
-            isDocRoot = (root && root.nodeType === 9),
-            scopeQuery = false,
-            combinator,
-            tmpRoot,
-            tmpSelector;
+            isDocRoot = (root && root.nodeType === 9);
 
         if (root) {
             if (!isDocRoot) {
                 root.id = root.id || Y.guid();
                 // break into separate queries for element scoping
                 for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                    if (NativeSelector._reLead.test(groups[i])) {
-                        combinator = RegExp.$1;
-                        scopeQuery = true;
-                        tmpRoot = root;
-                        tmpSelector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-
-                        if (combinator === '~' || combinator === '+') { // query from parentNode for sibling
-                            if (root[PARENT_NODE]) {
-                                tmpRoot = root[PARENT_NODE];
-                            } else {
-                            }
-                        }
-                    } else {
-                        tmpRoot = root;
-                        tmpSelector = groups[i];
-                    }
-                    queries.push({root: tmpRoot, selector: tmpSelector});
+                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
+                    queries.push({root: root.ownerDocument, selector: selector});
                 }
-            }
-            if (!scopeQuery) {
-                queries = [{root: root, selector: selector}]; // run as single query
+            } else {
+                queries.push({root: root, selector: selector});
             }
         }
 
@@ -151,15 +131,11 @@ NativeSelector = {
     },
 
     _filter: function(nodes, selector) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return NativeSelector._brute.filter(nodes, selector);
-        }
-
         var ret = [];
 
         if (nodes && selector) {
             for (var i = 0, node; (node = nodes[i++]);) {
-                if (NativeSelector._native.test(node, selector)) {
+                if (Y.Selector._test(node, selector)) {
                     ret[ret[LENGTH]] = node;
                 }
             }
@@ -170,17 +146,22 @@ NativeSelector = {
     },
 
     _test: function(node, selector) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return NativeSelector._brute.test(node, selector);
-        }
         var ret = false,
+            groups = selector.split(','),
             item;
 
         if (node && node[PARENT_NODE]) {
             node.id = node.id || Y.guid();
-            selector += '#' + node.id; // add ID for uniqueness
-            item = NativeSelector._native.query(selector, node[PARENT_NODE], true);
-            ret = (item === node);
+            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
+            for (var i = 0, group; group = groups[i++];) {
+                group += '#' + node.id; // add ID for uniqueness
+                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
+                item = Y.Selector.query(group, null, true);
+                ret = (item === node);
+                if (ret) {
+                    break;
+                }
+            }
         }
 
         return ret;
@@ -198,9 +179,11 @@ Y.mix(Y.Selector, NativeSelector, true);
 // allow standalone selector-native module
 if (NativeSelector._supportsNative()) {
     Y.Selector.query = NativeSelector._query;
-    Y.Selector.filter = NativeSelector._filter;
-    Y.Selector.test = NativeSelector._test;
+    //Y.Selector.filter = NativeSelector._filter;
+    //Y.Selector.test = NativeSelector._test;
 }
+Y.Selector.test = NativeSelector._test;
+Y.Selector.filter = NativeSelector._filter;
 
 
 }, '@VERSION@' ,{requires:['dom-base'], skinnable:false});

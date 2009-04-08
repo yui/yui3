@@ -188,7 +188,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         context = context || this;
-        Y.each(g_nodelists[this[UID]], function(node, index) {
+        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             return fn.call(context, Y.get(node), index, instance);
         });
     },
@@ -303,6 +303,11 @@ Y.mix(NodeList.prototype, {
         });
     }
 }, true);
+
+NodeList.importMethod(Y.Node.prototype, [
+    'addEventListener',
+    'removeEventListener'
+]);
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {

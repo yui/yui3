@@ -34,6 +34,13 @@ YUI().use('*', function(Y) {
     //nodelist.set('style.color', 'red');
 
     node = Y.get('p[title]');
+    nodelist.on('click', function(e) {
+        alert(e);
+    });
+
+    Y.on('click', function(e) {
+        //alert(e);
+    }, 'p[title]');
 
 /*
 1. set title on all nodes
