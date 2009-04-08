@@ -22,8 +22,16 @@
 <script>
 onload = function() {
     YUI().use('*', function(Y) {
-        console.log(Y.Selector.query('.foo-foo-foo', Y.DOM.byId('body'), true));
-        console.log(Y.get('body').query('.foo-foo-foo'));
+        console.log(Y.get('#root-test').getElementsByTagName('li').size());
+        console.log(Y.DOM.byId('root-test').getElementsByTagName('li').length);
+
+        var demo = Y.get('#root-test');
+        var lis = demo.getElementsByTagName('li');
+        var count = 0;
+        lis.each(function(item) {
+            count++;
+        });
+        alert(count + ' items');
     });
 };
 </script>
