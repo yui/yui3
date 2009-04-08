@@ -356,7 +356,7 @@
 <span class="c">        * @return {Array} The valid Drop Targets that are in the viewport.</span>
 <span class="c">        */</span>
         <span class="nx">_lookup</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">useHash</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">useHash</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">_noShim</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">;</span>
             <span class="o">}</span>
             <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="o">[];</span>

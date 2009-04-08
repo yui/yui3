@@ -201,7 +201,8 @@
                     <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
                     <span class="nx">preventable</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
                     <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                    <span class="nx">queuable</span><span class="o">:</span> <span class="kc">false</span>
+                    <span class="nx">queuable</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+                    <span class="nx">prefix</span><span class="o">:</span> <span class="s1">&#39;drop&#39;</span>
                 <span class="o">});</span>
             <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
 
@@ -488,10 +489,10 @@
                         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_DROP_EXIT</span><span class="o">);</span>
                         <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:exit&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
                         <span class="nx">delete</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">[</span><span class="k">this</span><span class="o">];</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrop</span> <span class="o">===</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrop</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
+                        <span class="c">//if (DDM.activeDrop === this) {</span>
+<span class="c"></span>                        <span class="c">//    DDM.activeDrop = null;</span>
+<span class="c"></span>                        <span class="c">//}</span>
+<span class="c"></span>                    <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>

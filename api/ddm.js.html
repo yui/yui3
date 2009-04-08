@@ -95,8 +95,10 @@
 <span class="c">        * @description Activates the shim</span>
 <span class="c">        */</span>
         <span class="nx">_pg_activate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ah</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">),</span>
-            <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;cursor&#39;</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">ah</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">),</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">ah</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;cursor&#39;</span><span class="o">);</span>
+            <span class="o">}</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">cur</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">cur</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragCursor&#39;</span><span class="o">);</span>
             <span class="o">}</span>
