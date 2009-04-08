@@ -497,7 +497,7 @@ Y.mix(Node.prototype, {
      */
     each: function(fn, context) {
         context = context || this;
-        console.log('each is deprecated on Node', 'warn', 'Node');
+        Y.log('each is deprecated on Node', 'warn', 'Node');
         return fn.call(context, this);
     },
 
@@ -510,7 +510,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        console.log('item is deprecated on Node', 'warn', 'Node');
+        Y.log('item is deprecated on Node', 'warn', 'Node');
         return this;
     },
 
@@ -522,7 +522,7 @@ Y.mix(Node.prototype, {
      */
 
     size: function() {
-        console.log('size is deprecated on Node', 'warn', 'Node');
+        Y.log('size is deprecated on Node', 'warn', 'Node');
         return g_nodes[this[UID]] ? 1 : 0;
     }
 }, true);

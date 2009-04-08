@@ -204,7 +204,7 @@ YUI.add('anim', function(Y) {
          * @readOnly
          */
         running: {
-            get: function() {
+            getter: function() {
                 return !!_running[Y.stamp(this)];
             },
             value: false,
@@ -394,7 +394,7 @@ YUI.add('anim', function(Y) {
             this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
             this._actualFrames = 0;
             if (!this.get(PAUSED)) {
-                this._initAttr();
+                this._initAnimAttr();
             }
             _running[Y.stamp(this)] = this;
             Y.Anim._startTimer();
@@ -505,7 +505,7 @@ YUI.add('anim', function(Y) {
             this._set(ITERATION_COUNT, iterCount);
         },
 
-        _initAttr: function() {
+        _initAnimAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
                 dur = this.get('duration') * 1000,
