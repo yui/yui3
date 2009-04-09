@@ -2490,19 +2490,19 @@ var BASE = 'base',
                 },
 
                 selector: {
-                    requires: ['dom-base'],
+                    requires: ['dom-base']
                 },
 
                 'selector-native': {
-                    requires: ['dom-base'],
+                    requires: ['dom-base']
                 }
             },
 
-                plugins: {
-                    'selector-css3': {
-                        requires: ['selector']
-                    }
+            plugins: {
+                'selector-css3': {
+                    requires: ['selector']
                 }
+            }
         },
 
         node: {
