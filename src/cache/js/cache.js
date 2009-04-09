@@ -211,13 +211,8 @@ Y.extend(Cache, Y.Plugin, {
             max = this.get("max"),
             entry = e.entry;
             
-        if(!entries || (max <= 0)) {
-            e.stopImmediatePropagation();
-            return;
-        }        
-    
         // If the cache at or over capacity, make room by removing stalest element (index=0)
-        while(entries.length >= (max)) {
+        while(entries.length>=max) {
             entries.shift();
         }
     
@@ -271,7 +266,7 @@ Y.extend(Cache, Y.Plugin, {
      * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        if(LANG.isValue(request) && LANG.isValue(response)) {
+        if(this.get("entries") && (this.get("max")>0) && LANG.isValue(request) && LANG.isValue(response)) {
             this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
