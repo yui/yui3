@@ -333,8 +333,9 @@
             <span class="o">}</span>
             
             <span class="c">//set options</span>
-<span class="c"></span>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="nx">options</span><span class="o">.</span><span class="nx">expires</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">options</span> <span class="o">||</span> <span class="o">{},</span> <span class="o">{</span>
+                <span class="nx">expires</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="m">0</span><span class="o">)</span>
+            <span class="o">});</span>
             
             <span class="c">//set cookie</span>
 <span class="c"></span>            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="s2">&quot;&quot;</span><span class="o">,</span> <span class="nx">options</span><span class="o">);</span>

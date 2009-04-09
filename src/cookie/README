@@ -3,11 +3,13 @@ Documentation: http://developer.yahoo.com/yui/3/cookie
 
 3.0.0b1
 
-   * Changed date encoding from toGMTString() to toUTCString().
-
+  * Synchronized with 2.x version of cookie:
+    * Changes formatting of date from toGMTString() to toUTCString() (trac# 2527892). 
+    * Updated remove() so that it no longer modifies the options object that is passed in (trac# 2527838).
+  
 3.0.0PR2
 
-   * Synchronized with latest 2.x version of cookie.
+  * Synchronized with latest 2.x version of cookie.
 
 3.0.0PR1 - Initial release
 
