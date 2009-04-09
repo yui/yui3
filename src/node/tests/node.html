@@ -155,13 +155,15 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             // return null 
             Assert.isNull(Y.get(''), 'Y.get("")');
-            Assert.isNull(Y.all(''), 'Y.all("")');
             Assert.isNull(Y.get(null), 'Y.get(null)');
-            Assert.isNull(Y.all(null), 'Y.all(null)');
             Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');
             Assert.isNull(Y.get('#fake-id'), 'Y.get("#fake-id") === null');
             Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');
-            Assert.isNull(Y.all('#foo *'), 'Y.all("#foo *") === null');
+
+            // return zero length collection
+            Assert.isTrue((Y.all('') instanceof Y.NodeList), 'Y.all("") instanceof NodeList');
+            Assert.isTrue((Y.all('null') instanceof Y.NodeList), 'Y.all("null") instanceof NodeList');
+            Assert.isTrue((Y.all('#foo *') instanceof Y.NodeList), 'Y.all("#foo *") === null');
 
             // return 1 
             Assert.areEqual(byId('test-nodes').id, Y.get('#test-nodes').get('id'), 'Y.get("#test-nodes")');
