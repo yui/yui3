@@ -62,7 +62,15 @@
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">region</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span> <span class="c">// document</span>
+<span class="c"></span>                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">alert</span><span class="o">)</span> <span class="o">{</span> <span class="c">// window</span>
+<span class="c"></span>                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">};</span>
     
@@ -73,7 +81,7 @@
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">viewportRegion</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">viewportRegion</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
     <span class="o">}</span>
 <span class="o">};</span>
 
