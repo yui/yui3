@@ -1,5 +1,11 @@
 The Slider widget
     The Slider widget creates an input UI involving a draggable thumb, representing a value, sliding along a rail, representing the finite value range.
 
+3.0.0 beta1
+    * renamed the valueSet custom event to positionThumb and rejiggered the
+      logic of the default function and support methods.
+    * renamed _defSyncUI to _defSyncFn for library nomenclature consistency
+    * Added protected _convertValueToOffset to help position the thumb
+
 3.0.0pr2
     Initial release
