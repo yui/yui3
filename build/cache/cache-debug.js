@@ -5,8 +5,6 @@ YUI.add('cache', function(Y) {
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
- * @requires plugin
- * @title Cache Utility
  */
 var LANG = Y.Lang,
 
@@ -46,9 +44,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "cache'
+     * @value "Cache'
      */
-    NAME: "cache",
+    NAME: "Cache",
 
 
     ATTRS: {
@@ -59,13 +57,13 @@ Y.mix(Cache, {
         /////////////////////////////////////////////////////////////////////////////
         
         /**
-        * @attribute size
-        * @description Max number of entries the Cache will hold.
+        * @attribute max
+        * @description Maximum number of entries the Cache can hold.
         * Set to 0 to turn off caching.
         * @type Number
         * @default 0
         */
-        size: {
+        max: {
             value: 0,
             validator: function(value) {
                 return (LANG.isNumber(value));
@@ -84,6 +82,30 @@ Y.mix(Cache, {
                     this._entries = [];
                 }
                 return value;
+            }
+        },
+        
+        /**
+        * @attribute size
+        * @description Number of entries currently cached.
+        * @type Number
+        */
+        size: {
+            readOnly: true,
+            getter: function() {
+                return this._entries.length;
+            }
+        },
+
+        /**
+         * @attribute entries
+         * @description Cached entries.
+         * @type Array
+         */
+        entries: {
+            readOnly: true,
+            getter: function() {
+                return this._entries;
             }
         }
     }
@@ -121,8 +143,10 @@ Y.extend(Cache, Y.Plugin, {
         /**
         * @event add
         * @description Fired when an entry is added.
-        * @param e {Event.Facade} Event Facade object.
-        * @param entry {Object} The cached entry.
+        * @param e {Event.Facade} Event Facade with the following properties:
+         * <dl>
+         * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
+         * </dl>
         * @preventable _defAddFn
         */
         this.publish("add", {defaultFn: this._defAddFn});
@@ -138,15 +162,19 @@ Y.extend(Cache, Y.Plugin, {
         /**
         * @event request
         * @description Fired when an entry is requested from the cache.
-        * @param e {Event.Facade} Event Facade object. 
-        * @param request {Object} The request object.
+        * @param e {Event.Facade} Event Facade with the following properties:
+        * <dl>
+        * <dt>request (Object)</dt> <dd>The request object.</dd>
+        * </dl>
         */
 
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
-        * @param e {Event.Facade} Event Facade object.
-        * @param entry {Object} The retrieved entry.
+        * @param e {Event.Facade} Event Facade with the following properties:
+        * <dl>
+        * <dt>entry (Object)</dt> <dd>The retrieved entry.</dd>
+        * </dl>
         */
 
         // Initialize internal values
@@ -174,21 +202,19 @@ Y.extend(Cache, Y.Plugin, {
      * Adds entry to cache.
      *
      * @method _defAddFn
-     * @param e {Event.Facade} Event Facade object.
-     * @param entry {Object} The cached entry.
+     * @param e {Event.Facade} Event Facade with the following properties:
+     * <dl>
+     * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
+     * </dl>
      * @protected
      */
-    _defAddFn: function(e, entry) {
+    _defAddFn: function(e) {
         var entries = this._entries,
-            max = this.get("size");
+            max = this.get("max"),
+            entry = e.entry;
             
-        if(!entries || (max <= 0)) {
-            e.stopImmediatePropagation();
-            return;
-        }        
-    
         // If the cache at or over capacity, make room by removing stalest element (index=0)
-        while(entries.length >= (max)) {
+        while(entries.length>=max) {
             entries.shift();
         }
     
@@ -209,36 +235,27 @@ Y.extend(Cache, Y.Plugin, {
         Y.log("Cache flushed", "info", this.toString());
     },
 
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // Cache public methods
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Accessor to internal array of entries
-     *
-     * @method getEntries
-     * @return {Array} Internal array of cache entries.
-     */
-    getEntries: function() {
-        return this._entries;
-    },
-
     /**
      * Default overridable method compares current request with given cache entry.
      * Returns true if current request matches the cached request, otherwise
      * false. Implementers should override this method to customize the
      * cache-matching algorithm.
      *
-     * @method isMatch
+     * @method _isMatch
      * @param request {Object} Request object.
      * @param entry {Object} Cached entry.
      * @return {Boolean} True if current request matches given cached request, false otherwise.
+     * @protected
      */
-    isMatch: function(request, entry) {
+    _isMatch: function(request, entry) {
         return (request === entry.request);
     },
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // Cache public methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
 
     /**
      * Adds a new entry to the cache of the format
@@ -251,8 +268,8 @@ Y.extend(Cache, Y.Plugin, {
      * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        if(LANG.isValue(request) && LANG.isValue(response)) {
-            this.fire("add", null, {request:request, response:response, payload:payload});
+        if(this.get("entries") && (this.get("max")>0) && LANG.isValue(request) && LANG.isValue(response)) {
+            this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
             Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", this.toString());
@@ -283,16 +300,16 @@ Y.extend(Cache, Y.Plugin, {
             entry = null,
             i = length-1;
             
-        if((this.get("size") > 0) && (length > 0)) {   
-            this.fire("request", null, request);
+        if((this.get("max") > 0) && (length > 0)) {
+            this.fire("request", {request: request});
     
             // Loop through each cached entry starting from the newest
             for(; i >= 0; i--) {
                 entry = entries[i];
     
                 // Execute matching function
-                if(this.isMatch(request, entry)) {
-                    this.fire("retrieve", null, entry);
+                if(this._isMatch(request, entry)) {
+                    this.fire("retrieve", {entry: entry});
                     
                     // Refresh the position of the cache hit
                     if(i < length-1) {

@@ -1,14 +1,14 @@
 /**
  * Extends DataSource with schema-based JSON parsing functionality.
  *
- * @module datasource-jsonparser
- * @requires plugin, datasource-base, dataparser-json
- * @title DataSource JSONParser Plugin
+ * @module datasource
+ * @submodule datasource-dataparser
  */
 
 /**
  * Adds parsability to the YUI DataSource utility.
  * @class DataSourceJSONParser
+ * @extends Plugin
  */    
 var DataSourceJSONParser = function() {
     DataSourceJSONParser.superclass.constructor.apply(this, arguments);
@@ -23,18 +23,18 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "cache"
+     * @value "parser"
      */
     NS: "parser",
 
     /**
      * Class name.
      *
-     * @property DataParser.Base.NAME
+     * @property NAME
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "DataSourceJSONParser"
      */
     NAME: "DataSourceJSONParser",
 
@@ -58,8 +58,10 @@ Y.mix(DataSourceJSONParser, {
 
 Y.extend(DataSourceJSONParser, Y.Plugin, {
     /**
+    * Internal init() handler.
+    *
     * @method initializer
-    * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private
     */
     initializer: function(config) {
@@ -69,26 +71,33 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
     /**
      * Parses raw data into a normalized response.
      *
-     * @method _defDataFn
-     * @param e {Event.Facade} Event Facade.
-     * @param o {Object} Object with the following properties:
+     * @method _beforeDefDataFn
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-     * <dt>data (Object)</dt> <dd>The raw response.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     *     <dl>
+     *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+     *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+     *     </dl>
+     * </dd>
+     * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * </dl>
      * @protected
      */
-    _beforeDefDataFn: function(e, o) {
-        var response = (this.get("parser").parse(this.get("schema"), o.data));
+    _beforeDefDataFn: function(e) {
+        // TODO: Remove temporary workaround for bug #2527838
+        e._yuifacade = false;
+
+        var response = (this.get("parser").parse(this.get("schema"), e.data));
         if(!response) {
             response = {
                 meta: {},
-                results: o.data
+                results: e.data
             };
         }
-        this._owner.fire("response", null, Y.mix(o, response));
+        this._owner.fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
 });

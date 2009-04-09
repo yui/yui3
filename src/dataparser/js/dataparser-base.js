@@ -3,7 +3,6 @@
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @title DataParser Utility
  */
 
 /**

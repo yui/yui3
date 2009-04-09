@@ -4,15 +4,13 @@ YUI.add('datasource-xhr', function(Y) {
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
- * @module datasource-xhr
- * @requires datasource-base
- * @title DataSource XHR Submodule
+ * @module datasource
  */
     
 /**
  * XHR subclass for the YUI DataSource utility.
  * @class DataSource.XHR
- * @extends DataSource
+ * @extends DataSource.Local
  * @constructor
  */    
 var DSXHR = function() {
@@ -29,7 +27,7 @@ Y.mix(DSXHR, {
     /**
      * Class name.
      *
-     * @property DataSource.XHR.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -60,48 +58,81 @@ Y.mix(DSXHR, {
     
 Y.extend(DSXHR, Y.DataSource.Local, {
     /**
+    * Internal init() handler.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config) {
+        this._queue = {interval:null, conn:null, requests:[]};
+    },
+
+    /**
+    * @property _queue
+    * @description Object literal to manage asynchronous request/response
+    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+    * <dl>
+    *     <dt>interval {Number}</dt>
+    *         <dd>Interval ID of in-progress queue.</dd>
+    *     <dt>conn</dt>
+    *         <dd>In-progress connection identifier (if applicable).</dd>
+    *     <dt>requests {Object[]}</dt>
+    *         <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+    * </dl>
+    * @type Object
+    * @default {interval:null, conn:null, requests:[]}
+    * @private
+    */
+    _queue: null,
+
+    /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
      *
      * @method _defRequestFn
-     * @param e {Event.Facade} Event Facade.
-     * @param o {Object} Object with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     *     <dl>
+     *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+     *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+     *     </dl>
+     * </dd>
      * </dl>
      * @protected
      */
-    _defRequestFn: function(e, o) {
+    _defRequestFn: function(e) {
+        // TODO: Remove temporary workaround for bug #2527838
+        e._yuifacade = false;
+
         var uri = this.get("source"),
             cfg = {
                 on: {
-                    success: function (id, response, o) {
-                        this.fire("data", null, Y.mix(o, {data:response}));
-                        Y.log("Received XHR data response for \"" + o.request + "\"", "info", this.toString());
+                    success: function (id, response, e) {
+                        this.fire("data", Y.mix({data:response}, e));
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     },
-                    failure: function (id, response, o) {
-                        o.error = true;
-                        this.fire("error", null, Y.mix(o, {data:response}));
-                        this.fire("data", null, Y.mix(o, {data:response}));
-                        Y.log("Received XHR data response for \"" + o.request + "\"", "info", this.toString());
+                    failure: function (id, response, e) {
+                        e.error = true;
+                        this.fire("error", Y.mix({data:response}, e));
+                        this.fire("data", Y.mix({data:response}, e));
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     }
                 },
                 context: this,
-                arguments: {
-                    tId: o.tId,
-                    request: o.request,
-                    callback: o.callback
-                }
+                arguments: e
             };
         
         this.get("io")(uri, cfg);
-        return o.tId;
+        return e.tId;
     }
 });
   
