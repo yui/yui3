@@ -45,8 +45,7 @@ PluginHost.prototype = {
             if (L.isFunction(p)) {
                 this._plug(p, config);
             } else if (L.isArray(p)) {
-                var ln = p.length;
-                for (var i = 0; i < ln; i++) {
+                for (var i = 0, ln = p.length; i < ln; i++) {
                     this.plug(p[i]);
                 }
             } else {
@@ -102,8 +101,8 @@ PluginHost.prototype = {
     _initPlugins: function(config) {
 
         // Class Configuration
-        var classes = this._getClasses(), constructor;
-        for (var i = classes.length - 1; i >= 0; i--) {
+        var classes = this._getClasses(), constructor, i;
+        for (i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
             if (constructor.PLUGINS) {
                 this.plug(constructor.PLUGINS);
@@ -172,10 +171,11 @@ PluginHost.prototype = {
 };
 
 Y.PluginHost = PluginHost;
+
     /**
-     * Base class support for objects requiring managed attributes and acting as event targets.
+     * Base class support for objects requiring managed attributes and acting as event targets. 
      *
-     * Also provides the an augmentable PluginHost interface.
+     * The base module also provides an augmentable PluginHost interface.
      *
      * @module base
      */
@@ -295,6 +295,14 @@ Y.PluginHost = PluginHost;
      * The cfg object literal supports the following properties
      * </p>
      * <dl>
+     *    <dt>dynamic &#60;boolean&#62;</dt>
+     *    <dd>
+     *    <p>If true (default), a completely new class
+     *    is created which extends the main class, and acts as the 
+     *    host on which the extension classes are augmented.</p>
+     *    <p>If false, the extensions classes are augmented directly to
+     *    the main class, modifying the main classes prototype.</p>
+     *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
@@ -317,17 +325,20 @@ Y.PluginHost = PluginHost;
         var build = Base.build,
             builtClass = build._getClass(main, cfg),
             aggregates = build._getAggregates(main, cfg),
+            dynamic = builtClass._yuibuild.dynamic,
             i, l, val, extClass;
 
         // Shallow isolate aggregates
-        if (aggregates) {
-            for (i = 0, l = aggregates.length; i < l; ++i) {
-                val = aggregates[i];
-                if (main.hasOwnProperty(val)) {
-                    builtClass[val] = L.isArray(main[val]) ? [] : {};
+        if (dynamic) {
+            if (aggregates) {
+                for (i = 0, l = aggregates.length; i < l; ++i) {
+                    val = aggregates[i];
+                    if (main.hasOwnProperty(val)) {
+                        builtClass[val] = L.isArray(main[val]) ? [] : {};
+                    }
                 }
+                Y.aggregate(builtClass, main, true, aggregates);
             }
-            Y.aggregate(builtClass, main, true, aggregates);
         }
 
         // Augment/Aggregate
@@ -345,8 +356,11 @@ Y.PluginHost = PluginHost;
         }
 
         builtClass.prototype.hasImpl = build._hasImpl;
-        builtClass.NAME = name;
-        builtClass.prototype.constructor = builtClass;
+
+        if (dynamic) {
+            builtClass.NAME = name;
+            builtClass.prototype.constructor = builtClass;
+        }
 
         return builtClass;
     };
@@ -391,11 +405,13 @@ Y.PluginHost = PluginHost;
 
         _getClass : function(main, cfg) {
 
-            var builtClass = Base.build._template(main);
+           var dynamic = (cfg && false === cfg.dynamic) ? false : true,
+                builtClass = (dynamic) ? Base.build._template(main) : main;
 
             builtClass._yuibuild = {
                 id: null,
-                exts : []
+                exts : [],
+                dynamic : dynamic
             };
 
             return builtClass;
@@ -470,6 +486,8 @@ Y.PluginHost = PluginHost;
                 defaultFn:this._defInitFn
             });
 
+            // TODO: Look at why this needs to be done after publish. Theoretically, just needs to
+            // be done before publish, as long as it's done before fire.
             Y.PluginHost.call(this);
 
             this.fire(INIT, null, config);
@@ -678,12 +696,20 @@ Y.PluginHost = PluginHost;
             var constr,
                 constrProto,
                 ci,
+                ei,
+                el,
                 classes = this._getClasses(),
                 mergedCfgs = this._getAttrCfgs();
 
             for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
+
+                if (constr._yuibuild && constr._yuibuild.exts && !constr._yuibuild.dynamic) {
+                    for (ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
+                        constr._yuibuild.exts[ei].apply(this, arguments);
+                    }
+                }
 
                 this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
 
@@ -733,6 +759,7 @@ Y.PluginHost = PluginHost;
 
     Base.prototype.constructor = Base;
     Y.Base = Base;
+
 
 
 }, '@VERSION@' ,{requires:['attribute']});

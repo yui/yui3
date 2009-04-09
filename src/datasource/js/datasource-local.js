@@ -1,18 +1,14 @@
-YUI.add('datasource-base', function(Y) {
-
 /**
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
- * @requires base
- * @title DataSource Utility
  */
 var LANG = Y.Lang,
     
 /**
  * Base class for the YUI DataSource utility.
- * @class DataSource
+ * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
@@ -29,7 +25,7 @@ Y.mix(DSLocal, {
     /**
      * Class name.
      *
-     * @property DataSource.NAME
+     * @property NAME
      * @type String
      * @static     
      * @final
@@ -75,12 +71,12 @@ Y.mix(DSLocal, {
      * @param error {Boolean} whether an error occurred
      * @static
      */
-    issueCallback: function (response) {
-        if(response.callback) {
-            var scope = response.callback.scope || window,
-                callbackFunc = (response.error && response.callback.failure) || response.callback.success;
+    issueCallback: function (e) {
+        if(e.callback) {
+            var scope = e.callback.scope || this,
+                callbackFunc = (e.error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
-                callbackFunc.apply(scope, [response]);
+                callbackFunc.apply(scope, [e]);
             }
         }
     }
@@ -88,45 +84,28 @@ Y.mix(DSLocal, {
     
 Y.extend(DSLocal, Y.Base, {
     /**
-    * @property _queue
-    * @description Object literal to manage asynchronous request/response
-    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
-        <dl>
-            <dt>interval {Number}</dt>
-                <dd>Interval ID of in-progress queue.</dd>
-            <dt>conn</dt>
-                <dd>In-progress connection identifier (if applicable).</dd>
-            <dt>requests {Object[]}</dt>
-                <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
-        </dl>
-    * @type Object
-    * @default {interval:null, conn:null, requests:[]}    
-    * @private     
-    */
-    _queue: null,
-    
-    /**
+    * Internal init() handler.
+    *
     * @method initializer
-    * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private        
     */
-    initializer: function() {
-        this._queue = {interval:null, conn:null, requests:[]};
+    initializer: function(config) {
         this._initEvents();
     },
 
     /**
+    * Internal destroy() handler.
+    *
     * @method destructor
-    * @description Internal destroy() handler.
     * @private        
     */
     destructor: function() {
     },
 
     /**
-    * @method _createEvents
-    * @description This method creates all the events for this module
-    * Target and publishes them so we get Event Bubbling.
+    * This method creates all the events for this module.
+    * @method _initEvents
     * @private        
     */
     _initEvents: function() {
@@ -144,65 +123,88 @@ Y.extend(DSLocal, Y.Base, {
          * @preventable _defRequestFn
          */
         //this.publish("request", {defaultFn: this._defRequestFn});
-        this.publish("request", {defaultFn:function(e, o){
-            this._defRequestFn(e, o);
+        this.publish("request", {defaultFn:function(e){
+            this._defRequestFn(e);
         }});
          
         /**
          * Fired when raw data is received.
          *
          * @event data
-         * @param e {Event.Facade} Event Facade.
-         * @param o {Object} Object with the following properties:
-         * <dl>                          
+         * @param e {Event.Facade} Event Facade with the following properties:
+         * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
-         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>data (Object)</dt> <dd>The raw data.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+         *     <dl>
+         *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+         *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+         *     </dl>
+         * </dd>
+         * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * </dl>
          * @preventable _defDataFn
          */
         //this.publish("data", {defaultFn: this._defDataFn});
-         this.publish("data", {defaultFn:function(e, o){
-            this._defDataFn(e, o);
+         this.publish("data", {defaultFn:function(e){
+            this._defDataFn(e);
         }});
 
         /**
          * Fired when response is returned.
          *
          * @event response
-         * @param e {Event.Facade} Event Facade.
-         * @param o {Object} Object with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
-         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>data (Object)</dt> <dd>The raw data.</dd>
-         * <dt>results (Object)</dt> <dd>Parsed results.</dd>
-         * <dt>meta (Object)</dt> <dd>Parsed meta results data.</dd>
-         * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+         *     <dl>
+         *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+         *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+         *     </dl>
+         * </dd>
+         * <dt>data (Object)</dt> <dd>Raw data.</dd>
+         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         *     <dl>
+         *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
+         *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *     </dl>
+         * </dd>
          * </dl>
          * @preventable _defResponseFn
          */
          //this.publish("response", {defaultFn: this._defResponseFn});
-         this.publish("response", {defaultFn:function(e, o){
-            this._defResponseFn(e, o);
+         this.publish("response", {defaultFn:function(e){
+            this._defResponseFn(e);
         }});
 
         /**
          * Fired when an error is encountered.
          *
          * @event error
-         * @param e {Event.Facade} Event Facade.
-         * @param o {Object} Object with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
-         * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-         * <dt>data (Object)</dt> <dd>The raw data (if available).</dd>
-         * <dt>results (Object)</dt> <dd>Parsed results (if available).</dd>
-         * <dt>meta (Object)</dt> <dd>Parsed meta results data (if available).</dd>
-         * <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+         *     <dl>
+         *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+         *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+         *     </dl>
+         * </dd>
+         * <dt>data (Object)</dt> <dd>Raw data.</dd>
+         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         *     <dl>
+         *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
+         *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *     </dl>
+         * </dd>
          * </dl>
          */
 
@@ -214,81 +216,101 @@ Y.extend(DSLocal, Y.Base, {
      * subclasses to achieve more complex behavior such as accessing remote data.
      *
      * @method _defRequestFn
-     * @param e {Event.Facade} Event Facade.         
-     * @param o {Object} Object with the following properties:
-     * <dl>                          
+     * @param e {Event.Facade} Event Facadewith the following properties:
+     * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     *     <dl>
+     *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+     *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+     *     </dl>
+     * </dd>
      * </dl>
      * @protected
      */
-    _defRequestFn: function(e, o) {
+    _defRequestFn: function(e) {
+        // TODO: Remove temporary workaround for bug #2527838
+        e._yuifacade = false;
+
         var data = this.get("source");
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            o.error = true;
+            e.error = true;
         }
-        if(o.error) {
-            this.fire("error", null, o);
+        if(e.error) {
+            this.fire("error", e);
             Y.log("Error in response", "error", this.toString());
         }
 
-        this.fire("data", null, Y.mix(o, {data:data}));
+        this.fire("data", Y.mix({data:data}, e));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(o.request) + " . Response: " + Y.dump(o.response), "info", this.toString());
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
     },
 
     /**
      * Normalizes raw data into a response that includes results and meta properties.
      *
      * @method _defDataFn
-     * @param e {Event.Facade} Event Facade.
-     * @param o {Object} Object with the following properties:
-     * <dl>                          
+     * @param e {Event.Facade} Event Facade with the following properties:
+     * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
-     * <dt>data (Object)</dt> <dd>The raw response data.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     *     <dl>
+     *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+     *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+     *     </dl>
+     * </dd>
+     * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * </dl>
      * @protected
      */
-    _defDataFn: function(e, o) {
-        // Pass through data as-is
-        o.results = o.data;
-        
-        // Normalize
-        if(!o.results) {
-            o.results = [];
-        }
-        if(!o.meta) {
-            o.meta = {};
-        }
-        
-        this.fire("response", null, o);
+    _defDataFn: function(e) {
+        var data = e.data,
+            meta = e.meta,
+            response = {
+                results: (LANG.isArray(data)) ? data : [data],
+                meta: (meta) ? meta : {}
+            };
+
+        this.fire("response", Y.mix({response: response}, e));
     },
 
     /**
      * Sends data as a normalized response to callback.
      *
      * @method _defResponseFn
-     * @param e {Event.Facade} Event Facade.
-     * @param o {Object} Object with the following properties:
+     * @param e {Event.Facade} Event Facade with the following properties:
      * <dl>
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     *     <dl>
+     *         <dt>success (Function)</dt> <dd>Success handler.</dd>
+     *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
+     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
+     *     </dl>
+     * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>results (Object)</dt> <dd>Parsed results.</dd>
-     * <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     *     <dl>
+     *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
+     *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+     *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+     *     </dl>
+     * </dd>
      * </dl>
      * @protected
      */
-    _defResponseFn: function(e, o) {
+    _defResponseFn: function(e) {
         // Send the response back to the callback
-        DSLocal.issueCallback(o);
+        DSLocal.issueCallback(e);
     },
+    
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
      *
@@ -309,7 +331,7 @@ Y.extend(DSLocal, Y.Base, {
      */
     sendRequest: function(request, callback) {
         var tId = DSLocal._tId++;
-        this.fire("request", null, {tId:tId, request:request,callback:callback});
+        this.fire("request", {tId:tId, request:request,callback:callback});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }
@@ -318,7 +340,3 @@ Y.extend(DSLocal, Y.Base, {
 Y.namespace("DataSource");
 Y.DataSource.Local = DSLocal;
     
-
-
-
-}, '@VERSION@' ,{requires:['base']});

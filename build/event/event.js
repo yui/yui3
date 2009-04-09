@@ -1078,8 +1078,6 @@ adapt.blur = {
 Y.Env.eventAdaptors.key = {
 
     on: function(type, fn, id, spec, o) {
-        console.log("spec:" + spec);
-
         var a = Y.Array(arguments, 0, true),
             parsed, etype, criteria, ename;
 
