@@ -871,16 +871,9 @@ YUI({
             
             testRemoveInvalidName5 : function(){
                 Y.Cookie.remove(null);        
-            },
-                 
-            /*
-             * Tests that remove() doesn't change the options object that was passed in.
-             */
-            testRemoveWithOptionsIntact: function(){
-                var options = {};
-                Y.Cookie.remove("name", options);
-                Assert.isUndefined(options.expires, "Options should not have an expires property.");
-            }            
+            }
+            
+            
             
         }));
     

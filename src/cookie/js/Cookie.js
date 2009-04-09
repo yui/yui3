@@ -284,9 +284,8 @@
             }
             
             //set options
-            options = Y.merge(options || {}, {
-                expires: new Date(0)
-            });
+            options = options || {};
+            options.expires = new Date(0);
             
             //set cookie
             return this.set(name, "", options);

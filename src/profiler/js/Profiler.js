@@ -1,54 +1,11 @@
 
+    var L = Y.Lang;
 
     /**
      * The YUI JavaScript profiler.
      * @module profiler
      * @requires yui
      */
-    var L = Y.Lang,
-    
-        /*
-         * Container object on which to put the original unprofiled methods.
-         */        
-        container   = {},
-        
-        /*
-         * Call information for functions.
-         */        
-        report      = {};
-        
-    /*
-     * Called when a method ends execution. Marks the start and end time of the 
-     * method so it can calculate how long the function took to execute. Also 
-     * updates min/max/avg calculations for the function.
-     * @param {String} name The name of the function to mark as stopped.
-     * @param {int} duration The number of milliseconds it took the function to
-     *      execute.
-     * @return {Void}
-     * @private
-     * @static
-     */
-    function saveData(name /*:String*/, duration /*:int*/){
-        
-        //get the function data
-        var functionData /*:Object*/ = report[name];
-    
-        //increment the calls
-        functionData.calls++;
-        functionData.points.push(duration);
-
-        //if it's already been called at least once, do more complex calculations
-        if (functionData.calls > 1) {
-            functionData.avg = ((functionData.avg*(functionData.calls-1))+duration)/functionData.calls;
-            functionData.min = Math.min(functionData.min, duration);
-            functionData.max = Math.max(functionData.max, duration);
-        } else {
-            functionData.avg = duration;
-            functionData.min = duration;
-            functionData.max = duration;
-        }                             
-    
-    }        
     
     /**
      * Profiles functions in JavaScript.
@@ -56,7 +13,66 @@
      * @static
      */
     Y.Profiler = {
+    
+        //-------------------------------------------------------------------------
+        // Private Properties
+        //-------------------------------------------------------------------------
+    
+        /**
+         * Container object on which to put the original unprofiled methods.
+         * @type Object
+         * @private
+         * @static
+         * @property _container
+         */
+        _container : {},
+    
+        /**
+         * Call information for functions.
+         * @type Object
+         * @private
+         * @static
+         * @property _report
+         */
+        _report : {},
         
+        //-------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------
+        
+        /**
+         * Called when a method ends execution. Marks the start and end time of the 
+         * method so it can calculate how long the function took to execute. Also 
+         * updates min/max/avg calculations for the function.
+         * @param {String} name The name of the function to mark as stopped.
+         * @param {int} duration The number of milliseconds it took the function to
+         *      execute.
+         * @return {Void}
+         * @private
+         * @static
+         */
+        _saveData : function (name /*:String*/, duration /*:int*/){
+            
+            //get the function data
+            var functionData /*:Object*/ = this._report[name];
+        
+            //increment the calls
+            functionData.calls++;
+            functionData.points.push(duration);
+    
+            //if it's already been called at least once, do more complex calculations
+            if (functionData.calls > 1) {
+                functionData.avg = ((functionData.avg*(functionData.calls-1))+duration)/functionData.calls;
+                functionData.min = Math.min(functionData.min, duration);
+                functionData.max = Math.max(functionData.max, duration);
+            } else {
+                functionData.avg = duration;
+                functionData.min = duration;
+                functionData.max = duration;
+            }                             
+        
+        },
+    
         //-------------------------------------------------------------------------
         // Reporting Methods
         //-------------------------------------------------------------------------    
@@ -71,7 +87,7 @@
          * @static
          */
         getAverage : function (name /*:String*/) /*:float*/ {
-            return report[name].avg;
+            return this._report[name].avg;
         },
     
         /**
@@ -81,7 +97,7 @@
          * @static
          */
         getCallCount : function (name /*:String*/) /*:int*/ {
-            return report[name].calls;    
+            return this._report[name].calls;    
         },
         
         /**
@@ -93,7 +109,7 @@
          * @return {float} The maximum time it takes the function to execute.
          */
         getMax : function (name /*:String*/) /*:int*/ {
-            return report[name].max;
+            return this._report[name].max;
         },
         
         /**
@@ -105,7 +121,7 @@
          * @return {float} The minimum time it takes the function to execute.
          */
         getMin : function (name /*:String*/) /*:int*/ {
-            return report[name].min;
+            return this._report[name].min;
         },
     
         /**
@@ -115,7 +131,7 @@
          * @static
          */
         getFunctionReport : function (name /*:String*/) /*:Object*/ {
-            return report[name];
+            return this._report[name];
         },
     
         /**
@@ -132,9 +148,9 @@
             if (typeof filter == "function") {
                 var report = {};
                 
-                for (var name in report){
-                    if (filter(report[name])){
-                        report[name] = report[name];    
+                for (var name in this._report){
+                    if (filter(this._report[name])){
+                        report[name] = this._report[name];    
                     }
                 }
                 
@@ -186,7 +202,7 @@
             if (L.isFunction(method) && !method.__yuiProfiled){
                 
                 //create a new slot for the original method
-                container[name] = method;
+                this._container[name] = method;
                 
                 //replace the function with the profiling one
                 owner[funcName] = function () {
@@ -205,8 +221,8 @@
                 Y.mix(owner[funcName], method);
                 owner[funcName].__yuiProfiled = true;
                 owner[funcName].prototype = prototype;
-                container[name].__yuiOwner = owner;
-                container[name].__yuiFuncName = funcName;        
+                this._container[name].__yuiOwner = owner;
+                this._container[name].__yuiFuncName = funcName;        
             
                 //register prototype if necessary
                 if (registerPrototype) {            
@@ -214,7 +230,7 @@
                 }
                 
                 //store function information
-                report[name] = {
+                this._report[name] = {
                     calls: 0,
                     max: 0,
                     min: 0,
@@ -245,7 +261,7 @@
             object = (L.isObject(object) ? object : eval(name));
         
             //save the object
-            container[name] = object;
+            this._container[name] = object;
         
             for (var prop in object) {
                 if (typeof object[prop] == "function"){
@@ -269,17 +285,17 @@
         unregisterConstructor : function(name /*:String*/) /*:Void*/{
                 
             //see if the method has been registered
-            if (L.isFunction(container[name])){
+            if (L.isFunction(this._container[name])){
             
                 //get original data
-                //var owner /*:Object*/ = container[name].__yuiOwner;
-                //var funcName /*:String*/ = container[name].__yuiFuncName;
-                //delete container[name].__yuiOwner;
-                //delete container[name].__yuiFuncName;
+                //var owner /*:Object*/ = this._container[name].__yuiOwner;
+                //var funcName /*:String*/ = this._container[name].__yuiFuncName;
+                //delete this._container[name].__yuiOwner;
+                //delete this._container[name].__yuiFuncName;
                 
                 //replace instrumented function
-                //owner[funcName] = container[name];
-                //delete container[name];
+                //owner[funcName] = this._container[name];
+                //delete this._container[name];
                 this.unregisterFunction(name, true);
            
             }
@@ -297,25 +313,25 @@
         unregisterFunction : function(name /*:String*/, unregisterPrototype /*:Boolean*/) /*:Void*/{
                 
             //see if the method has been registered
-            if (L.isFunction(container[name])){
+            if (L.isFunction(this._container[name])){
             
                 //check to see if you should unregister the prototype
                 if (unregisterPrototype){
-                    this.unregisterObject(name + ".prototype", container[name].prototype);
+                    this.unregisterObject(name + ".prototype", this._container[name].prototype);
                 }
                     
                 //get original data
-                var owner /*:Object*/ = container[name].__yuiOwner;
-                var funcName /*:String*/ = container[name].__yuiFuncName;
-                delete container[name].__yuiOwner;
-                delete container[name].__yuiFuncName;
+                var owner /*:Object*/ = this._container[name].__yuiOwner;
+                var funcName /*:String*/ = this._container[name].__yuiFuncName;
+                delete this._container[name].__yuiOwner;
+                delete this._container[name].__yuiFuncName;
                 
                 //replace instrumented function
-                owner[funcName] = container[name];
+                owner[funcName] = this._container[name];
                 
                 //delete supporting information
-                delete container[name];
-                delete report[name];
+                delete this._container[name];
+                delete this._report[name];
            
             }
                 
@@ -336,8 +352,8 @@
         unregisterObject : function (name /*:String*/, recurse /*:Boolean*/) /*:Void*/{
         
             //get the object
-            if (L.isObject(container[name])){            
-                var object = container[name];    
+            if (L.isObject(this._container[name])){            
+                var object = this._container[name];    
             
                 for (var prop in object) {
                     if (typeof object[prop] == "function"){
@@ -347,24 +363,8 @@
                     }
                 }
                 
-                delete container[name];
+                delete this._container[name];
             }
-        
-        },
-        
-        //-------------------------------------------------------------------------
-        // Stopwatch Methods
-        //-------------------------------------------------------------------------   
-        
-        start: function(name){
-        
-        },
-        
-        stop: function(name){
-        
-        },
-        
-        pause: function(name){
         
         }
              
