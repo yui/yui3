@@ -43,8 +43,7 @@ PluginHost.prototype = {
             if (L.isFunction(p)) {
                 this._plug(p, config);
             } else if (L.isArray(p)) {
-                var ln = p.length;
-                for (var i = 0; i < ln; i++) {
+                for (var i = 0, ln = p.length; i < ln; i++) {
                     this.plug(p[i]);
                 }
             } else {
@@ -100,8 +99,8 @@ PluginHost.prototype = {
     _initPlugins: function(config) {
 
         // Class Configuration
-        var classes = this._getClasses(), constructor;
-        for (var i = classes.length - 1; i >= 0; i--) {
+        var classes = this._getClasses(), constructor, i;
+        for (i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
             if (constructor.PLUGINS) {
                 this.plug(constructor.PLUGINS);
