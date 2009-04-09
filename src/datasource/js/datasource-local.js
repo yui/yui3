@@ -270,19 +270,13 @@ Y.extend(DSLocal, Y.Base, {
      * @protected
      */
     _defDataFn: function(e) {
-        var response = {};
-        
-        // Pass through data as-is
-        response.results = e.data;
-        
-        // Normalize
-        if(!LANG.isArray(response.results)) {
-            response.results = [response.results];
-        }
-        if(!e.meta) {
-            response.meta = {};
-        }
-        
+        var data = e.data,
+            meta = e.meta,
+            response = {
+                results: (LANG.isArray(data)) ? data : [data],
+                meta: (meta) ? meta : {}
+            };
+
         this.fire("response", Y.mix({response: response}, e));
     },
 
