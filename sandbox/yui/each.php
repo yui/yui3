@@ -28,23 +28,36 @@
 var yConfig = {
     base: '../../build/',
     allowRollup: false,
+
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
+
     throwFail: true,
-    debug: false
+    debug: true 
 };
 
 YUI(yConfig).use('node', function(Y) {
     var demo = Y.get('#demo');
     var lis = demo.getElementsByTagName('li');
+    Y.log('collection length: ' + lis.length);
+    Y.log('collection tagName: ' + lis.tagName);
+    Y.log('collection alert: ' + lis.alert);
+    Y.log('collection size: ' + lis.size());
     lis.each(function(item) {
         item.setStyle('border', '1px solid red');
     });
+
+    var nlis = document.getElementsByTagName('li');
+    Y.log('native collection length: ' + nlis.length);
+    Y.log('native collection tagName: ' + nlis.tagName);
+    Y.log('native collection alert: ' + nlis.alert);
+    Y.log('native collection size: ' + nlis.size);
+    Y.log('native collection test: ' + Y.Array.test(nlis));
+    Y.log('native collection isObject and not function: ' + Y.Lang.isObject(nlis, true));
 });
 
 </script>
