@@ -16,14 +16,6 @@
         #console {
             position:static;
         }
-
-        #console .yui-console-content {
-            width:100%;
-        }
-
-        #console .yui-console-bd {
-            height:50em;
-        }
     </style>
 
     <script type="text/javascript">
@@ -996,7 +988,8 @@
 
             //create the console
             new Y.Console({
-
+                width:"100%",
+                height:"50em",
                 boundingBox:"#console",
                 verbose : false,
                 printTimeout: 0,
