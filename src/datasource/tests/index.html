@@ -26,7 +26,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
             BTNRUN = Y.get("#btnRun"),
-            WAITTIMEOUT = undefined; // On a slow connection set to 5000
+            WAITTIMEOUT = 5000; // On a slow connection set to 5000
 
         // Set up the page
         
@@ -62,8 +62,8 @@
                 });
                 
 
-                ds.sendRequest("a", {success:function(response) {
-                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], response.results, "Expected live array.");
+                ds.sendRequest("a", {success:function(e) {
+                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], e.response.results, "Expected live array.");
                 }});                
             }
         });
@@ -76,11 +76,11 @@
                     source: ["a","b","c","d"]
                 });
                 
-                ds.subscribe("request", function(e, o) {
+                ds.subscribe("request", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
                     });
                 }, this, true);
 
@@ -93,12 +93,12 @@
                     source: ["a","b","c","d"]
                 });
 
-                ds.subscribe("data", function(e, o) {
+                ds.subscribe("data", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isArray(o.data, "Expected raw data.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isArray(e.data, "Expected raw data.");
                     });
                 }, this, true);
 
@@ -111,14 +111,15 @@
                     source: ["a","b","c","d"]
                 });
 
-                ds.subscribe("response", function(e, o) {
+                ds.subscribe("response", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isArray(o.data, "Expected raw data.");
-                        ASSERT.isArray(o.results, "Expected parsed results.");
-                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isArray(e.data, "Expected raw data.");
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "Expected parsed results.");
+                        ASSERT.isObject(e.response.meta, "Expected parsed meta data.");
                     });
                 }, this, true);
 
@@ -131,13 +132,13 @@
                     source: ["a","b","c","d"]
                 });
 
-                ds.subscribe("error", function(e, o) {
+                ds.subscribe("error", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isUndefined(o.results, "Expected undefined results.");
-                        ASSERT.isTrue(o.error, "Expected error.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isUndefined(e.response, "Expected undefined response.");
+                        ASSERT.isTrue(e.error, "Expected error.");
                     });
                 }, this, true);
 
@@ -156,14 +157,14 @@
                 });
                 
                 ds.sendRequest(null, {
-                    success: function(o) {
+                    success: function(e) {
                         this.resume(function() {
-                            ASSERT.isNull(o.request, "Expected null request.");
-                            ASSERT.isObject(o.results, "Expected response object.");
-                            OBJECTASSERT.ownsAll({tId:null,meta:null,results:null}, o, "Expected all properties.");
+                            ASSERT.isNull(e.request, "Expected null request.");
+                            ASSERT.isObject(e.response, "Expected response object.");
+                            OBJECTASSERT.ownsAll({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
                         });
                     },
-                    failure: function(o) {
+                    failure: function(e) {
                         this.resume(function() {
                             ASSERT.fail("XHR failure case.");
                         });
@@ -189,11 +190,11 @@
                     }
                 }});
 
-                ds.subscribe("request", function(e, o) {
+                ds.subscribe("request", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame(null, o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame(null, e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
                     });
                 }, this, true);
 
@@ -212,12 +213,12 @@
                     }
                 }});
 
-                ds.subscribe("data", function(e, o) {
+                ds.subscribe("data", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame(null, o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isObject(o.data, "Expected raw data.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame(null, e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isObject(e.data, "Expected raw data.");
                     });
                 }, this, true);
 
@@ -236,14 +237,15 @@
                     }
                 }});
 
-                ds.subscribe("response", function(e, o) {
+                ds.subscribe("response", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isObject(o.data, "Expected raw data.");
-                        ASSERT.isArray(o.results, "Expected parsed results.");
-                        ASSERT.isObject(o.meta, "Expected parsed meta data.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isObject(e.data, "Expected raw data.");
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "Expected parsed results.");
+                        ASSERT.isObject(e.response.meta, "Expected parsed meta data.");
                     });
                 }, this, true);
 
@@ -262,13 +264,13 @@
                     }
                 }});
 
-                ds.subscribe("error", function(e, o) {
+                ds.subscribe("error", function(e) {
                     this.resume(function() {
-                        ASSERT.isNumber(o.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", o.request, "Expected request.");
-                        ASSERT.areSame("callback", o.callback, "Expected callback.");
-                        ASSERT.isObject(o.data, "Expected raw data.");
-                        ASSERT.isTrue(o.error, "Expected error.");
+                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "Expected request.");
+                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isObject(e.data, "Expected raw data.");
+                        ASSERT.isTrue(e.error, "Expected error.");
                     });
                 }, this, true);
 
@@ -293,15 +295,16 @@
                 }});
 
                 ds.sendRequest(null, {
-                    success: function(o) {
+                    success: function(e) {
                         this.resume(function() {
-                            ASSERT.isNull(o.request, "Expected null request.");
-                            ASSERT.isArray(o.results, "Expected results array.");
-                            ASSERT.areSame(10, o.results.length, "Expected 10 results.")
-                            ASSERT.isNotUndefined(o.results[0].Title, "Expected Title property")
+                            ASSERT.isNull(e.request, "Expected null request.");
+                            ASSERT.isObject(e.response, "Expected normalized response object.");
+                            ASSERT.isArray(e.response.results, "Expected results array.");
+                            ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
+                            ASSERT.isNotUndefined(e.response.results[0].Title, "Expected Title property")
                         });
                     },
-                    failure: function(o) {
+                    failure: function(e) {
                         this.resume(function() {
                             ASSERT.fail("XHR failure case.");
                         });
@@ -346,7 +349,7 @@
 
                 ds.sendRequest("a");
 
-                ds.subscribe("data", function(e, o) {
+                ds.subscribe("data", function(e) {
                     ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
                 });
 
@@ -361,7 +364,7 @@
 
                 ds.sendRequest("a");
 
-                ds.cache.subscribe("retrieve", function(e, o) {
+                ds.cache.subscribe("retrieve", function(e) {
                     ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
                 });
 

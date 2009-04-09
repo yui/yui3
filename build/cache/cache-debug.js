@@ -5,8 +5,6 @@ YUI.add('cache', function(Y) {
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
- * @requires plugin
- * @title Cache Utility
  */
 var LANG = Y.Lang,
 
@@ -46,9 +44,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "cache'
+     * @value "Cache'
      */
-    NAME: "cache",
+    NAME: "Cache",
 
 
     ATTRS: {
@@ -145,8 +143,10 @@ Y.extend(Cache, Y.Plugin, {
         /**
         * @event add
         * @description Fired when an entry is added.
-        * @param e {Event.Facade} Event Facade object.
-        * @param entry {Object} The cached entry.
+        * @param e {Event.Facade} Event Facade with the following properties:
+         * <dl>
+         * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
+         * </dl>
         * @preventable _defAddFn
         */
         this.publish("add", {defaultFn: this._defAddFn});
@@ -162,15 +162,19 @@ Y.extend(Cache, Y.Plugin, {
         /**
         * @event request
         * @description Fired when an entry is requested from the cache.
-        * @param e {Event.Facade} Event Facade object. 
-        * @param request {Object} The request object.
+        * @param e {Event.Facade} Event Facade with the following properties:
+        * <dl>
+        * <dt>request (Object)</dt> <dd>The request object.</dd>
+        * </dl>
         */
 
         /**
         * @event retrieve
         * @description Fired when an entry is retrieved from the cache.
-        * @param e {Event.Facade} Event Facade object.
-        * @param entry {Object} The retrieved entry.
+        * @param e {Event.Facade} Event Facade with the following properties:
+        * <dl>
+        * <dt>entry (Object)</dt> <dd>The retrieved entry.</dd>
+        * </dl>
         */
 
         // Initialize internal values
@@ -198,13 +202,16 @@ Y.extend(Cache, Y.Plugin, {
      * Adds entry to cache.
      *
      * @method _defAddFn
-     * @param e {Event.Facade} Event Facade object.
-     * @param entry {Object} The cached entry.
+     * @param e {Event.Facade} Event Facade with the following properties:
+     * <dl>
+     * <dt>entry (Object)</dt> <dd>The cached entry.</dd>
+     * </dl>
      * @protected
      */
-    _defAddFn: function(e, entry) {
+    _defAddFn: function(e) {
         var entries = this._entries,
-            max = this.get("max");
+            max = this.get("max"),
+            entry = e.entry;
             
         if(!entries || (max <= 0)) {
             e.stopImmediatePropagation();
@@ -267,7 +274,7 @@ Y.extend(Cache, Y.Plugin, {
      */
     add: function(request, response, payload) {
         if(LANG.isValue(request) && LANG.isValue(response)) {
-            this.fire("add", null, {request:request, response:response, payload:payload});
+            this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
             Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", this.toString());
@@ -299,7 +306,7 @@ Y.extend(Cache, Y.Plugin, {
             i = length-1;
             
         if((this.get("max") > 0) && (length > 0)) {
-            this.fire("request", null, request);
+            this.fire("request", {request: request});
     
             // Loop through each cached entry starting from the newest
             for(; i >= 0; i--) {
@@ -307,7 +314,7 @@ Y.extend(Cache, Y.Plugin, {
     
                 // Execute matching function
                 if(this._isMatch(request, entry)) {
-                    this.fire("retrieve", null, entry);
+                    this.fire("retrieve", {entry: entry});
                     
                     // Refresh the position of the cache hit
                     if(i < length-1) {

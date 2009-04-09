@@ -134,10 +134,10 @@
 
             testAdd: function() {
                 var cache = new Y.Cache({max:2});
-                cache.on("add", function(e, entry) {
+                cache.on("add", function(e) {
                     this.resume(function() {
-                        ASSERT.areSame(1, entry.request);
-                        ASSERT.areSame("a", entry.response);
+                        ASSERT.areSame(1, e.entry.request);
+                        ASSERT.areSame("a", e.entry.response);
                     });
                 }, this, true);
                 cache.add(1, "a");
@@ -158,9 +158,9 @@
 
             testRequest: function() {
                 var cache = new Y.Cache({max:2});
-                cache.on("request", function(e, request) {
+                cache.on("request", function(e) {
                     this.resume(function() {
-                        ASSERT.areSame(2, request);
+                        ASSERT.areSame(2, e.request);
                     });
                 }, this, true);
                 cache.add(1, "a");
@@ -170,10 +170,10 @@
 
             testRetrieveSuccess: function() {
                 var cache = new Y.Cache({max:2});
-                cache.on("retrieve", function(e, entry) {
+                cache.on("retrieve", function(e) {
                     this.resume(function() {
-                        ASSERT.areSame(1, entry.request);
-                        ASSERT.areSame("a", entry.response);
+                        ASSERT.areSame(1, e.entry.request);
+                        ASSERT.areSame("a", e.entry.response);
                     });
                 }, this, true);
                 cache.add(1, "a");
@@ -183,7 +183,7 @@
 
             testRetrieveFailure: function() {
                 var cache = new Y.Cache({max:2});
-                cache.on("retrieve", function(e, entry) {
+                cache.on("retrieve", function(e) {
                     this.resume(function() {
                         ASSERT.fail();
                     });
@@ -197,7 +197,7 @@
 
             testCancelAdd: function() {
                 var cache = new Y.Cache({max:2});
-                cache.on("add", function(e, entry) {
+                cache.on("add", function(e) {
                     e.preventDefault();
                 }, this, true);
                 cache.add(1, "a");
