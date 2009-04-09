@@ -21,7 +21,7 @@ YUI.add('dd-scroll', function(Y) {
     OFFSET_WIDTH = 'offsetWidth',
     OFFSET_HEIGHT = 'offsetHeight';
 
-    S.NAME = 'DragScroll';
+    S.NAME = 'drag';
     
 
     S.ATTRS = {

@@ -352,7 +352,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     //Y.DD.DDM.set('dragMode', 'strict');
     //Y.DD.DDM.useHash = false;
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
-
+    //Y.DD.DDM = null;
     
     Y.DD.DDM.on('drop:over', function(e) {
         //console.log('DDM:drop:over :: ', arguments);

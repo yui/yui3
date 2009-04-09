@@ -22,7 +22,7 @@ YUI.add('dd-proxy', function(Y) {
 
     };
 
-    Proxy.NAME = 'dragProxy';
+    Proxy.NAME = 'drag';
 
     Proxy.ATTRS = {
         /**
