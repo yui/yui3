@@ -981,20 +981,18 @@ Y.Array = A;
  */
 A.test = function(o) {
     var r = 0;
-    if (L.isObject(o, true)) {
+    if (L.isObject(o)) {
         if (L.isArray(o)) {
             r = 1; 
         } else {
             try {
                 // indexed, but no tagName (element) or alert (window)
-                if ("length" in o && 
-                    !("tagName" in o) && 
-                    !("alert" in o) && 
+                if ("length" in o && !("tagName" in o) && !("alert" in o) && 
                     (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
-                        r = 2;
+                    r = 2;
                 }
                     
-            } catch(ex) {}
+            } catch(e) {}
         }
     }
     return r;
@@ -2522,19 +2520,19 @@ var BASE = 'base',
                 },
 
                 selector: {
-                    requires: ['dom-base'],
+                    requires: ['dom-base']
                 },
 
                 'selector-native': {
-                    requires: ['dom-base'],
+                    requires: ['dom-base']
                 }
             },
 
-                plugins: {
-                    'selector-css3': {
-                        requires: ['selector']
-                    }
+            plugins: {
+                'selector-css3': {
+                    requires: ['selector']
                 }
+            }
         },
 
         node: {
