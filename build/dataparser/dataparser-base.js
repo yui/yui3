@@ -5,7 +5,6 @@ YUI.add('dataparser-base', function(Y) {
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @title DataParser Utility
  */
 
 /**

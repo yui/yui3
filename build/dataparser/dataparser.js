@@ -5,7 +5,6 @@ YUI.add('dataparser-base', function(Y) {
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @title DataParser Utility
  */
 
 /**
@@ -63,8 +62,6 @@ YUI.add('dataparser-json', function(Y) {
  * parse a variety of data against a given schema.
  *
  * @module dataparser
- * @requires json, dataparser-base
- * @title DataParser JSON Submodule
  */
 var LANG = Y.Lang,
 
@@ -72,7 +69,7 @@ var LANG = Y.Lang,
  * JSON subclass for the YUI DataParser utility.
  * @class DataParser.JSON
  * @extends DataParser.Base
- * @constructor
+ * @static
  */
 DPJSON = {
 
@@ -168,9 +165,11 @@ DPJSON = {
     },
 
     /**
-     * Schema-parse list of results from full data
+     * Schema-parsed list of results from full data
      *
      * @method _parseResults
+     * @param data_out {Object} Data to parse.
+     * @param data_in {Object} In-progress parsed data to update.
      * @return {Array} Array of results.
      * @static
      * @protected
@@ -215,6 +214,8 @@ DPJSON = {
      * Schema-parse field data out of list of full results
      *
      * @method _filterFieldValues
+     * @param fields {Array} Fields to filter against.
+     * @param results {Array} Results data to parse.
      * @return {Array} Array of field-filtered results.
      * @static
      * @protected
@@ -289,6 +290,8 @@ DPJSON = {
      * Parses results data according to schema
      *
      * @method _parseMeta
+     * @param data_out {Object} Data to parse.
+     * @param data_in {Object} In-progress parsed data to update.
      * @return {Object} Schema-parsed meta data.
      * @static
      * @protected
