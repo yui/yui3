@@ -17,6 +17,7 @@ var getCN = Y.ClassNameManager.getClassName,
     ENTRY          = 'entry',
     ENTRY_TEMPLATE = 'entryTemplate',
     ERROR          = 'error',
+    HEIGHT         = 'height',
     INFO           = 'info',
     INNER_HTML     = 'innerHTML',
     LAST_TIME      = 'lastTime',
@@ -507,8 +508,33 @@ Y.mix(Console, {
          */
         collapsed : {
             value : false
-        }
+        },
 
+        /**
+        * String with units, or number, representing the height of the Console,
+        * inclusive of header and footer. If a number is provided, the default
+        * unit, defined by the Widgets DEF_UNIT, property is used.
+        *
+        * @attribute height
+        * @default "300px"
+        * @type {String | Number}
+        */
+        height: {
+            value: "300px"
+        },
+
+        /**
+        * String with units, or number, representing the width of the Console.
+        * If a number is provided, the default unit, defined by the Widgets
+        * DEF_UNIT, property is used.
+        *
+        * @attribute width
+        * @default "300px"
+        * @type {String | Number}
+        */
+        width: {
+            value: "300px"
+        }
     },
 
     /**
@@ -751,7 +777,7 @@ Y.extend(Console,Y.Widget,{
      */
     renderUI : function () {
         this._initHead();
-        this._initConsole();
+        this._initBody();
         this._initFoot();
     },
 
@@ -761,8 +787,9 @@ Y.extend(Console,Y.Widget,{
      * @method syncUI
      */
     syncUI : function () {
-        this.set(PAUSED,this.get(PAUSED));
-        this.set(COLLAPSED,this.get(COLLAPSED));
+        this._uiUpdatePaused(this.get(PAUSED));
+        this._uiUpdateCollapsed(this.get(COLLAPSED));
+        this._uiSetHeight(this.get(HEIGHT));
     },
 
     /**
@@ -811,10 +838,10 @@ Y.extend(Console,Y.Widget,{
      * Create the DOM structure for the console body&#8212;where messages are
      * rendered.
      *
-     * @method _initConsole
+     * @method _initBody
      * @protected
      */
-    _initConsole : function () {
+    _initBody : function () {
         this._body = create(substitute(
                             Console.BODY_TEMPLATE,
                             Console.CHROME_CLASSES));
@@ -1103,6 +1130,26 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
+     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.
+     * Overrides Widget.prototype._uiSetHeight.
+     *
+     * @method _uiSetHeight
+     * @param v {String|Number} the new height
+     * @protected
+     */
+    _uiSetHeight : function (v) {
+        Console.superclass._uiSetHeight.apply(this,arguments);
+
+        if (this._head && this._foot) {
+            var h = this.get('boundingBox').get('offsetHeight') -
+                    this._head.get('offsetHeight') -
+                    this._foot.get('offsetHeight');
+
+            this._body.setStyle(HEIGHT,h+'px');
+        }
+    },
+
+    /**
      * Updates the UI if changes are made to any of the strings in the strings
      * attribute.
      *
@@ -1148,20 +1195,31 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _afterPausedChange : function (e) {
-        var paused = e.newVal,
-            node;
+        var paused = e.newVal;
 
         if (e.src !== Y.Widget.SRC_UI) {
-            node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
-            if (node) {
-                node.set(CHECKED,paused);
-            }
+            this._uiUpdatePaused(paused);
         }
 
         if (!paused) {
             this._schedulePrint();
         } else if (this._timeout) {
             this._clearTimeout();
+        }
+    },
+
+    /**
+     * Checks or unchecks the paused checkbox
+     *
+     * @method _uiUpdatePaused
+     * @param on {Boolean} the new checked state
+     * @protected
+     */
+    _uiUpdatePaused : function (on) {
+        var node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
+
+        if (node) {
+            node.set(CHECKED,on);
         }
     },
 
@@ -1187,14 +1245,56 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _afterCollapsedChange : function (e) {
+        this._uiUpdateCollapsed(e.newVal);
+    },
+
+    /**
+     * Updates the UI to reflect the new Collapsed state
+     *
+     * @method _uiUpdateCollapsed
+     * @param v {Boolean} true for collapsed, false for expanded
+     * @protected
+     */
+    _uiUpdateCollapsed : function (v) {
         var cb     = this.get(CONTENT_BOX),
             button = cb.queryAll('button.'+C_COLLAPSE),
-            method = e.newVal ? 'addClass' : 'removeClass',
-            str    = this.get('strings.'+(e.newVal ? 'expand' : 'collapse'));
+            method = v ? 'addClass' : 'removeClass',
+            str    = this.get('strings.'+(v ? 'expand' : 'collapse'));
 
         cb[method](C_COLLAPSED);
+
         if (button) {
             button.set('innerHTML',str);
+        }
+
+        if (!v) {
+            this._uiSetHeight(this.get(HEIGHT));
+        }
+    },
+
+    /**
+     * Makes adjustments to the UI if needed when the Console is hidden or shown
+     *
+     * @method _afterVisibleChange
+     * @param e {Event} the visibleChange event
+     * @protected
+     */
+    _afterVisibleChange : function (e) {
+        Console.superclass._afterVisibleChange.apply(this,arguments);
+
+        this._uiUpdateFromHideShow(e.newVal);
+    },
+
+    /**
+     * Recalculates dimensions and updates appropriately when shown
+     *
+     * @method _uiUpdateFromHideShow
+     * @param v {Boolean} true for visible, false for hidden
+     * @protected
+     */
+    _uiUpdateFromHideShow : function (v) {
+        if (v) {
+            this._uiSetHeight(this.get(HEIGHT));
         }
     },
 
