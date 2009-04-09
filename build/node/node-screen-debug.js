@@ -174,7 +174,15 @@ Y.Node.importMethod(Y.DOM, [
  */
 Y.Node.ATTRS.region = {
     getter: function() {
-        return Y.DOM.region(Y.Node.getDOMNode(this));
+        var node = Y.Node.getDOMNode(this);
+        if (node && !node.tagName) {
+            if (node.nodeType === 9) { // document
+                node = node.documentElement;
+            } else if (node.alert) { // window
+                node = node.document.documentElement;
+            }
+        }
+        return Y.DOM.region(node);
     }
 };
     
@@ -185,7 +193,7 @@ Y.Node.ATTRS.region = {
  */
 Y.Node.ATTRS.viewportRegion = {
     getter: function() {
-        return Y.DOM.region(Y.Node.getDOMNode(this));
+        return Y.DOM.viewportRegion(Y.Node.getDOMNode(this));
     }
 };
 
