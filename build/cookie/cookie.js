@@ -286,8 +286,9 @@ YUI.add('cookie', function(Y) {
             }
             
             //set options
-            options = options || {};
-            options.expires = new Date(0);
+            options = Y.merge(options || {}, {
+                expires: new Date(0)
+            });
             
             //set cookie
             return this.set(name, "", options);
