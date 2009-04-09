@@ -7,6 +7,7 @@ YUI.add('event-custom', function(Y) {
  */
 
 
+Y.Env.eventHandles  = {};
 Y.Env.eventAdaptors = {};
 
 
@@ -354,12 +355,12 @@ Y.EventHandle = function(evt, sub) {
 };
 
 Y.EventHandle.prototype = {
+
     /**
      * Detaches this subscriber
      * @method detach
      */
     detach: function() {
-
         if (this.evt) {
             this.evt._delete(this.sub);
         }
@@ -1236,8 +1237,63 @@ Y.Subscriber.prototype = {
  */
 
 var L = Y.Lang,
-    after   = Y.after,
-    DELIMITER = ':',
+    PREFIX_DELIMITER = ':',
+    AFTER_PREFIX = '~AFTER~',
+
+    /**
+     * If the instance has a prefix attribute and the
+     * event type is not prefixed, the instance prefix is
+     * applied to the supplied type.
+     */
+    _getType = function(instance, type) {
+
+        if (!L.isString(type)) {
+            return type;
+        }
+
+        var t = type, 
+            pre = instance._yuievt.config.prefix;
+
+
+        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
+            t = pre + PREFIX_DELIMITER + t;
+        }
+
+
+        return t;
+    },
+
+    /**
+     * Returns an array with the detach key (if provided),
+     * and the prefixed event name from _getType
+     * Y.on('detachkey, menu:click', fn)
+     *
+     * @private
+     */
+    _parseType = function(instance, type) {
+
+        if (!L.isString(type)) {
+            return type;
+        }
+
+        var t = type, parts, detachkey, after, i = t.indexOf(AFTER_PREFIX);
+
+        if (i > -1) {
+            after = true;
+            t = t.substr(AFTER_PREFIX.length);
+        }
+
+        parts = t.split(/,\s*/);
+
+        if (parts.length > 1) {
+            detachkey = parts[0];
+            t = parts[1];
+        }
+
+        t = _getType(instance, t);
+
+        return [detachkey, t, after];
+    },
 
     ET = function(opts) { 
 
@@ -1253,34 +1309,18 @@ var L = Y.Lang,
 
             config: o,
 
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
+
             defaults: {
                 context: this, 
                 host: this,
                 emitFacade: o.emitFacade || false,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
-            
         };
 
-    },
-
-    _getType = function(instance, type) {
-
-        if (!L.isString(type)) {
-            return type;
-        }
-
-        var t = type, 
-            pre = instance._yuievt.config.prefix;
-
-
-        if (t.indexOf(DELIMITER) == -1 && pre) {
-            t = pre + DELIMITER + t;
-        }
-
-
-        return t;
     };
+
 
 
 ET.prototype = {
@@ -1295,16 +1335,18 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        type = _getType(this, type);
+        var parts = _parseType(this, type), f, c, args, ret, ce,
+            detachkey, handle, store = Y.Env.eventHandles,
+            key, after, adapt;
 
-        var f, c, args, ret, ce;
-
-        if (L.isObject(type)) {
+        if (L.isObject(type, true)) {
 
             f = fn; 
             c = context; 
             args = Y.Array(arguments, 0, true);
             ret = {};
+            after = type._after;
+            delete type._after;
 
             Y.each(type, function(v, k) {
 
@@ -1313,7 +1355,7 @@ ET.prototype = {
                     c = v.context || c;
                 }
 
-                args[0] = k;
+                args[0] = (after) ? AFTER_PREFIX + k : k;
                 args[1] = f;
                 args[2] = c;
 
@@ -1321,14 +1363,52 @@ ET.prototype = {
 
             }, this);
 
-            return ret;
+            return (this._yuievt.chain) ? this : ret;
+
+        } else if (L.isFunction(type)) {
+            return Y.Do.before.apply(Y.Do, arguments);
+        }
+
+        detachkey = parts[0];
+        type = parts[1];
+        after = parts[2];
+
+        if (this instanceof YUI) {
+            adapt = Y.Env.eventAdaptors[type];
+            // check for the existance of an event adaptor
+            if (adapt && adapt.on) {
+                return adapt.on.apply(Y, arguments);
+            // check to see if the target is an Event.Target.  If so,
+            // delegate to it (the Event.Target should handle whether
+            // or not the prefix was included);
+            // } else if (o && !(o instanceof YUI) && o.getEvent) {
+            //     a = Y.Array(arguments, 0, true);
+            //     a.splice(2, 1);
+            //     return o.on.apply(o, a);
+            } else if (!adapt && type.indexOf(':') == -1) {
+                return Y.Event.attach.apply(Y.Event, arguments);
+            }
+        }
+
+
+        ce     = this._yuievt.events[type] || this.publish(type);
+        args   = Y.Array(arguments, 1, true);
+
+        f = (parts[2]) ? ce.after : ce.on;
+
+        handle = f.apply(ce, args);
+
+        if (detachkey) {
+
+            key = parts[0] + parts[1];
+            if (!store[key]) {
+                store[key] = [];
+            }
+            store[key].push(handle);
 
         }
 
-        ce = this._yuievt.events[type] || this.publish(type);
-        args = Y.Array(arguments, 1, true);
-
-        return ce.on.apply(ce, args);
+        return (this._yuievt.chain) ? this : handle;
 
     },
 
@@ -1355,18 +1435,47 @@ ET.prototype = {
      *                        disambiguate multiple listeners that are the same
      *                        (e.g., you subscribe many object using a function
      *                        that lives on the prototype)
-     * @return {boolean} true if the subscriber was found and detached.
+     * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
 
-        type = _getType(this, type);
+        var parts = _parseType(this, type), detachkey = parts[0], key,
+        details, handle, adapt,
+
+        evts = this._yuievt.events, ce, i, ret = true;
+
+        if (detachkey) {
+            key = parts[0] + parts[1]; 
+            details = Y.Env.eventHandles[key];
+            if (details) {
+                while (details.length) {
+                    handle = details.pop();
+                    handle.detach();
+                }
+
+                return (this._yuievt.chain) ? this : true;
+            }
+        }
 
         // If this is an event handle, use it to detach
         if (L.isObject(type) && type.detach) {
-            return type.detach();
+            ret = type.detach();
+            return (this._yuievt.chain) ? this : true;
         }
 
-        var evts = this._yuievt.events, ce, i, ret = true;
+        type = parts[1];
+        adapt = Y.Env.eventAdaptors[type];
+
+        // The YUI instance handles DOM events and adaptors
+        if (this instanceof YUI) {
+            // use the adaptor specific detach code if
+            if (adapt && adapt.detach) {
+                return adapt.detach.apply(Y, arguments);
+            // DOM event fork
+            } else if (!adapt && type.indexOf(':') == -1) {
+                return Y.Event.detach.apply(Y.Event, arguments);
+            }
+        }
 
         if (type) {
             ce = evts[type];
@@ -1382,7 +1491,7 @@ ET.prototype = {
             return ret;
         }
 
-        return false;
+        return (this._yuievt.chain) ? this : false;
     },
 
     /**
@@ -1574,9 +1683,6 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t, {
-                //     configured: false
-                // });
                 ce = this.publish(t);
                 ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
 
@@ -1587,20 +1693,13 @@ ET.prototype = {
             return true;
         }
 
-        // Provide this object's subscribers the object they are listening to.
-        // ce.currentTarget = this;
-
-        // This this the target unless target is current not null
-        // (set in bubble()).
-        // ce.target = ce.target || this;
-
         a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
         ret = ce.fire.apply(ce, a);
 
         // clear target for next fire()
         ce.target = null;
 
-        return ret;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**
@@ -1687,18 +1786,41 @@ ET.prototype = {
      * @param args* 0..n params to supply to the callback
      */
     after: function(type, fn) {
-        if (L.isFunction(type)) {
-            return Y.Do.after.apply(Y.Do, arguments);
-        } else {
-            var ce = this._yuievt.events[type] || 
-                // this.publish(type, {
-                //     configured: false
-                // }),
-                this.publish(type),
-                a = Y.Array(arguments, 1, true);
 
-            return ce.after.apply(ce, a);
+        var a = Y.Array(arguments, 0, true);
+
+        switch (L.type(type)) {
+            case 'function':
+                return Y.Do.after.apply(Y.Do, arguments);
+            case 'object':
+                a[0]._after = true;
+                break;
+            default:
+                a[0] = AFTER_PREFIX + type;
         }
+
+        return this.on.apply(this, a);
+
+    },
+
+    /**
+     * Executes the callback before a DOM event, custom event
+     * or method.  If the first argument is a function, it
+     * is assumed the target is a method.  For DOM and custom
+     * events, this is an alias for Y.on.
+     *
+     * For DOM and custom events:
+     * type, callback, context, 1-n arguments
+     *  
+     * For methods:
+     * callback, object (method host), methodName, context, 1-n arguments
+     *
+     * @method before
+     * @return detach handle
+     * @deprecated use the on method
+     */
+    before: function() { 
+        return this.on.apply(this, arguments);
     }
 
 };
@@ -1712,8 +1834,8 @@ Y.mix(Y, ET.prototype, false, false, {
 
 ET.call(Y);
 
-Y._on = Y.on;
-Y._detach = Y.detach;
+// Y._on = Y.on;
+// Y._detach = Y.detach;
 
 /**
  * Attach an event listener, either to a DOM object
@@ -1729,37 +1851,37 @@ Y._detach = Y.detach;
  * @return {Event.Handle} a handle object for 
  * unsubscribing to this event.
  */
-Y.on = function(type, f, o) {
-
-    if (L.isFunction(type)) {
-        return Y.Do.before.apply(Y.Do, arguments);
-    }
-    
-    var adapt = Y.Env.eventAdaptors[type], a;
-
-    // check for the existance of an event adaptor
-    if (adapt && adapt.on) {
-        return adapt.on.apply(Y, arguments);
-    // check to see if the target is an Event.Target.  If so,
-    // delegate to it (the Event.Target should handle whether
-    // or not the prefix was included);
-    } else if (o && !(o instanceof YUI) && o.getEvent) {
-        a = Y.Array(arguments, 0, true);
-        a.splice(2, 1);
-        return o.on.apply(o, a);
-    } else {
-        // the pattern for custom events is 'prefix:event',
-        // however it is possible to have an event adaptor that
-        // doesn't do anything special for subscribe.
-        if (adapt || type.indexOf(':') > -1) {
-            return Y._on.apply(Y, arguments);
-        // DOM event listener
-        } else {
-            return Y.Event.attach.apply(Y.Event, arguments);
-        }
-    }
-
-};
+// Y.on = function(type, f, o) {
+// 
+//     if (L.isFunction(type)) {
+//         return Y.Do.before.apply(Y.Do, arguments);
+//     }
+//     
+//     var adapt = Y.Env.eventAdaptors[type];
+// 
+//     // check for the existance of an event adaptor
+//     if (adapt && adapt.on) {
+//         return adapt.on.apply(Y, arguments);
+//     // check to see if the target is an Event.Target.  If so,
+//     // delegate to it (the Event.Target should handle whether
+//     // or not the prefix was included);
+//     // } else if (o && !(o instanceof YUI) && o.getEvent) {
+//     //     a = Y.Array(arguments, 0, true);
+//     //     a.splice(2, 1);
+//     //     return o.on.apply(o, a);
+//     } else {
+//         // the pattern for custom events is 'prefix:event',
+//         // however it is possible to have an event adaptor that
+//         // doesn't do anything special for subscribe.
+//         if (adapt || type.indexOf(':') > -1) {
+//             return Y._on.apply(Y, arguments);
+//         // DOM event listener
+//         } else {
+//             return Y.Event.attach.apply(Y.Event, arguments);
+//         }
+//     }
+// 
+// };
 
 /**
  * Detach an event listener (either a custom event or a
@@ -1774,46 +1896,27 @@ Y.on = function(type, f, o) {
  * @method detach
  * @return {YUI} the YUI instance
  */
-Y.detach = function(type, f, o) {
+// Y.detach = function(type, f, o) {
+// 
+//     var adapt = Y.Env.eventAdaptors[type], a;
+// 
+//     if (o && o._yuievt && o.detach) {
+//         a = Y.Array(arguments, 0, true);
+//         a.splice(2, 1);
+//         return o.detach.apply(o, a);
+//     } else if (L.isObject(type) && type.detach) {
+//         return type.detach();
+//     } else {
+//         if (adapt && adapt.detach) {
+//             return adapt.detach.apply(Y, arguments);
+//         } else if (adapt || type.indexOf(':') > -1) {
+//             return Y._detach.apply(Y, arguments);
+//         } else {
+//             return Y.Event.detach.apply(Y.Event, arguments);
+//         }
+//     }
+// };
 
-    var adapt = Y.Env.eventAdaptors[type], a;
-
-    if (o && o._yuievt && o.detach) {
-        a = Y.Array(arguments, 0, true);
-        a.splice(2, 1);
-        return o.detach.apply(o, a);
-    } else if (L.isObject(type) && type.detach) {
-        return type.detach();
-    } else {
-        if (adapt && adapt.detach) {
-            return adapt.detach.apply(Y, arguments);
-        } else if (adapt || type.indexOf(':') > -1) {
-            return Y._detach.apply(Y, arguments);
-        } else {
-            return Y.Event.detach.apply(Y.Event, arguments);
-        }
-    }
-};
-
-/**
- * Executes the callback before a DOM event, custom event
- * or method.  If the first argument is a function, it
- * is assumed the target is a method.  For DOM and custom
- * events, this is an alias for Y.on.
- *
- * For DOM and custom events:
- * type, callback, context, 1-n arguments
- *  
- * For methods:
- * callback, object (method host), methodName, context, 1-n arguments
- *
- * @method before
- * @return detach handle
- * @deprecated use the on method
- */
-Y.before = function() { 
-    return Y.on.apply(Y, arguments);
-};
 
 /**
  * Executes the callback after a DOM event, custom event
@@ -1829,13 +1932,13 @@ Y.before = function() {
  * @method after
  * @return {Event.Handle} unsubscribe handle
  */
-Y.after = function(type, f, o) {
-    if (L.isFunction(type)) {
-        return Y.Do.after.apply(Y.Do, arguments);
-    } else {
-        return after.apply(Y, arguments);
-    }
-};
+// Y.after = function(type, f, o) {
+//     if (L.isFunction(type)) {
+//         return Y.Do.after.apply(Y.Do, arguments);
+//     } else {
+//         return Y.on.apply(Y, arguments);
+//     }
+// };
 
 })();
 (function() {

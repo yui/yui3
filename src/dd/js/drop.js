@@ -153,7 +153,8 @@
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
-                    queuable: false
+                    queuable: false,
+                    prefix: 'drop'
                 });
             }, this);
 
@@ -440,9 +441,9 @@
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        if (DDM.activeDrop === this) {
-                            DDM.activeDrop = null;
-                        }
+                        //if (DDM.activeDrop === this) {
+                        //    DDM.activeDrop = null;
+                        //}
                     }
                 }
             }

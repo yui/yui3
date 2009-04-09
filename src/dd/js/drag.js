@@ -404,7 +404,8 @@
                 defaultFn: this._handleMouseDown,
                 queuable: false,
                 emitFacade: true,
-                bubbles: true
+                bubbles: true,
+                prefix: 'drag'
             });
             
             var ev = [
@@ -429,7 +430,8 @@
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: false
+                    queuable: false,
+                    prefix: 'drag'
                 });
             }, this);
 

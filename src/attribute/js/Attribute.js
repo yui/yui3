@@ -103,12 +103,12 @@
 
             if (!this.attrAdded(name)) {
                 config = config || {};
-    
+
                 var value,
                     hasValue = (VALUE in config);
-    
+
                 if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
-    
+
                 if(hasValue) {
                     // We'll go through set, don't want to set value in _conf directory
                     value = config.value;
@@ -116,7 +116,7 @@
                 }
                 config[INIT] = true;
                 this._conf.add(name, config);
-    
+
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
@@ -374,6 +374,11 @@
                     }
                 }
             } else {
+                allowSet = false;
+            }
+
+            if (!e.subAttrName && val === e.prevVal) {
+                Y.log('attribute: ' + name + ' after listeners not invoked. Value unchanged:' + val, 'info', 'attribute');
                 allowSet = false;
             }
 

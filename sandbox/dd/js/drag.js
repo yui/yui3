@@ -405,7 +405,8 @@ YUI.add('dd-drag', function(Y) {
                 defaultFn: this._handleMouseDown,
                 queuable: false,
                 emitFacade: true,
-                bubbles: true
+                bubbles: true,
+                prefix: 'drag'
             });
             
             var ev = [
@@ -430,7 +431,8 @@ YUI.add('dd-drag', function(Y) {
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
-                    queuable: false
+                    queuable: false,
+                    prefix: 'drag'
                 });
             }, this);
 

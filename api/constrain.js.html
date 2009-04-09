@@ -62,10 +62,10 @@
 
     <span class="k">var</span> <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="o">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
-        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">;</span>
+        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>
+        <span class="nx">proto</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
 
-
-    <span class="k">var</span> <span class="nx">C</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">C</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
     <span class="o">};</span>
@@ -128,7 +128,7 @@
 <span class="c">        */</span>
         <span class="nx">constrain2region</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">r</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
@@ -137,7 +137,7 @@
                     <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">},</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">r</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span><span class="o">))</span> <span class="o">{</span>
                         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
@@ -149,6 +149,7 @@
                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">r</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
                 <span class="o">}</span>
+                <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/**</span>
@@ -158,7 +159,7 @@
 <span class="c">        */</span>
         <span class="nx">gutter</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">gutter</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">gutter</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">cssSizestoObject</span><span class="o">(</span><span class="nx">gutter</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -169,7 +170,7 @@
 <span class="c">        */</span>
         <span class="nx">constrain2node</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
@@ -190,7 +191,7 @@
         <span class="o">}</span>
     <span class="o">};</span>
 
-    <span class="k">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">proto</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">start</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -217,7 +218,9 @@
 <span class="c">        * @return {Object}</span>
 <span class="c">        */</span>
         <span class="nx">getRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">inc</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">oh</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">ow</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">g</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">);</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nb">window</span><span class="o">);</span>
@@ -231,7 +234,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
-            <span class="k">var</span> <span class="nx">g</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">);</span>
+
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">i</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">((</span><span class="nx">n</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">n</span> <span class="o">==</span> <span class="s1">&#39;bottom&#39;</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">r</span><span class="o">[</span><span class="nx">n</span><span class="o">]</span> <span class="o">-=</span> <span class="nx">i</span><span class="o">;</span>
@@ -240,8 +243,8 @@
                 <span class="o">}</span>
             <span class="o">});</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">inc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">oh</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span>
-                    <span class="nx">ow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
+                <span class="nx">oh</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">);</span>
+                <span class="nx">ow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
                 <span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">;</span>
                 <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">;</span>
             <span class="o">}</span>
@@ -359,7 +362,8 @@
 <span class="c">        * @return The tick position</span>
 <span class="c">        */</span>
         <span class="nx">_calcTickArray</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pos</span><span class="o">,</span> <span class="nx">ticks</span><span class="o">,</span> <span class="nx">off1</span><span class="o">,</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">next</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">next</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
+                <span class="nx">diff1</span><span class="o">,</span> <span class="nx">diff2</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ticks</span> <span class="o">||</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">pos</span><span class="o">;</span>
@@ -369,9 +373,9 @@
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
                     <span class="nx">next</span> <span class="o">=</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="nx">pos</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">var</span> <span class="nx">diff1</span> <span class="o">=</span> <span class="nx">pos</span> <span class="o">-</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span>
-                            <span class="nx">diff2</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">-</span> <span class="nx">pos</span><span class="o">;</span>
-                        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">diff2</span> <span class="o">&gt;</span> <span class="nx">diff1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">:</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">];</span>
+                        <span class="nx">diff1</span> <span class="o">=</span> <span class="nx">pos</span> <span class="o">-</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                        <span class="nx">diff2</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">-</span> <span class="nx">pos</span><span class="o">;</span>
+                        <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">diff2</span> <span class="o">&gt;</span> <span class="nx">diff1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">:</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">];</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">off1</span> <span class="o">&amp;&amp;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
                             <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">&gt;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="k">if</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">{</span>
@@ -439,7 +443,6 @@
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class="selected"><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
-                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>

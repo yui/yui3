@@ -203,11 +203,11 @@ YUI.add('attribute', function(Y) {
 
             if (!this.attrAdded(name)) {
                 config = config || {};
-    
+
                 var value,
                     hasValue = (VALUE in config);
-    
-    
+
+
                 if(hasValue) {
                     // We'll go through set, don't want to set value in _conf directory
                     value = config.value;
@@ -215,7 +215,7 @@ YUI.add('attribute', function(Y) {
                 }
                 config[INIT] = true;
                 this._conf.add(name, config);
-    
+
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
@@ -467,6 +467,10 @@ YUI.add('attribute', function(Y) {
                     }
                 }
             } else {
+                allowSet = false;
+            }
+
+            if (!e.subAttrName && val === e.prevVal) {
                 allowSet = false;
             }
 
