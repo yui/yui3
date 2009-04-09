@@ -40,6 +40,14 @@ echo "Building selector"
 echo "****************************************"
 ant -q all
 
+ln -sf build.selector-css3.xml build.xml
+wait
+ln -sf build.selector-css3.properties build.properties
+echo "****************************************"
+echo "Building selector-css3"
+echo "****************************************"
+ant -q all
+
 ln -sf build.dom.xml build.xml
 wait
 ln -sf build.dom.properties build.properties

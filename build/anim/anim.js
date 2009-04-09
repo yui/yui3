@@ -120,8 +120,8 @@ YUI.add('anim', function(Y) {
          * @type Node
          */
         node: {
-            set: function(node) {
-                node = Y.Node.get(node);
+            setter: function(node) {
+                node = Y.get(node);
                 this._node = node;
                 if (!node) {
                 }
@@ -147,7 +147,7 @@ YUI.add('anim', function(Y) {
         easing: {
             value: Y.Anim.DEFAULT_EASING,
 
-            set: function(val) {
+            setter: function(val) {
                 if (typeof val === 'string' && Y.Easing) {
                     return Y.Easing[val];
                 }
@@ -204,7 +204,7 @@ YUI.add('anim', function(Y) {
          * @readOnly
          */
         running: {
-            get: function() {
+            getter: function() {
                 return !!_running[Y.stamp(this)];
             },
             value: false,
@@ -394,7 +394,7 @@ YUI.add('anim', function(Y) {
             this._set(START_TIME, new Date() - this.get(ELAPSED_TIME));
             this._actualFrames = 0;
             if (!this.get(PAUSED)) {
-                this._initAttr();
+                this._initAnimAttr();
             }
             _running[Y.stamp(this)] = this;
             Y.Anim._startTimer();
@@ -505,7 +505,7 @@ YUI.add('anim', function(Y) {
             this._set(ITERATION_COUNT, iterCount);
         },
 
-        _initAttr: function() {
+        _initAnimAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
                 dur = this.get('duration') * 1000,

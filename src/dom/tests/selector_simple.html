@@ -6,11 +6,13 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
+<script type="text/javascript" src="../../../build/attribute/attribute-debug.js"></script>
+<script type="text/javascript" src="../../../build/base/base-debug.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
@@ -22,8 +24,27 @@
 <script>
 onload = function() {
     YUI().use('*', function(Y) {
-        console.log(Y.Selector.query('.foo-foo-foo', Y.DOM.byId('body'), true));
-        console.log(Y.get('body').query('.foo-foo-foo'));
+        console.log(Y.get('#root-test').getElementsByTagName('li').size());
+        console.log(Y.DOM.byId('root-test').getElementsByTagName('li').length);
+
+        var count = 0;
+
+        Y.get('#root-test').getElementsByTagName('li').each(function(item) {
+            count++;
+        });
+        alert(count + ' items');
+
+        count = 0;
+        Y.Array.each(lis, function(item) {
+            count++;
+        });
+        alert(count + ' items');
+
+        count = 0;
+        Array.prototype.forEach.call(lis, function(item) {
+            count++;
+        });
+        alert(count + ' items');
     });
 };
 </script>

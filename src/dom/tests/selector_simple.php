@@ -11,7 +11,6 @@
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
@@ -23,7 +22,11 @@
 onload = function() {
     YUI().use('*', function(Y) {
         //console.log(Y.Selector.query('ol li', document, false));
-        console.log(Y.Selector.query('.foo', document.body, true));
+<<<<<<< HEAD:src/dom/tests/selector_simple.php
+        console.log(Y.Selector.query('.first', document.body, true));
+=======
+        console.log(Y.Selector.query('#demo-foo'));
+>>>>>>> master:src/dom/tests/selector_simple.php
     });
 };
 </script>
@@ -33,7 +36,7 @@ onload = function() {
 </head>
 <body class="body-node">
 <span lang="en-us"></span>
-    <div id="demo" class="foo" title="this is a demo">
+    <div id="demo-foo" class="foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
         <p class="para">lorem ipsum</p>
         <p class="para last">lorem ipsum</p>

@@ -7,7 +7,7 @@ YUI.add('node-style', function(Y) {
  * @for Node
  */
 
-Y.Node.addDOMMethods([
+var methods = [
     /**
      * Returns the style's current value.
      * @method getStyle
@@ -40,7 +40,9 @@ Y.Node.addDOMMethods([
      * @chainable
      */
     'setStyles'
-]);
+];
+Y.Node.importMethod(Y.DOM, methods);
+Y.NodeList.importMethod(Y.Node.prototype, methods);
 
 
 

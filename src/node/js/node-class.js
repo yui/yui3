@@ -5,7 +5,7 @@
  * @for Node
  */
 
-    Y.Node.addDOMMethods([
+    var methods = [
         /**
          * Determines whether the node has the given className.
          * @method hasClass
@@ -47,4 +47,7 @@
          * @chainable
          */
         'toggleClass'
-    ]);
+    ];
+
+    Y.Node.importMethod(Y.DOM, methods);
+    Y.NodeList.importMethod(Y.Node.prototype, methods);

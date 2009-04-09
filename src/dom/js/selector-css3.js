@@ -16,7 +16,7 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
         result = [],
         op;
 
-    var siblings = node.parentNode.children || Selector._children(node.parentNode); 
+    var siblings = node.parentNode.children || Y.Selector._children(node.parentNode); 
     if (oddeven) {
         a = 2; // always every other
         op = '+';
