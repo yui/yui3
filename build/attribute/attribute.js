@@ -99,7 +99,6 @@ YUI.add('attribute', function(Y) {
             }
         }
     };
-
     /**
      * Managed Attribute Provider
      * @module attribute
@@ -203,11 +202,11 @@ YUI.add('attribute', function(Y) {
 
             if (!this.attrAdded(name)) {
                 config = config || {};
-    
+
                 var value,
                     hasValue = (VALUE in config);
-    
-    
+
+
                 if(hasValue) {
                     // We'll go through set, don't want to set value in _conf directory
                     value = config.value;
@@ -215,7 +214,7 @@ YUI.add('attribute', function(Y) {
                 }
                 config[INIT] = true;
                 this._conf.add(name, config);
-    
+
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
@@ -470,6 +469,10 @@ YUI.add('attribute', function(Y) {
                 allowSet = false;
             }
 
+            if (!e.subAttrName && val === e.prevVal) {
+                allowSet = false;
+            }
+
             if (allowSet) {
                 // Store value
                 storedVal = { value: val };
@@ -660,7 +663,6 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, EventTarget, false, null, 1);
 
     Y.Attribute = Attribute;
-
 
 
 }, '@VERSION@' ,{requires:['event-custom']});

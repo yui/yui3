@@ -13,11 +13,10 @@ YUI.add('dd-ddm-base', function(Y) {
      */
     
     var DDMBase = function() {
-        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'dragDropMgr';
+    DDMBase.NAME = 'ddm';
 
     DDMBase.ATTRS = {
         /**

@@ -38,15 +38,15 @@ PluginHost.prototype = {
      * a single call.
      * </p>
      */
-    plug: function(p) {
+    plug: function(p, config) {
         if (p) {
-            if (L.isArray(p)) {
+            if (L.isFunction(p)) {
+                this._plug(p, config);
+            } else if (L.isArray(p)) {
                 var ln = p.length;
                 for (var i = 0; i < ln; i++) {
                     this.plug(p[i]);
                 }
-            } else if (L.isFunction(p)) {
-                this._plug(p);
             } else {
                 this._plug(p.fn, p.cfg);
             }

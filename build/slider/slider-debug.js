@@ -22,7 +22,7 @@ var SLIDER = 'slider',
 
     THUMB_DRAG  = 'thumbDrag',
     SYNC        = 'sync',
-    VALUE_SET   = 'valueSet',
+    POSITION_THUMB = 'positionThumb',
     RENDERED    = 'rendered',
     DISABLED    = 'disabled',
     DISABLED_CHANGE = 'disabledChange',
@@ -391,8 +391,8 @@ Y.extend(Slider, Y.Widget, {
     initializer : function () {
         this._key = Slider.AXIS_KEYS[this.get('axis')];
 
-        this.after('minChange',    this._afterMinChange);
-        this.after('maxChange',    this._afterMaxChange);
+        this.after('minChange',      this._afterMinChange);
+        this.after('maxChange',      this._afterMaxChange);
 
         this.after('railSizeChange', this._afterRailSizeChange);
 
@@ -425,13 +425,13 @@ Y.extend(Slider, Y.Widget, {
         /**
          * Communicates a request to synchronize the Slider UI with the
          * attribute state.  Links the sync request with the default sync
-         * logic in the default function _defSyncUI.
+         * logic in the default function _defSyncFn.
          *
          * @event sync
          * @param event {Event.Facade} Event Facade object
-         * @preventable _defSyncUI
+         * @preventable _defSyncFn
          */
-        this.publish(SYNC,       {defaultFn: this._defSyncUI});
+        this.publish(SYNC, { defaultFn: this._defSyncFn });
 
         /**
          * Signals a value change via API, requiring the thumb position to be
@@ -444,9 +444,9 @@ Y.extend(Slider, Y.Widget, {
          *      <dt>changeEv</dt>
          *          <dd><code>valueChange</code> event fired in response to the change in the value attribute</dd>
          *  </dl>
-         * @preventable _defSetThumbPosition
+         * @preventable _defPositionThumbFn
          */
-        this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
+        this.publish(POSITION_THUMB, { defaultFn: this._defPositionThumbFn });
     },
 
     /**
@@ -735,7 +735,7 @@ Y.extend(Slider, Y.Widget, {
 
     /**
      * Fires the internal sync event, which barring preventDefault should
-     * execute _defSyncUI.
+     * execute _defSyncFn.
      *
      * @method _ready
      * @param img {Node} the thumbImage Node
@@ -756,11 +756,11 @@ Y.extend(Slider, Y.Widget, {
      * The default synchronization behavior, updating the Slider's DOM state to
      * match the current attribute values.
      *
-     * @method _defSyncUI
+     * @method _defSyncFn
      * @param e {Event} Internal sync event
      * @protected
      */
-    _defSyncUI : function (e) {
+    _defSyncFn : function (e) {
         this._uiSetThumbSize();
 
         this._setThumbOffset();
@@ -773,9 +773,12 @@ Y.extend(Slider, Y.Widget, {
 
         this._setFactor();
 
-        Y.log('placing thumb for value '+this.get(VALUE),'info','slider');
+        var val = this.get(VALUE);
 
-        this.set(VALUE,this.get(VALUE));
+        this.fire(POSITION_THUMB, {
+            value  : val,
+            offset : this._convertValueToOffset(val)
+        });
     },
 
     /**
@@ -1203,24 +1206,17 @@ Y.extend(Slider, Y.Widget, {
 
 
     /**
-     * The default behavior for calculating the placement of the thumb in
-     * response to a value attribute update.  This is performed in response
-     * to firing the internal valueSet event.
+     * Calls _uiPositionThumb with the value of the custom event's
+     * &quot;offset&quot; property.
      *
-     * @method _defSetThumbPosition
-     * @param e {Event} the valueSet custom event
+     * @method _defPositionThumbFn
+     * @param e {Event} the positionThumb custom event
      * @protected
      */
-    _defSetThumbPosition : function (e) {
-        var min = this.get(MIN),
-            max = this.get(MAX),
-            v   = e.changeEv.newVal;
+    _defPositionThumbFn : function (e) {
+        Y.log('setting thumb offset ('+e.offset+') from value attribute update ('+e.value+')', 'info', 'slider');
 
-        Y.log('setting thumb position from value attribute update ('+v+')', 'info', 'slider');
-
-        v = round(((v - min) / (max - min)) * this._railSize);
-
-        this._uiPositionThumb(v);
+        this._uiPositionThumb(e.offset);
     },
 
     /**
@@ -1255,10 +1251,26 @@ Y.extend(Slider, Y.Widget, {
      */
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
+            var xy = this._convertValueToOffset(e.newVal);
+
             Y.log('firing valueSet to position thumb', 'info', 'slider');
 
-            this.fire(VALUE_SET,{ changeEv: e });
+            this.fire(POSITION_THUMB,{ value: e.newVal, offset: xy });
         }
+    },
+
+    /**
+     * Converts a value to an integer offset for the thumb position on the rail.
+     *
+     * @method _convertValueToOffset
+     * @param v {Number} value between the Slider's min and max
+     * @protected
+     */
+    _convertValueToOffset : function (v) {
+        var min = this.get(MIN),
+            max = this.get(MAX);
+
+        return round(((v - min) / (max - min)) * this._railSize);
     },
 
     /**

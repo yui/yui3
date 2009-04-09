@@ -124,4 +124,4 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});

@@ -97,7 +97,7 @@ NativeSelector = {
 
     _query: function(selector, root, firstOnly) {
         if (NativeSelector._reUnSupported.test(selector)) {
-            return NativeSelector._brute.query(selector, root, firstOnly);
+            return Y.Selector._brute.query(selector, root, firstOnly);
         }
 
         var ret = firstOnly ? null : [],
@@ -612,4 +612,4 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});

@@ -167,16 +167,26 @@ var BASE = 'base',
 
                 selector: {
                     requires: ['dom-base']
+                },
+
+                'selector-native': {
+                    requires: ['dom-base']
+                }
+            },
+
+            plugins: {
+                'selector-css3': {
+                    requires: ['selector']
                 }
             }
         },
 
         node: {
-            requires: ['dom'],
+            requires: ['dom', 'base'],
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', 'selector']
+                    requires: ['dom-base', 'base', 'selector']
                 },
 
                 'node-style': {

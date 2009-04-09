@@ -64,22 +64,22 @@
 
    <span class="c">/**</span>
 <span class="c">	* @event io:start</span>
-<span class="c">	* @description This event is fired by YUI.io when a transaction is initiated..</span>
+<span class="c">	* @description This event is fired by YUI.io when a transaction is initiated.</span>
 <span class="c">	* @type Event Custom</span>
 <span class="c">	*/</span>
 	<span class="k">var</span> <span class="nx">E_START</span> <span class="o">=</span> <span class="s1">&#39;io:start&#39;</span><span class="o">,</span>
 
    <span class="c">/**</span>
 <span class="c">	* @event io:complete</span>
-<span class="c">	* @description This event is fired by YUI.io when a transaction is complete and</span>
-<span class="c">	* all response data are available.</span>
+<span class="c">	* @description This event is fired by YUI.io when a transaction is complete.</span>
+<span class="c">	* Response status and data are accessible, if available.</span>
 <span class="c">	* @type Event Custom</span>
 <span class="c">	*/</span>
 	<span class="nx">E_COMPLETE</span> <span class="o">=</span> <span class="s1">&#39;io:complete&#39;</span><span class="o">,</span>
 
    <span class="c">/**</span>
 <span class="c">	* @event io:success</span>
-<span class="c">	* @description This event is fired by YUI.io when a transaction is complete and</span>
+<span class="c">	* @description This event is fired by YUI.io when a transaction is complete, and</span>
 <span class="c">	* the HTTP status resolves to HTTP2xx.</span>
 <span class="c">	* @type Event Custom</span>
 <span class="c">	*/</span>
@@ -87,19 +87,19 @@
 
    <span class="c">/**</span>
 <span class="c">	* @event io:failure</span>
-<span class="c">	* @description This event is fired by YUI.io when a transaction is complete and</span>
+<span class="c">	* @description This event is fired by YUI.io when a transaction is complete, and</span>
 <span class="c">	* the HTTP status resolves to HTTP4xx, 5xx and above.</span>
 <span class="c">	* @type Event Custom</span>
 <span class="c">	*/</span>
 	<span class="nx">E_FAILURE</span> <span class="o">=</span> <span class="s1">&#39;io:failure&#39;</span><span class="o">,</span>
 
    <span class="c">/**</span>
-<span class="c">	* @event io:abort</span>
-<span class="c">	* @description This event is fired by YUI.io when a transaction is aborted</span>
-<span class="c">	* explicitly or by a defined config.timeout.</span>
+<span class="c">	* @event io:end</span>
+<span class="c">	* @description This event signifies the end of the transaction lifecycle.  The</span>
+<span class="c">	* transaction transport is destroyed.</span>
 <span class="c">	* @type Event Custom</span>
 <span class="c">	*/</span>
-	<span class="nx">E_ABORT</span> <span class="o">=</span> <span class="s1">&#39;io:abort&#39;</span><span class="o">,</span>
+	<span class="nx">E_END</span> <span class="o">=</span> <span class="s1">&#39;io:end&#39;</span><span class="o">,</span>
 
 	<span class="c">//--------------------------------------</span>
 <span class="c"></span>	<span class="c">//  Properties</span>
@@ -177,9 +177,10 @@
 <span class="c">    *     success - This event fires when the response status resolves to</span>
 <span class="c">    *               HTTP 2xx.</span>
 <span class="c">    *     failure - This event fires when the response status resolves to</span>
-<span class="c">    *               HTTP 4xx, 5xx, and beyond.</span>
-<span class="c">    *	  abort - This even is fired when a transaction abort is fire by</span>
-<span class="c">    *             timeout, or when it is manually aborted.</span>
+<span class="c">    *               HTTP 4xx, 5xx; and, for all transaction exceptions,</span>
+<span class="c">    *               including aborted transactions and transaction timeouts.</span>
+<span class="c">    *	  end -  This even is fired at the conclusion of the transaction</span>
+<span class="c">	*			 lifecycle, after a success or failure resolution.</span>
 <span class="c">    *</span>
 <span class="c">    *     The properties are:</span>
 <span class="c">    *     {</span>
@@ -187,7 +188,7 @@
 <span class="c">	*       complete: function(id, responseobject, args){},</span>
 <span class="c">	*       success: function(id, responseobject, args){},</span>
 <span class="c">	*       failure: function(id, responseobject, args){},</span>
-<span class="c">	*       abort: function(id, args){}</span>
+<span class="c">	*       end: function(id, args){}</span>
 <span class="c">	*     }</span>
 <span class="c">	*	  Each property can reference a function or be written as an</span>
 <span class="c">	*     inline function.</span>
@@ -226,6 +227,13 @@
 			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">((</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">3</span><span class="o">)</span> <span class="o">?</span> <span class="nx">arguments</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">c</span><span class="o">),</span>
 			<span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="o">,</span>
 			<span class="nx">d</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+
+		<span class="nx">o</span><span class="o">.</span><span class="nx">abort</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+			<span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">:</span> <span class="nx">_ioCancel</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="s1">&#39;abort&#39;</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="nx">o</span><span class="o">.</span><span class="nx">isInProgress</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="m">4</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="m">0</span><span class="o">;</span>
+		<span class="o">}</span>
 
 		<span class="c">/* Determine configuration properties */</span>
 		<span class="c">// If config.form is defined, perform data operations.</span>
@@ -269,25 +277,14 @@
 		<span class="c">// If config.timeout is defined, and the request is standard XHR,</span>
 <span class="c"></span>		<span class="c">// initialize timeout polling.</span>
 <span class="c"></span>		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+			<span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
 		<span class="o">}</span>
 		<span class="c">/* End Configuration Properties */</span>
 
 		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">};</span>
-		<span class="k">try</span> <span class="o">{</span>
-			<span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span>
-		<span class="o">}</span>
-		<span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-		<span class="o">}</span>
+		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{}</span>
 		<span class="nx">_setHeaders</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="o">{}));</span>
 
-		<span class="nx">o</span><span class="o">.</span><span class="nx">abort</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-			<span class="nx">_ioAbort</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-		<span class="o">}</span>
-
-		<span class="nx">o</span><span class="o">.</span><span class="nx">isInProgress</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="m">4</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="m">0</span><span class="o">;</span>
-		<span class="o">}</span>
 		<span class="c">// Do not pass null, in the absence of data, as this</span>
 <span class="c"></span>		<span class="c">// will result in a POST request with no Content-Length</span>
 <span class="c"></span>		<span class="c">// defined.</span>
@@ -303,7 +300,7 @@
 <span class="c">	* @private</span>
 <span class="c">	* @static</span>
 <span class="c">	* @param {string} e - event to be published</span>
-<span class="c">	* @param {object} c - configuration object for the transaction.</span>
+<span class="c">	* @param {object} c - configuration data subset for event subscription.</span>
 <span class="c">	*</span>
 <span class="c">    * @return void</span>
 <span class="c">	*/</span>
@@ -340,12 +337,14 @@
 		<span class="o">}</span>
 
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_START</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+
 		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">start</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;start&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
 		<span class="o">}</span>
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; started.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
 	<span class="o">};</span>
+
 
    <span class="c">/**</span>
 <span class="c">	* @description Fires event &quot;io:complete&quot; and creates, fires a</span>
@@ -361,15 +360,22 @@
 <span class="c">    * @return void</span>
 <span class="c">	*/</span>
 	<span class="k">function</span> <span class="nx">_ioComplete</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">event</span><span class="o">;</span>
+		<span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">),</span>
+			<span class="nx">event</span><span class="o">;</span>
 			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_COMPLETE</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">r</span><span class="o">.</span><span class="nx">status</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+			<span class="nx">r</span><span class="o">.</span><span class="nx">statusText</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">;</span>
+		<span class="o">}</span>
+
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_COMPLETE</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
+
 		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">complete</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;complete&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
+			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
 		<span class="o">}</span>
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; completed.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
 	<span class="o">};</span>
@@ -399,17 +405,17 @@
 			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">success</span><span class="o">;</span>
 			<span class="c">//Decode the response from IO.swf</span>
 <span class="c"></span>			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">);</span>
-			<span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
 		<span class="o">}</span>
 
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_SUCCESS</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
+
 		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">success</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
 		<span class="o">}</span>
 
-		<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">);</span>
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP Status evaluates to Success. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
+		<span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 	<span class="o">};</span>
 
    <span class="c">/**</span>
@@ -431,39 +437,45 @@
 			<span class="nx">event</span><span class="o">;</span>
 			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>			<span class="c">// the property is null or undefined.</span>
-<span class="c"></span>			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
+<span class="c"></span>			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{},</span>
+			<span class="nx">r</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">failure</span><span class="o">;</span>
 			<span class="c">//Decode the response from IO.swf</span>
 <span class="c"></span>			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">);</span>
-			<span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
 		<span class="o">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_FAILURE</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">r</span><span class="o">.</span><span class="nx">status</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+			<span class="nx">r</span><span class="o">.</span><span class="nx">statusText</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">;</span>
+		<span class="o">}</span>
+
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_FAILURE</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
+
 		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">failure</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;failure&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
+			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
 		<span class="o">}</span>
 
-		<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">);</span>
 		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP Status evaluates to Failure. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
+		<span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 	<span class="o">};</span>
 
    <span class="c">/**</span>
-<span class="c">	* @description Fires event &quot;io:abort&quot; and creates, fires a</span>
-<span class="c">	* transaction-specific &quot;abort&quot; event, if config.on.abort is</span>
+<span class="c">	* @description Fires event &quot;io:end&quot; and creates, fires a</span>
+<span class="c">	* transaction-specific &quot;end&quot; event, if config.on.end is</span>
 <span class="c">	* defined.</span>
 <span class="c">	*</span>
-<span class="c">	* @method _ioAbort</span>
+<span class="c">	* @method _ioEnd</span>
 <span class="c">	* @private</span>
 <span class="c">	* @static</span>
-<span class="c">    * @param {object} o - Transaction object generated by _create().</span>
-<span class="c">    * @param {object} c - Configuration object passed to YUI.io().</span>
+<span class="c">	* @param {object} o - transaction object.</span>
+<span class="c">	* @param {object} c - configuration object for the transaction.</span>
 <span class="c">	*</span>
 <span class="c">    * @return void</span>
 <span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_ioAbort</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">function</span> <span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
 		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_fn</span> <span class="o">||</span> <span class="o">{},</span>
 			<span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">])</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 			<span class="nx">event</span><span class="o">;</span>
@@ -471,32 +483,42 @@
 <span class="c"></span>			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
-		<span class="k">if</span><span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span>  <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
-			<span class="c">// Terminate the transaction</span>
-<span class="c"></span>			<span class="nx">o</span><span class="o">.</span><span class="nx">isAbort</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">();</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-				<span class="c">// Clear the timeout poll for this specific transaction.</span>
-<span class="c"></span>				<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">_clearTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-
 		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">abort</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">abort</span><span class="o">;</span>
+			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">end</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">end</span><span class="o">;</span>
 			<span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
 		<span class="o">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_ABORT</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">abort</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;abort&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_END</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">end</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;end&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 		<span class="o">}</span>
 
 		<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">);</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction has timed out or explicitly aborted. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ended.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
+	<span class="o">};</span>
+
+   <span class="c">/**</span>
+<span class="c">	* @description Terminates a transaction due to an explicit abort or</span>
+<span class="c">	* timeout.</span>
+<span class="c">	*</span>
+<span class="c">	* @method _ioCancel</span>
+<span class="c">	* @private</span>
+<span class="c">	* @static</span>
+<span class="c">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="c">    * @param {object} c - Configuration object passed to YUI.io().</span>
+<span class="c">    * @param {string} s - Identifies timed out or aborted transaction.</span>
+<span class="c">	*</span>
+<span class="c">    * @return void</span>
+<span class="c">	*/</span>
+	<span class="k">function</span> <span class="nx">_ioCancel</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">o</span><span class="o">.</span><span class="nx">isCancel</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+			<span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
+			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction cancelled due to time out or explicitly aborted. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
 	<span class="o">};</span>
 
    <span class="c">/**</span>
@@ -659,8 +681,8 @@
 <span class="c">    * @param {object} c - Configuration object passed to YUI.io().</span>
 <span class="c">    * @return void</span>
 <span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">_timeout</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_ioAbort</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">},</span> <span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
+	<span class="k">function</span> <span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">_timeout</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_ioCancel</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="s1">&#39;timeout&#39;</span><span class="o">);</span> <span class="o">},</span> <span class="nx">timeout</span><span class="o">);</span>
 	<span class="o">};</span>
 
    <span class="c">/**</span>
@@ -688,7 +710,7 @@
 <span class="c">    * @return void</span>
 <span class="c">	*/</span>
 	<span class="k">function</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="m">4</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">isAbort</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="m">4</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">_clearTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
 			<span class="o">}</span>
@@ -755,9 +777,7 @@
 	<span class="nx">_io</span><span class="o">.</span><span class="nx">complete</span> <span class="o">=</span> <span class="nx">_ioComplete</span><span class="o">;</span>
 	<span class="nx">_io</span><span class="o">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">_ioSuccess</span><span class="o">;</span>
 	<span class="nx">_io</span><span class="o">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">_ioFailure</span><span class="o">;</span>
-	<span class="nx">_io</span><span class="o">.</span><span class="nx">abort</span> <span class="o">=</span> <span class="nx">_ioAbort</span><span class="o">;</span>
 	<span class="nx">_io</span><span class="o">.</span><span class="nx">_id</span> <span class="o">=</span> <span class="nx">_id</span><span class="o">;</span>
-	<span class="nx">_io</span><span class="o">.</span><span class="nx">_timeout</span> <span class="o">=</span> <span class="nx">_timeout</span><span class="o">;</span>
 
    	<span class="c">//--------------------------------------</span>
 <span class="c"></span>   	<span class="c">//  Begin public interface definition</span>
@@ -863,7 +883,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:abort", "url": "io.html#event_io:abort", "type": "event"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioAbort", "url": "io.html#method__ioAbort", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
 </script>
 </body>
 </html>

@@ -167,8 +167,8 @@
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">node</span> <span class="o">+</span> <span class="s1">&#39; is not a valid node&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Anim&#39;</span><span class="o">);</span>
@@ -195,7 +195,7 @@
         <span class="nx">easing</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_EASING</span><span class="o">,</span>
 
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">[</span><span class="nx">val</span><span class="o">];</span>
                 <span class="o">}</span>
@@ -252,7 +252,7 @@
 <span class="c">         * @readOnly</span>
 <span class="c">         */</span>
         <span class="nx">running</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="o">!!</span><span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)];</span>
             <span class="o">},</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
@@ -442,7 +442,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">START_TIME</span><span class="o">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">()</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ELAPSED_TIME</span><span class="o">));</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_actualFrames</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_initAttr</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initAnimAttr</span><span class="o">();</span>
             <span class="o">}</span>
             <span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_startTimer</span><span class="o">();</span>
@@ -553,7 +553,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">ITERATION_COUNT</span><span class="o">,</span> <span class="nx">iterCount</span><span class="o">);</span>
         <span class="o">},</span>
 
-        <span class="nx">_initAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_initAnimAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">from</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;from&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
                 <span class="nx">to</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;to&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
                 <span class="nx">dur</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;duration&#39;</span><span class="o">)</span> <span class="o">*</span> <span class="m">1000</span><span class="o">,</span>

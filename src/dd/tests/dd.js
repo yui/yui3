@@ -22,7 +22,26 @@ YUI({
         useConsole: true
     }
 }).use('dd', 'console', 'test', 'substitute', function(Y) {
-        var myConsole = new Y.Console().render();    
+        var myConsole = new Y.Console({
+            height: Y.get(window).get('winHeight') + 'px'
+        }).render();    
+            
+
+        _fakeMove = function(node, max) {
+            _resetCount();
+            Y.DD.DDM._noShim = true;
+            node._dragThreshMet = true;
+            node.set('activeHandle', node.get('node'));                    
+            node._setStartPosition(node.get('node').getXY());
+            Y.DD.DDM.activeDrag = node;
+            node.start();
+            for (var i = 0; i < max; i++) {
+                Y.DD.DDM._move({ pageX: i, pageY: 110 });
+            }
+            node.end();
+            node._handleMouseUp();
+            Y.DD.DDM._noShim = false;
+        };
 
         _count = {};
         _data = {
@@ -67,7 +86,7 @@ YUI({
             });
         },
         test_drag_setup: function() {
-            dd = new Y.DD.Drag({ node: '#drag', mode: 'intersect' });
+            dd = new Y.DD.Drag({ node: '#drag' });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
@@ -90,19 +109,7 @@ YUI({
             });
         },
         test_drag_move: function() {
-            _resetCount();
-            Y.DD.DDM._noShim = true;
-            dd._dragThreshMet = true;
-            dd.set('activeHandle', dd.get('node'));                    
-            dd._setStartPosition(dd.get('node').getXY());
-            Y.DD.DDM.activeDrag = dd;
-            dd.start();
-            for (var i = 0; i < moveCount; i++) {
-                Y.DD.DDM._move({ pageX: i, pageY: 110 });
-            }
-            dd.end();
-            dd._handleMouseUp();
-            Y.DD.DDM._noShim = false;
+            _fakeMove(dd, moveCount);
             Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
             Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
             Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
@@ -134,19 +141,7 @@ YUI({
             });
         },
         test_proxy_move: function() {
-            _resetCount();
-            Y.DD.DDM._noShim = true;
-            proxy._dragThreshMet = true;
-            proxy.set('activeHandle', proxy.get('node'));                    
-            proxy._setStartPosition(dd.get('node').getXY());
-            Y.DD.DDM.activeDrag = proxy;
-            proxy.start();
-            for (var i = 0; i < moveCount; i++) {
-                Y.DD.DDM._move({ pageX: i, pageY: 110 });
-            }
-            proxy.end();
-            proxy._handleMouseUp();
-            Y.DD.DDM._noShim = false;
+            _fakeMove(proxy, moveCount);
             
             Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
             Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
@@ -168,6 +163,44 @@ YUI({
             drop.destroy();
             Y.Assert.isFalse(drop.get('node').hasClass('yui-dd-drop'), 'Drop: Drop Instance NO ClassName');
             Y.Assert.isTrue(drop.get('destroyed'), 'Drop: Destroyed Attribute');
+        },
+        test_constrain_node_setup: function() {
+            Y.Node.get('#drag').setStyles({ top: '10px', left: '950px' });
+            dd = new Y.DD.Drag({
+                node: '#drag',
+                constrain2node: '#wrap'
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+        },
+        test_constrain_node_move: function() {
+            var inRegion_before = dd.get('node').inRegion(Y.get('#wrap'));
+
+            _fakeMove(dd, 25);
+
+            var inRegion_after = dd.get('node').inRegion(Y.get('#wrap'));
+            Y.Assert.isFalse(inRegion_before, 'Drag Node is in the region of #wrap');
+            Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the region of #wrap');
+            dd.destroy();
+        },
+        test_constrain_view_setup: function() {
+            Y.Node.get('#drag').setStyles({ top: '-150px', left: '200px' });
+            dd = new Y.DD.Drag({
+                node: '#drag',
+                constrain2view: true
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+        },
+        test_constrain_view_move: function() {
+            var inRegion_before = dd.get('node').inViewportRegion();
+
+            _fakeMove(dd, 250);
+
+            var inRegion_after = dd.get('node').inViewportRegion();
+            Y.Assert.isFalse(inRegion_before, 'Drag Node is in the viewport');
+            Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
+            dd.destroy();
         }
     };
     

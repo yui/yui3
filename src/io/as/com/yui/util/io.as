@@ -25,22 +25,19 @@ package com.yui.util
 			yId = root.loaderInfo.parameters.yid;
 			var a:Array = [yId];
 
-			trace('yId is ' + yId);
 			ExternalInterface.addCallback("send", send);
 			ExternalInterface.addCallback("abort", ioAbort);
-			ExternalInterface.addCallback("isInProgress", isInProgress);
+			ExternalInterface.addCallback("readyState", readyState);
 			ExternalInterface.call('YUI.applyTo', yId, 'io.xdrReady', a);
 		};
 
 		public function send(uri:String, cfg:Object, id:uint):void {
-			trace('XDR request received.  The transaction is ' + id);
 			var loader:URLLoader = new URLLoader(),
 				request:URLRequest = new URLRequest(uri),
 				d:Object = { id:id, cfg:cfg },
 				timer:Timer,
 				prop:String;
 
-			trace('Iterating config.  The transaction is ' + id);
 			for (prop in cfg) {
 				switch (prop) {
 					case "method":
@@ -60,38 +57,23 @@ package com.yui.util
 						break;
 				}
 			}
+
 			loaderMap[id] = { c:loader, readyState: 0, t:timer };
 			defineListeners(d, timer);
 			addListeners(loader, timer);
 			loader.load(request);
 			ioStart(d);
+
 			if (timer) {
 				timer.start();
 			}
 		};
 
-		public function ioAbort(id:uint, c:Object):void {
-			var t:Timer = loaderMap[id].t,
-				a:Array = [id, c];
-
-			loaderMap[id].close();
-			if (t && t.running) {
-				t.stop();
-			}
-
-			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
-			destroy(id);
-		};
-
-		public function isInProgress(id:uint):uint {
-			return loaderMap[id].readyState;
-		};
-
 		private function defineListeners(d:Object, timer:Timer):void {
 			httpComplete = function(e:Event):void { ioSuccess(e, d, timer); };
 			httpError = function(e:IOErrorEvent):void { ioFailure(e, d, timer); };
+
 			if (timer) {
-				trace('Defining timeout listener.  The transaction is ' + d.id);
 				httpTimeout = function(e:TimerEvent):void { ioTimeout(e, d); };
 			}
 		};
@@ -99,6 +81,7 @@ package com.yui.util
 		private function addListeners(loader:IEventDispatcher, timer:IEventDispatcher):void  {
 			loader.addEventListener(Event.COMPLETE, httpComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, httpError);
+
 			if (timer) {
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
@@ -108,9 +91,9 @@ package com.yui.util
 			var loader:URLLoader = loaderMap[id].c,
 				timer:Timer = loaderMap[id].t;
 
-			trace('Removing event listeners.  The transaction is ' + id);
 			loader.removeEventListener(Event.COMPLETE, httpComplete);
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, httpError);
+
 			if (timer) {
 				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
@@ -121,7 +104,6 @@ package com.yui.util
 
 			loaderMap[d.id].readyState = 2;
 			ExternalInterface.call('YUI.applyTo', yId, 'io.start', a);
-			trace('Transaction ' + d.id + ' started.');
 		};
 
 		private function ioSuccess(e:Event, d:Object, timer:Timer):void {
@@ -129,9 +111,8 @@ package com.yui.util
 				response:Object = { id: d.id, c: { responseText: data } },
 				a:Array = [response, d.cfg];
 
-			trace('Transaction ' + d.id + ' success.');
-			trace('Data are ' + data);
 			loaderMap[d.id].readyState = 4;
+
 			if (timer && timer.running) {
 				timer.stop();
 			}
@@ -141,17 +122,19 @@ package com.yui.util
 		};
 
 		private function ioFailure(e:Event, d:Object, timer:Timer):void {
-			var data:String = encodeURI(e.target.data),
+			var data:String,
 				response:Object = { id: d.id, c: { responseText: data } },
 				a:Array = [response, d.cfg];
 
 			if (e is IOErrorEvent) {
 				data = encodeURI(e.target.data);
 			}
+			else if (e is TimerEvent) {
+				response.status = 'timeout';
+			}
 
-			trace('Transaction ' + d.id + ' failure.');
-			trace('Data are ' + data);
 			loaderMap[d.id].readyState = 4;
+
 			if (timer && timer.running) {
 				timer.stop();
 			}
@@ -161,9 +144,28 @@ package com.yui.util
 		};
 
 		private function ioTimeout(e:TimerEvent, d:Object):void {
-			trace('Transaction ' + d.id + ' timeout.');
-			loaderMap[d.id].close();
+			loaderMap[d.id].c.close();
+			loaderMap[d.id].status = 'timeout';
 			ioFailure(e, d, null);
+		};
+
+		public function ioAbort(id:uint, c:Object):void {
+			var t:Timer = loaderMap[id].t,
+				response:Object = { id: id, c: { statusText: 'abort' } },
+				a:Array = [response, c];
+
+			loaderMap[id].c.close();
+
+			if (t && t.running) {
+				t.stop();
+			}
+
+			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
+			destroy(id);
+		};
+
+		public function readyState(id:uint):Boolean {
+			return loaderMap[id].readyState !== 4;
 		};
 
 		private function setRequestHeaders(request:URLRequest, headers:Object):void {
@@ -179,6 +181,7 @@ package com.yui.util
 		private function serializeData(request:URLRequest, d:Object):void {
 			var prop:String;
 			request.data = new URLVariables();
+
 			for (prop in d) {
 				request.data[prop] = d[prop];
 			}
@@ -187,7 +190,6 @@ package com.yui.util
 		private function destroy(id:uint):void {
 			removeListeners(id);
 			delete loaderMap[id];
-			trace('Transaction ' + id + ' ended.');
 		};
 	}
 }
