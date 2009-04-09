@@ -63,7 +63,20 @@ var g_nodes = {},
 Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
-    click: true
+    'click': true,
+    'dblclick': true,
+    'keydown': true,
+    'keypress': true,
+    'keyup': true,
+    'mousedown': true,
+    'mousemove': true,
+    'mouseout': true, 
+    'mouseover': true, 
+    'mouseup': true,
+    'focus': true,
+    'blur': true,
+    'submit': true,
+    'change': true
 };
 
 Node._instances = {};
@@ -531,10 +544,16 @@ Y.mix(Node.prototype, {
     },
     
     removeEventListener: function() {
+        var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
         return Y.Event.nativeRemove.apply(Y.Event, arguments);
     },
 
+    // TODO: need this?  check for fn; document this
+    hasMethod: function(method) {
+        var node = g_nodes[this[UID]];
+        return (node && (typeof node === 'function'));
+    }
 }, true);
 
 Y.Array.each([

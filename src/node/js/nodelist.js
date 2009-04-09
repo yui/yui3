@@ -201,7 +201,7 @@ Y.mix(NodeList.prototype, {
      * @see Selector
      */
     filter: function(selector) {
-        return Node.scrubVal(Selector.filter(g_nodelists[this[UID]], selector), this);
+        return Node.scrubVal(Y.Selector.filter(g_nodelists[this[UID]], selector), this);
     },
 
     get: function(attr) {
@@ -321,3 +321,4 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodeList.size() ? nodeList : null;
 };
+Y.Node.all = Y.all; // TODO: deprecated
