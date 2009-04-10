@@ -1,0 +1,461 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Progress Bar</title>
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssgrids/grids-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/widget/assets/skins/sam/widget.css" />
+<!-- JS -->
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+
+<!-- Until they get included in the yui-loader.js tables, I have to add it manually
+I could use the Loader.addModule method, but this file is already built and has the code 
+to add itself to the module list along with its requirements -->
+<link rel="stylesheet" type="text/css" href="../../build/progressbar/assets/skins/sam/progressbar.css">
+<script type="text/javascript" src="../../build/progressbar/progressbar.js"></script>
+				
+<style type="text/css">
+/* Here I am using the id of each bar to set the masks and/or bar images for each one separately */
+
+#pbplain.yui-progressbar-content {
+	height:25px;
+}
+#pbplain .yui-progressbar-mask td {
+	/* if you don't provide a mask, the bar will be a completely rectangular thing  with no borders */
+	background-image: url(mask.gif);
+}
+
+#pbplain .yui-progressbar-bar {
+	/* if you omit the image of the bar, it will be shown as a flat thing of the color given in attribute 'barColor' */
+	background-image:url(bar.gif);
+}
+#pbplain.yui-progressbar-content .yui-progressbar-anim {
+	/* if you omit the image of the bar, it will be shown as a flat thing of the color given in attribute 'barColor' */
+	background-image:url(animbar.gif);
+}
+
+
+#pbg .yui-progressbar-mask td  {
+	background-image: url(grid.gif);
+}
+
+/* Important:  there is no space in between #pbr and .yui-progressbar-content but there is one in all the other selectors */
+#pbr.yui-progressbar-content {
+	width:401px;
+	height: 100px;
+}
+
+#pbr .yui-progressbar-mask td  {
+	background-image: url(ruler.gif);
+}
+
+#pbr .yui-progressbar-bar {
+	background-image: url(gradient.png);
+}
+
+#pbcopper.yui-progressbar-content {
+	background-image:url(copperbackV.gif);
+}
+
+
+#pbcopper.yui-progressbar-content {
+	width:25px;
+	height: 200px;
+}
+
+#pbcopper .yui-progressbar-mask td  {
+	background-image: url(coppermaskV.gif);
+}
+
+#pbcopper .yui-progressbar-bar {
+	background-image: url(copperbarV.gif);
+	margin: 32px 0;
+}
+
+#pbthin  {
+	margin:1em;
+	background-color: rgb(192,192,192);
+}
+
+#pbthin.yui-progressbar-content {
+	width:400px;
+	height: 12px;
+}
+
+#pbthin .yui-progressbar-mask td  {
+	background-image: url(thinmask.gif);
+}
+
+#pbthin .yui-progressbar-bar {
+	background-image: url(thinbar.gif);
+	margin: 0 10px;
+}
+
+
+/* Just a little decoration for the page, not relevant to the usage of the progress bar */
+hr {
+	margin:1em 0;
+}
+
+#bd {
+	margin:3em 0;
+	padding: 1em 0;
+	border-top: solid silver;
+	border-bottom: solid silver;
+}
+pre, code {
+	background-color:#e0e0e0;
+	border:thin solid #c0c0c0;
+	white-space:pre;
+	font-size:10px;
+}
+.selector {
+	white-space:nowrap;
+	font-family:monospace;
+}
+
+.h .yui-progressbar-bar {
+	margin: 0px 0px 0px 20px;
+}
+.v .yui-progressbar-bar {
+	margin: 0px 0px 20px 0px;
+}
+
+</style>
+</head>
+<body class="yui-skin-sam">
+	<div style="position:fixed;left:0;top:0;border:thin solid silver">
+		You can use this box<br/>
+		to change the value<br/>
+		of the bar.<br/>
+		Range: 0 - 100<br/>
+		<input id="newValue" value="50" maxlength="3" size="3" /><button id="setValue">Set</button>
+	</div>
+
+	<div class="yui-d1"> 
+			<p align="right"><a href="../../index.html">Back to the index of articles and examples</a></p>
+		<div id="hd">
+			<h1>Progress Bar</h1>
+			<p>The following examples of the ProgressBar show several of its features.  
+			The Animation utility has been loaded so all bars move smoothly, otherwise they would respond
+			immediately to changes in value.  The values set in the floating box to the left will
+			affect all of the bars below.  All bars have the properties <code>minValue</code> and <code>maxValue</code>
+			left at their default of 0 and 100.  Values outside of this range will be ignored. 
+			</p>
+		</div>
+		<div id="bd">
+			<div id="pb"></div>
+			<p>This is the most plain ProgressBar, it has been created by the following code:</p>
+			<pre>pb = new Y.ProgressBar({contentBox:'#pb',height:'30px', width: 300, barColor:'green',
+    backColor:'orange',border:'thin solid black'});
+pb.render();</pre>
+			<p>The <code>contentBox</code> property tells where to render it. 
+			Size attributes can be given as strings with units specified or numbers which will be interpreted as pixel sizes.
+			Color attributes can be anything that a CSS color definition would take.</p>
+			<hr/>
+			<div id="pbplain"></div>
+			<p>This is a more elaborate version.  It was created by the following statements:</p>
+			<pre>pbplain = new Y.ProgressBar({contentBox:'#pbplain'});
+pbplain.render();</pre>
+			<p>The shape and colors are the result of style definitions which use the <code>#pbplain</code> as part of their selector.</p>
+			<pre>#pbplain.yui-progressbar-content {
+	height:25px;
+}
+#pbplain .yui-progressbar-mask td {
+	/* if you don't provide a mask, the bar will be a completely rectangular thing  with no borders */
+	background-image: url(mask.gif);
+}
+
+#pbplain .yui-progressbar-bar {
+	/* if you omit the image of the bar, it will be shown as a flat thing of the color given in attribute 'barColor' */
+	background-image:url(bar.gif);
+}
+#pbplain.yui-progressbar-content .yui-progressbar-anim {
+	/* if you omit the image of the bar, it will be shown as a flat thing of the color given in attribute 'barColor' */
+	background-image:url(animbar.gif);
+}</pre>
+			<p>In the first one I'm changing the default height, leaving the width to the internal default (200px).
+			The second definition sets the image that provides the rounded corners to contain the bar.  
+			This image can be stretched and shrunk as needed.  
+			The actual <code>mask.gif</code> image is 400*32px but here it is shown in 200*25px.
+			The third definition provides the image to be used for the bar.  
+			It will be tiled to fit the space needed so it needs to be designed with a repeating tileable pattern.
+			Finally, the last definition provides an image that will be displayed alternatively when the bar
+			is moving.</p>
+			<p>The Progress Bar also fires some events when it changes values and also while it changes.
+			Below, you can see the value of the bar above, updated while it is being changed.</p>
+			<div id="setting" style="font-size:larget;font-weight:bold"></div>
+			<p>This is done with the following code:</p>
+			<pre>var settingEl = Y.get('#setting');
+// This one shows it while moving
+pb.on('changingEvent',function (value) {
+	settingEl.set('innerHTML',value + ' ... moving ...');
+});
+// This will show at the end (even if there is no animation at all)
+pb.on('completeEvent',function (value) {
+	settingEl.set('innerHTML', value);
+});</pre>
+			
+			<hr/>
+			<div id="pbg"></div>
+			<p>The bar itself is always a rectangle.  To give it different shapes and borders, a mask is used.
+			The mask should be a GIF or PNG file with transparency where you want the bar to show through.
+			The mask can be opaque in the corners and transparent in the center, as in the previous example
+			or you can also play with transparency and opaqueness anywhere in the graphics like the bar above.</p>
+			<p>The ProgressBar cuts the given mask vertically and horizontally right through the center of it
+			and uses each corner separately.  These four sectors slide to and from the center lines.
+			If the mask has a repeating pattern, as this one has, you have to make sure that the width and height
+			given are integer multiples of the basic pattern, otherwise it will not tile correctly.
+			In this example, I have made the width and height one pixel wider and higher than it should have been.
+			If you look at the center, you will see that the holes in the grid on the vertical and horizontal 
+			lines coming out from it are different in size from the others</p>
+			
+			<hr/>
+			<div id="pbr"></div>
+			<p>This bar uses a mask that is not symmetrical in any way.  It cannot be scaled.  
+			If you try to make it any different width, the ruler at the bottom will either have no 5 or have two of them
+			if you shrink it further the 4 and 6 will disappear and so on.
+			The bar, which looks like a wedge, is actually rectangular as it always is.  
+			The mask has a wedge-shaped opaque area in the upper-left corner, which is the same color as the page background.
+			The bar is not tiling.  The bar is a single image, the bar shows whatever needs of it.  
+			Here you have them both over a light gray background with blue borders around the two images:</p>
+			<div style="background-color:silver; padding:1em;text-align:center">
+				<img style="border:thin solid blue" src="ruler.gif" />
+				<br/>
+				<br/>
+				<img  style="border:thin solid blue" src="gradient.png" />
+			</div>
+		
+			<hr/>
+			<div id="pbthin"></div>
+			<p>The mask for this bar has some fancy caps at both top and bottom ends, those blue rounded things at each side. 
+			The bar cannot go from edge to edge of the ProgressBar container because it would hide behind the areas taken
+			by those caps at the ends.  To reserve space for them, we use the <code>margin</code> CSS attribute given along the image
+			to be used for the bar, in this case, we are leaving 10 pixels at the left and right ends of the bar:</p>
+			<pre>#pbthin .yui-progressbar-bar {
+	background-image: url(thinbar.gif);
+	margin: 0 10px;
+}</pre>
+			<p>The bottom of the empty area of the bar is the same silver background as the rest of the area around it, 
+			it simply looks deeper than the rest because of the inset shading of the mask.</p>
+			<hr/>
+			<div>
+			<div style="float:left;margin-right:1em;" id="pbcopper"></div>
+			<p>ProgressBars can grow in any direction, as set by the <code>direction</code> attribute (case insensitive),
+			which can take values <code>'lr'</code> (left to right, the default), <code>'rl'</code>, <code>'tb'</code> 
+			(top to bottom) or <code>'bt'</code>, as in this sample.</p>
+			<p>If the Animation utility is available, ProgressBar will use it.  
+			The instance of Animation in use is available in the <code>anim</code> attribute.  
+			You can set the attributes of the animation like <code>duration</code> or <code>easing</code>.</p>
+			<p>This is the code for this bar:</p>
+			<pre>pbcopper = new Y.ProgressBar({contentBox:'#pbcopper',direction:'bt'});
+pbcopper.set('anim',{
+	duration:3,
+	easing:Y.Easing.bounceBoth
+});
+pbcopper.render();</pre>
+			<p>These setting make the bar grow from bottom to top, to last 3 seconds to make any changes and
+			use the <code>bounceBoth</code> easing method</p>
+			<p style="clear:both">The space left blank by the bar is not transparent 
+			as in the previous examples.  I have set a further background which shows in the 'empty' area. 
+			This was set through the following style:</p>
+<pre>#pbcopper.yui-progressbar-content {
+	background-image:url(copperbackV.gif);
+}</pre>
+			<p>So, in the end, we have three layered levels in the ProgressBar, assuming we have a ProgressBar with an
+			<code>id</code> of <code>pbcopper</code> as in these case, the CSS selectors for each of the layers,
+			from bottom up, are:</p>
+			<ol>
+			<li><code>#pbcopper.yui-progressbar-content           </code>/* The area within the transparent section of the mask not covered by the bar */</li>
+			<li><code>#pbcopper .yui-progressbar-bar      </code>/* The bar itself */</li>
+			<li><code>#pbcopper .yui-progressbar-mask td  </code>/* The mask that will let the bar be seen through its transparencies */</li>
+			</ol>
+			There is a further selector to set the image of the bar while it is moving (provided the Animation utility is loaded)
+			which is selected via the selector:<ul>
+			<li><code>#pbcopper.yui-progressbar-content .yui-progressbar-anim</code></li>
+			</ul>
+			<p>The selectors to be used for each of the characteristics of the ProgressBar seem quite random but, 
+			actually, have been forced by the way the widget is drawn.  Many alternatives to make them as easy as possible
+			have been explored, these are the best choices found.</p>
+			
+			</div>
+			<h2>WAI-ARIA support</h2>
+			<p>The ProgressBar supports WAI-ARIA as specified for the "progressbar" role, see: <a href="http://www.w3.org/TR/wai-aria/#progressbar">W3C spec</a>.
+			The ProgressBar container has <code>tabIndex="1"</code> and has <code>role</code> and role-specific settings as described in the document.</p>
+			<p>Since the ProgressBar cannot know what concept the value corresponds to, it cannot, on its own, provide a meaningful <code>aria-valuetext</code>
+			text.  The <code>ariaText</code> setting allows the implementer to set a text to be used for that setting.  The value set should contain a
+			vertical bar character (|) which will be replaced by the actual value</p>
+			
+		</div>
+		<div id="ft">
+			<h2>API</h2>
+			<p>The ProgressBar has no public properties, all settings are handled through methods <code>get</code> and <code>set</code></p>
+			<h3>Configuration Attributes</h3>
+			<dl>
+				<dt><code>contentBox</code></dt>
+				<dd>Valid DOM element identifier or reference where the ProgressBar will be drawn.  It can be set only once.</dd>
+				<dt><code>value</code></dt>
+				<dd>Numeric, default: 50, the value that will be represented by the bar</dd>
+				<dt><code>minValue</code></dt>
+				<dd>Numeric, default: 0, the minimum value for the bar.  Settings of <code>value</code> below this will be ignored</dd>
+				<dt><code>maxValue</code></dt>
+				<dd>Numeric, default: 100, the maximum value for the bar.  Settings of <code>value</code> above this will be ignored</dd>
+				<dt><code>barColor</code></dt>
+				<dd>Any valid CSS color specification, default 'blue' it will apply to the body of the bar. 
+				It will override settings done via StyleSheets</dd>
+				<dt><code>backColor</code></dt>
+				<dd>Any valid CSS color specification, default 'white' it will apply to the area left uncovered by the bar. 
+				It will override settings done via StyleSheets</dd>
+				<dt><code>border</code></dt>
+				<dd>Any valid CSS border specification, default 'none' it will apply to the whole of the widget. 
+				It will override settings done via StyleSheets</dd>
+				<dt><code>width</code> and <code>height</code></dt>
+				<dd>Any valid CSS width specification, defaults 200 wide, 20 high, a string including standard CSS units or any numeric value (which will be interpreted as pixel sizes)</dd>
+				<dt><code>direction</code></dt>
+				<dd>Either 'lr' (default), 'rl', 'tb', 'bt', sets in which direction the bar will grow from (left, right, top or bottom) in which direction. 
+				Once set it cannot be changed.  Case insensitive.</dd>
+				<dt><code>anim</code></dt>
+				<dd>Read only.  If the YUI Animation utility has been loaded, it will contain the instance of 
+				the <code>Animation</code> utility that this ProgressBar uses.
+				The <code>duration</code> and <code>easing</code> setting are the most important to use.</dd>
+				<dt><code>barEl</code> and <code>maskEl</code></dt>
+				<dd>Read only.  They contain references to the actual elements making up the ProgressBar. 
+				It's use is discouraged</dd>
+				<dt><code>ariaText</code></dt>
+				<dd>A formatting string to provide a meaningful text for WAI-ARIA <code>aria-valuetext</code> attribute.  
+				It should contain a vertical bar to be replaced by the current value of the control</dd>
+			</dl>
+			<h3>Methods</h3>
+			<dl>
+				<dt>Constructor</dt>
+				<dd>Takes an optional object literal with settings for the attributes listed above. Returns an instance of ProgressBar</dd>
+				<dt><code>render()</code></dt>
+				<dd>Draws the ProgressBar</dd>
+				<dt><code>redraw()</code></dt>
+				<dd>Redraws the ProgressBar with the current settings.  It takes no arguments, it doesn't return anything</dd>
+				<dt><code>destroy()</code></dt>
+				<dd>Deletes the HTML code created and removes any event listeners attached to them</dd>
+			</dl>
+			<h3>CSS styles</h3>
+			<p>To make it easy to draw the most basic ProgressBar a few settings relating to presentation are provided.
+			However, the code and presentation of the widget have been kept separate as much as possible.  
+			The programmer can write the code independently of the graphics	designer.  
+			Once a ProgressBar instance is created, the programmer just needs to set the value, 
+			all other aspects of the presentation (except direction) can be handled through CSS styles</p>
+			<table>
+			<tr><th>Selector</th><th>Attribute</th><th>Description</th></tr>
+			<tr><td class="selector">.yui-progressbar-content</td><td>width<br/>height</td><td>overall size of the ProgressBar.  Can be set via the <code>width</code> and <code>height</code> configuration settings</td></tr>
+			<tr><td class="selector">.yui-progressbar-content</td><td>background</td><td>background to be used on the area the bar is not covering</td></tr>
+			<tr><td class="selector">.yui-progressbar-bar</td><td>background-image<br/>background-color</td><td>Image or color to use for the bar</td></tr>
+			<tr><td class="selector">.yui-progressbar-bar</td><td>margin</td><td>offset from the edge of the ProgressBar to where the mask transparency starts.  If the bar goes into this area, it would be hidden behind the mask.</td></tr>
+			<tr><td class="selector">.yui-progressbar-content .yui-progressbar-anim</td><td>background-image<br/>background-color</td><td>Image or color to use for the bar while it is changing</td></tr>
+			<tr><td class="selector">.yui-progressbar-mask td</td><td>background-image</td><td>mask with transparencies to allow the bar to show through</td></tr>
+			</table>
+			<h2>How it works</h2>
+			<div style="float:left"><img src="diagrama.png" /></div><p>The diagram to the left shows the layers of the ProgressBar.</p> 
+			<p>The green rectangle is the container which is the base for the whole control. It has the className <code>.yui-progressbar-content</code>.</p>
+			<p>The red rectangle is the bar itself, which occupies just part of the container and has className <code>yui-progressbar-bar</code>.</p>
+			<p>The blue area is the mask which has a transparent hole that allows the lower layers to be seen and has className <code>yui-progressbar-mask</code>.</p>
+			<p>The red bar does not start at the very edge of the container, because it would otherwise be hidden under the 
+			borders of the mask. The black vertical lines in between the top and bottom layers show these two do match while the red 
+			bar is offset by as much as set in its margin.</p>
+			<p>The blue mask is not a continuous image but it is made of four sections shown cut by the yellow lines.</p>
+			
+			<div style="clear:both;float:left;margin:1em;"><img src="maskdiag.png" /></div>
+			<p>This set of diagrams show how the mask image is used. 
+			The blue sections enclosed in red at the top two images show a couple of masks of very different sizes, both made of the very same base image, 
+			which is shown below.</p>
+			<p>The red line outlines the table used to hold the mask which is of the same size as the overall ProgressBar.  
+			The table is divided in four cells of 50% width and height, marked by the yellow lines.</p>
+			
+			<p>The same mask image is set as the background for each of the four individual cells but instead of letting it tile normally, 
+			we use the background-position CSS attribute so each is aligned to its own corner.  The blue area shows the corner section of the mask image that 
+			is visible in each cell, enclosed in between the table edge in red and the cell dividers in yellow, the light blue areas are the parts of the
+			same image that fall outside of the cells and are invisible.</p>
+			<p>If the top ProgressBar were to be stretched a little more, the now invisible edges opposite each visible corner would start to show.  
+			On the other hand, if the lower ProgressBar were to be reduced, the yellow lines would start eating into the rounded inner corners and 
+			the inner contour would not blend but meet at an angle.</p>
+			<p>If we call <b>A</b> the length of the straight section of each edge and 
+			<b>B</b> the length of the section from the edge until the rounded inner corner meets the straight section so that
+			the width of the original mask is <b>A + 2 *  B</b>, we can use that image as a mask for any ProgressBar that is at
+			least <b>2 * B</b> on the side (no straight section visible) to <b>2 * A + 2 * B</b> (the straight sections are seen twice, once
+			in each contiguous cell).</p>
+			<p>Placing the mask in a regular &lt;img&gt; tag would allow for unbound stretching and shrinking by using the width and height attributes.  
+			The problem with this approach is that the definition and general appearance of the base image might be altered drastically. 
+			Lines 1px wide might become too wide or completely disappear, rounded corners will turn elliptical if stretched unevenly and
+			generally, the image will loose resolution and become distorted.</p>
+		</div>
+	</div>
+<script  type="text/javascript">
+YUI({base:"../../build/"}).use('widget','anim','progressbar',function(Y) {
+	var pb,pbplain,pbg,pbr,pbcopper,pbthin;
+
+
+
+	Y.on('event:ready', function () {
+		// This is all that is required to set up the progress bars.
+		// First you call the constructor and provide the settings for those attributes you want their defaults overridden
+		// Then you call render and tell it where it is you want it rendered.
+		// You can also create the instance, change settings explicitly (as in the second bar with the height) and then render.
+		// I've provided id's in each of the bars so that the styles above could attach to each bar separately.
+		
+		pb = new Y.ProgressBar({contentBox:'#pb',height:'30px', width: 300, barColor:'green',backColor:'orange',border:'thin solid black'});
+		pb.render();
+
+		pbplain = new Y.ProgressBar({contentBox:'#pbplain'});
+		pbplain.render();
+
+		
+		pbg = new Y.ProgressBar({contentBox:'#pbg',direction:'rl'});
+		pbg.set('height',30);
+		pbg.render();
+
+
+		pbr = new Y.ProgressBar({contentBox:'#pbr'});
+		pbr.render();
+
+
+		pbcopper = new Y.ProgressBar({contentBox:'#pbcopper',direction:'bt'});
+		pbcopper.set('anim',{
+			duration:3,
+			easing:Y.Easing.bounceBoth
+		});
+		pbcopper.render();
+		
+
+		pbthin = new Y.ProgressBar({contentBox:'#pbthin'});
+		pbthin.render();
+		
+
+		// This is meant to show how you can listen to animation events and show the numeric values of the bar as it grows or shrinks
+		var settingEl = Y.get('#setting');
+		// This one shows it while moving
+		pb.on('changingEvent',function (value) {
+			settingEl.set('innerHTML',value + ' ... moving ...');
+		});
+		// This will show at the end (even if there is no animation at all)
+		pb.on('completeEvent',function (value) {
+			settingEl.set('innerHTML', value);
+		});
+		
+		
+		Y.on('click',function() {
+			var newVal = parseInt(Y.get('#newValue').get('value'),10);
+
+			pb.set('value',newVal);
+			pbplain.set('value',newVal);
+			pbg.set('value',newVal);
+			pbr.set('value',newVal);
+			pbcopper.set('value',newVal);
+			pbthin.set('value',newVal);
+		},'#setValue');
+		
+	});
+});
+</script>
+</body>
+</html>
+	
