@@ -479,7 +479,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     el = oEl;
                 */
 
-                if (oEl && (oEl instanceof Y.Node)) {
+                if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
                     size = oEl.size();
                     if (size > 1) {
                         // args[0] = oEl;
