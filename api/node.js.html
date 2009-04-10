@@ -251,8 +251,7 @@
 
     <span class="s1">&#39;options&#39;</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;option&#39;</span><span class="o">))</span> <span class="o">:</span> <span class="o">[];</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;option&#39;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
