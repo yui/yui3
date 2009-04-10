@@ -112,7 +112,7 @@ NativeSelector = {
             for (var i = 0, query; query = queries[i++];) {
                 try {
                     result = query.root[queryName](query.selector);
-                    if (result && result.item) { // convert NodeList to Array
+                    if (queryName === 'querySelectorAll') { // convert NodeList to Array
                         result = NativeSelector._toArray(result);
                     }
                     ret = ret.concat(result);

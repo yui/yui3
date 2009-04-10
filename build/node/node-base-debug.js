@@ -204,8 +204,7 @@ Node.ATTRS = {
 
     'options': {
         getter: function() {
-            var node = g_nodes[this[UID]];
-            return (node) ? Y.all(node.getElementsByTagName('option')) : [];
+            return this.getElementsByTagName('option');
         }
     },
 
