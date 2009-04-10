@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI OOP Tests</title>
+</head>
+
+<body class="yui-skin-sam">
+<h1>OOP Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        useConsole: true,
+        // logInclude: ['event', 'test']
+        //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
+        logExclude: {Dom:true, 
+        Selector:true, Node:true, attribute:true, event:true, base:true}
+    }).use("dump", "test", "console", "event-custom", function(Y) {
+
+        var button = Y.get('#btnRun');
+
+        // Set up the page
+        button.set("disabled", false);
+        Y.on("click", function() {
+            Y.Test.Runner.run();
+        }, button);
+
+        var myConsole = new Y.Console().render();
+ 
+        var testOOP= new Y.Test.Case({
+            name: "OOP tests",
+        
+
+            testExtend: function() {
+
+                var firedbase = false;
+                var firedextended = false;
+
+                var Base = function() {
+                    Y.log('Base constructor executed');
+                    arguments.callee.superclass.constructor.apply(this, arguments);
+
+                    this.on('testStringFn', Y.bind('base', this));
+                };
+
+                Y.extend(Base, Y.Event.Target, {
+                    base: function() {
+                        Y.log('base function');
+                        firedbase = true;
+                    }
+                });
+
+                var Extended = function() {
+                    Y.log('Extended constructor executed');
+                    arguments.callee.superclass.constructor.apply(this, arguments);
+                };
+
+                Y.extend(Extended, Base, {
+                    base: function() {
+                        Y.log('extended function');
+                        firedextended = true;
+                    }
+                });
+
+                var b = new Extended();
+                b.fire('testStringFn', 1, 2);
+
+                Y.Assert.isFalse(firedbase);
+                Y.Assert.isTrue(firedextended);
+            }
+
+        });
+        
+
+        Y.Test.Runner.add(testOOP);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>
