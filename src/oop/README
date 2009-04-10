@@ -9,6 +9,10 @@ YUI OOP Utilities
     to bind are appended to the arguments collection supplied
     to the function when executed).
 
+  * bind() supports a string representing a function on the
+    context object in order to allow subclassing of bound
+    methods.
+
   * Fixed array handling in clone
 
 3.0.0pr2
