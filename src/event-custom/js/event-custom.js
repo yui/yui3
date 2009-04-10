@@ -423,9 +423,9 @@ Y.CustomEvent.prototype = {
         return this.detach.apply(this, arguments);
     },
 
-    _getFacade: function(args) {
+    _getFacade: function() {
 
-        var ef = this._facade, o;
+        var ef = this._facade, o, args = this.details;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -435,7 +435,8 @@ Y.CustomEvent.prototype = {
         // properties to the event facade
         o = args && args[0];
 
-        if (Y.Lang.isObject(o, true) && !o._yuifacade) {
+        // if (Y.Lang.isObject(o, true) && !o._yuifacade) {
+        if (Y.Lang.isObject(o, true)) {
             Y.mix(ef, o, true);
         }
 
