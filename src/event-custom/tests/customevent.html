@@ -182,7 +182,8 @@
                     fired2 = true;
                 });
 
-                Y.on('handle, test:event', function() {
+                // comma or pipe
+                Y.on('handle|test:event', function() {
                     Y.Assert.isFalse(fired2);
                     fired1 = true;
                 });

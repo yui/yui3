@@ -65,7 +65,7 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        parts = t.split(/,\s*/);
+        parts = t.split(/[,|]\s*/);
 
         if (parts.length > 1) {
             detachkey = parts[0];
