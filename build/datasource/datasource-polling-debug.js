@@ -82,6 +82,19 @@ Pollable.prototype = {
                 clearInterval(id);
             }
         }
+    },
+
+    /**
+     * Clears all intervals.
+     *
+     * @method clearAllIntervals
+     */
+    clearAllIntervals: function() {
+        for(var i = tracker.length-1; i>-1; i--) {
+            clearInterval(id);
+        }
+        
+        this._intervals = []
     }
 };
     
