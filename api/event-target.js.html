@@ -114,7 +114,7 @@
             <span class="c">// Y.log(t);</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="sr">/,\s*/</span><span class="o">);</span>
+        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="sr">/[,|]\s*/</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">detachkey</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
