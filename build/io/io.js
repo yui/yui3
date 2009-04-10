@@ -1381,7 +1381,7 @@ YUI.add('io-queue', function(Y) {
 	_queue.purge = _purge;
 
     Y.mix(Y.io, {
-		queue: _queue,
+		queue: _queue
     }, true);
 
 
