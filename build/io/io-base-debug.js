@@ -436,7 +436,7 @@ YUI.add('io-base', function(Y) {
 
    		if (c.on.end) {
    			event = _tPubSub('end', c);
-   			event.fire(o.id, c);
+   			event.fire(o.id);
    		}
 
    		_destroy(o, (c.xdr) ? true : false );
