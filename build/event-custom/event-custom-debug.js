@@ -1233,8 +1233,8 @@ Y.Subscriber.prototype = {
  */
 
 /**
- * Event.Target is designed to be used with Y.augment to wrap 
- * Event.Custom in an interface that allows events to be subscribed to 
+ * EventTarget is designed to be used with Y.augment to wrap 
+ * EventCustom in an interface that allows events to be listened to 
  * and fired by name.  This makes it possible for implementing code to
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
@@ -1304,7 +1304,17 @@ var L = Y.Lang,
         return [detachkey, t, after];
     },
 
-    ET = function(opts) { 
+    /**
+     * An event target can fire events and be targeted by events.
+     * @class EventTarget
+     * @param opts a configuration object
+     * @config emitFacade {boolean} if true, all events will emit event 
+     * facade payloads by default (default false)
+     * @config prefix {string} the prefix to apply to non-prefixed event names 
+     * @config chain {boolean} if true, on/after/detach return the host to allow 
+     * chaining, otherwise they return an EventHandle (default false)
+     */
+    ET = function(opts) {
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
@@ -1341,6 +1351,7 @@ ET.prototype = {
      * @param fn {Function} The callback
      * @param context The execution context
      * @param args* 0..n params to supply to the callback
+     * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
 
@@ -1797,6 +1808,7 @@ ET.prototype = {
      * @param fn {Function} The callback
      * @param context The execution context
      * @param args* 0..n params to supply to the callback
+     * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
 
