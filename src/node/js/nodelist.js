@@ -319,6 +319,6 @@ Y.all = function(nodes, doc, restrict) {
     });
 
     // zero-length result returns null
-    return nodeList.size() ? nodeList : null;
+    return nodeList;
 };
 Y.Node.all = Y.all; // TODO: deprecated

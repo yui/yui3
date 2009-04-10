@@ -88,14 +88,11 @@ package com.yui.util
 		};
 
 		private function removeListeners(id:uint):void  {
-			var loader:URLLoader = loaderMap[id].c,
-				timer:Timer = loaderMap[id].t;
+			loaderMap[id].c.removeEventListener(Event.COMPLETE, httpComplete);
+			loaderMap[id].c.removeEventListener(IOErrorEvent.IO_ERROR, httpError);
 
-			loader.removeEventListener(Event.COMPLETE, httpComplete);
-			loader.removeEventListener(IOErrorEvent.IO_ERROR, httpError);
-
-			if (timer) {
-				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
+			if (loaderMap[id].t) {
+				loaderMap[id].t.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
 		};
 
@@ -123,11 +120,11 @@ package com.yui.util
 
 		private function ioFailure(e:Event, d:Object, timer:Timer):void {
 			var data:String,
-				response:Object = { id: d.id, c: { responseText: data } },
+				response:Object = { id: d.id, c: {} },
 				a:Array = [response, d.cfg];
 
 			if (e is IOErrorEvent) {
-				data = encodeURI(e.target.data);
+				response.c.responseText = encodeURI(e.target.data);
 			}
 			else if (e is TimerEvent) {
 				response.status = 'timeout';
@@ -145,19 +142,17 @@ package com.yui.util
 
 		private function ioTimeout(e:TimerEvent, d:Object):void {
 			loaderMap[d.id].c.close();
-			loaderMap[d.id].status = 'timeout';
 			ioFailure(e, d, null);
 		};
 
 		public function ioAbort(id:uint, c:Object):void {
-			var t:Timer = loaderMap[id].t,
-				response:Object = { id: id, c: { statusText: 'abort' } },
+			var response:Object = { id: id, c: { statusText: 'abort' } },
 				a:Array = [response, c];
 
 			loaderMap[id].c.close();
 
-			if (t && t.running) {
-				t.stop();
+			if (loaderMap[id].t && loaderMap[id].t.running) {
+				loaderMap[id].t;
 			}
 
 			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);

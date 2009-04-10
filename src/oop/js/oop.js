@@ -258,7 +258,8 @@
      * supplied to the function.
      *
      * @method bind
-     * @param f {Function} the function to bind
+     * @param f {Function|String} the function to bind, or a function name
+     * to execute on the context object
      * @param c the execution context
      * @param args* 0..n arguments to include before the arguments the 
      * function is executed with.
@@ -267,7 +268,8 @@
     Y.bind = function(f, c) {
         var a = Y.Array(arguments, 2, true);
         return function () {
-            return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+            var fn = L.isString(f) ? c[f] : f;
+            return fn.apply(c || fn, a.concat(Y.Array(arguments, 0, true)));
         };
     };
     
@@ -278,7 +280,8 @@
      * is executed with.
      *
      * @method rbind
-     * @param f {Function} the function to bind
+     * @param f {Function|String} the function to bind, or a function name
+     * to execute on the context object
      * @param c the execution context
      * @param args* 0..n arguments to append to the end of arguments collection
      * supplied to the function
@@ -287,7 +290,8 @@
     Y.rbind = function(f, c) {
         var a = Y.Array(arguments, 2, true);
         return function () {
-            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
+            var fn = L.isString(f) ? c[f] : f;
+            return fn.apply(c || fn, Y.Array(arguments, 0, true).concat(a));
         };
     };
 

@@ -204,8 +204,7 @@ Node.ATTRS = {
 
     'options': {
         getter: function() {
-            var node = g_nodes[this[UID]];
-            return (node) ? Y.all(node.getElementsByTagName('option')) : [];
+            return this.getElementsByTagName('option');
         }
     },
 
@@ -1017,7 +1016,7 @@ Y.all = function(nodes, doc, restrict) {
     });
 
     // zero-length result returns null
-    return nodeList.size() ? nodeList : null;
+    return nodeList;
 };
 Y.Node.all = Y.all; // TODO: deprecated
 /**

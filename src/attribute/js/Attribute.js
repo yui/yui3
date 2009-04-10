@@ -277,18 +277,20 @@
                 name = path.shift();
             }
 
+            // TODO: Performance pass - prevent allowSet fallthrough
             if (!initialSet && !force) {
                 if (conf.get(name, WRITE_ONCE)) {
-                    Y.log('set ' + name + ' failed; Attribute is writeOnce', 'info', 'attribute');
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                     allowSet = false;
                 }
                 if (conf.get(name, READ_ONLY)) {
-                    Y.log('set ' + name + ' failed; Attribute is readOnly', 'info', 'attribute');
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                     allowSet = false;
                 }
             }
+
             if (!conf.get(name)) {
-                Y.log('set ' + name + ' failed; Attribute is not configured', 'info', 'attribute');
+                Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
                 allowSet = false;
             }
 
@@ -298,7 +300,7 @@
                val = O.setValue(Y.clone(currVal), path, val);
 
                if (val === undefined) {
-                   Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'attribute');
+                   Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
                    allowSet = false;
                }
             }
@@ -368,17 +370,19 @@
                     retVal = setFn.call(this, val);
                     if (retVal === INVALID_VALUE) {
                         allowSet = false;
+                        Y.log('Attribute: ' + name + ', setter returned Attribute.INVALID_VALUE for value:' + val, 'warn', 'attribute');
                     } else if (retVal !== undefined){
-                        Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
+                        Y.log('Attribute: ' + name + ', raw value: ' + val + ' modified by setter to:' + retVal, 'info', 'attribute');
                         val = retVal;
                     }
                 }
             } else {
+                Y.log('Attribute:' + name + ', Validation failed for value:' + val, 'warn', 'attribute');
                 allowSet = false;
             }
 
             if (!e.subAttrName && val === e.prevVal) {
-                Y.log('attribute: ' + name + ' after listeners not invoked. Value unchanged:' + val, 'info', 'attribute');
+                Y.log('Attribute: ' + name + ', value unchanged:' + val, 'warn', 'attribute');
                 allowSet = false;
             }
 
@@ -393,7 +397,7 @@
                 // Honor set normalization
                 e.newVal = conf.get(name, VALUE);
             } else {
-                Y.log('Validation failed or setter returned Attribute.INVALID_VALUE. State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
+                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
                 // Prevent "after" listeners from being 
                 // invoked since nothing changed.

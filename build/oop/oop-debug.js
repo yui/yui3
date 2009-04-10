@@ -269,7 +269,8 @@ YUI.add('oop', function(Y) {
     Y.bind = function(f, c) {
         var a = Y.Array(arguments, 2, true);
         return function () {
-            return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+            var fn = L.isString(f) ? c[f] : f;
+            return fn.apply(c || fn, a.concat(Y.Array(arguments, 0, true)));
         };
     };
     
@@ -289,7 +290,8 @@ YUI.add('oop', function(Y) {
     Y.rbind = function(f, c) {
         var a = Y.Array(arguments, 2, true);
         return function () {
-            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
+            var fn = L.isString(f) ? c[f] : f;
+            return fn.apply(c || fn, Y.Array(arguments, 0, true).concat(a));
         };
     };
 

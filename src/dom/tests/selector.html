@@ -10,7 +10,7 @@
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
 <script type="text/javascript" src="../../../build/dom/selector-css3.js"></script>
 <script type="text/javascript" src="../../../build/base/base-debug.js"></script>
 <script type="text/javascript" src="../../../build/attribute/attribute-debug.js"></script>
@@ -173,6 +173,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual($('.not-button', Y.DOM.byId('test-inputs')), $('input:not([type=button])', Y.DOM.byId('test-inputs')), 'input[type=radio], input[type=checkbox] = input:not([type=button])');
                 //ArrayAssert.itemsAreEqual(Y.Dom.get('demo2').getElementsByTagName('div'), $('div:contains(child of demo2)', Y.DOM.byId('demo2')), 'div:contains:(child of demo2) ');
                 //Assert.areEqual(document.getElementById('contains-special'), $(':contains(contains "\' & ])'), 'contains "\' & ]');
+                Assert.areEqual(Y.DOM.byId('test-select'), $('#test-select', null, true), "($('#test-select'), null, true)");
             }
         });
 
@@ -308,6 +309,11 @@ onload = function() {
 
     <div id="empty"></div>
 
+    <select id="test-select" name="test-select"> 
+        <option value="0">foo</option> 
+        <option value="1">bar</option> 
+        <option>baz</option> 
+    </select> 
     <div id="root-test">
         <ol id="nth-test">
             <li class="odd three-1 four-1">foo</li>

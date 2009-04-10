@@ -307,7 +307,8 @@
 <span class="c">     * supplied to the function.</span>
 <span class="c">     *</span>
 <span class="c">     * @method bind</span>
-<span class="c">     * @param f {Function} the function to bind</span>
+<span class="c">     * @param f {Function|String} the function to bind, or a function name</span>
+<span class="c">     * to execute on the context object</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to include before the arguments the </span>
 <span class="c">     * function is executed with.</span>
@@ -316,7 +317,8 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">a</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">)));</span>
+            <span class="k">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">[</span><span class="nx">f</span><span class="o">]</span> <span class="o">:</span> <span class="nx">f</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">a</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">)));</span>
         <span class="o">};</span>
     <span class="o">};</span>
     
@@ -327,7 +329,8 @@
 <span class="c">     * is executed with.</span>
 <span class="c">     *</span>
 <span class="c">     * @method rbind</span>
-<span class="c">     * @param f {Function} the function to bind</span>
+<span class="c">     * @param f {Function|String} the function to bind, or a function name</span>
+<span class="c">     * to execute on the context object</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to append to the end of arguments collection</span>
 <span class="c">     * supplied to the function</span>
@@ -336,7 +339,8 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
+            <span class="k">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">[</span><span class="nx">f</span><span class="o">]</span> <span class="o">:</span> <span class="nx">f</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
         <span class="o">};</span>
     <span class="o">};</span>
 </pre></div>

@@ -11,6 +11,8 @@
 <script type="text/javascript" src="../../../build/event/event.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
+<script type="text/javascript" src="../../../build/base/base.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
@@ -161,15 +163,15 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
             },           
 
             test_childrenByTag: function() {
-                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(tmp), 'childrenByTag(tmp)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(null), 'childrenByTag(null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(null, null), 'childrenByTag(null, null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM.childrenByTag(), 'childrenByTag()');
+                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(tmp), '_childrenByTag(tmp)');
+                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(null), '_childrenByTag(null)');
+                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(null, null), '_childrenByTag(null, null)');
+                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(), '_childrenByTag()');
 
-                ArrayAssert.itemsAreEqual([lorem], Y.DOM.childrenByTag(main, 'em'), 'children(main, "em")');
-                ArrayAssert.itemsAreEqual([search_p], Y.DOM.childrenByTag(search_fields, 'input', function(node) {
+                ArrayAssert.itemsAreEqual([lorem], Y.DOM._childrenByTag(main, 'em'), 'children(main, "em")');
+                ArrayAssert.itemsAreEqual([search_p], Y.DOM._childrenByTag(search_fields, 'input', function(node) {
                     return node.type === 'text';
-                },'childrenByTag(main, "input", fn)'));
+                },'_childrenByTag(main, "input", fn)'));
             },            
 
             test_getStyle: function() {
