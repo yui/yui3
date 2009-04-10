@@ -233,9 +233,6 @@ Y.extend(DSLocal, Y.Base, {
      * @protected
      */
     _defRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var data = this.get("source");
         
         // Problematic data
@@ -451,9 +448,6 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      * @protected
      */
     _defRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var uri = this.get("source"),
             cfg = {
                 on: {
@@ -565,9 +559,6 @@ Y.extend(DataSourceCache, Y.Cache, {
      * @protected
      */
     _beforeDefRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
@@ -706,9 +697,6 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var response = (this.get("parser").parse(this.get("schema"), e.data));
         if(!response) {
             response = {
