@@ -53,7 +53,7 @@ YUI.add('plugin', function(Y) {
                 if (config.owner) {
                     this._owner = config.owner;
                 } else {
-                    Y.log('no owner defined for plugin ' + this, 'error', 'Plugin');
+                    Y.log('no owner defined for plugin ' + this, 'warn', 'Plugin');
                 }
 
                 this._handles = [];
