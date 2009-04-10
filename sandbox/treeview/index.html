@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>TreeView</title>
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssgrids/grids-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/widget/assets/skins/sam/widget.css" />
+<!-- JS -->
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../src/treeview/assets/skins/sam/treeview-skin.css">
+<script type="text/javascript" src="../../build/treeview/treeview-debug.js"></script>
+				
+<style type="text/css">
+
+</style>
+</head>
+<body class="yui-skin-sam">
+	<div class="yui-d1"> 
+		<div id="hd">
+			<h1>TreeView</h1>
+
+		</div>
+		<div id="bd" class="pepe">
+		</div>
+	</div>
+<script  type="text/javascript">
+YUI({combine:false,filter:'debug', base:"../../build/", debug:true, useBrowserConsole:false}).use('widget','treeview','test','console',function(Y) {
+
+	
+	var tv, PARENT 		= 'parent',
+			PREVIOUS	= 'previousSibling',
+			NEXT 		= 'nextSibling',
+			ROOT		= 'root',
+			A = Y.Assert;
+
+	Y.on('event:ready', function () {
+
+		var yconsole = new Y.Console(); 
+		yconsole.render(); 
+		
+		var rel = function (tv,msg) {
+			console.log('---------'+msg+'-------------');
+			console.log('me',tv);
+			console.log(PARENT,tv._conf.data.value.parent);
+			console.log(ROOT,tv._conf.data.value.root);
+			console.log(PREVIOUS,tv._conf.data.value.previousSibling);
+			console.log(NEXT,tv._conf.data.value.nextSibling);
+			console.log('children',tv._children);
+		}
+
+		var testCase = new Y.Test.Case({
+
+			name: 'Relationships',
+			setUp:function() {
+				console.log('setUp');
+				tv = new Y.TreeNode();
+			},
+			tearDown :function() {
+				console.log('tearDown');
+				tv.destroy();
+				Y.get('#bd').set('innerHTML','');
+			},
+			testSingleNode: function () {
+				console.log('testSingleNode');
+				tv.set('content','testSingleNode');
+				tv.render('#bd');
+				A.isInstanceOf(Y.TreeNode,tv,'tv should be a TreeNode');
+				A.isNull(tv.get(PARENT),'parent should be null');
+				A.areSame(tv,tv.get(ROOT),'root should be its own root');
+				A.isNull(tv.get(NEXT),'tree should have no next sibling');
+				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
+				A.isArray(tv._children,'children should be an array');
+				A.areEqual(tv._children.length,0,'children should contain zero elements');
+			},
+			testFatherChild:function() {
+				console.log('testFatherChild');
+				tv.set('content','testFatherChild');
+				var tn = new Y.TreeNode({parent:tv});
+				tv.render('#bd');
+				A.isInstanceOf(Y.TreeNode,tv,'tv should be a TreeNode');
+				A.isNull(tv.get(PARENT),'parent should be null');
+				A.areSame(tv,tv.get(ROOT),'root should be its own root');
+				A.isNull(tv.get(NEXT),'tree should have no next sibling');
+				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
+				A.isArray(tv._children,'children should be an array');
+				A.areEqual(tv._children.length,1,'children should contain one element');
+				A.areSame(tv._children[0],tn,'tv should have tn as child');
+				
+				A.isInstanceOf(Y.TreeNode,tn,'tn should be a TreeNode');
+				A.areSame(tn.get(PARENT),tv,'parent should be null');
+				A.areSame(tv,tn.get(ROOT),'root should be its parent');
+				A.isNull(tn.get(NEXT),'tree should have no next sibling');
+				A.isNull(tn.get(PREVIOUS),'tree should have no previous sibling');
+				A.isArray(tn._children,'children should be an array');
+				A.areEqual(tn._children.length,0,'children should contain no elements');
+			},
+			testFatherWithChildAdded:function() {
+				console.log('testFatherWithChildAdded');
+				tv.set('content','testFatherWithChildAdded');
+				tv.render('#bd');
+				var tn = new Y.TreeNode({parent:tv});
+				A.isInstanceOf(Y.TreeNode,tv,'tv should be a TreeNode');
+				A.isNull(tv.get(PARENT),'parent should be null');
+				A.areSame(tv,tv.get(ROOT),'root should be its own root');
+				A.isNull(tv.get(NEXT),'tree should have no next sibling');
+				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
+				A.isArray(tv._children,'children should be an array');
+				A.areEqual(tv._children.length,1,'children should contain one element');
+				A.areSame(tv._children[0],tn,'tv should have tn as child');
+				
+				A.isInstanceOf(Y.TreeNode,tn,'tn should be a TreeNode');
+				A.areSame(tn.get(PARENT),tv,'parent should be null');
+				A.areSame(tv,tn.get(ROOT),'root should be its parent');
+				A.isNull(tn.get(NEXT),'tree should have no next sibling');
+				A.isNull(tn.get(PREVIOUS),'tree should have no previous sibling');
+				A.isArray(tn._children,'children should be an array');
+				A.areEqual(tn._children.length,0,'children should contain no elements');
+			},
+			testAddingBySibling:function() {
+				console.log('testAddingBySibling');
+				tv.set('content','testAddingBySibling');
+				var t1 = new Y.TreeNode({parent:tv});
+				var t2 = new Y.TreeNode({nextSibling:t1});
+				var t3 = new Y.TreeNode({previousSibling:t1});
+				tv.render('#bd');
+				
+				A.areSame(t2,t1.get(PREVIOUS),'t2 should be previous to t1');
+				A.areSame(t3,t1.get(NEXT),'t1 should be previous to t3');
+				A.areEqual(tv._children.length,3,'tree should have three branches');
+				A.areSame(tv._children[0],t2,'t2 should be the first');
+				A.areSame(tv._children[1],t1,'t1 should be in the middle');
+				A.areSame(tv._children[2],t3,'t3 should be the last');
+				
+				A.areSame(t1.get(PARENT),tv,'tv should be parent of t1');
+				A.areSame(t1.get(ROOT),tv,'tv should be the root of t1');
+				A.areSame(t2.get(PARENT),tv,'tv should be parent of t2');
+				A.areSame(t2.get(ROOT),tv,'tv should be the root of t2');
+				A.areSame(t3.get(PARENT),tv,'tv should be parent of t3');
+				A.areSame(t3.get(ROOT),tv,'tv should be the root of t3');
+			},
+			testMoveNode: function () {
+				console.log('testMoveNode');
+				tv.set('content','testMoveNode');
+				var t1 = new Y.TreeNode({parent:tv, content:'t1'});
+				var t2 = new Y.TreeNode({previousSibling:t1, content:'t2'});
+				var t3 = new Y.TreeNode({previousSibling:t2, content:'t3'});
+				tv.render('#bd');
+				A.areSame(tv._children[0],t1,'t1 should be the first');
+				A.areSame(tv._children[1],t2,'t2 should be in the middle');
+				A.areSame(tv._children[2],t3,'t3 should be the last');
+
+				t2.set(PARENT,t1);
+	
+				A.areSame(tv._children[0],t1,'t1 should be the first');
+				A.areSame(tv._children[1],t3,'t3 should be in the middle');
+				A.areSame(t1._children[0],t2,'t2 should be the last');
+			}
+
+		});
+		Y.Test.Runner.add(testCase);
+if (true) {
+		Y.Test.Runner.run();
+} else {	
+		Y.log('first root node');
+		tv = new Y.TreeNode({content:'prueba'});
+		tv.set('content','testMoveNode');
+		tv.render('#bd');
+		var t1 = new Y.TreeNode({parent:tv, content:'t1'});
+		var t2 = new Y.TreeNode({content:'t2'});
+		t2.set(PREVIOUS,t1);
+		var t3 = new Y.TreeNode({content:'t3'});
+		t3.set(PREVIOUS,t2);
+		/*
+		rel(tv,'tv');
+		rel(t1,'t1');
+		rel(t2,'t2');
+		rel(t3,'t3');
+		*/
+//		t2.set(PARENT,t1);
+		/*
+		rel(tv,'tv');
+		rel(t1,'t1');
+		rel(t2,'t2');
+		rel(t3,'t3');
+		*/
+		tv.destroy();
+}
+		
+	});
+});
+</script>
+</body>
+</html>
+	
