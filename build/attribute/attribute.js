@@ -99,6 +99,7 @@ YUI.add('attribute', function(Y) {
             }
         }
     };
+
     /**
      * Managed Attribute Provider
      * @module attribute
@@ -374,6 +375,7 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
+            // TODO: Performance pass - prevent allowSet fallthrough
             if (!initialSet && !force) {
                 if (conf.get(name, WRITE_ONCE)) {
                     allowSet = false;
@@ -382,6 +384,7 @@ YUI.add('attribute', function(Y) {
                     allowSet = false;
                 }
             }
+
             if (!conf.get(name)) {
                 allowSet = false;
             }
@@ -663,6 +666,7 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, EventTarget, false, null, 1);
 
     Y.Attribute = Attribute;
+
 
 
 }, '@VERSION@' ,{requires:['event-custom']});
