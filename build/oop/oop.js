@@ -256,7 +256,8 @@ YUI.add('oop', function(Y) {
      * supplied to the function.
      *
      * @method bind
-     * @param f {Function} the function to bind
+     * @param f {Function|String} the function to bind, or a function name
+     * to execute on the context object
      * @param c the execution context
      * @param args* 0..n arguments to include before the arguments the 
      * function is executed with.
@@ -277,7 +278,8 @@ YUI.add('oop', function(Y) {
      * is executed with.
      *
      * @method rbind
-     * @param f {Function} the function to bind
+     * @param f {Function|String} the function to bind, or a function name
+     * to execute on the context object
      * @param c the execution context
      * @param args* 0..n arguments to append to the end of arguments collection
      * supplied to the function

@@ -17,7 +17,7 @@
         filter: "debug",
         useConsole: true,
         // logInclude: ['event', 'test']
-        // logExclude: ['Dom', 'Selector', 'Node']
+        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.get('#btnRun');
@@ -182,7 +182,8 @@
                     fired2 = true;
                 });
 
-                Y.on('handle, test:event', function() {
+                // comma or pipe
+                Y.on('handle|test:event', function() {
                     Y.Assert.isFalse(fired2);
                     fired1 = true;
                 });

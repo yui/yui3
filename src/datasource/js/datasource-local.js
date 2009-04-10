@@ -231,9 +231,6 @@ Y.extend(DSLocal, Y.Base, {
      * @protected
      */
     _defRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var data = this.get("source");
         
         // Problematic data

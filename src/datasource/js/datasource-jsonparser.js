@@ -87,9 +87,6 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var response = (this.get("parser").parse(this.get("schema"), e.data));
         if(!response) {
             response = {

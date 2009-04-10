@@ -45,6 +45,7 @@
                     Y.log('Base constructor executed');
                     arguments.callee.superclass.constructor.apply(this, arguments);
 
+                    // bind by string in order to allow the subclass
                     this.on('testStringFn', Y.bind('base', this));
                 };
 

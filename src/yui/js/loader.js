@@ -384,7 +384,15 @@ var BASE = 'base',
         profiler: { },
 
         queue: {
-            requires: ['node']
+            submodules: {
+                'queue-base': {}
+            },
+            plugins: {
+                'queue-io': {
+                    requires: ['io-base']
+                }
+            }, 
+            requires: ['event-custom']
         },
 
         slider: {

@@ -132,13 +132,13 @@ property names rather than e.details[1]
 
     o1.addTarget(o2);
 
-    o2.addTarget(o3);
+    // o2.addTarget(o3);
 
     o1.on('o:1', function(e) {
         // Y.log('o1, o:1: ' + Y.Lang.dump(Y.Array(arguments)));
         // Y.log('o1, o:1: ');
         Y.log('o1, o:1 O1 TARGET: ' + Y.Lang.dump(e.target.id));
-        this.fire('chain', 1, 2);
+        // this.fire('chain', 1, 2);
         // e.halt();
     });
 
@@ -160,6 +160,12 @@ property names rather than e.details[1]
 
     o2.on('chain', function(e) {
         Y.log('o2, chain from o1: ' + Y.Lang.dump(Y.Array(arguments)));
+    });
+
+    o2.after('o:1', function(e) {
+        // Y.log('AFTER o1, o:1: ' + Y.Lang.dump(Y.Array(arguments)));
+        Y.log('AFTER o2, o:1 from o1: ');
+        // e.halt();
     });
 
 

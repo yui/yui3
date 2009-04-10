@@ -78,7 +78,9 @@ Node.DOM_EVENTS = {
     'focus': true,
     'blur': true,
     'submit': true,
-    'change': true
+    'change': true,
+    'error': true,
+    'load': true
 };
 
 Node._instances = {};
