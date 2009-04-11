@@ -335,7 +335,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     el = oEl;
                 */
 
-                if (oEl && (oEl instanceof Y.Node)) {
+                if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
                     size = oEl.size();
                     if (size > 1) {
                         // Y.log('more than one: ' + size + ', ' + type);

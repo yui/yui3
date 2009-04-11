@@ -104,9 +104,6 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      * @protected
      */
     _defRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         var uri = this.get("source"),
             cfg = {
                 on: {

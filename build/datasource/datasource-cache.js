@@ -77,9 +77,6 @@ Y.extend(DataSourceCache, Y.Cache, {
      * @protected
      */
     _beforeDefRequestFn: function(e) {
-        // TODO: Remove temporary workaround for bug #2527838
-        e._yuifacade = false;
-
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
