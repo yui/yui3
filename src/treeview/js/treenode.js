@@ -5,8 +5,9 @@
  */
 var TREENODE = 'treenode',
 
-	CONTENT_BOX = 'contentBox',
+	CONTENT_BOX  = 'contentBox',
 	BOUNDING_BOX = 'boundingBox',
+	RENDERED	 = 'rendered',
 	
 	NOT_HIGHLIGHTED =      0,
 	HIGHLIGHTED =          1,
@@ -105,10 +106,9 @@ Y.mix(TreeNode,{
     ATTRS : {
 		children: {
 			readOnly:true,
-			get: function() {
-				return this._children;
-			},
-			clone: Y.Attribute.CLONE.DEEP
+			getter: function() {
+				return Y.mix({},this._children);
+			}
 		},
 		dataLoader: {
 			value: null
@@ -164,7 +164,7 @@ Y.mix(TreeNode,{
 			validator: function (value) {
 				return this._contentValidator(value);
 			},
-			set: function (value) {
+			setter: function (value) {
 				return this._contentSetter(value);
 			}
 		},
@@ -183,122 +183,19 @@ Y.extend(TreeNode,Y.Widget,{
 	
 	initializer: function (config) {
 		Y.log('initializer [' + this + ']');
-		var parent, siblings, previous, next, i;
-
 		this._children = [];
-		
 		config = config || {};
-		if (PARENT in config) {
-			parent = config[PARENT];
-			siblings = parent._children;
-			if (siblings.length) {
-				previous = siblings[siblings.length -1];
-				previous._dontPropagate = true;
-				previous.set(NEXT, this);
-				previous._dontPropagate = false;
-				this.set(PREVIOUS, previous);
-			}
-			siblings.push(this);
-			this.set(PARENT,parent);
-		}
-		if (NEXT in config) {
-			next = config[NEXT];
-			this.set(NEXT,next);
-			if (parent) {
-				if (next.get(PARENT)) {
-					if (next.get(PARENT) !== parent) {
-						Y.error('Next Sibling has a diferent parent');
-						return false;
-					}
-				} else {
-					next._dontPropagate = true;
-					next.set(PARENT,parent);
-					next._dontPropagate = false;
-					siblings.push(next);
-				}
-			} else {
-				if (next.get(PARENT)) {
-					parent = next.get(PARENT);
-					siblings = parent._children;
-					for (i = 0;i < siblings.length;i++){
-						if (next === siblings[i]) {
-							siblings.splice(i,0,this);
-							break;
-						}
-					}
-					if (i === siblings.length) {
-						Y.error('Position of nextSibling amongst parent children not found');
-					}
-					this.set(PARENT,parent);
-				}
-			}
-			previous = next.get(PREVIOUS);
-			if (previous) {
-				this.set(PREVIOUS,previous);
-				previous._dontPropagate = true;
-				previous.set(NEXT,this);
-				previous._dontPropagate = false;
 
-			}
-
-			next._dontPropagate = true;
-			next.set(PREVIOUS,this);
-			next._dontPropagate = false;
-		}
-		if (PREVIOUS in config) {
-			if (previous) {
-				if (previous !== config[PREVIOUS]) {
-					Y.error('Inconsistent siblings for node');
-				}
-			} else {
-				previous = config[PREVIOUS];
-				this.set(PREVIOUS,previous);
-				if (parent) {
-					if (parent !== previous.get(PARENT)) {
-						Y.error('Previous Sibling has a diferent parent');
-					}
-				} else {
-					parent = previous.get(PARENT);
-					siblings = parent._children;
-					for (i = 0; i < siblings.length;i++){
-						if (previous === siblings[i]) {
-							siblings.splice(i+1,0,this);
-							break;
-						}
-					}
-					if (i === siblings.length) {
-						Y.error('Position of previousSibling amongst parent children not found');
-					}
-					this.set(PARENT,parent);
-				}
-						
-				if (next) {
-					if (next !== previous.get(NEXT)) {
-						Y.error('Inconsistent siblings for node');
-					} 
-				} else {
-					next = previous.get(NEXT);
-					if (next) {
-						next._dontPropagate = true;
-						next.set(PREVIOUS,this);
-						next._dontPropagate = false;
-						this.set(NEXT,next);
-					}
-				} 
-				//debugger;
-				previous._dontPropagate = true;
-				previous.set(NEXT,this);
-				previous._dontPropagate = false;
-				//debugger;
-			}
-		}
 		
-		this._findRoot();
+		this.on('parentChange',     	this._doWhenNotSilent,this,  this._onParentChange);
+		this.on('nextSiblingChange',   	this._doWhenNotSilent,this,  this._onNextSiblingChange);
+		this.on('previousSiblingChange',this._doWhenNotSilent,this,  this._onPreviousSiblingChange);	
 		
-		this.after('parentChange',    this._afterParentChange);
-		this.after('nextSiblingChange',    this._afterNextSiblingChange);
-		this.after('previousSiblingChange',    this._afterPreviousSiblingChange);	
 		this.after('contentChange',    this._afterContentChange);	
+
+		this.setAttrs(config);
+
+		this._findRoot();
 	},
 	destructor: function () {
 		for (var i = 0;i < this._children.length;i++) {
@@ -380,7 +277,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	
 	_contentValidator:function(value) {
-		return !Y.Lang.isUndefined(value);
+		return value === null || value instanceof Y.Node || (value.nodeType && value.nodeType == 1) ||  Y.Lang.isString(value);
 	},
 	_contentSetter: function(value) {
 		switch(true) {
@@ -405,96 +302,142 @@ Y.extend(TreeNode,Y.Widget,{
 			container.appendChild(newContent);
 		}
 	},
-		
 	
-	_afterParentChange : function(e) {
-		if (this._dontPropagate) { return;}
-		this._dontPropagate = true;
-		var node = e.newVal;
-		//if (this.get(PARENT) !== node) {
-			Y.log('setting parent [' + node + '] of  [' + this  + ']');
-			var oldParent = this.get('parent');
-			if (oldParent) {
-				oldParent.removeChild(node);
+	_detach:  function(newParent) {
+		var parent = this.get(PARENT), found = false;
+		if (parent && parent !== newParent) {
+			var siblings = parent._children;
+			for (var i = 0; i < siblings.length;i++) {
+				if (this === siblings[i]) {
+					siblings.splice(i,1);
+					found = true;
+					break;
+				}
 			}
-			if (node) {
-			node.insertChild(this);
+			if (!found && siblings.length) {
+				Y.error(Y.substitute('I [{me}] was already an orphan!',{me:this}));
 			}
-		/*} else {
-			this._dontPropagate = false;
-			return false;
-			//debugger;
-		}*/
-		this._dontPropagate = false;
+		}
+		var next = this.get(NEXT),
+			previous = this.get(PREVIOUS);
+		if (next) {
+			next.set(PREVIOUS, previous);
+		}
+		if (previous) {
+			previous.set(NEXT,next);
+		}			
 	},
-	_afterNextSiblingChange : function(e) {
-		if (this._dontPropagate) { return;}
-		this._dontPropagate = true;
-		var node = e.newVal;
-		//if (this.get(NEXT) !== node) {
-			Y.log('setting next sibling [' + node + '] to  [' + this  + ']');
-			var oldParent = this.get(PARENT);
-			var newParent = node && node.get(PARENT);
-			if (oldParent) {
-				oldParent.removeChild(node);
-			}
-			if (newParent) {
-				newParent.insertChild(this,node);
-			} else {
-			}
-		/*} else {
-			this._dontPropagate = false;
-			return false;
-			//debugger;
-		}*/
-		this._dontPropagate = false;
+	
+	_doWhenNotSilent : function(ev,f) {
+		var root = this.get(ROOT);
+		if (!root || root._silent) { return; }
+		root._silent = true;
+		f.call(this,ev);
+		root._silent = false;
 	},
-	_afterPreviousSiblingChange : function(e) {
-		if (this._dontPropagate) { return;}
-		this._dontPropagate = true;
-		var node = e.newVal;
-		//if (this.get(PREVIOUS) !== node) {
-			Y.log('setting previous sibling [' + node + '] to  [' + this  + ']');
-			var oldParent = this.get(PARENT);
-			if (oldParent) {
-				oldParent.removeChild(node);
-			}
-			var newParent = node && node.get(PARENT);
+	
+	_onParentChange : function(e) {
+		var newParent = e.newVal;
+		Y.log('setting parent [' + newParent + '] of  [' + this  + ']');
+		this._detach(newParent);
+		if (newParent) {
+			this.set(NEXT,null);
+			var siblings = newParent._children;
+			this.set(PREVIOUS,siblings[siblings.length -1]);
+			siblings.push(this);
+		}
+		if (this.get(RENDERED)) {
+			this._move();
+		}
+	},
+	_onNextSiblingChange : function(e) {
+		var next = e.newVal;
+		Y.log('setting next sibling [' + next + '] to  [' + this  + ']');
+		var newParent = next && next.get(PARENT);
+		this._detach(newParent);
+		if (next) {
 			if (newParent) {
-				newParent.insertChild(this,node.get(NEXT));
-			} else {
+				var siblings = newParent._children, found = false;
+				for (var i = 0;i < siblings.length;i++){
+					if (next === siblings[i]) {
+						siblings.splice(i,0,this);
+						found = true;
+						break;
+					}
+				}
+				if (!found && siblings.length) {
+					Y.error('Position of nextSibling amongst parent children not found');
+				}
+				this.set(PARENT,newParent);
 			}
-		/*} else {
-			console.log('on',this,node,this.get(PREVIOUS));
-			this._dontPropagate = false;
-			return false;
-			//debugger;
-		}*/			
-		this._dontPropagate = false;
+			this.set(NEXT,next);
+			var previous = next.get(PREVIOUS);
+			if (previous) {
+				this.set(PREVIOUS,previous);
+				previous.set(NEXT,this);
+			}
+			next.set(PREVIOUS,this);
+		}
+		if (this.get(RENDERED)) {
+			this._move();
+		}
+	},
+	_onPreviousSiblingChange : function(e) {
+		var previous = e.newVal;
+		Y.log('setting previous sibling [' + previous + '] to  [' + this  + ']');
+		var newParent = previous && previous.get(PARENT);
+		this._detach(newParent);
+		if (previous) {
+			if (newParent) {
+				var siblings = newParent._children, found = false;
+				for (var i = 0;i < siblings.length;i++){
+					if (previous === siblings[i]) {
+						siblings.splice(i+1, 0, this);
+						found = true;
+						break;
+					}
+				}
+				if (!found && siblings.length) {
+					Y.error('Position of previousSibling amongst parent children not found');
+				}
+				this.set(PARENT,newParent);
+			}
+			this.set(PREVIOUS,previous);
+			var next = previous.get(NEXT);
+			if (next) {
+				this.set(NEXT,next);
+				next.set(PREVIOUS,this);
+			}
+			previous.set(NEXT,this);
+		}
+		if (this.get(RENDERED)) {
+			this._move();
+		}
+	},
+	_move: function () {
+		var myBB = this.get(BOUNDING_BOX),
+			parent = this.get(PARENT),
+			parentContainer = parent && parent._childContainerEl,
+			next= this.get(NEXT),
+			nextBB = next && next.get(BOUNDING_BOX);
+			
+		Y.log(Y.substitute('Moving [{node}] under [{parent}] in between [{previous}] and [{next}]',{
+			node:this,
+			parent:parent,
+			previous:this.get(PREVIOUS),
+			next:next
+		}));
+		if (parentContainer) {
+			if (nextBB) {
+				parentContainer.insertBefore(myBB,nextBB);
+			} else {
+				parentContainer.appendChild(myBB);
+			}
+		}
 	},
 	removeChild: function (node) {
 		Y.log('removing [' + node + '] from  [' + this  + ']');
-		if (node.get(PREVIOUS)) {
-			node.get(PREVIOUS).set(NEXT,node.get(NEXT));
-		}
-		if (node.get(NEXT)) {
-			node.get(NEXT).set(PREVIOUS,node.get(PREVIOUS));
-		}
-		for (var i = 0; i < this._children.length; i++) {
-			if (this._children[i] === node) {
-				this._children.splice(i,1);
-				break;
-			}
-		}
 		node.set(PARENT,null);
-		node.set(NEXT,null);
-		node.set(PREVIOUS,null);
-		node._set(ROOT,node);
-		if (node.get('rendered')) {
-			var bb = node.get(BOUNDING_BOX);
-			bb.get('parentNode').removeChild(bb);
-		}
-		
 		return node;
 	},
 	appendChild: function(node) {
@@ -522,59 +465,17 @@ Y.extend(TreeNode,Y.Widget,{
 				Y.error('Cannot insert node [' + node + '] before a node [' + next + '] that is not a children of this node [' + this + ']');
 				return false;
 			}
+			node.set(NEXT,next);
 		} else if (Y.Lang.isUndefined(next)) {
-			next = null;
+			node.set(PARENT,this);
 		} else {
 			Y.error('Argument next in method insertNode should be an integer, a TreeNode reference or undefined ' + next);
 			return false;
 		}
-		siblings = this._children;
-		if (next) {
-			node.set(NEXT,next);
-			previous = next.get(PREVIOUS);
-			if (previous) {
-				previous.set(NEXT, node);
-			}
-			node.set(PREVIOUS, previous);
-			next.set(PREVIOUS, node);
-			for (i = 0; i < siblings.length; i++) {
-				if (siblings[i] === next) {
-					siblings.splice(i,0,node);
-					break;
-				}
-			}
-			if (i === siblings.length) {
-				Y.error('Position of nextSibling amongst parent children not found');
-			}
-				
-		} else {
-			previous = siblings[siblings.length -1];
-			if (previous) {
-				previous.set(NEXT, node);
-				node.set(PREVIOUS,previous);
-			}
-			siblings.push(node);
-		}
-		if (node.get('rendered')) {
-			bb = node.get(BOUNDING_BOX);
-			if (next) {
-				this._childContainerEl.insertBefore(bb,next.get(BOUNDING_BOX));
-			} else {
-				this._childContainerEl.appendChild(bb);
-			}
-		} else {
-			if (next) {
-				this.set(CONTENT_BOX,this._childContainerEl.insertBefore(Y.Node.create(EMPTY_DIV_MARKUP),next.get(BOUNDING_BOX)));
-			} else {
-				this.set(CONTENT_BOX,this._childContainerEl.appendChild(Y.Node.create(EMPTY_DIV_MARKUP)));
-			}
-			node.render();
-		}
-		if (node.get(ROOT) !== this.get(ROOT)) {
-			this._findRoot();
-		}
-			
 		return node;
+	},
+	toString : function() {
+		return (this.get(CONTENT) && this.get(CONTENT).get('textContent')) || this._yuid;
 	}
 	
 

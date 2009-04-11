@@ -28,13 +28,14 @@
 		</div>
 	</div>
 <script  type="text/javascript">
-YUI({combine:false,filter:'debug', base:"../../build/", debug:true, useBrowserConsole:false}).use('widget','treeview','test','console',function(Y) {
+YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserConsole:false}).use('widget','treeview','test','console',function(Y) {
 
 	
 	var tv, PARENT 		= 'parent',
 			PREVIOUS	= 'previousSibling',
 			NEXT 		= 'nextSibling',
 			ROOT		= 'root',
+			CONTENT		= 'content',
 			A = Y.Assert;
 
 	Y.on('event:ready', function () {
@@ -145,15 +146,30 @@ YUI({combine:false,filter:'debug', base:"../../build/", debug:true, useBrowserCo
 			testMoveNode: function () {
 				console.log('testMoveNode');
 				tv.set('content','testMoveNode');
+				rel(tv,1);
 				var t1 = new Y.TreeNode({parent:tv, content:'t1'});
+				rel(tv,2);
+				rel(t1,2);
 				var t2 = new Y.TreeNode({previousSibling:t1, content:'t2'});
+				rel(tv,3);
+				rel(t1,3);
+				rel(t2,3);
 				var t3 = new Y.TreeNode({previousSibling:t2, content:'t3'});
+				rel(tv,4);
+				rel(t1,4);
+				rel(t2,4);
+				rel(t3,4);
 				tv.render('#bd');
 				A.areSame(tv._children[0],t1,'t1 should be the first');
 				A.areSame(tv._children[1],t2,'t2 should be in the middle');
 				A.areSame(tv._children[2],t3,'t3 should be the last');
-
+				
 				t2.set(PARENT,t1);
+				
+				rel(tv,5);
+				rel(t1,5);
+				rel(t2,5);
+				rel(t3,5);
 	
 				A.areSame(tv._children[0],t1,'t1 should be the first');
 				A.areSame(tv._children[1],t3,'t3 should be in the middle');
@@ -162,32 +178,38 @@ YUI({combine:false,filter:'debug', base:"../../build/", debug:true, useBrowserCo
 
 		});
 		Y.Test.Runner.add(testCase);
-if (true) {
+if (false) {
 		Y.Test.Runner.run();
 } else {	
-		Y.log('first root node');
-		tv = new Y.TreeNode({content:'prueba'});
-		tv.set('content','testMoveNode');
-		tv.render('#bd');
-		var t1 = new Y.TreeNode({parent:tv, content:'t1'});
-		var t2 = new Y.TreeNode({content:'t2'});
-		t2.set(PREVIOUS,t1);
-		var t3 = new Y.TreeNode({content:'t3'});
-		t3.set(PREVIOUS,t2);
-		/*
-		rel(tv,'tv');
-		rel(t1,'t1');
-		rel(t2,'t2');
-		rel(t3,'t3');
-		*/
-//		t2.set(PARENT,t1);
-		/*
-		rel(tv,'tv');
-		rel(t1,'t1');
-		rel(t2,'t2');
-		rel(t3,'t3');
-		*/
-		tv.destroy();
+				tv = new Y.TreeNode();
+
+
+				console.log('testMoveNode');
+				tv.set('content','testMoveNode');
+				rel(tv,1);
+				var t1 = new Y.TreeNode({parent:tv, content:'t1'});
+				rel(tv,2);
+				rel(t1,2);
+				debugger;
+				var t2 = new Y.TreeNode({content:'t2'});
+				t2.set(PREVIOUS,t1);
+				rel(tv,3);
+				rel(t1,3);
+				rel(t2,3);
+				var t3 = new Y.TreeNode({previousSibling:t2, content:'t3'});
+				rel(tv,4);
+				rel(t1,4);
+				rel(t2,4);
+				rel(t3,4);
+				tv.render('#bd');
+			
+				t2.set(PARENT,t1);
+				
+				rel(tv,5);
+				rel(t1,5);
+				rel(t2,5);
+				rel(t3,5);
+//		tv.destroy();
 }
 		
 	});
