@@ -522,9 +522,13 @@
 <span class="c"></span>            
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getFacade</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
-                <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
-            <span class="o">}</span>
 
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">ef</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="c">// The default context should be the object/element that</span>
@@ -649,7 +653,12 @@
 <span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
                 <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getFacade</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
-                <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">ef</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
