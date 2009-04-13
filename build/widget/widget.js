@@ -485,7 +485,7 @@ Y.extend(Widget, Y.Base, {
                 parentNode = null;
             }
 
-            this.fire(RENDER, null, parentNode);
+            this.fire(RENDER, {parentNode: parentNode});
         }
 
         return this;
@@ -499,9 +499,9 @@ Y.extend(Widget, Y.Base, {
      * @param {Event.Facade} e The Event object
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
-    _defRenderFn : function(e, parentNode) {
+    _defRenderFn : function(e) {
 
-            this._renderUI(parentNode);
+            this._renderUI(e.parentNode);
             this._bindUI();
             this._syncUI();
 
