@@ -54,8 +54,8 @@
                     emitFacade: true
                 });
 
-                var o = new O();
-                o.on('testAugment', function(e, arg1, arg2) {
+                var o = new O(),
+                handle = o.on('testAugment', function(e, arg1, arg2) {
                     Y.Assert.isTrue(this instanceof O);
                     Y.Assert.isTrue(e instanceof Y.Event.Facade);
                     Y.Assert.isTrue(e.foo === 'afoo');
@@ -68,6 +68,19 @@
                 o.fire('testAugment', { foo: 'afoo' }, 1, 2);
 
                 Y.Assert.isTrue(fired);
+
+                handle.detach();
+
+                // if the first argument is not an object, the
+                // event facade is moved in front of the args rather
+                // than overwriting existing object.
+                o.on('testAugment', function(e, arg1, arg2) {
+                    Y.Assert.areEqual(1, arg1);
+                    Y.Assert.areEqual(2, arg2);
+                });
+
+                o.fire('testAugment', 1, 2);
+
             },
 
             testExtend: function() {
