@@ -17,7 +17,7 @@ var L = Y.Lang;
 function PluginHost(config) {
     this._plugins = {};
 
-    this.after("init", function(e, cfg) {this._initPlugins(cfg);});
+    this.after("init", function(e) {this._initPlugins(e.cfg);});
     this.after("destroy", this._destroyPlugins);
 }
 
