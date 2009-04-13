@@ -61,9 +61,22 @@
                     source: ["a","b","c","d"]
                 });
 
-                ds.sendRequest("a", {success:function(e) {
-                    ARRAYASSERT.itemsAreSame(["a","b","c","d"], e.response.results, "Expected live array.");
-                }});
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ARRAYASSERT.itemsAreSame(["a","b","c","d"], e.response.results, "Expected live array.");
+                    })]
+                });
+
+                ds.sendRequest(null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                });
+                
+                Y.Mock.verify(handler);
             },
 
             testLocalEvents: function() {
@@ -80,7 +93,7 @@
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest, handler);
+                ds.subscribe("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
@@ -91,7 +104,7 @@
                         ASSERT.isArray(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData, handler);
+                ds.subscribe("data", handler.handleData);
                 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
@@ -105,7 +118,7 @@
                         ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse, handler);
+                ds.subscribe("response", handler.handleResponse);
 
                 ds.sendRequest("a", "callback");
                 Y.Mock.verify(handler);
@@ -127,7 +140,7 @@
                         ASSERT.isTrue(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError, handler);
+                ds.subscribe("error", handler.handleError);
 
                 ds.set("source", undefined);
                 ds.sendRequest("a", "callback");
@@ -157,8 +170,7 @@
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
-                    },
-                    scope: handler
+                    }
                 });                
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -179,37 +191,37 @@
                 Y.Mock.expect(handler,{
                     method: "handleRequest",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
-                        ASSERT.areSame(null, e.request, "Expected request.");
-                        ASSERT.areSame("callback", e.callback, "Expected callback.");
+                        ASSERT.isNumber(e.tId, "request: Expected transaction ID.");
+                        ASSERT.areSame(null, e.request, "request: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest, handler);
+                ds.subscribe("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
-                        ASSERT.areSame(null, e.request, "Expected request.");
-                        ASSERT.areSame("callback", e.callback, "Expected callback.");
-                        ASSERT.isObject(e.data, "Expected raw data.");
+                        ASSERT.isNumber(e.tId, "data: Expected transaction ID.");
+                        ASSERT.areSame(null, e.request, "data: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "data: Expected callback.");
+                        ASSERT.isObject(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData, handler);
+                ds.subscribe("data", handler.handleData);
 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", e.request, "Expected request.");
-                        ASSERT.areSame("callback", e.callback, "Expected callback.");
-                        ASSERT.isObject(e.data, "Expected raw data.");
-                        ASSERT.isObject(e.response, "Expected normalized response object.");
-                        ASSERT.isArray(e.response.results, "Expected parsed results.");
-                        ASSERT.isObject(e.response.meta, "Expected parsed meta data.");
+                        ASSERT.isNumber(e.tId, "response: Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "response: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "response: Expected callback.");
+                        ASSERT.isObject(e.data, "response: Expected raw data.");
+                        ASSERT.isObject(e.response, "response: Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "response: Expected parsed results.");
+                        ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse, handler);
+                ds.subscribe("response", handler.handleResponse);
 
                 ds.sendRequest(null, "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -230,14 +242,14 @@
                 Y.Mock.expect(handler,{
                     method: "handleError",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNumber(e.tId, "Expected transaction ID.");
-                        ASSERT.areSame("a", e.request, "Expected request.");
-                        ASSERT.areSame("callback", e.callback, "Expected callback.");
-                        ASSERT.isObject(e.data, "Expected raw data.");
-                        ASSERT.isTrue(e.error, "Expected error.");
+                        ASSERT.isNumber(e.tId, "error: Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "error: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "error: Expected callback.");
+                        ASSERT.isObject(e.data, "error: Expected raw data.");
+                        ASSERT.isTrue(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError, handler);
+                ds.subscribe("error", handler.handleError);
 
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
@@ -245,10 +257,10 @@
             }
         });
 
-        var testXHRJSONParser = new Y.Test.Case({
+        var testJSONParser = new Y.Test.Case({
             name: "DataSource.XHR JSONParser Tests",
 
-            testPlug: function() {
+            testXHRPlug: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "./php/ysearch_json_madonna.php"
                 });
@@ -259,25 +271,27 @@
                     }
                 }});
 
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "Expected results array.");
+                        ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
+                        ASSERT.isNotUndefined(e.response.results[0].Title, "Expected Title property")
+                    })]
+                });
+
                 ds.sendRequest(null, {
-                    success: function(e) {
-                        this.resume(function() {
-                            ASSERT.isNull(e.request, "Expected null request.");
-                            ASSERT.isObject(e.response, "Expected normalized response object.");
-                            ASSERT.isArray(e.response.results, "Expected results array.");
-                            ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
-                            ASSERT.isNotUndefined(e.response.results[0].Title, "Expected Title property")
-                        });
-                    },
+                    success: handler.handleSuccess,
                     failure: function(e) {
-                        this.resume(function() {
-                            ASSERT.fail("XHR failure case.");
-                        });
+                        ASSERT.fail("XHR failure case.");
                     },
                     scope: this
                 });
 
-                this.wait(WAITTIMEOUT);
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
 
@@ -343,15 +357,87 @@
 
             testClass: function() {
                 var ds = new Y.DataSource.Local();
-                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method.");
-                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method.");
-            }
+                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on Local.");
+                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on Local.");
+
+                ds = new Y.DataSource.XHR();
+                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on XHR.");
+                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on XHR.");
+            },
+
+            testSetAndClear: function() {
+                var ds = new Y.DataSource.Local();
+                
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value.Any],
+                    callCount: 3
+                });
+
+                var id = ds.setInterval(500, null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                });
+                
+                ASSERT.isNumber(id, "Expected interval id.");
+
+                this.wait(function(){
+                    ds.clearInterval(id);
+                    this.wait(function(){
+                        ASSERT.areSame(0, ds._intervals.length, "Expected no tracked intervals.");
+                        Y.Mock.verify(handler);
+                    }, 1000);
+                }, 2000);
+            },
+
+            testClearAll: function() {
+                var ds = new Y.DataSource.Local();
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value.Any],
+                    callCount: 3
+                });
+
+                var id1 = ds.setInterval(500, null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                }),
+                id2 = ds.setInterval(500, null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                }),
+                id3 = ds.setInterval(500, null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                });
+
+                ASSERT.areSame(3, ds._intervals.length, "Expected interval ids.");
+
+                this.wait(function(){
+                    ds.clearAllIntervals();
+                    this.wait(function(){
+                        ASSERT.areSame(0, ds._intervals.length, "Expected no tracked intervals.");
+                        Y.Mock.verify(handler);
+                    }, 500);
+                }, 1000);
+            },
         });
 
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
         Y.Test.Runner.add(testXHR);
-        Y.Test.Runner.add(testXHRJSONParser);
+        Y.Test.Runner.add(testJSONParser);
         Y.Test.Runner.add(testCaching);
         Y.Test.Runner.add(testPolling);
         Y.Test.Runner.run();
