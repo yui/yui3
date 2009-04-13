@@ -474,9 +474,13 @@ Y.CustomEvent.prototype = {
             
             if (!ef) {
                 ef = this._getFacade(args);
-                args[0] = ef;
-            }
 
+                if (Y.Lang.isObject(args[0])) {
+                    args[0] = ef;
+                } else {
+                    args.unshift(ef);
+                }
+            }
         }
 
         // The default context should be the object/element that
@@ -601,7 +605,12 @@ Y.CustomEvent.prototype = {
                 this._facade = null;
 
                 ef = this._getFacade(args);
-                args[0] = ef;
+
+                if (Y.Lang.isObject(args[0])) {
+                    args[0] = ef;
+                } else {
+                    args.unshift(ef);
+                }
             }
 
             for (i in subs) {
