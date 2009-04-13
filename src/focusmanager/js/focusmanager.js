@@ -97,6 +97,8 @@ FocusManager.ATTRS = {
 	/**
 	* Node, or index of the Node, representing the descendant that is either 
 	* focused or is focusable (<code>tabIndex</code> attribute is set to 0).  
+	* The value cannot represent a disabled descendant Node.  Use a value of -1
+	* to remove all descendant Nodes from the default tab flow.
 	* If no value is specified, the active descendant will be inferred using 
 	* the following criteria:
 	* <ol>
@@ -114,25 +116,52 @@ FocusManager.ATTRS = {
 
 		setter: function (value) {
 			
-			var descendantsMap = this._descendantsMap,
+			var isNumber = Lang.isNumber,
+				INVALID_VALUE = Y.Attribute.INVALID_VALUE,
+				descendantsMap = this._descendantsMap,
+				descendants = this._descendants,
 				nodeIndex,
-				returnValue;
+				returnValue,
+				oNode;
 			
 
-			if (Lang.isNumber(value)) {
-				returnValue = value;
+			if (isNumber(value)) {
+				nodeIndex = value;
+				returnValue = nodeIndex;
 			}
 			else if ((value instanceof Y.Node) && descendantsMap) {
 
 				nodeIndex = descendantsMap[value.get(ID)];
 
-				if (Lang.isNumber(nodeIndex)) {
+				if (isNumber(nodeIndex)) {
 					returnValue = nodeIndex;
+				}
+				else {
+
+					//	The user passed a reference to a Node that wasn't one
+					//	of the descendants.
+					returnValue = INVALID_VALUE;					
+
 				}
 
 			}
 			else {
-				returnValue = Y.Attribute.INVALID_VALUE;
+				returnValue = INVALID_VALUE;
+			}
+
+
+			if (descendants) {
+
+				oNode = descendants.item(nodeIndex);
+			
+				if (oNode && oNode.get("disabled")) {
+
+					//	Setting the "activeDescendant" attribute to the index
+					//	of a disabled descendant is invalid.
+					returnValue = INVALID_VALUE;
+					
+				}
+
 			}
 
 			return returnValue;
@@ -699,6 +728,7 @@ Y.extend(FocusManager, Y.Base, {
 	destructor: function () {
 		
 		this.stop();
+		this._node.focusManager = null;
 		
     },
 
