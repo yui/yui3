@@ -536,7 +536,7 @@
                 <span class="nx">parentNode</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">parentNode</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="o">{</span><span class="nx">parentNode</span><span class="o">:</span> <span class="nx">parentNode</span><span class="o">});</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -550,9 +550,9 @@
 <span class="c">     * @param {Event.Facade} e The Event object</span>
 <span class="c">     * @param {Node} parentNode The parent node to render to, if passed in to the &lt;code&gt;render&lt;/code&gt; method</span>
 <span class="c">     */</span>
-    <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">_renderUI</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_renderUI</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_bindUI</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_syncUI</span><span class="o">();</span>
 
