@@ -1626,6 +1626,7 @@ Y.UA = function() {
         r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 
         return {
+            id: r,
             interval: periodic,
             cancel: function() {
                 if (this.interval) {

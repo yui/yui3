@@ -282,6 +282,10 @@ Y.on('available', function() {
 //log message to indicate that the example is ready:
 Y.log("When you begin interacting with the example at left, you'll see log messages appear here.", "info", "example");
 
+Y.on('windowresize', function(e) {
+    Y.log('window resize');
+});
+
 });
 
 </script>
