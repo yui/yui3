@@ -11,7 +11,9 @@
      * @class Pollable
      * @extends DataSource.Local
      */    
-    Pollable = function() {};
+    Pollable = function() {
+        this._intervals = {};
+    };
 
     
 Pollable.prototype = {
@@ -52,9 +54,6 @@ Pollable.prototype = {
                     self.sendRequest(request, callback);
                     //self._makeConnection(request, callback);
                 }, msec);
-            if(!this._intervals) {
-                this._intervals = {};
-            }
             this._intervals[id] = id;
             return id;
         }
@@ -89,4 +88,4 @@ Pollable.prototype = {
     }
 };
     
-Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:false});
+Y.augment(Y.DataSource.Local, Pollable);
