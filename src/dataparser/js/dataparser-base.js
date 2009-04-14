@@ -12,21 +12,17 @@
  */
 var DPBase = {
     /**
-     * Abstract overridable parse method returns data as-is.
+     * Returns string name.
      *
-     * @method _parse
-     * @param schema {Object} Schema to parse against.
-     * @param data {Object} Data to parse.
-     * @return {Object} Schema-parsed data.
-     * @static
-     * @protected
+     * @method toString
+     * @return {String} String representation for this object.
      */
-   _parse: function(schema, data) {
-        return data;
+    toString: function() {
+        return "DataParser.Base";
     },
 
     /**
-     * Parses data against schema.
+     * Overridable parse method returns data as-is.
      *
      * @method parse
      * @param schema {Object} Schema to parse against.
@@ -35,16 +31,9 @@ var DPBase = {
      * @static
      */
     parse: function(schema, data) {
-        return this._parse(schema, data);
+        return data;
     }
 };
 
 Y.namespace("DataParser");
 Y.DataParser.Base = DPBase;
-
-
-    
-    
-    
-    
-

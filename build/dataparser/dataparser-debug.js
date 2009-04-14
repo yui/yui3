@@ -14,21 +14,17 @@ YUI.add('dataparser-base', function(Y) {
  */
 var DPBase = {
     /**
-     * Abstract overridable parse method returns data as-is.
+     * Returns string name.
      *
-     * @method _parse
-     * @param schema {Object} Schema to parse against.
-     * @param data {Object} Data to parse.
-     * @return {Object} Schema-parsed data.
-     * @static
-     * @protected
+     * @method toString
+     * @return {String} String representation for this object.
      */
-   _parse: function(schema, data) {
-        return data;
+    toString: function() {
+        return "DataParser.Base";
     },
 
     /**
-     * Parses data against schema.
+     * Overridable parse method returns data as-is.
      *
      * @method parse
      * @param schema {Object} Schema to parse against.
@@ -37,19 +33,12 @@ var DPBase = {
      * @static
      */
     parse: function(schema, data) {
-        return this._parse(schema, data);
+        return data;
     }
 };
 
 Y.namespace("DataParser");
 Y.DataParser.Base = DPBase;
-
-
-    
-    
-    
-    
-
 
 
 
@@ -78,7 +67,16 @@ DPJSON = {
     // DataParser.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
-    
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataParser.JSON";
+    },
+
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
@@ -111,7 +109,7 @@ DPJSON = {
                 }
             }
             else {
-                Y.log("Invalid locator: " + locator, "error", this.toString());
+                Y.log("Invalid locator: " + locator, "error", DPJSON.toString());
             }
         }
         return path;
@@ -143,23 +141,22 @@ DPJSON = {
      * @param data {Object} Data to parse.
      * @return {Object} Schema-parsed data.
      * @static
-     * @protected
      */
-    _parse: function(schema, data) {
+    parse: function(schema, data) {
         var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             data_out = {results:[],meta:{}};
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            data_out = this._parseResults(schema, data_in, data_out);
+            data_out = DPJSON._parseResults(schema, data_in, data_out);
 
             // Parse meta data
             if(LANG.isObject(schema.metaFields)) {
-                data_out = this._parseMeta(schema.metaFields, data_in, data_out);
+                data_out = DPJSON._parseMeta(schema.metaFields, data_in, data_out);
             }
         }
         else {
-            Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", this.toString());
+            Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", DPJSON.toString());
             data_out.error = true;
         }
 
@@ -191,7 +188,7 @@ DPJSON = {
                 else {
                     if(LANG.isArray(schema.fields)) {
                         if(LANG.isArray(schema.fields)) {
-                            results = this._filterFieldValues(schema.fields, results);
+                            results = DPJSON._filterFieldValues(schema.fields, results);
                         }
                         else {
                             bError = true;
@@ -204,7 +201,7 @@ DPJSON = {
             }
 
             if (bError) {
-                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", this.toString());
+                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", DPJSON.toString());
                 data_out.error = true;
             }
             
@@ -245,7 +242,7 @@ DPJSON = {
                     complexPaths[complexPaths.length] = {key:key, path:path};
                 }
             } else {
-                Y.log("Invalid key syntax: " + key, "warn", this.toString());
+                Y.log("Invalid key syntax: " + key, "warn", DPJSON.toString());
             }
 
             // Validate and store parsers for later
@@ -313,9 +310,8 @@ DPJSON = {
         return data_out;
     }
 };
-Y.mix(DPJSON, Y.DataParser.Base);
 
-Y.DataParser.JSON = DPJSON;
+Y.DataParser.JSON = Y.mix(DPJSON, Y.DataParser.Base);
 
 
 
