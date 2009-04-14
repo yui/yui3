@@ -744,7 +744,7 @@ Pollable.prototype = {
 
     /**
     * @property _intervals
-    * @description Array of polling interval IDs that have been enabled,
+    * @description Hash of polling interval IDs that have been enabled,
     * stored here to be able to clear all intervals.
     * @private
     */
@@ -779,9 +779,9 @@ Pollable.prototype = {
                     //self._makeConnection(request, callback);
                 }, msec);
             if(!this._intervals) {
-                this._intervals = [];
+                this._intervals = {};
             }
-            this._intervals.push(id);
+            this._intervals[id] = id;
             return id;
         }
         else {
@@ -796,15 +796,12 @@ Pollable.prototype = {
      * @param id {Number} Interval ID.
      */
     clearInterval: function(id) {
-        // Remove from tracker if there
-        var tracker = this._intervals || [],
-            i = tracker.length-1;
-
-        for(; i>-1; i--) {
-            if(tracker[i] === id) {
-                tracker.splice(i,1);
-                clearInterval(id);
-            }
+        // Validate
+        if(this._intervals && this._intervals[id]) {
+            // Clear from tracker
+            delete this._intervals[id];
+            // Clear the interval
+            clearInterval(id);
         }
     },
 
@@ -814,14 +811,7 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        var tracker = this._intervals,
-            i = tracker.length-1;
-            
-        for(; i>-1; i--) {
-            clearInterval(tracker[i]);
-        }
-        
-        this._intervals = [];
+        Y.each(this._intervals, this.clearInterval, this)
     }
 };
     
