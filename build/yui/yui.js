@@ -2641,6 +2641,10 @@ var BASE = 'base',
             requires: ['event']
         },
 
+        focusmanager: { 
+            requires: ['node']
+        },
+
         get: { 
             requires: ['yui-base']
         },
