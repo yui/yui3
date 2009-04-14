@@ -402,24 +402,24 @@
                     callCount: 3
                 });
 
-                var id1 = ds.setInterval(500, null, {
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                }),
-                id2 = ds.setInterval(500, null, {
+                });
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                }),
-                id3 = ds.setInterval(500, null, {
+                });
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                }),
+                });
 
                 this.wait(function(){
                     ds.clearAllIntervals();
