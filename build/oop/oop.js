@@ -249,7 +249,7 @@ YUI.add('oop', function(Y) {
     };
 
 
-    /*
+    /**
      * Returns a function that will execute the supplied function in the
      * supplied object's context, optionally adding any additional
      * supplied parameters to the beginning of the arguments collection the 
