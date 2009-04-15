@@ -47,19 +47,9 @@ Pollable.prototype = {
      * @return {Number} Interval ID.
      */
     setInterval: function(msec, request, callback) {
-        if(LANG.isNumber(msec) && (msec >= 0)) {
-            Y.log("Enabling polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
-            var self = this,
-                id = setInterval(function() {
-                    self.sendRequest(request, callback);
-                    //self._makeConnection(request, callback);
-                }, msec);
-            this._intervals[id] = id;
-            return id;
-        }
-        else {
-            Y.log("Could not enable polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
-        }
+        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+        this._intervals[x.id] = x;
+        return x.id;
     },
 
     /**
@@ -68,13 +58,14 @@ Pollable.prototype = {
      * @method clearInterval
      * @param id {Number} Interval ID.
      */
-    clearInterval: function(id) {
-        // Validate
-        if(this._intervals && this._intervals[id]) {
+    clearInterval: function(id, key) {
+        // In case of being called by clearAllIntervals()
+        id = key || id;
+        if(this._intervals[id]) {
+            // Clear the interval
+            this._intervals[id].cancel();
             // Clear from tracker
             delete this._intervals[id];
-            // Clear the interval
-            clearInterval(id);
         }
     },
 
@@ -84,7 +75,7 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        Y.each(this._intervals, this.clearInterval, this)
+        Y.each(this._intervals, this.clearInterval, this);
     }
 };
     

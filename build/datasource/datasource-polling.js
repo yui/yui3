@@ -49,17 +49,9 @@ Pollable.prototype = {
      * @return {Number} Interval ID.
      */
     setInterval: function(msec, request, callback) {
-        if(LANG.isNumber(msec) && (msec >= 0)) {
-            var self = this,
-                id = setInterval(function() {
-                    self.sendRequest(request, callback);
-                    //self._makeConnection(request, callback);
-                }, msec);
-            this._intervals[id] = id;
-            return id;
-        }
-        else {
-        }
+        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+        this._intervals[x.id] = x;
+        return x.id;
     },
 
     /**
@@ -68,13 +60,14 @@ Pollable.prototype = {
      * @method clearInterval
      * @param id {Number} Interval ID.
      */
-    clearInterval: function(id) {
-        // Validate
-        if(this._intervals && this._intervals[id]) {
+    clearInterval: function(id, key) {
+        // In case of being called by clearAllIntervals()
+        id = key || id;
+        if(this._intervals[id]) {
+            // Clear the interval
+            this._intervals[id].cancel();
             // Clear from tracker
             delete this._intervals[id];
-            // Clear the interval
-            clearInterval(id);
         }
     },
 
