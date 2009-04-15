@@ -47,3 +47,4 @@ Y.Env.eventAdaptors.windowresize = {
         return Y.on.apply(Y, a);
     }
 };
+
