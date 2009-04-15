@@ -166,17 +166,6 @@ YUI.add('dd-proxy', function(Y) {
         * @description Starts the drag operation and sets the dragNode config option.
         */       
         start: function() {
-            if (!this.get('lock')) {
-                /*
-                if (this.get(PROXY)) {
-                    if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
-                        this.set(DRAG_NODE, DDM._proxy);
-                    }
-                } else {
-                    this.set(DRAG_NODE, this.get(NODE));
-                }
-                */
-            }
             Proxy.superclass.start.apply(this);
             if (this.get(PROXY)) {
                 this._setFrame();

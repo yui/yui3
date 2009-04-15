@@ -819,7 +819,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @private
         * @method _unprep
-        * @description Detach event listners and remove classname
+        * @description Detach event listeners and remove classname
         */
         _unprep: function() {
             var node = this.get(NODE);
