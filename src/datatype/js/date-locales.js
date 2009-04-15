@@ -63,7 +63,7 @@
  * @requires oop
  * @class DataType.Date.Locale
  */
-Y.DataType.Date.Locale = {
+var YDateEn = {
        a: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
        A: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
        b: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -76,8 +76,11 @@ Y.DataType.Date.Locale = {
        X: '%T'
 };
 
-Y.DataType.Date.Locale['en'] = Y.merge(Y.DataType.Date.Locale, {});
+Y.namespace('DataType.Date.Locale');
 
+Y.DataType.Date.Locale["en"] = YDateEn;
+
+// todo use YDateEn
 Y.DataType.Date.Locale['en-US'] = Y.merge(Y.DataType.Date.Locale['en'], {
        c: '%a %d %b %Y %I:%M:%S %p %Z',
        x: '%m/%d/%Y',
