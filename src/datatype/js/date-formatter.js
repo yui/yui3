@@ -16,24 +16,33 @@
  *
  *
  * @module datatype
+ * @submodule datatype-date
  * @requires oop
  * @title DataType Date Formatter Submodule
  */
 
-(function() {
-
+/**
+ * Pad a number with leading spaces, zeroes or something else
+ * @param x {Number}    The number to be padded
+ * @param pad {String}  The character to pad the number with
+ * @param r {Number}    (optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.
+ * @private
+ */
 var xPad=function (x, pad, r)
 {
     if(typeof r === 'undefined')
     {
         r=10;
     }
+    pad = pad.toString();
     for( ; parseInt(x, 10)<r && r>1; r/=10) {
-        x = pad.toString() + x;
+        x = pad + x;
     }
     return x.toString();
 };
 
+Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
+Y.config.locale = Y.config.locale || "en";
 
 /**
  * Date subclass for the YUI DataType utility.
@@ -235,27 +244,31 @@ var Dt = {
      * @return {String} Formatted date for display.
      * @sa Y.DataType.Date.Locale
      */
-    format : function (oDate, oConfig, sLocale) {
+    format : function (oDate, oConfig) {
         oConfig = oConfig || {};
         
-        if(!(oDate instanceof Date)) {
-            return YAHOO.lang.isValue(oDate) ? oDate : "";
+        if(!Y.Lang.isDate(oDate)) {
+            Y.log("format called without a date", "WARN", "datatype-date");
+            return Y.Lang.isValue(oDate) ? oDate : "";
         }
 
-        var format = oConfig.format || "%Y-%m-%d";
+        var format = oConfig.format || Y.config.dateFormat,
+            sLocale = oConfig.locale || Y.config.locale;
 
-        sLocale = sLocale || "en";
-
+        sLocale = sLocale.replace(/_/g, '-');
+        
         // Make sure we have a definition for the requested locale, or default to en.
-        if(!(sLocale in Y.DataType.Date.Locale)) {
-            if(sLocale.replace(/-[a-zA-Z]+$/, '') in Y.DataType.Date.Locale) {
-                sLocale = sLocale.replace(/-[a-zA-Z]+$/, '');
+        if(!Dt.Locale[sLocale]) {
+            // todo Log
+            var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, '');
+            if(tmpLocale in Dt.Locale) {
+                sLocale = tmpLocale;
             } else {
                 sLocale = "en";
             }
         }
 
-        var aLocale = Y.DataType.Date.Locale[sLocale];
+        var aLocale = Dt.Locale[sLocale];
 
         var replace_aggs = function (m0, m1) {
             var f = Dt.aggregates[m1];
@@ -264,6 +277,7 @@ var Dt = {
 
         var replace_formats = function (m0, m1) {
             var f = Dt.formats[m1];
+            // todo use switch Y.Lang.type(f);
             if(typeof f === 'string') {             // string => built in date function
                 return oDate[f]();
             } else if(typeof f === 'function') {    // function => our own function
@@ -289,7 +303,4 @@ var Dt = {
     }
 };
 
-Y.namespace("DataType");
-Y.DataType.Date = Dt;
-
-})();
+Y.namespace("DataType").Date=Dt;

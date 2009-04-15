@@ -50,6 +50,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  The target window/frame</li>
      *  <li>core:
      *  A list of modules that defines the YUI core (overrides the default)</li>
+     *  <li>dateFormat: default date format</li>
+     *  <li>locale: default locale</li>
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
@@ -713,6 +715,7 @@ DATE      = 'date',
 ERROR     = 'error',
 FUNCTION  = 'function',
 NUMBER    = 'number',
+NULL      = 'null',
 OBJECT    = 'object',
 REGEX     = 'regexp',
 STRING    = 'string',
@@ -787,7 +790,8 @@ L.isFunction = function(o) {
  * @return {boolean} true if o is a date
  */
 L.isDate = function(o) {
-    return o instanceof Date;
+    // return o instanceof Date;
+    return L.type(o) === DATE;
 };
 
 /**
@@ -874,7 +878,15 @@ L.trim = function(s){
  */
 L.isValue = function(o) {
     var t = L.type(o);
-    return (t && t !== UNDEFINED) || false;
+    switch (t) {
+        case NUMBER:
+            return isFinite(o);
+        case NULL:
+        case UNDEFINED:
+            return false;
+        default:
+            return !!(t);
+    }
 };
 
 /**
