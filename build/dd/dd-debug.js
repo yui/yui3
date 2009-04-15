@@ -279,7 +279,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node', 'base']});
+}, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
 
@@ -406,7 +406,7 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-ddm-drop', function(Y) {
 
 
@@ -802,7 +802,7 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
 YUI.add('dd-drag', function(Y) {
 
 
@@ -1829,7 +1829,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
 
@@ -2038,7 +2038,7 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
 YUI.add('dd-constrain', function(Y) {
 
 
@@ -2931,7 +2931,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
 
 
@@ -2976,7 +2976,7 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
 YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
