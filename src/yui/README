@@ -30,6 +30,10 @@ The YUI Global
     - yuitest renamed to test, now requires collection
     - added collection
 
+    UA:
+    - Added 'secure' property for SSL detection
+    - Added 'os' property for windows vs mac detection
+    - Added Adobe Air and Google Caja detection
 
 3.0.0pr2
 

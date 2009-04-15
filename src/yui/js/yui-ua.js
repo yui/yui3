@@ -64,7 +64,8 @@ Y.UA = function() {
          *                                   and many major issues fixed).
          * Safari 3.0.4 (523.12) 523.12  <-- First Tiger release - automatic update
          *                                   from 2.x via the 10.4.11 OS patch
-         *                                   
+         * Webkit nightly 1/2008:525+    <-- Supports DOMContentLoaded event.
+         *                                   yahoo.com user agent hack removed.
          * </pre>
          * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
@@ -82,10 +83,49 @@ Y.UA = function() {
          * @type string
          * @static
          */
-        mobile: null 
+        mobile: null,
+
+        /**
+         * Adobe AIR version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property air
+         * @type float
+         */
+        air: 0,
+
+        /**
+         * Google Caja version number or 0.
+         * @property caja
+         * @type float
+         */
+        caja: 0,
+
+        /**
+         * Set to true if the page appears to be in SSL
+         * @property secure
+         * @type boolean
+         * @static
+         */
+        secure: (Y.config.win.location.href.toLowerCase().indexOf("https") === 0),
+
+        /**
+         * The operating system.  Currently only detecting windows or macintosh
+         * @property os
+         * @type string
+         * @static
+         */
+        os: null
+        
     },
 
-    ua = navigator.userAgent, m;
+    ua = navigator.userAgent, 
+    m ;
+
+    if ((/windows|win32/).test(ua)) {
+        o.os = 'windows';
+    } else if ((/macintosh/).test(ua)) {
+        o.os = 'macintosh';
+    }
 
     // Modern KHTML browsers should qualify as Safari X-Grade
     if ((/KHTML/).test(ua)) {
@@ -104,6 +144,11 @@ Y.UA = function() {
             if (m) {
                 o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
             }
+        }
+
+        m=ua.match(/AdobeAIR\/([^\s]*)/);
+        if (m) {
+            o.air = m[0]; // Adobe AIR 1.0 or better
         }
 
     }
@@ -132,6 +177,11 @@ Y.UA = function() {
                 }
             }
         }
+    }
+
+    m=ua.match(/Caja\/([^\s]*)/);
+    if (m&&m[1]) {
+        o.caja=parseFloat(m[1]);
     }
     
     return o;
