@@ -341,7 +341,8 @@ Y.CustomEvent.prototype = {
      * @param {Object}   context   Specifies the value of the 
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      * @deprecated use on
      */
     subscribe: function(fn, context) {
@@ -355,7 +356,8 @@ Y.CustomEvent.prototype = {
      * @param {Object}   context   Specifies the value of the 
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      */
     on: function(fn, context) {
         return this._subscribe(fn, context, arguments, true);
@@ -370,7 +372,8 @@ Y.CustomEvent.prototype = {
      * @param {Object}   context   Specifies the value of the 
      * 'this' keyword in the listener.
      * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      */
     after: function(fn, context) {
         return this._subscribe(fn, context, arguments, AFTER);
@@ -382,7 +385,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean} True if the subscriber was found and detached.
+     * @return {boolean|EventTarget} returns a chainable event target
+     * or a boolean for legacy detach support.
      */
     detach: function(fn, context) {
 
@@ -416,7 +420,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean} True if the subscriber was found and detached.
+     * @return {boolean|EventTarget} returns a chainable event target
+     * or a boolean for legacy detach support.
      * @deprecated use detach
      */
     unsubscribe: function() {

@@ -19,7 +19,7 @@
         // logInclude: ['event', 'test']
         //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
         logExclude: {Dom:true, 
-        Selector:true, Node:true, attribute:true, event:true, base:true}
+        Selector:true, Node:true, attribute:true, event:true, base:true, widget:true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.get('#btnRun'),
@@ -148,7 +148,7 @@
 
             Assert.isTrue(
                 (result.indexOf("GMT" > -1)) ? true : false,
-                "failed two level mixed object with a date (date should have produced an output with GMT in it"
+                "failed two level mixed object with a date (date should have produced an output with GMT in it)"
             );
 
 
