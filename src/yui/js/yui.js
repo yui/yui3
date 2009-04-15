@@ -50,6 +50,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  The target window/frame</li>
      *  <li>core:
      *  A list of modules that defines the YUI core (overrides the default)</li>
+     *  <li>dateFormat: default date format</li>
+     *  <li>locale: default locale</li>
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
