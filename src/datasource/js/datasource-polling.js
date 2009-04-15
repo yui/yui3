@@ -11,14 +11,16 @@
      * @class Pollable
      * @extends DataSource.Local
      */    
-    Pollable = function() {};
+    Pollable = function() {
+        this._intervals = {};
+    };
 
     
 Pollable.prototype = {
 
     /**
     * @property _intervals
-    * @description Array of polling interval IDs that have been enabled,
+    * @description Hash of polling interval IDs that have been enabled,
     * stored here to be able to clear all intervals.
     * @private
     */
@@ -45,22 +47,9 @@ Pollable.prototype = {
      * @return {Number} Interval ID.
      */
     setInterval: function(msec, request, callback) {
-        if(LANG.isNumber(msec) && (msec >= 0)) {
-            Y.log("Enabling polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
-            var self = this,
-                id = setInterval(function() {
-                    self.sendRequest(request, callback);
-                    //self._makeConnection(request, callback);
-                }, msec);
-            if(!this._intervals) {
-                this._intervals = [];
-            }
-            this._intervals.push(id);
-            return id;
-        }
-        else {
-            Y.log("Could not enable polling to live data for \"" + Y.dump(request) + "\" at interval " + msec, "info", this.toString());
-        }
+        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+        this._intervals[x.id] = x;
+        return x.id;
     },
 
     /**
@@ -69,16 +58,14 @@ Pollable.prototype = {
      * @method clearInterval
      * @param id {Number} Interval ID.
      */
-    clearInterval: function(id) {
-        // Remove from tracker if there
-        var tracker = this._intervals || [],
-            i = tracker.length-1;
-
-        for(; i>-1; i--) {
-            if(tracker[i] === id) {
-                tracker.splice(i,1);
-                clearInterval(id);
-            }
+    clearInterval: function(id, key) {
+        // In case of being called by clearAllIntervals()
+        id = key || id;
+        if(this._intervals[id]) {
+            // Clear the interval
+            this._intervals[id].cancel();
+            // Clear from tracker
+            delete this._intervals[id];
         }
     },
 
@@ -88,15 +75,8 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        var tracker = this._intervals,
-            i = tracker.length-1;
-            
-        for(; i>-1; i--) {
-            clearInterval(tracker[i]);
-        }
-        
-        this._intervals = [];
+        Y.each(this._intervals, this.clearInterval, this);
     }
 };
     
-Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:false});
+Y.augment(Y.DataSource.Local, Pollable);
