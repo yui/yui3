@@ -21,7 +21,16 @@ DPJSON = {
     // DataParser.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
-    
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataParser.JSON";
+    },
+
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
@@ -85,19 +94,18 @@ DPJSON = {
      * @param data {Object} Data to parse.
      * @return {Object} Schema-parsed data.
      * @static
-     * @protected
      */
-    _parse: function(schema, data) {
+    parse: function(schema, data) {
         var data_in = (data.responseText && Y.JSON.parse(data.responseText)) || data,
             data_out = {results:[],meta:{}};
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            data_out = this._parseResults(schema, data_in, data_out);
+            data_out = DPJSON._parseResults(schema, data_in, data_out);
 
             // Parse meta data
             if(LANG.isObject(schema.metaFields)) {
-                data_out = this._parseMeta(schema.metaFields, data_in, data_out);
+                data_out = DPJSON._parseMeta(schema.metaFields, data_in, data_out);
             }
         }
         else {
@@ -132,7 +140,7 @@ DPJSON = {
                 else {
                     if(LANG.isArray(schema.fields)) {
                         if(LANG.isArray(schema.fields)) {
-                            results = this._filterFieldValues(schema.fields, results);
+                            results = DPJSON._filterFieldValues(schema.fields, results);
                         }
                         else {
                             bError = true;
@@ -252,9 +260,8 @@ DPJSON = {
         return data_out;
     }
 };
-Y.mix(DPJSON, Y.DataParser.Base);
 
-Y.DataParser.JSON = DPJSON;
+Y.DataParser.JSON = Y.mix(DPJSON, Y.DataParser.Base);
 
 
 

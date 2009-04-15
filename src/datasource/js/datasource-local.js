@@ -123,9 +123,10 @@ Y.extend(DSLocal, Y.Base, {
          * @preventable _defRequestFn
          */
         //this.publish("request", {defaultFn: this._defRequestFn});
-        this.publish("request", {defaultFn:function(e){
-            this._defRequestFn(e);
-        }});
+        //this.publish("request", {defaultFn:function(e){
+        //    this._defRequestFn(e);
+        //}});
+        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
          
         /**
          * Fired when raw data is received.
@@ -146,10 +147,11 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defDataFn
          */
-        //this.publish("data", {defaultFn: this._defDataFn});
-         this.publish("data", {defaultFn:function(e){
-            this._defDataFn(e);
-        }});
+         //this.publish("data", {defaultFn: this._defDataFn});
+         //this.publish("data", {defaultFn:function(e){
+         //   this._defDataFn(e);
+         //}});
+        this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
 
         /**
          * Fired when response is returned.
@@ -178,9 +180,10 @@ Y.extend(DSLocal, Y.Base, {
          * @preventable _defResponseFn
          */
          //this.publish("response", {defaultFn: this._defResponseFn});
-         this.publish("response", {defaultFn:function(e){
-            this._defResponseFn(e);
-        }});
+         //this.publish("response", {defaultFn:function(e){
+         //   this._defResponseFn(e);
+         //}});
+         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
 
         /**
          * Fired when an error is encountered.
@@ -334,6 +337,4 @@ Y.extend(DSLocal, Y.Base, {
     }
 });
     
-Y.namespace("DataSource");
-Y.DataSource.Local = DSLocal;
-    
+Y.namespace("DataSource").Local = DSLocal;

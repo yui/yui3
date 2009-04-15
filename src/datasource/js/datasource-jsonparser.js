@@ -99,5 +99,4 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
     }
 });
     
-Y.namespace('plugin');
-Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;

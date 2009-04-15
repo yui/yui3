@@ -1,1 +1,1 @@
-YUI.add("dataparser-base",function(B){var A={_parse:function(C,D){return D;},parse:function(C,D){return this._parse(C,D);}};B.namespace("DataParser");B.DataParser.Base=A;},"@VERSION@",{requires:["base"]});
+YUI.add("dataparser-base",function(B){var A={toString:function(){return"DataParser.Base";},parse:function(C,D){return D;}};B.namespace("DataParser").Base=A;},"@VERSION@",{requires:["base"]});
