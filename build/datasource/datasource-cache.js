@@ -117,8 +117,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      }
 });
 
-Y.namespace('plugin');
-Y.plugin.DataSourceCache = DataSourceCache;
+Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 

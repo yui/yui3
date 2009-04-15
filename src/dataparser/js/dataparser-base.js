@@ -35,5 +35,4 @@ var DPBase = {
     }
 };
 
-Y.namespace("DataParser");
-Y.DataParser.Base = DPBase;
+Y.namespace("DataParser").Base = DPBase;

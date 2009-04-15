@@ -77,7 +77,7 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        Y.each(this._intervals, this.clearInterval, this)
+        Y.each(this._intervals, this.clearInterval, this);
     }
 };
     

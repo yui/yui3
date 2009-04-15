@@ -335,9 +335,7 @@ Y.extend(DSLocal, Y.Base, {
     }
 });
     
-Y.namespace("DataSource");
-Y.DataSource.Local = DSLocal;
-    
+Y.namespace("DataSource").Local = DSLocal;
 
 
 

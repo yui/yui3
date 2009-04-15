@@ -335,9 +335,7 @@ Y.extend(DSLocal, Y.Base, {
     }
 });
     
-Y.namespace("DataSource");
-Y.DataSource.Local = DSLocal;
-    
+Y.namespace("DataSource").Local = DSLocal;
 
 
 
@@ -602,8 +600,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      }
 });
 
-Y.namespace('plugin');
-Y.plugin.DataSourceCache = DataSourceCache;
+Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
@@ -712,8 +709,7 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
     }
 });
     
-Y.namespace('plugin');
-Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;
 
 
 
@@ -798,7 +794,7 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        Y.each(this._intervals, this.clearInterval, this)
+        Y.each(this._intervals, this.clearInterval, this);
     }
 };
     
