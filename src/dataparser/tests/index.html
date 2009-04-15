@@ -157,7 +157,22 @@
                 ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
                 ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
                 ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
-            }
+            },
+
+            testError: function() {
+                var schema = {
+                        resultsList: "response",
+                        fields: ["name", "number", "letter"]
+                    },
+                    data_in = "123",
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.areSame(true, data_out.error, "Expected error flag on.");
+                // Don't know if we can assert this as of yet
+                //ASSERT.areSame({}, data_out.meta, "Expected empty meta.");
+                //ASSERT.areSame([], data_out.results, "Expected empty results.");
+            },
+
         });
             
         
