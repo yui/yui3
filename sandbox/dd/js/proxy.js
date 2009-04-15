@@ -49,7 +49,8 @@ YUI.add('dd-proxy', function(Y) {
         proxy: {
             value: false,
             setter: function(v) {
-                this._setProxy(v);
+                Y.on('event:ready', Y.bind(this._setProxy, this, v));
+                //this._setProxy(v);
                 return v;
             }
         },        
@@ -80,37 +81,12 @@ YUI.add('dd-proxy', function(Y) {
         _setProxy: function(v) {
             if (v) {
                 if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
-                    this._createFrame();
-                    this.set(DRAG_NODE, DDM._proxy);
+                    if (DDM._proxy) {
+                        this.set(DRAG_NODE, DDM._proxy);
+                    }
                 }
             } else {
                 this.set(DRAG_NODE, this.get(NODE));
-            }
-        },
-        /**
-        * @private
-        * @method _createFrame
-        * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
-        */
-        _createFrame: function() {
-            if (!DDM._proxy) {
-                DDM._proxy = true;
-
-                var p = Y.Node.create('<div></div>'),
-                b = Y.Node.get('body');
-
-                p.setStyles({
-                    position: 'absolute',
-                    display: 'none',
-                    zIndex: '999',
-                    top: '-999px',
-                    left: '-999px'
-                });
-
-                b.insertBefore(p, b.get('firstChild'));
-                p.set('id', Y.stamp(p));
-                p.addClass(DDM.CSS_PREFIX + '-proxy');
-                DDM._proxy = p;
             }
         },
         /**
@@ -157,9 +133,6 @@ YUI.add('dd-proxy', function(Y) {
         * @description Lifecycle method
         */
         initializer: function() {
-            if (this.get(PROXY)) {
-                this._createFrame();
-            }
         },
         /**
         * @method start
@@ -188,7 +161,38 @@ YUI.add('dd-proxy', function(Y) {
     //Extend DD.Drag
     Y.extend(Proxy, Y.DD.Drag, proto);
     //Set this new class as DD.Drag for other extensions
-    Y.DD.Drag = Proxy;    
+    Y.DD.Drag = Proxy;
+
+
+    /**
+    * @private
+    * @for DDM
+    * @method _createFrame
+    * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
+    */
+    Y.DD.DDM._createFrame = function() {
+        if (!Y.DD.DDM._proxy) {
+            Y.DD.DDM._proxy = true;
+
+            var p = Y.Node.create('<div></div>'),
+            b = Y.Node.get('body');
+
+            p.setStyles({
+                position: 'absolute',
+                display: 'none',
+                zIndex: '999',
+                top: '-999px',
+                left: '-999px'
+            });
+
+            b.insertBefore(p, b.get('firstChild'));
+            p.set('id', Y.stamp(p));
+            p.addClass(Y.DD.DDM.CSS_PREFIX + '-proxy');
+            Y.DD.DDM._proxy = p;
+        }
+    };
+    
+    Y.on('event:ready', Y.bind(Y.DD.DDM._createFrame, Y.DD.DDM));
 
 
 

@@ -31,7 +31,7 @@ YUI.add('dd-scroll', function(Y) {
                 if (node) {
                     var n = Y.get(node);
                     if (!n) {
-                        Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                        Y.error('DD.Drag: Invalid Node Given: ' + node);
                     } else {
                         n = n.item(0);
                     }
@@ -126,9 +126,9 @@ YUI.add('dd-scroll', function(Y) {
             return r;
         },
         initializer: function() {
-            Y.Node.get(window).on('scroll', function() {
+            Y.get(window).on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
-            }, this);
+            }, this));
         },
         /**
         * @private

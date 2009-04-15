@@ -136,7 +136,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -152,7 +152,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -812,9 +812,9 @@ YUI.add('dd-drag', function(Y) {
         _prep: function() {
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.on(MOUSE_UP, this._handleMouseUp, this, true);
-            node.on(DRAG_START, this._fixDragStart, this, true);
+            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
+            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
+            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
         },
         /**
         * @private
@@ -824,6 +824,7 @@ YUI.add('dd-drag', function(Y) {
         _unprep: function() {
             var node = this.get(NODE);
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
+            //TODO...
             node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.detach(MOUSE_UP, this._handleMouseUp, this, true);
             node.detach(DRAG_START, this._fixDragStart, this, true);
@@ -839,7 +840,7 @@ YUI.add('dd-drag', function(Y) {
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
-                this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+                this.get(DRAG_NODE).on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
                 var xy = this.nodeXY;
 
                 this._startTime = (new Date()).getTime();

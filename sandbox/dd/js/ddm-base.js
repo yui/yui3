@@ -133,8 +133,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description DDM's init method
         */
         initializer: function() {
-            Y.Node.get('document').on('mousemove', this._move, this, true);
-            Y.Node.get('document').on('mouseup', this._end, this, true);
+            var doc = Y.Node.get('document');
+            doc.on('mousemove', Y.bind(this._move, this));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
