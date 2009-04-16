@@ -201,6 +201,12 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                 } catch(e) {
                     Assert.isFalse(1, 'setStyle invalid width error');
                 }
+
+                try {
+                    Y.DOM.setStyle(ft, 'height', '-1');
+                } catch(e) {
+                    Assert.isFalse(1, 'setStyle invalid height error');
+                }
            },
 
             test_create: function() {

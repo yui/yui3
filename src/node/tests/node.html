@@ -93,7 +93,7 @@ body {
             <button name="test-data3" value="0">button</button>
             <button name="test-data4">button</button>
         </form><div id="test-class">test class</div>
-        <div id="test-prop">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
+        <div id="test-prop" tabindex="4">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
         <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
         <div id="get-style">getStyle</div>
         <div id="baz">baz</div>
@@ -254,6 +254,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                     'node.get("firstChild.nextSibling.firstChild.nodeValue")');
 
 
+            Assert.areEqual(4, Y.get('#test-prop').get('tabIndex'), 'node.get("tabIndex")');
 
         },
             
