@@ -1,5 +1,7 @@
 The Console tool
     The Console tool creates a cross browser display to read log messages emitted by the YUI logging subsystem.
 
+Development master
+
 3.0.0pr2
     Initial release
