@@ -722,7 +722,7 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
-(function() {
+(function() { // IE clones expandos
     var node = document.createElement('div');
     Y.stamp(node);
     if (node[UID] === node.cloneNode(true)[UID]) {
@@ -732,7 +732,6 @@ if (!document.documentElement.hasAttribute) { // IE < 8
             return Y.get(node);
         };
     }
-    
 })();
     /**
      * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
