@@ -132,11 +132,11 @@ DPJSON = {
     },
 
     /**
-     * Overriding parse method traverses JSON data according to given schema.
+     * Overriding parse method filters JSON data according to given schema.
      *
-     * @method _parse
+     * @method parse
      * @param schema {Object} Schema to parse against.
-     * @param data {Object} Data to parse
+     * @param data {Object} Data to parse.
      * @return {Object} Schema-parsed data.
      * @static
      */
@@ -157,7 +157,7 @@ DPJSON = {
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            if(!LANG.isUndefined(schema.resultsList)) {
+            if(!LANG.isUndefined(schema.resultsLocator)) {
                 data_out = DPJSON._parseResults(schema, data_in, data_out);
             }
 
@@ -189,16 +189,16 @@ DPJSON = {
             path,
             error;
 
-        if(schema.resultsList) {
-            path = DPJSON.buildPath(schema.resultsList);
+        if(schema.resultsLocator) {
+            path = DPJSON.buildPath(schema.resultsLocator);
             if(path) {
                 results = DPJSON.getLocationValue(path, data_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
-                    if(LANG.isArray(schema.fields) && LANG.isArray(results)) {
-                        data_out = DPJSON._filterFieldValues(schema.fields, results, data_out);
+                    if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
+                        data_out = DPJSON._filterFieldValues(schema.resultsFields, results, data_out);
                     }
                     else {
                         data_out.results = [];

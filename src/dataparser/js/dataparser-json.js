@@ -86,7 +86,7 @@ DPJSON = {
     },
 
     /**
-     * Overriding parse method traverses JSON data according to given schema.
+     * Overriding parse method filters JSON data according to given schema.
      *
      * @method parse
      * @param schema {Object} Schema to parse against.
@@ -111,7 +111,7 @@ DPJSON = {
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            if(!LANG.isUndefined(schema.resultsList)) {
+            if(!LANG.isUndefined(schema.resultsLocator)) {
                 data_out = DPJSON._parseResults(schema, data_in, data_out);
             }
 
@@ -144,16 +144,16 @@ DPJSON = {
             path,
             error;
 
-        if(schema.resultsList) {
-            path = DPJSON.buildPath(schema.resultsList);
+        if(schema.resultsLocator) {
+            path = DPJSON.buildPath(schema.resultsLocator);
             if(path) {
                 results = DPJSON.getLocationValue(path, data_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
-                    if(LANG.isArray(schema.fields) && LANG.isArray(results)) {
-                        data_out = DPJSON._filterFieldValues(schema.fields, results, data_out);
+                    if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
+                        data_out = DPJSON._getFieldValues(schema.resultsFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
@@ -174,17 +174,17 @@ DPJSON = {
     },
 
     /**
-     * Schema-parse field data out of list of full results
+     * Get field data values out of list of full results
      *
-     * @method _filterFieldValues
-     * @param fields {Array} Fields to filter against.
+     * @method _getFieldValues
+     * @param fields {Array} Fields to find.
      * @param data_in {Array} Results data to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _filterFieldValues: function(fields, data_in, data_out) {
+    _getFieldValues: function(fields, data_in, data_out) {
         var results = [],
             len = fields.length,
             i, j,
