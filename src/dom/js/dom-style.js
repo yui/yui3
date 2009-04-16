@@ -122,30 +122,6 @@ if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
     Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
-try {
-    document.documentElement.style.height = '-1px';
-} catch(e) { // IE throws error on invalid style set; trap common cases
-    Y.DOM.CUSTOM_STYLES.height = {
-        set: function(node, val, style) {
-            if (val >= 0) {
-                style['height'] = val;
-            } else {
-                Y.log('invalid style value for height: ' + val, 'warn', 'DOM');
-            }
-        }
-    };
-
-    Y.DOM.CUSTOM_STYLES.width = {
-        set: function(node, val, style) {
-            if (val >= 0) {
-                style['width'] = val;
-            } else {
-                Y.log('invalid style value for width: ' + val, 'warn', 'DOM');
-            }
-        }
-    };
-}
-
 // fix opera computedStyle default color unit (convert to rgb)
 if (Y.UA.opera) {
     Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
