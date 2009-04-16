@@ -28,6 +28,21 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype,
+
+    Node = function(config) {
+        this[UID] = Y.stamp(config.node);
+        g_nodes[this[UID]] = config.node;
+        Node._instances[this[UID]] = this;
+
+        if (config.restricted) {
+            g_restrict[this[UID]] = true; 
+        }
+
+        SuperConstr.apply(this, arguments);
+    },
+
     // used with previous/next/ancestor tests
     _wrapFn = function(fn) {
         var ret = null;
@@ -42,23 +57,7 @@ var g_nodes = {},
         }
 
         return ret;
-    },
-
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
-    Node = function(config) {
-        this[UID] = Y.stamp(config.node);
-        g_nodes[this[UID]] = config.node;
-        Node._instances[this[UID]] = this;
-
-        if (config.restricted) {
-            g_restrict[this[UID]] = true; 
-        }
-
-        SuperConstr.apply(this, arguments);
     };
-
 // end "globals"
 
 Node.NAME = 'Node';
@@ -101,8 +100,8 @@ Node.scrubVal = function(val, node, depth) {
             if (    NODE_TYPE in val || // dom node
                     val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document // window TODO: restrict?
-                ) { 
+                    val.document ) // window TODO: restrict?
+                { 
                 if (node && g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
@@ -241,7 +240,8 @@ Node.ATTRS = {
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]];
+    var node = g_nodes[this[UID]],
+        strPath;
 
     if (name.indexOf(DOT) !== -1) {
         strPath = name;

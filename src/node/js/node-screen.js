@@ -60,7 +60,7 @@ Y.each([
 
                 return Y.DOM[name].apply(this, args);
             }
-        }
+        };
     }
 );
 
@@ -159,3 +159,4 @@ Y.Node.importMethod(Y.DOM, [
  */
     'setY'
 ]);
+

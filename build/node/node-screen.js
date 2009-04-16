@@ -62,7 +62,7 @@ Y.each([
 
                 return Y.DOM[name].apply(this, args);
             }
-        }
+        };
     }
 );
 
@@ -159,6 +159,7 @@ Y.Node.importMethod(Y.DOM, [
  */
     'setY'
 ]);
+
 /**
  * Extended Node interface for managing regions and screen positioning.
  * Adds support for positioning elements and normalizes window size and scroll detection. 

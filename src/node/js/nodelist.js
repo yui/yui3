@@ -87,10 +87,8 @@ NodeList.each = function(instance, fn, context) {
 };
 
 NodeList.addMethod = function(name, fn, context) {
-    if (name) {
-        var tmp = NodeList._tmpNode =
-                NodeList._tmpNode || Y.Node.create('<div>');
-
+    var tmp = NodeList._getTempNode();
+    if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
                 args = arguments;
@@ -130,10 +128,18 @@ NodeList.importMethod = function(host, name, altName) {
     }
 };
 
+NodeList._getTempNode = function() {
+    var tmp = NodeList._tempNode;
+        if (!tmp) {
+            tmp = Y.Node.create('<div></div>');
+            NodeList._tempNode = tmp;
+        }
+    return tmp;
+};
+
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>');
+    var tmp = NodeList._getTempNode();
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
         if (!instance) {
@@ -146,8 +152,7 @@ NodeList.DEFAULT_SETTER = function(attr, val) {
 
 // call with instance context
 NodeList.DEFAULT_GETTER = function(attr) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>'),
+    var tmp = NodeList._getTempNode(),
         ret = [];
 
     NodeList.each(this, function(node) {
