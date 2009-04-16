@@ -1,4 +1,4 @@
-YUI.add('dom', function(Y) {
+YUI.add('dom-base', function(Y) {
 
 /** 
  * The DOM utility provides a cross-browser abtraction layer
@@ -118,11 +118,13 @@ Y.DOM = {
                     wrapFn = fn;
                 if (element) {
                     if (tag && !Y.UA.webkit) { // children.tags() broken in safari
-                        elements = element.children.tags(tag); 
+                        elements = element.children.tags(tag);
                     } else {
-                        elements = element.children; 
-                        wrapFn = function(el) {
-                            return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                        elements = element.children;
+                        if (tag) {
+                            wrapFn = function(el) {
+                                return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                            }
                         }
                     }
 
@@ -809,6 +811,11 @@ Y.mix(Y.DOM, {
     }
 });
 
+
+
+}, '@VERSION@' ,{requires:['event'], skinnable:false});
+YUI.add('dom-style', function(Y) {
+
 /** 
  * Add style management functionality to DOM.
  * @module dom
@@ -840,7 +847,8 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 
 Y.mix(Y.DOM, {
-    CUSTOM_STYLES: {},
+    CUSTOM_STYLES: {
+    },
 
 
     /**
@@ -932,6 +940,30 @@ if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
     Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
+try {
+    document.documentElement.style.height = '-1px';
+} catch(e) { // IE throws error on invalid style set; trap common cases
+    Y.DOM.CUSTOM_STYLES.height = {
+        set: function(node, val, style) {
+            if (val >= 0) {
+                style['height'] = val;
+            } else {
+                Y.log('invalid style value for height: ' + val, 'warn', 'DOM');
+            }
+        }
+    };
+
+    Y.DOM.CUSTOM_STYLES.width = {
+        set: function(node, val, style) {
+            if (val >= 0) {
+                style['width'] = val;
+            } else {
+                Y.log('invalid style value for width: ' + val, 'warn', 'DOM');
+            }
+        }
+    };
+}
+
 // fix opera computedStyle default color unit (convert to rgb)
 if (Y.UA.opera) {
     Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
@@ -961,6 +993,303 @@ if (Y.UA.webkit) {
     };
 
 }
+
+/**
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
+ */
+
+var TO_STRING = 'toString',
+    PARSE_INT = parseInt,
+    RE = RegExp;
+
+Y.Color = {
+    KEYWORDS: {
+        black: '000',
+        silver: 'c0c0c0',
+        gray: '808080',
+        white: 'fff',
+        maroon: '800000',
+        red: 'f00',
+        purple: '800080',
+        fuchsia: 'f0f',
+        green: '008000',
+        lime: '0f0',
+        olive: '808000',
+        yellow: 'ff0',
+        navy: '000080',
+        blue: '00f',
+        teal: '008080',
+        aqua: '0ff'
+    },
+
+    re_RGB: /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+    re_hex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
+    re_hex3: /([0-9A-F])/gi,
+
+    toRGB: function(val) {
+        if (!Y.Color.re_RGB.test(val)) {
+            val = Y.Color.toHex(val);
+        }
+
+        if(Y.Color.re_hex.exec(val)) {
+            val = 'rgb(' + [
+                PARSE_INT(RE.$1, 16),
+                PARSE_INT(RE.$2, 16),
+                PARSE_INT(RE.$3, 16)
+            ].join(', ') + ')';
+        }
+        return val;
+    },
+
+    toHex: function(val) {
+        val = Y.Color.KEYWORDS[val] || val;
+        if (Y.Color.re_RGB.exec(val)) {
+            var r = (RE.$1.length === 1) ? '0' + RE.$1 : Number(RE.$1),
+                g = (RE.$2.length === 1) ? '0' + RE.$2 : Number(RE.$2),
+                b = (RE.$3.length === 1) ? '0' + RE.$3 : Number(RE.$3);
+
+            val = [
+                r[TO_STRING](16),
+                g[TO_STRING](16),
+                b[TO_STRING](16)
+            ].join('');
+        }
+
+        if (val.length < 6) {
+            val = val.replace(Y.Color.re_hex3, '$1$1');
+        }
+
+        if (val !== 'transparent' && val.indexOf('#') < 0) {
+            val = '#' + val;
+        }
+
+        return val.toLowerCase();
+    }
+};
+
+/**
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
+ */
+
+var CLIENT_TOP = 'clientTop',
+    CLIENT_LEFT = 'clientLeft',
+    PARENT_NODE = 'parentNode',
+    RIGHT = 'right',
+    HAS_LAYOUT = 'hasLayout',
+    PX = 'px',
+    FILTER = 'filter',
+    FILTERS = 'filters',
+    OPACITY = 'opacity',
+    AUTO = 'auto',
+    CURRENT_STYLE = 'currentStyle';
+
+// use alpha filter for IE opacity
+if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
+        document[DOCUMENT_ELEMENT][FILTERS]) {
+    Y.DOM.CUSTOM_STYLES[OPACITY] = {
+        get: function(node) {
+            var val = 100;
+            try { // will error if no DXImageTransform
+                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+
+            } catch(e) {
+                try { // make sure its in the document
+                    val = node[FILTERS]('alpha')[OPACITY];
+                } catch(err) {
+                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
+                }
+            }
+            return val / 100;
+        },
+
+        set: function(node, val, style) {
+            if (typeof style[FILTER] == 'string') { // in case not appended
+                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
+                
+                if (!node[CURRENT_STYLE] || !node[CURRENT_STYLE][HAS_LAYOUT]) {
+                    style.zoom = 1; // needs layout 
+                }
+            }
+        }
+    };
+}
+
+// IE getComputedStyle
+// TODO: unit-less lineHeight (e.g. 1.22)
+var re_size = /^width|height$/,
+    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
+
+var ComputedStyle = {
+    CUSTOM_STYLES: {},
+
+    get: function(el, property) {
+        var value = '',
+            current = el[CURRENT_STYLE][property];
+
+        if (property === OPACITY) {
+            value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
+        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
+            value = current;
+        } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
+            value = Y.DOM.IE.COMPUTED[property](el, property);
+        } else if (re_unit.test(current)) { // convert to pixel
+            value = Y.DOM.IE.ComputedStyle.getPixel(el, property);
+        } else {
+            value = current;
+        }
+
+        return value;
+    },
+
+    getOffset: function(el, prop) {
+        var current = el[CURRENT_STYLE][prop],                        // value of "width", "top", etc.
+            capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
+            offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
+            pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
+            value = '';
+
+        if (current == AUTO) {
+            var actual = el[offset]; // offsetHeight/Top etc.
+            if (actual === UNDEFINED) { // likely "right" or "bottom"
+                value = 0;
+            }
+
+            value = actual;
+            if (re_size.test(prop)) { // account for box model diff 
+                el[STYLE][prop] = actual; 
+                if (el[offset] > actual) {
+                    // the difference is padding + border (works in Standards & Quirks modes)
+                    value = actual - (el[offset] - actual);
+                }
+                el[STYLE][prop] = AUTO; // revert to auto
+            }
+        } else { // convert units to px
+            if (!el[STYLE][pixel] && !el[STYLE][prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
+                el[STYLE][prop] = current;              // no style.pixelWidth if no style.width
+            }
+            value = el[STYLE][pixel];
+        }
+        return value + PX;
+    },
+
+    getBorderWidth: function(el, property) {
+        // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
+        // clientTop/Left = borderWidth
+        var value = null;
+        if (!el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
+            el[STYLE].zoom = 1; // need layout to measure client
+        }
+
+        switch(property) {
+            case BORDER_TOP_WIDTH:
+                value = el[CLIENT_TOP];
+                break;
+            case BORDER_BOTTOM_WIDTH:
+                value = el.offsetHeight - el.clientHeight - el[CLIENT_TOP];
+                break;
+            case BORDER_LEFT_WIDTH:
+                value = el[CLIENT_LEFT];
+                break;
+            case BORDER_RIGHT_WIDTH:
+                value = el.offsetWidth - el.clientWidth - el[CLIENT_LEFT];
+                break;
+        }
+        return value + PX;
+    },
+
+    getPixel: function(node, att) {
+        // use pixelRight to convert to px
+        var val = null,
+            styleRight = node[CURRENT_STYLE][RIGHT],
+            current = node[CURRENT_STYLE][att];
+
+        node[STYLE][RIGHT] = current;
+        val = node[STYLE].pixelRight;
+        node[STYLE][RIGHT] = styleRight; // revert
+
+        return val + PX;
+    },
+
+    getMargin: function(node, att) {
+        var val;
+        if (node[CURRENT_STYLE][att] == AUTO) {
+            val = 0 + PX;
+        } else {
+            val = Y.DOM.IE.ComputedStyle.getPixel(node, att);
+        }
+        return val;
+    },
+
+    getVisibility: function(node, att) {
+        var current;
+        while ( (current = node[CURRENT_STYLE]) && current[att] == 'inherit') { // NOTE: assignment in test
+            node = node[PARENT_NODE];
+        }
+        return (current) ? current[att] : VISIBLE;
+    },
+
+    getColor: function(node, att) {
+        var current = node[CURRENT_STYLE][att];
+
+        if (!current || current === TRANSPARENT) {
+            Y.DOM.elementByAxis(node, PARENT_NODE, null, function(parent) {
+                current = parent[CURRENT_STYLE][att];
+                if (current && current !== TRANSPARENT) {
+                    node = parent;
+                    return true;
+                }
+            });
+        }
+
+        return Y.Color.toRGB(current);
+    },
+
+    getBorderColor: function(node, att) {
+        var current = node[CURRENT_STYLE];
+        var val = current[att] || current.color;
+        return Y.Color.toRGB(Y.Color.toHex(val));
+    }
+
+};
+
+//fontSize: getPixelFont,
+var IEComputed = {};
+
+// TODO: top, right, bottom, left
+IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
+
+IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
+
+IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
+        IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
+        ComputedStyle.getBorderWidth;
+
+IEComputed.marginTop = IEComputed.marginRight = IEComputed.marginBottom =
+        IEComputed.marginLeft = ComputedStyle.getMargin;
+
+IEComputed.visibility = ComputedStyle.getVisibility;
+IEComputed.borderColor = IEComputed.borderTopColor =
+        IEComputed.borderRightColor = IEComputed.borderBottomColor =
+        IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
+
+if (!Y.config.win[GET_COMPUTED_STYLE]) {
+    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
+}
+
+Y.namespace('DOM.IE');
+Y.DOM.IE.COMPUTED = IEComputed;
+Y.DOM.IE.ComputedStyle = ComputedStyle;
+
+
+
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+YUI.add('dom-screen', function(Y) {
 
 
 /**
@@ -1483,913 +1812,10 @@ Y.mix(DOM, {
         return r;
     }
 });
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
 
-var CLIENT_TOP = 'clientTop',
-    CLIENT_LEFT = 'clientLeft',
-    PARENT_NODE = 'parentNode',
-    RIGHT = 'right',
-    HAS_LAYOUT = 'hasLayout',
-    PX = 'px',
-    FILTER = 'filter',
-    FILTERS = 'filters',
-    OPACITY = 'opacity',
-    AUTO = 'auto',
-    CURRENT_STYLE = 'currentStyle';
 
-// use alpha filter for IE opacity
-if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
-        document[DOCUMENT_ELEMENT][FILTERS]) {
-    Y.DOM.CUSTOM_STYLES[OPACITY] = {
-        get: function(node) {
-            var val = 100;
-            try { // will error if no DXImageTransform
-                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
 
-            } catch(e) {
-                try { // make sure its in the document
-                    val = node[FILTERS]('alpha')[OPACITY];
-                } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
-                }
-            }
-            return val / 100;
-        },
 
-        set: function(node, val, style) {
-            if (typeof style[FILTER] == 'string') { // in case not appended
-                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                
-                if (!node[CURRENT_STYLE] || !node[CURRENT_STYLE][HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
-                }
-            }
-        }
-    };
-}
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector'], skinnable:false});
 
-// IE getComputedStyle
-// TODO: unit-less lineHeight (e.g. 1.22)
-var re_size = /^width|height$/,
-    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
-
-var ComputedStyle = {
-    CUSTOM_STYLES: {},
-
-    get: function(el, property) {
-        var value = '',
-            current = el[CURRENT_STYLE][property];
-
-        if (property === OPACITY) {
-            value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
-            value = current;
-        } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
-            value = Y.DOM.IE.COMPUTED[property](el, property);
-        } else if (re_unit.test(current)) { // convert to pixel
-            value = Y.DOM.IE.ComputedStyle.getPixel(el, property);
-        } else {
-            value = current;
-        }
-
-        return value;
-    },
-
-    getOffset: function(el, prop) {
-        var current = el[CURRENT_STYLE][prop],                        // value of "width", "top", etc.
-            capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
-            offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
-            pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-            value = '';
-
-        if (current == AUTO) {
-            var actual = el[offset]; // offsetHeight/Top etc.
-            if (actual === UNDEFINED) { // likely "right" or "bottom"
-                value = 0;
-            }
-
-            value = actual;
-            if (re_size.test(prop)) { // account for box model diff 
-                el[STYLE][prop] = actual; 
-                if (el[offset] > actual) {
-                    // the difference is padding + border (works in Standards & Quirks modes)
-                    value = actual - (el[offset] - actual);
-                }
-                el[STYLE][prop] = AUTO; // revert to auto
-            }
-        } else { // convert units to px
-            if (!el[STYLE][pixel] && !el[STYLE][prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
-                el[STYLE][prop] = current;              // no style.pixelWidth if no style.width
-            }
-            value = el[STYLE][pixel];
-        }
-        return value + PX;
-    },
-
-    getBorderWidth: function(el, property) {
-        // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
-        // clientTop/Left = borderWidth
-        var value = null;
-        if (!el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
-            el[STYLE].zoom = 1; // need layout to measure client
-        }
-
-        switch(property) {
-            case BORDER_TOP_WIDTH:
-                value = el[CLIENT_TOP];
-                break;
-            case BORDER_BOTTOM_WIDTH:
-                value = el.offsetHeight - el.clientHeight - el[CLIENT_TOP];
-                break;
-            case BORDER_LEFT_WIDTH:
-                value = el[CLIENT_LEFT];
-                break;
-            case BORDER_RIGHT_WIDTH:
-                value = el.offsetWidth - el.clientWidth - el[CLIENT_LEFT];
-                break;
-        }
-        return value + PX;
-    },
-
-    getPixel: function(node, att) {
-        // use pixelRight to convert to px
-        var val = null,
-            styleRight = node[CURRENT_STYLE][RIGHT],
-            current = node[CURRENT_STYLE][att];
-
-        node[STYLE][RIGHT] = current;
-        val = node[STYLE].pixelRight;
-        node[STYLE][RIGHT] = styleRight; // revert
-
-        return val + PX;
-    },
-
-    getMargin: function(node, att) {
-        var val;
-        if (node[CURRENT_STYLE][att] == AUTO) {
-            val = 0 + PX;
-        } else {
-            val = Y.DOM.IE.ComputedStyle.getPixel(node, att);
-        }
-        return val;
-    },
-
-    getVisibility: function(node, att) {
-        var current;
-        while ( (current = node[CURRENT_STYLE]) && current[att] == 'inherit') { // NOTE: assignment in test
-            node = node[PARENT_NODE];
-        }
-        return (current) ? current[att] : VISIBLE;
-    },
-
-    getColor: function(node, att) {
-        var current = node[CURRENT_STYLE][att];
-
-        if (!current || current === TRANSPARENT) {
-            Y.DOM.elementByAxis(node, PARENT_NODE, null, function(parent) {
-                current = parent[CURRENT_STYLE][att];
-                if (current && current !== TRANSPARENT) {
-                    node = parent;
-                    return true;
-                }
-            });
-        }
-
-        return Y.Color.toRGB(current);
-    },
-
-    getBorderColor: function(node, att) {
-        var current = node[CURRENT_STYLE];
-        var val = current[att] || current.color;
-        return Y.Color.toRGB(Y.Color.toHex(val));
-    }
-
-};
-
-//fontSize: getPixelFont,
-var IEComputed = {};
-
-// TODO: top, right, bottom, left
-IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
-
-IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
-
-IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
-        IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
-        ComputedStyle.getBorderWidth;
-
-IEComputed.marginTop = IEComputed.marginRight = IEComputed.marginBottom =
-        IEComputed.marginLeft = ComputedStyle.getMargin;
-
-IEComputed.visibility = ComputedStyle.getVisibility;
-IEComputed.borderColor = IEComputed.borderTopColor =
-        IEComputed.borderRightColor = IEComputed.borderBottomColor =
-        IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
-
-if (!Y.config.win[GET_COMPUTED_STYLE]) {
-    Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
-}
-
-Y.namespace('DOM.IE');
-Y.DOM.IE.COMPUTED = IEComputed;
-Y.DOM.IE.ComputedStyle = ComputedStyle;
-
-Y.namespace('Selector'); // allow native module to standalone
-
-var PARENT_NODE = 'parentNode',
-    LENGTH = 'length',
-
-NativeSelector = {
-    _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./,
-
-    _foundCache: [],
-
-    _supportsNative: function() {
-        // whitelist and feature detection to manage
-        // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) &&
-            document.querySelectorAll);
-    },
-
-    _toArray: function(nodes) { // TODO: move to Y.Array
-        var ret = nodes;
-        if (!nodes.slice) {
-            try {
-                ret = Array.prototype.slice.call(nodes);
-            } catch(e) { // IE: requires manual copy
-                ret = [];
-                for (var i = 0, len = nodes[LENGTH]; i < len; ++i) {
-                    ret[i] = nodes[i];
-                }
-            }
-        }
-        return ret;
-    },
-
-    _clearFoundCache: function() {
-        var foundCache = NativeSelector._foundCache;
-        for (var i = 0, len = foundCache[LENGTH]; i < len; ++i) {
-            try { // IE no like delete
-                delete foundCache[i]._found;
-            } catch(e) {
-                foundCache[i].removeAttribute('_found');
-            }
-        }
-        foundCache = [];
-    },
-
-    _sort: function(nodes) {
-        if (nodes) {
-            nodes = NativeSelector._toArray(nodes);
-            if (nodes.sort) {
-                nodes.sort(function(a, b) {
-                    return Y.DOM.srcIndex(a) - Y.DOM.srcIndex(b);
-                });
-            }
-        }
-
-        return nodes;
-    },
-
-    _deDupe: function(nodes) {
-        var ret = [],
-            cache = NativeSelector._foundCache;
-
-        for (var i = 0, node; node = nodes[i++];) {
-            if (!node._found) {
-                ret[ret[LENGTH]] = cache[cache[LENGTH]] = node;
-                node._found = true;
-            }
-        }
-        NativeSelector._clearFoundCache();
-        return ret;
-    },
-
-    // allows element scoped queries to begin with combinator
-    // e.g. query('> p', document.body) === query('body > p')
-    _prepQuery: function(root, selector) {
-        var groups = selector.split(','),
-            queries = [],
-            isDocRoot = (root && root.nodeType === 9);
-
-        if (root) {
-            if (!isDocRoot) {
-                root.id = root.id || Y.guid();
-                // break into separate queries for element scoping
-                for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root.ownerDocument, selector: selector});
-                }
-            } else {
-                queries.push({root: root, selector: selector});
-            }
-        }
-
-        return queries;
-    },
-
-    _query: function(selector, root, firstOnly) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return Y.Selector._brute.query(selector, root, firstOnly);
-        }
-
-        var ret = firstOnly ? null : [],
-            queryName = firstOnly ? 'querySelector' : 'querySelectorAll',
-            result,
-            queries;
-
-        root = root || Y.config.doc;
-
-        if (selector) {
-            queries = NativeSelector._prepQuery(root, selector);
-            ret = [];
-
-            for (var i = 0, query; query = queries[i++];) {
-                try {
-                    result = query.root[queryName](query.selector);
-                    if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = NativeSelector._toArray(result);
-                    }
-                    ret = ret.concat(result);
-                } catch(e) {
-                    Y.log('native selector error: ' + e, 'error', 'Selector');
-                }
-            }
-
-            if (queries[LENGTH] > 1) { // remove dupes and sort by doc order 
-                ret = NativeSelector._sort(NativeSelector._deDupe(ret));
-            }
-            ret = (!firstOnly) ? ret : ret[0] || null;
-        }
-        return ret;
-    },
-
-    _filter: function(nodes, selector) {
-        var ret = [];
-
-        if (nodes && selector) {
-            for (var i = 0, node; (node = nodes[i++]);) {
-                if (Y.Selector._test(node, selector)) {
-                    ret[ret[LENGTH]] = node;
-                }
-            }
-        } else {
-            Y.log('invalid filter input (nodes: ' + nodes +
-                    ', selector: ' + selector + ')', 'warn', 'Selector');
-        }
-
-        return ret;
-    },
-
-    _test: function(node, selector) {
-        var ret = false,
-            groups = selector.split(','),
-            item;
-
-        if (node && node[PARENT_NODE]) {
-            node.id = node.id || Y.guid();
-            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
-            for (var i = 0, group; group = groups[i++];) {
-                group += '#' + node.id; // add ID for uniqueness
-                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
-                item = Y.Selector.query(group, null, true);
-                ret = (item === node);
-                if (ret) {
-                    break;
-                }
-            }
-        }
-
-        return ret;
-    }
-};
-
-if (Y.UA.ie && Y.UA.ie <= 8) {
-    NativeSelector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
-}
-
-
-
-Y.mix(Y.Selector, NativeSelector, true);
-
-// allow standalone selector-native module
-if (NativeSelector._supportsNative()) {
-    Y.Selector.query = NativeSelector._query;
-    //Y.Selector.filter = NativeSelector._filter;
-    //Y.Selector.test = NativeSelector._test;
-}
-Y.Selector.test = NativeSelector._test;
-Y.Selector.filter = NativeSelector._filter;
-/**
- * The selector-css1 module provides helper methods allowing CSS1 Selectors to be used with DOM elements.
- * @module selector-css1
- * @title Selector Utility
- * @requires yahoo, dom
- */
-
-/**
- * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
- */
-
-var PARENT_NODE = 'parentNode',
-    TAG_NAME = 'tagName',
-    ATTRIBUTES = 'attributes',
-    COMBINATOR = 'combinator',
-    PSEUDOS = 'pseudos',
-    PREVIOUS = 'previous',
-    PREVIOUS_SIBLING = 'previousSibling',
-    LENGTH = 'length',
-
-    _childCache = [], // cache to cleanup expando node.children
-
-    Selector = Y.Selector,
-
-    SelectorCSS1 = {
-        SORT_RESULTS: false,
-        _children: function(node) {
-            var ret = node.children;
-
-            if (!ret) {
-                ret = [];
-                for (var i = 0, n; n = node.childNodes[i++];) {
-                    if (n.tagName) {
-                        ret[ret.length] = n;
-                    }
-                }
-                _childCache[_childCache.length] = node;
-                node.children = ret;
-            }
-
-            return ret;
-        },
-
-        _regexCache: {},
-
-        _re: {
-            attr: /(\[.*\])/g,
-            urls: /^(?:href|src)/
-        },
-
-        /**
-         * Mapping of shorthand tokens to corresponding attribute selector 
-         * @property shorthand
-         * @type object
-         */
-        shorthand: {
-            '\\#(-?[_a-z]+[-\\w]*)': '[id=$1]',
-            '\\.(-?[_a-z]+[-\\w]*)': '[className~=$1]'
-        },
-
-        /**
-         * List of operators and corresponding boolean functions. 
-         * These functions are passed the attribute and the current node's value of the attribute.
-         * @property operators
-         * @type object
-         */
-        operators: {
-            '': function(node, m) { return Y.DOM.getAttribute(node, m[0]) !== ''; }, // Just test for existence of attribute
-            //'': '.+',
-            '=': '^{val}$', // equality
-            '~=': '(?:^|\\s+){val}(?:\\s+|$)', // space-delimited
-            '|=': '^{val}-?' // optional hyphen-delimited
-        },
-
-        pseudos: {
-           'first-child': function(node) { 
-                return Y.Selector._children(node[PARENT_NODE])[0] === node; 
-            } 
-        },
-
-        _brute: {
-            /**
-             * Retrieves a set of nodes based on a given CSS selector. 
-             * @method query
-             *
-             * @param {string} selector The CSS Selector to test the node against.
-             * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
-             * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-             * @return {Array} An array of nodes that match the given selector.
-             * @static
-             */
-            query: function(selector, root, firstOnly) {
-                var ret = [];
-                if (selector) {
-                    ret = Selector._query(selector, root, firstOnly);
-                }
-
-                Y.log('query: ' + selector + ' returning: ' + ret[LENGTH], 'info', 'Selector');
-                Selector._cleanup();
-                return (firstOnly) ? (ret[0] || null) : ret;
-            }
-
-        },
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
-
-        // TODO: make extensible? events?
-        _cleanup: function() {
-            for (var i = 0, node; node = _childCache[i++];) {
-                delete node.children;
-            }
-
-            _childCache = [];
-        },
-
-        _query: function(selector, root, firstOnly, deDupe) {
-            var ret = [],
-                groups = selector.split(','), // TODO: handle comma in attribute/pseudo
-                nodes = [],
-                tokens,
-                token;
-
-            if (groups[LENGTH] > 1) {
-                for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                    ret = ret.concat(arguments.callee(groups[i],
-                            root, firstOnly, true)); 
-                }
-
-                ret = Selector.SORT_RESULT ? Selector._sort(ret) : ret;
-                Selector._clearFoundCache();
-            } else {
-                root = root || Y.config.doc;
-
-                if (root.nodeType !== 9) { // enforce element scope
-                    if (!root.id) {
-                        root.id = Y.guid();
-                    }
-                    selector = '#' + root.id + ' ' + selector;
-                    root = root.ownerDocument;
-                }
-
-                tokens = Selector._tokenize(selector);
-                token = tokens.pop();
-
-                if (token) {
-                    if (deDupe) {
-                        token.deDupe = true; // TODO: better approach?
-                    }
-                    if (tokens[0] && tokens[0].id) {
-                        root = root.getElementById(tokens[0].id);
-                    }
-
-                    if (root && !nodes[LENGTH] && token.prefilter) {
-                        nodes = token.prefilter(root, token);
-                    }
-
-                    if (nodes[LENGTH]) {
-                        if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
-                        } else {
-                            Y.Array.each(nodes, Selector._testToken, token);
-                        }
-                    }
-                    ret = token.result;
-                }
-            }
-
-            return ret;
-        },
-
-        _testToken: function(node, index, nodes, token) {
-            var token = token || this,
-                tag = token.tag,
-                previous = token[PREVIOUS],
-                result = token.result,
-                i = 0,
-                nextTest = previous && previous[COMBINATOR] ?
-                        Selector.combinators[previous[COMBINATOR]] :
-                        null;
-
-            if (//node[TAG_NAME] && // tagName limits to HTMLElements
-                    (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
-                while ((attr = token.tests[i])) {
-                    i++;
-                    test = attr.test;
-                    if (test.test) {
-                        if (!test.test(node[attr.name])) {
-                            return false;
-                        }
-                    } else if (!test(node, attr.match)) {
-                        return false;
-                    }
-                }
-
-                if (nextTest && !nextTest(node, token)) {
-                    return false;
-                }
-
-                result[result.length] = node;
-                if (token.deDupe) {
-                    node._found = true;
-                    Selector._foundCache.push(node);
-                }
-                return true;
-            }
-            return false;
-        },
-
-
-        _getRegExp: function(str, flags) {
-            var regexCache = Selector._regexCache;
-            flags = flags || '';
-            if (!regexCache[str + flags]) {
-                regexCache[str + flags] = new RegExp(str, flags);
-            }
-            return regexCache[str + flags];
-        },
-
-        combinators: {
-            ' ': function(node, token) {
-                var test = Selector._testToken,
-                    previous = token[PREVIOUS];
-                while ( (node = node[PARENT_NODE]) ) {
-                    if (test(node, null, null, previous)) {
-                        return true;
-                    }
-                }  
-                return false;
-            },
-
-            '>': function(node, token) {
-                return Selector._testToken(node[PARENT_NODE], null, null, token[PREVIOUS]);
-            },
-
-
-            '+': function(node, token) {
-                var sib = node[PREVIOUS_SIBLING];
-                while (sib && sib.nodeType !== 1) {
-                    sib = sib[PREVIOUS_SIBLING];
-                }
-
-                if (sib && Y.Selector._testToken(sib, null, null, token[PREVIOUS])) {
-                    return true; 
-                }
-                return false;
-            }
-
-        },
-
-        _parsers: [
-            {
-                name: TAG_NAME,
-                re: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
-                fn: function(token, match) {
-                    token.tag = match[1].toUpperCase();
-                    token.prefilter = function(root) {
-                        return root.getElementsByTagName(token.tag);
-                    };
-                    return true;
-                }
-            },
-            {
-                name: ATTRIBUTES,
-                re: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
-                fn: function(token, match) {
-                    var val = match[3],
-                        operator = !(match[2] && val) ? '' : match[2],
-                        test = Selector.operators[operator];
-
-                    // might be a function
-                    if (typeof test === 'string') {
-                        test = Selector._getRegExp(test.replace('{val}', val));
-                    }
-                    
-                    if (match[1] === 'id' && val) { // store ID for fast-path match
-                        token.id = val;
-                        token.prefilter = function(root) {
-                            var doc = root.nodeType === 9 ? root : root.ownerDocument,
-                                node = doc.getElementById(val);
-                            
-                            return node ? [node] : [];
-                        };
-                    } else if (document.documentElement.getElementsByClassName && 
-                            match[1].indexOf('class') === 0) {
-                        if (!token.prefilter) {
-                            token.prefilter = function(root) {
-                                return root.getElementsByClassName(val);
-                            };
-                            test = true; // skip class test 
-                        }
-                    }
-                    return test;
-
-                }
-
-            },
-            {
-                name: COMBINATOR,
-                re: /^\s*([>+~]|\s)\s*/,
-                fn: function(token, match) {
-                    token[COMBINATOR] = match[1];
-                    return !! Selector.combinators[token[COMBINATOR]];
-                }
-            },
-            {
-                name: PSEUDOS,
-                re: /^:([\-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
-                fn: function(token, match) {
-                    return Selector[PSEUDOS][match[1]];
-
-                }
-            }
-            ],
-
-        _getToken: function(token) {
-            return {
-                previous: token,
-                combinator: ' ',
-                tag: '*',
-                prefilter: function(root) {
-                    return root.getElementsByTagName('*');
-                },
-                tests: [],
-                result: []
-            };
-        },
-
-        /**
-            Break selector into token units per simple selector.
-            Combinator is attached to the previous token.
-         */
-        _tokenize: function(selector) {
-            selector = selector || '';
-            selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
-            var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
-                query = selector, // original query for debug report
-                tokens = [],    // array of tokens
-                found = false,  // whether or not any matches were found this pass
-                test,
-                match;          // the regex match
-
-            /*
-                Search for selector patterns, store, and strip them from the selector string
-                until no patterns match (invalid selector) or we run out of chars.
-
-                Multiple attributes and pseudos are allowed, in any order.
-                for example:
-                    'form:first-child[type=button]:not(button)[lang|=en]'
-            */
-            outer:
-            do {
-                found = false; // reset after full pass
-                for (var i = 0, parser; parser = Selector._parsers[i++];) {
-                    if ( (match = parser.re.exec(selector)) ) { // note assignment
-                        test = parser.fn(token, match);
-                        if (test) {
-                            if (test !== true) { // auto-pass
-                                token.tests.push({
-                                    name: match[1],
-                                    test: test,
-                                    match: match.slice(1)
-                                });
-                            }
-
-                            found = true;
-                            selector = selector.replace(match[0], ''); // strip current match from selector
-                            if (!selector[LENGTH] || parser.name === COMBINATOR) {
-                                tokens.push(token);
-                                token = Selector._getToken(token);
-                            }
-                        } else {
-                            found = false;
-                            break outer;
-                        }
-                    }
-                }
-            } while (found && selector.length);
-
-            if (!found || selector.length) { // not fully parsed
-                Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
-                tokens = [];
-            }
-            return tokens;
-        },
-
-        _replaceShorthand: function(selector) {
-            var shorthand = Selector.shorthand,
-                attrs = selector.match(Selector._re.attr); // pull attributes to avoid false pos on "." and "#"
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
-            }
-
-            for (var re in shorthand) {
-                if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
-                }
-            }
-
-            if (attrs) {
-                for (var i = 0, len = attrs[LENGTH]; i < len; ++i) {
-                    selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
-                }
-            }
-            return selector;
-        }
-    };
-
-Y.mix(Y.Selector, SelectorCSS1, true);
-
-// only override native when not supported
-if (!Y.Selector._supportsNative()) {
-    Y.Selector.query = Selector._brute.query;
-}
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
-var TO_STRING = 'toString',
-    PARSE_INT = parseInt,
-    RE = RegExp;
-
-Y.Color = {
-    KEYWORDS: {
-        black: '000',
-        silver: 'c0c0c0',
-        gray: '808080',
-        white: 'fff',
-        maroon: '800000',
-        red: 'f00',
-        purple: '800080',
-        fuchsia: 'f0f',
-        green: '008000',
-        lime: '0f0',
-        olive: '808000',
-        yellow: 'ff0',
-        navy: '000080',
-        blue: '00f',
-        teal: '008080',
-        aqua: '0ff'
-    },
-
-    re_RGB: /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
-    re_hex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-    re_hex3: /([0-9A-F])/gi,
-
-    toRGB: function(val) {
-        if (!Y.Color.re_RGB.test(val)) {
-            val = Y.Color.toHex(val);
-        }
-
-        if(Y.Color.re_hex.exec(val)) {
-            val = 'rgb(' + [
-                PARSE_INT(RE.$1, 16),
-                PARSE_INT(RE.$2, 16),
-                PARSE_INT(RE.$3, 16)
-            ].join(', ') + ')';
-        }
-        return val;
-    },
-
-    toHex: function(val) {
-        val = Y.Color.KEYWORDS[val] || val;
-        if (Y.Color.re_RGB.exec(val)) {
-            var r = (RE.$1.length === 1) ? '0' + RE.$1 : Number(RE.$1),
-                g = (RE.$2.length === 1) ? '0' + RE.$2 : Number(RE.$2),
-                b = (RE.$3.length === 1) ? '0' + RE.$3 : Number(RE.$3);
-
-            val = [
-                r[TO_STRING](16),
-                g[TO_STRING](16),
-                b[TO_STRING](16)
-            ].join('');
-        }
-
-        if (val.length < 6) {
-            val = val.replace(Y.Color.re_hex3, '$1$1');
-        }
-
-        if (val !== 'transparent' && val.indexOf('#') < 0) {
-            val = '#' + val;
-        }
-
-        return val.toLowerCase();
-    }
-};
-
-
-
-}, '@VERSION@' );
