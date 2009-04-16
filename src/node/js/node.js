@@ -216,13 +216,14 @@ Node.ATTRS = {
     'children': {
         getter: function() {
             var node = g_nodes[this[UID]],
-                children = node.children;
+                children = node.children,
+                childNodes, i, len;
 
             if (children === undefined) {
-                var childNodes = node.childNodes;
+                childNodes = node.childNodes;
                 children = [];
 
-                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                for (i = 0, len = childNodes.length; i < len; ++i) {
                     if (childNodes[i][TAG_NAME]) {
                         children[children.length] = childNodes[i];
                     }
