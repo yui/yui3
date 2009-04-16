@@ -137,7 +137,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.response, "error: Expected undefined response.");
-                        ASSERT.isTrue(e.error, "error: Expected error.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
                 ds.subscribe("error", handler.handleError);
@@ -183,7 +183,7 @@
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
                         resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsFields: ["Title"]
                     }
                 }});
 
@@ -234,7 +234,7 @@
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
                         resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsFields: ["Title"]
                     }
                 }});
 
@@ -246,7 +246,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isObject(e.data, "error: Expected raw data.");
-                        ASSERT.isTrue(e.error, "error: Expected error.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
                 ds.subscribe("error", handler.handleError);
@@ -267,7 +267,7 @@
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
                         resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsFields: ["Title"]
                     }
                 }});
 

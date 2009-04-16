@@ -164,14 +164,27 @@
                         resultsList: "response",
                         fields: ["name", "number", "letter"]
                     },
-                    data_in = "123",
+                    data_in = 123,
                     data_out = Y.DataParser.JSON.parse(schema, data_in);
 
-                ASSERT.areSame(true, data_out.error, "Expected error flag on.");
-                // Don't know if we can assert this as of yet
-                //ASSERT.areSame({}, data_out.meta, "Expected empty meta.");
-                //ASSERT.areSame([], data_out.results, "Expected empty results.");
-            },
+                ASSERT.isObject(data_out.error, "Expected JSON parse error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+
+                data_in = {123:123, 456:456};
+                data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.error, "Expected results error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+
+                data_in = {"response":"abc"};
+                data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.error, "Expected fields error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+            }
 
         });
             

@@ -207,7 +207,7 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *         <dt>error (Object)</dt> <dd>Error object.</dd>
          *     </dl>
          * </dd>
          * </dl>
@@ -240,7 +240,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = true;
+            e.error = new Error(this.toString() + " Source undefined");;
         }
         if(e.error) {
             this.fire("error", e);
@@ -463,7 +463,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     },
                     failure: function (id, response, e) {
-                        e.error = true;
+                        e.error = new Error(this.toString() + " Data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
@@ -594,7 +594,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-     *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+     *         <dt>error (Object)</dt> <dd>Error object.</dd>
      *     </dl>
      * </dd>
      * </dl>
@@ -703,13 +703,17 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var response = (this.get("parser").parse(this.get("schema"), e.data));
+        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = (this.get("parser").parse(this.get("schema"), data));
+            
+        // Default
         if(!response) {
             response = {
                 meta: {},
-                results: e.data
+                results: data
             };
         }
+        
         this._owner.fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
