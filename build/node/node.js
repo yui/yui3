@@ -1,4 +1,4 @@
-YUI.add('node', function(Y) {
+YUI.add('node-base', function(Y) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -1015,50 +1015,6 @@ Y.all = function(nodes, doc, restrict) {
 };
 Y.Node.all = Y.all; // TODO: deprecated
 /**
- * Extended Node interface for managing node styles.
- * @module node
- * @submodule node-style
- * @for Node
- */
-
-var methods = [
-    /**
-     * Returns the style's current value.
-     * @method getStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The current value of the style property for the element.
-     */
-    'getStyle',
-
-    /**
-     * Returns the computed value for the given style property.
-     * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The computed value of the style property for the element.
-     */
-    'getComputedStyle',
-
-    /**
-     * Sets a style property of the node.
-     * @method setStyle
-     * @param {String} attr The style attribute to set. 
-     * @param {String|Number} val The value. 
-     * @chainable
-     */
-    'setStyle',
-
-    /**
-     * Sets multiple style properties on the node.
-     * @method setStyles
-     * @param {Object} hash An object literal of property:value pairs. 
-     * @chainable
-     */
-    'setStyles'
-];
-Y.Node.importMethod(Y.DOM, methods);
-Y.NodeList.importMethod(Y.Node.prototype, methods);
-
-/**
  * Extended Node interface for managing classNames.
  * @module node
  * @submodule node
@@ -1111,6 +1067,60 @@ Y.NodeList.importMethod(Y.Node.prototype, methods);
 
     Y.Node.importMethod(Y.DOM, methods);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
+
+
+}, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});
+YUI.add('node-style', function(Y) {
+
+/**
+ * Extended Node interface for managing node styles.
+ * @module node
+ * @submodule node-style
+ * @for Node
+ */
+
+var methods = [
+    /**
+     * Returns the style's current value.
+     * @method getStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The current value of the style property for the element.
+     */
+    'getStyle',
+
+    /**
+     * Returns the computed value for the given style property.
+     * @method getComputedStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The computed value of the style property for the element.
+     */
+    'getComputedStyle',
+
+    /**
+     * Sets a style property of the node.
+     * @method setStyle
+     * @param {String} attr The style attribute to set. 
+     * @param {String|Number} val The value. 
+     * @chainable
+     */
+    'setStyle',
+
+    /**
+     * Sets multiple style properties on the node.
+     * @method setStyles
+     * @param {Object} hash An object literal of property:value pairs. 
+     * @chainable
+     */
+    'setStyles'
+];
+Y.Node.importMethod(Y.DOM, methods);
+Y.NodeList.importMethod(Y.Node.prototype, methods);
+
+
+
+}, '@VERSION@' ,{requires:['dom-style', 'node-base']});
+YUI.add('node-screen', function(Y) {
+
 /**
  * Extended Node interface for managing regions and screen positioning.
  * Adds support for positioning elements and normalizes window size and scroll detection. 
@@ -1119,76 +1129,7 @@ Y.NodeList.importMethod(Y.Node.prototype, methods);
  * @for Node
  */
 
-/**
- * Returns a region object for the node 
- * @property region
- * @type Node
- */
-Y.Node.ATTRS.region = {
-    getter: function() {
-        var node = Y.Node.getDOMNode(this);
-        if (node && !node.tagName) {
-            if (node.nodeType === 9) { // document
-                node = node.documentElement;
-            } else if (node.alert) { // window
-                node = node.document.documentElement;
-            }
-        }
-        return Y.DOM.region(node);
-    }
-};
-    
-/**
- * Returns a region object for the node's viewport 
- * @property viewportRegion
- * @type Node
- */
-Y.Node.ATTRS.viewportRegion = {
-    getter: function() {
-        return Y.DOM.viewportRegion(Y.Node.getDOMNode(this));
-    }
-};
-
-Y.Node.importMethod(Y.DOM, 'inViewportRegion');
-
-// these need special treatment to extract 2nd node arg
-/**
- * Compares the intersection of the node with another node or region 
- * @method intersect         
- * @param {Node|Object} node2 The node or region to compare with.
- * @param {Object} altRegion An alternate region to use (rather than this node's). 
- * @return {Object} An object representing the intersection of the regions. 
- */
-Y.Node.prototype.intersect = function(node2, altRegion) {
-    var node1 = Y.Node.getDOMNode(this);
-    if (node2 instanceof Y.Node) { // might be a region object
-        node2 = Y.Node.getDOMNode(node2);
-    }
-    return Y.DOM.intersect(node1, node2, altRegion); 
-};
-
-/**
- * Determines whether or not the node is within the giving region.
- * @method inRegion         
- * @param {Node|Object} node2 The node or region to compare with.
- * @param {Boolean} all Whether or not all of the node must be in the region. 
- * @param {Object} altRegion An alternate region to use (rather than this node's). 
- * @return {Object} An object representing the intersection of the regions. 
- */
-Y.Node.prototype.inRegion = function(node2, all, altRegion) {
-    var node1 = Y.Node.getDOMNode(this);
-    if (node2 instanceof Y.Node) { // might be a region object
-        node2 = Y.Node.getDOMNode(node2);
-    }
-    return Y.DOM.inRegion(node1, node2, all, altRegion); 
-};
-/**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
+var NODE_TYPE = 'nodeType';
 
 // these are all "safe" returns, no wrapping required
 Y.each([
@@ -1238,7 +1179,7 @@ Y.each([
         Y.Node.ATTRS[name] = {
             getter: function() {
                 var args = Array.prototype.slice.call(arguments);
-                args.unshift(Y.Node.getDOMNode(this[UID]));
+                args.unshift(Y.Node.getDOMNode(this));
 
                 return Y.DOM[name].apply(this, args);
             }
@@ -1339,6 +1280,81 @@ Y.Node.importMethod(Y.DOM, [
  */
     'setY'
 ]);
+/**
+ * Extended Node interface for managing regions and screen positioning.
+ * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * @module node
+ * @submodule node-screen
+ * @for Node
+ */
+
+/**
+ * Returns a region object for the node 
+ * @property region
+ * @type Node
+ */
+Y.Node.ATTRS.region = {
+    getter: function() {
+        var node = Y.Node.getDOMNode(this);
+        if (node && !node.tagName) {
+            if (node.nodeType === 9) { // document
+                node = node.documentElement;
+            } else if (node.alert) { // window
+                node = node.document.documentElement;
+            }
+        }
+        return Y.DOM.region(node);
+    }
+};
+    
+/**
+ * Returns a region object for the node's viewport 
+ * @property viewportRegion
+ * @type Node
+ */
+Y.Node.ATTRS.viewportRegion = {
+    getter: function() {
+        return Y.DOM.viewportRegion(Y.Node.getDOMNode(this));
+    }
+};
+
+Y.Node.importMethod(Y.DOM, 'inViewportRegion');
+
+// these need special treatment to extract 2nd node arg
+/**
+ * Compares the intersection of the node with another node or region 
+ * @method intersect         
+ * @param {Node|Object} node2 The node or region to compare with.
+ * @param {Object} altRegion An alternate region to use (rather than this node's). 
+ * @return {Object} An object representing the intersection of the regions. 
+ */
+Y.Node.prototype.intersect = function(node2, altRegion) {
+    var node1 = Y.Node.getDOMNode(this);
+    if (node2 instanceof Y.Node) { // might be a region object
+        node2 = Y.Node.getDOMNode(node2);
+    }
+    return Y.DOM.intersect(node1, node2, altRegion); 
+};
+
+/**
+ * Determines whether or not the node is within the giving region.
+ * @method inRegion         
+ * @param {Node|Object} node2 The node or region to compare with.
+ * @param {Boolean} all Whether or not all of the node must be in the region. 
+ * @param {Object} altRegion An alternate region to use (rather than this node's). 
+ * @return {Object} An object representing the intersection of the regions. 
+ */
+Y.Node.prototype.inRegion = function(node2, all, altRegion) {
+    var node1 = Y.Node.getDOMNode(this);
+    if (node2 instanceof Y.Node) { // might be a region object
+        node2 = Y.Node.getDOMNode(node2);
+    }
+    return Y.DOM.inRegion(node1, node2, all, altRegion); 
+};
 
 
-}, '@VERSION@' ,{requires:['dom', 'base']});
+}, '@VERSION@' ,{requires:['dom-screen']});
+
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false});
+

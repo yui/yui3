@@ -6,6 +6,8 @@
  * @for Node
  */
 
+var NODE_TYPE = 'nodeType';
+
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
@@ -54,7 +56,7 @@ Y.each([
         Y.Node.ATTRS[name] = {
             getter: function() {
                 var args = Array.prototype.slice.call(arguments);
-                args.unshift(Y.Node.getDOMNode(this[UID]));
+                args.unshift(Y.Node.getDOMNode(this));
 
                 return Y.DOM[name].apply(this, args);
             }
