@@ -218,13 +218,14 @@ Node.ATTRS = {
     'children': {
         getter: function() {
             var node = g_nodes[this[UID]],
-                children = node.children;
+                children = node.children,
+                childNodes, i, len;
 
             if (children === undefined) {
-                var childNodes = node.childNodes;
+                childNodes = node.childNodes;
                 children = [];
 
-                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                for (i = 0, len = childNodes.length; i < len; ++i) {
                     if (childNodes[i][TAG_NAME]) {
                         children[children.length] = childNodes[i];
                     }
@@ -718,12 +719,13 @@ Y.get = Y.Node.get;
 
 Y.Array._diff = function(a, b) {
     var removed = [],
-        present = false;
+        present = false,
+        i, j, lenA, lenB;
 
     outer:
-    for (var i = 0, lenA = a.length; i < lenA; i++) {
+    for (i = 0, lenA = a.length; i < lenA; i++) {
         present = false;
-        for (var j = 0, lenB = b.length; j < lenB; j++) {
+        for (j = 0, lenB = b.length; j < lenB; j++) {
             if (a[i] === b[j]) {
                 present = true;
                 continue outer;
@@ -929,8 +931,7 @@ Y.mix(NodeList.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0),
-            ret;
+        var args = g_slice.call(arguments, 0);
 
         args.splice(2, 0, g_nodelists[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
@@ -976,10 +977,11 @@ Y.mix(NodeList.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
-            nodes = g_nodelists[this[UID]];
+            nodes = g_nodelists[this[UID]],
+            node;
 
         if (nodes && nodes[0]) {
-            var node = nodes[0];
+            node = nodes[0];
             str += node[NODE_NAME];
             if (node.id) {
                 str += '#' + node.id; 
