@@ -556,6 +556,10 @@ Y.mix(Node.prototype, {
     }
 }, true);
 
+Y.Node = Node;
+Y.get = Y.Node.get;
+var UID = '_yuid';
+
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -674,26 +678,57 @@ Y.Array.each([
      */
      'select'
 ], function(method) {
-    Node.prototype[method] = function(arg1, arg2, arg3) {
+    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
 });
 
-/**
- * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
- * @method contains
- * @param {Node | HTMLElement} needle The possible node or descendent
- * @return {Boolean} Whether or not this node is the needle its ancestor
- */
 Node.importMethod(Y.DOM, [
+    /**
+     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+     * @method contains
+     * @chainable
+     * @param {Node | HTMLElement} needle The possible node or descendent
+     * @return {Boolean} Whether or not this node is the needle its ancestor
+     */
     'contains',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method setAttribute
+     * @param {string} name The attribute name 
+     * @param {string} value The value to set
+     */
     'setAttribute',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method getAttribute
+     * @param {string} name The attribute name 
+     * @return {string} The attribute value 
+     */
     'getAttribute'
 ]);
 
-Y.Node = Node;
-Y.get = Y.Node.get;
+if (!document.documentElement.hasAttribute) { // IE < 8
+    Y.Node.prototype.hasAttribute = function(attr) {
+        return this.getAttribute(attr) !== '';
+    };
+}
+
+(function() {
+    var node = document.createElement('div');
+    Y.stamp(node);
+    if (node[UID] === node.cloneNode(true)[UID]) {
+        Y.Node.prototype.cloneNode = function(deep) {
+            var node = Y.Node.getDOMNode(this).cloneNode(deep);
+            node[UID] = Y.guid();
+            return Y.get(node);
+        };
+    }
+    
+})();
     /**
      * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
      * @module node
