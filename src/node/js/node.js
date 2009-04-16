@@ -44,6 +44,9 @@ var g_nodes = {},
         return ret;
     },
 
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype,
+
     Node = function(config) {
         this[UID] = Y.stamp(config.node);
         g_nodes[this[UID]] = config.node;
@@ -54,10 +57,8 @@ var g_nodes = {},
         }
 
         SuperConstr.apply(this, arguments);
-    },
+    };
 
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype;
 // end "globals"
 
 Node.NAME = 'Node';
