@@ -293,6 +293,28 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.isTrue(f1);
                 Y.Assert.isTrue(f2);
+            },
+
+            testPreventFnOnce: function() {
+                var count = 0;
+                Y.publish('y:foo', {
+                    emitFacade: true,
+                    preventedFn: function() {
+                        count++
+                    }
+                });
+
+                Y.on('y:foo', function(e) {
+                    e.preventDefault();
+                });
+
+                Y.on('y:foo', function(e) {
+                    e.preventDefault();
+                });
+
+                Y.fire('y:foo');
+
+                Y.Assert.areEqual(1, count);
             }
 
         });

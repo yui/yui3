@@ -840,7 +840,7 @@ Y.CustomEvent.prototype = {
 
         var es = Y.Env._eventstack,
             subs, s, args, i, ef, q, queue, ce, hasSub,
-            ret = true;
+            ret = true, events;
 
 
         if (es) {
@@ -892,6 +892,21 @@ Y.CustomEvent.prototype = {
             this.stopped = 0;
             this.prevented = 0;
             this.target = this.target || this.host;
+
+            events = new Y.EventTarget({
+                fireOnce: true,
+                context: this.host || this
+            });
+
+            this.events = events;
+
+            if (this.preventedFn) {
+                events.on('prevented', this.preventedFn);
+            }
+
+            if (this.stoppedFn) {
+                events.on('stopped', this.stoppedFn);
+            }
 
             this.currentTarget = this.host || this.currentTarget;
 
@@ -1076,9 +1091,10 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        if (this.stoppedFn) {
-            this.stoppedFn.call(this.host || this, this);
-        }
+        // if (this.stoppedFn) {
+        //     this.stoppedFn.call(this.host || this, this);
+        // }
+        this.events.fire('stopped');
     },
 
     /**
@@ -1089,9 +1105,10 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        if (this.stoppedFn) {
-            this.stoppedFn.call(this.host || this, this);
-        }
+        // if (this.stoppedFn) {
+        //     this.stoppedFn.call(this.host || this, this);
+        // }
+        this.events.fire('stopped');
     },
 
     /**
@@ -1103,9 +1120,11 @@ Y.CustomEvent.prototype = {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
         }
-        if (this.preventedFn) {
-            this.preventedFn.call(this.host || this, this);
-        }
+
+        //if (this.preventedFn) {
+        //    this.preventedFn.call(this.host || this, this);
+        //}
+        this.events.fire('prevented');
     }
 
 };
@@ -1352,6 +1371,7 @@ var L = Y.Lang,
                 context: this, 
                 host: this,
                 emitFacade: o.emitFacade || false,
+                fireOnce: o.fireOnce || false,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1731,14 +1751,16 @@ ET.prototype = {
             }
 
             // otherwise there is nothing to be done
-            return true;
+            ret = true;
+
+        } else {
+
+            a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+            ret = ce.fire.apply(ce, a);
+
+            // clear target for next fire()
+            ce.target = null;
         }
-
-        a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-        ret = ce.fire.apply(ce, a);
-
-        // clear target for next fire()
-        ce.target = null;
 
         return (this._yuievt.chain) ? this : ret;
     },
