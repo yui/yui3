@@ -13,30 +13,32 @@ var LANG = Y.Lang,
  * @static
  */
 Number = {
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataType.Number";
+    },
 
     /**
      * Converts data to type Number.
      *
      * @method parse
-     * @param data {String | Number | Boolean} Data to convert. Note, the following
+     * @param data {String | Number | Boolean} Data to convert. The following
      * values return as null: null, undefined, NaN, "".
      * @return {Number} A number, or null.
      * @static
      */
-    parse : function(data) {
-        if(!LANG.isValue(data) || (data === "")) {
-            return null;
-        }
-
-        //Convert to number
-        var number = data * 1;
-
-        // Validate
+    parse: function(data) {
+        var number = (data === null) ? data : +data;
         if(LANG.isNumber(number)) {
             return number;
         }
         else {
-            Y.log("Could not convert data " + Y.dump(data) + " to type Number", "warn", this.toString());
+            Y.log("Could not parse data " + Y.dump(data) + " to type Number", "warn", Number.toString());
             return null;
         }
     },
@@ -62,61 +64,45 @@ Number = {
      * @return {String} Formatted number for display. Note, the following values
      * return as "": null, undefined, NaN, "".
      */
-    format : function(data, config) {
-        if(!LANG.isValue(data) || (data === "")) {
-            return "";
-        }
-
-        config = config || {};
-
-        if(!LANG.isNumber(data)) {
-            data *= 1;
-        }
+    format: function(data, config) {
+        data = LANG.isNumber(data) ? data : Number.parse(data);
 
         if(LANG.isNumber(data)) {
-            var isNeg = (data < 0);
-            var output = data + "";
-            var decSep = (config.decimalSeparator) ? config.decimalSeparator : ".";
-            var dotIndex;
+            config = config || {};
 
-            // Manage decimals
-            if(LANG.isNumber(config.decimalPlaces)) {
+            var isNeg = (data < 0),
+                output = data + "",
+                decPlaces = config.decimalPlaces,
+                decSep = config.decimalSeparator || ".",
+                thouSep = config.thousandsSeparator,
+                decIndex,
+                newOutput, count, i;
+
+            // Decimal precision
+            if(LANG.isNumber(decPlaces)) {
                 // Round to the correct decimal place
-                var decPlaces = config.decimalPlaces;
-                var dec = Math.pow(10, decPlaces);
-                output = Math.round(data*dec)/dec + "";
-                dotIndex = output.lastIndexOf(".");
+                output = data.toFixed(decPlaces);
+            }
 
-                if(decPlaces > 0) {
-                    // Add the decimal separator
-                    if(dotIndex < 0) {
-                        output += decSep;
-                        dotIndex = output.length-1;
-                    }
-                    // Replace the "."
-                    else if(decSep !== "."){
-                        output = output.replace(".",decSep);
-                    }
-                    // Add missing zeros
-                    while((output.length - 1 - dotIndex) < decPlaces) {
-                        output += "0";
-                    }
-                }
+            // Decimal separator
+            if(decSep !== "."){
+                output = output.replace(".", decSep);
             }
 
             // Add the thousands separator
-            if(config.thousandsSeparator) {
-                var thouSep = config.thousandsSeparator;
-                dotIndex = output.lastIndexOf(decSep);
-                dotIndex = (dotIndex > -1) ? dotIndex : output.length;
-                var newOutput = output.substring(dotIndex);
-                var count = -1;
-                for (var i=dotIndex; i>0; i--) {
-                    count++;
-                    if ((count%3 === 0) && (i !== dotIndex) && (!isNeg || (i > 1))) {
+            if(thouSep) {
+                // Find the dot or where it would be
+                decIndex = output.lastIndexOf(decSep);
+                decIndex = (decIndex > -1) ? decIndex : output.length;
+                // Start with the dot and everything to the right
+                newOutput = output.substring(decIndex);
+                // Working left, every third time add a separator, every time add a digit
+                for (count = 0, i=decIndex; i>0; i--) {
+                    if ((count%3 === 0) && (i !== decIndex) && (!isNeg || (i > 1))) {
                         newOutput = thouSep + newOutput;
                     }
                     newOutput = output.charAt(i-1) + newOutput;
+                    count++;
                 }
                 output = newOutput;
             }
