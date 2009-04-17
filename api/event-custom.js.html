@@ -389,7 +389,8 @@
 <span class="c">     * @param {Object}   context   Specifies the value of the </span>
 <span class="c">     * &#39;this&#39; keyword in the listener.</span>
 <span class="c">     * @param args* 0..n params to provide to the listener</span>
-<span class="c">     * @return {EventHandle} unsubscribe handle</span>
+<span class="c">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
+<span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     * @deprecated use on</span>
 <span class="c">     */</span>
     <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
@@ -403,7 +404,8 @@
 <span class="c">     * @param {Object}   context   Specifies the value of the </span>
 <span class="c">     * &#39;this&#39; keyword in the listener.</span>
 <span class="c">     * @param args* 0..n params to provide to the listener</span>
-<span class="c">     * @return {EventHandle} unsubscribe handle</span>
+<span class="c">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
+<span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_subscribe</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -418,7 +420,8 @@
 <span class="c">     * @param {Object}   context   Specifies the value of the </span>
 <span class="c">     * &#39;this&#39; keyword in the listener.</span>
 <span class="c">     * @param args* 0..n params to provide to the listener</span>
-<span class="c">     * @return {EventHandle} unsubscribe handle</span>
+<span class="c">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
+<span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_subscribe</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">,</span> <span class="nx">AFTER</span><span class="o">);</span>
@@ -430,7 +433,8 @@
 <span class="c">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
 <span class="c">     *                       all will be removed</span>
 <span class="c">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="c">     * @return {boolean} True if the subscriber was found and detached.</span>
+<span class="c">     * @return {boolean|EventTarget} returns a chainable event target</span>
+<span class="c">     * or a boolean for legacy detach support.</span>
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
@@ -464,7 +468,8 @@
 <span class="c">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
 <span class="c">     *                       all will be removed</span>
 <span class="c">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="c">     * @return {boolean} True if the subscriber was found and detached.</span>
+<span class="c">     * @return {boolean|EventTarget} returns a chainable event target</span>
+<span class="c">     * or a boolean for legacy detach support.</span>
 <span class="c">     * @deprecated use detach</span>
 <span class="c">     */</span>
     <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>

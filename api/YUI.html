@@ -412,49 +412,6 @@ omit - features that should not be loaded if this module is present</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_after">
-                                    <h4>
-                                        <a name="method_after">after</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong property="yui:name">after</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executes the callback after a DOM event, custom event
-or method.  If the first argument is a function, it
-is assumed the target is a method.
-For DOM and custom events:
-type, callback, context, 1-n arguments
-For methods:
-callback, object (method host), methodName, context, 1-n arguments
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">unsubscribe handle</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_applyTo">
                                     <h4>
                                         <a name="method_applyTo">applyTo</a></h4>
@@ -1288,81 +1245,6 @@ paired with members of the first parameter</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_detach">
-                                    <h4>
-                                        <a name="method_detach">detach</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        YUI
-                                            <strong property="yui:name">detach</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Detach an event listener (either a custom event or a
-DOM event
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the type of event, or a Event.Handle to
-for the subscription.  If the Event.Handle is passed
-in, the other parameters are not used.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">f</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the subscribed function</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the object or element the listener is subscribed
-to.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the YUI instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_error">
                                     <h4>
                                         <a name="method_error">error</a></h4>
@@ -1887,100 +1769,6 @@ This fails because "long" is a future reserved word in ECMAScript
                                                         object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the last namespace object created</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_on">
-                                    <h4>
-                                        <a name="method_on">on</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong property="yui:name">on</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Attach an event listener, either to a DOM object
-or to an Event.Target.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">type</span>
-                                                        &lt;<span property="yui:type">string</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the event type</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">f</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the function to execute</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the Event.Target or element to attach to</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Optional execution context</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">args*</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> 0..n additional arguments to append
-to the signature provided when the event fires.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">a handle object for 
-unsubscribing to this event.</dd>
                                                 </dl>
 
 
@@ -2885,7 +2673,6 @@ behavior in other browsers.
                                 <li class="private"><a href="#method__init" title="_init">_init</a></li>
                                 <li class="private"><a href="#method__setup" title="_setup">_setup</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
-                                <li class=""><a href="#method_after" title="after">after</a></li>
                                 <li class=""><a href="#method_applyTo" title="applyTo">applyTo</a></li>
                                 <li class=""><a href="#method_Array.every" title="Array.every">Array.every</a></li>
                                 <li class=""><a href="#method_Array.filter" title="Array.filter">Array.filter</a></li>
@@ -2898,7 +2685,6 @@ behavior in other browsers.
                                 <li class=""><a href="#method_Array.some" title="Array.some">Array.some</a></li>
                                 <li class=""><a href="#method_Array.unique" title="Array.unique">Array.unique</a></li>
                                 <li class=""><a href="#method_Array.zip" title="Array.zip">Array.zip</a></li>
-                                <li class=""><a href="#method_detach" title="detach">detach</a></li>
                                 <li class=""><a href="#method_error" title="error">error</a></li>
                                 <li class=""><a href="#method_guid" title="guid">guid</a></li>
                                 <li class=""><a href="#method_later" title="later">later</a></li>
@@ -2906,7 +2692,6 @@ behavior in other browsers.
                                 <li class=""><a href="#method_merge" title="merge">merge</a></li>
                                 <li class=""><a href="#method_mix" title="mix">mix</a></li>
                                 <li class=""><a href="#method_namespace" title="namespace">namespace</a></li>
-                                <li class=""><a href="#method_on" title="on">on</a></li>
                                 <li class=""><a href="#method_set" title="set">set</a></li>
                                 <li class=""><a href="#method_simulate" title="simulate">simulate</a></li>
                                 <li class=""><a href="#method_stamp" title="stamp">stamp</a></li>
@@ -2940,7 +2725,7 @@ behavior in other browsers.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.every", "url": "YUI.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.filter", "url": "YUI.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.find", "url": "YUI.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.grep", "url": "YUI.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.map", "url": "YUI.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.partition", "url": "YUI.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reduce", "url": "YUI.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reject", "url": "YUI.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.some", "url": "YUI.html#method_Array.some", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.unique", "url": "YUI.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.zip", "url": "YUI.html#method_Array.zip", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "detach", "url": "YUI.html#method_detach", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "lastIndexOf", "url": "YUI.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "set", "url": "YUI.html#method_set", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.every", "url": "YUI.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.filter", "url": "YUI.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.find", "url": "YUI.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.grep", "url": "YUI.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.map", "url": "YUI.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.partition", "url": "YUI.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reduce", "url": "YUI.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reject", "url": "YUI.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.some", "url": "YUI.html#method_Array.some", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.unique", "url": "YUI.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.zip", "url": "YUI.html#method_Array.zip", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "lastIndexOf", "url": "YUI.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "YUI", "name": "set", "url": "YUI.html#method_set", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
 </script>
 </body>
 </html>

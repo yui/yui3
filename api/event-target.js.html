@@ -72,6 +72,7 @@
 <span class="c">     * If the instance has a prefix attribute and the</span>
 <span class="c">     * event type is not prefixed, the instance prefix is</span>
 <span class="c">     * applied to the supplied type.</span>
+<span class="c">     * @method _getType</span>
 <span class="c">     */</span>
     <span class="nx">_getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
@@ -97,7 +98,7 @@
 <span class="c">     * Returns an array with the detach key (if provided),</span>
 <span class="c">     * and the prefixed event name from _getType</span>
 <span class="c">     * Y.on(&#39;detachkey, menu:click&#39;, fn)</span>
-<span class="c">     *</span>
+<span class="c">     * @method _parseType</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_parseType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
@@ -178,7 +179,7 @@
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
-            <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventHandles</span><span class="o">,</span>
+            <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span>
             <span class="nx">key</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
@@ -216,7 +217,7 @@
         <span class="nx">after</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+            <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
             <span class="c">// check for the existance of an event adaptor</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
@@ -291,7 +292,7 @@
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">detachkey</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span> 
-            <span class="nx">details</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventHandles</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+            <span class="nx">details</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">details</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">while</span> <span class="o">(</span><span class="nx">details</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">handle</span> <span class="o">=</span> <span class="nx">details</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
@@ -309,7 +310,7 @@
         <span class="o">}</span>
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
-        <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">eventAdaptors</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+        <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
 
         <span class="c">// The YUI instance handles DOM events and adaptors</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
@@ -681,113 +682,6 @@
 
 <span class="nx">ET</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
 
-<span class="c">// Y._on = Y.on;</span>
-<span class="c">// Y._detach = Y.detach;</span>
-<span class="c"></span>
-<span class="c">/**</span>
-<span class="c"> * Attach an event listener, either to a DOM object</span>
-<span class="c"> * or to an Event.Target.</span>
-<span class="c"> * @param type {string} the event type</span>
-<span class="c"> * @param f {Function} the function to execute</span>
-<span class="c"> * @param o the Event.Target or element to attach to</span>
-<span class="c"> * @param context Optional execution context</span>
-<span class="c"> * @param args* 0..n additional arguments to append</span>
-<span class="c"> * to the signature provided when the event fires.</span>
-<span class="c"> * @method on</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @return {Event.Handle} a handle object for </span>
-<span class="c"> * unsubscribing to this event.</span>
-<span class="c"> */</span>
-<span class="c">// Y.on = function(type, f, o) {</span>
-<span class="c">// </span>
-<span class="c">//     if (L.isFunction(type)) {</span>
-<span class="c">//         return Y.Do.before.apply(Y.Do, arguments);</span>
-<span class="c">//     }</span>
-<span class="c">//     </span>
-<span class="c">//     var adapt = Y.Env.eventAdaptors[type];</span>
-<span class="c">// </span>
-<span class="c">//     // check for the existance of an event adaptor</span>
-<span class="c">//     if (adapt &amp;&amp; adapt.on) {</span>
-<span class="c">//         Y.log(&#39;Using adaptor for &#39; + type, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c">//         return adapt.on.apply(Y, arguments);</span>
-<span class="c">//     // check to see if the target is an Event.Target.  If so,</span>
-<span class="c">//     // delegate to it (the Event.Target should handle whether</span>
-<span class="c">//     // or not the prefix was included);</span>
-<span class="c">//     // } else if (o &amp;&amp; !(o instanceof YUI) &amp;&amp; o.getEvent) {</span>
-<span class="c">//     //     a = Y.Array(arguments, 0, true);</span>
-<span class="c">//     //     a.splice(2, 1);</span>
-<span class="c">//     //     return o.on.apply(o, a);</span>
-<span class="c">//     } else {</span>
-<span class="c">//         // the pattern for custom events is &#39;prefix:event&#39;,</span>
-<span class="c">//         // however it is possible to have an event adaptor that</span>
-<span class="c">//         // doesn&#39;t do anything special for subscribe.</span>
-<span class="c">//         if (adapt || type.indexOf(&#39;:&#39;) &gt; -1) {</span>
-<span class="c">//             return Y._on.apply(Y, arguments);</span>
-<span class="c">//         // DOM event listener</span>
-<span class="c">//         } else {</span>
-<span class="c">//             return Y.Event.attach.apply(Y.Event, arguments);</span>
-<span class="c">//         }</span>
-<span class="c">//     }</span>
-<span class="c">// </span>
-<span class="c">// };</span>
-<span class="c"></span>
-<span class="c">/**</span>
-<span class="c"> * Detach an event listener (either a custom event or a</span>
-<span class="c"> * DOM event</span>
-<span class="c"> * @method detach</span>
-<span class="c"> * @param type the type of event, or a Event.Handle to</span>
-<span class="c"> * for the subscription.  If the Event.Handle is passed</span>
-<span class="c"> * in, the other parameters are not used.</span>
-<span class="c"> * @param f {Function} the subscribed function</span>
-<span class="c"> * @param o the object or element the listener is subscribed</span>
-<span class="c"> * to.</span>
-<span class="c"> * @method detach</span>
-<span class="c"> * @return {YUI} the YUI instance</span>
-<span class="c"> */</span>
-<span class="c">// Y.detach = function(type, f, o) {</span>
-<span class="c">// </span>
-<span class="c">//     var adapt = Y.Env.eventAdaptors[type], a;</span>
-<span class="c">// </span>
-<span class="c">//     if (o &amp;&amp; o._yuievt &amp;&amp; o.detach) {</span>
-<span class="c">//         a = Y.Array(arguments, 0, true);</span>
-<span class="c">//         a.splice(2, 1);</span>
-<span class="c">//         return o.detach.apply(o, a);</span>
-<span class="c">//     } else if (L.isObject(type) &amp;&amp; type.detach) {</span>
-<span class="c">//         return type.detach();</span>
-<span class="c">//     } else {</span>
-<span class="c">//         if (adapt &amp;&amp; adapt.detach) {</span>
-<span class="c">//             return adapt.detach.apply(Y, arguments);</span>
-<span class="c">//         } else if (adapt || type.indexOf(&#39;:&#39;) &gt; -1) {</span>
-<span class="c">//             return Y._detach.apply(Y, arguments);</span>
-<span class="c">//         } else {</span>
-<span class="c">//             return Y.Event.detach.apply(Y.Event, arguments);</span>
-<span class="c">//         }</span>
-<span class="c">//     }</span>
-<span class="c">// };</span>
-<span class="c"></span>
-
-<span class="c">/**</span>
-<span class="c"> * Executes the callback after a DOM event, custom event</span>
-<span class="c"> * or method.  If the first argument is a function, it</span>
-<span class="c"> * is assumed the target is a method.</span>
-<span class="c"> *</span>
-<span class="c"> * For DOM and custom events:</span>
-<span class="c"> * type, callback, context, 1-n arguments</span>
-<span class="c"> *  </span>
-<span class="c"> * For methods:</span>
-<span class="c"> * callback, object (method host), methodName, context, 1-n arguments</span>
-<span class="c"> *</span>
-<span class="c"> * @method after</span>
-<span class="c"> * @return {Event.Handle} unsubscribe handle</span>
-<span class="c"> */</span>
-<span class="c">// Y.after = function(type, f, o) {</span>
-<span class="c">//     if (L.isFunction(type)) {</span>
-<span class="c">//         return Y.Do.after.apply(Y.Do, arguments);</span>
-<span class="c">//     } else {</span>
-<span class="c">//         return Y.on.apply(Y, arguments);</span>
-<span class="c">//     }</span>
-<span class="c">// };</span>
-<span class="c"></span>
 <span class="o">})();</span>
 </pre></div>
                     </div>

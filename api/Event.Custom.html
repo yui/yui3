@@ -544,7 +544,7 @@ stopPropagation or stopImmediatePropagation
                                         
                                         
                                         
-                                        EventHandle
+                                        EventHandle|EventTarget
                                             <strong property="yui:name">after</strong>
                                            (
                                                 
@@ -597,9 +597,10 @@ default behavior, it also prevents after listeners from firing.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        EventHandle
+                                                        EventHandle|EventTarget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">unsubscribe handle or a
+chainable event target depending on the 'chain' config.</dd>
                                                 </dl>
 
 
@@ -680,7 +681,7 @@ will be overwritten.</span>
                                         
                                         
                                         
-                                        boolean
+                                        boolean|EventTarget
                                             <strong property="yui:name">detach</strong>
                                            (
                                                 
@@ -721,9 +722,10 @@ all will be removed</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        boolean
+                                                        boolean|EventTarget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">True if the subscriber was found and detached.</dd>
+                                                    <dd property="yui:returnInfo">returns a chainable event target
+or a boolean for legacy detach support.</dd>
                                                 </dl>
 
 
@@ -864,7 +866,7 @@ true otherwise</dd>
                                         
                                         
                                         
-                                        EventHandle
+                                        EventHandle|EventTarget
                                             <strong property="yui:name">on</strong>
                                            (
                                                 
@@ -915,9 +917,10 @@ true otherwise</dd>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        EventHandle
+                                                        EventHandle|EventTarget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">unsubscribe handle or a
+chainable event target depending on the 'chain' config.</dd>
                                                 </dl>
 
 
@@ -1048,7 +1051,7 @@ subscribers on the current target from executing.
                                         
                                         
                                         
-                                        EventHandle
+                                        EventHandle|EventTarget
                                             <strong property="yui:name">subscribe</strong>
                                            (
                                                 
@@ -1099,9 +1102,10 @@ subscribers on the current target from executing.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        EventHandle
+                                                        EventHandle|EventTarget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">unsubscribe handle or a
+chainable event target depending on the 'chain' config.</dd>
                                                 </dl>
 
 
@@ -1160,7 +1164,7 @@ subscribers on the current target from executing.
                                         
                                         
                                         
-                                        boolean
+                                        boolean|EventTarget
                                             <strong property="yui:name">unsubscribe</strong>
                                            (
                                                 
@@ -1201,9 +1205,10 @@ all will be removed</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        boolean
+                                                        boolean|EventTarget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">True if the subscriber was found and detached.</dd>
+                                                    <dd property="yui:returnInfo">returns a chainable event target
+or a boolean for legacy detach support.</dd>
                                                 </dl>
 
 
