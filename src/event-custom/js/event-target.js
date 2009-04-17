@@ -108,6 +108,7 @@ var L = Y.Lang,
                 context: this, 
                 host: this,
                 emitFacade: o.emitFacade || false,
+                fireOnce: o.fireOnce || false,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -487,14 +488,16 @@ ET.prototype = {
             }
 
             // otherwise there is nothing to be done
-            return true;
+            ret = true;
+
+        } else {
+
+            a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+            ret = ce.fire.apply(ce, a);
+
+            // clear target for next fire()
+            ce.target = null;
         }
-
-        a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-        ret = ce.fire.apply(ce, a);
-
-        // clear target for next fire()
-        ce.target = null;
 
         return (this._yuievt.chain) ? this : ret;
     },
