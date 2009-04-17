@@ -45,8 +45,8 @@ Number = {
      * Takes a Number and formats to string for display to user.
      *
      * @method format
-     * @param nData {Number} Number.
-     * @param oConfig {Object} (Optional) Optional configuration values:
+     * @param data {Number} Number.
+     * @param config {Object} (Optional) Optional configuration values:
      *  <dl>
      *   <dt>prefix {String}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
@@ -62,77 +62,76 @@ Number = {
      * @return {String} Formatted number for display. Note, the following values
      * return as "": null, undefined, NaN, "".
      */
-    format : function(nData, oConfig) {
-        var lang = YAHOO.lang;
-        if(!lang.isValue(nData) || (nData === "")) {
+    format : function(data, config) {
+        if(!LANG.isValue(data) || (data === "")) {
             return "";
         }
 
-        oConfig = oConfig || {};
+        config = config || {};
 
-        if(!lang.isNumber(nData)) {
-            nData *= 1;
+        if(!LANG.isNumber(data)) {
+            data *= 1;
         }
 
-        if(lang.isNumber(nData)) {
-            var bNegative = (nData < 0);
-            var sOutput = nData + "";
-            var sDecimalSeparator = (oConfig.decimalSeparator) ? oConfig.decimalSeparator : ".";
-            var nDotIndex;
+        if(LANG.isNumber(data)) {
+            var isNeg = (data < 0);
+            var output = data + "";
+            var decSep = (config.decimalSeparator) ? config.decimalSeparator : ".";
+            var dotIndex;
 
             // Manage decimals
-            if(lang.isNumber(oConfig.decimalPlaces)) {
+            if(LANG.isNumber(config.decimalPlaces)) {
                 // Round to the correct decimal place
-                var nDecimalPlaces = oConfig.decimalPlaces;
-                var nDecimal = Math.pow(10, nDecimalPlaces);
-                sOutput = Math.round(nData*nDecimal)/nDecimal + "";
-                nDotIndex = sOutput.lastIndexOf(".");
+                var decPlaces = config.decimalPlaces;
+                var dec = Math.pow(10, decPlaces);
+                output = Math.round(data*dec)/dec + "";
+                dotIndex = output.lastIndexOf(".");
 
-                if(nDecimalPlaces > 0) {
+                if(decPlaces > 0) {
                     // Add the decimal separator
-                    if(nDotIndex < 0) {
-                        sOutput += sDecimalSeparator;
-                        nDotIndex = sOutput.length-1;
+                    if(dotIndex < 0) {
+                        output += decSep;
+                        dotIndex = output.length-1;
                     }
                     // Replace the "."
-                    else if(sDecimalSeparator !== "."){
-                        sOutput = sOutput.replace(".",sDecimalSeparator);
+                    else if(decSep !== "."){
+                        output = output.replace(".",decSep);
                     }
                     // Add missing zeros
-                    while((sOutput.length - 1 - nDotIndex) < nDecimalPlaces) {
-                        sOutput += "0";
+                    while((output.length - 1 - dotIndex) < decPlaces) {
+                        output += "0";
                     }
                 }
             }
 
             // Add the thousands separator
-            if(oConfig.thousandsSeparator) {
-                var sThousandsSeparator = oConfig.thousandsSeparator;
-                nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
-                nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
-                var sNewOutput = sOutput.substring(nDotIndex);
-                var nCount = -1;
-                for (var i=nDotIndex; i>0; i--) {
-                    nCount++;
-                    if ((nCount%3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
-                        sNewOutput = sThousandsSeparator + sNewOutput;
+            if(config.thousandsSeparator) {
+                var thouSep = config.thousandsSeparator;
+                dotIndex = output.lastIndexOf(decSep);
+                dotIndex = (dotIndex > -1) ? dotIndex : output.length;
+                var newOutput = output.substring(dotIndex);
+                var count = -1;
+                for (var i=dotIndex; i>0; i--) {
+                    count++;
+                    if ((count%3 === 0) && (i !== dotIndex) && (!isNeg || (i > 1))) {
+                        newOutput = thouSep + newOutput;
                     }
-                    sNewOutput = sOutput.charAt(i-1) + sNewOutput;
+                    newOutput = output.charAt(i-1) + newOutput;
                 }
-                sOutput = sNewOutput;
+                output = newOutput;
             }
 
             // Prepend prefix
-            sOutput = (oConfig.prefix) ? oConfig.prefix + sOutput : sOutput;
+            output = (config.prefix) ? config.prefix + output : output;
 
             // Append suffix
-            sOutput = (oConfig.suffix) ? sOutput + oConfig.suffix : sOutput;
+            output = (config.suffix) ? output + config.suffix : output;
 
-            return sOutput;
+            return output;
         }
         // Still not a Number, just return unaltered
         else {
-            return nData;
+            return data;
         }
     }
 };
