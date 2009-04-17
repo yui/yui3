@@ -145,7 +145,7 @@ ET.prototype = {
             Y.each(type, function(v, k) {
 
                 if (v) {
-                    f = v.fn || f;
+                    f = v.fn || ((Y.Lang.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
