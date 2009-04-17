@@ -157,6 +157,7 @@
                 <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span> 
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                 <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
+                <span class="nx">fireOnce</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
                 <span class="nx">bubbles</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="kc">true</span>
             <span class="o">}</span>
         <span class="o">};</span>
@@ -536,14 +537,16 @@
             <span class="o">}</span>
 
             <span class="c">// otherwise there is nothing to be done</span>
-<span class="c"></span>            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+
+            <span class="c">// clear target for next fire()</span>
+<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
-
-        <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-
-        <span class="c">// clear target for next fire()</span>
-<span class="c"></span>        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
         <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
