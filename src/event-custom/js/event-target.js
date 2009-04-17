@@ -130,7 +130,7 @@ ET.prototype = {
     on: function(type, fn, context) {
 
         var parts = _parseType(this, type), f, c, args, ret, ce,
-            detachkey, handle, store = Y.Env.eventHandles,
+            detachkey, handle, store = Y.Env.evt.handles,
             key, after, adapt;
 
         if (L.isObject(type, true)) {
@@ -168,7 +168,7 @@ ET.prototype = {
         after = parts[2];
 
         if (this instanceof YUI) {
-            adapt = Y.Env.eventAdaptors[type];
+            adapt = Y.Env.evt.plugins[type];
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
                 Y.log('Using adaptor for ' + type, 'info', 'event');
@@ -243,7 +243,7 @@ ET.prototype = {
 
         if (detachkey) {
             key = parts[0] + parts[1]; 
-            details = Y.Env.eventHandles[key];
+            details = Y.Env.evt.handles[key];
             if (details) {
                 while (details.length) {
                     handle = details.pop();
@@ -261,7 +261,7 @@ ET.prototype = {
         }
 
         type = parts[1];
-        adapt = Y.Env.eventAdaptors[type];
+        adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
