@@ -783,10 +783,7 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        // if (this.stoppedFn) {
-        //     this.stoppedFn.call(this.host || this, this);
-        // }
-        this.events.fire('stopped');
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -797,10 +794,7 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        // if (this.stoppedFn) {
-        //     this.stoppedFn.call(this.host || this, this);
-        // }
-        this.events.fire('stopped');
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -811,12 +805,9 @@ Y.CustomEvent.prototype = {
         if (this.preventable) {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
-        }
 
-        //if (this.preventedFn) {
-        //    this.preventedFn.call(this.host || this, this);
-        //}
-        this.events.fire('prevented');
+            this.events.fire('prevented', this);
+        }
     }
 
 };
@@ -871,14 +862,15 @@ Y.Subscriber = function(fn, context, args) {
      * @type Function
      */
     this.wrappedFn = fn;
+
+    /**
+     * Custom events for a given fire transaction.
+     * @property events
+     * @type {EventTarget}
+     */
+    this.events = null;
     
     if (context) {
-        /*
-        var a = (args) ? Y.Array(args) : [];
-        a.unshift(fn, context);
-        // a.unshift(fn);
-        m = Y.rbind.apply(Y, a);
-        */
         this.wrappedFn = Y.rbind.apply(Y, args);
     }
     

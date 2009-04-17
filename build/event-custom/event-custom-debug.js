@@ -1094,7 +1094,7 @@ Y.CustomEvent.prototype = {
         // if (this.stoppedFn) {
         //     this.stoppedFn.call(this.host || this, this);
         // }
-        this.events.fire('stopped');
+        this.events.fire('stopped', this, this);
     },
 
     /**
@@ -1108,7 +1108,7 @@ Y.CustomEvent.prototype = {
         // if (this.stoppedFn) {
         //     this.stoppedFn.call(this.host || this, this);
         // }
-        this.events.fire('stopped');
+        this.events.fire('stopped', this, this);
     },
 
     /**
@@ -1119,12 +1119,13 @@ Y.CustomEvent.prototype = {
         if (this.preventable) {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
-        }
 
-        //if (this.preventedFn) {
-        //    this.preventedFn.call(this.host || this, this);
-        //}
-        this.events.fire('prevented');
+            this.events.fire('prevented', this, this);
+
+            //if (this.preventedFn) {
+            //    this.preventedFn.call(this.host || this, this);
+            //}
+        }
     }
 
 };
