@@ -4,9 +4,13 @@
  * @module event-custom
  */
 
+Y.Env.evt = {
+    handles: {},
+    plugins: {}
+};
 
-Y.Env.eventHandles  = {};
-Y.Env.eventAdaptors = {};
+// Y.Env.eventHandles  = {};
+// Y.Env.eventAdaptors = {};
 
 
 })();

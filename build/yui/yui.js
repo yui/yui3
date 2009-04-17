@@ -1732,9 +1732,12 @@ YUI.add('get', function(Y) {
  * @submodule get
  */
 
-var ua=Y.UA, 
-    L=Y.Lang,
-    PREFIX = Y.guid('yui_');
+var ua         = Y.UA, 
+    L          = Y.Lang,
+    PREFIX     = Y.guid('yui_'),
+    TYPE_JS    = "text/javascript",
+    TYPE_CSS   = "text/css",
+    STYLESHEET = "stylesheet";
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
@@ -1807,14 +1810,16 @@ Y.Get = function() {
      * @private
      */
     _linkNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("link", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/css",
-                "charset": c,
-                "rel":     "stylesheet",
-                "href":    url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_CSS,
+            rel:  STYLESHEET,
+            href: url
+        };
+        if (charset) {
+            o.charset = charset;
+        }
+        return _node("link", o, win);
     },
 
     /**
@@ -1826,13 +1831,17 @@ Y.Get = function() {
      * @private
      */
     _scriptNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("script", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/javascript",
-                "charset": c,
-                "src":     url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_JS,
+            src:  url
+        };
+
+        if (charset) {
+            o.charset = charset;
+        }
+
+        return _node("script", o, win);
     },
 
     /**
