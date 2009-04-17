@@ -607,7 +607,7 @@ Y.CustomEvent.prototype = {
         }
     },
 
-    _subscribe: function(fn, context, args, when) {
+    _on: function(fn, context, args, when) {
 
         if (!fn) {
             Y.error("Invalid callback for CE: " + this.type);
@@ -621,11 +621,10 @@ Y.CustomEvent.prototype = {
 
         s = new Y.Subscriber(fn, context, args, when);
 
-
         if (this.fireOnce && this.fired) {
 
             // this._notify(s);
-            // setTimeout(Y.rbind(this._notify, this, s), 0);
+            
             Y.later(0, this, this._notify, s);
         }
 
@@ -651,7 +650,7 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
-        return this._subscribe(fn, context, arguments, true);
+        return this._on(fn, context, arguments, true);
     },
 
     /**
@@ -665,7 +664,7 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      */
     on: function(fn, context) {
-        return this._subscribe(fn, context, arguments, true);
+        return this._on(fn, context, arguments, true);
     },
 
     /**
@@ -681,7 +680,7 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      */
     after: function(fn, context) {
-        return this._subscribe(fn, context, arguments, AFTER);
+        return this._on(fn, context, arguments, AFTER);
     },
 
     /**
@@ -1382,7 +1381,7 @@ ET.prototype = {
             Y.each(type, function(v, k) {
 
                 if (v) {
-                    f = v.fn || f;
+                    f = v.fn || ((Y.Lang.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 

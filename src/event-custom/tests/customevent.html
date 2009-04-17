@@ -278,6 +278,21 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     Y.Assert.isTrue(fired5);  // verifies custom prefix
                     
                 });
+            },
+
+            
+            testObjType: function() {
+                var f1, f2;
+                Y.on({
+                    'y:click': function() {f1 = true},
+                    'y:clack': function() {f2 = true}
+                });
+
+                Y.fire('y:click');
+                Y.fire('y:clack');
+
+                Y.Assert.isTrue(f1);
+                Y.Assert.isTrue(f2);
             }
 
         });
