@@ -155,7 +155,7 @@ DPJSON = {
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
                     if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
-                        data_out = DPJSON._filterFieldValues(schema.resultsFields, results, data_out);
+                        data_out = DPJSON._getFieldValues(schema.resultsFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
@@ -176,17 +176,17 @@ DPJSON = {
     },
 
     /**
-     * Schema-parse field data out of list of full results
+     * Get field data values out of list of full results
      *
-     * @method _filterFieldValues
-     * @param fields {Array} Fields to filter against.
+     * @method _getFieldValues
+     * @param fields {Array} Fields to find.
      * @param data_in {Array} Results data to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _filterFieldValues: function(fields, data_in, data_out) {
+    _getFieldValues: function(fields, data_in, data_out) {
         var results = [],
             len = fields.length,
             i, j,
@@ -213,6 +213,7 @@ DPJSON = {
                 }
 
                 // Validate and store parsers for later
+                //TODO: implement shortcuts
                 parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataParser[field.parser+''];
                 if (parser) {
                     fieldParsers[fieldParsers.length] = {key:key, parser:parser};

@@ -211,6 +211,7 @@ DPJSON = {
                 }
 
                 // Validate and store parsers for later
+                //TODO: implement shortcuts
                 parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataParser[field.parser+''];
                 if (parser) {
                     fieldParsers[fieldParsers.length] = {key:key, parser:parser};

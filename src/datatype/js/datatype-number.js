@@ -138,16 +138,3 @@ Number = {
 };
 
 Y.namespace("DataType").Number = Number;
-
-// Done in separate step so referenced functions are defined.
-/**
- * Data parsing functions.
- * @property DataSource.Parser
- * @type Object
- * @static
- */
-DS.Parser = {
-    string   : DS.parseString,
-    number   : DS.parseNumber,
-    date     : DS.parseDate
-};

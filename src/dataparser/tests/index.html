@@ -10,6 +10,7 @@
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/dataparser/dataparser-debug.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/datatype/datatype-debug.js" id="buildsrc"></script>
 <script type="text/javascript">
 
 (function() {
@@ -18,7 +19,7 @@
         filter: "debug",
         useConsole: true,
         insertBefore: "buildsrc"
-    }).use("console", "test", "dump", "dataparser", function(Y) {
+    }).use("console", "test", "dump", "dataparser", "datatype", function(Y) {
         
         // Set up the page
         var ASSERT = Y.Assert,
@@ -38,23 +39,7 @@
             testResults: function() {
                 var schema = {
                         resultsLocator: "response",
-                        resultsFields: ["name", {key:"number", parser:function(oData){
-                            if(!Y.Lang.isValue(oData) || (oData === "")) {
-                                return null;
-                            }
-
-                            //Convert to number
-                            var number = oData * 1;
-
-                            // Validate
-                            if(Y.Lang.isNumber(number)) {
-                                return number;
-                            }
-                            else {
-                                Y.log("Could not convert data " + Y.dump(oData) + " to type Number", "warn", this.toString());
-                                return null;
-                            }
-                        }}, "letter"]
+                        resultsFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
                     },
                     data_in = {
                         response: [
