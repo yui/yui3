@@ -1,6 +1,25 @@
+*** Development Master ***
+
+* All transaction event flows now resolves to "success" or "failure"; the abort
+event removed.  Transaction abort and timeout conditions resolve to "failure",
+and is distinguishable in the response data.  Specifically, the response
+object's status and statusText properties will be populated as:
+
+- response.status will be 0.
+- response.statusText will be "timeout" or "abort" to differentiate the two
+possible conditions.
+
+* A new "end" event is introduced in the transaction event flow; this is the
+terminal event for all transactions.  Its event handler signature is the same as
+the "start" event.
+
+- The global event name is "io:end".
+- To subscribe to the transaction event, define the "end" property in the
+transaction's configuration object. { on: { end: function() { } } }
+
 *** version 3.0.0 PR2 ***
 
-* IO is now comprised of several modules, allowing users to specify and
+* YUI io is now comprised of several modules, allowing users to specify and
 implement only the needed modules.  These modules are:
 
 - io-base.js: This is the IO base class, using XMLHttpRequest as the transport.
@@ -23,5 +42,6 @@ and io-upload-iframe.js.
 *** version 3.0.0 PR1 ***
 
 * Initial Release
+
 
 
