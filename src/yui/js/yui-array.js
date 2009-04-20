@@ -113,7 +113,7 @@ A.each = (Native.forEach) ?
         return Y;
     } :
     function (a, f, o) { 
-        var l = a.length, i;
+        var l = (a && a.length) || 0, i;
         for (i = 0; i < l; i=i+1) {
             f.call(o || Y, a[i], i, a);
         }
