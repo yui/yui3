@@ -1,22 +1,24 @@
+YUI.add('dataschema-json', function(Y) {
+
 /**
- * The DataParser utility provides a common configurable interface for widgets to
- * parse a variety of data against a given schema.
+ * The DataSchema utility provides a common configurable interface for widgets to
+ * apply a given schema to a variety of data.
  *
- * @module dataparser
+ * @module dataschema
  */
 var LANG = Y.Lang,
 
 /**
- * JSON subclass for the YUI DataParser utility.
- * @class DataParser.JSON
- * @extends DataParser.Base
+ * JSON subclass for the YUI DataSchema utility.
+ * @class DataSchema.JSON
+ * @extends DataSchema.Base
  * @static
  */
 DPJSON = {
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataParser.JSON static methods
+    // DataSchema.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
@@ -26,13 +28,13 @@ DPJSON = {
      * @return {String} String representation for this object.
      */
     toString: function() {
-        return "DataParser.JSON";
+        return "DataSchema.JSON";
     },
 
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
-     * @method DataParser.JSON.buildPath
+     * @method DataSchema.JSON.buildPath
      * @param locator {String} JSON value locator.
      * @return {String[]} Walkable path to data value.
      * @static
@@ -70,7 +72,7 @@ DPJSON = {
     /**
      * Utility function to walk a path and return the value located there.
      *
-     * @method DataParser.JSON.getLocationValue
+     * @method DataSchema.JSON.getLocationValue
      * @param path {String[]} Locator path.
      * @param data {String} Data to traverse.
      * @return {Object} Data value at location.
@@ -86,15 +88,15 @@ DPJSON = {
     },
 
     /**
-     * Overriding parse method filters JSON data according to given schema.
+     * Applies a given schema to given JSON data.
      *
-     * @method parse
-     * @param schema {Object} Schema to parse against.
-     * @param data {Object} Data to parse.
+     * @method apply
+     * @param schema {Object} Schema to apply.
+     * @param data {Object} JSON data.
      * @return {Object} Schema-parsed data.
      * @static
      */
-    parse: function(schema, data) {
+    apply: function(schema, data) {
         var data_in = data,
             data_out = {results:[],meta:{}};
             
@@ -212,7 +214,7 @@ DPJSON = {
 
                 // Validate and store parsers for later
                 //TODO: implement shortcuts
-                parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataParser[field.parser+''];
+                parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataSchema[field.parser+''];
                 if (parser) {
                     fieldParsers[fieldParsers.length] = {key:key, parser:parser};
                 }
@@ -283,4 +285,8 @@ DPJSON = {
     }
 };
 
-Y.DataParser.JSON = Y.mix(DPJSON, Y.DataParser.Base);
+Y.DataSchema.JSON = Y.mix(DPJSON, Y.DataSchema.Base);
+
+
+
+}, '@VERSION@' ,{requires:['dataschema-base']});

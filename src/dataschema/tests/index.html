@@ -1,15 +1,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>DataParser Tests</title>
+<title>DataSchema Tests</title>
 </head>
 
 <body class="yui-skin-sam">
-<h1>DataParser Tests</h1>
+<h1>DataSchema Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/dataparser/dataparser-debug.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/dataschema/dataschema-debug.js" id="buildsrc"></script>
 <script type="text/javascript" src="../../../build/datatype/datatype-debug.js" id="buildsrc"></script>
 <script type="text/javascript">
 
@@ -19,7 +19,7 @@
         filter: "debug",
         useConsole: true,
         insertBefore: "buildsrc"
-    }).use("console", "test", "dump", "dataparser", "datatype", function(Y) {
+    }).use("console", "test", "dump", "dataschema", "datatype", function(Y) {
         
         // Set up the page
         var ASSERT = Y.Assert,
@@ -48,7 +48,7 @@
                             {name: "gamma", number: "2", letter: "c"}
                         ]
                     },
-                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
                     
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
@@ -67,7 +67,7 @@
                         top: "foo",
                         second: {nested: "bar"}
                     },
-                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
                 ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
@@ -147,7 +147,7 @@
                             }
                         }
                     },
-                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(2, data_out.results.length, "Expected 2 results.");
@@ -168,21 +168,21 @@
                         resultsFields: ["name", "number", "letter"]
                     },
                     data_in = 123,
-                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.error, "Expected JSON parse error.");
                 //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
 
                 data_in = {123:123, 456:456};
-                data_out = Y.DataParser.JSON.parse(schema, data_in);
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.error, "Expected results error.");
                 //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
 
                 data_in = {"response":"abc"};
-                data_out = Y.DataParser.JSON.parse(schema, data_in);
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.error, "Expected fields error.");
                 //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");

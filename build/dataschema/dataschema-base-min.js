@@ -1,0 +1,1 @@
+YUI.add("dataschema-base",function(B){var A={toString:function(){return"DataSchema.Base";},apply:function(C,D){return D;}};B.namespace("DataSchema").Base=A;},"@VERSION@",{requires:["base"]});
