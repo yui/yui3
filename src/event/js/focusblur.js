@@ -3,7 +3,7 @@
 var FOCUS   = Y.UA.ie ? "focusin" : "focus",
     BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    adapt = Y.Env.eventAdaptors;
+    adapt = Y.Env.evt.plugins;
 
 
 /**

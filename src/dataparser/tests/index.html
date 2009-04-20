@@ -10,6 +10,7 @@
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/dataparser/dataparser-debug.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/datatype/datatype-debug.js" id="buildsrc"></script>
 <script type="text/javascript">
 
 (function() {
@@ -18,7 +19,7 @@
         filter: "debug",
         useConsole: true,
         insertBefore: "buildsrc"
-    }).use("console", "test", "dump", "dataparser", function(Y) {
+    }).use("console", "test", "dump", "dataparser", "datatype", function(Y) {
         
         // Set up the page
         var ASSERT = Y.Assert,
@@ -37,14 +38,14 @@
         
             testResults: function() {
                 var schema = {
-                        resultsList: "response",
-                        fields: ["name", "number", "letter"]
+                        resultsLocator: "response",
+                        resultsFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
                     },
                     data_in = {
                         response: [
-                            {name: "alpha", number: 1, letter: "a"},
-                            {name: "beta", number: 2, letter: "b"},
-                            {name: "gamma", number: 3, letter: "c"}
+                            {name: "alpha", number: "0", letter: "a"},
+                            {name: "beta", number: "1", letter: "b"},
+                            {name: "gamma", number: "2", letter: "c"}
                         ]
                     },
                     data_out = Y.DataParser.JSON.parse(schema, data_in);
@@ -53,6 +54,8 @@
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("alpha", data_out.results[0].name, "Expected first result.");
                 ASSERT.areSame("gamma", data_out.results[2].name, "Expected last result.");
+                ASSERT.areSame(0, data_out.results[0].number, "Expected first number to be parsed.");
+                ASSERT.areSame(2, data_out.results[2].number, "Expected last number to be parsed.");
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
             
@@ -76,8 +79,8 @@
             testComplex: function() {
                 var schema = {
                         metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
-                        resultsList:"response['data array'][0].response['i t e m s']",
-                        fields: [
+                        resultsLocator:"response['data array'][0].response['i t e m s']",
+                        resultsFields: [
                             "name",
                             "['customer.data']['alert(\'id\')']",
                             "['customer.data']['phone/email']",
@@ -157,7 +160,35 @@
                 ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
                 ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
                 ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
+            },
+
+            testError: function() {
+                var schema = {
+                        resultsLocator: "response",
+                        resultsFields: ["name", "number", "letter"]
+                    },
+                    data_in = 123,
+                    data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.error, "Expected JSON parse error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+
+                data_in = {123:123, 456:456};
+                data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.error, "Expected results error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+
+                data_in = {"response":"abc"};
+                data_out = Y.DataParser.JSON.parse(schema, data_in);
+
+                ASSERT.isObject(data_out.error, "Expected fields error.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
             }
+
         });
             
         

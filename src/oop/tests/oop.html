@@ -22,7 +22,9 @@
         Selector:true, Node:true, attribute:true, event:true, base:true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.get('#btnRun');
+        var button = Y.get('#btnRun'),
+            Assert = Y.Assert,
+            ObjectAssert = Y.ObjectAssert;
 
         // Set up the page
         button.set("disabled", false);
@@ -73,10 +75,56 @@
 
                 Y.Assert.isFalse(firedbase);
                 Y.Assert.isTrue(firedextended);
+            },
+
+            test_merge: function() {
+                var o1 = { one: "one" }, 
+                    o2 = { two: "two" },
+                    o3 = { two: "twofromthree", three: "three" },
+                    o4 = { one: "one", two: "twofromthree", three: "three" }, 
+                    o123 = Y.merge(o1, o2, o3);
+
+                ObjectAssert.areEqual(o123, o4);
+                Assert.areEqual(o123.two, o4.two);
+            },
+            
+            test_mix: function() {
+
+                var a = {
+                    'bool' : false,
+                    'num'  : 0,
+                    'nul' : null,
+                    'undef': undefined,
+                    'T'    : 'blabber'
+                };
+
+                var b = {
+                    'bool' : 'oops',
+                    'num'  : 'oops',
+                    'nul' : 'oops',
+                    'undef': 'oops',
+                    'T'    : 'oops'
+                };
+
+                Y.mix(a, b, false);
+
+                Assert.isFalse((a.bool === 'oops'));
+                Assert.isFalse((a.num === 'oops'));
+                Assert.isFalse((a.nul === 'oops'));
+                Assert.isFalse((a.undef === 'oops'));
+                Assert.isFalse((a.T === 'oops'));
+
+                Y.mix(a, b, true);
+                Assert.isTrue((a.bool === 'oops'));
+                Assert.isTrue((a.num === 'oops'));
+                Assert.isTrue((a.nul === 'oops'));
+                Assert.isTrue((a.undef === 'oops'));
+                Assert.isTrue((a.T === 'oops'));
+
             }
 
         });
-        
+            
 
         Y.Test.Runner.add(testOOP);
         Y.Test.Runner.run();

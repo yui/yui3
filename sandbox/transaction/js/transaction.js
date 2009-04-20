@@ -7,35 +7,41 @@
  *
  * Set the default function for at least the start event as well as any other
  * interesting moments during the life of the transaction by defining the event
- * schema in the &quot;on&quot; property of the configuration object.  Each key
+ * map in the &quot;on&quot; property of the schema object.  Each key
  * is used as the event name and the value its default function.  Use this to
- * define the operational schema of the transaction.
+ * define the operational path of the transaction.
  *
- * Configuration object passed to the constructor takes the following form:
+ * Transaction schema object passed to the constructor takes the following form:
  * {
- *   on : {
+ *   events : { // the operational path(s) of the transaction
  *     start    : goManGo,
  *     response : successOrFailure, // define additional events and their
  *     success  : successHandler,   // default functions to describe the
  *     failure  : failureHandler,   // interesting moments that may occur
+ *     //end : isProvidedByDefault
  *   },
+ *
  *   api : { // Add/override instance methods or properties
  *     customFunction : function (payload) {
  *       this.fire('failure',this.customProperty,payload);
  *     },
  *     customProperty : "foo"
  *   },
+ *
  *   context : obj, // execution context bound to the default functions
- *   args    : [ "extra", "args", "bound", "to", "default", "functions" ]
+ *   args    : [ "extra", "args", "bound", "to", "default", "functions" ],
+ *
+ *   host : bubbleTarget // events will bubble to this object if provided
  * }
  *
  * @module transaction
  * @class Transaction
  * @constructor
- * @param cfg {Object} 
+ * @param schema {Object} 
+ * @param sub* {Object} 0..n subscription maps (see _initSubscribers)
  */
-function Transaction(cfg) {
-    Y.mix(cfg, Transaction.defaults);
+function Transaction(schema) {
+    Y.mix(schema, Transaction.defaults);
 
     Transaction.superclass.constructor.apply(this, arguments);
 
@@ -48,41 +54,55 @@ function Transaction(cfg) {
      */
     this.id = Y.guid();
 
-    this._init(cfg);
+    this._init.apply(this,arguments);
 }
 
 Transaction.defaults = {
     emitFacade : true,
-    broadcast  : true
+    broadcast  : 1,
+    queuable : true
 };
 
 Y.extend(Transaction, Y.Event.Target, {
     /**
      * Configures the instance.  Mixes in API and event and corresponding  info, then
-     * calls _initEvents to set up the individual state change events.
+     * calls _initEvents to set up the individual state change events.  Finally,
+     * any additional arguments are scanned for an &quot;on&quot; collection
+     * to initialize subscriptions to this transaction's events.
      *
      * @method _init
-     * @param cfg {Object} the config object passed to the constructor
+     * @param schema {Object} the schema object passed to the constructor
+     * @param sub* {Object} 0..n subscription maps (see _initSubscribers)
      * @protected
      */
-    _init : function (cfg) {
-        cfg = cfg || {};
+    _init : function (schema) {
+        schema = schema || {};
 
         var events = {
                 start : this._defStartFn,
                 end   : this._defEndFn
             },
-            args = 'args' in cfg ? Y.Array(cfg.args) : [];
+            args    = 'args' in schema ? Y.Array(schema.args) : [],
+            subs    = Y.Array(arguments,1,true),
+            context = schema.context || this;
 
-        if (Y.Lang.isObject(cfg.on)) {
-            Y.mix(events, cfg.on, true);
+        if (Y.Lang.isObject(schema.events)) {
+            Y.mix(events, schema.events, true);
         }
 
-        if (Y.Lang.isObject(cfg.api)) {
-            Y.mix(this, cfg.api);
+        if (Y.Lang.isObject(schema.api)) {
+            Y.mix(this, schema.api);
         }
 
-        this._initEvents(events, (cfg.context || this), args);
+        this._initEvents(events, context, args);
+
+        if (schema.host) {
+            this.addTarget(schema.host);
+        }
+
+        if (subs.length) {
+            this._initSubscribers(subs, context);
+        }
     },
 
     /**
@@ -105,8 +125,44 @@ Y.extend(Transaction, Y.Event.Target, {
     },
 
     /**
+     * Subscribes to transaction events using any number of objects in the
+     * format
+     * <pre>{
+     *    on : {
+     *      event_name : fn, ...
+     *    },
+     *    after : {
+     *      event_name : fn, ...
+     *    }
+     * }</pre>
+     *
+     * @method _initSubscribers
+     * @param subs {Array} Array of objects as described above
+     * @param context {Object} Context for the subscriber callback execution
+     * @protected
+     */
+    _initSubscribers : function (subs, context) {
+        var isObject = Y.Lang.isObject, i, l, s;
+
+        if (Y.Lang.isArray(subs)) {
+            for (i = 0, l = subs.length; i < l; ++i) {
+                s = subs[i];
+
+                if (isObject(s)) {
+                    if (isObject(s.on)) {
+                        this.on(s.on, null, context);
+                    }
+                    if (isObject(s.after)) {
+                        this.after(s.after, null, context);
+                    }
+                }
+            }
+        }
+    },
+
+    /**
      * Default start event handler.  Should be overridden during instantiation
-     * by setting cfg.on.start.
+     * by setting schema.events.start.
      *
      * @method _defStartFn
      * @protected
@@ -122,7 +178,7 @@ Y.extend(Transaction, Y.Event.Target, {
      * resulting from the start event's default function, after the body of the
      * transaction is complete.
      *
-     * Can be overridden during instantiation by setting cfg.on.end.
+     * Can be overridden during instantiation by setting schema.events.end.
      *
      * @method _defEndFn
      * @protected
@@ -140,7 +196,7 @@ Y.extend(Transaction, Y.Event.Target, {
      * @return {Transaction} this transaction object
      */
     start : function (info) {
-        this.fire('start', info);
+        this.fire('start', Y.merge({ transaction: this }, (info || {})));
 
         return this;
     }
