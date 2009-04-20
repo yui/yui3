@@ -50,7 +50,6 @@ YUI.add('dd-proxy', function(Y) {
             value: false,
             setter: function(v) {
                 Y.on('event:ready', Y.bind(this._setProxy, this, v));
-                //this._setProxy(v);
                 return v;
             }
         },        
@@ -83,9 +82,20 @@ YUI.add('dd-proxy', function(Y) {
                 if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
                     if (DDM._proxy) {
                         this.set(DRAG_NODE, DDM._proxy);
+                        if (this._setFrameHandle) {
+                            this._setFrameHandle.detach();
+                        }
+                        this._setFrameHandle = Y.DD.DDM.on('ddm:start', Y.bind(function() {
+                            if (Y.DD.DDM.activeDrag === this) {
+                                this._setFrame(this);
+                            }
+                        }, this));
                     }
                 }
             } else {
+                if (this._setFrameHandle) {
+                    this._setFrameHandle.detach();
+                }
                 this.set(DRAG_NODE, this.get(NODE));
             }
         },
@@ -95,9 +105,9 @@ YUI.add('dd-proxy', function(Y) {
         * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
-        _setFrame: function() {
-            var n = this.get(NODE), ah, cur = 'auto';
-            if (this.get('resizeFrame')) {
+        _setFrame: function(drag) {
+            var n = drag.get(NODE), ah, cur = 'auto';
+            if (drag.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
                     width: n.get('offsetWidth') + 'px'
@@ -113,19 +123,19 @@ YUI.add('dd-proxy', function(Y) {
             }
 
 
-            this.get(DRAG_NODE).setStyles({
+            drag.get(DRAG_NODE).setStyles({
                 visibility: 'hidden',
                 display: 'block',
                 cursor: cur,
-                border: this.get('borderStyle')
+                border: drag.get('borderStyle')
             });
 
 
 
-            if (this.get('positionProxy')) {
-                this.get(DRAG_NODE).setXY(this.nodeXY);
+            if (drag.get('positionProxy')) {
+                drag.get(DRAG_NODE).setXY(drag.nodeXY);
             }
-            this.get(DRAG_NODE).setStyle('visibility', 'visible');
+            drag.get(DRAG_NODE).setStyle('visibility', 'visible');
         },
         /**
         * @private
@@ -141,7 +151,7 @@ YUI.add('dd-proxy', function(Y) {
         start: function() {
             Proxy.superclass.start.apply(this);
             if (this.get(PROXY)) {
-                this._setFrame();
+                //this._setFrame();
             }
         },
         /**

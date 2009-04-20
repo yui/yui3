@@ -147,6 +147,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Number} h The height of the drag element
         */
         _start: function(x, y, w, h) {
+            this.fire('ddm:start');
             this._startDrag.apply(this, arguments);
         },
         /**
