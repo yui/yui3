@@ -16,23 +16,21 @@ YUI.add('dd-constrain', function(Y) {
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
-        proto = null,
+        DDM = Y.DD.DDM,
+        proto = null;
 
-    C = function() {
-        C.superclass.constructor.apply(this, arguments);
-
-    };
-    
-    C.NAME = 'drag';
-
-    C.ATTRS = {
+    Y.mix(Y.DD.Drag.ATTRS, {
         /**
         * @attribute stickX
         * @description Stick the drag movement to the X-Axis. Default: false
         * @type Boolean
         */        
         stickX: {
-            value: false
+            value: false,
+            setter: function(v) {
+                this._initConstrained();
+                return v;
+            }
         },
         /**
         * @attribute stickY
@@ -40,7 +38,11 @@ YUI.add('dd-constrain', function(Y) {
         * @type Boolean
         */        
         stickY: {
-            value: false
+            value: false,
+            setter: function(v) {
+                this._initConstrained();
+                return v;
+            }
         },
         /**
         * @attribute tickX
@@ -95,6 +97,7 @@ YUI.add('dd-constrain', function(Y) {
                     if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
                         var o = {};
                         Y.mix(o, r);
+                        this._initConstrained();
                         return o;
                     } else {
                         return false;
@@ -127,6 +130,7 @@ YUI.add('dd-constrain', function(Y) {
                 if (!this.get('constrain2region')) {
                     var node = Y.Node.get(n);
                     if (node) {
+                        this._initConstrained();
                         return node;
                     }
                 } else if (this.get('constrain2region') !== false) {
@@ -142,12 +146,11 @@ YUI.add('dd-constrain', function(Y) {
         constrain2view: {
             value: false
         }
-    };
+    });
 
     proto = {
-        start: function() {
-            C.superclass.start.apply(this, arguments);
-            this._regionCache = null;
+        _initConstrained: function() {
+            this.after('drag:align', Y.bind(this._align2, this));
         },
         /**
         * @private
@@ -175,10 +178,10 @@ YUI.add('dd-constrain', function(Y) {
                 g = this.get('gutter');
 
             if (this.get('constrain2node')) {
-                if (!this._regionCache) {
-                    Y.on('resize', Y.bind(this._cacheRegion, this), window);
+                //if (!this._regionCache) {
+                //    Y.on('resize', Y.bind(this._cacheRegion, this), window);
                     this._cacheRegion();
-                }
+                //}
                 r = Y.clone(this._regionCache);
             } else if (this.get('constrain2region')) {
                 r = this.get('constrain2region');
@@ -252,11 +255,10 @@ YUI.add('dd-constrain', function(Y) {
         * @private
         * @method _align
         * @description Override of Drag _align to account for region checking and tick checking
-        * @param {Array} xy The XY to check for ticks and region
-        * @return {Array} The modified XY coords.
         */
-        _align: function(xy) {
-            var _xy = C.superclass._align.apply(this, arguments),
+        _align2: function() {
+            //TODO
+            var _xy = this.actXY,
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
@@ -266,15 +268,51 @@ YUI.add('dd-constrain', function(Y) {
                 _xy[0] = (this.startXY[0] - this.deltaXY[0]);
             }
 
-
             if (r) {
                 _xy = this._checkRegion(_xy);
             }
                 
             _xy = this._checkTicks(_xy, r);
-            return _xy;
+            this.actXY = _xy;
         },
         /**
+        * @private
+        * @method _checkTicks
+        * @description This method delegates the proper helper method for tick calculations
+        * @param {Array} xy The XY coords for the Drag
+        * @param {Object} r The optional region that we are bound to.
+        * @return {Array} The calced XY coords
+        */
+        _checkTicks: function(xy, r) {
+            var lx = (this.startXY[0] - this.deltaXY[0]),
+                ly = (this.startXY[1] - this.deltaXY[1]),
+                xt = this.get('tickX'),
+                yt = this.get('tickY');
+                if (xt && !this.get('tickXArray')) {
+                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r.left, r.right);
+                }
+                if (yt && !this.get('tickYArray')) {
+                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r.top, r.bottom);
+                }
+                if (this.get('tickXArray')) {
+                    xy[0] = DDM._calcTickArray(xy[0], this.get('tickXArray'), r.left, r.right);
+                }
+                if (this.get('tickYArray')) {
+                    xy[1] = DDM._calcTickArray(xy[1], this.get('tickYArray'), r.top, r.bottom);
+                }
+
+            return xy;
+        }
+    };
+    Y.mix(Y.DD.Drag.prototype, proto);
+    //Extend DD.Drag
+    //Y.extend(C, Y.DD.Drag, proto);
+    //Set this to DD.Drag for other extensions
+    //Y.DD.Drag = C;
+
+    Y.mix(DDM, {
+        /**
+        * @for DDM
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -305,6 +343,7 @@ YUI.add('dd-constrain', function(Y) {
                 return pos;
         },
         /**
+        * @for DDM
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
@@ -344,41 +383,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
                 return ticks[ticks.length - 1];
             }
-        },
-        /**
-        * @private
-        * @method _checkTicks
-        * @description This method delegates the proper helper method for tick calculations
-        * @param {Array} xy The XY coords for the Drag
-        * @param {Object} r The optional region that we are bound to.
-        * @return {Array} The calced XY coords
-        */
-        _checkTicks: function(xy, r) {
-            var lx = (this.startXY[0] - this.deltaXY[0]),
-                ly = (this.startXY[1] - this.deltaXY[1]),
-                xt = this.get('tickX'),
-                yt = this.get('tickY');
-                if (xt && !this.get('tickXArray')) {
-                    xy[0] = this._calcTicks(xy[0], lx, xt, r.left, r.right);
-                }
-                if (yt && !this.get('tickYArray')) {
-                    xy[1] = this._calcTicks(xy[1], ly, yt, r.top, r.bottom);
-                }
-                if (this.get('tickXArray')) {
-                    xy[0] = this._calcTickArray(xy[0], this.get('tickXArray'), r.left, r.right);
-                }
-                if (this.get('tickYArray')) {
-                    xy[1] = this._calcTickArray(xy[1], this.get('tickYArray'), r.top, r.bottom);
-                }
-
-            return xy;
         }
-    };
-    //Extend DD.Drag
-    Y.extend(C, Y.DD.Drag, proto);
-    //Set this to DD.Drag for other extensions
-    Y.DD.Drag = C;
-
+    });
 
 
 }, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
