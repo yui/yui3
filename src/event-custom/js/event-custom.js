@@ -429,7 +429,7 @@ Y.CustomEvent.prototype = {
 
     _getFacade: function() {
 
-        var ef = this._facade, o, args = this.details;
+        var ef = this._facade, o, args = this.details, o2;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -441,10 +441,21 @@ Y.CustomEvent.prototype = {
 
         // if (Y.Lang.isObject(o, true) && !o._yuifacade) {
         if (Y.Lang.isObject(o, true)) {
+
+            o2 = {};
+
+            // protect the event facade prototype properties
+            Y.mix(o2, ef, true, Y.EventFacade.prototype);
+
+            // mix the data
             Y.mix(ef, o, true);
+
+            // restore ef proto
+            Y.mix(ef, o2, true);
         }
 
         // update the details field with the arguments
+        // ef.type = this.type;
         ef.details = this.details;
         ef.target = this.target;
         ef.currentTarget = this.currentTarget;
@@ -874,8 +885,6 @@ Y.Subscriber = function(fn, context, args) {
         this.wrappedFn = Y.rbind.apply(Y, args);
     }
     
-
-
 };
 
 Y.Subscriber.prototype = {

@@ -18,7 +18,7 @@ var detachHandle,
                 timerHandle.cancel();
             }
 
-            timerHandle = Y.later(40, Y, function() {
+            timerHandle = Y.later(Y.config.windowResizeDelay || 40, Y, function() {
                 Y.fire(CE_NAME, e);
             });
         }

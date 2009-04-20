@@ -734,7 +734,7 @@ Y.CustomEvent.prototype = {
 
     _getFacade: function() {
 
-        var ef = this._facade, o, args = this.details;
+        var ef = this._facade, o, args = this.details, o2;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -746,10 +746,21 @@ Y.CustomEvent.prototype = {
 
         // if (Y.Lang.isObject(o, true) && !o._yuifacade) {
         if (Y.Lang.isObject(o, true)) {
+
+            o2 = {};
+
+            // protect the event facade prototype properties
+            Y.mix(o2, ef, true, Y.EventFacade.prototype);
+
+            // mix the data
             Y.mix(ef, o, true);
+
+            // restore ef proto
+            Y.mix(ef, o2, true);
         }
 
         // update the details field with the arguments
+        // ef.type = this.type;
         ef.details = this.details;
         ef.target = this.target;
         ef.currentTarget = this.currentTarget;
@@ -1086,10 +1097,7 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        // if (this.stoppedFn) {
-        //     this.stoppedFn.call(this.host || this, this);
-        // }
-        this.events.fire('stopped', this, this);
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -1100,10 +1108,7 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        // if (this.stoppedFn) {
-        //     this.stoppedFn.call(this.host || this, this);
-        // }
-        this.events.fire('stopped', this, this);
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -1115,11 +1120,7 @@ Y.CustomEvent.prototype = {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
 
-            this.events.fire('prevented', this, this);
-
-            //if (this.preventedFn) {
-            //    this.preventedFn.call(this.host || this, this);
-            //}
+            this.events.fire('prevented', this);
         }
     }
 
@@ -1175,19 +1176,18 @@ Y.Subscriber = function(fn, context, args) {
      * @type Function
      */
     this.wrappedFn = fn;
+
+    /**
+     * Custom events for a given fire transaction.
+     * @property events
+     * @type {EventTarget}
+     */
+    this.events = null;
     
     if (context) {
-        /*
-        var a = (args) ? Y.Array(args) : [];
-        a.unshift(fn, context);
-        // a.unshift(fn);
-        m = Y.rbind.apply(Y, a);
-        */
         this.wrappedFn = Y.rbind.apply(Y, args);
     }
     
-
-
 };
 
 Y.Subscriber.prototype = {
