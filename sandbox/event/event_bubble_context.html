@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+</head>
+<body>
+
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../build/oop/oop.js"></script>
+<script type="text/javascript" src="../../build/event/event.js"></script>
+<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js"></script>
+<script type="text/javascript">
+YUI().use('*', function (Y) {
+    var et = new Y.Event.Target,
+        host = new Y.Event.Target;
+
+    et.addTarget(host);
+
+    Y.mix(host,{
+        someFunction : function () {},
+
+        _defAFn : function (e) {
+            // death by e
+            e.transaction.fire('b',e);
+        }
+    });
+
+    et.publish('a', {
+        emitFacade: true,
+        defaultFn: Y.rbind(host._defAFn, host)
+    });
+    et.publish('b');
+
+    // Subscribe at the bubble target level
+    host.on({
+        // First subscriber called from correct context
+        a:function (e) {
+            Y.log('a');
+            this.someFunction();
+        },
+        // Second subscriber called from et
+        b:function (e) {
+            Y.log('b');
+            this.someFunction();
+        }
+    });
+
+    et.fire('a', { transaction: et });
+
+    Y.log('done');
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js" ></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>
