@@ -377,7 +377,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     bubbles: false
                 });
 
-                // cache the dom event details in the custom event
                 // for later removeListener calls
                 cewrapper.el = el;
                 cewrapper.type = type;
@@ -503,7 +502,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             var ev = e || window.event;
 
             return (noFacade) ? ev : 
-                new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**
