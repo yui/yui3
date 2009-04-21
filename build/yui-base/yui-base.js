@@ -55,8 +55,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>pollInterval:
-     *  The default poll interval</li>
+     *  <li>pollInterval: The default poll interval</li>
+     *  <li>windowResizeDelay: The time between browser events to wait before firing.</li>
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
@@ -683,8 +683,8 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files.
- * @method log
+ * minified and raw versions of the YUI files, unlike log statements
+ * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
@@ -1015,7 +1015,7 @@ A.each = (Native.forEach) ?
         return Y;
     } :
     function (a, f, o) { 
-        var l = a.length, i;
+        var l = (a && a.length) || 0, i;
         for (i = 0; i < l; i=i+1) {
             f.call(o || Y, a[i], i, a);
         }
@@ -1257,30 +1257,30 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
-    /**
-     * Extracts the keys, values, or size from an object
-     * 
-     * @method _extract
-     * @param o the object
-     * @param what what to extract (0: keys, 1: values, 2: size)
-     * @return {boolean|Array} the extracted info
-     * @private
-     */
-    _extract = function(o, what) {
-        var count = (what === 2), out = (count) ? 0 : [], i;
+/**
+ * Extracts the keys, values, or size from an object
+ * 
+ * @method _extract
+ * @param o the object
+ * @param what what to extract (0: keys, 1: values, 2: size)
+ * @return {boolean|Array} the extracted info
+ * @private
+ */
+_extract = function(o, what) {
+    var count = (what === 2), out = (count) ? 0 : [], i;
 
-        for (i in o) {
-            if (count) {
-                out++;
-            } else {
-                if (o.hasOwnProperty(i)) {
-                    out.push((what) ? o[i] : i);
-                }
+    for (i in o) {
+        if (count) {
+            out++;
+        } else {
+            if (o.hasOwnProperty(i)) {
+                out.push((what) ? o[i] : i);
             }
         }
+    }
 
-        return out;
-    };
+    return out;
+};
 
 /**
  * Returns an array containing the object's keys
@@ -1360,7 +1360,9 @@ O.hasValue = function(o, v) {
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = O.hasKey;
+O.owns = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 /**
  * Executes a function on each item. The function
