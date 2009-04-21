@@ -548,7 +548,13 @@
 
         <span class="c">// The default context should be the object/element that</span>
 <span class="c"></span>        <span class="c">// the listener was bound to.</span>
-<span class="c"></span>        <span class="nx">ct</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">currentTarget</span><span class="o">);</span>
+<span class="c"></span>        
+        <span class="c">// @TODO this breaks some expectations documented here:</span>
+<span class="c"></span>        <span class="c">// http://yuilibrary.com/projects/yui3/ticket/2527854</span>
+<span class="c"></span>        <span class="c">// confirm that their isn&#39;t a case that the bubbled</span>
+<span class="c"></span>        <span class="c">// context should be used.</span>
+<span class="c"></span>        <span class="c">// ct = (args &amp;&amp; Y.Lang.isObject(args[0]) &amp;&amp; args[0].currentTarget);</span>
+<span class="c"></span>
         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">notify</span><span class="o">(</span><span class="nx">ct</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
