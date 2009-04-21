@@ -274,8 +274,6 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     dd4 = new Y1.DD.Drag({
         node: '#drag4',
         useShim: false,
-        //tickX: 25,
-        //tickY: 25,
         proxy: true,
         //tickXArray: [10, 133, 245, 333, 388, 455, 488, 546, 667, 798, 892],
         //tickXArray: [133, 245, 333, 455, 488, 546, 667, 798, 892],
@@ -289,14 +287,21 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
         },
         */
     
-        constrain2node: '#drag4Cont',
+        //constrain2node: '#drag4Cont',
         //constrain2view: true,
         //gutter: '-15 20 15 -20'
-        gutter:  '-20',
+        //gutter:  '-20',
         //stickX: true,
         //stickY: true
         foo: true
     });
+    dd4.plug(Y1.plugin.DDConstrained, {
+        //tickX: 25,
+        //tickY: 25,
+        constrain2node: '#drag4Cont',
+        gutter:  '-20'
+    });
+    
     dd4.on('drag:end', function() {
         dd4.set('proxy', !dd4.get('proxy'));
     });
