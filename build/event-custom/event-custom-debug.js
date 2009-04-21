@@ -808,7 +808,13 @@ Y.CustomEvent.prototype = {
 
         // The default context should be the object/element that
         // the listener was bound to.
-        ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+        
+        // @TODO this breaks some expectations documented here:
+        // http://yuilibrary.com/projects/yui3/ticket/2527854
+        // confirm that their isn't a case that the bubbled
+        // context should be used.
+        // ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+
         ret = s.notify(ct || this.context, args, this);
 
         if (false === ret || this.stopped > 1) {
