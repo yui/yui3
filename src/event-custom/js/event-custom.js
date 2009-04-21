@@ -439,13 +439,14 @@ Y.CustomEvent.prototype = {
         // properties to the event facade
         o = args && args[0];
 
-        // if (Y.Lang.isObject(o, true) && !o._yuifacade) {
         if (Y.Lang.isObject(o, true)) {
 
             o2 = {};
 
             // protect the event facade prototype properties
-            Y.mix(o2, ef, true, Y.EventFacade.prototype);
+            // Y.mix(o2, ef, true, Y.EventFacade.prototype);
+            // Y.mix(o2, ef, true, Y.merge(Y.EventFacade.prototype, Y.CustomEvent.prototype));
+            Y.mix(o2, ef, true, new Y.EventFacade());
 
             // mix the data
             Y.mix(ef, o, true);
@@ -481,7 +482,6 @@ Y.CustomEvent.prototype = {
         var ret, ct;
 
         // emit an EventFacade if this is that sort of event
-        // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
         if (this.emitFacade) {
 
             // @TODO object literal support to fire makes it possible for

@@ -16,9 +16,11 @@
 <script type="text/javascript">
 YUI().use('*', function (Y) {
     var et = new Y.Event.Target;
+    et.id = 1;
     et.publish('a', {
         emitFacade: true,
         defaultFn: function (e) {
+            Y.log('defaultFn: ' + this.id);
             setTimeout(function () {
                 et.fire('b',e);
             },10)
@@ -30,6 +32,7 @@ YUI().use('*', function (Y) {
     });
 
     et.on('b', function (e) { 
+        Y.log('defaultFn: ' + this.id);
         e.preventDefault(); 
     });
 
