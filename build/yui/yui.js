@@ -50,6 +50,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  The target window/frame</li>
      *  <li>core:
      *  A list of modules that defines the YUI core (overrides the default)</li>
+     *  <li>dateFormat: default date format</li>
+     *  <li>locale: default locale</li>
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
@@ -713,6 +715,7 @@ DATE      = 'date',
 ERROR     = 'error',
 FUNCTION  = 'function',
 NUMBER    = 'number',
+NULL      = 'null',
 OBJECT    = 'object',
 REGEX     = 'regexp',
 STRING    = 'string',
@@ -787,7 +790,8 @@ L.isFunction = function(o) {
  * @return {boolean} true if o is a date
  */
 L.isDate = function(o) {
-    return o instanceof Date;
+    // return o instanceof Date;
+    return L.type(o) === DATE;
 };
 
 /**
@@ -874,7 +878,15 @@ L.trim = function(s){
  */
 L.isValue = function(o) {
     var t = L.type(o);
-    return (t && t !== UNDEFINED) || false;
+    switch (t) {
+        case NUMBER:
+            return isFinite(o);
+        case NULL:
+        case UNDEFINED:
+            return false;
+        default:
+            return !!(t);
+    }
 };
 
 /**
@@ -1720,9 +1732,12 @@ YUI.add('get', function(Y) {
  * @submodule get
  */
 
-var ua=Y.UA, 
-    L=Y.Lang,
-    PREFIX = Y.guid('yui_');
+var ua         = Y.UA, 
+    L          = Y.Lang,
+    PREFIX     = Y.guid('yui_'),
+    TYPE_JS    = "text/javascript",
+    TYPE_CSS   = "text/css",
+    STYLESHEET = "stylesheet";
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
@@ -1795,14 +1810,16 @@ Y.Get = function() {
      * @private
      */
     _linkNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("link", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/css",
-                "charset": c,
-                "rel":     "stylesheet",
-                "href":    url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_CSS,
+            rel:  STYLESHEET,
+            href: url
+        };
+        if (charset) {
+            o.charset = charset;
+        }
+        return _node("link", o, win);
     },
 
     /**
@@ -1814,13 +1831,17 @@ Y.Get = function() {
      * @private
      */
     _scriptNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("script", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/javascript",
-                "charset": c,
-                "src":     url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_JS,
+            src:  url
+        };
+
+        if (charset) {
+            o.charset = charset;
+        }
+
+        return _node("script", o, win);
     },
 
     /**

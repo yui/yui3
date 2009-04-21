@@ -1,3 +1,4 @@
+
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -16,7 +17,7 @@
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-Y.Env.eventAdaptors.key = {
+Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true),

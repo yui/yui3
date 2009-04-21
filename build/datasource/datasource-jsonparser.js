@@ -89,20 +89,23 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var response = (this.get("parser").parse(this.get("schema"), e.data));
+        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = (this.get("parser").parse(this.get("schema"), data));
+            
+        // Default
         if(!response) {
             response = {
                 meta: {},
-                results: e.data
+                results: data
             };
         }
+        
         this._owner.fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin');
-Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;
 
 
 

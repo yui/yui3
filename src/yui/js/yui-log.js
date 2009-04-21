@@ -68,8 +68,8 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files.
- * @method log
+ * minified and raw versions of the YUI files, unlike log statements
+ * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default

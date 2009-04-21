@@ -1,11 +1,4 @@
-/**
- * Firefox fires the window resize event once when the resize action
- * finishes, other browsers fire the event periodically during the
- * resize.  This code uses timeout logic to simulate the Firefox 
- * behavior in other browsers.
- * @event windowresize
- * @for YUI
- */
+(function() {
 
 var detachHandle,
 
@@ -25,14 +18,23 @@ var detachHandle,
                 timerHandle.cancel();
             }
 
-            timerHandle = Y.later(40, Y, function() {
+            timerHandle = Y.later(Y.config.windowResizeDelay || 40, Y, function() {
                 Y.fire(CE_NAME, e);
             });
         }
         
     };
 
-Y.Env.eventAdaptors.windowresize = {
+
+/**
+ * Firefox fires the window resize event once when the resize action
+ * finishes, other browsers fire the event periodically during the
+ * resize.  This code uses timeout logic to simulate the Firefox 
+ * behavior in other browsers.
+ * @event windowresize
+ * @for YUI
+ */
+Y.Env.evt.plugins.windowresize = {
 
     on: function(type, fn) {
 
@@ -48,3 +50,4 @@ Y.Env.eventAdaptors.windowresize = {
     }
 };
 
+})();

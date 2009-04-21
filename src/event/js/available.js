@@ -4,7 +4,7 @@
  * @for YUI
  * @event available
  */
-Y.Env.eventAdaptors.available = {
+Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
@@ -18,7 +18,7 @@ Y.Env.eventAdaptors.available = {
  * @for YUI
  * @event contentready
  */
-Y.Env.eventAdaptors.contentready = {
+Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);

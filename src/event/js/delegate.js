@@ -1,3 +1,4 @@
+
 /**
  * Set up a delegated listener container.
  * @event delegate
@@ -13,7 +14,8 @@
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-Y.Env.eventAdaptors.delegate = {
+
+Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, event, spec, o) {
 

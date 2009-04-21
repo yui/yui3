@@ -78,12 +78,14 @@ YUI.add('event', function(Y) {
  */
 
 var GLOBAL_ENV = YUI.Env,
+    
+    adapt = Y.Env.evt.plugins,
 
     yready = function() {
         Y.fire('domready');
     };
 
-Y.mix(Y.Env.eventAdaptors, {
+Y.mix(adapt, {
 
     /**
      * Executes the supplied callback when the DOM is first usable.  This
@@ -985,7 +987,7 @@ Event._tryPreloadAttach();
  * @for YUI
  * @event available
  */
-Y.Env.eventAdaptors.available = {
+Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
@@ -999,7 +1001,7 @@ Y.Env.eventAdaptors.available = {
  * @for YUI
  * @event contentready
  */
-Y.Env.eventAdaptors.contentready = {
+Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
@@ -1010,7 +1012,7 @@ Y.Env.eventAdaptors.contentready = {
 var FOCUS   = Y.UA.ie ? "focusin" : "focus",
     BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    adapt = Y.Env.eventAdaptors;
+    adapt = Y.Env.evt.plugins;
 
 
 /**
@@ -1057,6 +1059,7 @@ adapt.blur = {
 };
 
 })();
+
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -1075,7 +1078,7 @@ adapt.blur = {
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-Y.Env.eventAdaptors.key = {
+Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true),
@@ -1148,6 +1151,7 @@ Y.Env.eventAdaptors.key = {
         return Y.on.apply(Y, a);
     }
 };
+
 /**
  * Set up a delegated listener container.
  * @event delegate
@@ -1163,7 +1167,8 @@ Y.Env.eventAdaptors.key = {
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-Y.Env.eventAdaptors.delegate = {
+
+Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, event, spec, o) {
 
@@ -1208,6 +1213,7 @@ Y.Env.eventAdaptors.delegate = {
 
 };
 
+(function() {
 
 var detachHandle,
 
@@ -1222,6 +1228,7 @@ var detachHandle,
             Y.fire(CE_NAME, e);
 
         } else {
+
             if (timerHandle) {
                 timerHandle.cancel();
             }
@@ -1233,11 +1240,20 @@ var detachHandle,
         
     };
 
-Y.Env.eventAdaptors.windowresize = {
+
+/**
+ * Firefox fires the window resize event once when the resize action
+ * finishes, other browsers fire the event periodically during the
+ * resize.  This code uses timeout logic to simulate the Firefox 
+ * behavior in other browsers.
+ * @event windowresize
+ * @for YUI
+ */
+Y.Env.evt.plugins.windowresize = {
 
     on: function(type, fn) {
 
-        // check for window listener and add if needed
+        // check for single window listener and add if needed
         if (!detachHandle) {
             detachHandle = Y.on('resize', handler);
         }
@@ -1248,6 +1264,8 @@ Y.Env.eventAdaptors.windowresize = {
         return Y.on.apply(Y, a);
     }
 };
+
+})();
 
 
 }, '@VERSION@' );
