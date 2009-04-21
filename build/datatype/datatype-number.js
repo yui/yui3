@@ -120,60 +120,6 @@ Number = {
         else {
             return data;
         }
-    },
-
-    formatOrig: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
-        if(LANG.isNumber(data)) {
-            config = config || {};
-            
-            var isNeg = (data < 0),
-                output = data + "",
-                decPlaces = config.decimalPlaces,
-                decSep = config.decimalSeparator,
-                thouSep = config.thousandsSeparator,
-                dotIndex;
-
-            // Decimal precision
-            if(LANG.isNumber(decPlaces)) {
-                // Round to the correct decimal place
-                output = data.toFixed(decPlaces);
-            }
-            
-            // Decimal separator
-            if(decSep){
-                output = output.replace(".", decSep);
-            }
-            
-            // Add the thousands separator
-            if(thouSep) {
-                dotIndex = output.lastIndexOf(decSep);
-                dotIndex = (dotIndex > -1) ? dotIndex : output.length;
-                var newOutput = output.substring(dotIndex);
-                var count = -1;
-                for (var i=dotIndex; i>0; i--) {
-                    count++;
-                    if ((count%3 === 0) && (i !== dotIndex) && (!isNeg || (i > 1))) {
-                        newOutput = thouSep + newOutput;
-                    }
-                    newOutput = output.charAt(i-1) + newOutput;
-                }
-                output = newOutput;
-            }
-
-            // Prepend prefix
-            output = (config.prefix) ? config.prefix + output : output;
-
-            // Append suffix
-            output = (config.suffix) ? output + config.suffix : output;
-
-            return output;
-        }
-        // Still not a Number, just return unaltered
-        else {
-            return data;
-        }
     }
 };
 

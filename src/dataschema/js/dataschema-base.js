@@ -10,7 +10,7 @@
  * @class DataSchema.Base
  * @static
  */
-var DPBase = {
+var SchemaBase = {
     /**
      * Returns string name.
      *
@@ -35,4 +35,4 @@ var DPBase = {
     }
 };
 
-Y.namespace("DataSchema").Base = DPBase;
+Y.namespace("DataSchema").Base = SchemaBase;

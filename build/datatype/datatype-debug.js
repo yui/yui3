@@ -121,60 +121,6 @@ Number = {
         else {
             return data;
         }
-    },
-
-    formatOrig: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
-        if(LANG.isNumber(data)) {
-            config = config || {};
-            
-            var isNeg = (data < 0),
-                output = data + "",
-                decPlaces = config.decimalPlaces,
-                decSep = config.decimalSeparator,
-                thouSep = config.thousandsSeparator,
-                dotIndex;
-
-            // Decimal precision
-            if(LANG.isNumber(decPlaces)) {
-                // Round to the correct decimal place
-                output = data.toFixed(decPlaces);
-            }
-            
-            // Decimal separator
-            if(decSep){
-                output = output.replace(".", decSep);
-            }
-            
-            // Add the thousands separator
-            if(thouSep) {
-                dotIndex = output.lastIndexOf(decSep);
-                dotIndex = (dotIndex > -1) ? dotIndex : output.length;
-                var newOutput = output.substring(dotIndex);
-                var count = -1;
-                for (var i=dotIndex; i>0; i--) {
-                    count++;
-                    if ((count%3 === 0) && (i !== dotIndex) && (!isNeg || (i > 1))) {
-                        newOutput = thouSep + newOutput;
-                    }
-                    newOutput = output.charAt(i-1) + newOutput;
-                }
-                output = newOutput;
-            }
-
-            // Prepend prefix
-            output = (config.prefix) ? config.prefix + output : output;
-
-            // Append suffix
-            output = (config.suffix) ? output + config.suffix : output;
-
-            return output;
-        }
-        // Still not a Number, just return unaltered
-        else {
-            return data;
-        }
     }
 };
 
@@ -593,7 +539,69 @@ Y.DataType.Date.Locale['en-AU'] = Y.merge(Y.DataType.Date.Locale['en']);
 
 }, '@VERSION@' );
 
+YUI.add('datatype-xml', function(Y) {
+
+/**
+ * The DataType utility provides a set of utility functions to operate on native
+ * JavaScript data types.
+ *
+ * @module datatype
+ */
+var LANG = Y.Lang,
+
+/**
+ * XML submodule.
+ *
+ * @class DataType.XML
+ * @static
+ */
+XML = {
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataType.XML";
+    },
+
+    /**
+     * Converts data to type XMLDocument.
+     *
+     * @method parse
+     * @param data {String} Data to convert.
+     * @return {XMLDoc} XML Document.
+     * @static
+     */
+    parse: function(data) {
+        var xmlDoc = null;
+        if(LANG.isString(data)) {
+            try {
+                if(!LANG.isUndefined(DOMParser)) {
+                    xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+                }
+                else if(!LANG.isUndefined(ActiveXObject)) {
+                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                        xmlDoc.async= "false";
+                        xmlDoc.load(data);
+                }
+            }
+            catch(e) {
+                Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", Number.toString());
+            }
+        }
+        return xmlDoc;
+    }
+};
+
+Y.namespace("DataType").XML = XML;
 
 
-YUI.add('datatype', function(Y){}, '@VERSION@' ,{use:['datatype-number', 'datatype-date']});
+
+}, '@VERSION@' ,{requires:['??']});
+
+
+
+YUI.add('datatype', function(Y){}, '@VERSION@' ,{use:['datatype-number', 'datatype-date', 'datatype-xml']});
 
