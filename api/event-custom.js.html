@@ -477,7 +477,7 @@
 
     <span class="nx">_getFacade</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">args</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">args</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">,</span> <span class="nx">o2</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
@@ -489,10 +489,21 @@
 
         <span class="c">// if (Y.Lang.isObject(o, true) &amp;&amp; !o._yuifacade) {</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="nx">o2</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="c">// protect the event facade prototype properties</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o2</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
+
+            <span class="c">// mix the data</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="c">// restore ef proto</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// update the details field with the arguments</span>
+<span class="c"></span>        <span class="c">// ef.type = this.type;</span>
 <span class="c"></span>        <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
         <span class="nx">ef</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
         <span class="nx">ef</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
@@ -922,8 +933,6 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">wrappedFn</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
     <span class="o">}</span>
     
-
-
 <span class="o">};</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Subscriber</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>

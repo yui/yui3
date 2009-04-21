@@ -67,7 +67,7 @@
                 <span class="nx">timerHandle</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
             <span class="o">}</span>
 
-            <span class="nx">timerHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="m">40</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">timerHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">windowResizeDelay</span> <span class="o">||</span> <span class="m">40</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">CE_NAME</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
             <span class="o">});</span>
         <span class="o">}</span>

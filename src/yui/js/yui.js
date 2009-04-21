@@ -55,8 +55,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>pollInterval:
-     *  The default poll interval</li>
+     *  <li>pollInterval: The default poll interval</li>
+     *  <li>windowResizeDelay: The time between browser events to wait before firing.</li>
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
