@@ -55,6 +55,10 @@
 <span class="c"> * @static</span>
 <span class="c"> */</span>
 <span class="k">var</span> <span class="nx">_toString</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">toString</span><span class="o">,</span>
+    <span class="nx">Lang</span>      <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    <span class="nx">isFunction</span><span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">,</span>
+    <span class="nx">isArray</span>   <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">,</span>
+    <span class="nx">type</span>      <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
     <span class="nx">STRING</span>    <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="o">,</span>
     <span class="nx">NUMBER</span>    <span class="o">=</span> <span class="s1">&#39;number&#39;</span><span class="o">,</span>
     <span class="nx">BOOLEAN</span>   <span class="o">=</span> <span class="s1">&#39;boolean&#39;</span><span class="o">,</span>
@@ -73,6 +77,7 @@
     <span class="nx">COMMA_CR</span>  <span class="o">=</span> <span class="s2">&quot;,\n&quot;</span><span class="o">,</span>
     <span class="nx">CR</span>        <span class="o">=</span> <span class="s2">&quot;\n&quot;</span><span class="o">,</span>
     <span class="nx">COLON</span>     <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
+    <span class="nx">COLON_SP</span>  <span class="o">=</span> <span class="s1">&#39;: &#39;</span><span class="o">,</span>
     <span class="nx">QUOTE</span>     <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;JSON&#39;</span><span class="o">),{</span>
@@ -148,18 +153,27 @@
 
         <span class="k">var</span> <span class="nx">m</span>      <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">_CHARS</span><span class="o">,</span>
             <span class="nx">str_re</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">_SPECIAL_CHARS</span><span class="o">,</span>
-            <span class="nx">rep</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">rep</span>    <span class="o">=</span> <span class="nx">isFunction</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
             <span class="nx">pstack</span> <span class="o">=</span> <span class="o">[],</span> <span class="c">// Processing stack used for cyclical ref protection</span>
-<span class="c"></span>            <span class="nx">_date</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">dateToString</span><span class="o">;</span> <span class="c">// Use configured date serialization</span>
-<span class="c"></span>
+<span class="c"></span>            <span class="nx">_date</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">dateToString</span><span class="o">,</span> <span class="c">// Use configured date serialization</span>
+<span class="c"></span>            <span class="nx">format</span> <span class="o">=</span> <span class="nx">_toString</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">ind</span><span class="o">).</span><span class="nx">match</span><span class="o">(</span><span class="sr">/String|Number/</span><span class="o">);</span>
+
         <span class="k">if</span> <span class="o">(</span><span class="nx">rep</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">w</span> <span class="o">!==</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">w</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ind</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ind</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">ind</span><span class="o">)</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Array</span><span class="o">(</span><span class="nx">ind</span><span class="o">+</span><span class="m">1</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot; &quot;</span><span class="o">)</span> <span class="o">:</span>
-                  <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">ind</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ind</span> <span class="o">:</span>
-                  <span class="kc">null</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">format</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// String instances and primatives are left alone.  String objects</span>
+<span class="c"></span>            <span class="c">// coerce for the indenting operations.</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">format</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;Number&#39;</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// force numeric indent values between {0,100} per the spec</span>
+<span class="c"></span>                <span class="c">// This also converts Number instances to primative</span>
+<span class="c"></span>                <span class="nx">ind</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="o">(</span><span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="m">0</span><span class="o">,</span><span class="nx">ind</span><span class="o">),</span><span class="m">100</span><span class="o">)+</span><span class="m">1</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot; &quot;</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// turn off formatting for 0 or empty string</span>
+<span class="c"></span>            <span class="nx">format</span> <span class="o">=</span> <span class="nx">ind</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="c">// escape encode special characters</span>
@@ -193,7 +207,9 @@
             <span class="c">// Add the object to the processing stack</span>
 <span class="c"></span>            <span class="nx">pstack</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">len</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">v</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">colon</span> <span class="o">=</span> <span class="nx">format</span> <span class="o">?</span> <span class="nx">COLON_SP</span> <span class="o">:</span> <span class="nx">COLON</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">len</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">v</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">arr</span><span class="o">)</span> <span class="o">{</span> <span class="c">// Array</span>
 <span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
@@ -201,13 +217,13 @@
                 <span class="o">}</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>   <span class="c">// Object</span>
 <span class="c"></span>                <span class="c">// If whitelist provided, take only those keys</span>
-<span class="c"></span>                <span class="nx">k</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">w</span> <span class="o">||</span> <span class="nx">o</span><span class="o">);</span>
+<span class="c"></span>                <span class="nx">k</span> <span class="o">=</span> <span class="nx">isArray</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">STRING</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">v</span> <span class="o">=</span> <span class="nx">_stringify</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">a</span><span class="o">[</span><span class="nx">j</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">_string</span><span class="o">(</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">+</span> <span class="nx">COLON</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
+                            <span class="nx">a</span><span class="o">[</span><span class="nx">j</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">_string</span><span class="o">(</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">+</span> <span class="nx">colon</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
                         <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -216,7 +232,7 @@
             <span class="c">// remove the array from the stack</span>
 <span class="c"></span>            <span class="nx">pstack</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ind</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">format</span> <span class="o">&amp;&amp;</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">arr</span> <span class="o">?</span>
                     <span class="nx">OPEN_A</span> <span class="o">+</span> <span class="nx">CR</span> <span class="o">+</span> <span class="nx">_indent</span><span class="o">(</span><span class="nx">a</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="nx">COMMA_CR</span><span class="o">))</span> <span class="o">+</span> <span class="nx">CR</span> <span class="o">+</span> <span class="nx">CLOSE_A</span> <span class="o">:</span>
                     <span class="nx">OPEN_O</span> <span class="o">+</span> <span class="nx">CR</span> <span class="o">+</span> <span class="nx">_indent</span><span class="o">(</span><span class="nx">a</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="nx">COMMA_CR</span><span class="o">))</span> <span class="o">+</span> <span class="nx">CR</span> <span class="o">+</span> <span class="nx">CLOSE_O</span><span class="o">;</span>
@@ -229,13 +245,13 @@
 
         <span class="c">// Worker function.  Fork behavior on data type and recurse objects.</span>
 <span class="c"></span>        <span class="k">function</span> <span class="nx">_stringify</span><span class="o">(</span><span class="nx">h</span><span class="o">,</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">rep</span><span class="o">)</span> <span class="o">?</span> <span class="nx">rep</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">h</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">:</span> <span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">],</span>
-                <span class="nx">t</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">isFunction</span><span class="o">(</span><span class="nx">rep</span><span class="o">)</span> <span class="o">?</span> <span class="nx">rep</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">h</span><span class="o">,</span><span class="nx">key</span><span class="o">,</span><span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">:</span> <span class="nx">h</span><span class="o">[</span><span class="nx">key</span><span class="o">],</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">OBJECT</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="sr">/String|Number|Boolean/</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">_toString</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">)))</span> <span class="o">{</span>
                     <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">valueOf</span><span class="o">();</span>
-                    <span class="nx">t</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+                    <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
