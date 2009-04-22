@@ -11,6 +11,8 @@ Development master
     * stringify now throws an error for cyclical object structures (per ECMA 5 spec)
     * removed key sort from object stringification
     * restructured stringify to leverage Y.Lang.type
+    * third parameter to stringify changed to indent, allowing output
+      formatting per the ECMA 5 spec.  Depth control has been removed.
 
 3.0.0 beta1
     * Leverages native JSON.parse if available
