@@ -12,16 +12,30 @@ var PROPS = {
     details: 1,
     type: 1,
     target: 1,
-    currentTarget,
-    related
+    currentTarget: 1,
+    stopPropagation: 2,
+    stopImmediatePropagation: 2,
+    preventDefault: 2,
+    halt: 2
+};
 
-}
-
-function makeFacade(target, properties, methods) {
-    return function (target, properties, methods) {
-        Y.mix(this
-    };
-}
+Y.EventFacade2 = function(e, currentTarget) {
+    if (e) {
+        Y.Object.each(PROPS, function(v, k) {
+            //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];
+            var val = e[k];
+            if (val) {
+                this[k] = (v == 2) ? function() {
+                    if (val) {
+                        val.apply(e, arguments);
+                    }
+                } : val;
+            } else {
+                console.log('missing ' + k);
+            }
+        });
+    }
+};
 */
 
 Y.EventFacade = function(e, currentTarget) {
@@ -99,12 +113,7 @@ Y.EventFacade = function(e, currentTarget) {
      * on the current target will not be executed
      */
     this.halt = function(immediate) {
-        if (immediate) {
-            this.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-        this.preventDefault();
+        e.halt(immediate);
     };
 
 };

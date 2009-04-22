@@ -107,8 +107,9 @@ var L = Y.Lang,
             defaults: {
                 context: this, 
                 host: this,
-                emitFacade: o.emitFacade || false,
-                fireOnce: o.fireOnce || false,
+                emitFacade: o.emitFacade,
+                fireOnce: o.fireOnce,
+                queuable: o.queuable,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };

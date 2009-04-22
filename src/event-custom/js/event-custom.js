@@ -35,6 +35,8 @@ var onsubscribeType = "_event:onsub",
         'type'
     ],
 
+    FACADE = new Y.EventFacade(),
+
     YUI3_SIGNATURE = 9;
 
 Y.EventHandle = function(evt, sub) {
@@ -443,15 +445,13 @@ Y.CustomEvent.prototype = {
 
             o2 = {};
 
-            // protect the event facade prototype properties
-            // Y.mix(o2, ef, true, Y.EventFacade.prototype);
-            // Y.mix(o2, ef, true, Y.merge(Y.EventFacade.prototype, Y.CustomEvent.prototype));
-            Y.mix(o2, ef, true, new Y.EventFacade());
+            // protect the event facade properties
+            Y.mix(o2, ef, true, FACADE);
 
             // mix the data
             Y.mix(ef, o, true);
 
-            // restore ef proto
+            // restore ef
             Y.mix(ef, o2, true);
         }
 
@@ -825,6 +825,22 @@ Y.CustomEvent.prototype = {
 
             this.events.fire('prevented', this);
         }
+    },
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    halt: function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this.preventDefault();
     }
 
 };
