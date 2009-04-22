@@ -12,55 +12,56 @@ YUI.add('dd-proxy', function(Y) {
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        PROXY = 'proxy';
-
-    //Mix in the new Attibutes
-    Y.mix(Y.DD.Drag.ATTRS, {
-        /**
-        * @attribute moveOnEnd
-        * @description Move the original node at the end of the drag. Default: true
-        * @type Boolean
-        */
-        moveOnEnd: {
-            value: true
-        },
-        /**
-        * @attribute resizeFrame
-        * @description Make the Proxy node assume the size of the original node. Default: true
-        * @type Boolean
-        */
-        resizeFrame: {
-            value: true
-        },
-        /**
-        * @attribute positionProxy
-        * @description Make the Proxy node appear in the same place as the original node. Default: true
-        * @type Boolean
-        */
-        positionProxy: {
-            value: true
-        },
-        /**
-        * @attribute borderStyle
-        * @description The default border style for the border of the proxy. Default: 1px solid #808080
-        * @type Boolean
-        */
-        borderStyle: {
-            value: '1px solid #808080'
-        },
-        /**
-        * @attribute proxy
-        * @description Make this Draggable instance a Proxy instance. Default: false
-        * @type Boolean
-        */
-        proxy: {
-            value: false,
-            setter: function(v) {
-                this._setProxy(v);
-                return v;
+        PROXY = 'proxy',
+        ATTRS = Y.DD.Drag.ATTRS,
+        PATTRS = {
+            /**
+            * @attribute moveOnEnd
+            * @description Move the original node at the end of the drag. Default: true
+            * @type Boolean
+            */
+            moveOnEnd: {
+                value: true
+            },
+            /**
+            * @attribute resizeFrame
+            * @description Make the Proxy node assume the size of the original node. Default: true
+            * @type Boolean
+            */
+            resizeFrame: {
+                value: true
+            },
+            /**
+            * @attribute positionProxy
+            * @description Make the Proxy node appear in the same place as the original node. Default: true
+            * @type Boolean
+            */
+            positionProxy: {
+                value: true
+            },
+            /**
+            * @attribute borderStyle
+            * @description The default border style for the border of the proxy. Default: 1px solid #808080
+            * @type Boolean
+            */
+            borderStyle: {
+                value: '1px solid #808080'
+            },
+            /**
+            * @attribute proxy
+            * @description Make this Draggable instance a Proxy instance. Default: false
+            * @type Boolean
+            */
+            proxy: {
+                value: false,
+                setter: function(v) {
+                    this._setProxy(v);
+                    return v;
+                }
             }
-        }
-    });
+        };
+    Y.mix(PATTRS, ATTRS);
+    Y.DD.Drag.ATTRS = PATTRS;
 
     //Add a couple of methods
     Y.mix(Y.DD.Drag.prototype, {
@@ -84,6 +85,7 @@ YUI.add('dd-proxy', function(Y) {
                 return;
             }
             if (v) {
+                console.log(this);
                 if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
                     if (DDM._proxy) {
                         this.set(DRAG_NODE, DDM._proxy);

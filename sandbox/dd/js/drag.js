@@ -825,6 +825,8 @@ YUI.add('dd-drag', function(Y) {
                 this.get(NODE).set('id', id);
             }
 
+            this._onHandles = [];
+
             this.actXY = [];
             
 
@@ -848,9 +850,9 @@ YUI.add('dd-drag', function(Y) {
         _prep: function() {
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
-            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
-            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
+            this._onHandles.push(node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this)));
+            this._onHandles.push(node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this)));
+            this._onHandles.push(node.on(DRAG_START, Y.bind(this._fixDragStart, this)));
         },
         /**
         * @private
@@ -861,9 +863,10 @@ YUI.add('dd-drag', function(Y) {
             var node = this.get(NODE);
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
             //TODO...
-            node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.detach(MOUSE_UP, this._handleMouseUp, this, true);
-            node.detach(DRAG_START, this._fixDragStart, this, true);
+            console.log(this._onHandles);
+            for (var i in this._onHandles) {
+                this._onHandles[i].detach();
+            }
         },
         /**
         * @method start
