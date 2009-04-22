@@ -31,6 +31,17 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 	FOCUS_MANAGER = "focusManager",
 
+	//	Collection of keys that, when pressed, cause the browser viewport
+	//	to scroll.
+	scrollKeys = {
+		
+		37: true,
+		38: true,
+		39: true,
+		40: true
+		
+	},
+
 	//	Library shortcuts
 
 	Lang = Y.Lang,
@@ -407,6 +418,20 @@ Y.extend(FocusManager, Y.Base, {
 
 
 	/**
+	* @method _preventScroll
+	* @description Prevents the viewport from scolling when the user presses 
+	* the up, down, left, or right key.
+	* @protected
+	*/
+	_preventScroll: function (event) {
+
+		if (scrollKeys[event.keyCode]) {
+			event.preventDefault();
+		}
+		
+	},
+
+	/**
 	* @method _attachKeyHandler
 	* @description Attaches the "key" event handlers used to support the "keys"
 	* attribute.
@@ -427,6 +452,15 @@ Y.extend(FocusManager, Y.Base, {
 		if (sNextKey) {
  			this._nextKeyHandler = 
 				Y.on(KEY, this._focusNext, this._node, sNextKey, this);
+		}
+
+
+		//	For Opera and Firefox 2:  In these browsers it is necessary to 
+		//	call the "preventDefault" method on a "keypress" event in order 
+		//	to prevent the viewport from scrolling.
+		
+		if (UA.opera || (UA.gecko && UA.gecko < 1.9)) {	
+			this._node.on("keypress", this._preventScroll, this);
 		}
 
 	},
@@ -624,7 +658,7 @@ Y.extend(FocusManager, Y.Base, {
 	* next descendant to be focused
 	*/
 	_focusNext: function (event, activeDescendant) {
-	
+
 		var nActiveDescendant = activeDescendant || this.get(ACTIVE_DESCENDANT),
 			oNode;
 
@@ -651,6 +685,8 @@ Y.extend(FocusManager, Y.Base, {
 			}
 
 		}
+		
+		this._preventScroll(event);
 
 	},
 
@@ -687,6 +723,8 @@ Y.extend(FocusManager, Y.Base, {
 			}
 
 		}
+		
+		this._preventScroll(event);			
 	
 	},
 
