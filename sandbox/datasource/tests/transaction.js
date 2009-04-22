@@ -1,3 +1,5 @@
+YUI.add('transaction', function(Y) {
+
 /**
  * Encapsulates the life cycle execution of atomic transactions that rely on
  * callback execution. Configured start and end handlers are executed as the
@@ -173,7 +175,6 @@ Y.extend(Transaction, Y.Event.Target, {
      * @protected
      */
     _defStartFn: function (e) {
-        Y.log("Transaction " + this.id + " started");
         this.fire('end', e);
     },
 
@@ -188,7 +189,6 @@ Y.extend(Transaction, Y.Event.Target, {
      * @protected
      */
     _defEndFn: function (e) {
-        Y.log("Transaction " + this.id + " completed");
     },
 
     /**
@@ -208,3 +208,6 @@ Y.extend(Transaction, Y.Event.Target, {
 });
 
 Y.Transaction = Transaction;
+
+
+}, '@VERSION@' ,{requires:['oop','event-custom']});
