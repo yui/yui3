@@ -1760,7 +1760,6 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to combine: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_combining</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
-
                 <span class="nx">fn</span> <span class="o">=(</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">CSS</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">css</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">script</span><span class="o">;</span>
 
                 <span class="c">// @TODO get rid of the redundant Get code</span>
@@ -1858,8 +1857,7 @@
 
                 <span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">CSS</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">css</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">script</span><span class="o">;</span>
 
-                    
-                <span class="nx">url</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fullpath</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filter</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fullpath</span><span class="o">)</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_url</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">path</span><span class="o">,</span> <span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                <span class="nx">url</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fullpath</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filter</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fullpath</span><span class="o">,</span> <span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_url</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">path</span><span class="o">,</span> <span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
 
                 <span class="nx">fn</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="o">{</span>
                     <span class="nx">data</span><span class="o">:</span> <span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span>
@@ -1914,20 +1912,20 @@
 <span class="c">     * Apply filter defined for this instance to a url/path</span>
 <span class="c">     * method _filter</span>
 <span class="c">     * @param u {string} the string to filter</span>
+<span class="c">     * @param name {string} the name of the module, if we are processing</span>
+<span class="c">     * a single module as opposed to a combined url</span>
 <span class="c">     * @return {string} the filtered string</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">u</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">u</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;filter &#39;</span> <span class="o">+</span> <span class="nx">u</span><span class="o">);</span>
-
-        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> <span class="nx">useFilter</span><span class="o">,</span> <span class="nx">exc</span><span class="o">,</span> <span class="nx">inc</span><span class="o">;</span>
+        <span class="c">// Y.log(&#39;filter &#39; + u);</span>
+<span class="c"></span>
+        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">exc</span><span class="o">,</span> <span class="nx">inc</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">u</span> <span class="o">&amp;&amp;</span> <span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">filterName</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">filterName</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="o">)</span> <span class="o">{</span>
             
                 <span class="nx">exc</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logExclude</span><span class="o">;</span>
                 <span class="nx">inc</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logInclude</span><span class="o">;</span>
@@ -1957,7 +1955,7 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_url</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filter</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">base</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">)</span> <span class="o">+</span> <span class="nx">path</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filter</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">base</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">)</span> <span class="o">+</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
     <span class="o">}</span>
 
 <span class="o">};</span>
