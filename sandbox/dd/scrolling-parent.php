@@ -95,9 +95,10 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
 
     Y.DD.DDM._debugShim = true;
 
-    dd4 = new Y.DD.DragScroll({
+    dd4 = new Y.DD.Drag({
         node: '#drag4',
-        parentScroll: '#drag4Cont'
+    }).plug(Y.plugin.DDNodeScroll, {
+        node: '#drag4Cont'
     });
 
 });

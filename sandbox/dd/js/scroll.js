@@ -6,9 +6,10 @@ YUI.add('dd-scroll', function(Y) {
      * @submodule dd-scroll
      */
     /**
-     * This class extends the dd-drag module to add the ability to scroll the window.
-     * @class DragScroll
-     * @extends Drag
+     * This class is the base scroller class used to create the plugin.DDNodeScroll and plugin.DDWinScroll.
+     * This class should not be called on it's own, it's designed to be a plugin.
+     * @class Scroll
+     * @extends Base
      * @constructor
      */
 
@@ -21,37 +22,30 @@ YUI.add('dd-scroll', function(Y) {
     OFFSET_WIDTH = 'offsetWidth',
     OFFSET_HEIGHT = 'offsetHeight';
 
-    S.NAME = 'drag';
-    
 
     S.ATTRS = {
         parentScroll: {
             value: false,
             setter: function(node) {
                 if (node) {
-                    var n = Y.get(node);
-                    if (!n) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
-                    } else {
-                        n = n.item(0);
-                    }
-                    return n;
+                    return node;
                 }
                 return false;
             }
         },
-        /**
-        * @attribute windowScroll
-        * @description Turn on window scroll support
-        * @type Boolean
-        */
-        windowScroll: {
+        node: {
             value: false,
-            setter: function(scroll) {
-                if (scroll) {
-                    this.set('parentScroll', window);
+            setter: function(node) {
+                var n = Y.get(node);
+                if (!n) {
+                    if (node !== false) {
+                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    }
+                } else {
+                    n = n.item(0);
+                    this.set('parentScroll', n);
                 }
-                return scroll;
+                return n;
             }
         },
         /**
@@ -69,10 +63,16 @@ YUI.add('dd-scroll', function(Y) {
         */
         scrollDelay: {
             value: 900
+        },
+        owner: {
+            value: null
+        },
+        windowScroll: {
+            value: false
         }
     };
 
-    Y.extend(S, Y.DD.Drag, {
+    Y.extend(S, Y.Base, {
         /**
         * @property _scrolling
         * @description Tells if we are actively scrolling or not.
@@ -126,6 +126,11 @@ YUI.add('dd-scroll', function(Y) {
             return r;
         },
         initializer: function() {
+
+            this.get('owner').after('drag:start', Y.bind(this.start, this));
+            this.get('owner').after('drag:end', Y.bind(this.end, this));
+            this.get('owner').on('drag:align', Y.bind(this._align, this));
+            
             Y.get(window).on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
             }, this));
@@ -138,7 +143,7 @@ YUI.add('dd-scroll', function(Y) {
         */        
         _checkWinScroll: function(move) {
             var r = this._getVPRegion(),
-                xy = this.realXY,
+                xy = this.get('owner').realXY,
                 scroll = false,
                 b = this.get('buffer'),
                 win = this.get('parentScroll'),
@@ -198,7 +203,8 @@ YUI.add('dd-scroll', function(Y) {
                 console.log('scroll', sLeft, sTop);
                 console.log('moveNode', nl, nt);
                 console.log('set scroll', sl, st);
-                this._moveNode([nl, nt]);
+                this.get('owner').actXY = [nl, nt];
+                this.get('owner')._moveNode([nl, nt]);
                 win.set(SCROLL_TOP, st);
                 win.set(SCROLL_LEFT, sl);
             } else {
@@ -231,19 +237,19 @@ YUI.add('dd-scroll', function(Y) {
                 this._scrollTimer = false;
             }
         },
-        _align: function(xy) {
+        _align: function(e) {
             if (this._scrolling) {
                 this._cancelScroll();
+                e.preventDefault();
             } else {
                 //Only call align if we are not scrolling..
-                xy = S.superclass._align.apply(this, arguments);
+                //xy = S.superclass._align.apply(this, arguments);
             }
             if (this.get('parentScroll')) {
                 if (!this._scrolling) {
                     this._checkWinScroll();
                 }
             }
-            return xy;
         },
         /**
         * @private
@@ -251,21 +257,18 @@ YUI.add('dd-scroll', function(Y) {
         * @description Set the cache of the dragNode dims.
         */        
         _setDimCache: function() {
-            var node = this.get('dragNode');
+            var node = this.get('owner').get('dragNode');
             this._dimCache = {
                 h: node.get(OFFSET_HEIGHT),
                 w: node.get(OFFSET_WIDTH)
             };
         },
         start: function() {
-            S.superclass.start.apply(this, arguments);
             this._setDimCache();
         },
         end: function(xy) {
             this._dimCache = null;
             this._cancelScroll();
-            S.superclass.end.apply(this, arguments);
-            return this;
         },
         /**
         * @method toString
@@ -276,6 +279,64 @@ YUI.add('dd-scroll', function(Y) {
             return S.NAME + ' #' + this.get('node').get('id');
         }
     });
-    Y.DD.DragScroll = S;
+
+    Y.namespace('plugin');
+
+    
+    /**
+     * Extends the Scroll class to make the window scroll while dragging.
+     * @class DDWindowScroll
+     * @extends DD.Scroll
+     * @namespace plugin
+     * @constructor
+     */
+    var WS = function() {
+        WS.superclass.constructor.apply(this, arguments);
+
+    };
+    WS.ATTRS = Y.merge(S.ATTRS, {
+        /**
+        * @attribute windowScroll
+        * @description Turn on window scroll support
+        * @type Boolean
+        */
+        windowScroll: {
+            value: true,
+            setter: function(scroll) {
+                if (scroll) {
+                    console.log('setting window scroll');
+                    this.set('parentScroll', Y.get(window));
+                }
+                return scroll;
+            }
+        }
+    });
+    Y.extend(WS, S);
+    WS.NAME = 'winscroll';
+    WS.NS = 'winscroll';    
+    Y.plugin.DDWinScroll = WS;
+    
+
+    /**
+     * Extends the Scroll class to make a parent node scroll while dragging.
+     * @class DDNodeScroll
+     * @extends DD.Scroll
+     * @namespace plugin
+     * @constructor
+     */
+    var NS = function() {
+        NS.superclass.constructor.apply(this, arguments);
+
+    };
+    NS.ATTRS = {};
+    Y.mix(NS.ATTRS, S.ATTRS);
+    Y.extend(NS, S);
+    NS.NAME = 'nodescroll';
+    NS.NS = 'nodescroll';
+    Y.plugin.DDNodeScroll = NS;
+
+
+    Y.DD.Scroll = S;
+    
 
 }, '3.0.0', { requires: ['dd-drag'] });
