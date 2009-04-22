@@ -220,6 +220,10 @@ YUI.add('json-stringify', function(Y) {
  * @static
  */
 var _toString = Object.prototype.toString,
+    Lang      = Y.Lang,
+    isFunction= Lang.isFunction,
+    isArray   = Lang.isArray,
+    type      = Lang.type,
     STRING    = 'string',
     NUMBER    = 'number',
     BOOLEAN   = 'boolean',
@@ -238,7 +242,148 @@ var _toString = Object.prototype.toString,
     COMMA_CR  = ",\n",
     CR        = "\n",
     COLON     = ':',
-    QUOTE     = '"';
+    COLON_SP  = ': ',
+    QUOTE     = '"',
+    Native    = Y.config.win.JSON,
+    stringify = function (o,w,ind) {
+
+        var m      = Y.JSON._CHARS,
+            str_re = Y.JSON._SPECIAL_CHARS,
+            rep    = isFunction(w) ? w : null,
+            pstack = [], // Processing stack used for cyclical ref protection
+            _date  = Y.JSON.dateToString, // Use configured date serialization
+            format = _toString.call(ind).match(/String|Number/);
+
+        if (rep || typeof w !== 'object') {
+            w = undefined;
+        }
+
+        if (format) {
+            // String instances and primatives are left alone.  String objects
+            // coerce for the indenting operations.
+            if (format[0] === 'Number') {
+
+                // force numeric indent values between {0,100} per the spec
+                // This also converts Number instances to primative
+                ind = new Array(Math.min(Math.max(0,ind),100)+1).join(" ");
+            }
+
+            // turn off formatting for 0 or empty string
+            format = ind;
+        }
+
+        // escape encode special characters
+        function _char(c) {
+            if (!m[c]) {
+                m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+            }
+            return m[c];
+        }
+
+        // Enclose the escaped string in double quotes
+        function _string(s) {
+            return QUOTE + s.replace(str_re, _char) + QUOTE;
+        }
+
+        // Check for cyclical references
+        function _cyclicalTest(o) {
+            for (var i = pstack.length - 1; i >= 0; --i) {
+                if (pstack[i] === o) {
+                    throw new Error("JSON.stringify. Cyclical reference");
+                }
+            }
+            return false;
+        }
+
+        function _indent(s) {
+            return s.replace(/^/gm,ind);
+        }
+
+        function _object(o,arr) {
+            // Add the object to the processing stack
+            pstack.push(o);
+
+            var a = [],
+                colon = format ? COLON_SP : COLON,
+                i, j, len, k, v;
+
+            if (arr) { // Array
+                for (i = o.length - 1; i >= 0; --i) {
+                    a[i] = _stringify(o,i) || NULL;
+                }
+            } else {   // Object
+                // If whitelist provided, take only those keys
+                k = isArray(w) ? w : Y.Object.keys(o);
+
+                for (i = 0, j = 0, len = k.length; i < len; ++i) {
+                    if (typeof k[i] === STRING) {
+                        v = _stringify(o,k[i]);
+                        if (v) {
+                            a[j++] = _string(k[i]) + colon + v;
+                        }
+                    }
+                }
+            }
+
+            // remove the array from the stack
+            pstack.pop();
+
+            if (format && a.length) {
+                return arr ?
+                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
+                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
+            } else {
+                return arr ?
+                    OPEN_A + a.join(COMMA) + CLOSE_A :
+                    OPEN_O + a.join(COMMA) + CLOSE_O;
+            }
+        }
+
+        // Worker function.  Fork behavior on data type and recurse objects.
+        function _stringify(h,key) {
+            var o = isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
+                t = type(o);
+
+            if (t === OBJECT) {
+                if (/String|Number|Boolean/.test(_toString.call(o))) {
+                    o = o.valueOf();
+                    t = type(o);
+                }
+            }
+
+            switch (t) {
+                case STRING  : return _string(o);
+                case NUMBER  : return isFinite(o) ? o+EMPTY : NULL;
+                case BOOLEAN : return o+EMPTY;
+                case DATE    : return _date(o);
+                case NULL    : return NULL;
+                case ARRAY   : _cyclicalTest(o); return _object(o,true);
+                case REGEXP  : // intentional fall through
+                case ERROR   : // intentional fall through
+                case OBJECT  : _cyclicalTest(o); return _object(o);
+                default      : return undefined;
+            }
+        }
+
+        // process the input
+        return _stringify({'':o},EMPTY);
+    },
+    test;
+
+// Test for fully functional native implementation
+if (Native && _toString.call(Native) === '[object JSON]') {
+    try {
+        test = Native.stringify([function () {}, { a:1,b:2 }],['b'],'x').
+               replace(/ +/gm,'');
+        if (Native.stringify(1) === "1" &&
+            test === "[\nxnull,\nx{\nxx\"b\":2\nx}\n]") {
+
+            stringify = Native.stringify;
+            Y.log("Using browser native JSON stringify","info","JSON");
+        }
+    }
+    catch (e) {} // defer to JS implementation
+} 
 
 Y.mix(Y.namespace('JSON'),{
     /**
@@ -309,118 +454,7 @@ Y.mix(Y.namespace('JSON'),{
      * @static
      * @public
      */
-    stringify : function (o,w,ind) {
-
-        var m      = Y.JSON._CHARS,
-            str_re = Y.JSON._SPECIAL_CHARS,
-            rep    = Y.Lang.isFunction(w) ? w : null,
-            pstack = [], // Processing stack used for cyclical ref protection
-            _date  = Y.JSON.dateToString; // Use configured date serialization
-
-        if (rep || typeof w !== 'object') {
-            w = undefined;
-        }
-
-        if (ind) {
-            ind = Y.Lang.isNumber(ind) ? new Array(ind+1).join(" ") :
-                  Y.Lang.isString(ind) ? ind :
-                  null;
-        }
-
-        // escape encode special characters
-        function _char(c) {
-            if (!m[c]) {
-                m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-            }
-            return m[c];
-        }
-
-        // Enclose the escaped string in double quotes
-        function _string(s) {
-            return QUOTE + s.replace(str_re, _char) + QUOTE;
-        }
-
-        // Check for cyclical references
-        function _cyclicalTest(o) {
-            for (var i = pstack.length - 1; i >= 0; --i) {
-                if (pstack[i] === o) {
-                    throw new Error("JSON.stringify. Cyclical reference");
-                }
-            }
-            return false;
-        }
-
-        function _indent(s) {
-            return s.replace(/^/gm,ind);
-        }
-
-        function _object(o,arr) {
-            // Add the object to the processing stack
-            pstack.push(o);
-
-            var a = [], i, j, len, k, v;
-
-            if (arr) { // Array
-                for (i = o.length - 1; i >= 0; --i) {
-                    a[i] = _stringify(o,i) || NULL;
-                }
-            } else {   // Object
-                // If whitelist provided, take only those keys
-                k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
-
-                for (i = 0, j = 0, len = k.length; i < len; ++i) {
-                    if (typeof k[i] === STRING) {
-                        v = _stringify(o,k[i]);
-                        if (v) {
-                            a[j++] = _string(k[i]) + COLON + v;
-                        }
-                    }
-                }
-            }
-
-            // remove the array from the stack
-            pstack.pop();
-
-            if (ind) {
-                return arr ?
-                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
-                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
-            } else {
-                return arr ?
-                    OPEN_A + a.join(COMMA) + CLOSE_A :
-                    OPEN_O + a.join(COMMA) + CLOSE_O;
-            }
-        }
-
-        // Worker function.  Fork behavior on data type and recurse objects.
-        function _stringify(h,key) {
-            var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
-                t = Y.Lang.type(o);
-
-            if (t === OBJECT) {
-                if (/String|Number|Boolean/.test(_toString.call(o))) {
-                    o = o.valueOf();
-                    t = Y.Lang.type(o);
-                }
-            }
-
-            switch (t) {
-                case STRING  : return _string(o);
-                case NUMBER  : return isFinite(o) ? o+EMPTY : NULL;
-                case BOOLEAN : return o+EMPTY;
-                case DATE    : return _date(o);
-                case NULL    : return NULL;
-                case ARRAY   : _cyclicalTest(o); return _object(o,true);
-                case REGEXP  : // intentional fall through
-                case ERROR   : // intentional fall through
-                case OBJECT  : _cyclicalTest(o); return _object(o);
-                default      : return undefined;
-            }
-        }
-
-        // process the input
-        return _stringify({'':o},EMPTY);
-    }
+    stringify : stringify
 });
 
 
