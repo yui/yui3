@@ -6,65 +6,75 @@ YUI.add('dd-proxy', function(Y) {
      * @submodule dd-proxy
      */
     /**
-     * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * @for Drag
+     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * @class DDProxy
+     * @extends Base
+     * @constructor
+     * @namespace plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
         PROXY = 'proxy',
-        ATTRS = Y.DD.Drag.ATTRS,
-        PATTRS = {
-            /**
-            * @attribute moveOnEnd
-            * @description Move the original node at the end of the drag. Default: true
-            * @type Boolean
-            */
-            moveOnEnd: {
-                value: true
-            },
-            /**
-            * @attribute resizeFrame
-            * @description Make the Proxy node assume the size of the original node. Default: true
-            * @type Boolean
-            */
-            resizeFrame: {
-                value: true
-            },
-            /**
-            * @attribute positionProxy
-            * @description Make the Proxy node appear in the same place as the original node. Default: true
-            * @type Boolean
-            */
-            positionProxy: {
-                value: true
-            },
-            /**
-            * @attribute borderStyle
-            * @description The default border style for the border of the proxy. Default: 1px solid #808080
-            * @type Boolean
-            */
-            borderStyle: {
-                value: '1px solid #808080'
-            },
-            /**
-            * @attribute proxy
-            * @description Make this Draggable instance a Proxy instance. Default: false
-            * @type Boolean
-            */
-            proxy: {
-                value: false,
-                setter: function(v) {
-                    this._setProxy(v);
-                    return v;
-                }
-            }
-        };
-    Y.mix(PATTRS, ATTRS);
-    Y.DD.Drag.ATTRS = PATTRS;
+        OWNER = 'owner';
 
-    //Add a couple of methods
-    Y.mix(Y.DD.Drag.prototype, {
+    var Proxy = function(config) {
+        Proxy.superclass.constructor.apply(this, arguments);
+    };
+    
+    Proxy.NAME = 'DDProxy';
+    /**
+    * @property proxy
+    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
+    * @type {String}
+    */
+    Proxy.NS = 'proxy';
+
+    Proxy.ATTRS = {
+        /**
+        * @attribute moveOnEnd
+        * @description Move the original node at the end of the drag. Default: true
+        * @type Boolean
+        */
+        moveOnEnd: {
+            value: true
+        },
+        /**
+        * @attribute resizeFrame
+        * @description Make the Proxy node assume the size of the original node. Default: true
+        * @type Boolean
+        */
+        resizeFrame: {
+            value: true
+        },
+        /**
+        * @attribute positionProxy
+        * @description Make the Proxy node appear in the same place as the original node. Default: true
+        * @type Boolean
+        */
+        positionProxy: {
+            value: true
+        },
+        /**
+        * @attribute borderStyle
+        * @description The default border style for the border of the proxy. Default: 1px solid #808080
+        * @type Boolean
+        */
+        borderStyle: {
+            value: '1px solid #808080'
+        },
+        /**
+        * @attribute owner
+        * @description The object that this was plugged into.
+        * @type Object
+        */
+        owner: {
+            writeOnce: true,
+            value: false
+        }
+    };
+
+    var proto = {
         /**
         * @private
         * @property _proxyHandles
@@ -76,47 +86,54 @@ YUI.add('dd-proxy', function(Y) {
         * @method _setProxy
         * @description Handler for the proxy config attribute
         */
-        _setProxy: function(v) {
+        _setProxy: function() {
+            if (!DDM._proxy) {
+                Y.on('event:ready', Y.bind(this._setProxy, this));
+                return;
+            }
             if (!this._proxyHandles) {
                 this._proxyHandles = [];
             }
-            if (!DDM._proxy) {
-                Y.on('event:ready', Y.bind(this._setProxy, this, v));
-                return;
+            var i, h, h1, owner = this.get(OWNER), dnode = owner.get(DRAG_NODE);
+            if (dnode.compareTo(owner.get(NODE))) {
+                if (DDM._proxy) {
+                    owner.set(DRAG_NODE, DDM._proxy);
+                }
             }
-            if (v) {
-                console.log(this);
-                if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
-                    if (DDM._proxy) {
-                        this.set(DRAG_NODE, DDM._proxy);
-                    }
-                }
-                for (var i in this._proxyHandles) {
-                    this._proxyHandles[i].detach();
-                }
-                var h = DDM.on('ddm:start', Y.bind(function() {
-                    if (DDM.activeDrag === this) {
-                        DDM._setFrame(this);
-                    }
-                }, this));
-                var h1 = DDM.on('ddm:end', Y.bind(function() {
-                    if (this.get(PROXY) && this.get('dragging')) {
-                        if (this.get('moveOnEnd')) {
-                            this.get(NODE).setXY(this.lastXY);
-                        }
-                        this.get(DRAG_NODE).setStyle('display', 'none');
-                    }
-                }, this));
-                this._proxyHandles = [h, h1];
-            } else {
-                for (var i in this._proxyHandles) {
-                    this._proxyHandles[i].detach();
-                }
-                this.set(DRAG_NODE, this.get(NODE));
+            for (i in this._proxyHandles) {
+                this._proxyHandles[i].detach();
             }
+            h = DDM.on('ddm:start', Y.bind(function() {
+                if (DDM.activeDrag === owner) {
+                    DDM._setFrame(owner);
+                }
+            }, this));
+            h1 = DDM.on('ddm:end', Y.bind(function() {
+                if (owner.get('dragging')) {
+                    if (this.get('moveOnEnd')) {
+                        owner.get(NODE).setXY(owner.lastXY);
+                    }
+                    owner.get(DRAG_NODE).setStyle('display', 'none');
+                }
+            }, this));
+            this._proxyHandles = [h, h1];
+        },
+        initializer: function() {
+            this._setProxy();
+        },
+        destructor: function() {
+            var owner = this.get(OWNER);
+            for (var i in this._proxyHandles) {
+                this._proxyHandles[i].detach();
+            }
+            owner.set(DRAG_NODE, owner.get(NODE));
         }
-    });
+    };
     
+    Y.namespace('plugin');
+    Y.extend(Proxy, Y.Base, proto);
+    Y.plugin.DDProxy = Proxy;
+
     //Add a couple of methods to the DDM
     Y.mix(DDM, {
         /**
@@ -154,8 +171,8 @@ YUI.add('dd-proxy', function(Y) {
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function(drag) {
-            var n = drag.get(NODE), ah, cur = 'auto';
-            if (drag.get('resizeFrame')) {
+            var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';
+            if (drag.proxy.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
                     width: n.get('offsetWidth') + 'px'
@@ -171,19 +188,19 @@ YUI.add('dd-proxy', function(Y) {
             }
 
 
-            drag.get(DRAG_NODE).setStyles({
+            d.setStyles({
                 visibility: 'hidden',
                 display: 'block',
                 cursor: cur,
-                border: drag.get('borderStyle')
+                border: drag.proxy.get('borderStyle')
             });
 
 
 
-            if (drag.get('positionProxy')) {
-                drag.get(DRAG_NODE).setXY(drag.nodeXY);
+            if (drag.proxy.get('positionProxy')) {
+                d.setXY(drag.nodeXY);
             }
-            drag.get(DRAG_NODE).setStyle('visibility', 'visible');
+            d.setStyle('visibility', 'visible');
         }
     });
 

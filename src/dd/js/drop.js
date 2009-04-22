@@ -74,7 +74,7 @@
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                    Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }
@@ -377,8 +377,8 @@
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', this._handleOverEvent, this, true);
-            s.on('mouseout', this._handleOutEvent, this, true);
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private

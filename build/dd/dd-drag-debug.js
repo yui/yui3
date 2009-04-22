@@ -25,7 +25,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
-        * @preventable _handleMouseDown
+        * @preventable _defMouseDownFn
         * @param {Event} ev The mousedown event.
         * @bubbles DDM
         * @type Event.Custom
@@ -89,6 +89,14 @@ YUI.add('dd-drag', function(Y) {
         */
         EV_DRAG = 'drag:drag',
         /**
+        * @event drag:align
+        * @preventable _defAlignFn
+        * @description Fires when this node is aligned.
+        * @bubbles DDM
+        * @type Event.Custom
+        */
+        EV_ALIGN = 'drag:align',
+        /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
@@ -137,7 +145,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -153,7 +161,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -403,7 +411,23 @@ YUI.add('dd-drag', function(Y) {
         _createEvents: function() {
             
             this.publish(EV_MOUSE_DOWN, {
-                defaultFn: this._handleMouseDown,
+                defaultFn: this._defMouseDownFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_ALIGN, {
+                defaultFn: this._defAlignFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_DRAG, {
+                defaultFn: this._defDragFn,
                 queuable: false,
                 emitFacade: true,
                 bubbles: true,
@@ -418,7 +442,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
-                EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -530,6 +553,17 @@ YUI.add('dd-drag', function(Y) {
         * @type {Array}
         */
         lastXY: null,
+        /**
+        * @property actXY
+        * @description The xy that the node will be set to. Changing this will alter the position as it's dragged.
+        * @type {Array}
+        */
+        actXY: null,
+        /**
+        * @property realXY
+        * @description The real xy position of the node.
+        * @type {Array}
+        */
         realXY: null,
         /**
         * @property mouseXY
@@ -609,11 +643,11 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
-        * @method _handleMouseDown
+        * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
         * @param {Event}
         */
-        _handleMouseDown: function(e) {
+        _defMouseDownFn: function(e) {
             var ev = e.ev;
             this._dragThreshMet = false;
             this._ev_md = ev;
@@ -791,6 +825,10 @@ YUI.add('dd-drag', function(Y) {
                 var id = Y.stamp(this.get(NODE));
                 this.get(NODE).set('id', id);
             }
+
+            this._onHandles = [];
+
+            this.actXY = [];
             
 
             this._invalids = Y.clone(this._invalidsDefault, true);
@@ -813,21 +851,23 @@ YUI.add('dd-drag', function(Y) {
         _prep: function() {
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.on(MOUSE_UP, this._handleMouseUp, this, true);
-            node.on(DRAG_START, this._fixDragStart, this, true);
+            this._onHandles.push(node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this)));
+            this._onHandles.push(node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this)));
+            this._onHandles.push(node.on(DRAG_START, Y.bind(this._fixDragStart, this)));
         },
         /**
         * @private
         * @method _unprep
-        * @description Detach event listners and remove classname
+        * @description Detach event listeners and remove classname
         */
         _unprep: function() {
             var node = this.get(NODE);
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
-            node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.detach(MOUSE_UP, this._handleMouseUp, this, true);
-            node.detach(DRAG_START, this._fixDragStart, this, true);
+            //TODO...
+            console.log(this._onHandles);
+            for (var i in this._onHandles) {
+                this._onHandles[i].detach();
+            }
         },
         /**
         * @method start
@@ -840,7 +880,7 @@ YUI.add('dd-drag', function(Y) {
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
-                this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+                this.get(DRAG_NODE).on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
                 var xy = this.nodeXY;
 
                 this._startTime = (new Date()).getTime();
@@ -891,35 +931,39 @@ YUI.add('dd-drag', function(Y) {
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
         * @param {Array} xy The xy coords to align with.
-        * @return Array
-        * @type {Array}
         */
         _align: function(xy) {
-            return [xy[0] - this.deltaXY[0], xy[1] - this.deltaXY[1]];
+            this.fire(EV_ALIGN, {pageX: xy[0], pageY: xy[1] });
+        },
+        /**
+        * @private
+        * @method _defAlignFn
+        * @description Calculates the offsets and set's the XY that the element will move to.
+        * @param {Event} e The drag:align event.
+        */
+        _defAlignFn: function(e) {
+            this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
         },
         /**
         * @private
         * @method _alignNode
         * @description This method performs the alignment before the element move.
         * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _alignNode: function(eXY, noFire) {
+        _alignNode: function(eXY) {
             var xy = this._align(eXY);
-            this._moveNode(xy, noFire);
+            this._moveNode();
         },
         /**
         * @private
         * @method _moveNode
         * @description This method performs the actual element move.
-        * @param {Array} eXY The XY to move the element to, usually comes from the _alignNode method.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _moveNode: function(xy, noFire) {
+        _moveNode: function() {
             if (!this.get(DRAGGING)) {
-                noFire = true;
+                return;
             }
-            var diffXY = [], diffXY2 = [], startXY = null;
+            var diffXY = [], diffXY2 = [], startXY = null, xy = this.actXY;
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -927,16 +971,6 @@ YUI.add('dd-drag', function(Y) {
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
-
-            if (this.get('move')) {
-                if (Y.UA.opera) {
-                    this.get(DRAG_NODE).setXY(xy);
-                } else {
-                    DDM.setXY(this.get(DRAG_NODE), diffXY);
-                    //this.get(DRAG_NODE).setXY(xy);
-                }
-                this.realXY = xy;
-            }
 
             this.region = {
                 '0': xy[0], 
@@ -949,20 +983,34 @@ YUI.add('dd-drag', function(Y) {
             };
 
             startXY = this.nodeXY;
-            if (!noFire) {
-                this.fire(EV_DRAG, {
-                    pageX: xy[0],
-                    pageY: xy[1],
-                    info: {
-                        start: startXY,
-                        xy: xy,
-                        delta: diffXY,
-                        offset: diffXY2
-                    } 
-                });
-            }
+            this.fire(EV_DRAG, {
+                pageX: xy[0],
+                pageY: xy[1],
+                info: {
+                    start: startXY,
+                    xy: xy,
+                    delta: diffXY,
+                    offset: diffXY2
+                } 
+            });
             
             this.lastXY = xy;
+        },
+        /**
+        * @private
+        * @method _defDragFn
+        * @description Default function for drag:drag. Fired from _moveNode.
+        * @param {Event} ev The drag:drag event
+        */
+        _defDragFn: function(e) {
+            if (this.get('move')) {
+                if (Y.UA.opera) {
+                    this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
+                } else {
+                    DDM.setXY(this.get(DRAG_NODE), e.info.delta);
+                }
+                this.realXY = [e.pageX, e.pageY];
+            }
         },
         /**
         * @private

@@ -14,11 +14,10 @@ YUI.add('dd-ddm-base', function(Y) {
      */
     
     var DDMBase = function() {
-        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'dragDropMgr';
+    DDMBase.NAME = 'ddm';
 
     DDMBase.ATTRS = {
         /**
@@ -135,8 +134,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description DDM's init method
         */
         initializer: function() {
-            Y.Node.get('document').on('mousemove', this._move, this, true);
-            Y.Node.get('document').on('mouseup', this._end, this, true);
+            var doc = Y.Node.get('document');
+            doc.on('mousemove', Y.bind(this._move, this));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -148,6 +148,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Number} h The height of the drag element
         */
         _start: function(x, y, w, h) {
+            this.fire('ddm:start');
             this._startDrag.apply(this, arguments);
         },
         /**
@@ -176,6 +177,7 @@ YUI.add('dd-ddm-base', function(Y) {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
+                this.fire('ddm:end');
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;

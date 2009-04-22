@@ -5,26 +5,46 @@
      * @submodule dd-constrain
      */
     /**
-     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
+     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
      * @class DragConstrained
-     * @extends Drag
+     * @extends Base
      * @constructor
+     * @namespace plugin     
      */
 
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
-        proto = null,
+        OWNER = 'owner',
+        CON_2_REGION = 'constrain2region',
+        TICK_X_ARRAY = 'tickXArray',
+        TICK_Y_ARRAY = 'tickYArray',
+        DDM = Y.DD.DDM,
+        proto = null;
 
-    C = function() {
+    var C = function(config) {
         C.superclass.constructor.apply(this, arguments);
-
     };
     
-    C.NAME = 'dragConstrained';
+    C.NAME = 'DragConstrained';
+    /**
+    * @property con
+    * @description The Constrained instance will be placed on the Drag instance under the con namespace.
+    * @type {String}
+    */
+    C.NS = 'con';
 
     C.ATTRS = {
+        /**
+        * @attribute owner
+        * @description A reference to the plugged Drag instance
+        * @type {Drag}
+        */        
+        owner: {
+            writeOnce: true,
+            value: false
+        },
         /**
         * @attribute stickX
         * @description Stick the drag movement to the X-Axis. Default: false
@@ -123,12 +143,12 @@
         constrain2node: {
             value: false,
             setter: function(n) {
-                if (!this.get('constrain2region')) {
+                if (!this.get(CON_2_REGION)) {
                     var node = Y.Node.get(n);
                     if (node) {
                         return node;
                     }
-                } else if (this.get('constrain2region') !== false) {
+                } else if (this.get(CON_2_REGION) !== false) {
                 }
                 return false;
             }
@@ -144,8 +164,16 @@
     };
 
     proto = {
-        start: function() {
-            C.superclass.start.apply(this, arguments);
+        initializer: function() {
+            this.get(OWNER).on('drag:start', Y.bind(this._handleStart, this));
+            this.get(OWNER).after('drag:align', Y.bind(this.align, this));
+        },
+        /**
+        * @private
+        * @method _handleStart
+        * @description Fires on drag:start and clears the _regionCache
+        */
+        _handleStart: function() {
             this._regionCache = null;
         },
         /**
@@ -171,16 +199,17 @@
         */
         getRegion: function(inc) {
             var r = {}, oh = null, ow = null,
-                g = this.get('gutter');
+                g = this.get('gutter'),
+                owner = this.get(OWNER);
 
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
-                    Y.on('resize', this._cacheRegion, this, true, window);
+                    Y.on('resize', Y.bind(this._cacheRegion, this), window);
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);
-            } else if (this.get('constrain2region')) {
-                r = this.get('constrain2region');
+            } else if (this.get(CON_2_REGION)) {
+                r = this.get(CON_2_REGION);
             } else if (this.get('constrain2view')) {
                 r = this.get('node').get('viewportRegion');
             } else {
@@ -195,8 +224,8 @@
                 }
             });
             if (inc) {
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT);
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -212,8 +241,9 @@
         _checkRegion: function(_xy) {
             var oxy = _xy,
                 r = this.getRegion(),
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                owner = this.get(OWNER),
+                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
             
                 if (oxy[1] > (r.bottom - oh)) {
                     _xy[1] = (r.bottom - oh);
@@ -238,7 +268,7 @@
         * @return {Boolean} True if the XY is inside the region, false otherwise.
         */
         inRegion: function(xy) {
-            xy = xy || this.get(DRAG_NODE).getXY();
+            xy = xy || this.get(OWNER).get(DRAG_NODE).getXY();
 
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
@@ -248,32 +278,66 @@
             return inside;
         },
         /**
-        * @private
-        * @method _align
-        * @description Override of Drag _align to account for region checking and tick checking
-        * @param {Array} xy The XY to check for ticks and region
-        * @return {Array} The modified XY coords.
+        * @method align
+        * @description Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
         */
-        _align: function(xy) {
-            var _xy = C.superclass._align.apply(this, arguments),
+        align: function() {
+            var owner = this.get(OWNER),
+                _xy = owner.actXY,
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
-                _xy[1] = (this.startXY[1] - this.deltaXY[1]);
+                _xy[1] = (owner.startXY[1] - owner.deltaXY[1]);
             }
             if (this.get('stickY')) {
-                _xy[0] = (this.startXY[0] - this.deltaXY[0]);
+                _xy[0] = (owner.startXY[0] - owner.deltaXY[0]);
             }
-
 
             if (r) {
                 _xy = this._checkRegion(_xy);
             }
                 
             _xy = this._checkTicks(_xy, r);
-            return _xy;
+            owner.actXY = _xy;
         },
         /**
+        * @private
+        * @method _checkTicks
+        * @description This method delegates the proper helper method for tick calculations
+        * @param {Array} xy The XY coords for the Drag
+        * @param {Object} r The optional region that we are bound to.
+        * @return {Array} The calced XY coords
+        */
+        _checkTicks: function(xy, r) {
+            var owner = this.get(OWNER),
+                lx = (owner.startXY[0] - owner.deltaXY[0]),
+                ly = (owner.startXY[1] - owner.deltaXY[1]),
+                xt = this.get('tickX'),
+                yt = this.get('tickY');
+                if (xt && !this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r.left, r.right);
+                }
+                if (yt && !this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r.top, r.bottom);
+                }
+                if (this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTickArray(xy[0], this.get(TICK_X_ARRAY), r.left, r.right);
+                }
+                if (this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTickArray(xy[1], this.get(TICK_Y_ARRAY), r.top, r.bottom);
+                }
+
+            return xy;
+        }
+    };
+
+    Y.namespace('plugin');
+    Y.extend(C, Y.Base, proto);
+    Y.plugin.DDConstrained = C;
+
+    Y.mix(DDM, {
+        /**
+        * @for DDM
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -304,6 +368,7 @@
                 return pos;
         },
         /**
+        * @for DDM
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
@@ -343,40 +408,7 @@
                 }
                 return ticks[ticks.length - 1];
             }
-        },
-        /**
-        * @private
-        * @method _checkTicks
-        * @description This method delegates the proper helper method for tick calculations
-        * @param {Array} xy The XY coords for the Drag
-        * @param {Object} r The optional region that we are bound to.
-        * @return {Array} The calced XY coords
-        */
-        _checkTicks: function(xy, r) {
-            var lx = (this.startXY[0] - this.deltaXY[0]),
-                ly = (this.startXY[1] - this.deltaXY[1]),
-                xt = this.get('tickX'),
-                yt = this.get('tickY');
-                if (xt && !this.get('tickXArray')) {
-                    xy[0] = this._calcTicks(xy[0], lx, xt, r.left, r.right);
-                }
-                if (yt && !this.get('tickYArray')) {
-                    xy[1] = this._calcTicks(xy[1], ly, yt, r.top, r.bottom);
-                }
-                if (this.get('tickXArray')) {
-                    xy[0] = this._calcTickArray(xy[0], this.get('tickXArray'), r.left, r.right);
-                }
-                if (this.get('tickYArray')) {
-                    xy[1] = this._calcTickArray(xy[1], this.get('tickYArray'), r.top, r.bottom);
-                }
-
-            return xy;
         }
-    };
-    //Extend DD.Drag
-    Y.extend(C, Y.DD.Drag, proto);
-    //Set this to DD.Drag for other extensions
-    Y.DD.Drag = C;
-
+    });
 
 

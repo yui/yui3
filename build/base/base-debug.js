@@ -65,6 +65,10 @@ PluginHost.prototype = {
      */
     unplug: function(ns) {
         if (ns) {
+            //BUG?
+            if (L.isFunction(ns)) {
+                ns = ns.NS;
+            }
             this._unplug(ns);
         } else {
             for (ns in this._plugins) {

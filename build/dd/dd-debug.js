@@ -14,11 +14,10 @@ YUI.add('dd-ddm-base', function(Y) {
      */
     
     var DDMBase = function() {
-        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'dragDropMgr';
+    DDMBase.NAME = 'ddm';
 
     DDMBase.ATTRS = {
         /**
@@ -135,8 +134,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description DDM's init method
         */
         initializer: function() {
-            Y.Node.get('document').on('mousemove', this._move, this, true);
-            Y.Node.get('document').on('mouseup', this._end, this, true);
+            var doc = Y.Node.get('document');
+            doc.on('mousemove', Y.bind(this._move, this));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -148,6 +148,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Number} h The height of the drag element
         */
         _start: function(x, y, w, h) {
+            this.fire('ddm:start');
             this._startDrag.apply(this, arguments);
         },
         /**
@@ -176,6 +177,7 @@ YUI.add('dd-ddm-base', function(Y) {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
+                this.fire('ddm:end');
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
@@ -370,7 +372,6 @@ YUI.add('dd-ddm', function(Y) {
         * @description Creates the shim and adds it's listeners to it.
         */
         _createPG: function() {
-            //var pg = Y.Node.create(['div']),
             var pg = Y.Node.create('<div></div>'),
             bd = Y.Node.get('body');
             pg.setStyles({
@@ -379,28 +380,29 @@ YUI.add('dd-ddm', function(Y) {
                 position: 'absolute',
                 zIndex: '9999',
                 overflow: 'hidden',
-                //opacity: '0',
                 backgroundColor: 'red',
                 display: 'none',
                 height: '5px',
                 width: '5px'
             });
+            pg.set('id', Y.stamp(pg));
+            pg.addClass('yui-dd-shim');
             if (bd.get('firstChild')) {
                 bd.insertBefore(pg, bd.get('firstChild'));
             } else {
                 bd.appendChild(pg);
             }
             this._pg = pg;
-            this._pg.on('mouseup', this._end, this, true);
-            this._pg.on('mousemove', this._move, this, true);
+            this._pg.on('mouseup', Y.bind(this._end, this));
+            this._pg.on('mousemove', Y.bind(this._move, this));
             
-            
-            Y.on('resize', this._pg_size, window, this, true);
-            Y.on('scroll', this._pg_size, window, this, true);
+            var win = Y.get(window);
+            win.on('resize', Y.bind(this._pg_size, this));
+            win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
-
-    Y.DD.DDM._createPG();    
+    
+    Y.on('event:ready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
 
 
 
@@ -830,7 +832,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
-        * @preventable _handleMouseDown
+        * @preventable _defMouseDownFn
         * @param {Event} ev The mousedown event.
         * @bubbles DDM
         * @type Event.Custom
@@ -894,6 +896,14 @@ YUI.add('dd-drag', function(Y) {
         */
         EV_DRAG = 'drag:drag',
         /**
+        * @event drag:align
+        * @preventable _defAlignFn
+        * @description Fires when this node is aligned.
+        * @bubbles DDM
+        * @type Event.Custom
+        */
+        EV_ALIGN = 'drag:align',
+        /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
@@ -942,7 +952,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -958,7 +968,7 @@ YUI.add('dd-drag', function(Y) {
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -1208,7 +1218,23 @@ YUI.add('dd-drag', function(Y) {
         _createEvents: function() {
             
             this.publish(EV_MOUSE_DOWN, {
-                defaultFn: this._handleMouseDown,
+                defaultFn: this._defMouseDownFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_ALIGN, {
+                defaultFn: this._defAlignFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_DRAG, {
+                defaultFn: this._defDragFn,
                 queuable: false,
                 emitFacade: true,
                 bubbles: true,
@@ -1223,7 +1249,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
-                EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -1335,6 +1360,17 @@ YUI.add('dd-drag', function(Y) {
         * @type {Array}
         */
         lastXY: null,
+        /**
+        * @property actXY
+        * @description The xy that the node will be set to. Changing this will alter the position as it's dragged.
+        * @type {Array}
+        */
+        actXY: null,
+        /**
+        * @property realXY
+        * @description The real xy position of the node.
+        * @type {Array}
+        */
         realXY: null,
         /**
         * @property mouseXY
@@ -1414,11 +1450,11 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
-        * @method _handleMouseDown
+        * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
         * @param {Event}
         */
-        _handleMouseDown: function(e) {
+        _defMouseDownFn: function(e) {
             var ev = e.ev;
             this._dragThreshMet = false;
             this._ev_md = ev;
@@ -1596,6 +1632,10 @@ YUI.add('dd-drag', function(Y) {
                 var id = Y.stamp(this.get(NODE));
                 this.get(NODE).set('id', id);
             }
+
+            this._onHandles = [];
+
+            this.actXY = [];
             
 
             this._invalids = Y.clone(this._invalidsDefault, true);
@@ -1618,21 +1658,23 @@ YUI.add('dd-drag', function(Y) {
         _prep: function() {
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.on(MOUSE_UP, this._handleMouseUp, this, true);
-            node.on(DRAG_START, this._fixDragStart, this, true);
+            this._onHandles.push(node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this)));
+            this._onHandles.push(node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this)));
+            this._onHandles.push(node.on(DRAG_START, Y.bind(this._fixDragStart, this)));
         },
         /**
         * @private
         * @method _unprep
-        * @description Detach event listners and remove classname
+        * @description Detach event listeners and remove classname
         */
         _unprep: function() {
             var node = this.get(NODE);
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
-            node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.detach(MOUSE_UP, this._handleMouseUp, this, true);
-            node.detach(DRAG_START, this._fixDragStart, this, true);
+            //TODO...
+            console.log(this._onHandles);
+            for (var i in this._onHandles) {
+                this._onHandles[i].detach();
+            }
         },
         /**
         * @method start
@@ -1645,7 +1687,7 @@ YUI.add('dd-drag', function(Y) {
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
-                this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+                this.get(DRAG_NODE).on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
                 var xy = this.nodeXY;
 
                 this._startTime = (new Date()).getTime();
@@ -1696,35 +1738,39 @@ YUI.add('dd-drag', function(Y) {
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
         * @param {Array} xy The xy coords to align with.
-        * @return Array
-        * @type {Array}
         */
         _align: function(xy) {
-            return [xy[0] - this.deltaXY[0], xy[1] - this.deltaXY[1]];
+            this.fire(EV_ALIGN, {pageX: xy[0], pageY: xy[1] });
+        },
+        /**
+        * @private
+        * @method _defAlignFn
+        * @description Calculates the offsets and set's the XY that the element will move to.
+        * @param {Event} e The drag:align event.
+        */
+        _defAlignFn: function(e) {
+            this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
         },
         /**
         * @private
         * @method _alignNode
         * @description This method performs the alignment before the element move.
         * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _alignNode: function(eXY, noFire) {
+        _alignNode: function(eXY) {
             var xy = this._align(eXY);
-            this._moveNode(xy, noFire);
+            this._moveNode();
         },
         /**
         * @private
         * @method _moveNode
         * @description This method performs the actual element move.
-        * @param {Array} eXY The XY to move the element to, usually comes from the _alignNode method.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _moveNode: function(xy, noFire) {
+        _moveNode: function() {
             if (!this.get(DRAGGING)) {
-                noFire = true;
+                return;
             }
-            var diffXY = [], diffXY2 = [], startXY = null;
+            var diffXY = [], diffXY2 = [], startXY = null, xy = this.actXY;
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -1732,16 +1778,6 @@ YUI.add('dd-drag', function(Y) {
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
-
-            if (this.get('move')) {
-                if (Y.UA.opera) {
-                    this.get(DRAG_NODE).setXY(xy);
-                } else {
-                    DDM.setXY(this.get(DRAG_NODE), diffXY);
-                    //this.get(DRAG_NODE).setXY(xy);
-                }
-                this.realXY = xy;
-            }
 
             this.region = {
                 '0': xy[0], 
@@ -1754,20 +1790,34 @@ YUI.add('dd-drag', function(Y) {
             };
 
             startXY = this.nodeXY;
-            if (!noFire) {
-                this.fire(EV_DRAG, {
-                    pageX: xy[0],
-                    pageY: xy[1],
-                    info: {
-                        start: startXY,
-                        xy: xy,
-                        delta: diffXY,
-                        offset: diffXY2
-                    } 
-                });
-            }
+            this.fire(EV_DRAG, {
+                pageX: xy[0],
+                pageY: xy[1],
+                info: {
+                    start: startXY,
+                    xy: xy,
+                    delta: diffXY,
+                    offset: diffXY2
+                } 
+            });
             
             this.lastXY = xy;
+        },
+        /**
+        * @private
+        * @method _defDragFn
+        * @description Default function for drag:drag. Fired from _moveNode.
+        * @param {Event} ev The drag:drag event
+        */
+        _defDragFn: function(e) {
+            if (this.get('move')) {
+                if (Y.UA.opera) {
+                    this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
+                } else {
+                    DDM.setXY(this.get(DRAG_NODE), e.info.delta);
+                }
+                this.realXY = [e.pageX, e.pageY];
+            }
         },
         /**
         * @private
@@ -1839,23 +1889,29 @@ YUI.add('dd-proxy', function(Y) {
      * @submodule dd-proxy
      */
     /**
-     * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * @class Proxy
-     * @extends Drag
+     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * @class DDProxy
+     * @extends Base
      * @constructor
+     * @namespace plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
         PROXY = 'proxy',
-        proto,
+        OWNER = 'owner';
 
-    Proxy = function() {
+    var Proxy = function(config) {
         Proxy.superclass.constructor.apply(this, arguments);
-
     };
-
-    Proxy.NAME = 'dragProxy';
+    
+    Proxy.NAME = 'DDProxy';
+    /**
+    * @property proxy
+    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
+    * @type {String}
+    */
+    Proxy.NS = 'proxy';
 
     Proxy.ATTRS = {
         /**
@@ -1875,18 +1931,6 @@ YUI.add('dd-proxy', function(Y) {
             value: true
         },
         /**
-        * @attribute proxy
-        * @description Make this Draggable instance a Proxy instance. Default: false
-        * @type Boolean
-        */
-        proxy: {
-            value: false,
-            setter: function(v) {
-                this._setProxy(v);
-                return v;
-            }
-        },        
-        /**
         * @attribute positionProxy
         * @description Make the Proxy node appear in the same place as the original node. Default: true
         * @type Boolean
@@ -1901,33 +1945,89 @@ YUI.add('dd-proxy', function(Y) {
         */
         borderStyle: {
             value: '1px solid #808080'
+        },
+        /**
+        * @attribute owner
+        * @description The object that this was plugged into.
+        * @type Object
+        */
+        owner: {
+            writeOnce: true,
+            value: false
         }
     };
 
-    proto = {
+    var proto = {
+        /**
+        * @private
+        * @property _proxyHandles
+        * @description Holds the event handles for setting the proxy
+        */
+        _proxyHandles: null,
         /**
         * @private
         * @method _setProxy
         * @description Handler for the proxy config attribute
         */
-        _setProxy: function(v) {
-            if (v) {
-                if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
-                    this._createFrame();
-                    this.set(DRAG_NODE, DDM._proxy);
-                }
-            } else {
-                this.set(DRAG_NODE, this.get(NODE));
+        _setProxy: function() {
+            if (!DDM._proxy) {
+                Y.on('event:ready', Y.bind(this._setProxy, this));
+                return;
             }
+            if (!this._proxyHandles) {
+                this._proxyHandles = [];
+            }
+            var i, h, h1, owner = this.get(OWNER), dnode = owner.get(DRAG_NODE);
+            if (dnode.compareTo(owner.get(NODE))) {
+                if (DDM._proxy) {
+                    owner.set(DRAG_NODE, DDM._proxy);
+                }
+            }
+            for (i in this._proxyHandles) {
+                this._proxyHandles[i].detach();
+            }
+            h = DDM.on('ddm:start', Y.bind(function() {
+                if (DDM.activeDrag === owner) {
+                    DDM._setFrame(owner);
+                }
+            }, this));
+            h1 = DDM.on('ddm:end', Y.bind(function() {
+                if (owner.get('dragging')) {
+                    if (this.get('moveOnEnd')) {
+                        owner.get(NODE).setXY(owner.lastXY);
+                    }
+                    owner.get(DRAG_NODE).setStyle('display', 'none');
+                }
+            }, this));
+            this._proxyHandles = [h, h1];
         },
+        initializer: function() {
+            this._setProxy();
+        },
+        destructor: function() {
+            var owner = this.get(OWNER);
+            for (var i in this._proxyHandles) {
+                this._proxyHandles[i].detach();
+            }
+            owner.set(DRAG_NODE, owner.get(NODE));
+        }
+    };
+    
+    Y.namespace('plugin');
+    Y.extend(Proxy, Y.Base, proto);
+    Y.plugin.DDProxy = Proxy;
+
+    //Add a couple of methods to the DDM
+    Y.mix(DDM, {
         /**
         * @private
+        * @for DDM
         * @method _createFrame
         * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
         _createFrame: function() {
-            if (!DDM._proxy) {
-                DDM._proxy = true;
+            if (!Y.DD.DDM._proxy) {
+                Y.DD.DDM._proxy = true;
 
                 var p = Y.Node.create('<div></div>'),
                 b = Y.Node.get('body');
@@ -1942,19 +2042,20 @@ YUI.add('dd-proxy', function(Y) {
 
                 b.insertBefore(p, b.get('firstChild'));
                 p.set('id', Y.stamp(p));
-                p.addClass(DDM.CSS_PREFIX + '-proxy');
-                DDM._proxy = p;
+                p.addClass(Y.DD.DDM.CSS_PREFIX + '-proxy');
+                Y.DD.DDM._proxy = p;
             }
         },
         /**
         * @private
+        * @for DDM
         * @method _setFrame
         * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
-        _setFrame: function() {
-            var n = this.get(NODE), ah, cur = 'auto';
-            if (this.get('resizeFrame')) {
+        _setFrame: function(drag) {
+            var n = drag.get(NODE), d = drag.get(DRAG_NODE), ah, cur = 'auto';
+            if (drag.proxy.get('resizeFrame')) {
                 DDM._proxy.setStyles({
                     height: n.get('offsetHeight') + 'px',
                     width: n.get('offsetWidth') + 'px'
@@ -1970,71 +2071,24 @@ YUI.add('dd-proxy', function(Y) {
             }
 
 
-            this.get(DRAG_NODE).setStyles({
+            d.setStyles({
                 visibility: 'hidden',
                 display: 'block',
                 cursor: cur,
-                border: this.get('borderStyle')
+                border: drag.proxy.get('borderStyle')
             });
 
 
 
-            if (this.get('positionProxy')) {
-                this.get(DRAG_NODE).setXY(this.nodeXY);
+            if (drag.proxy.get('positionProxy')) {
+                d.setXY(drag.nodeXY);
             }
-            this.get(DRAG_NODE).setStyle('visibility', 'visible');
-        },
-        /**
-        * @private
-        * @method initializer
-        * @description Lifecycle method
-        */
-        initializer: function() {
-            if (this.get(PROXY)) {
-                this._createFrame();
-            }
-        },
-        /**
-        * @method start
-        * @description Starts the drag operation and sets the dragNode config option.
-        */       
-        start: function() {
-            if (!this.get('lock')) {
-                /*
-                if (this.get(PROXY)) {
-                    if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
-                        this.set(DRAG_NODE, DDM._proxy);
-                    }
-                } else {
-                    this.set(DRAG_NODE, this.get(NODE));
-                }
-                */
-            }
-            Proxy.superclass.start.apply(this);
-            if (this.get(PROXY)) {
-                this._setFrame();
-            }
-        },
-        /**
-        * @method end
-        * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
-        */        
-        end: function() {
-            if (this.get(PROXY) && this.get('dragging')) {
-                if (this.get('moveOnEnd')) {
-                    this.get(NODE).setXY(this.lastXY);
-                }
-                this.get(DRAG_NODE).setStyle('display', 'none');
-            }
-            Proxy.superclass.end.apply(this);
+            d.setStyle('visibility', 'visible');
         }
-    };
-    //Extend DD.Drag
-    Y.extend(Proxy, Y.DD.Drag, proto);
-    //Set this new class as DD.Drag for other extensions
-    Y.DD.Drag = Proxy;    
+    });
 
-
+    //Create the frame when DOM is ready
+    Y.on('event:ready', Y.bind(Y.DD.DDM._createFrame, Y.DD.DDM));
 
 
 
@@ -2048,26 +2102,46 @@ YUI.add('dd-constrain', function(Y) {
      * @submodule dd-constrain
      */
     /**
-     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
+     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
      * @class DragConstrained
-     * @extends Drag
+     * @extends Base
      * @constructor
+     * @namespace plugin     
      */
 
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
-        proto = null,
+        OWNER = 'owner',
+        CON_2_REGION = 'constrain2region',
+        TICK_X_ARRAY = 'tickXArray',
+        TICK_Y_ARRAY = 'tickYArray',
+        DDM = Y.DD.DDM,
+        proto = null;
 
-    C = function() {
+    var C = function(config) {
         C.superclass.constructor.apply(this, arguments);
-
     };
     
-    C.NAME = 'dragConstrained';
+    C.NAME = 'DragConstrained';
+    /**
+    * @property con
+    * @description The Constrained instance will be placed on the Drag instance under the con namespace.
+    * @type {String}
+    */
+    C.NS = 'con';
 
     C.ATTRS = {
+        /**
+        * @attribute owner
+        * @description A reference to the plugged Drag instance
+        * @type {Drag}
+        */        
+        owner: {
+            writeOnce: true,
+            value: false
+        },
         /**
         * @attribute stickX
         * @description Stick the drag movement to the X-Axis. Default: false
@@ -2166,12 +2240,12 @@ YUI.add('dd-constrain', function(Y) {
         constrain2node: {
             value: false,
             setter: function(n) {
-                if (!this.get('constrain2region')) {
+                if (!this.get(CON_2_REGION)) {
                     var node = Y.Node.get(n);
                     if (node) {
                         return node;
                     }
-                } else if (this.get('constrain2region') !== false) {
+                } else if (this.get(CON_2_REGION) !== false) {
                 }
                 return false;
             }
@@ -2187,8 +2261,16 @@ YUI.add('dd-constrain', function(Y) {
     };
 
     proto = {
-        start: function() {
-            C.superclass.start.apply(this, arguments);
+        initializer: function() {
+            this.get(OWNER).on('drag:start', Y.bind(this._handleStart, this));
+            this.get(OWNER).after('drag:align', Y.bind(this.align, this));
+        },
+        /**
+        * @private
+        * @method _handleStart
+        * @description Fires on drag:start and clears the _regionCache
+        */
+        _handleStart: function() {
             this._regionCache = null;
         },
         /**
@@ -2214,16 +2296,17 @@ YUI.add('dd-constrain', function(Y) {
         */
         getRegion: function(inc) {
             var r = {}, oh = null, ow = null,
-                g = this.get('gutter');
+                g = this.get('gutter'),
+                owner = this.get(OWNER);
 
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
-                    Y.on('resize', this._cacheRegion, this, true, window);
+                    Y.on('resize', Y.bind(this._cacheRegion, this), window);
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);
-            } else if (this.get('constrain2region')) {
-                r = this.get('constrain2region');
+            } else if (this.get(CON_2_REGION)) {
+                r = this.get(CON_2_REGION);
             } else if (this.get('constrain2view')) {
                 r = this.get('node').get('viewportRegion');
             } else {
@@ -2238,8 +2321,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
             });
             if (inc) {
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT);
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -2255,8 +2338,9 @@ YUI.add('dd-constrain', function(Y) {
         _checkRegion: function(_xy) {
             var oxy = _xy,
                 r = this.getRegion(),
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                owner = this.get(OWNER),
+                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
             
                 if (oxy[1] > (r.bottom - oh)) {
                     _xy[1] = (r.bottom - oh);
@@ -2281,7 +2365,7 @@ YUI.add('dd-constrain', function(Y) {
         * @return {Boolean} True if the XY is inside the region, false otherwise.
         */
         inRegion: function(xy) {
-            xy = xy || this.get(DRAG_NODE).getXY();
+            xy = xy || this.get(OWNER).get(DRAG_NODE).getXY();
 
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
@@ -2291,32 +2375,66 @@ YUI.add('dd-constrain', function(Y) {
             return inside;
         },
         /**
-        * @private
-        * @method _align
-        * @description Override of Drag _align to account for region checking and tick checking
-        * @param {Array} xy The XY to check for ticks and region
-        * @return {Array} The modified XY coords.
+        * @method align
+        * @description Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
         */
-        _align: function(xy) {
-            var _xy = C.superclass._align.apply(this, arguments),
+        align: function() {
+            var owner = this.get(OWNER),
+                _xy = owner.actXY,
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
-                _xy[1] = (this.startXY[1] - this.deltaXY[1]);
+                _xy[1] = (owner.startXY[1] - owner.deltaXY[1]);
             }
             if (this.get('stickY')) {
-                _xy[0] = (this.startXY[0] - this.deltaXY[0]);
+                _xy[0] = (owner.startXY[0] - owner.deltaXY[0]);
             }
-
 
             if (r) {
                 _xy = this._checkRegion(_xy);
             }
                 
             _xy = this._checkTicks(_xy, r);
-            return _xy;
+            owner.actXY = _xy;
         },
         /**
+        * @private
+        * @method _checkTicks
+        * @description This method delegates the proper helper method for tick calculations
+        * @param {Array} xy The XY coords for the Drag
+        * @param {Object} r The optional region that we are bound to.
+        * @return {Array} The calced XY coords
+        */
+        _checkTicks: function(xy, r) {
+            var owner = this.get(OWNER),
+                lx = (owner.startXY[0] - owner.deltaXY[0]),
+                ly = (owner.startXY[1] - owner.deltaXY[1]),
+                xt = this.get('tickX'),
+                yt = this.get('tickY');
+                if (xt && !this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r.left, r.right);
+                }
+                if (yt && !this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r.top, r.bottom);
+                }
+                if (this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTickArray(xy[0], this.get(TICK_X_ARRAY), r.left, r.right);
+                }
+                if (this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTickArray(xy[1], this.get(TICK_Y_ARRAY), r.top, r.bottom);
+                }
+
+            return xy;
+        }
+    };
+
+    Y.namespace('plugin');
+    Y.extend(C, Y.Base, proto);
+    Y.plugin.DDConstrained = C;
+
+    Y.mix(DDM, {
+        /**
+        * @for DDM
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -2347,6 +2465,7 @@ YUI.add('dd-constrain', function(Y) {
                 return pos;
         },
         /**
+        * @for DDM
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
@@ -2386,41 +2505,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
                 return ticks[ticks.length - 1];
             }
-        },
-        /**
-        * @private
-        * @method _checkTicks
-        * @description This method delegates the proper helper method for tick calculations
-        * @param {Array} xy The XY coords for the Drag
-        * @param {Object} r The optional region that we are bound to.
-        * @return {Array} The calced XY coords
-        */
-        _checkTicks: function(xy, r) {
-            var lx = (this.startXY[0] - this.deltaXY[0]),
-                ly = (this.startXY[1] - this.deltaXY[1]),
-                xt = this.get('tickX'),
-                yt = this.get('tickY');
-                if (xt && !this.get('tickXArray')) {
-                    xy[0] = this._calcTicks(xy[0], lx, xt, r.left, r.right);
-                }
-                if (yt && !this.get('tickYArray')) {
-                    xy[1] = this._calcTicks(xy[1], ly, yt, r.top, r.bottom);
-                }
-                if (this.get('tickXArray')) {
-                    xy[0] = this._calcTickArray(xy[0], this.get('tickXArray'), r.left, r.right);
-                }
-                if (this.get('tickYArray')) {
-                    xy[1] = this._calcTickArray(xy[1], this.get('tickYArray'), r.top, r.bottom);
-                }
-
-            return xy;
         }
-    };
-    //Extend DD.Drag
-    Y.extend(C, Y.DD.Drag, proto);
-    //Set this to DD.Drag for other extensions
-    Y.DD.Drag = C;
-
+    });
 
 
 
@@ -2454,6 +2540,7 @@ YUI.add('dd-plugin', function(Y) {
         * @type {String}
         */
         Drag.NAME = "dd-plugin";
+
         /**
         * @property NS
         * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
@@ -2549,7 +2636,7 @@ YUI.add('dd-drop', function(Y) {
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                    Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }
@@ -2852,8 +2939,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', this._handleOverEvent, this, true);
-            s.on('mouseout', this._handleOutEvent, this, true);
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
