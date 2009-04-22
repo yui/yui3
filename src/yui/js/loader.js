@@ -1711,7 +1711,6 @@ Y.Loader.prototype = {
 
 Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
-
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
                 // @TODO get rid of the redundant Get code
@@ -1809,8 +1808,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
 
-                    
-                url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
                 fn(url, {
                     data: s[i],
@@ -1865,20 +1863,20 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
      * Apply filter defined for this instance to a url/path
      * method _filter
      * @param u {string} the string to filter
+     * @param name {string} the name of the module, if we are processing
+     * a single module as opposed to a combined url
      * @return {string} the filtered string
      * @private
      */
-    _filter: function(u) {
+    _filter: function(u, name) {
 
-        Y.log('filter ' + u);
+        // Y.log('filter ' + u);
 
-        var f = this.filter, useFilter, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc;
 
         if (u && f) {
 
-            useFilter = true;
-
-            if (this.filterName == "DEBUG") {
+            if (name && this.filterName == "DEBUG") {
             
                 exc = this.logExclude;
                 inc = this.logInclude;
@@ -1908,7 +1906,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
      * @private
      */
     _url: function(path, name) {
-        return this._filter((this.base || "") + path);
+        return this._filter((this.base || "") + path, name);
     }
 
 };

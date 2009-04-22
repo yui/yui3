@@ -5,7 +5,7 @@
  * @param type {string} 'delegate'
  * @param fn {string} the function to execute
  * @param el {string|node} the element that is the delegation container
- * @param event {string} the event type to delegate
+ * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
  * @param o optional context object
@@ -17,15 +17,15 @@
 
 Y.Env.evt.plugins.delegate = {
 
-    on: function(type, fn, el, event, spec, o) {
+    on: function(type, fn, el, delegateType, spec, o) {
 
-        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
+        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + delegateType + spec,
             a     = Y.Array(arguments, 0, true);
 
         if (!Y.getEvent(ename)) {
 
             // set up the listener on the container
-            Y.on(event, function(e) {
+            Y.on(delegateType, function(e) {
 
                 var targets = e.currentTarget.queryAll(spec),
                     target  = e.target, 
@@ -50,7 +50,7 @@ Y.Env.evt.plugins.delegate = {
 
         a[0] = ename;
 
-        // remove element, delegation event, and delegation spec from the args
+        // remove element, delegation type, and delegation spec from the args
         a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
