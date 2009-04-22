@@ -8,6 +8,10 @@ YUI.add('json-stringify', function(Y) {
  * @static
  */
 var _toString = Object.prototype.toString,
+    Lang      = Y.Lang,
+    isFunction= Lang.isFunction,
+    isArray   = Lang.isArray,
+    type      = Lang.type,
     STRING    = 'string',
     NUMBER    = 'number',
     BOOLEAN   = 'boolean',
@@ -26,6 +30,7 @@ var _toString = Object.prototype.toString,
     COMMA_CR  = ",\n",
     CR        = "\n",
     COLON     = ':',
+    COLON_SP  = ': ',
     QUOTE     = '"';
 
 Y.mix(Y.namespace('JSON'),{
@@ -101,18 +106,27 @@ Y.mix(Y.namespace('JSON'),{
 
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
-            rep    = Y.Lang.isFunction(w) ? w : null,
+            rep    = isFunction(w) ? w : null,
             pstack = [], // Processing stack used for cyclical ref protection
-            _date  = Y.JSON.dateToString; // Use configured date serialization
+            _date  = Y.JSON.dateToString, // Use configured date serialization
+            format = _toString.call(ind).match(/String|Number/);
 
         if (rep || typeof w !== 'object') {
             w = undefined;
         }
 
-        if (ind) {
-            ind = Y.Lang.isNumber(ind) ? new Array(ind+1).join(" ") :
-                  Y.Lang.isString(ind) ? ind :
-                  null;
+        if (format) {
+            // String instances and primatives are left alone.  String objects
+            // coerce for the indenting operations.
+            if (format[0] === 'Number') {
+
+                // force numeric indent values between {0,100} per the spec
+                // This also converts Number instances to primative
+                ind = new Array(Math.min(Math.max(0,ind),100)+1).join(" ");
+            }
+
+            // turn off formatting for 0 or empty string
+            format = ind;
         }
 
         // escape encode special characters
@@ -146,7 +160,9 @@ Y.mix(Y.namespace('JSON'),{
             // Add the object to the processing stack
             pstack.push(o);
 
-            var a = [], i, j, len, k, v;
+            var a = [],
+                colon = format ? COLON_SP : COLON,
+                i, j, len, k, v;
 
             if (arr) { // Array
                 for (i = o.length - 1; i >= 0; --i) {
@@ -154,13 +170,13 @@ Y.mix(Y.namespace('JSON'),{
                 }
             } else {   // Object
                 // If whitelist provided, take only those keys
-                k = Y.Lang.isArray(w) ? w : Y.Object.keys(w || o);
+                k = isArray(w) ? w : Y.Object.keys(o);
 
                 for (i = 0, j = 0, len = k.length; i < len; ++i) {
                     if (typeof k[i] === STRING) {
                         v = _stringify(o,k[i]);
                         if (v) {
-                            a[j++] = _string(k[i]) + COLON + v;
+                            a[j++] = _string(k[i]) + colon + v;
                         }
                     }
                 }
@@ -169,7 +185,7 @@ Y.mix(Y.namespace('JSON'),{
             // remove the array from the stack
             pstack.pop();
 
-            if (ind) {
+            if (format && a.length) {
                 return arr ?
                     OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
                     OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
@@ -182,13 +198,13 @@ Y.mix(Y.namespace('JSON'),{
 
         // Worker function.  Fork behavior on data type and recurse objects.
         function _stringify(h,key) {
-            var o = Y.Lang.isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
-                t = Y.Lang.type(o);
+            var o = isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
+                t = type(o);
 
             if (t === OBJECT) {
                 if (/String|Number|Boolean/.test(_toString.call(o))) {
                     o = o.valueOf();
-                    t = Y.Lang.type(o);
+                    t = type(o);
                 }
             }
 
