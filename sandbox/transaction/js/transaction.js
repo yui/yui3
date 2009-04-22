@@ -28,9 +28,6 @@
  *     customProperty : "foo"
  *   },
  *
- *   context : obj, // execution context bound to the default functions
- *   args    : [ "extra", "args", "bound", "to", "default", "functions" ],
- *
  *   host : bubbleTarget // events will bubble to this object if provided
  * }
  *
@@ -44,6 +41,12 @@ function Transaction(schema) {
     Y.mix(schema, Transaction.defaults);
 
     Transaction.superclass.constructor.apply(this, arguments);
+
+    // Workaround for event-custom not propagating queuable to the defaults
+    // collection.
+    if ('queuable' in schema) {
+        this._yuievt.defaults.queuable = schema.queuable;
+    }
 
     /**
      * The unique id of this transaction.
@@ -67,8 +70,9 @@ Y.extend(Transaction, Y.Event.Target, {
     /**
      * Configures the instance.  Mixes in API and event and corresponding  info, then
      * calls _initEvents to set up the individual state change events.  Finally,
-     * any additional arguments are scanned for an &quot;on&quot; collection
-     * to initialize subscriptions to this transaction's events.
+     * any additional arguments are scanned for <code>on</code> and
+     * <code>after</code> collections to initialize subscriptions to this
+     * transaction's events.
      *
      * @method _init
      * @param schema {Object} the schema object passed to the constructor
@@ -79,12 +83,10 @@ Y.extend(Transaction, Y.Event.Target, {
         schema = schema || {};
 
         var events = {
-                start : this._defStartFn,
-                end   : this._defEndFn
+                start : "_defStartFn",
+                end   : "_defEndFn"
             },
-            args    = 'args' in schema ? Y.Array(schema.args) : [],
-            subs    = Y.Array(arguments,1,true),
-            context = schema.context || this;
+            subs    = Y.Array(arguments,1,true);
 
         if (Y.Lang.isObject(schema.events)) {
             Y.mix(events, schema.events, true);
@@ -94,14 +96,15 @@ Y.extend(Transaction, Y.Event.Target, {
             Y.mix(this, schema.api);
         }
 
-        this._initEvents(events, context, args);
-
         if (schema.host) {
+            this.host = schema.host;
             this.addTarget(schema.host);
         }
 
+        this._initEvents(events);
+
         if (subs.length) {
-            this._initSubscribers(subs, context);
+            this._initSubscribers(subs);
         }
     },
 
@@ -110,18 +113,21 @@ Y.extend(Transaction, Y.Event.Target, {
      *
      * @method _initEvents
      * @param events {Object} map of event names to handler functions
-     * @param context {Object} execution context of the handler functions
-     * @param args {Object} additional arguments to bind to the handler
-     *                      function execution
      * @protected
      */
-    _initEvents : function (events, context, args) {
-        args.unshift(null,context);
+    _initEvents : function (events) {
+        var type = Y.Lang.type;
 
-        Y.each(events, function (defFn, ev) {
-            args[0] = defFn;
-            this.publish(ev, { defaultFn  : Y.rbind.apply(Y, args) });
-        }, this);
+        Y.each(events, Y.bind(function (cfg, ev) {
+            // Convert strings to bound functions and functions to event
+            // publishing configuration
+            switch (type(cfg)) {
+                case 'string'  : cfg = Y.rbind(cfg, (this.host || this));
+                                 // fall through intentional
+                case 'function': cfg = { defaultFn: cfg }; break;
+            }
+            this.publish(ev, cfg);
+        }, this));
     },
 
     /**
@@ -138,10 +144,9 @@ Y.extend(Transaction, Y.Event.Target, {
      *
      * @method _initSubscribers
      * @param subs {Array} Array of objects as described above
-     * @param context {Object} Context for the subscriber callback execution
      * @protected
      */
-    _initSubscribers : function (subs, context) {
+    _initSubscribers : function (subs) {
         var isObject = Y.Lang.isObject, i, l, s;
 
         if (Y.Lang.isArray(subs)) {
@@ -150,10 +155,10 @@ Y.extend(Transaction, Y.Event.Target, {
 
                 if (isObject(s)) {
                     if (isObject(s.on)) {
-                        this.on(s.on, null, context);
+                        this.on(s.on);
                     }
                     if (isObject(s.after)) {
-                        this.after(s.after, null, context);
+                        this.after(s.after);
                     }
                 }
             }
@@ -169,7 +174,6 @@ Y.extend(Transaction, Y.Event.Target, {
      */
     _defStartFn: function (e) {
         Y.log("Transaction " + this.id + " started");
-        e.stopImmediatePropagation();
         this.fire('end', e);
     },
 
