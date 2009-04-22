@@ -106,26 +106,22 @@ YUI({
                     step1 : this._xStep1,
                     step2 : this._xStep2
                 },
-                context : this,
                 host : this
             };
         },
 
         _xStart : function (e) {
             this.foo("_xStart - " + this.message + ' - ' + e.payload);
-            e.transaction.fire('step1',{ transaction: e.transaction });
-            //e.transaction.fire('step1',e);
+            e.transaction.fire('step1',e);
         },
         _xStep1 : function (e) {
             this.foo("_xStep1 - " + this.message + ' - ' + e.payload);
-            e.transaction.fire('step2',{ transaction: e.transaction });
-            //e.transaction.fire('step2',e);
+            e.transaction.fire('step2',e);
         },
 
         _xStep2 : function (e) {
             this.foo("_xStep2 - " + this.message + ' - ' + e.payload);
-            e.transaction.fire('end',{ transaction: e.transaction });
-            //e.transaction.fire('end', e);
+            e.transaction.fire('end', e);
         },
 
         startTransaction : function (callback) {
@@ -204,11 +200,7 @@ YUI({
                 this.foo('Transaction: after end -' + e.payload);
             },
         },
-        payload: "GOOP!",
-
-        api: {
-            __NAME : "Transaction"
-        }
+        payload: "GOOP!"
     });
 });
 </script>
