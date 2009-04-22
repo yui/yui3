@@ -243,9 +243,78 @@ var _toString = Object.prototype.toString,
     CR        = "\n",
     COLON     = ':',
     COLON_SP  = ': ',
-    QUOTE     = '"',
-    Native    = Y.config.win.JSON,
-    stringify = function (o,w,ind) {
+    QUOTE     = '"';
+
+Y.mix(Y.namespace('JSON'),{
+    /**
+     * Regex used to capture characters that need escaping before enclosing
+     * their containing string in quotes.
+     * @property _SPECIAL_CHARS
+     * @type {RegExp}
+     * @private
+     */
+    _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+
+    /**
+     * Character substitution map for common escapes and special characters.
+     * @property _CHARS
+     * @type {Object}
+     * @static
+     * @private
+     */
+    _CHARS : {
+        '\b': '\\b',
+        '\t': '\\t',
+        '\n': '\\n',
+        '\f': '\\f',
+        '\r': '\\r',
+        '"' : '\\"',
+        '\\': '\\\\'
+    },
+
+    /**
+     * Serializes a Date instance as a UTC date string.  Used internally by
+     * stringify.  Override this method if you need Dates serialized in a
+     * different format.
+     * @method dateToString
+     * @param d {Date} The Date to serialize
+     * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
+     * @static
+     */
+    dateToString : function (d) {
+        function _zeroPad(v) {
+            return v < 10 ? '0' + v : v;
+        }
+
+        return QUOTE + d.getUTCFullYear()   + '-' +
+              _zeroPad(d.getUTCMonth() + 1) + '-' +
+              _zeroPad(d.getUTCDate())      + 'T' +
+              _zeroPad(d.getUTCHours())     + COLON +
+              _zeroPad(d.getUTCMinutes())   + COLON +
+              _zeroPad(d.getUTCSeconds())   + 'Z' + QUOTE;
+    },
+
+    /**
+     * Converts an arbitrary value to a JSON string representation.
+     * Cyclical object or array references are replaced with null.
+     * If a whitelist is provided, only matching object keys will be included.
+     * If a positive integer or non-empty string is passed as the third
+     * parameter, the output will be formatted with carriage returns and
+     * indentation for readability.  If a String is passed (such as "\t") it
+     * will be used once for each indentation level.  If a number is passed,
+     * that number of spaces will be used.
+     * @method stringify
+     * @param o {MIXED} any arbitrary object to convert to JSON string
+     * @param w {Array|Function} (optional) whitelist of acceptable object
+     *                  keys to include, or a replacer function to modify the
+     *                  raw value before serialization
+     * @param ind {Number|String} (optional) indentation character or depth of
+     *                  spaces to format the output.
+     * @return {string} JSON string representation of the input
+     * @static
+     * @public
+     */
+    stringify : function (o,w,ind) {
 
         var m      = Y.JSON._CHARS,
             str_re = Y.JSON._SPECIAL_CHARS,
@@ -367,93 +436,7 @@ var _toString = Object.prototype.toString,
 
         // process the input
         return _stringify({'':o},EMPTY);
-    },
-    test;
-
-// Test for fully functional native implementation
-if (Native && _toString.call(Native) === '[object JSON]') {
-    try {
-        test = Native.stringify([function () {}, { a:1,b:2 }],['b'],'x').
-               replace(/ +/gm,'');
-        if (Native.stringify(1) === "1" &&
-            test === "[\nxnull,\nx{\nxx\"b\":2\nx}\n]") {
-
-            stringify = Native.stringify;
-        }
     }
-    catch (e) {} // defer to JS implementation
-} 
-
-Y.mix(Y.namespace('JSON'),{
-    /**
-     * Regex used to capture characters that need escaping before enclosing
-     * their containing string in quotes.
-     * @property _SPECIAL_CHARS
-     * @type {RegExp}
-     * @private
-     */
-    _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-
-    /**
-     * Character substitution map for common escapes and special characters.
-     * @property _CHARS
-     * @type {Object}
-     * @static
-     * @private
-     */
-    _CHARS : {
-        '\b': '\\b',
-        '\t': '\\t',
-        '\n': '\\n',
-        '\f': '\\f',
-        '\r': '\\r',
-        '"' : '\\"',
-        '\\': '\\\\'
-    },
-
-    /**
-     * Serializes a Date instance as a UTC date string.  Used internally by
-     * stringify.  Override this method if you need Dates serialized in a
-     * different format.
-     * @method dateToString
-     * @param d {Date} The Date to serialize
-     * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
-     * @static
-     */
-    dateToString : function (d) {
-        function _zeroPad(v) {
-            return v < 10 ? '0' + v : v;
-        }
-
-        return QUOTE + d.getUTCFullYear()   + '-' +
-              _zeroPad(d.getUTCMonth() + 1) + '-' +
-              _zeroPad(d.getUTCDate())      + 'T' +
-              _zeroPad(d.getUTCHours())     + COLON +
-              _zeroPad(d.getUTCMinutes())   + COLON +
-              _zeroPad(d.getUTCSeconds())   + 'Z' + QUOTE;
-    },
-
-    /**
-     * Converts an arbitrary value to a JSON string representation.
-     * Cyclical object or array references are replaced with null.
-     * If a whitelist is provided, only matching object keys will be included.
-     * If a positive integer or non-empty string is passed as the third
-     * parameter, the output will be formatted with carriage returns and
-     * indentation for readability.  If a String is passed (such as "\t") it
-     * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.
-     * @method stringify
-     * @param o {MIXED} any arbitrary object to convert to JSON string
-     * @param w {Array|Function} (optional) whitelist of acceptable object
-     *                  keys to include, or a replacer function to modify the
-     *                  raw value before serialization
-     * @param ind {Number|String} (optional) indentation character or depth of
-     *                  spaces to format the output.
-     * @return {string} JSON string representation of the input
-     * @static
-     * @public
-     */
-    stringify : stringify
 });
 
 
