@@ -31,16 +31,7 @@ YUI().use('*', function(Y) {
         b = ['foo', 'baz', 'boo', 'bool'];
 
     nodelist = Y.all('p');
-    //nodelist.set('style.color', 'red');
-
-    node = Y.get('p[title]');
-    nodelist.on('click', function(e) {
-        alert(e);
-    });
-
-    Y.on('click', function(e) {
-        //alert(e);
-    }, 'p[title]');
+    console.log(nodelist.addClass('foo').addClass('bar'));
 
 /*
 1. set title on all nodes
@@ -50,6 +41,7 @@ YUI().use('*', function(Y) {
 4. fire nodelist titleChange
 */
 
+/*
     node.on('innerHTMLChange', function(e) {
         e.preventDefault();
         e.newVal = 'hijacked val';
@@ -63,7 +55,6 @@ YUI().use('*', function(Y) {
     nodelist.setStyle('color', 'red');
 
     console.log(Y.all('body').get('firstChild.nodeName'));
-/*
     console.log(Y.get('body').get('firstChild.nodeName'));
 
     Y.get('body').on('firstChildChange', function(e) {

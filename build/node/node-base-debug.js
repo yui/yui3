@@ -722,7 +722,7 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
-(function() { // IE clones expandos
+(function() { // IE clones expandos; regenerate UID
     var node = document.createElement('div');
     Y.stamp(node);
     if (node[UID] === node.cloneNode(true)[UID]) {
@@ -840,7 +840,7 @@ NodeList.addMethod = function(name, fn, context) {
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
-                if (result !== undefined) {
+                if (result !== undefined && result !== instance) {
                     ret[ret.length] = result;
                 }
             });

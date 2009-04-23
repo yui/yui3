@@ -418,6 +418,17 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             node.replaceClass('foo', 'bar');
             Assert.areEqual('bar', element.className, 'Node.replaceClass("foo", "bar")');
 
+            var nodes = Y.all('#test-nodes li');
+            nodes.addClass('foo').addClass('bar');
+            nodes.each(function(n) {
+                Assert.isTrue(n.hasClass('foo'));
+                Assert.isTrue(n.hasClass('bar'));
+            });
+
+            nodes.removeClass('bar');
+            nodes.each(function(n) {
+                Assert.isFalse(n.hasClass('bar'));
+            });
 
         },
 

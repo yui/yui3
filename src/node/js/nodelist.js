@@ -105,7 +105,8 @@ NodeList.addMethod = function(name, fn, context) {
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
-                if (result !== undefined) {
+                if (result !== undefined && result !== instance) {
+                console.log(result);
                     ret[ret.length] = result;
                 }
             });
