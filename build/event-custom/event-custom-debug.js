@@ -327,7 +327,7 @@ var PROPS = {
     halt: 2
 };
 
-Y.EventFacade2 = function(e, currentTarget) {
+Y.EventFacade = function(e, currentTarget) {
     if (e) {
         Y.Object.each(PROPS, function(v, k) {
             //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];
@@ -1405,6 +1405,7 @@ Y.Subscriber.prototype = {
     }
 };
 
+// FACADE = new Y.EventFacade(new Y.CustomEvent('x'));
 (function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 

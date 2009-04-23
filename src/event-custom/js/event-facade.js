@@ -19,7 +19,7 @@ var PROPS = {
     halt: 2
 };
 
-Y.EventFacade2 = function(e, currentTarget) {
+Y.EventFacade = function(e, currentTarget) {
     if (e) {
         Y.Object.each(PROPS, function(v, k) {
             //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];
