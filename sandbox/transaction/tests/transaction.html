@@ -16,7 +16,7 @@
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom-debug.js"></script>
 <script type="text/javascript" src="transaction.js"></script>
 <!--script type="text/javascript" src="../../../build/transaction/transaction.js"></script-->
 <script type="text/javascript">
@@ -106,31 +106,30 @@ YUI({
                     step1 : this._xStep1,
                     step2 : this._xStep2
                 },
-                context : this,
                 host : this
             };
         },
 
         _xStart : function (e) {
-            this.log("_xStart - " + this.message + ' - ' + e.payload);
+            this.foo("_xStart - " + this.message + ' - ' + e.payload);
             e.transaction.fire('step1',e);
         },
         _xStep1 : function (e) {
-            this.log("_xStep1 - " + this.message + ' - ' + e.payload);
+            this.foo("_xStep1 - " + this.message + ' - ' + e.payload);
             e.transaction.fire('step2',e);
         },
 
         _xStep2 : function (e) {
-            this.log("_xStep2 - " + this.message + ' - ' + e.payload);
-            e.transaction.fire('end',e);
+            this.foo("_xStep2 - " + this.message + ' - ' + e.payload);
+            e.transaction.fire('end', e);
         },
 
         startTransaction : function (callback) {
             var t = new Y.Transaction(this._transactionSchema, callback);
-            t.start({ transaction: t, payload: callback.payload });
+            t.start({ payload: callback.payload });
         },
 
-        log : function (msg) {
+        foo : function (msg) {
             Y.get('div ul').appendChild(
                 Y.Node.create('<li>'+msg+'</li>'));
         },
@@ -145,67 +144,63 @@ YUI({
     // in the transaction schema
     th.on({
         start : function (e) {
-            this.log('Instance: on start -' + e.payload);
+            this.foo('Instance: on start -' + e.payload);
         },
         step1 : function (e) {
-            this.log('Instance: on step1 -' + e.payload);
+            this.foo('Instance: on step1 -' + e.payload);
         },
         step2 : function (e) {
-            this.log('Instance: on step2 -' + e.payload);
+            this.foo('Instance: on step2 -' + e.payload);
         },
         end : function (e) {
-            this.log('Instance: on end -' + e.payload);
+            this.foo('Instance: on end -' + e.payload);
         }
     });
     th.after({
         start : function (e) {
-            this.log('Instance: after start -' + e.payload);
+            this.foo('Instance: after start -' + e.payload);
         },
         step1 : function (e) {
-            this.log('Instance: after step1 -' + e.payload);
+            this.foo('Instance: after step1 -' + e.payload);
         },
         step2 : function (e) {
-            this.log('Instance: after step2 -' + e.payload);
+            this.foo('Instance: after step2 -' + e.payload);
         },
         end : function (e) {
-            this.log('Instance: after end -' + e.payload);
+            this.foo('Instance: after end -' + e.payload);
         }
     });
 
     th.startTransaction({
         on: {
             start : function (e) {
-                this.log('Transaction: on start -' + e.payload);
+                this.foo('Transaction: on start -' + e.payload);
             },
             step1 : function (e) {
-                this.log('Transaction: on step1 -' + e.payload);
+                this.foo('Transaction: on step1 -' + e.payload);
             },
             step2 : function (e) {
-                this.log('Transaction: on step2 -' + e.payload);
+                this.foo('Transaction: on step2 -' + e.payload);
             },
             end : function (e) {
-                this.log('Transaction: on end -' + e.payload);
+                this.foo('Transaction: on end -' + e.payload);
             },
         },
         after: {
             start : function (e) {
-                this.log('Transaction: after start -' + e.payload);
+                this.foo('Transaction: after start -' + e.payload);
             },
             step1 : function (e) {
-                this.log('Transaction: after step1 -' + e.payload);
+                this.foo('Transaction: after step1 -' + e.payload);
             },
             step2 : function (e) {
-                this.log('Transaction: after step2 -' + e.payload);
+                this.foo('Transaction: after step2 -' + e.payload);
             },
             end : function (e) {
-                this.log('Transaction: after end -' + e.payload);
+                this.foo('Transaction: after end -' + e.payload);
             },
         },
-        payload: "GOOP!",
-
-        api: {
-            __NAME : "Transaction"
-        }
+        payload: "GOOP!"
     });
 });
 </script>

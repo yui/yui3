@@ -116,11 +116,13 @@ Y.DOM = {
                     wrapFn = fn;
                 if (element) {
                     if (tag && !Y.UA.webkit) { // children.tags() broken in safari
-                        elements = element.children.tags(tag); 
+                        elements = element.children.tags(tag);
                     } else {
-                        elements = element.children; 
-                        wrapFn = function(el) {
-                            return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                        elements = element.children;
+                        if (tag) {
+                            wrapFn = function(el) {
+                                return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                            }
                         }
                     }
 
@@ -463,10 +465,6 @@ Y.DOM = {
         var frag = doc.createElement(tag);
         frag.innerHTML = Y.Lang.trim(html);
         return frag.removeChild(frag[FIRST_CHILD]);
-    },
-
-    innerHTML: function(node, content, execScripts) {
-        Y.DOM.insertNode(node, content, 'innerHTML', execScripts);
     },
 
     insertNode: function(node, content, where, execScripts) {

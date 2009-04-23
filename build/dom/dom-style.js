@@ -31,7 +31,8 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 
 Y.mix(Y.DOM, {
-    CUSTOM_STYLES: {},
+    CUSTOM_STYLES: {
+    },
 
 
     /**
@@ -278,6 +279,28 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
     };
 }
 
+try {
+    document.createElement('div').style.height = '-1px';
+} catch(e) { // IE throws error on invalid style set; trap common cases
+    Y.DOM.CUSTOM_STYLES.height = {
+        set: function(node, val, style) {
+            if (parseInt(val, 10) >= 0) {
+                style['height'] = val;
+            } else {
+            }
+        }
+    };
+
+    Y.DOM.CUSTOM_STYLES.width = {
+        set: function(node, val, style) {
+            if (parseInt(val, 10) >= 0) {
+                style['width'] = val;
+            } else {
+            }
+        }
+    };
+}
+
 // IE getComputedStyle
 // TODO: unit-less lineHeight (e.g. 1.22)
 var re_size = /^width|height$/,
@@ -297,7 +320,7 @@ var ComputedStyle = {
         } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
             value = Y.DOM.IE.COMPUTED[property](el, property);
         } else if (re_unit.test(current)) { // convert to pixel
-            value = Y.DOM.IE.ComputedStyle.getPixel(el, property);
+            value = ComputedStyle.getPixel(el, property) + PX;
         } else {
             value = current;
         }
@@ -312,7 +335,7 @@ var ComputedStyle = {
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
             value = '';
 
-        if (current == AUTO) {
+        if (current === AUTO) {
             var actual = el[offset]; // offsetHeight/Top etc.
             if (actual === UNDEFINED) { // likely "right" or "bottom"
                 value = 0;
@@ -320,7 +343,7 @@ var ComputedStyle = {
 
             value = actual;
             if (re_size.test(prop)) { // account for box model diff 
-                el[STYLE][prop] = actual; 
+                el[STYLE][prop] = actual;
                 if (el[offset] > actual) {
                     // the difference is padding + border (works in Standards & Quirks modes)
                     value = actual - (el[offset] - actual);
@@ -328,6 +351,11 @@ var ComputedStyle = {
                 el[STYLE][prop] = AUTO; // revert to auto
             }
         } else { // convert units to px
+            if (current.indexOf('%') > -1) { // IE pixelWidth incorrect for percent; manually compute 
+                current = el.clientWidth - // offsetWidth - borderWidth
+                        ComputedStyle.getPixel(el, 'paddingRight') -
+                        ComputedStyle.getPixel(el, 'paddingLeft');
+            }
             if (!el[STYLE][pixel] && !el[STYLE][prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
                 el[STYLE][prop] = current;              // no style.pixelWidth if no style.width
             }
@@ -371,17 +399,17 @@ var ComputedStyle = {
         val = node[STYLE].pixelRight;
         node[STYLE][RIGHT] = styleRight; // revert
 
-        return val + PX;
+        return val;
     },
 
     getMargin: function(node, att) {
         var val;
         if (node[CURRENT_STYLE][att] == AUTO) {
-            val = 0 + PX;
+            val = 0;
         } else {
-            val = Y.DOM.IE.ComputedStyle.getPixel(node, att);
+            val = ComputedStyle.getPixel(node, att);
         }
-        return val;
+        return val + PX;
     },
 
     getVisibility: function(node, att) {

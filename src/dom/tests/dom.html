@@ -190,11 +190,23 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
             test_setStyle: function() {
                 Y.DOM.setStyle(ft, 'opacity', 0.5);
                 Assert.areEqual(Y.DOM.getStyle(ft, 'opacity'),
-                        0.5, 'wrong style returned');
+                        0.5, "Y.DOM.getStyle(ft, 'opacity')");
 
                 Y.DOM.setStyle(main, 'float', 'none');
                 Assert.areEqual('none', Y.DOM.getStyle(main, 'float'),
                         'wrong style returned');
+
+                try {
+                    Y.DOM.setStyle(ft, 'width', '-1');
+                } catch(e) {
+                    Assert.isFalse(1, 'setStyle invalid width error');
+                }
+
+                try {
+                    Y.DOM.setStyle(ft, 'height', '-1');
+                } catch(e) {
+                    Assert.isFalse(1, 'setStyle invalid height error');
+                }
            },
 
             test_create: function() {

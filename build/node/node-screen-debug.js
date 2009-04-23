@@ -8,6 +8,8 @@ YUI.add('node-screen', function(Y) {
  * @for Node
  */
 
+var NODE_TYPE = 'nodeType';
+
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
@@ -56,11 +58,11 @@ Y.each([
         Y.Node.ATTRS[name] = {
             getter: function() {
                 var args = Array.prototype.slice.call(arguments);
-                args.unshift(Y.Node.getDOMNode(this[UID]));
+                args.unshift(Y.Node.getDOMNode(this));
 
                 return Y.DOM[name].apply(this, args);
             }
-        }
+        };
     }
 );
 
@@ -159,6 +161,7 @@ Y.Node.importMethod(Y.DOM, [
  */
     'setY'
 ]);
+
 /**
  * Extended Node interface for managing regions and screen positioning.
  * Adds support for positioning elements and normalizes window size and scroll detection. 

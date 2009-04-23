@@ -29,7 +29,8 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 
 Y.mix(Y.DOM, {
-    CUSTOM_STYLES: {},
+    CUSTOM_STYLES: {
+    },
 
 
     /**

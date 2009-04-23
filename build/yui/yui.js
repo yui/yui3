@@ -619,11 +619,12 @@ var instance = Y;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Logger widget and anything else
+ * dispatched, which the Console widget and anything else
  * can consume.  If the 'useBrowserConsole' config is true, it will
  * write to the browser console if available.  YUI-specific log
  * messages will only be present in the -debug versions of the
- * JS files.
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
  *
  * @method log
  * @for YUI
@@ -683,7 +684,7 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files, unlike log statements
+ * minified and raw versions of the YUI files, unlike log statements.
  * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
@@ -1011,7 +1012,7 @@ A.test = function(o) {
  */
 A.each = (Native.forEach) ?
     function (a, f, o) { 
-        Native.forEach.call(a, f, o || Y);
+        Native.forEach.call(a || [], f, o || Y);
         return Y;
     } :
     function (a, f, o) { 
@@ -4078,7 +4079,6 @@ Y.Loader.prototype = {
             if (this._combining.length) {
 
 
-
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
                 // @TODO get rid of the redundant Get code
@@ -4171,8 +4171,7 @@ Y.Loader.prototype = {
 
                 fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
 
-                    
-                url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
                 fn(url, {
                     data: s[i],
@@ -4225,19 +4224,19 @@ Y.Loader.prototype = {
      * Apply filter defined for this instance to a url/path
      * method _filter
      * @param u {string} the string to filter
+     * @param name {string} the name of the module, if we are processing
+     * a single module as opposed to a combined url
      * @return {string} the filtered string
      * @private
      */
-    _filter: function(u) {
+    _filter: function(u, name) {
 
 
-        var f = this.filter, useFilter, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc;
 
         if (u && f) {
 
-            useFilter = true;
-
-            if (this.filterName == "DEBUG") {
+            if (name && this.filterName == "DEBUG") {
             
                 exc = this.logExclude;
                 inc = this.logInclude;
@@ -4267,7 +4266,7 @@ Y.Loader.prototype = {
      * @private
      */
     _url: function(path, name) {
-        return this._filter((this.base || "") + path);
+        return this._filter((this.base || "") + path, name);
     }
 
 };

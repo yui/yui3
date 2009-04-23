@@ -18,12 +18,13 @@
 
 Y.Array._diff = function(a, b) {
     var removed = [],
-        present = false;
+        present = false,
+        i, j, lenA, lenB;
 
     outer:
-    for (var i = 0, lenA = a.length; i < lenA; i++) {
+    for (i = 0, lenA = a.length; i < lenA; i++) {
         present = false;
-        for (var j = 0, lenB = b.length; j < lenB; j++) {
+        for (j = 0, lenB = b.length; j < lenB; j++) {
             if (a[i] === b[j]) {
                 present = true;
                 continue outer;
@@ -87,10 +88,8 @@ NodeList.each = function(instance, fn, context) {
 };
 
 NodeList.addMethod = function(name, fn, context) {
-    if (name) {
-        var tmp = NodeList._tmpNode =
-                NodeList._tmpNode || Y.Node.create('<div>');
-
+    var tmp = NodeList._getTempNode();
+    if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
                 args = arguments;
@@ -106,7 +105,8 @@ NodeList.addMethod = function(name, fn, context) {
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
-                if (result !== undefined) {
+                if (result !== undefined && result !== instance) {
+                console.log(result);
                     ret[ret.length] = result;
                 }
             });
@@ -130,10 +130,18 @@ NodeList.importMethod = function(host, name, altName) {
     }
 };
 
+NodeList._getTempNode = function() {
+    var tmp = NodeList._tempNode;
+        if (!tmp) {
+            tmp = Y.Node.create('<div></div>');
+            NodeList._tempNode = tmp;
+        }
+    return tmp;
+};
+
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>');
+    var tmp = NodeList._getTempNode();
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
         if (!instance) {
@@ -146,8 +154,7 @@ NodeList.DEFAULT_SETTER = function(attr, val) {
 
 // call with instance context
 NodeList.DEFAULT_GETTER = function(attr) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>'),
+    var tmp = NodeList._getTempNode(),
         ret = [];
 
     NodeList.each(this, function(node) {
@@ -224,8 +231,7 @@ Y.mix(NodeList.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0),
-            ret;
+        var args = g_slice.call(arguments, 0);
 
         args.splice(2, 0, g_nodelists[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
@@ -271,10 +277,11 @@ Y.mix(NodeList.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
-            nodes = g_nodelists[this[UID]];
+            nodes = g_nodelists[this[UID]],
+            node;
 
         if (nodes && nodes[0]) {
-            var node = nodes[0];
+            node = nodes[0];
             str += node[NODE_NAME];
             if (node.id) {
                 str += '#' + node.id; 

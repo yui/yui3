@@ -58,6 +58,7 @@ body {
 }
 
 #test-computed {
+    position:relative;
     width:50%;
     margin:auto;
     padding:10px;
@@ -87,13 +88,15 @@ body {
         <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
     </div>
     <div id="doc" class="doc-wrap">
+        <a href="http://www.yahoo.com" id="link-1">Yahoo!</a>
+        <a href="http://www.yahoo.com" id="link-2" tabIndex="-1">Yahoo!</a>
         <form id="test-form" class="test-class" action="#">
             <input name="test-data1" value="0">
             <textarea name="test-data2" value="0"></textarea>
             <button name="test-data3" value="0">button</button>
             <button name="test-data4">button</button>
         </form><div id="test-class">test class</div>
-        <div id="test-prop">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
+        <div id="test-prop" tabindex="4">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
         <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
         <div id="get-style">getStyle</div>
         <div id="baz">baz</div>
@@ -254,6 +257,10 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                     'node.get("firstChild.nextSibling.firstChild.nodeValue")');
 
 
+            Assert.areEqual(byId('test-prop').tabIndex, Y.get('#test-prop').get('tabIndex'), 'Y.get("#test-prop").get("tabIndex")');
+            Assert.areEqual(byId('doc').tabIndex, Y.get('#doc').get('tabIndex'), 'Y.get("#doc".get("tabIndex"))');
+            Assert.areEqual(byId('link-1').tabIndex, Y.get('#link-1').get('tabIndex'), 'Y.get("#link1".get("tabIndex"))');
+            Assert.areEqual(byId('link-2').tabIndex, Y.get('#link-2').get('tabIndex'), 'Y.get("#link1".get("tabIndex"))');
 
         },
             
@@ -411,6 +418,17 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             node.replaceClass('foo', 'bar');
             Assert.areEqual('bar', element.className, 'Node.replaceClass("foo", "bar")');
 
+            var nodes = Y.all('#test-nodes li');
+            nodes.addClass('foo').addClass('bar');
+            nodes.each(function(n) {
+                Assert.isTrue(n.hasClass('foo'));
+                Assert.isTrue(n.hasClass('bar'));
+            });
+
+            nodes.removeClass('bar');
+            nodes.each(function(n) {
+                Assert.isFalse(n.hasClass('bar'));
+            });
 
         },
 
@@ -465,14 +483,14 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual(h, Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
             Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 10em");
-            domNode.style.margin = 'auto';
-            Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
-            Assert.areEqual('500px', node.getComputedStyle('width'), "percent width (from CSS)");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
             domNode.parentNode.style.visibility = 'hidden';
             Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility");
             domNode.parentNode.style.visibility = 'visible';
             Assert.areEqual(2, node.getComputedStyle('zIndex'), 'node.getComputedStyle("zIndex")');
+            Assert.areEqual('500px', node.getComputedStyle('width'), "percent width (from CSS)");
+            domNode.style.margin = 'auto';
+            Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
         },
 
         test_setStyles: function() {
