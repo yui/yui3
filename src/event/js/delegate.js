@@ -1,6 +1,5 @@
-
 /**
- * Set up a delegated listener container.
+ * Sets up a delegated listener container.
  * @event delegate
  * @param type {string} 'delegate'
  * @param fn {string} the function to execute
@@ -27,30 +26,30 @@ Y.Env.evt.plugins.delegate = {
             // set up the listener on the container
             Y.on(delegateType, function(e) {
 
-                var targets = e.currentTarget.queryAll(spec),
-                    target  = e.target, 
+                var target  = e.target, 
                     passed  = false;
 
-                if (targets) {
+				// @TODO we need Node.some 
+				e.currentTarget.queryAll(spec).each(function (v, k) {
 
-                    // @TODO we need Node.some 
-                    targets.each(function (v, k) {
+					if ((!passed) && (v.compareTo(target) || v.contains(target))) {
 
-                        if ((!passed) && (v == target)) {
-                            Y.fire(ename, e);
-                            passed = true;
-                        }
+						e.target = v;
+						Y.fire(ename, e);
+						passed = true;
 
-                    });
+					}
 
-                }
+				});
+
 
             }, el);
+
         }
 
         a[0] = ename;
 
-        // remove element, delegation type, and delegation spec from the args
+        // remove element, delegation spec and context object from the args
         a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
@@ -59,4 +58,3 @@ Y.Env.evt.plugins.delegate = {
     }
 
 };
-
