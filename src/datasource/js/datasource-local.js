@@ -205,7 +205,7 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *         <dt>error (Object)</dt> <dd>Error object.</dd>
          *     </dl>
          * </dd>
          * </dl>
@@ -238,7 +238,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = true;
+            e.error = new Error(this.toString() + " Source undefined");;
         }
         if(e.error) {
             this.fire("error", e);

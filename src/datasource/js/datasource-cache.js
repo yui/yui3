@@ -103,7 +103,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-     *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+     *         <dt>error (Object)</dt> <dd>Error object.</dd>
      *     </dl>
      * </dd>
      * </dl>

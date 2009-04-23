@@ -116,7 +116,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     },
                     failure: function (id, response, e) {
-                        e.error = true;
+                        e.error = new Error(this.toString() + " Data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());

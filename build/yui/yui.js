@@ -55,8 +55,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>pollInterval:
-     *  The default poll interval</li>
+     *  <li>pollInterval: The default poll interval</li>
+     *  <li>windowResizeDelay: The time between browser events to wait before firing.</li>
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
@@ -683,8 +683,8 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files.
- * @method log
+ * minified and raw versions of the YUI files, unlike log statements
+ * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
@@ -1011,11 +1011,11 @@ A.test = function(o) {
  */
 A.each = (Native.forEach) ?
     function (a, f, o) { 
-        Native.forEach.call(a, f, o || Y);
+        Native.forEach.call(a || [], f, o || Y);
         return Y;
     } :
     function (a, f, o) { 
-        var l = a.length, i;
+        var l = (a && a.length) || 0, i;
         for (i = 0; i < l; i=i+1) {
             f.call(o || Y, a[i], i, a);
         }
@@ -1257,30 +1257,30 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
-    /**
-     * Extracts the keys, values, or size from an object
-     * 
-     * @method _extract
-     * @param o the object
-     * @param what what to extract (0: keys, 1: values, 2: size)
-     * @return {boolean|Array} the extracted info
-     * @private
-     */
-    _extract = function(o, what) {
-        var count = (what === 2), out = (count) ? 0 : [], i;
+/**
+ * Extracts the keys, values, or size from an object
+ * 
+ * @method _extract
+ * @param o the object
+ * @param what what to extract (0: keys, 1: values, 2: size)
+ * @return {boolean|Array} the extracted info
+ * @private
+ */
+_extract = function(o, what) {
+    var count = (what === 2), out = (count) ? 0 : [], i;
 
-        for (i in o) {
-            if (count) {
-                out++;
-            } else {
-                if (o.hasOwnProperty(i)) {
-                    out.push((what) ? o[i] : i);
-                }
+    for (i in o) {
+        if (count) {
+            out++;
+        } else {
+            if (o.hasOwnProperty(i)) {
+                out.push((what) ? o[i] : i);
             }
         }
+    }
 
-        return out;
-    };
+    return out;
+};
 
 /**
  * Returns an array containing the object's keys
@@ -1360,7 +1360,9 @@ O.hasValue = function(o, v) {
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = O.hasKey;
+O.owns = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 /**
  * Executes a function on each item. The function
@@ -1732,9 +1734,12 @@ YUI.add('get', function(Y) {
  * @submodule get
  */
 
-var ua=Y.UA, 
-    L=Y.Lang,
-    PREFIX = Y.guid('yui_');
+var ua         = Y.UA, 
+    L          = Y.Lang,
+    PREFIX     = Y.guid('yui_'),
+    TYPE_JS    = "text/javascript",
+    TYPE_CSS   = "text/css",
+    STYLESHEET = "stylesheet";
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
@@ -1807,14 +1812,16 @@ Y.Get = function() {
      * @private
      */
     _linkNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("link", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/css",
-                "charset": c,
-                "rel":     "stylesheet",
-                "href":    url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_CSS,
+            rel:  STYLESHEET,
+            href: url
+        };
+        if (charset) {
+            o.charset = charset;
+        }
+        return _node("link", o, win);
     },
 
     /**
@@ -1826,13 +1833,17 @@ Y.Get = function() {
      * @private
      */
     _scriptNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("script", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/javascript",
-                "charset": c,
-                "src":     url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_JS,
+            src:  url
+        };
+
+        if (charset) {
+            o.charset = charset;
+        }
+
+        return _node("script", o, win);
     },
 
     /**
@@ -4067,7 +4078,6 @@ Y.Loader.prototype = {
             if (this._combining.length) {
 
 
-
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
                 // @TODO get rid of the redundant Get code
@@ -4160,8 +4170,7 @@ Y.Loader.prototype = {
 
                 fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
 
-                    
-                url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
                 fn(url, {
                     data: s[i],
@@ -4214,19 +4223,19 @@ Y.Loader.prototype = {
      * Apply filter defined for this instance to a url/path
      * method _filter
      * @param u {string} the string to filter
+     * @param name {string} the name of the module, if we are processing
+     * a single module as opposed to a combined url
      * @return {string} the filtered string
      * @private
      */
-    _filter: function(u) {
+    _filter: function(u, name) {
 
 
-        var f = this.filter, useFilter, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc;
 
         if (u && f) {
 
-            useFilter = true;
-
-            if (this.filterName == "DEBUG") {
+            if (name && this.filterName == "DEBUG") {
             
                 exc = this.logExclude;
                 inc = this.logInclude;
@@ -4256,7 +4265,7 @@ Y.Loader.prototype = {
      * @private
      */
     _url: function(path, name) {
-        return this._filter((this.base || "") + path);
+        return this._filter((this.base || "") + path, name);
     }
 
 };

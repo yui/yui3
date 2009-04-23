@@ -13,6 +13,8 @@
  * @static
  */
 
+
+// @TODO move the native addEventListener code to DOM
 var add = function(el, type, fn, capture) {
     if (el.addEventListener) {
             el.addEventListener(type, fn, !!capture);
@@ -312,28 +314,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 return (handles.length === 1) ? handles[0] : handles;
 
-
+            // If the el argument is a string, we assume it is 
+            // actually the id of the element.  If the page is loaded
+            // we convert el to the actual element, otherwise we 
+            // defer attaching the event until the element is
+            // ready
             } else if (Y.Lang.isString(el)) {
 
                 oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
-                // If the el argument is a string, we assume it is 
-                // actually the id of the element.  If the page is loaded
-                // we convert el to the actual element, otherwise we 
-                // defer attaching the event until onload event fires
-
-                // check to see if we need to delay hooking up the event 
-                // until after the page loads.
-
-                // Node collection
-                // if (oEl && oEl.size && oEl.size() > 0) {
-                //
-                // Y.log('node?: ' + (oEl instanceof Y.Node));
-
-                /*
-                if (oEl) {
-                    el = oEl;
-                */
+                // @TODO switch to using DOM directly here
 
                 if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
                     size = oEl.size();
@@ -387,7 +377,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     bubbles: false
                 });
 
-                // cache the dom event details in the custom event
                 // for later removeListener calls
                 cewrapper.el = el;
                 cewrapper.type = type;
@@ -513,7 +502,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             var ev = e || window.event;
 
             return (noFacade) ? ev : 
-                new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**

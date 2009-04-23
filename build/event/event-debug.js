@@ -78,12 +78,14 @@ YUI.add('event', function(Y) {
  */
 
 var GLOBAL_ENV = YUI.Env,
+    
+    adapt = Y.Env.evt.plugins,
 
     yready = function() {
         Y.fire('domready');
     };
 
-Y.mix(Y.Env.eventAdaptors, {
+Y.mix(adapt, {
 
     /**
      * Executes the supplied callback when the DOM is first usable.  This
@@ -154,6 +156,346 @@ if (GLOBAL_ENV.DOMReady) {
 
 })();
 (function() {
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
+/**
+ * Wraps a DOM event, properties requiring browser abstraction are
+ * fixed here.  Provids a security layer when required.
+ * @class EventFacade
+ * @param ev {Event} the DOM event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ */
+
+/*
+ * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
+ */
+
+/*
+
+var whitelist = {
+    altKey          : 1,
+    // "button"          : 1, // we supply
+    // "bubbles"         : 1, // needed?
+    // "cancelable"      : 1, // needed? 
+    // "charCode"        : 1, // we supply
+    cancelBubble    : 1,
+    // "currentTarget"   : 1, // we supply
+    ctrlKey         : 1,
+    clientX         : 1, // needed?
+    clientY         : 1, // needed?
+    detail          : 1, // not fully implemented
+    // "fromElement"     : 1,
+    keyCode         : 1,
+    // "height"          : 1, // needed?
+    // "initEvent"       : 1, // need the init events?
+    // "initMouseEvent"  : 1,
+    // "initUIEvent"     : 1,
+    // "layerX"          : 1, // needed?
+    // "layerY"          : 1, // needed?
+    metaKey         : 1,
+    // "modifiers"       : 1, // needed?
+    // "offsetX"         : 1, // needed?
+    // "offsetY"         : 1, // needed?
+    // "preventDefault"  : 1, // we supply
+    // "reason"          : 1, // IE proprietary
+    // "relatedTarget"   : 1,
+    // "returnValue"     : 1, // needed?
+    shiftKey        : 1,
+    // "srcUrn"          : 1, // IE proprietary
+    // "srcElement"      : 1,
+    // "srcFilter"       : 1, IE proprietary
+    // "stopPropagation" : 1, // we supply
+    // "target"          : 1,
+    // "timeStamp"       : 1, // needed?
+    // "toElement"       : 1,
+    type            : 1,
+    // "view"            : 1,
+    // "which"           : 1, // we supply
+    // "width"           : 1, // needed?
+    x               : 1,
+    y               : 1
+},
+
+*/
+
+var whitelist = {
+    altKey          : 1,
+    cancelBubble    : 1,
+    ctrlKey         : 1,
+    clientX         : 1, // needed?
+    clientY         : 1, // needed?
+    detail          : 1, // not fully implemented
+    keyCode         : 1,
+    metaKey         : 1,
+    shiftKey        : 1,
+    type            : 1,
+    x               : 1,
+    y               : 1
+},
+
+    ua = Y.UA,
+
+    /**
+     * webkit key remapping required for Safari < 3.1
+     * @property webkitKeymap
+     * @private
+     */
+    webkitKeymap = {
+        63232: 38, // up
+        63233: 40, // down
+        63234: 37, // left
+        63235: 39, // right
+        63276: 33, // page up
+        63277: 34, // page down
+        25: 9      // SHIFT-TAB (Safari provides a different key code in
+                   // this case, even though the shiftKey modifier is set)
+    },
+
+    /**
+     * Returns a wrapped node.  Intended to be used on event targets,
+     * so it will return the node's parent if the target is a text
+     * node
+     * @method resolve
+     * @private
+     */
+    resolve = function(n) {
+
+        if (!n) {
+            return null;
+        }
+
+        try {
+            if (ua.webkit && 3 == n.nodeType) {
+                n = n.parentNode;
+            } 
+        } catch(ex) { }
+
+        return Y.Node.get(n);
+    };
+
+
+// provide a single event with browser abstractions resolved
+//
+// include all properties for both browers?
+// include only DOM2 spec properties?
+// provide browser-specific facade?
+
+Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
+
+    // @TODO the document should be the target's owner document
+
+    var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
+        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
+
+    // copy all primitives ... this is slow in FF
+    for (i in whitelist) {
+        // if (!Y.Lang.isObject(e[i])) {
+        if (whitelist.hasOwnProperty(i)) {
+            this[i] = e[i];
+        }
+    }
+
+    //////////////////////////////////////////////////////
+
+    if (!x && 0 !== x) {
+        x = e.clientX || 0;
+        y = e.clientY || 0;
+
+        if (ua.ie) {
+            x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
+            y += Math.max(d.documentElement.scrollTop, b.scrollTop);
+        }
+    }
+
+    this._yuifacade = true;
+
+    /**
+     * The X location of the event on the page (including scroll)
+     * @property pageX
+     * @type int
+     */
+    this.pageX = x;
+
+    /**
+     * The Y location of the event on the page (including scroll)
+     * @property pageY
+     * @type int
+     */
+    this.pageY = y;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * The keyCode for key events.  Uses charCode if keyCode is not available
+     * @property keyCode
+     * @type int
+     */
+    c = e.keyCode || e.charCode || 0;
+
+    if (ua.webkit && (c in webkitKeymap)) {
+        c = webkitKeymap[c];
+    }
+
+    /**
+     * The keyCode for key events.  Uses charCode if keyCode is not available
+     * @property keyCode
+     * @type int
+     */
+    this.keyCode = c;
+
+    /**
+     * The charCode for key events.  Same as keyCode
+     * @property charCode
+     * @type int
+     */
+    this.charCode = c;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * The button that was pushed.
+     * @property button
+     * @type int
+     */
+    this.button = e.which || e.button;
+
+    /**
+     * The button that was pushed.  Same as button.
+     * @property which
+     * @type int
+     */
+    this.which = this.button;
+
+    /**
+     * The event details.  Currently supported for Custom
+     * Events only, where it contains the arguments that
+     * were passed to fire().
+     * @property details
+     * @type Array
+     */
+    this.details = details;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Timestamp for the event
+     * @property time
+     * @type Date
+     */
+    this.time = e.time || new Date().getTime();
+
+    //////////////////////////////////////////////////////
+    
+    /**
+     * Node reference for the targeted element
+     * @propery target
+     * @type Node
+     */
+    this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
+
+    /**
+     * Node reference for the element that the listener was attached to.
+     * @propery currentTarget
+     * @type Node
+     */
+    this.currentTarget = (isCE) ? ot :  resolve(ot);
+
+    t = e.relatedTarget;
+
+    if (!t) {
+        if (e.type == "mouseout") {
+            t = e.toElement;
+        } else if (e.type == "mouseover") {
+            t = e.fromElement;
+        }
+    }
+
+    /**
+     * Node reference to the relatedTarget
+     * @propery relatedTarget
+     * @type Node
+     */
+    this.relatedTarget = (isCE) ? t : resolve(t);
+    
+    //////////////////////////////////////////////////////
+    // methods
+
+    /**
+     * Stops the propagation to the next bubble target
+     * @method stopPropagation
+     */
+    this.stopPropagation = function() {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
+    };
+
+    /**
+     * Stops the propagation to the next bubble target and
+     * prevents any additional listeners from being exectued
+     * on the current target.
+     * @method stopImmediatePropagation
+     */
+    this.stopImmediatePropagation = function() {
+
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
+
+    };
+
+    /**
+     * Prevents the event's default behavior
+     * @method preventDefault
+     */
+    this.preventDefault = function() {
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
+    };
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    this.halt = function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this.preventDefault();
+    };
+
+};
+
+})();
+(function() {
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -168,6 +510,8 @@ if (GLOBAL_ENV.DOMReady) {
  * @static
  */
 
+
+// @TODO move the native addEventListener code to DOM
 var add = function(el, type, fn, capture) {
     if (el.addEventListener) {
             el.addEventListener(type, fn, !!capture);
@@ -467,28 +811,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 return (handles.length === 1) ? handles[0] : handles;
 
-
+            // If the el argument is a string, we assume it is 
+            // actually the id of the element.  If the page is loaded
+            // we convert el to the actual element, otherwise we 
+            // defer attaching the event until the element is
+            // ready
             } else if (Y.Lang.isString(el)) {
 
                 oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
-                // If the el argument is a string, we assume it is 
-                // actually the id of the element.  If the page is loaded
-                // we convert el to the actual element, otherwise we 
-                // defer attaching the event until onload event fires
-
-                // check to see if we need to delay hooking up the event 
-                // until after the page loads.
-
-                // Node collection
-                // if (oEl && oEl.size && oEl.size() > 0) {
-                //
-                // Y.log('node?: ' + (oEl instanceof Y.Node));
-
-                /*
-                if (oEl) {
-                    el = oEl;
-                */
+                // @TODO switch to using DOM directly here
 
                 if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
                     size = oEl.size();
@@ -542,7 +874,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     bubbles: false
                 });
 
-                // cache the dom event details in the custom event
                 // for later removeListener calls
                 cewrapper.el = el;
                 cewrapper.type = type;
@@ -668,7 +999,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             var ev = e || window.event;
 
             return (noFacade) ? ev : 
-                new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**
@@ -1009,7 +1340,7 @@ Event._tryPreloadAttach();
  * @for YUI
  * @event available
  */
-Y.Env.eventAdaptors.available = {
+Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
@@ -1023,7 +1354,7 @@ Y.Env.eventAdaptors.available = {
  * @for YUI
  * @event contentready
  */
-Y.Env.eventAdaptors.contentready = {
+Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
@@ -1034,7 +1365,7 @@ Y.Env.eventAdaptors.contentready = {
 var FOCUS   = Y.UA.ie ? "focusin" : "focus",
     BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    adapt = Y.Env.eventAdaptors;
+    adapt = Y.Env.evt.plugins;
 
 
 /**
@@ -1081,6 +1412,7 @@ adapt.blur = {
 };
 
 })();
+
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -1099,7 +1431,7 @@ adapt.blur = {
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-Y.Env.eventAdaptors.key = {
+Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true),
@@ -1177,6 +1509,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
+
 /**
  * Set up a delegated listener container.
  * @event delegate
@@ -1192,7 +1525,8 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-Y.Env.eventAdaptors.delegate = {
+
+Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, event, spec, o) {
 
@@ -1237,6 +1571,7 @@ Y.Env.eventAdaptors.delegate = {
 
 };
 
+(function() {
 
 var detachHandle,
 
@@ -1251,22 +1586,32 @@ var detachHandle,
             Y.fire(CE_NAME, e);
 
         } else {
+
             if (timerHandle) {
                 timerHandle.cancel();
             }
 
-            timerHandle = Y.later(40, Y, function() {
+            timerHandle = Y.later(Y.config.windowResizeDelay || 40, Y, function() {
                 Y.fire(CE_NAME, e);
             });
         }
         
     };
 
-Y.Env.eventAdaptors.windowresize = {
+
+/**
+ * Firefox fires the window resize event once when the resize action
+ * finishes, other browsers fire the event periodically during the
+ * resize.  This code uses timeout logic to simulate the Firefox 
+ * behavior in other browsers.
+ * @event windowresize
+ * @for YUI
+ */
+Y.Env.evt.plugins.windowresize = {
 
     on: function(type, fn) {
 
-        // check for window listener and add if needed
+        // check for single window listener and add if needed
         if (!detachHandle) {
             detachHandle = Y.on('resize', handler);
         }
@@ -1277,6 +1622,8 @@ Y.Env.eventAdaptors.windowresize = {
         return Y.on.apply(Y, a);
     }
 };
+
+})();
 
 
 }, '@VERSION@' );

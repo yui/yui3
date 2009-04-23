@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+</head>
+<body>
+
+<div>
+    <ul></ul>
+</div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="transaction.js"></script>
+<script type="text/javascript" src="datasource-local.js"></script>
+<!--script type="text/javascript" src="../../../build/transaction/transaction.js"></script>
+<script type="text/javascript" src="../../../build/datasource/datasource-local.js"></script-->
+<script type="text/javascript">
+YUI({
+    base: '../../../build/'
+}).use('node','dump','transaction','datasource-local',function (Y) {
+
+    var ds = new Y.DataSource.Local({ source: [1,2,3] });
+
+    function report(e,after) {
+        var div = Y.get('div');
+        div.appendChild(Y.Node.create(
+            '<h3>' + (after ? 'AFTER ' : '' ) + e.type + '</h3>'));
+        div.appendChild(Y.Node.create('<dl>' +
+            '<dt>request</dt><dd>'+e.request+'</dd>' +
+            '<dt>data</dt><dd>'+Y.dump(e.data)+'</dd>' +
+            '<dt>response</dt><dd>'+Y.dump(e.response)+'</dd>' +
+            '<dt>error</dt><dd>'+e.error+'</dd>' +
+            '<dt>payload</dt><dd>'+e.payload+'</dd></dl>'));
+    }
+
+    ds.sendRequest(null,{
+        on    : {
+            'start'    : report,
+            'request'  : report,
+            'response' : report,
+            'success'  : report,
+            'failure'  : report,
+            'error'    : report,
+            'end'      : report
+        },
+        after : {
+            'start'    : function (e) { report(e, true); },
+            'request'  : function (e) { report(e, true); },
+            'response' : function (e) { report(e, true); },
+            'success'  : function (e) { report(e, true); },
+            'failure'  : function (e) { report(e, true); },
+            'error'    : function (e) { report(e, true); },
+            'end'      : function (e) { report(e, true); }
+        }
+    }, { payload : "I'm the payload" });
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js" ></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>

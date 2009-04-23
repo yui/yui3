@@ -5,12 +5,14 @@
  */
 
 var GLOBAL_ENV = YUI.Env,
+    
+    adapt = Y.Env.evt.plugins,
 
     yready = function() {
         Y.fire('domready');
     };
 
-Y.mix(Y.Env.eventAdaptors, {
+Y.mix(adapt, {
 
     /**
      * Executes the supplied callback when the DOM is first usable.  This
