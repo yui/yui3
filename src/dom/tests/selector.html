@@ -177,6 +177,7 @@ onload = function() {
                 Assert.areEqual(document.getElementsByTagName('link')[0], $('[rel^=style]', null, true), "($('[rel^=style]), null, true)");
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $('div[rel^=foo2]', null, true), "($('[rel^=foo2]), null, true)");
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $("div[rel^='foo2']", null, true), "($('[rel^=\'foo2\']), null, true)");
+                Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
             }
         });
 
@@ -340,6 +341,7 @@ onload = function() {
         <input type="radio" id="radio-unchecked" class="not-button">
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo">
+        <input id="foo-bar" name="foo.bar" class="not-button">
     </form>
     <div class="Bar" id="class-bar"></div>
     <div id="contains-special">contains "' & ]</div>
