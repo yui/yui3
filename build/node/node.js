@@ -85,6 +85,15 @@ Node.DOM_EVENTS = {
 
 Node._instances = {};
 
+/**
+ * Retrieves the DOM node bound to a Node instance
+ * @method getDOMNode
+ * @static
+ *
+ * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * as the node argument, it is simply returned.
+ */
 Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
@@ -802,6 +811,14 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} node The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };
@@ -925,6 +942,7 @@ Y.mix(NodeList.prototype, {
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             return fn.call(context, Y.get(node), index, instance);
         });
+        return instance;
     },
 
     /**
@@ -973,6 +991,22 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    plug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.plug.apply(node, args);
+        });
+        return this;
+    },
+
+    unplug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.unplug.apply(node, args);
+        });
+        return this;
+    },
+
     refresh: function() {
         var doc,
             diff,
@@ -990,6 +1024,7 @@ Y.mix(NodeList.prototype, {
             diff.removed = diff.removed ? Y.all(diff.removed) : null;
             this.fire('refresh', diff);
         }
+        return this;
     },
 
     /**

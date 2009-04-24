@@ -411,7 +411,7 @@ Y.DOM = {
         'class': 'className'
     } : { // w3c
         'htmlFor': 'for',
-        'className': 'class' 
+        'className': 'class'
     },
 
     /**
@@ -422,8 +422,10 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        el.setAttribute(attr, val);
+        if (el && el.setAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            el.setAttribute(attr, val);
+        }
     },
 
 
@@ -435,19 +437,18 @@ Y.DOM = {
      * @return {String} The current value of the attribute. 
      */
     getAttribute: function(el, attr) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        var ret = el.getAttribute(attr);
-        if (!document.documentElement.hasAttribute) { // IE < 8
-            if (el.getAttributeNode) {
+        var ret = '';
+        if (el && el.getAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
                 ret = el.getAttributeNode(attr);
-                ret = (ret) ? ret.value : null;
+                ret = ret ? ret.value : '';
             } else {
-                ret = el.getAttribute(attr);
+                ret = el.getAttribute(attr, 2);
             }
-
-        }
-        if (ret === null) {
-            ret = ''; // per DOM spec
+            if (ret === null) {
+                ret = ''; // per DOM spec
+            }
         }
         return ret;
     },
@@ -859,6 +860,9 @@ Y.mix(Y.DOM, {
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
+            if (val === null) {
+                val = ''; // normalize for unsetting
+            }
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);
@@ -1081,6 +1085,14 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
         },
 
         set: function(node, val, style) {
+            var current;
+            if (val === '') { // normalize inline style behavior
+                current = node.currentStyle.opacity; // revert to original opacity
+                val = current;
+                if (val === undefined) {
+                    val = 1;
+                }
+            }
             if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 
@@ -2016,8 +2028,8 @@ if (NativeSelector._supportsNative()) {
 Y.Selector.test = NativeSelector._test;
 Y.Selector.filter = NativeSelector._filter;
 /**
- * The selector-css1 module provides helper methods allowing CSS1 Selectors to be used with DOM elements.
- * @module selector-css1
+ * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
+ * @module selector
  * @title Selector Utility
  * @requires yahoo, dom
  */
@@ -2041,8 +2053,8 @@ var PARENT_NODE = 'parentNode',
 
     Selector = Y.Selector,
 
-    SelectorCSS1 = {
-        SORT_RESULTS: false,
+    SelectorCSS2 = {
+        SORT_RESULTS: true,
         _children: function(node) {
             var ret = node.children;
 
@@ -2120,6 +2132,15 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
+        /**
+         * Executes the supplied function against each node until true is returned.
+         * @method some
+         *
+         * @param {Array} nodes The nodes to run the function against 
+         * @param {Function} fn  The function to run against each node
+         * @return {Boolean} whether or not any element passed
+         * @static
+         */
         some: function() { return (Array.prototype.some) ?
             function(nodes, fn, context) {
                 return Array.prototype.some.call(nodes, fn, context);
@@ -2156,7 +2177,7 @@ var PARENT_NODE = 'parentNode',
                             root, firstOnly, true)); 
                 }
 
-                ret = Selector.SORT_RESULT ? Selector._sort(ret) : ret;
+                ret = Selector.SORT_RESULTS ? Selector._sort(ret) : ret;
                 Selector._clearFoundCache();
             } else {
                 root = root || Y.config.doc;
@@ -2215,7 +2236,7 @@ var PARENT_NODE = 'parentNode',
                     i++;
                     test = attr.test;
                     if (test.test) {
-                        if (!test.test(node[attr.name])) {
+                        if (!test.test(Y.DOM.getAttribute(node, attr.name))) {
                             return false;
                         }
                     } else if (!test(node, attr.match)) {
@@ -2437,7 +2458,7 @@ var PARENT_NODE = 'parentNode',
         }
     };
 
-Y.mix(Y.Selector, SelectorCSS1, true);
+Y.mix(Y.Selector, SelectorCSS2, true);
 
 // only override native when not supported
 if (!Y.Selector._supportsNative()) {

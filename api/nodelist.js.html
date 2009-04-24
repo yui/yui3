@@ -121,6 +121,14 @@
 <span class="c"></span>
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;NodeList&#39;</span><span class="o">;</span>
 
+<span class="c">/**</span>
+<span class="c"> * Retrieves the DOM nodes bound to a NodeList instance</span>
+<span class="c"> * @method getDOMNodes</span>
+<span class="c"> * @static</span>
+<span class="c"> *</span>
+<span class="c"> * @param {Y.NodeList} node The NodeList instance</span>
+<span class="c"> * @return {Array} The array of DOM nodes bound to the NodeList</span>
+<span class="c"> */</span>
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">getDOMNodes</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodeList</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="nx">nodeList</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
 <span class="o">};</span>
@@ -154,7 +162,7 @@
                 <span class="o">}</span>
                 <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">instance</span><span class="o">;</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ctx</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">result</span> <span class="o">!==</span> <span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">result</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">});</span>
@@ -246,6 +254,7 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
+        <span class="k">return</span> <span class="nx">instance</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -294,6 +303,22 @@
         <span class="nx">delete</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
     <span class="o">},</span>
 
+    <span class="nx">plug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">plug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="nx">unplug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">unplug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">},</span>
+
     <span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">doc</span><span class="o">,</span>
             <span class="nx">diff</span><span class="o">,</span>
@@ -311,6 +336,7 @@
             <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">=</span> <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;refresh&#39;</span><span class="o">,</span> <span class="nx">diff</span><span class="o">);</span>
         <span class="o">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -454,7 +480,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
 </script>
 </body>
 </html>

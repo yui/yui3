@@ -72,6 +72,14 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} node The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };
@@ -106,7 +114,6 @@ NodeList.addMethod = function(name, fn, context) {
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
                 if (result !== undefined && result !== instance) {
-                console.log(result);
                     ret[ret.length] = result;
                 }
             });
@@ -198,6 +205,7 @@ Y.mix(NodeList.prototype, {
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             return fn.call(context, Y.get(node), index, instance);
         });
+        return instance;
     },
 
     /**
@@ -246,6 +254,22 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    plug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.plug.apply(node, args);
+        });
+        return this;
+    },
+
+    unplug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.unplug.apply(node, args);
+        });
+        return this;
+    },
+
     refresh: function() {
         var doc,
             diff,
@@ -263,6 +287,7 @@ Y.mix(NodeList.prototype, {
             diff.removed = diff.removed ? Y.all(diff.removed) : null;
             this.fire('refresh', diff);
         }
+        return this;
     },
 
     /**

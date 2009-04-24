@@ -83,6 +83,15 @@ Node.DOM_EVENTS = {
 
 Node._instances = {};
 
+/**
+ * Retrieves the DOM node bound to a Node instance
+ * @method getDOMNode
+ * @static
+ *
+ * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * as the node argument, it is simply returned.
+ */
 Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
