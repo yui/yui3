@@ -404,7 +404,8 @@ Y.extend(FocusManager, Y.Base, {
 	_detachKeyHandler: function () {
 
 		var prevKeyHandler = this._prevKeyHandler,
-			nextKeyHandler = this._nextKeyHandler;
+			nextKeyHandler = this._nextKeyHandler,
+			keyPressHandler = this._keyPressHandler;
 
 		if (prevKeyHandler) {
 			prevKeyHandler.detach();
@@ -412,6 +413,10 @@ Y.extend(FocusManager, Y.Base, {
 		
 		if (nextKeyHandler) {
 			nextKeyHandler.detach();
+		}
+
+		if (keyPressHandler) {
+			keyPressHandler.detach();
 		}
 		
 	},
@@ -446,12 +451,12 @@ Y.extend(FocusManager, Y.Base, {
 
 		if (sPreviousKey) {
  			this._prevKeyHandler = 
-				Y.on(KEY, this._focusPrevious, this._node, sPreviousKey, this);
+				Y.on(KEY, Y.bind(this._focusPrevious, this), this._node, sPreviousKey);
 		}
 
 		if (sNextKey) {
  			this._nextKeyHandler = 
-				Y.on(KEY, this._focusNext, this._node, sNextKey, this);
+				Y.on(KEY, Y.bind(this._focusNext, this), this._node, sNextKey);
 		}
 
 
@@ -460,7 +465,10 @@ Y.extend(FocusManager, Y.Base, {
 		//	to prevent the viewport from scrolling.
 		
 		if (UA.opera || (UA.gecko && UA.gecko < 1.9)) {	
-			this._node.on("keypress", this._preventScroll, this);
+
+			this._keyPressHandler = 
+				this._node.on("keypress", Y.bind(this._preventScroll, this));
+
 		}
 
 	},
@@ -517,10 +525,10 @@ Y.extend(FocusManager, Y.Base, {
 			oDocument = oNode.get("ownerDocument");
 
 		    aHandlers[aHandlers.length] =	
-				Y.on("focus", this._onDocFocus, oDocument, this);
+				Y.on("focus", Y.bind(this._onDocFocus, this), oDocument);
 
 			aHandlers[aHandlers.length] = 
-				Y.on("mousedown", this._onDocMouseDown, oDocument, this);
+				Y.on("mousedown", Y.bind(this._onDocMouseDown, this), oDocument);
 
 			aHandlers[aHandlers.length] = 
 				this.after("descendantsChange", this._initDescendants);
