@@ -107,7 +107,7 @@ body {
     <div id="inline-style" style="color: green">inline style</div>
     <div id="foo"></div>
     <div id="test-computed">test computed style</div>
-    <form>
+    <form id="form.foo@bar:baz">
         <select id="test-select" name="test-select">
             <option value="0">foo</option>
             <option value="1">bar</option>
@@ -191,6 +191,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
                 "frameDoc.query('#demo li').get('innerHTML')");
 
+            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id=form.foo@bar:baz]')), "#form.foo@bar:baz");
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');
             Assert.areEqual(3, Y.all('#test-select option').size(), 'Y.get("#test-select option").size()');
@@ -547,6 +548,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual(id, parent.query('#' + id).get('id'), 'parent.query("#id")');
             Assert.isNull(parent.query('#text-xy'), 'parent.query("test-xy")');
 
+            Assert.areEqual(id, parent.queryAll('#' + id).item(0).get('id'), 'parent.queryAll(node, "#id")');
             Assert.areEqual(id, parent.queryAll('#' + id).item(0).get('id'), 'parent.queryAll(node, "#id")');
         },
 
