@@ -1,9 +1,11 @@
 /**
-* <p>The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, 
-* drop down navigational menus that are both accessible and easy to customize, and only require 
-* a small set of dependencies.</p>
-* <p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a Node instance's 
-* <code>plug</code> method.</p>
+* <p>The MenuNav Node Plugin makes it easy to transform existing list-based 
+* markup into traditional, drop down navigational menus that are both accessible 
+* and easy to customize, and only require a small set of dependencies.</p>
+* 
+* 
+* <p>To use the MenuNav Node Plugin, simply pass a reference to the plugin to a 
+* Node instance's <code>plug</code> method.</p>
 * 
 * <p>
 * <code>
@@ -71,34 +73,9 @@
 * </code>
 * </p>
 * 
-* <p> The complete list of the MenuNav Node Plugin configuration properties are:</p>
-* <dl>
-* 	<dt>useARIA</dt>
-* 		<dd>Boolean indicating if use of the WAI-ARIA Roles and States should be enabled for the 
-* 		MenuNav.  Set to true by default for Firefox 3 and Internet Explorer 8 as currently only 
-* 		these browsers have support for ARIA, and are supported by several screen readers for 
-* 		Windows that also offer support for ARIA.</dd>
-* 
-* 	<dt>autoSubmenuDisplay</dt>
-* 		<dd>Boolean indicating if submenus are automatically made visible when the user mouses over 
-* 		the menu's items.  Set to true by default.</dd>
-* 
-* 	<dt>submenuShowDelay</dt>
-* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
-* 		made visible when the user mouses over the menu's label.  Set to 250 by default.</dd>
-* 
-* 	<dt>submenuHideDelay</dt>
-* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
-* 		hidden when the user mouses out of a menu label heading in the direction of a submenu.  
-* 		Set to 250 by default.</dd>
-* 
-* 	<dt>mouseOutHideDelay</dt>
-* 		<dd>Number indicating the time (in milliseconds) that should expire before a submenu is 
-* 		hidden when the user mouses out of it.  Set to 750 by default.</dd>
-* </dl>
-* 
 * @module node-menunav
 */
+
 
 	//	Util shortcuts
 
@@ -131,6 +108,13 @@ var UA = Y.UA,
 	CLICK = "click",
 	EMPTY_STRING = "",
 	FIRST_OF_TYPE = "first-of-type",
+	
+
+	//	Attribute keys
+	
+	USE_ARIA = "useARIA",
+	AUTO_SUBMENU_DISPLAY = "autoSubmenuDisplay",
+	MOUSEOUT_HIDE_DELAY = "mouseOutHideDelay",
 
 
 	//	CSS class names
@@ -391,103 +375,11 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 };
 
 
-/**
-* The NodeMenuNav class is a plugin for a Node instance.  The class is used via the 
-* <a href="Node.html#method_plug"><code>plug</code></a> method of Node and should not be 
-* instantiated directly.
-* @namespace plugin
-* @class NodeMenuNav
-*/
-var MenuNav = function (config) {
+var MenuNav = function () {
 
-	var menuNav = this,
-		oRootMenu = config.owner,
-		oDocument,
-		bUseARIA,
-		bAutoSubmenuDisplay,
-		nMouseOutHideDelay,
-		oMenuNodes,
-		oULs;
-		
-
-	if (oRootMenu) {
-
-		bUseARIA = config.useARIA;
-		bAutoSubmenuDisplay = config.autoSubmenuDisplay;
-		nMouseOutHideDelay = config.mouseOutHideDelay;
-		
-
-		//	Enable ARIA for Firefox 3 and IE 8 by default since those are the two browsers 
-		//	that current support ARIA
-
-		menuNav._useARIA = Lang.isBoolean(bUseARIA) ? 
-						bUseARIA : ((UA.gecko && UA.gecko >= 1.9) || (UA.ie && UA.ie >= 8));
-
-
-		menuNav._autoSubmenuDisplay = 
-					Lang.isBoolean(bAutoSubmenuDisplay) ? bAutoSubmenuDisplay : true;
-
-		menuNav._submenuShowDelay = config.submenuShowDelay || 250;
-		menuNav._submenuHideDelay = config.submenuHideDelay || 250;
-
-		menuNav._mouseOutHideDelay = Lang.isNumber(nMouseOutHideDelay) ? nMouseOutHideDelay : 750;
-
-
-		//	Hide all visible submenus
-
-		oMenuNodes = oRootMenu.queryAll(MENU_SELECTOR);
-
-		if (oMenuNodes) {
-			oMenuNodes.addClass(CSS_MENU_HIDDEN);
-		}
-
-
-		oULs = oRootMenu.queryAll("ul:first-child");
-
-		if (oULs) {
-			oULs.addClass(FIRST_OF_TYPE);
-		}
-
-
-		//	Wire up all event handlers
-
-		oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
-		oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
-		oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
-		oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-		oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-		oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
-		oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
-		oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
-
-		oDocument = oRootMenu.get("ownerDocument");
-	    oDocument.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
-
-
-		menuNav._rootMenu = oRootMenu;
-
-
-		oRootMenu.plug(Y.plugin.FocusManager, { 
-			// To do--need to filter out elements with the class "yui-menu-toggle"
-			descendants: ">.yui-menu-content>ul>li>a",
-			keys: (isHorizontalMenu(oRootMenu) ? { next: "down:39", previous: "down:37" } : { next: "down:40", previous: "down:38" }),
-			rollThrough: true
-		});
-
-		var oFocusManager = oRootMenu.focusManager;
-
-		oFocusManager.removeFromTabIndex("#" + oRootMenu.get("id") + " .yui-menu a");
-
-		oFocusManager.on("activeDescendantChange", this._onActiveDescendantChange, oFocusManager, this);
-		oFocusManager.after("activeDescendantChange", this._afterActiveDescendantChange, oFocusManager, this);
-		oFocusManager.after("hasFocusChange", this._afterHasFocusChange, oFocusManager, this);
-
-		menuNav._focusManager = oFocusManager;
-
-	}
+	MenuNav.superclass.constructor.apply(this, arguments);
 
 };
-
 
 MenuNav.NS = "MenuNav";
 
@@ -530,7 +422,102 @@ MenuNav.SHIM_TEMPLATE	=	'<iframe frameborder="0" tabindex="-1" class="' +
 							'" src="javascript:false;"></iframe>';
 
 
-MenuNav.prototype = {
+MenuNav.ATTRS = {
+
+	/**
+	* Boolean indicating if use of the WAI-ARIA Roles and States should be 
+	* enabled for the MenuNav.
+	*
+	* @attribute useARIA
+	* @readOnly
+	* @writeOnce	
+	* @default true
+	* @type boolean
+	*/
+	useARIA: {
+		
+		value: true,
+		writeOnce: true
+		
+	},
+
+
+	/**
+	* Boolean indicating if submenus are automatically made visible when the 
+	* user mouses over the menu's items.
+	*
+	* @attribute autoSubmenuDisplay
+	* @readOnly
+	* @writeOnce	
+	* @default true
+	* @type boolean
+	*/	
+	autoSubmenuDisplay: {
+		
+		value: true,
+		writeOnce: true
+		
+	},
+
+
+	/**
+	* Number indicating the time (in milliseconds) that should expire before a 
+	* submenu is made visible when the user mouses over the menu's label.
+	*
+	* @attribute submenuShowDelay
+	* @readOnly
+	* @writeOnce	
+	* @default 250
+	* @type Number
+	*/
+	submenuShowDelay: {
+		
+		value: 250,
+		writeOnce: true
+		
+	},
+
+
+	/**
+	* Number indicating the time (in milliseconds) that should expire before a 
+	* submenu is hidden when the user mouses out of a menu label heading in the 
+	* direction of a submenu.  
+	*
+	* @attribute submenuHideDelay
+	* @readOnly
+	* @writeOnce	
+	* @default 250
+	* @type Number
+	*/
+	submenuHideDelay: {
+		
+		value: 250,
+		writeOnce: true
+		
+	},
+
+
+	/**
+	* Number indicating the time (in milliseconds) that should expire before a 
+	* submenu is hidden when the user mouses out of it.
+	* 
+	* @attribute mouseOutHideDelay
+	* @readOnly
+	* @writeOnce	
+	* @default 750
+	* @type Number
+	*/	
+	mouseOutHideDelay: {
+		
+		value: 750,
+		writeOnce: true
+		
+	}
+
+};
+
+
+Y.extend(MenuNav, Y.Base, {
 
 	//	Protected properties
 
@@ -654,17 +641,6 @@ MenuNav.prototype = {
 	* @type Node
 	*/
 	_firstItem: null,
-
-
-	/** 
-	* @property _autoSubmenuDisplay
-    * @description Boolean indicating if submenus are automatically made visible when the user 
-    * mouses over the menu's items.
-    * @default true
-	* @protected
-    * @type Boolean
-	*/
-	_autoSubmenuDisplay: true,
 
 
 
@@ -1075,13 +1051,13 @@ MenuNav.prototype = {
 
 			if (oParentMenu && !oParentMenu.contains(oRelatedTarget)) {
 
-				if (menuNav._mouseOutHideDelay > 0) {
+				if (menuNav.get(MOUSEOUT_HIDE_DELAY) > 0) {
 
 					menuNav._cancelShowSubmenuTimer();
 
 					menuNav._hideAllSubmenusTimer = 
 
-							later(menuNav._mouseOutHideDelay, menuNav, function () {
+							later(menuNav.get(MOUSEOUT_HIDE_DELAY), menuNav, function () {
 
 								var	oSubmenu;
 
@@ -1133,7 +1109,7 @@ MenuNav.prototype = {
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bIsRoot = menuNav._isRoot(oActiveMenu),
-			bUseAutoSubmenuDisplay = (menuNav._autoSubmenuDisplay && bIsRoot || !bIsRoot),
+			bUseAutoSubmenuDisplay = (menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
 			oSubmenu;
 
 
@@ -1157,7 +1133,7 @@ MenuNav.prototype = {
 					menuNav._hideAllSubmenus(oActiveMenu);
 
 					menuNav._showSubmenuTimer = 
-									later(menuNav._submenuShowDelay, menuNav, 
+									later(menuNav.get("submenuShowDelay"), menuNav, 
 											menuNav._showMenu, oSubmenu);
 				
 				}
@@ -1180,7 +1156,7 @@ MenuNav.prototype = {
 
 		var menuNav = this,
 			bIsRoot = menuNav._isRoot(menuNav._activeMenu),
-			bUseAutoSubmenuDisplay = (menuNav._autoSubmenuDisplay && bIsRoot || !bIsRoot),
+			bUseAutoSubmenuDisplay = (menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
 			oRelatedTarget = event.relatedTarget,
 			oSubmenu = menuLabel.next();
 
@@ -1194,7 +1170,7 @@ MenuNav.prototype = {
 				//	isn't in the process of being displayed (via a timer), then hide the submenu 
 				//	via a timer to give the user some time to reach the submenu.
 			
-				menuNav._hideSubmenuTimer = later(menuNav._submenuHideDelay, menuNav, 
+				menuNav._hideSubmenuTimer = later(menuNav.get("submenuHideDelay"), menuNav, 
 															menuNav._hideMenu, oSubmenu);
 			
 			}
@@ -1228,7 +1204,7 @@ MenuNav.prototype = {
 		var menuNav = this,
 			oActiveMenu = menuNav._activeMenu,
 			bIsRoot = menuNav._isRoot(oActiveMenu),
-			bUseAutoSubmenuDisplay = (menuNav._autoSubmenuDisplay && bIsRoot || !bIsRoot);
+			bUseAutoSubmenuDisplay = (menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot);
 
 
 		menuNav._setActiveItem(menuItem);
@@ -1839,9 +1815,81 @@ MenuNav.prototype = {
 			menuNav._hideAllSubmenus(oRoot);
 		}
 
-	}
+	},
 	
-};
+
+    initializer: function (config) {
+
+		var menuNav = this,
+			oRootMenu = config.owner,
+			oDocument,
+			oMenuNodes,
+			oULs;
+
+
+		if (oRootMenu) {
+
+			//	Hide all visible submenus
+
+			oMenuNodes = oRootMenu.queryAll(MENU_SELECTOR);
+
+			if (oMenuNodes) {
+				oMenuNodes.addClass(CSS_MENU_HIDDEN);
+			}
+
+
+			oULs = oRootMenu.queryAll("ul:first-child");
+
+			if (oULs) {
+				oULs.addClass(FIRST_OF_TYPE);
+			}
+
+
+			//	Wire up all event handlers
+
+			oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
+			oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
+			oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
+			oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
+			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
+
+			oDocument = oRootMenu.get("ownerDocument");
+		    oDocument.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+
+
+			menuNav._rootMenu = oRootMenu;
+
+
+			oRootMenu.plug(Y.plugin.FocusManager, { 
+				// To do--need to filter out elements with the class "yui-menu-toggle"
+				descendants: ">.yui-menu-content>ul>li>a",
+				keys: (isHorizontalMenu(oRootMenu) ? { next: "down:39", previous: "down:37" } : { next: "down:40", previous: "down:38" }),
+				rollThrough: true
+			});
+
+			var oFocusManager = oRootMenu.focusManager;
+
+			oFocusManager.removeFromTabIndex("#" + oRootMenu.get("id") + " .yui-menu a");
+
+			oFocusManager.on("activeDescendantChange", this._onActiveDescendantChange, oFocusManager, this);
+			oFocusManager.after("activeDescendantChange", this._afterActiveDescendantChange, oFocusManager, this);
+			oFocusManager.after("hasFocusChange", this._afterHasFocusChange, oFocusManager, this);
+
+			menuNav._focusManager = oFocusManager;
+
+		}
+		
+
+    },
+
+	destructor: function () {
+		
+    }
+	
+});
 
 
 Y.namespace('plugin');
