@@ -254,6 +254,7 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
+        <span class="k">return</span> <span class="nx">instance</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -302,6 +303,22 @@
         <span class="nx">delete</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
     <span class="o">},</span>
 
+    <span class="nx">plug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">plug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="nx">unplug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">unplug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">},</span>
+
     <span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">doc</span><span class="o">,</span>
             <span class="nx">diff</span><span class="o">,</span>
@@ -319,6 +336,7 @@
             <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">=</span> <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;refresh&#39;</span><span class="o">,</span> <span class="nx">diff</span><span class="o">);</span>
         <span class="o">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
