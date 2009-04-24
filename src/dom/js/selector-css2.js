@@ -1,6 +1,6 @@
 /**
- * The selector-css1 module provides helper methods allowing CSS1 Selectors to be used with DOM elements.
- * @module selector-css1
+ * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
+ * @module selector
  * @title Selector Utility
  * @requires yahoo, dom
  */
@@ -24,7 +24,7 @@ var PARENT_NODE = 'parentNode',
 
     Selector = Y.Selector,
 
-    SelectorCSS1 = {
+    SelectorCSS2 = {
         SORT_RESULTS: false,
         _children: function(node) {
             var ret = node.children;
@@ -420,7 +420,7 @@ var PARENT_NODE = 'parentNode',
         }
     };
 
-Y.mix(Y.Selector, SelectorCSS1, true);
+Y.mix(Y.Selector, SelectorCSS2, true);
 
 // only override native when not supported
 if (!Y.Selector._supportsNative()) {
