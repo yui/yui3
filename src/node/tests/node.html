@@ -127,6 +127,7 @@ body {
         </ol>
     </div>
 
+<iframe src="test-frame"></iframe>
 <script type="text/javascript">
 YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var tool = YAHOO.tool,
@@ -185,6 +186,10 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                     Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
 
             Assert.areEqual(document.body, Y.Node.getDOMNode(Y.get('div, .foo, body')), "Y.get('div, .foo, body')");
+
+            var frameDoc = Y.get('iframe').get('contentWindow.document');
+            Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
+                "frameDoc.query('#demo li').get('innerHTML')");
 
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');
