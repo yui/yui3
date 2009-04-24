@@ -47,6 +47,9 @@ Y.mix(Y.DOM, {
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
+            if (val === null) {
+                val = ''; // normalize for unsetting
+            }
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);
@@ -268,6 +271,14 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
         },
 
         set: function(node, val, style) {
+            var current;
+            if (val === '') { // normalize inline style behavior
+                current = node.currentStyle.opacity; // revert to original opacity
+                val = current;
+                if (val === undefined) {
+                    val = 1;
+                }
+            }
             if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 

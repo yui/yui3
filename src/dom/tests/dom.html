@@ -41,6 +41,10 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
 #foo {
     float:left; /* required for getStyle test */
 }
+
+#ft {
+    opacity: 0.75;
+}
 </style>
 
 <style type="text/css">
@@ -207,6 +211,22 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                 } catch(e) {
                     Assert.isFalse(1, 'setStyle invalid height error');
                 }
+
+                Y.DOM.setStyle(ft, 'display', 'none');
+                Assert.areEqual('none', Y.DOM.getStyle(ft, 'display'), "Y.DOM.setStyle(ft, 'display', 'none')");
+
+                Y.DOM.setStyle(ft, 'display', null);
+                Assert.areEqual('block', Y.DOM.getStyle(ft, 'display'), "Y.DOM.setStyle(ft, 'display', null)");
+
+                Y.DOM.setStyle(ft, 'display', 'none');
+                Y.DOM.setStyle(ft, 'display', '');
+                Assert.areEqual('block', Y.DOM.getStyle(ft, 'display'), "Y.DOM.setStyle(ft, 'display', '')");
+
+                Y.DOM.setStyle(ft, 'opacity', null);
+                Assert.areEqual(0.75, Y.DOM.getStyle(ft, 'opacity'), "Y.DOM.setStyle(ft, 'opacity', null)");
+                Y.DOM.setStyle(ft, 'opacity', 0);
+                Y.DOM.setStyle(ft, 'opacity', '');
+                Assert.areEqual(0.75, Y.DOM.getStyle(ft, 'opacity'), "Y.DOM.setStyle(ft, 'opacity', '')");
            },
 
             test_create: function() {
