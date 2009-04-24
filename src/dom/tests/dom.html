@@ -72,7 +72,7 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                         <form action="#" method="get" id="search">
                             <fieldset id="search-fields">
                                 <legend>Search</legend>
-                                <label for="search-p">Query</label>
+                                <label for="search-p" id="search-p-label">Query</label>
                                 <input type="text" name="p" id="search-p">
                                 <input type="submit" value="search">
                             </fieldset>
@@ -404,6 +404,21 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
             test_insertAfter: function() {
                 //Assert.areEqual(Y.DOM.insertAfter(hd, ft), ft.nextSibling, 'insertAfter(hd, ft)');
                 //Assert.areEqual(hd, ft.nextSibling, 'insertAfter(hd, ft)');
+            },
+
+            test_getAttribute: function() {
+                var node = Y.DOM.byId('doc');
+                Y.DOM.setAttribute(node, 'class', 'foo');
+                Assert.areEqual('foo', node.className, "Y.DOM.setAttribute(node, 'class', 'foo')");
+                Assert.areEqual('foo', Y.DOM.getAttribute(node, 'class'), "Y.DOM.getAttribute(node, 'class')");
+                Assert.areEqual('foo', Y.DOM.getAttribute(node, 'className'), "Y.DOM.getAttribute(node, 'className')");
+
+                Y.DOM.setAttribute(node, 'className', 'bar');
+                Assert.areEqual('bar', node.className, "node.className");
+
+                node = Y.DOM.byId('search-p-label');
+                Assert.areEqual('search-p', Y.DOM.getAttribute(node, 'for'), "Y.DOM.setAttribute(node, 'for', 'search-p')");
+                Assert.areEqual('search-p', Y.DOM.getAttribute(node, 'htmlFor'), "Y.DOM.setAttribute(node, 'htmlFor', 'search-p')");
             }
         })); 
         tool.TestRunner.add(suite);

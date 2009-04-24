@@ -411,7 +411,7 @@ Y.DOM = {
         'class': 'className'
     } : { // w3c
         'htmlFor': 'for',
-        'className': 'class' 
+        'className': 'class'
     },
 
     /**
@@ -422,8 +422,10 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        el.setAttribute(attr, val);
+        if (el && el.setAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            el.setAttribute(attr, val);
+        }
     },
 
 
@@ -435,19 +437,18 @@ Y.DOM = {
      * @return {String} The current value of the attribute. 
      */
     getAttribute: function(el, attr) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        var ret = el.getAttribute(attr);
-        if (!document.documentElement.hasAttribute) { // IE < 8
-            if (el.getAttributeNode) {
+        var ret = '';
+        if (el && el.getAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
                 ret = el.getAttributeNode(attr);
-                ret = (ret) ? ret.value : null;
+                ret = ret ? ret.value : '';
             } else {
-                ret = el.getAttribute(attr);
+                ret = el.getAttribute(attr, 2);
             }
-
-        }
-        if (ret === null) {
-            ret = ''; // per DOM spec
+            if (ret === null) {
+                ret = ''; // per DOM spec
+            }
         }
         return ret;
     },
@@ -2215,7 +2216,7 @@ var PARENT_NODE = 'parentNode',
                     i++;
                     test = attr.test;
                     if (test.test) {
-                        if (!test.test(node[attr.name])) {
+                        if (!test.test(Y.DOM.getAttribute(node, attr.name))) {
                             return false;
                         }
                     } else if (!test(node, attr.match)) {

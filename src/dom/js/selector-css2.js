@@ -198,7 +198,7 @@ var PARENT_NODE = 'parentNode',
                     i++;
                     test = attr.test;
                     if (test.test) {
-                        if (!test.test(node[attr.name])) {
+                        if (!test.test(Y.DOM.getAttribute(node, attr.name))) {
                             return false;
                         }
                     } else if (!test(node, attr.match)) {
