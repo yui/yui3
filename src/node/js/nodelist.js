@@ -72,6 +72,14 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} node The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };
@@ -106,7 +114,6 @@ NodeList.addMethod = function(name, fn, context) {
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
                 if (result !== undefined && result !== instance) {
-                console.log(result);
                     ret[ret.length] = result;
                 }
             });

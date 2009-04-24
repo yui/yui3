@@ -181,6 +181,11 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
 
+            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
+                    Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
+
+            Assert.areEqual(document.body, Y.Node.getDOMNode(Y.get('div, .foo, body')), "Y.get('div, .foo, body')");
+
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');
             Assert.areEqual(3, Y.all('#test-select option').size(), 'Y.get("#test-select option").size()');
@@ -338,6 +343,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Assert.isTrue(node.compareTo(node), 'compareTo(node)');
             Assert.isTrue(node.compareTo(Y.Node.get(node)), 'compareTo(new Y.Node)');
+            Assert.isFalse(node.compareTo(null), 'compareTo(null)');
 
             Assert.isFalse(node.create('<p>foo</p>').inDoc(), 'node.inDoc()');
 

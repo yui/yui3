@@ -85,6 +85,15 @@ Node.DOM_EVENTS = {
 
 Node._instances = {};
 
+/**
+ * Retrieves the DOM node bound to a Node instance
+ * @method getDOMNode
+ * @static
+ *
+ * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * as the node argument, it is simply returned.
+ */
 Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
@@ -807,6 +816,14 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} node The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };

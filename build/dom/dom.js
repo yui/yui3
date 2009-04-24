@@ -2030,7 +2030,7 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
-        SORT_RESULTS: false,
+        SORT_RESULTS: true,
         _children: function(node) {
             var ret = node.children;
 
@@ -2152,7 +2152,7 @@ var PARENT_NODE = 'parentNode',
                             root, firstOnly, true)); 
                 }
 
-                ret = Selector.SORT_RESULT ? Selector._sort(ret) : ret;
+                ret = Selector.SORT_RESULTS ? Selector._sort(ret) : ret;
                 Selector._clearFoundCache();
             } else {
                 root = root || Y.config.doc;
