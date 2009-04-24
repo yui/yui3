@@ -103,6 +103,15 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
+        /**
+         * Executes the supplied function against each node until true is returned.
+         * @method some
+         *
+         * @param {Array} nodes The nodes to run the function against 
+         * @param {Function} fn  The function to run against each node
+         * @return {Boolean} whether or not any element passed
+         * @static
+         */
         some: function() { return (Array.prototype.some) ?
             function(nodes, fn, context) {
                 return Array.prototype.some.call(nodes, fn, context);

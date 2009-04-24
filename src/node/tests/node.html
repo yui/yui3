@@ -271,6 +271,11 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Assert.areEqual('fresh', node.create('<div id="fresh">fresh</div>').get('id'), 'node.create from string)');
 
+            node = Y.Node.create('<select><option>foo</option></select>');
+            var option = Y.Node.create('<option>bar</option>').set('selected', 'selected');
+            node.appendChild(option);
+            Assert.isTrue(Y.Node.getDOMNode(option).selected, "Y.Node.create('<option>test</option>').set('selected', 'selected'))");
+
         },
 
         test_setter: function() {
