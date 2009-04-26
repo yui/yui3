@@ -61,16 +61,30 @@
 <span class="c">    details: 1,</span>
 <span class="c">    type: 1,</span>
 <span class="c">    target: 1,</span>
-<span class="c">    currentTarget,</span>
-<span class="c">    related</span>
+<span class="c">    currentTarget: 1,</span>
+<span class="c">    stopPropagation: 2,</span>
+<span class="c">    stopImmediatePropagation: 2,</span>
+<span class="c">    preventDefault: 2,</span>
+<span class="c">    halt: 2</span>
+<span class="c">};</span>
 <span class="c"></span>
-<span class="c">}</span>
-<span class="c"></span>
-<span class="c">function makeFacade(target, properties, methods) {</span>
-<span class="c">    return function (target, properties, methods) {</span>
-<span class="c">        Y.mix(this</span>
-<span class="c">    };</span>
-<span class="c">}</span>
+<span class="c">Y.EventFacade = function(e, currentTarget) {</span>
+<span class="c">    if (e) {</span>
+<span class="c">        Y.Object.each(PROPS, function(v, k) {</span>
+<span class="c">            //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];</span>
+<span class="c">            var val = e[k];</span>
+<span class="c">            if (val) {</span>
+<span class="c">                this[k] = (v == 2) ? function() {</span>
+<span class="c">                    if (val) {</span>
+<span class="c">                        val.apply(e, arguments);</span>
+<span class="c">                    }</span>
+<span class="c">                } : val;</span>
+<span class="c">            } else {</span>
+<span class="c">                console.log(&#39;missing &#39; + k);</span>
+<span class="c">            }</span>
+<span class="c">        });</span>
+<span class="c">    }</span>
+<span class="c">};</span>
 <span class="c">*/</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">currentTarget</span><span class="o">)</span> <span class="o">{</span>
@@ -148,12 +162,7 @@
 <span class="c">     * on the current target will not be executed</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">halt</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">immediate</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">immediate</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+        <span class="nx">e</span><span class="o">.</span><span class="nx">halt</span><span class="o">(</span><span class="nx">immediate</span><span class="o">);</span>
     <span class="o">};</span>
 
 <span class="o">};</span>

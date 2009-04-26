@@ -1,4 +1,4 @@
-YUI.add('node', function(Y) {
+YUI.add('node-base', function(Y) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -30,6 +30,21 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype,
+
+    Node = function(config) {
+        this[UID] = Y.stamp(config.node);
+        g_nodes[this[UID]] = config.node;
+        Node._instances[this[UID]] = this;
+
+        if (config.restricted) {
+            g_restrict[this[UID]] = true; 
+        }
+
+        SuperConstr.apply(this, arguments);
+    },
+
     // used with previous/next/ancestor tests
     _wrapFn = function(fn) {
         var ret = null;
@@ -44,22 +59,7 @@ var g_nodes = {},
         }
 
         return ret;
-    },
-
-    Node = function(config) {
-        this[UID] = Y.stamp(config.node);
-        g_nodes[this[UID]] = config.node;
-        Node._instances[this[UID]] = this;
-
-        if (config.restricted) {
-            g_restrict[this[UID]] = true; 
-        }
-
-        SuperConstr.apply(this, arguments);
-    },
-
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype;
+    };
 // end "globals"
 
 Node.NAME = 'Node';
@@ -85,6 +85,15 @@ Node.DOM_EVENTS = {
 
 Node._instances = {};
 
+/**
+ * Retrieves the DOM node bound to a Node instance
+ * @method getDOMNode
+ * @static
+ *
+ * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * as the node argument, it is simply returned.
+ */
 Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
@@ -102,8 +111,8 @@ Node.scrubVal = function(val, node, depth) {
             if (    NODE_TYPE in val || // dom node
                     val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document // window TODO: restrict?
-                ) { 
+                    val.document ) // window TODO: restrict?
+                { 
                 if (node && g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
@@ -218,13 +227,14 @@ Node.ATTRS = {
     'children': {
         getter: function() {
             var node = g_nodes[this[UID]],
-                children = node.children;
+                children = node.children,
+                childNodes, i, len;
 
             if (children === undefined) {
-                var childNodes = node.childNodes;
+                childNodes = node.childNodes;
                 children = [];
 
-                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                for (i = 0, len = childNodes.length; i < len; ++i) {
                     if (childNodes[i][TAG_NAME]) {
                         children[children.length] = childNodes[i];
                     }
@@ -242,7 +252,8 @@ Node.ATTRS = {
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]];
+    var node = g_nodes[this[UID]],
+        strPath;
 
     if (name.indexOf(DOT) !== -1) {
         strPath = name;
@@ -559,6 +570,10 @@ Y.mix(Node.prototype, {
     }
 }, true);
 
+Y.Node = Node;
+Y.get = Y.Node.get;
+var UID = '_yuid';
+
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -677,26 +692,56 @@ Y.Array.each([
      */
      'select'
 ], function(method) {
-    Node.prototype[method] = function(arg1, arg2, arg3) {
+    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
 });
 
-/**
- * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
- * @method contains
- * @param {Node | HTMLElement} needle The possible node or descendent
- * @return {Boolean} Whether or not this node is the needle its ancestor
- */
 Node.importMethod(Y.DOM, [
+    /**
+     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+     * @method contains
+     * @chainable
+     * @param {Node | HTMLElement} needle The possible node or descendent
+     * @return {Boolean} Whether or not this node is the needle its ancestor
+     */
     'contains',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method setAttribute
+     * @param {string} name The attribute name 
+     * @param {string} value The value to set
+     */
     'setAttribute',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method getAttribute
+     * @param {string} name The attribute name 
+     * @return {string} The attribute value 
+     */
     'getAttribute'
 ]);
 
-Y.Node = Node;
-Y.get = Y.Node.get;
+if (!document.documentElement.hasAttribute) { // IE < 8
+    Y.Node.prototype.hasAttribute = function(attr) {
+        return this.getAttribute(attr) !== '';
+    };
+}
+
+(function() { // IE clones expandos; regenerate UID
+    var node = document.createElement('div');
+    Y.stamp(node);
+    if (node[UID] === node.cloneNode(true)[UID]) {
+        Y.Node.prototype.cloneNode = function(deep) {
+            var node = Y.Node.getDOMNode(this).cloneNode(deep);
+            node[UID] = Y.guid();
+            return Y.get(node);
+        };
+    }
+})();
     /**
      * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
      * @module node
@@ -717,12 +762,13 @@ Y.get = Y.Node.get;
 
 Y.Array._diff = function(a, b) {
     var removed = [],
-        present = false;
+        present = false,
+        i, j, lenA, lenB;
 
     outer:
-    for (var i = 0, lenA = a.length; i < lenA; i++) {
+    for (i = 0, lenA = a.length; i < lenA; i++) {
         present = false;
-        for (var j = 0, lenB = b.length; j < lenB; j++) {
+        for (j = 0, lenB = b.length; j < lenB; j++) {
             if (a[i] === b[j]) {
                 present = true;
                 continue outer;
@@ -770,6 +816,14 @@ var g_nodelists = {},
 
 NodeList.NAME = 'NodeList';
 
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} node The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
 NodeList.getDOMNodes = function(nodeList) {
     return g_nodelists[nodeList[UID]];
 };
@@ -786,10 +840,8 @@ NodeList.each = function(instance, fn, context) {
 };
 
 NodeList.addMethod = function(name, fn, context) {
-    if (name) {
-        var tmp = NodeList._tmpNode =
-                NodeList._tmpNode || Y.Node.create('<div>');
-
+    var tmp = NodeList._getTempNode();
+    if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
                 args = arguments;
@@ -805,7 +857,7 @@ NodeList.addMethod = function(name, fn, context) {
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
-                if (result !== undefined) {
+                if (result !== undefined && result !== instance) {
                     ret[ret.length] = result;
                 }
             });
@@ -829,10 +881,18 @@ NodeList.importMethod = function(host, name, altName) {
     }
 };
 
+NodeList._getTempNode = function() {
+    var tmp = NodeList._tempNode;
+        if (!tmp) {
+            tmp = Y.Node.create('<div></div>');
+            NodeList._tempNode = tmp;
+        }
+    return tmp;
+};
+
 // call with instance context
 NodeList.DEFAULT_SETTER = function(attr, val) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>');
+    var tmp = NodeList._getTempNode();
     NodeList.each(this, function(node) {
         var instance = Y.Node._instances[node[UID]];
         if (!instance) {
@@ -845,8 +905,7 @@ NodeList.DEFAULT_SETTER = function(attr, val) {
 
 // call with instance context
 NodeList.DEFAULT_GETTER = function(attr) {
-    var tmp = NodeList._tmpNode =
-            NodeList._tmpNode || Y.Node.create('<div>'),
+    var tmp = NodeList._getTempNode(),
         ret = [];
 
     NodeList.each(this, function(node) {
@@ -890,6 +949,7 @@ Y.mix(NodeList.prototype, {
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             return fn.call(context, Y.get(node), index, instance);
         });
+        return instance;
     },
 
     /**
@@ -923,8 +983,7 @@ Y.mix(NodeList.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0),
-            ret;
+        var args = g_slice.call(arguments, 0);
 
         args.splice(2, 0, g_nodelists[this[UID]]);
         if (Node.DOM_EVENTS[type]) {
@@ -937,6 +996,22 @@ Y.mix(NodeList.prototype, {
     destructor: function() {
         g_nodelists[this[UID]] = [];
         delete NodeList._instances[this[UID]];
+    },
+
+    plug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.plug.apply(node, args);
+        });
+        return this;
+    },
+
+    unplug: function() {
+        var args = arguments;
+        this.each(function(node) {
+            node.unplug.apply(node, args);
+        });
+        return this;
     },
 
     refresh: function() {
@@ -956,6 +1031,7 @@ Y.mix(NodeList.prototype, {
             diff.removed = diff.removed ? Y.all(diff.removed) : null;
             this.fire('refresh', diff);
         }
+        return this;
     },
 
     /**
@@ -970,10 +1046,11 @@ Y.mix(NodeList.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
-            nodes = g_nodelists[this[UID]];
+            nodes = g_nodelists[this[UID]],
+            node;
 
         if (nodes && nodes[0]) {
-            var node = nodes[0];
+            node = nodes[0];
             str += node[NODE_NAME];
             if (node.id) {
                 str += '#' + node.id; 
@@ -1021,50 +1098,6 @@ Y.all = function(nodes, doc, restrict) {
     return nodeList;
 };
 Y.Node.all = Y.all; // TODO: deprecated
-/**
- * Extended Node interface for managing node styles.
- * @module node
- * @submodule node-style
- * @for Node
- */
-
-var methods = [
-    /**
-     * Returns the style's current value.
-     * @method getStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The current value of the style property for the element.
-     */
-    'getStyle',
-
-    /**
-     * Returns the computed value for the given style property.
-     * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The computed value of the style property for the element.
-     */
-    'getComputedStyle',
-
-    /**
-     * Sets a style property of the node.
-     * @method setStyle
-     * @param {String} attr The style attribute to set. 
-     * @param {String|Number} val The value. 
-     * @chainable
-     */
-    'setStyle',
-
-    /**
-     * Sets multiple style properties on the node.
-     * @method setStyles
-     * @param {Object} hash An object literal of property:value pairs. 
-     * @chainable
-     */
-    'setStyles'
-];
-Y.Node.importMethod(Y.DOM, methods);
-Y.NodeList.importMethod(Y.Node.prototype, methods);
-
 /**
  * Extended Node interface for managing classNames.
  * @module node
@@ -1118,6 +1151,60 @@ Y.NodeList.importMethod(Y.Node.prototype, methods);
 
     Y.Node.importMethod(Y.DOM, methods);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
+
+
+}, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});
+YUI.add('node-style', function(Y) {
+
+/**
+ * Extended Node interface for managing node styles.
+ * @module node
+ * @submodule node-style
+ * @for Node
+ */
+
+var methods = [
+    /**
+     * Returns the style's current value.
+     * @method getStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The current value of the style property for the element.
+     */
+    'getStyle',
+
+    /**
+     * Returns the computed value for the given style property.
+     * @method getComputedStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The computed value of the style property for the element.
+     */
+    'getComputedStyle',
+
+    /**
+     * Sets a style property of the node.
+     * @method setStyle
+     * @param {String} attr The style attribute to set. 
+     * @param {String|Number} val The value. 
+     * @chainable
+     */
+    'setStyle',
+
+    /**
+     * Sets multiple style properties on the node.
+     * @method setStyles
+     * @param {Object} hash An object literal of property:value pairs. 
+     * @chainable
+     */
+    'setStyles'
+];
+Y.Node.importMethod(Y.DOM, methods);
+Y.NodeList.importMethod(Y.Node.prototype, methods);
+
+
+
+}, '@VERSION@' ,{requires:['dom-style', 'node-base']});
+YUI.add('node-screen', function(Y) {
+
 /**
  * Extended Node interface for managing regions and screen positioning.
  * Adds support for positioning elements and normalizes window size and scroll detection. 
@@ -1126,76 +1213,7 @@ Y.NodeList.importMethod(Y.Node.prototype, methods);
  * @for Node
  */
 
-/**
- * Returns a region object for the node 
- * @property region
- * @type Node
- */
-Y.Node.ATTRS.region = {
-    getter: function() {
-        var node = Y.Node.getDOMNode(this);
-        if (node && !node.tagName) {
-            if (node.nodeType === 9) { // document
-                node = node.documentElement;
-            } else if (node.alert) { // window
-                node = node.document.documentElement;
-            }
-        }
-        return Y.DOM.region(node);
-    }
-};
-    
-/**
- * Returns a region object for the node's viewport 
- * @property viewportRegion
- * @type Node
- */
-Y.Node.ATTRS.viewportRegion = {
-    getter: function() {
-        return Y.DOM.viewportRegion(Y.Node.getDOMNode(this));
-    }
-};
-
-Y.Node.importMethod(Y.DOM, 'inViewportRegion');
-
-// these need special treatment to extract 2nd node arg
-/**
- * Compares the intersection of the node with another node or region 
- * @method intersect         
- * @param {Node|Object} node2 The node or region to compare with.
- * @param {Object} altRegion An alternate region to use (rather than this node's). 
- * @return {Object} An object representing the intersection of the regions. 
- */
-Y.Node.prototype.intersect = function(node2, altRegion) {
-    var node1 = Y.Node.getDOMNode(this);
-    if (node2 instanceof Y.Node) { // might be a region object
-        node2 = Y.Node.getDOMNode(node2);
-    }
-    return Y.DOM.intersect(node1, node2, altRegion); 
-};
-
-/**
- * Determines whether or not the node is within the giving region.
- * @method inRegion         
- * @param {Node|Object} node2 The node or region to compare with.
- * @param {Boolean} all Whether or not all of the node must be in the region. 
- * @param {Object} altRegion An alternate region to use (rather than this node's). 
- * @return {Object} An object representing the intersection of the regions. 
- */
-Y.Node.prototype.inRegion = function(node2, all, altRegion) {
-    var node1 = Y.Node.getDOMNode(this);
-    if (node2 instanceof Y.Node) { // might be a region object
-        node2 = Y.Node.getDOMNode(node2);
-    }
-    return Y.DOM.inRegion(node1, node2, all, altRegion); 
-};
-/**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
+var NODE_TYPE = 'nodeType';
 
 // these are all "safe" returns, no wrapping required
 Y.each([
@@ -1245,11 +1263,11 @@ Y.each([
         Y.Node.ATTRS[name] = {
             getter: function() {
                 var args = Array.prototype.slice.call(arguments);
-                args.unshift(Y.Node.getDOMNode(this[UID]));
+                args.unshift(Y.Node.getDOMNode(this));
 
                 return Y.DOM[name].apply(this, args);
             }
-        }
+        };
     }
 );
 
@@ -1349,5 +1367,81 @@ Y.Node.importMethod(Y.DOM, [
     'setY'
 ]);
 
+/**
+ * Extended Node interface for managing regions and screen positioning.
+ * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * @module node
+ * @submodule node-screen
+ * @for Node
+ */
 
-}, '@VERSION@' ,{requires:['dom', 'base']});
+/**
+ * Returns a region object for the node 
+ * @property region
+ * @type Node
+ */
+Y.Node.ATTRS.region = {
+    getter: function() {
+        var node = Y.Node.getDOMNode(this);
+        if (node && !node.tagName) {
+            if (node.nodeType === 9) { // document
+                node = node.documentElement;
+            } else if (node.alert) { // window
+                node = node.document.documentElement;
+            }
+        }
+        return Y.DOM.region(node);
+    }
+};
+    
+/**
+ * Returns a region object for the node's viewport 
+ * @property viewportRegion
+ * @type Node
+ */
+Y.Node.ATTRS.viewportRegion = {
+    getter: function() {
+        return Y.DOM.viewportRegion(Y.Node.getDOMNode(this));
+    }
+};
+
+Y.Node.importMethod(Y.DOM, 'inViewportRegion');
+
+// these need special treatment to extract 2nd node arg
+/**
+ * Compares the intersection of the node with another node or region 
+ * @method intersect         
+ * @param {Node|Object} node2 The node or region to compare with.
+ * @param {Object} altRegion An alternate region to use (rather than this node's). 
+ * @return {Object} An object representing the intersection of the regions. 
+ */
+Y.Node.prototype.intersect = function(node2, altRegion) {
+    var node1 = Y.Node.getDOMNode(this);
+    if (node2 instanceof Y.Node) { // might be a region object
+        node2 = Y.Node.getDOMNode(node2);
+    }
+    return Y.DOM.intersect(node1, node2, altRegion); 
+};
+
+/**
+ * Determines whether or not the node is within the giving region.
+ * @method inRegion         
+ * @param {Node|Object} node2 The node or region to compare with.
+ * @param {Boolean} all Whether or not all of the node must be in the region. 
+ * @param {Object} altRegion An alternate region to use (rather than this node's). 
+ * @return {Object} An object representing the intersection of the regions. 
+ */
+Y.Node.prototype.inRegion = function(node2, all, altRegion) {
+    var node1 = Y.Node.getDOMNode(this);
+    if (node2 instanceof Y.Node) { // might be a region object
+        node2 = Y.Node.getDOMNode(node2);
+    }
+    return Y.DOM.inRegion(node1, node2, all, altRegion); 
+};
+
+
+}, '@VERSION@' ,{requires:['dom-screen']});
+
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false});
+

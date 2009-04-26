@@ -118,11 +118,13 @@ Y.DOM = {
                     wrapFn = fn;
                 if (element) {
                     if (tag && !Y.UA.webkit) { // children.tags() broken in safari
-                        elements = element.children.tags(tag); 
+                        elements = element.children.tags(tag);
                     } else {
-                        elements = element.children; 
-                        wrapFn = function(el) {
-                            return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                        elements = element.children;
+                        if (tag) {
+                            wrapFn = function(el) {
+                                return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
+                            }
                         }
                     }
 
@@ -409,7 +411,7 @@ Y.DOM = {
         'class': 'className'
     } : { // w3c
         'htmlFor': 'for',
-        'className': 'class' 
+        'className': 'class'
     },
 
     /**
@@ -420,8 +422,10 @@ Y.DOM = {
      * @param {String} val The value of the attribute.
      */
     setAttribute: function(el, attr, val) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        el.setAttribute(attr, val);
+        if (el && el.setAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            el.setAttribute(attr, val);
+        }
     },
 
 
@@ -433,19 +437,18 @@ Y.DOM = {
      * @return {String} The current value of the attribute. 
      */
     getAttribute: function(el, attr) {
-        attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-        var ret = el.getAttribute(attr);
-        if (!document.documentElement.hasAttribute) { // IE < 8
-            if (el.getAttributeNode) {
+        var ret = '';
+        if (el && el.getAttribute) {
+            attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
+            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
                 ret = el.getAttributeNode(attr);
-                ret = (ret) ? ret.value : null;
+                ret = ret ? ret.value : '';
             } else {
-                ret = el.getAttribute(attr);
+                ret = el.getAttribute(attr, 2);
             }
-
-        }
-        if (ret === null) {
-            ret = ''; // per DOM spec
+            if (ret === null) {
+                ret = ''; // per DOM spec
+            }
         }
         return ret;
     },
@@ -465,10 +468,6 @@ Y.DOM = {
         var frag = doc.createElement(tag);
         frag.innerHTML = Y.Lang.trim(html);
         return frag.removeChild(frag[FIRST_CHILD]);
-    },
-
-    innerHTML: function(node, content, execScripts) {
-        Y.DOM.insertNode(node, content, 'innerHTML', execScripts);
     },
 
     insertNode: function(node, content, where, execScripts) {

@@ -107,8 +107,9 @@ var L = Y.Lang,
             defaults: {
                 context: this, 
                 host: this,
-                emitFacade: o.emitFacade || false,
-                fireOnce: o.fireOnce || false,
+                emitFacade: o.emitFacade,
+                fireOnce: o.fireOnce,
+                queuable: o.queuable,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -124,8 +125,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -583,8 +582,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {

@@ -1,13 +1,16 @@
-**** version 3.0.0 PR2 ***
+Development Master
+- Node and NodeList broken into separate classes
+- NodeList no longer contains DOM related methods (appendChild, removeChild, contains, etc.)
+- Node no longer contains NodeList methods (size, each, filter, etc.)
+- Both Node and NodeList extend Base
+- set() fires attribute change events
+- zero length NodeLists now return an empty NodeList rather than null
 
-* Node instances now have NodeList api
+release 3.0.0 PR2
+- Node instances now have NodeList api
+- Y.all now returns null for non-matching queries (symmetry with "Y.get")
+- deep setters/getters now supported (Y.get('#foo').get('firstSibling.innerHTML'))
+- window can now be a Node instance 
 
-* Y.all now returns null for non-matching queries (symmetry with "Y.get")
-
-* deep setters/getters now supported (Y.get('#foo').get('firstSibling.innerHTML'))
-
-* window can now be a Node instance 
-
-**** version 3.0.0 PR1 ***
-
-* initial 3.0 revision
+release 3.0.0 PR1
+- initial 3.0 revision
