@@ -1899,28 +1899,29 @@ YUI.add('dd-proxy', function(Y) {
         NODE = 'node',
         DRAG_NODE = 'dragNode',
         PROXY = 'proxy',
-        OWNER = 'owner';
+        OWNER = 'owner',
+        TRUE = true;
 
-    var Proxy = function(config) {
-        Proxy.superclass.constructor.apply(this, arguments);
+    var P = function(config) {
+        P.superclass.constructor.apply(this, arguments);
     };
     
-    Proxy.NAME = 'DDProxy';
+    P.NAME = 'DDProxy';
     /**
     * @property proxy
     * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
     * @type {String}
     */
-    Proxy.NS = 'proxy';
+    P.NS = 'proxy';
 
-    Proxy.ATTRS = {
+    P.ATTRS = {
         /**
         * @attribute moveOnEnd
         * @description Move the original node at the end of the drag. Default: true
         * @type Boolean
         */
         moveOnEnd: {
-            value: true
+            value: TRUE
         },
         /**
         * @attribute resizeFrame
@@ -1928,7 +1929,7 @@ YUI.add('dd-proxy', function(Y) {
         * @type Boolean
         */
         resizeFrame: {
-            value: true
+            value: TRUE
         },
         /**
         * @attribute positionProxy
@@ -1936,7 +1937,7 @@ YUI.add('dd-proxy', function(Y) {
         * @type Boolean
         */
         positionProxy: {
-            value: true
+            value: TRUE
         },
         /**
         * @attribute borderStyle
@@ -1952,7 +1953,7 @@ YUI.add('dd-proxy', function(Y) {
         * @type Object
         */
         owner: {
-            writeOnce: true,
+            writeOnce: TRUE,
             value: false
         }
     };
@@ -1960,22 +1961,22 @@ YUI.add('dd-proxy', function(Y) {
     var proto = {
         /**
         * @private
-        * @property _proxyHandles
+        * @property _hands
         * @description Holds the event handles for setting the proxy
         */
-        _proxyHandles: null,
+        _hands: null,
         /**
         * @private
-        * @method _setProxy
+        * @method _init
         * @description Handler for the proxy config attribute
         */
-        _setProxy: function() {
+        _init: function() {
             if (!DDM._proxy) {
-                Y.on('event:ready', Y.bind(this._setProxy, this));
+                Y.on('event:ready', Y.bind(this._init, this));
                 return;
             }
-            if (!this._proxyHandles) {
-                this._proxyHandles = [];
+            if (!this._hands) {
+                this._hands = [];
             }
             var i, h, h1, owner = this.get(OWNER), dnode = owner.get(DRAG_NODE);
             if (dnode.compareTo(owner.get(NODE))) {
@@ -1983,8 +1984,8 @@ YUI.add('dd-proxy', function(Y) {
                     owner.set(DRAG_NODE, DDM._proxy);
                 }
             }
-            for (i in this._proxyHandles) {
-                this._proxyHandles[i].detach();
+            for (i in this._hands) {
+                this._hands[i].detach();
             }
             h = DDM.on('ddm:start', Y.bind(function() {
                 if (DDM.activeDrag === owner) {
@@ -1999,23 +2000,23 @@ YUI.add('dd-proxy', function(Y) {
                     owner.get(DRAG_NODE).setStyle('display', 'none');
                 }
             }, this));
-            this._proxyHandles = [h, h1];
+            this._hands = [h, h1];
         },
         initializer: function() {
-            this._setProxy();
+            this._init();
         },
         destructor: function() {
             var owner = this.get(OWNER);
-            for (var i in this._proxyHandles) {
-                this._proxyHandles[i].detach();
+            for (var i in this._hands) {
+                this._hands[i].detach();
             }
             owner.set(DRAG_NODE, owner.get(NODE));
         }
     };
     
     Y.namespace('plugin');
-    Y.extend(Proxy, Y.Base, proto);
-    Y.plugin.DDProxy = Proxy;
+    Y.extend(P, Y.Base, proto);
+    Y.plugin.DDProxy = P;
 
     //Add a couple of methods to the DDM
     Y.mix(DDM, {
@@ -2026,8 +2027,8 @@ YUI.add('dd-proxy', function(Y) {
         * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
         _createFrame: function() {
-            if (!Y.DD.DDM._proxy) {
-                Y.DD.DDM._proxy = true;
+            if (!DDM._proxy) {
+                DDM._proxy = TRUE;
 
                 var p = Y.Node.create('<div></div>'),
                 b = Y.Node.get('body');
@@ -2042,8 +2043,8 @@ YUI.add('dd-proxy', function(Y) {
 
                 b.insertBefore(p, b.get('firstChild'));
                 p.set('id', Y.stamp(p));
-                p.addClass(Y.DD.DDM.CSS_PREFIX + '-proxy');
-                Y.DD.DDM._proxy = p;
+                p.addClass(DDM.CSS_PREFIX + '-proxy');
+                DDM._proxy = p;
             }
         },
         /**
@@ -2088,7 +2089,7 @@ YUI.add('dd-proxy', function(Y) {
     });
 
     //Create the frame when DOM is ready
-    Y.on('event:ready', Y.bind(Y.DD.DDM._createFrame, Y.DD.DDM));
+    Y.on('event:ready', Y.bind(DDM._createFrame, DDM));
 
 
 
@@ -2511,7 +2512,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
 
