@@ -1,12 +1,13 @@
 YUI Event Utility
     DOM event utilities
 
-3.0.0next
+3.0.0b1
     - DOM event, custom event, and simulate event moved to separate modules.
     - Event.attach returns a single handle if the result from collection processing is a single item.
-    - Fixed unsubscribeAll return value.
     - purgeElement only reads element guids, it does not create new ones for elements without one.
     - Added Y.on('delegate', fn, el, 'click', 'selector' ...
+    - Added Y.on('windowresize', fn)
+    - Fixed unsubscribeAll return value.
 
 3.0.0pr2
     - Fixed IE notification error when no arguments are supplied.

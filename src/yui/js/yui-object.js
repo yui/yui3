@@ -21,30 +21,30 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
-    /**
-     * Extracts the keys, values, or size from an object
-     * 
-     * @method _extract
-     * @param o the object
-     * @param what what to extract (0: keys, 1: values, 2: size)
-     * @return {boolean|Array} the extracted info
-     * @private
-     */
-    _extract = function(o, what) {
-        var count = (what === 2), out = (count) ? 0 : [], i;
+/**
+ * Extracts the keys, values, or size from an object
+ * 
+ * @method _extract
+ * @param o the object
+ * @param what what to extract (0: keys, 1: values, 2: size)
+ * @return {boolean|Array} the extracted info
+ * @private
+ */
+_extract = function(o, what) {
+    var count = (what === 2), out = (count) ? 0 : [], i;
 
-        for (i in o) {
-            if (count) {
-                out++;
-            } else {
-                if (o.hasOwnProperty(i)) {
-                    out.push((what) ? o[i] : i);
-                }
+    for (i in o) {
+        if (count) {
+            out++;
+        } else {
+            if (o.hasOwnProperty(i)) {
+                out.push((what) ? o[i] : i);
             }
         }
+    }
 
-        return out;
-    };
+    return out;
+};
 
 /**
  * Returns an array containing the object's keys
@@ -124,7 +124,9 @@ O.hasValue = function(o, v) {
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = O.hasKey;
+O.owns = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 /**
  * Executes a function on each item. The function

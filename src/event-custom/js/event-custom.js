@@ -35,6 +35,8 @@ var onsubscribeType = "_event:onsub",
         'type'
     ],
 
+    FACADE = new Y.EventFacade(),
+
     YUI3_SIGNATURE = 9;
 
 Y.EventHandle = function(evt, sub) {
@@ -302,7 +304,7 @@ Y.CustomEvent.prototype = {
         }
     },
 
-    _subscribe: function(fn, context, args, when) {
+    _on: function(fn, context, args, when) {
 
         if (!fn) {
             Y.error("Invalid callback for CE: " + this.type);
@@ -316,11 +318,10 @@ Y.CustomEvent.prototype = {
 
         s = new Y.Subscriber(fn, context, args, when);
 
-
         if (this.fireOnce && this.fired) {
 
             // this._notify(s);
-            // setTimeout(Y.rbind(this._notify, this, s), 0);
+            
             Y.later(0, this, this._notify, s);
         }
 
@@ -338,27 +339,23 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      * @deprecated use on
      */
     subscribe: function(fn, context) {
-        return this._subscribe(fn, context, arguments, true);
+        return this._on(fn, context, arguments, true);
     },
 
     /**
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      */
     on: function(fn, context) {
-        return this._subscribe(fn, context, arguments, true);
+        return this._on(fn, context, arguments, true);
     },
 
     /**
@@ -367,13 +364,11 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
-     * @return {EventHandle} unsubscribe handle
+     * @return {EventHandle|EventTarget} unsubscribe handle or a
+     * chainable event target depending on the 'chain' config.
      */
     after: function(fn, context) {
-        return this._subscribe(fn, context, arguments, AFTER);
+        return this._on(fn, context, arguments, AFTER);
     },
 
     /**
@@ -382,7 +377,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean} True if the subscriber was found and detached.
+     * @return {boolean|EventTarget} returns a chainable event target
+     * or a boolean for legacy detach support.
      */
     detach: function(fn, context) {
 
@@ -416,7 +412,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean} True if the subscriber was found and detached.
+     * @return {boolean|EventTarget} returns a chainable event target
+     * or a boolean for legacy detach support.
      * @deprecated use detach
      */
     unsubscribe: function() {
@@ -425,7 +422,7 @@ Y.CustomEvent.prototype = {
 
     _getFacade: function() {
 
-        var ef = this._facade, o, args = this.details;
+        var ef = this._facade, o, args = this.details, o2;
 
         if (!ef) {
             ef = new Y.EventFacade(this, this.currentTarget);
@@ -435,12 +432,22 @@ Y.CustomEvent.prototype = {
         // properties to the event facade
         o = args && args[0];
 
-        // if (Y.Lang.isObject(o, true) && !o._yuifacade) {
         if (Y.Lang.isObject(o, true)) {
+
+            o2 = {};
+
+            // protect the event facade properties
+            Y.mix(o2, ef, true, FACADE);
+
+            // mix the data
             Y.mix(ef, o, true);
+
+            // restore ef
+            Y.mix(ef, o2, true);
         }
 
         // update the details field with the arguments
+        // ef.type = this.type;
         ef.details = this.details;
         ef.target = this.target;
         ef.currentTarget = this.currentTarget;
@@ -466,7 +473,6 @@ Y.CustomEvent.prototype = {
         var ret, ct;
 
         // emit an EventFacade if this is that sort of event
-        // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
         if (this.emitFacade) {
 
             // @TODO object literal support to fire makes it possible for
@@ -474,14 +480,24 @@ Y.CustomEvent.prototype = {
             
             if (!ef) {
                 ef = this._getFacade(args);
-                args[0] = ef;
-            }
 
+                if (Y.Lang.isObject(args[0])) {
+                    args[0] = ef;
+                } else {
+                    args.unshift(ef);
+                }
+            }
         }
 
         // The default context should be the object/element that
         // the listener was bound to.
-        ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+        
+        // @TODO this breaks some expectations documented here:
+        // http://yuilibrary.com/projects/yui3/ticket/2527854
+        // confirm that their isn't a case that the bubbled
+        // context should be used.
+        // ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
+
         ret = s.notify(ct || this.context, args, this);
 
         if (false === ret || this.stopped > 1) {
@@ -524,7 +540,7 @@ Y.CustomEvent.prototype = {
 
         var es = Y.Env._eventstack,
             subs, s, args, i, ef, q, queue, ce, hasSub,
-            ret = true;
+            ret = true, events;
 
 
         if (es) {
@@ -577,6 +593,21 @@ Y.CustomEvent.prototype = {
             this.prevented = 0;
             this.target = this.target || this.host;
 
+            events = new Y.EventTarget({
+                fireOnce: true,
+                context: this.host || this
+            });
+
+            this.events = events;
+
+            if (this.preventedFn) {
+                events.on('prevented', this.preventedFn);
+            }
+
+            if (this.stoppedFn) {
+                events.on('stopped', this.stoppedFn);
+            }
+
             this.currentTarget = this.host || this.currentTarget;
 
             this.fired = true;
@@ -601,7 +632,12 @@ Y.CustomEvent.prototype = {
                 this._facade = null;
 
                 ef = this._getFacade(args);
-                args[0] = ef;
+
+                if (Y.Lang.isObject(args[0])) {
+                    args[0] = ef;
+                } else {
+                    args.unshift(ef);
+                }
             }
 
             for (i in subs) {
@@ -755,9 +791,7 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        if (this.stoppedFn) {
-            this.stoppedFn.call(this.host || this, this);
-        }
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -768,9 +802,7 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        if (this.stoppedFn) {
-            this.stoppedFn.call(this.host || this, this);
-        }
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -781,10 +813,25 @@ Y.CustomEvent.prototype = {
         if (this.preventable) {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
+
+            this.events.fire('prevented', this);
         }
-        if (this.preventedFn) {
-            this.preventedFn.call(this.host || this, this);
+    },
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    halt: function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
         }
+        this.preventDefault();
     }
 
 };
@@ -839,19 +886,18 @@ Y.Subscriber = function(fn, context, args) {
      * @type Function
      */
     this.wrappedFn = fn;
+
+    /**
+     * Custom events for a given fire transaction.
+     * @property events
+     * @type {EventTarget}
+     */
+    this.events = null;
     
     if (context) {
-        /*
-        var a = (args) ? Y.Array(args) : [];
-        a.unshift(fn, context);
-        // a.unshift(fn);
-        m = Y.rbind.apply(Y, a);
-        */
         this.wrappedFn = Y.rbind.apply(Y, args);
     }
     
-
-
 };
 
 Y.Subscriber.prototype = {
@@ -921,3 +967,4 @@ Y.Subscriber.prototype = {
     }
 };
 
+// FACADE = new Y.EventFacade(new Y.CustomEvent('x'));

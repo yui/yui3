@@ -14,6 +14,7 @@ DATE      = 'date',
 ERROR     = 'error',
 FUNCTION  = 'function',
 NUMBER    = 'number',
+NULL      = 'null',
 OBJECT    = 'object',
 REGEX     = 'regexp',
 STRING    = 'string',
@@ -88,7 +89,8 @@ L.isFunction = function(o) {
  * @return {boolean} true if o is a date
  */
 L.isDate = function(o) {
-    return o instanceof Date;
+    // return o instanceof Date;
+    return L.type(o) === DATE;
 };
 
 /**
@@ -175,7 +177,15 @@ L.trim = function(s){
  */
 L.isValue = function(o) {
     var t = L.type(o);
-    return (t && t !== UNDEFINED) || false;
+    switch (t) {
+        case NUMBER:
+            return isFinite(o);
+        case NULL:
+        case UNDEFINED:
+            return false;
+        default:
+            return !!(t);
+    }
 };
 
 /**

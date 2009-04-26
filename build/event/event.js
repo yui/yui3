@@ -78,12 +78,14 @@ YUI.add('event', function(Y) {
  */
 
 var GLOBAL_ENV = YUI.Env,
+    
+    adapt = Y.Env.evt.plugins,
 
     yready = function() {
         Y.fire('domready');
     };
 
-Y.mix(Y.Env.eventAdaptors, {
+Y.mix(adapt, {
 
     /**
      * Executes the supplied callback when the DOM is first usable.  This
@@ -152,6 +154,346 @@ if (GLOBAL_ENV.DOMReady) {
 
 })();
 (function() {
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event
+ */
+
+/**
+ * Wraps a DOM event, properties requiring browser abstraction are
+ * fixed here.  Provids a security layer when required.
+ * @class EventFacade
+ * @param ev {Event} the DOM event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+ */
+
+/*
+ * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
+ */
+
+/*
+
+var whitelist = {
+    altKey          : 1,
+    // "button"          : 1, // we supply
+    // "bubbles"         : 1, // needed?
+    // "cancelable"      : 1, // needed? 
+    // "charCode"        : 1, // we supply
+    cancelBubble    : 1,
+    // "currentTarget"   : 1, // we supply
+    ctrlKey         : 1,
+    clientX         : 1, // needed?
+    clientY         : 1, // needed?
+    detail          : 1, // not fully implemented
+    // "fromElement"     : 1,
+    keyCode         : 1,
+    // "height"          : 1, // needed?
+    // "initEvent"       : 1, // need the init events?
+    // "initMouseEvent"  : 1,
+    // "initUIEvent"     : 1,
+    // "layerX"          : 1, // needed?
+    // "layerY"          : 1, // needed?
+    metaKey         : 1,
+    // "modifiers"       : 1, // needed?
+    // "offsetX"         : 1, // needed?
+    // "offsetY"         : 1, // needed?
+    // "preventDefault"  : 1, // we supply
+    // "reason"          : 1, // IE proprietary
+    // "relatedTarget"   : 1,
+    // "returnValue"     : 1, // needed?
+    shiftKey        : 1,
+    // "srcUrn"          : 1, // IE proprietary
+    // "srcElement"      : 1,
+    // "srcFilter"       : 1, IE proprietary
+    // "stopPropagation" : 1, // we supply
+    // "target"          : 1,
+    // "timeStamp"       : 1, // needed?
+    // "toElement"       : 1,
+    type            : 1,
+    // "view"            : 1,
+    // "which"           : 1, // we supply
+    // "width"           : 1, // needed?
+    x               : 1,
+    y               : 1
+},
+
+*/
+
+var whitelist = {
+    altKey          : 1,
+    cancelBubble    : 1,
+    ctrlKey         : 1,
+    clientX         : 1, // needed?
+    clientY         : 1, // needed?
+    detail          : 1, // not fully implemented
+    keyCode         : 1,
+    metaKey         : 1,
+    shiftKey        : 1,
+    type            : 1,
+    x               : 1,
+    y               : 1
+},
+
+    ua = Y.UA,
+
+    /**
+     * webkit key remapping required for Safari < 3.1
+     * @property webkitKeymap
+     * @private
+     */
+    webkitKeymap = {
+        63232: 38, // up
+        63233: 40, // down
+        63234: 37, // left
+        63235: 39, // right
+        63276: 33, // page up
+        63277: 34, // page down
+        25: 9      // SHIFT-TAB (Safari provides a different key code in
+                   // this case, even though the shiftKey modifier is set)
+    },
+
+    /**
+     * Returns a wrapped node.  Intended to be used on event targets,
+     * so it will return the node's parent if the target is a text
+     * node
+     * @method resolve
+     * @private
+     */
+    resolve = function(n) {
+
+        if (!n) {
+            return null;
+        }
+
+        try {
+            if (ua.webkit && 3 == n.nodeType) {
+                n = n.parentNode;
+            } 
+        } catch(ex) { }
+
+        return Y.Node.get(n);
+    };
+
+
+// provide a single event with browser abstractions resolved
+//
+// include all properties for both browers?
+// include only DOM2 spec properties?
+// provide browser-specific facade?
+
+Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
+
+    // @TODO the document should be the target's owner document
+
+    var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
+        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
+
+    // copy all primitives ... this is slow in FF
+    for (i in whitelist) {
+        // if (!Y.Lang.isObject(e[i])) {
+        if (whitelist.hasOwnProperty(i)) {
+            this[i] = e[i];
+        }
+    }
+
+    //////////////////////////////////////////////////////
+
+    if (!x && 0 !== x) {
+        x = e.clientX || 0;
+        y = e.clientY || 0;
+
+        if (ua.ie) {
+            x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
+            y += Math.max(d.documentElement.scrollTop, b.scrollTop);
+        }
+    }
+
+    this._yuifacade = true;
+
+    /**
+     * The X location of the event on the page (including scroll)
+     * @property pageX
+     * @type int
+     */
+    this.pageX = x;
+
+    /**
+     * The Y location of the event on the page (including scroll)
+     * @property pageY
+     * @type int
+     */
+    this.pageY = y;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * The keyCode for key events.  Uses charCode if keyCode is not available
+     * @property keyCode
+     * @type int
+     */
+    c = e.keyCode || e.charCode || 0;
+
+    if (ua.webkit && (c in webkitKeymap)) {
+        c = webkitKeymap[c];
+    }
+
+    /**
+     * The keyCode for key events.  Uses charCode if keyCode is not available
+     * @property keyCode
+     * @type int
+     */
+    this.keyCode = c;
+
+    /**
+     * The charCode for key events.  Same as keyCode
+     * @property charCode
+     * @type int
+     */
+    this.charCode = c;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * The button that was pushed.
+     * @property button
+     * @type int
+     */
+    this.button = e.which || e.button;
+
+    /**
+     * The button that was pushed.  Same as button.
+     * @property which
+     * @type int
+     */
+    this.which = this.button;
+
+    /**
+     * The event details.  Currently supported for Custom
+     * Events only, where it contains the arguments that
+     * were passed to fire().
+     * @property details
+     * @type Array
+     */
+    this.details = details;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Timestamp for the event
+     * @property time
+     * @type Date
+     */
+    this.time = e.time || new Date().getTime();
+
+    //////////////////////////////////////////////////////
+    
+    /**
+     * Node reference for the targeted element
+     * @propery target
+     * @type Node
+     */
+    this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
+
+    /**
+     * Node reference for the element that the listener was attached to.
+     * @propery currentTarget
+     * @type Node
+     */
+    this.currentTarget = (isCE) ? ot :  resolve(ot);
+
+    t = e.relatedTarget;
+
+    if (!t) {
+        if (e.type == "mouseout") {
+            t = e.toElement;
+        } else if (e.type == "mouseover") {
+            t = e.fromElement;
+        }
+    }
+
+    /**
+     * Node reference to the relatedTarget
+     * @propery relatedTarget
+     * @type Node
+     */
+    this.relatedTarget = (isCE) ? t : resolve(t);
+    
+    //////////////////////////////////////////////////////
+    // methods
+
+    /**
+     * Stops the propagation to the next bubble target
+     * @method stopPropagation
+     */
+    this.stopPropagation = function() {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
+    };
+
+    /**
+     * Stops the propagation to the next bubble target and
+     * prevents any additional listeners from being exectued
+     * on the current target.
+     * @method stopImmediatePropagation
+     */
+    this.stopImmediatePropagation = function() {
+
+        if (e.stopImmediatePropagation) {
+            e.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
+
+    };
+
+    /**
+     * Prevents the event's default behavior
+     * @method preventDefault
+     */
+    this.preventDefault = function() {
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
+    };
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    this.halt = function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this.preventDefault();
+    };
+
+};
+
+})();
+(function() {
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -166,6 +508,8 @@ if (GLOBAL_ENV.DOMReady) {
  * @static
  */
 
+
+// @TODO move the native addEventListener code to DOM
 var add = function(el, type, fn, capture) {
     if (el.addEventListener) {
             el.addEventListener(type, fn, !!capture);
@@ -457,27 +801,16 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 return (handles.length === 1) ? handles[0] : handles;
 
-
+            // If the el argument is a string, we assume it is 
+            // actually the id of the element.  If the page is loaded
+            // we convert el to the actual element, otherwise we 
+            // defer attaching the event until the element is
+            // ready
             } else if (Y.Lang.isString(el)) {
 
                 oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
-                // If the el argument is a string, we assume it is 
-                // actually the id of the element.  If the page is loaded
-                // we convert el to the actual element, otherwise we 
-                // defer attaching the event until onload event fires
-
-                // check to see if we need to delay hooking up the event 
-                // until after the page loads.
-
-                // Node collection
-                // if (oEl && oEl.size && oEl.size() > 0) {
-                //
-
-                /*
-                if (oEl) {
-                    el = oEl;
-                */
+                // @TODO switch to using DOM directly here
 
                 if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
                     size = oEl.size();
@@ -525,7 +858,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     bubbles: false
                 });
 
-                // cache the dom event details in the custom event
                 // for later removeListener calls
                 cewrapper.el = el;
                 cewrapper.type = type;
@@ -650,7 +982,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             var ev = e || window.event;
 
             return (noFacade) ? ev : 
-                new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
+                new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
         },
 
         /**
@@ -985,7 +1317,7 @@ Event._tryPreloadAttach();
  * @for YUI
  * @event available
  */
-Y.Env.eventAdaptors.available = {
+Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
@@ -999,7 +1331,7 @@ Y.Env.eventAdaptors.available = {
  * @for YUI
  * @event contentready
  */
-Y.Env.eventAdaptors.contentready = {
+Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
         var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
@@ -1010,7 +1342,7 @@ Y.Env.eventAdaptors.contentready = {
 var FOCUS   = Y.UA.ie ? "focusin" : "focus",
     BLUR    = Y.UA.ie ? "focusout" : "blur",
     CAPTURE = "capture_",
-    adapt = Y.Env.eventAdaptors;
+    adapt = Y.Env.evt.plugins;
 
 
 /**
@@ -1057,6 +1389,7 @@ adapt.blur = {
 };
 
 })();
+
 /**
  * Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
@@ -1075,7 +1408,7 @@ adapt.blur = {
  * to the listener.
  * @return {Event.Handle} the detach handle
  */
-Y.Env.eventAdaptors.key = {
+Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true),
@@ -1149,12 +1482,12 @@ Y.Env.eventAdaptors.key = {
     }
 };
 /**
- * Set up a delegated listener container.
+ * Sets up a delegated listener container.
  * @event delegate
  * @param type {string} 'delegate'
  * @param fn {string} the function to execute
  * @param el {string|node} the element that is the delegation container
- * @param event {string} the event type to delegate
+ * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
  * @param o optional context object
@@ -1163,42 +1496,43 @@ Y.Env.eventAdaptors.key = {
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-Y.Env.eventAdaptors.delegate = {
 
-    on: function(type, fn, el, event, spec, o) {
+Y.Env.evt.plugins.delegate = {
 
-        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
+    on: function(type, fn, el, delegateType, spec, o) {
+
+        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + delegateType + spec,
             a     = Y.Array(arguments, 0, true);
 
         if (!Y.getEvent(ename)) {
 
             // set up the listener on the container
-            Y.on(event, function(e) {
+            Y.on(delegateType, function(e) {
 
-                var targets = e.currentTarget.queryAll(spec),
-                    target  = e.target, 
+                var target  = e.target, 
                     passed  = false;
 
-                if (targets) {
+				// @TODO we need Node.some 
+				e.currentTarget.queryAll(spec).each(function (v, k) {
 
-                    // @TODO we need Node.some 
-                    targets.each(function (v, k) {
+					if ((!passed) && (v.compareTo(target) || v.contains(target))) {
 
-                        if ((!passed) && (v == target)) {
-                            Y.fire(ename, e);
-                            passed = true;
-                        }
+						e.target = v;
+						Y.fire(ename, e);
+						passed = true;
 
-                    });
+					}
 
-                }
+				});
+
 
             }, el);
+
         }
 
         a[0] = ename;
 
-        // remove element, delegation event, and delegation spec from the args
+        // remove element, delegation spec and context object from the args
         a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
@@ -1207,7 +1541,167 @@ Y.Env.eventAdaptors.delegate = {
     }
 
 };
+(function() {
 
+var detachHandle,
+
+    timerHandle,
+
+    CE_NAME = 'window:resize',
+
+    handler = function(e) {
+
+        if (Y.UA.gecko) {
+
+            Y.fire(CE_NAME, e);
+
+        } else {
+
+            if (timerHandle) {
+                timerHandle.cancel();
+            }
+
+            timerHandle = Y.later(Y.config.windowResizeDelay || 40, Y, function() {
+                Y.fire(CE_NAME, e);
+            });
+        }
+        
+    };
+
+
+/**
+ * Firefox fires the window resize event once when the resize action
+ * finishes, other browsers fire the event periodically during the
+ * resize.  This code uses timeout logic to simulate the Firefox 
+ * behavior in other browsers.
+ * @event windowresize
+ * @for YUI
+ */
+Y.Env.evt.plugins.windowresize = {
+
+    on: function(type, fn) {
+
+        // check for single window listener and add if needed
+        if (!detachHandle) {
+            detachHandle = Y.on('resize', handler);
+        }
+
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CE_NAME;
+
+        return Y.on.apply(Y, a);
+    }
+};
+
+})();
+var fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
+
+	var bReturnVal = false;
+
+	if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
+
+		if (spec && !node.compareTo(e.currentTarget)) {
+			e.target = node;
+		}
+
+		Y.fire(eventName, e);
+			
+		bReturnVal = true;
+			
+	}
+	
+	return bReturnVal;
+
+};
+
+
+var handleMouseEvent = function(e, eventName, spec) {
+
+	var relatedTarget = e.relatedTarget,
+		target = e.target,
+		bStop = false;
+
+	if (spec) {
+
+		this.queryAll(spec).each(function (v) {
+
+			if ((!bStop) && (v.compareTo(target) || v.contains(target))) {
+				bStop = fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
+			}
+			
+		});
+		
+	}
+	else {
+		fireMouseEventForNode(this, relatedTarget, eventName, e);
+	}
+
+};
+
+var eventConfig = {
+
+    on: function(type, fn, el, spec) {
+
+        var sDOMEvent = (type === 'mouseenter') ? 'mouseover' : 'mouseout',
+			ename = type + ':' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + sDOMEvent + spec,
+            a     = Y.Array(arguments, 0, true),
+			selector = Y.Lang.isString(spec) ? spec : null;
+
+        if (!Y.getEvent(ename)) {
+
+            // Set up the listener on the container
+            Y.on(sDOMEvent, Y.rbind(handleMouseEvent, Y.Node.get(el), ename, selector), el);
+        }
+
+        a[0] = ename;
+
+
+        // Remove the element (and the spec--if defined) from the args
+		
+		if (selector) {
+        	a.splice(2, 2);
+		}
+		else {
+			a.splice(2, 1);
+		}
+            
+
+        // Subscribe to the custom event for the delegation spec
+        return Y.on.apply(Y, a);
+
+    }
+
+};
+
+/**
+ * Sets up a "mouseenter" listener--a listener that is called the first time 
+ * the user's mouse enters the specified element(s).  Can be used to listen for 
+ * the "mouseenter" event on a single element, or a collection of elements as
+ * specified via a CSS selector passed as the fourth argument when subscribing 
+ * to the event. 
+ * @event mouseenter
+ * @param type {string} 'mouseenter'
+ * @param fn {string} The method the event invokes.
+ * @param el {string|node} The element to assign the listener to.
+ * @return {Event.Handle} the detach handle
+ * @for YUI
+ */
+Y.Env.evt.plugins.mouseenter = eventConfig;
+
+/**
+* Sets up a "mouseleave" listener--a listener that is called the first time 
+* the user's mouse enters the specified element(s).  Can be used to listen for 
+* the "mouseleave" event on a single element, or a collection of elements as
+* specified via a CSS selector passed as the fourth argument when subscribing 
+* to the event.
+* @event mouseleave
+* @param type {string} 'mouseleave'
+* @param fn {string} The method the event invokes.
+* @param el {string|node} The element to assign the listener to.
+* @return {Event.Handle} the detach handle
+* @for YUI
+ */
+Y.Env.evt.plugins.mouseleave = eventConfig;
 
 
 }, '@VERSION@' );

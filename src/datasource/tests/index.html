@@ -137,7 +137,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.response, "error: Expected undefined response.");
-                        ASSERT.isTrue(e.error, "error: Expected error.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
                 ds.subscribe("error", handler.handleError);
@@ -178,12 +178,12 @@
 
             testXHREvents: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "./php/ysearch_json_madonna.php",
+                    source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsLocator: "ResultSet.Result",
+                        resultsFields: ["Title"]
                     }
                 }});
 
@@ -233,8 +233,8 @@
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsLocator: "ResultSet.Result",
+                        resultsFields: ["Title"]
                     }
                 }});
 
@@ -246,7 +246,7 @@
                         ASSERT.areSame("a", e.request, "error: Expected request.");
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isObject(e.data, "error: Expected raw data.");
-                        ASSERT.isTrue(e.error, "error: Expected error.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
                 ds.subscribe("error", handler.handleError);
@@ -266,8 +266,8 @@
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONParser, cfg: {
                     schema: {
-                        resultsList: "ResultSet.Result",
-                        fields: ["Title"]
+                        resultsLocator: "ResultSet.Result",
+                        resultsFields: ["Title"]
                     }
                 }});
 
@@ -372,10 +372,10 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value.Any],
-                    callCount: 4
+                    callCount: 3
                 });
 
-                var id = ds.setInterval(200, null, {
+                var id = ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
@@ -387,10 +387,9 @@
                 this.wait(function(){
                     ds.clearInterval(id);
                     this.wait(function(){
-                        ASSERT.areSame(0, ds._intervals.length, "Expected no tracked intervals.");
                         Y.Mock.verify(handler);
                     }, 1000);
-                }, 1000);
+                }, 2000);
             },
 
             testClearAll: function() {
@@ -403,31 +402,28 @@
                     callCount: 3
                 });
 
-                var id1 = ds.setInterval(500, null, {
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                }),
-                id2 = ds.setInterval(500, null, {
+                });
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                }),
-                id3 = ds.setInterval(500, null, {
+                });
+                ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
                 });
 
-                ASSERT.areSame(3, ds._intervals.length, "Expected interval ids.");
-
                 this.wait(function(){
                     ds.clearAllIntervals();
                     this.wait(function(){
-                        ASSERT.areSame(0, ds._intervals.length, "Expected no tracked intervals.");
                         Y.Mock.verify(handler);
                     }, 500);
                 }, 1000);

@@ -4,11 +4,12 @@ var instance = Y;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Logger widget and anything else
+ * dispatched, which the Console widget and anything else
  * can consume.  If the 'useBrowserConsole' config is true, it will
  * write to the browser console if available.  YUI-specific log
  * messages will only be present in the -debug versions of the
- * JS files.
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
  *
  * @method log
  * @for YUI
@@ -68,8 +69,8 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files.
- * @method log
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default

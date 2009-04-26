@@ -1,8 +1,10 @@
-**** version 3.0.0 PR2 ***
+Development Master
+- Selector CSS3 support broken out as optional addon ('selector-css3')
+- Selector now leverages native querySelector
+- Selector now leverages native getElementsByClassName
 
-* Documentation updates
+version 3.0.0 PR2
+-Documentation updates
 
-
-**** version 3.0.0 PR1 ***
-
-* initial 3.0 revision
+version 3.0.0 PR1
+- initial 3.0 revision

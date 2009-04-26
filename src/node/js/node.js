@@ -28,6 +28,21 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype,
+
+    Node = function(config) {
+        this[UID] = Y.stamp(config.node);
+        g_nodes[this[UID]] = config.node;
+        Node._instances[this[UID]] = this;
+
+        if (config.restricted) {
+            g_restrict[this[UID]] = true; 
+        }
+
+        SuperConstr.apply(this, arguments);
+    },
+
     // used with previous/next/ancestor tests
     _wrapFn = function(fn) {
         var ret = null;
@@ -42,22 +57,7 @@ var g_nodes = {},
         }
 
         return ret;
-    },
-
-    Node = function(config) {
-        this[UID] = Y.stamp(config.node);
-        g_nodes[this[UID]] = config.node;
-        Node._instances[this[UID]] = this;
-
-        if (config.restricted) {
-            g_restrict[this[UID]] = true; 
-        }
-
-        SuperConstr.apply(this, arguments);
-    },
-
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype;
+    };
 // end "globals"
 
 Node.NAME = 'Node';
@@ -83,6 +83,15 @@ Node.DOM_EVENTS = {
 
 Node._instances = {};
 
+/**
+ * Retrieves the DOM node bound to a Node instance
+ * @method getDOMNode
+ * @static
+ *
+ * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
+ * as the node argument, it is simply returned.
+ */
 Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
@@ -100,8 +109,8 @@ Node.scrubVal = function(val, node, depth) {
             if (    NODE_TYPE in val || // dom node
                     val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document // window TODO: restrict?
-                ) { 
+                    val.document ) // window TODO: restrict?
+                { 
                 if (node && g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
@@ -216,13 +225,14 @@ Node.ATTRS = {
     'children': {
         getter: function() {
             var node = g_nodes[this[UID]],
-                children = node.children;
+                children = node.children,
+                childNodes, i, len;
 
             if (children === undefined) {
-                var childNodes = node.childNodes;
+                childNodes = node.childNodes;
                 children = [];
 
-                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                for (i = 0, len = childNodes.length; i < len; ++i) {
                     if (childNodes[i][TAG_NAME]) {
                         children[children.length] = childNodes[i];
                     }
@@ -240,7 +250,8 @@ Node.ATTRS = {
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]];
+    var node = g_nodes[this[UID]],
+        strPath;
 
     if (name.indexOf(DOT) !== -1) {
         strPath = name;
@@ -556,142 +567,6 @@ Y.mix(Node.prototype, {
         return (node && (typeof node === 'function'));
     }
 }, true);
-
-Y.Array.each([
-    /**
-     * Passes through to DOM method.
-     * @method replaceChild
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method appendChild
-     * @param {HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    'appendChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method insertBefore
-     * @param {HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    'insertBefore',
-
-    /**
-     * Passes through to DOM method.
-     * @method removeChild
-     * @param {HTMLElement | Node} node Node to be removed 
-     * @return {Node} The removed node 
-     */
-    'removeChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method hasChildNodes
-     * @return {Boolean} Whether or not the node has any childNodes 
-     */
-    'hasChildNodes',
-
-    /**
-     * Passes through to DOM method.
-     * @method cloneNode
-     * @param {HTMLElement | Node} node Node to be cloned 
-     * @return {Node} The clone 
-     */
-    'cloneNode',
-
-    /**
-     * Passes through to DOM method.
-     * @method hasAttribute
-     * @param {String} attribute The attribute to test for 
-     * @return {Boolean} Whether or not the attribute is present 
-     */
-    'hasAttribute',
-
-    /**
-     * Passes through to DOM method.
-     * @method removeAttribute
-     * @param {String} attribute The attribute to be removed 
-     * @chainable
-     */
-    'removeAttribute',
-
-    /**
-     * Passes through to DOM method.
-     * @method scrollIntoView
-     * @chainable
-     */
-    'scrollIntoView',
-
-    /**
-     * Passes through to DOM method.
-     * @method getElementsByTagName
-     * @param {String} tagName The tagName to collect 
-     * @return {NodeList} A NodeList representing the HTMLCollection
-     */
-    'getElementsByTagName',
-
-    /**
-     * Passes through to DOM method.
-     * @method focus
-     * @chainable
-     */
-    'focus',
-
-    /**
-     * Passes through to DOM method.
-     * @method blur
-     * @chainable
-     */
-    'blur',
-
-    /**
-     * Passes through to DOM method.
-     * Only valid on FORM elements
-     * @method submit
-     * @chainable
-     */
-    'submit',
-
-    /**
-     * Passes through to DOM method.
-     * Only valid on FORM elements
-     * @method reset
-     * @chainable
-     */
-    'reset',
-
-    /**
-     * Passes through to DOM method.
-     * @method select
-     * @chainable
-     */
-     'select'
-], function(method) {
-    Node.prototype[method] = function(arg1, arg2, arg3) {
-        var ret = this.invoke(method, arg1, arg2, arg3);
-        return ret;
-    };
-});
-
-/**
- * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
- * @method contains
- * @param {Node | HTMLElement} needle The possible node or descendent
- * @return {Boolean} Whether or not this node is the needle its ancestor
- */
-Node.importMethod(Y.DOM, [
-    'contains',
-    'setAttribute',
-    'getAttribute'
-]);
 
 Y.Node = Node;
 Y.get = Y.Node.get;

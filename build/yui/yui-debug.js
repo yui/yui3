@@ -50,11 +50,13 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  The target window/frame</li>
      *  <li>core:
      *  A list of modules that defines the YUI core (overrides the default)</li>
+     *  <li>dateFormat: default date format</li>
+     *  <li>locale: default locale</li>
      *  <li>------------------------------------------------------------------------</li>
      *  <li>For event and get:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>pollInterval:
-     *  The default poll interval</li>
+     *  <li>pollInterval: The default poll interval</li>
+     *  <li>windowResizeDelay: The time between browser events to wait before firing.</li>
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
@@ -627,11 +629,12 @@ var instance = Y;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Logger widget and anything else
+ * dispatched, which the Console widget and anything else
  * can consume.  If the 'useBrowserConsole' config is true, it will
  * write to the browser console if available.  YUI-specific log
  * messages will only be present in the -debug versions of the
- * JS files.
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
  *
  * @method log
  * @for YUI
@@ -691,8 +694,8 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files.
- * @method log
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
  * @param  {String}  cat  The log category for the message.  Default
@@ -723,6 +726,7 @@ DATE      = 'date',
 ERROR     = 'error',
 FUNCTION  = 'function',
 NUMBER    = 'number',
+NULL      = 'null',
 OBJECT    = 'object',
 REGEX     = 'regexp',
 STRING    = 'string',
@@ -797,7 +801,8 @@ L.isFunction = function(o) {
  * @return {boolean} true if o is a date
  */
 L.isDate = function(o) {
-    return o instanceof Date;
+    // return o instanceof Date;
+    return L.type(o) === DATE;
 };
 
 /**
@@ -884,7 +889,15 @@ L.trim = function(s){
  */
 L.isValue = function(o) {
     var t = L.type(o);
-    return (t && t !== UNDEFINED) || false;
+    switch (t) {
+        case NUMBER:
+            return isFinite(o);
+        case NULL:
+        case UNDEFINED:
+            return false;
+        default:
+            return !!(t);
+    }
 };
 
 /**
@@ -1009,11 +1022,11 @@ A.test = function(o) {
  */
 A.each = (Native.forEach) ?
     function (a, f, o) { 
-        Native.forEach.call(a, f, o || Y);
+        Native.forEach.call(a || [], f, o || Y);
         return Y;
     } :
     function (a, f, o) { 
-        var l = a.length, i;
+        var l = (a && a.length) || 0, i;
         for (i = 0; i < l; i=i+1) {
             f.call(o || Y, a[i], i, a);
         }
@@ -1256,30 +1269,30 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
-    /**
-     * Extracts the keys, values, or size from an object
-     * 
-     * @method _extract
-     * @param o the object
-     * @param what what to extract (0: keys, 1: values, 2: size)
-     * @return {boolean|Array} the extracted info
-     * @private
-     */
-    _extract = function(o, what) {
-        var count = (what === 2), out = (count) ? 0 : [], i;
+/**
+ * Extracts the keys, values, or size from an object
+ * 
+ * @method _extract
+ * @param o the object
+ * @param what what to extract (0: keys, 1: values, 2: size)
+ * @return {boolean|Array} the extracted info
+ * @private
+ */
+_extract = function(o, what) {
+    var count = (what === 2), out = (count) ? 0 : [], i;
 
-        for (i in o) {
-            if (count) {
-                out++;
-            } else {
-                if (o.hasOwnProperty(i)) {
-                    out.push((what) ? o[i] : i);
-                }
+    for (i in o) {
+        if (count) {
+            out++;
+        } else {
+            if (o.hasOwnProperty(i)) {
+                out.push((what) ? o[i] : i);
             }
         }
+    }
 
-        return out;
-    };
+    return out;
+};
 
 /**
  * Returns an array containing the object's keys
@@ -1359,7 +1372,9 @@ O.hasValue = function(o, v) {
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = O.hasKey;
+O.owns = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 /**
  * Executes a function on each item. The function
@@ -1506,7 +1521,8 @@ Y.UA = function() {
          *                                   and many major issues fixed).
          * Safari 3.0.4 (523.12) 523.12  <-- First Tiger release - automatic update
          *                                   from 2.x via the 10.4.11 OS patch
-         *                                   
+         * Webkit nightly 1/2008:525+    <-- Supports DOMContentLoaded event.
+         *                                   yahoo.com user agent hack removed.
          * </pre>
          * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
          * @property webkit
@@ -1524,10 +1540,49 @@ Y.UA = function() {
          * @type string
          * @static
          */
-        mobile: null 
+        mobile: null,
+
+        /**
+         * Adobe AIR version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property air
+         * @type float
+         */
+        air: 0,
+
+        /**
+         * Google Caja version number or 0.
+         * @property caja
+         * @type float
+         */
+        caja: 0,
+
+        /**
+         * Set to true if the page appears to be in SSL
+         * @property secure
+         * @type boolean
+         * @static
+         */
+        secure: (Y.config.win.location.href.toLowerCase().indexOf("https") === 0),
+
+        /**
+         * The operating system.  Currently only detecting windows or macintosh
+         * @property os
+         * @type string
+         * @static
+         */
+        os: null
+        
     },
 
-    ua = navigator.userAgent, m;
+    ua = navigator.userAgent, 
+    m ;
+
+    if ((/windows|win32/).test(ua)) {
+        o.os = 'windows';
+    } else if ((/macintosh/).test(ua)) {
+        o.os = 'macintosh';
+    }
 
     // Modern KHTML browsers should qualify as Safari X-Grade
     if ((/KHTML/).test(ua)) {
@@ -1546,6 +1601,11 @@ Y.UA = function() {
             if (m) {
                 o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
             }
+        }
+
+        m=ua.match(/AdobeAIR\/([^\s]*)/);
+        if (m) {
+            o.air = m[0]; // Adobe AIR 1.0 or better
         }
 
     }
@@ -1574,6 +1634,11 @@ Y.UA = function() {
                 }
             }
         }
+    }
+
+    m=ua.match(/Caja\/([^\s]*)/);
+    if (m&&m[1]) {
+        o.caja=parseFloat(m[1]);
     }
     
     return o;
@@ -1626,6 +1691,7 @@ Y.UA = function() {
         r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
 
         return {
+            id: r,
             interval: periodic,
             cancel: function() {
                 if (this.interval) {
@@ -1681,9 +1747,12 @@ YUI.add('get', function(Y) {
  * @submodule get
  */
 
-var ua=Y.UA, 
-    L=Y.Lang,
-    PREFIX = Y.guid('yui_');
+var ua         = Y.UA, 
+    L          = Y.Lang,
+    PREFIX     = Y.guid('yui_'),
+    TYPE_JS    = "text/javascript",
+    TYPE_CSS   = "text/css",
+    STYLESHEET = "stylesheet";
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
@@ -1756,14 +1825,16 @@ Y.Get = function() {
      * @private
      */
     _linkNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("link", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/css",
-                "charset": c,
-                "rel":     "stylesheet",
-                "href":    url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_CSS,
+            rel:  STYLESHEET,
+            href: url
+        };
+        if (charset) {
+            o.charset = charset;
+        }
+        return _node("link", o, win);
     },
 
     /**
@@ -1775,13 +1846,17 @@ Y.Get = function() {
      * @private
      */
     _scriptNode = function(url, win, charset) {
-        var c = charset || "utf-8";
-        return _node("script", {
-                "id":      PREFIX + (nidx++),
-                "type":    "text/javascript",
-                "charset": c,
-                "src":     url
-            }, win);
+        var o = {
+            id:   PREFIX + (nidx++),
+            type: TYPE_JS,
+            src:  url
+        };
+
+        if (charset) {
+            o.charset = charset;
+        }
+
+        return _node("script", o, win);
     },
 
     /**
@@ -2670,6 +2745,10 @@ var BASE = 'base',
 
         'event-simulate': { 
             requires: ['event']
+        },
+
+        focusmanager: { 
+            requires: ['node']
         },
 
         get: { 
@@ -4063,7 +4142,6 @@ Y.Loader.prototype = {
 
 Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
-
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
                 // @TODO get rid of the redundant Get code
@@ -4161,8 +4239,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
 
-                    
-                url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
                 fn(url, {
                     data: s[i],
@@ -4217,20 +4294,20 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
      * Apply filter defined for this instance to a url/path
      * method _filter
      * @param u {string} the string to filter
+     * @param name {string} the name of the module, if we are processing
+     * a single module as opposed to a combined url
      * @return {string} the filtered string
      * @private
      */
-    _filter: function(u) {
+    _filter: function(u, name) {
 
-        Y.log('filter ' + u);
+        // Y.log('filter ' + u);
 
-        var f = this.filter, useFilter, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc;
 
         if (u && f) {
 
-            useFilter = true;
-
-            if (this.filterName == "DEBUG") {
+            if (name && this.filterName == "DEBUG") {
             
                 exc = this.logExclude;
                 inc = this.logInclude;
@@ -4260,7 +4337,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
      * @private
      */
     _url: function(path, name) {
-        return this._filter((this.base || "") + path);
+        return this._filter((this.base || "") + path, name);
     }
 
 };

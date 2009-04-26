@@ -125,9 +125,10 @@ Y.extend(DSLocal, Y.Base, {
          * @preventable _defRequestFn
          */
         //this.publish("request", {defaultFn: this._defRequestFn});
-        this.publish("request", {defaultFn:function(e){
-            this._defRequestFn(e);
-        }});
+        //this.publish("request", {defaultFn:function(e){
+        //    this._defRequestFn(e);
+        //}});
+        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
          
         /**
          * Fired when raw data is received.
@@ -148,10 +149,11 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defDataFn
          */
-        //this.publish("data", {defaultFn: this._defDataFn});
-         this.publish("data", {defaultFn:function(e){
-            this._defDataFn(e);
-        }});
+         //this.publish("data", {defaultFn: this._defDataFn});
+         //this.publish("data", {defaultFn:function(e){
+         //   this._defDataFn(e);
+         //}});
+        this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
 
         /**
          * Fired when response is returned.
@@ -180,9 +182,10 @@ Y.extend(DSLocal, Y.Base, {
          * @preventable _defResponseFn
          */
          //this.publish("response", {defaultFn: this._defResponseFn});
-         this.publish("response", {defaultFn:function(e){
-            this._defResponseFn(e);
-        }});
+         //this.publish("response", {defaultFn:function(e){
+         //   this._defResponseFn(e);
+         //}});
+         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
 
         /**
          * Fired when an error is encountered.
@@ -204,7 +207,7 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *         <dt>error (Object)</dt> <dd>Error object.</dd>
          *     </dl>
          * </dd>
          * </dl>
@@ -237,7 +240,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = true;
+            e.error = new Error(this.toString() + " Source undefined");;
         }
         if(e.error) {
             this.fire("error", e);
@@ -332,9 +335,7 @@ Y.extend(DSLocal, Y.Base, {
     }
 });
     
-Y.namespace("DataSource");
-Y.DataSource.Local = DSLocal;
-    
+Y.namespace("DataSource").Local = DSLocal;
 
 
 
@@ -457,7 +458,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         //this.handleResponse(args.tId, args.request, args.callback, response);
                     },
                     failure: function (id, response, e) {
-                        e.error = true;
+                        e.error = new Error(this.toString() + " Data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                         //{tId:args.tId, request:args.request, callback:args.callback, response:response}
@@ -587,7 +588,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-     *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+     *         <dt>error (Object)</dt> <dd>Error object.</dd>
      *     </dl>
      * </dd>
      * </dl>
@@ -599,8 +600,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      }
 });
 
-Y.namespace('plugin');
-Y.plugin.DataSourceCache = DataSourceCache;
+Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
@@ -697,20 +697,23 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var response = (this.get("parser").parse(this.get("schema"), e.data));
+        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = (this.get("parser").parse(this.get("schema"), data));
+            
+        // Default
         if(!response) {
             response = {
                 meta: {},
-                results: e.data
+                results: data
             };
         }
+        
         this._owner.fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin');
-Y.plugin.DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;
 
 
 
@@ -731,14 +734,16 @@ YUI.add('datasource-polling', function(Y) {
      * @class Pollable
      * @extends DataSource.Local
      */    
-    Pollable = function() {};
+    Pollable = function() {
+        this._intervals = {};
+    };
 
     
 Pollable.prototype = {
 
     /**
     * @property _intervals
-    * @description Array of polling interval IDs that have been enabled,
+    * @description Hash of polling interval IDs that have been enabled,
     * stored here to be able to clear all intervals.
     * @private
     */
@@ -765,20 +770,9 @@ Pollable.prototype = {
      * @return {Number} Interval ID.
      */
     setInterval: function(msec, request, callback) {
-        if(LANG.isNumber(msec) && (msec >= 0)) {
-            var self = this,
-                id = setInterval(function() {
-                    self.sendRequest(request, callback);
-                    //self._makeConnection(request, callback);
-                }, msec);
-            if(!this._intervals) {
-                this._intervals = [];
-            }
-            this._intervals.push(id);
-            return id;
-        }
-        else {
-        }
+        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+        this._intervals[x.id] = x;
+        return x.id;
     },
 
     /**
@@ -787,16 +781,14 @@ Pollable.prototype = {
      * @method clearInterval
      * @param id {Number} Interval ID.
      */
-    clearInterval: function(id) {
-        // Remove from tracker if there
-        var tracker = this._intervals || [],
-            i = tracker.length-1;
-
-        for(; i>-1; i--) {
-            if(tracker[i] === id) {
-                tracker.splice(i,1);
-                clearInterval(id);
-            }
+    clearInterval: function(id, key) {
+        // In case of being called by clearAllIntervals()
+        id = key || id;
+        if(this._intervals[id]) {
+            // Clear the interval
+            this._intervals[id].cancel();
+            // Clear from tracker
+            delete this._intervals[id];
         }
     },
 
@@ -806,18 +798,11 @@ Pollable.prototype = {
      * @method clearAllIntervals
      */
     clearAllIntervals: function() {
-        var tracker = this._intervals,
-            i = tracker.length-1;
-            
-        for(; i>-1; i--) {
-            clearInterval(tracker[i]);
-        }
-        
-        this._intervals = [];
+        Y.each(this._intervals, this.clearInterval, this);
     }
 };
     
-Y.Base.build(Y.DataSource.Local.NAME, Y.DataSource.Local, [Pollable], {dynamic:false});
+Y.augment(Y.DataSource.Local, Pollable);
 
 
 
