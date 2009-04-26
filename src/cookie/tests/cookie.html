@@ -11,7 +11,8 @@
     
 YUI({
     base: '../../../build/',
-    filter: 'debug'
+    filter: "debug",
+    logInclude: { TestRunner: 1}
 }).use('test', 'cookie', 'console', function (Y) {
 
     Y.namespace("Tests");
@@ -141,7 +142,7 @@ YUI({
             },
             
             testParseCookieStringIncorrectFormat: function(){
-                var cookieString = "SESSION=27bedbdf3d35252d0db07f34d81dcca6; STATS=OK; SCREEN=1280x1024; undefined; ys-bottom-preview=o%3Aheight%3Dn%253A389"
+                var cookieString = "SESSION=27bedbdf3d35252d0db07f34d81dcca6; STATS=OK; SCREEN=1280x1024; undefined; ys-bottom-preview=o%3Aheight%3Dn%253A389";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
                 ObjectAssert.has("SCREEN", cookies, "Cookie 'SCREEN' is missing.");
@@ -151,8 +152,7 @@ YUI({
                 ObjectAssert.has("undefined", cookies, "Cookie 'undefined' is missing.");
             },
             
-        
-            /**
+            /*
              * Tests that the cookie utility deals with cookies that contain
              * an invalid encoding. It shouldn't error, but should treat the cookie
              * as if it doesn't exist (return null).
@@ -162,7 +162,18 @@ YUI({
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
                 Assert.isNull(cookies["DetailInfoList"], "Cookie 'DetailInfoList' should not have a value.");
-            },            
+            },
+            
+            /*
+             * Tests that a Boolean cookie, one without an equals sign of value,
+             * is represented as an empty string.
+             */
+            testParseCookieStringBooleanCookie: function(){
+                var cookieString = "info";
+                var cookies = Y.Cookie._parseCookieString(cookieString);
+                
+                Assert.areEqual("", cookies["info"], "Cookie 'info' should be an empty string.");
+            },
             
             testParseCookieStringWithHash : function(){
             
@@ -375,13 +386,22 @@ YUI({
             
                 error : {
                 
-                    testGetInvalidName1 : new TypeError("Cookie.get(): Cookie name must be a non-empty string."),
-                    testGetInvalidName2 : new TypeError("Cookie.get(): Cookie name must be a non-empty string."),
-                    testGetInvalidName3 : new TypeError("Cookie.get(): Cookie name must be a non-empty string."),
-                    testGetInvalidName4 : new TypeError("Cookie.get(): Cookie name must be a non-empty string."),
-                    testGetInvalidName5 : new TypeError("Cookie.get(): Cookie name must be a non-empty string.")                            
+                    testGetInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetInvalidName5 : new TypeError("Cookie name must be a non-empty string.")
                 }
             
+            },
+            
+            tearDown: function(){
+                deleteCookie("name");
+                deleteCookie("name2");
+                deleteCookie("title");
+                deleteCookie("component");
+                deleteCookie("found");
+                deleteCookie("count");
             },
     
             //---------------------------------------------------------------------
@@ -393,9 +413,7 @@ YUI({
                 setCookie("name", "Nicholas%20Zakas");
                 
                 var value = Y.Cookie.get("name");
-                Assert.areEqual("Nicholas Zakas", value, "Retrieved cookie value is incorrect.");
-                
-                deleteCookie("name");
+                Assert.areEqual("Nicholas Zakas", value, "Retrieved cookie value is incorrect.");                
             },
             
             testGetUnknown : function(){
@@ -404,8 +422,6 @@ YUI({
                 
                 var value = Y.Cookie.get("name2");
                 Assert.isNull(value, "Retrieved cookie value is should be null.");
-                
-                deleteCookie("name");
             },
             
             testGetComplex : function(){
@@ -423,10 +439,6 @@ YUI({
                 Assert.areEqual("Front End Engineer", value2, "Retrieved cookie value is incorrect.");
                 Assert.areEqual("Cookie Utility", value3, "Retrieved cookie value is incorrect.");
                 Assert.isNull(value4, "Retrieved cookie value should be null.");
-                
-                deleteCookie("name");
-                deleteCookie("title");
-                deleteCookie("component");
             },
             
             testGetInvalidName1 : function(){        
@@ -455,8 +467,6 @@ YUI({
                 var value = Y.Cookie.get("found", Boolean);
                 Assert.isBoolean(value, "Retrieved value should be a boolean.");
                 Assert.isTrue(value, "Retrieved cookie value should be true.");
-                
-                deleteCookie("found");
             
             },
             
@@ -466,8 +476,6 @@ YUI({
                 var value = Y.Cookie.get("count", Number);
                 Assert.isNumber(value, "Retrieved value should be a number.");
                 Assert.areEqual(11, value, "Retrieved cookie value should be 11.");
-                
-                deleteCookie("number");
             },
             
             testGetWithCustomConverter : function(){
@@ -481,9 +489,7 @@ YUI({
                     }
                 });
                 Assert.isBoolean(value, "Retrieved value should be a boolean.");
-                Assert.isTrue(value, "Retrieved cookie value should be true.");
-                
-                deleteCookie("count");        
+                Assert.isTrue(value, "Retrieved cookie value should be true.");       
             },
                     
             testGetWithInvalidConverter : function(){
@@ -491,20 +497,141 @@ YUI({
                 
                 var value = Y.Cookie.get("count", true);
                 Assert.isString(value, "Retrieved value should be a string.");
-                Assert.areEqual("11", value, "Retrieved cookie value should be 11.");
-                
-                deleteCookie("count");        
+                Assert.areEqual("11", value, "Retrieved cookie value should be 11.");       
             },
                     
             testGetWithConverterAndUnknownCookie : function(){
                 setCookie("count", "11");
                 
                 var value = Y.Cookie.get("count2", Number);
-                Assert.isNull(value, "Retrieved value should be null.");
+                Assert.isNull(value, "Retrieved value should be null.");       
+            },
+            
+            testGetWithBooleanConverterOption : function(){
+                setCookie("found", "true");
                 
-                deleteCookie("count");        
+                var value = Y.Cookie.get("found", { converter: Boolean });
+                Assert.isBoolean(value, "Retrieved value should be a boolean.");
+                Assert.isTrue(value, "Retrieved cookie value should be true.");
+            
+            },
+            
+            testGetWithNumberConverterOption : function(){
+                setCookie("count", "11");
+                
+                var value = Y.Cookie.get("count", { converter: Number });
+                Assert.isNumber(value, "Retrieved value should be a number.");
+                Assert.areEqual(11, value, "Retrieved cookie value should be 11.");
+            },
+            
+            testGetWithCustomConverterOption : function(){
+                setCookie("count", "11");
+                
+                var value = Y.Cookie.get("count", { converter: function(value){
+                    if (value === "11"){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } });
+                Assert.isBoolean(value, "Retrieved value should be a boolean.");
+                Assert.isTrue(value, "Retrieved cookie value should be true.");       
+            },
+                    
+            testGetWithInvalidConverterOption : function(){
+                setCookie("count", "11");
+                
+                var value = Y.Cookie.get("count", { converter: true });
+                Assert.isString(value, "Retrieved value should be a string.");
+                Assert.areEqual("11", value, "Retrieved cookie value should be 11.");       
+            },
+                    
+            testGetWithConverterOptionAndUnknownCookie : function(){
+                setCookie("count", "11");
+                
+                var value = Y.Cookie.get("count2", { converter: Number });
+                Assert.isNull(value, "Retrieved value should be null.");      
+            },
+            
+            testGetWithEmptyOptions : function(){
+                setCookie("name", "Nicholas%20Zakas");
+                
+                var value = Y.Cookie.get("name", {});
+                Assert.areEqual("Nicholas Zakas", value, "Retrieved cookie value is incorrect.");
+            },
+            
+            testGetSimpleWithFalseRaw : function(){
+                setCookie("name", "Nicholas%20Zakas");
+                
+                var value = Y.Cookie.get("name", { raw: false });
+                Assert.areEqual("Nicholas Zakas", value, "Retrieved cookie value is incorrect.");
+            },
+            
+            testGetSimpleWithTrueRaw : function(){
+                setCookie("name", "Nicholas%20Zakas");
+                
+                var value = Y.Cookie.get("name", { raw: true });
+                Assert.areEqual("Nicholas%20Zakas", value, "Retrieved cookie value is incorrect.");
+            },
+            
+            testGetComplexWithFalseRaw : function(){
+                setCookie("name", encodeURIComponent("as.bd ed|ieh,~!!@#$%^*=098345|}{<>?"));
+                
+                var value = Y.Cookie.get("name", { raw: false });
+                Assert.areEqual("as.bd ed|ieh,~!!@#$%^*=098345|}{<>?", value, "Retrieved cookie value is incorrect.");
+            },
+            
+            testGetComplexWithTrueRaw : function(){
+                setCookie("name", "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?");
+                setCookie("name2", encodeURIComponent("as.bd ed|ieh,~!!@#$%^*=098345|}{<>?"));
+                
+                var value  = Y.Cookie.get("name",  { raw: true }),
+                    value2 = Y.Cookie.get("name2", { raw: true });
+                Assert.areEqual("as.bd ed|ieh,~!!@#$%^*=098345|}{<>?", value, "Retrieved cookie value is incorrect.");
+                Assert.areEqual(encodeURIComponent("as.bd ed|ieh,~!!@#$%^*=098345|}{<>?"), value2, "Retrieved cookie value is incorrect.");
             }
+            
         }));
+        
+        //-------------------------------------------------------------------------
+        // Test Case for testing cookie existence
+        //-------------------------------------------------------------------------
+        
+        suite.add(new Y.Test.Case({
+        
+            name : "Cookie Exists Tests",   
+    
+            tearDown: function(){
+                deleteCookie("name");
+                document.cookie = "info; expires=" + (new Date(0)).toUTCString();
+            },
+    
+            //---------------------------------------------------------------------
+            // Tests
+            //---------------------------------------------------------------------
+        
+            testExistsSimple : function(){
+            
+                setCookie("name", "Nicholas%20Zakas");
+                
+                var value = Y.Cookie.exists("name");
+                Assert.isTrue(value, "Cookie 'name' should exist.");
+            },
+            
+            testExistsUnknown : function(){
+                var value = Y.Cookie.exists("name3");
+                Assert.isFalse(value, "Cookie 'name3' should not exist.");
+            },
+            
+            testExistsBooleanCookie : function(){
+            
+                document.cookie = "info";            
+                var value = Y.Cookie.exists("info");
+                Assert.isTrue(value, "Cookie 'info' should exist.");
+            }
+            
+        }));
+        
     
         //-------------------------------------------------------------------------
         // Test Case for getting cookie hashes
@@ -513,6 +640,12 @@ YUI({
         suite.add(new Y.Test.Case({
         
             name : "Get Cookie Subs Tests",
+            
+            tearDown: function(){
+                deleteCookie("data");
+                deleteCookie("name");
+                deleteCookie("component");
+            },
     
             //---------------------------------------------------------------------
             // Tests
@@ -533,8 +666,7 @@ YUI({
                 Assert.areEqual("d", hash.c, "Hash 'c' should have value 'd'.");
                 Assert.areEqual("f", hash.e, "Hash 'e' should have value 'f'.");
                 Assert.areEqual("h", hash.g, "Hash 'g' should have value 'h'."); 
-                
-                deleteCookie("data");
+
             },
             
             testGetSubsUnknown : function(){
@@ -543,8 +675,6 @@ YUI({
                 
                 var hash = Y.Cookie.getSubs("name2");
                 Assert.isNull(hash, "Retrieved cookie value is should be null.");
-                
-                deleteCookie("name");
             },
             
             testGetSubsComplex : function(){
@@ -561,11 +691,7 @@ YUI({
     
                 Assert.areEqual("29", hash.age, "Hash 'a' should have value 'b'.");
                 Assert.areEqual("f2e", hash.title, "Hash 'c' should have value 'd'.");
-                Assert.areEqual("no way", hash.stuff, "Hash 'e' should have value 'f'.");
-                
-                deleteCookie("name");
-                deleteCookie("data");
-                deleteCookie("component");
+                Assert.areEqual("no way", hash.stuff, "Hash 'e' should have value 'f'.");                
             }
         }));
     
@@ -580,17 +706,17 @@ YUI({
             _should : {
             
                 error : {
-                    testGetSubInvalidName1 : new TypeError("Cookie.getSubs(): Cookie name must be a non-empty string."),
-                    testGetSubInvalidName2 : new TypeError("Cookie.getSubs(): Cookie name must be a non-empty string."),
-                    testGetSubInvalidName3 : new TypeError("Cookie.getSubs(): Cookie name must be a non-empty string."),
-                    testGetSubInvalidName4 : new TypeError("Cookie.getSubs(): Cookie name must be a non-empty string."),
-                    testGetSubInvalidName5 : new TypeError("Cookie.getSubs(): Cookie name must be a non-empty string."),
+                    testGetSubInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetSubInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetSubInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetSubInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testGetSubInvalidName5 : new TypeError("Cookie name must be a non-empty string."),
                 
-                    testGetSubInvalidSubName1 : new TypeError("Cookie.getSub(): Subcookie name must be a non-empty string."),
-                    testGetSubInvalidSubName2 : new TypeError("Cookie.getSub(): Subcookie name must be a non-empty string."),
-                    testGetSubInvalidSubName3 : new TypeError("Cookie.getSub(): Subcookie name must be a non-empty string."),
-                    testGetSubInvalidSubName4 : new TypeError("Cookie.getSub(): Subcookie name must be a non-empty string."),
-                    testGetSubInvalidSubName5 : new TypeError("Cookie.getSub(): Subcookie name must be a non-empty string.")
+                    testGetSubInvalidSubName1 : new TypeError("Subcookie name must be a non-empty string."),
+                    testGetSubInvalidSubName2 : new TypeError("Subcookie name must be a non-empty string."),
+                    testGetSubInvalidSubName3 : new TypeError("Subcookie name must be a non-empty string."),
+                    testGetSubInvalidSubName4 : new TypeError("Subcookie name must be a non-empty string."),
+                    testGetSubInvalidSubName5 : new TypeError("Subcookie name must be a non-empty string.")
                 
                 }
             
@@ -720,22 +846,22 @@ YUI({
         
         suite.add(new Y.Test.Case({
         
-            name : "Remove Cookie Sub Tests",       
+            name : "Remove Cookie Sub Tests",
             
             _should : {
             
                 error : {
-                    testRemoveSubInvalidName1 : new TypeError("Cookie.removeSub(): Cookie name must be a non-empty string."),
-                    testRemoveSubInvalidName2 : new TypeError("Cookie.removeSub(): Cookie name must be a non-empty string."),
-                    testRemoveSubInvalidName3 : new TypeError("Cookie.removeSub(): Cookie name must be a non-empty string."),
-                    testRemoveSubInvalidName4 : new TypeError("Cookie.removeSub(): Cookie name must be a non-empty string."),
-                    testRemoveSubInvalidName5 : new TypeError("Cookie.removeSub(): Cookie name must be a non-empty string."),
+                    testRemoveSubInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveSubInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveSubInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveSubInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveSubInvalidName5 : new TypeError("Cookie name must be a non-empty string."),
                 
-                    testRemoveSubInvalidSubName1 : new TypeError("Cookie.removeSub(): Subcookie name must be a non-empty string."),
-                    testRemoveSubInvalidSubName2 : new TypeError("Cookie.removeSub(): Subcookie name must be a non-empty string."),
-                    testRemoveSubInvalidSubName3 : new TypeError("Cookie.removeSub(): Subcookie name must be a non-empty string."),
-                    testRemoveSubInvalidSubName4 : new TypeError("Cookie.removeSub(): Subcookie name must be a non-empty string."),
-                    testRemoveSubInvalidSubName5 : new TypeError("Cookie.removeSub(): Subcookie name must be a non-empty string.")
+                    testRemoveSubInvalidSubName1 : new TypeError("Subcookie name must be a non-empty string."),
+                    testRemoveSubInvalidSubName2 : new TypeError("Subcookie name must be a non-empty string."),
+                    testRemoveSubInvalidSubName3 : new TypeError("Subcookie name must be a non-empty string."),
+                    testRemoveSubInvalidSubName4 : new TypeError("Subcookie name must be a non-empty string."),
+                    testRemoveSubInvalidSubName5 : new TypeError("Subcookie name must be a non-empty string.")
                 
                 }
             
@@ -743,15 +869,17 @@ YUI({
             },
             
             setUp : function () {
-                setCookie("data", "a=b&c=d&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and ="));            
+                setCookie("data", "a=b&c=d&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and ="));
+                setCookie("info", "a=b");
                 setCookie("name", "Nicholas%20Zakas");
                 setCookie("component", "Cookie%20Utility");
             },
             
             tearDown : function () {
                 deleteCookie("data");
+                deleteCookie("info");
                 deleteCookie("name");
-                deleteCookie("component");            
+                deleteCookie("component");
             },
     
             //---------------------------------------------------------------------
@@ -811,7 +939,41 @@ YUI({
             testRemoveSubOnNonExistantCookie : function(){
                 var value = Y.Cookie.removeSub("invalid", "i");
                 Assert.areEqual("",value, "Cookie string is incorrect.");
+            },
+            
+            testRemoveLastSub : function(){
+                Y.Cookie.removeSub("info", "a");
+                var value = Y.Cookie.get("info");
+                Assert.areEqual("", value, "Cookie string is incorrect.");
+            },
+            
+            testRemoveLastSubWithTrueRemoveIfEmpty : function(){
+                Y.Cookie.removeSub("info", "a", { removeIfEmpty: true });
+                var value = Y.Cookie.get("info");
+                Assert.isNull(value, "Cookie value should be null.");
+            },
+            
+            testRemoveLastSubWithFalseRemoveIfEmpty : function() {
+                Y.Cookie.removeSub("info", "a", { removeIfEmpty: false });
+                var value = Y.Cookie.get("info");
+                Assert.areEqual("", value, "Cookie string is incorrect.");
+            },
+            
+            testRemoveNotLastSubWithTrueRemoveIfEmpty : function(){
+                var value = Y.Cookie.removeSub("data", "c", { removeIfEmpty: true });
+                Assert.areEqual("data=a=b&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and ="), value, "Cookie string is incorrect.");
+            },
+            
+            testRemoveNotLastSubWithFalseRemoveIfEmpty : function() {
+                var value = Y.Cookie.removeSub("data", "c", { removeIfEmpty: false });
+                Assert.areEqual("data=a=b&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and ="), value, "Cookie string is incorrect.");
+            },
+            
+            testRemoveNotLastSubWithInvalidRemoveIfEmpty : function() {
+                var value = Y.Cookie.removeSub("data", "c", { removeIfEmpty: "blah" });
+                Assert.areEqual("data=a=b&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and ="), value, "Cookie string is incorrect.");
             }
+    
         }));
         
         //-------------------------------------------------------------------------
@@ -825,11 +987,11 @@ YUI({
             _should : {
             
                 error : {
-                    testRemoveInvalidName1 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName2 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName3 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName4 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName5 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string.")                        
+                    testRemoveInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName5 : new TypeError("Cookie name must be a non-empty string.")                        
                 }
             
             
@@ -853,6 +1015,9 @@ YUI({
                 Assert.isNull(value, "Cookie value should be null.");           
             },
             
+            /*
+             * These next five tests pass because they throw an error.
+             */
             testRemoveInvalidName1 : function(){        
                 Y.Cookie.remove();        
             },
@@ -872,7 +1037,7 @@ YUI({
             testRemoveInvalidName5 : function(){
                 Y.Cookie.remove(null);        
             },
-                 
+            
             /*
              * Tests that remove() doesn't change the options object that was passed in.
              */
@@ -880,7 +1045,9 @@ YUI({
                 var options = {};
                 Y.Cookie.remove("name", options);
                 Assert.isUndefined(options.expires, "Options should not have an expires property.");
-            }            
+            }
+            
+            
             
         }));
     
@@ -895,11 +1062,11 @@ YUI({
             _should : {
             
                 error : {
-                    testRemoveInvalidName1 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName2 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName3 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName4 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName5 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string.")                        
+                    testRemoveInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName5 : new TypeError("Cookie name must be a non-empty string.")                        
                 }
             
             
@@ -931,6 +1098,24 @@ YUI({
                 var output = Y.Cookie.set("data", "1234");
                 output += "; " + Y.Cookie.set("name", "Nicholas C. Zakas");
                 Assert.areEqual("data=1234; name=Nicholas%20C.%20Zakas", document.cookie, "Cookies were not set to document.");
+            },
+            
+            testSetSimpleWithFalseRaw : function(){
+                var output = Y.Cookie.set("data", "1234", { raw: false });
+                Assert.areEqual("data=1234", output, "Cookie string format is wrong.");
+                Assert.areEqual("data=1234", document.cookie, "Cookie was not set onto document.");
+            },
+            
+            testSetSimpleWithTrueRaw : function(){
+                var output = Y.Cookie.set("data", "1234", { raw: true });
+                Assert.areEqual("data=1234", output, "Cookie string format is wrong.");
+                Assert.areEqual("data=1234", document.cookie, "Cookie was not set onto document.");
+            },
+            
+            testSetSimpleWithInvalidRaw : function(){
+                var output = Y.Cookie.set("data", "1234", { raw: "blah" });
+                Assert.areEqual("data=1234", output, "Cookie string format is wrong.");
+                Assert.areEqual("data=1234", document.cookie, "Cookie was not set onto document.");
             },
             
             testSetSimpleWithPath : function(){        
@@ -1021,6 +1206,24 @@ YUI({
                 Assert.areEqual(result, document.cookie, "Cookie was not set to document.");
             },
             
+            testSetComplexWithFalseRaw : function(){
+                var name = "c.f name";
+                var value = "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?";
+                var result = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+                var text = Y.Cookie.set(name, value, { raw: false });
+                Assert.areEqual(result, text, "Cookie string is incorrect.");
+                Assert.areEqual(result, document.cookie, "Cookie was not set to document.");
+            },
+            
+            testSetComplexWithTrueRaw : function(){
+                var name = "c.f name";
+                var value = "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?";
+                var result = encodeURIComponent(name) + "=" + value;
+                var text = Y.Cookie.set(name, value, { raw: true });
+                Assert.areEqual(result, text, "Cookie string is incorrect.");
+                Assert.areEqual(result, document.cookie, "Cookie was not set to document.");
+            },
+            
             testSetComplexWithPath : function(){
                 var name = "c.f name";
                 var value = "as.bd ed|ieh,~!!@#$%^*=098345|}{<>?";
@@ -1084,11 +1287,11 @@ YUI({
             _should : {
             
                 error : {
-                    testRemoveInvalidName1 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName2 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName3 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName4 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string."),
-                    testRemoveInvalidName5 : new TypeError("Cookie.remove(): Cookie name must be a non-empty string.")                        
+                    testRemoveInvalidName1 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName2 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName3 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName4 : new TypeError("Cookie name must be a non-empty string."),
+                    testRemoveInvalidName5 : new TypeError("Cookie name must be a non-empty string.")                        
                 }
             
             
