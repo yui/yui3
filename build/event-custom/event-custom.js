@@ -1641,15 +1641,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
