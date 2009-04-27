@@ -329,7 +329,8 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM]
+            requires: [EVENTCUSTOM],
+            expound: NODE
         },
 
         'event-custom': { 
@@ -1301,12 +1302,19 @@ Y.Loader.prototype = {
 
         for (i in r) {
             if (r.hasOwnProperty(i)) {
-                mod = this.getModule(i);
+                mod = this.getModule(i), expound = mod && mod.expound;
                 // Y.log('exploding ' + i);
 
-                req = this.getRequires(mod);
+                if (mod) {
 
-                if (req) {
+                    if (expound) {
+                        r[expound] = this.getModule(expound);
+                        req = this.getRequires(r[expound]);
+                        Y.mix(r, Y.Array.hash(req));
+                    }
+
+                    req = this.getRequires(mod);
+
                     // Y.log('via explode: ' + req);
                     Y.mix(r, Y.Array.hash(req));
                 }
