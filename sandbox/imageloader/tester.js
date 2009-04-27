@@ -35,13 +35,12 @@ YUI({
 		customeventGroup.registerImage({ domId: 'customevent', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/ca/mus/pol/album_bss.jpg' });
 		customeventGroup.addCustomTrigger('mycustomevent:imgloadevent');
 		Y.on('dblclick', function() { Y.fire('mycustomevent:imgloadevent'); }, '#customevent');
-		// alternate code ---
-		/*
+		
 		var myCustomEvent = new Y.Event.Target();
-		customeventGroup.addCustomTrigger('mycustomevent:imgloadevent', myCustomEvent);
-		Y.on('dblclick', function() { myCustomEvent.fire('mycustomevent:imgloadevent'); }, '#customevent');
-		*/
-		// ---
+		var customevent2Group = new Y.ImgLoadGroup({ name: 'customevent2' });
+		customevent2Group.registerImage({ domId: 'customevent2', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/ca/mus/pol/album_bss.jpg' });
+		customevent2Group.addCustomTrigger('mycustomevent:imgloadevent2', myCustomEvent);
+		Y.on('dblclick', function() { myCustomEvent.fire('mycustomevent:imgloadevent2'); }, '#customevent2');
 
 		var squareGroup = new Y.ImgLoadGroup({ name: 'scroll' });
 		squareGroup.addTrigger(window, 'scroll');
