@@ -185,10 +185,12 @@ YUI.add('dd-scroll', function(Y) {
 
             if (st < 0) {
                 st = 0;
+                nt = xy[1];
             }
 
             if (sl < 0) {
                 sl = 0;
+                nl = xy[0];
             }
 
             if (nt < 0) {
@@ -204,7 +206,8 @@ YUI.add('dd-scroll', function(Y) {
                 console.log('moveNode', nl, nt);
                 console.log('set scroll', sl, st);
                 this.get('owner').actXY = [nl, nt];
-                this.get('owner')._moveNode([nl, nt]);
+                //this.get('owner')._alignNode([nl, nt]);
+                this.get('owner')._moveNode();
                 win.set(SCROLL_TOP, st);
                 win.set(SCROLL_LEFT, sl);
             } else {
@@ -241,14 +244,9 @@ YUI.add('dd-scroll', function(Y) {
             if (this._scrolling) {
                 this._cancelScroll();
                 e.preventDefault();
-            } else {
-                //Only call align if we are not scrolling..
-                //xy = S.superclass._align.apply(this, arguments);
             }
-            if (this.get('parentScroll')) {
-                if (!this._scrolling) {
-                    this._checkWinScroll();
-                }
+            if (!this._scrolling) {
+                this._checkWinScroll();
             }
         },
         /**
@@ -304,7 +302,6 @@ YUI.add('dd-scroll', function(Y) {
             value: true,
             setter: function(scroll) {
                 if (scroll) {
-                    console.log('setting window scroll');
                     this.set('parentScroll', Y.get(window));
                 }
                 return scroll;
@@ -335,8 +332,6 @@ YUI.add('dd-scroll', function(Y) {
     NS.NS = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;
 
-
-    Y.DD.Scroll = S;
-    
+    Y.DD.Scroll = S;    
 
 }, '3.0.0', { requires: ['dd-drag'] });
