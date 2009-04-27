@@ -128,12 +128,19 @@ var BASE = 'base',
     VERSION = '@VERSION@',
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
+
     YUIBASE = 'yui-base',
+
     GET = 'get',
+
     EVENT = 'event',
+
     EVENTCUSTOM = 'event-custom',
+
     NODE = 'node',
+
     OOP = 'oop',
+
     META = {
 
     version: VERSION,
