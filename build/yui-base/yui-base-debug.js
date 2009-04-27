@@ -396,6 +396,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
                 // Y.log('Use complete');

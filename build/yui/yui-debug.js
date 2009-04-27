@@ -396,6 +396,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
                 // Y.log('Use complete');
@@ -2553,11 +2554,18 @@ var BASE = 'base',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
     CSSBASE = 'cssbase',
-    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
-    YUI_CSS = ['reset', 'fonts', 'grids', 'base'],
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
+                 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    YUI_CSS = ['reset', 'fonts', 'grids', BASE],
     VERSION = '@VERSION@',
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
+    YUIBASE = 'yui-base',
+    GET = 'get',
+    EVENT = 'event',
+    EVENTCUSTOM = 'event-custom',
+    NODE = 'node',
+    OOP = 'oop',
     META = {
 
     version: VERSION,
@@ -2572,18 +2580,19 @@ var BASE = 'base',
         defaultSkin: 'sam',
         base: 'assets/skins/',
         path: 'skin.css',
-        after: ['reset', 'fonts', 'grids', 'base']
+        // after: ['reset', 'fonts', 'grids', 'base']
+        after: CSS_AFTER
         //rollup: 3
     },
 
     modules: {
 
        dom: {
-            requires: ['event'],
+            requires: [EVENT],
             submodules: {
 
                 'dom-base': {
-                    requires: ['event']
+                    requires: [EVENT]
                 },
 
                 'dom-style': {
@@ -2611,11 +2620,11 @@ var BASE = 'base',
         },
 
         node: {
-            requires: ['dom', 'base'],
+            requires: ['dom', BASE],
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', 'base', 'selector']
+                    requires: ['dom-base', BASE, 'selector']
                 },
 
                 'node-style': {
@@ -2635,11 +2644,11 @@ var BASE = 'base',
         },
 
         anim: {
-            requires: [BASE, 'node'],
+            requires: [BASE, NODE],
             submodules: {
 
                 'anim-base': {
-                    requires: ['base', 'node-style']
+                    requires: [BASE, 'node-style']
                 },
 
                 'anim-color': {
@@ -2651,6 +2660,7 @@ var BASE = 'base',
                 },
 
                 'anim-easing': {
+                    requires: [YUIBASE]
                 },
 
                 'anim-scroll': {
@@ -2662,13 +2672,13 @@ var BASE = 'base',
                 },
 
                 'anim-node-plugin': {
-                     requires: ['node', 'anim-base']
+                     requires: [NODE, 'anim-base']
                 }
             }
         },
 
         attribute: { 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM]
         },
 
         base: {
@@ -2676,19 +2686,25 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: ['node', 'dump', 'substitute']
+            requires: [NODE, 'dump', 'substitute']
         },
 
-        classnamemanager: { },
+        classnamemanager: { 
+            requires: [YUIBASE]
+        },
 
-        collection: { },
+        collection: { 
+            requires: [OOP]
+        },
 
         console: {
             requires: ['widget', 'substitute'],
             skinnable: true
         },
         
-        cookie: { },
+        cookie: { 
+            requires: [YUIBASE]
+        },
 
         // Note: CSS attributes are modified programmatically to reduce metadata size
         // cssbase: {
@@ -2703,7 +2719,7 @@ var BASE = 'base',
         dd:{
             submodules: {
                 'dd-ddm-base': {
-                    requires: ['node', BASE]
+                    requires: [NODE, BASE]
                 }, 
                 'dd-ddm':{
                     requires: ['dd-ddm-base']
@@ -2733,37 +2749,39 @@ var BASE = 'base',
             }
         },
 
-        dump: { },
+        dump: { 
+            requires: [YUIBASE]
+        },
 
         event: { 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM]
         },
 
         'event-custom': { 
-            requires: ['oop']
+            requires: [OOP]
         },
 
         'event-simulate': { 
-            requires: ['event']
+            requires: [EVENT]
         },
 
         focusmanager: { 
-            requires: ['node']
+            requires: [NODE]
         },
 
         get: { 
-            requires: ['yui-base']
+            requires: [YUIBASE]
         },
 
         history: { 
-            requires: ['node']
+            requires: [NODE]
         },
         
         io:{
             submodules: {
 
                 'io-base': {
-                    requires: ['node']
+                    requires: [NODE]
                 }, 
 
                 'io-xdr': {
@@ -2787,24 +2805,26 @@ var BASE = 'base',
         json: {
             submodules: {
                 'json-parse': {
+                    requires: [YUIBASE]
                 },
 
                 'json-stringify': {
+                    requires: [YUIBASE]
                 }
             }
         },
 
         loader: { 
-            requires: ['get']
+            requires: [GET]
         },
 
         'node-menunav': {
-            requires: ['node', 'classnamemanager'],
+            requires: [NODE, 'classnamemanager'],
             skinnable: true
         },
         
         oop: { 
-            requires: ['yui-base']
+            requires: [YUIBASE]
         },
 
         overlay: {
@@ -2813,21 +2833,25 @@ var BASE = 'base',
         },
 
         plugin: { 
-            requires: ['base']
+            requires: [BASE]
         },
 
-        profiler: { },
+        profiler: { 
+            requires: [YUIBASE]
+        },
 
         queue: {
             submodules: {
-                'queue-base': {}
+                'queue-base': {
+                    requires: [YUIBASE]
+                }
             },
             plugins: {
                 'queue-io': {
                     requires: ['io-base']
                 }
             }, 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM]
         },
 
         slider: {
@@ -2835,14 +2859,16 @@ var BASE = 'base',
             skinnable: true
         },
 
-        stylesheet: { },
+        stylesheet: { 
+            requires: [YUIBASE]
+        },
 
         substitute: {
             optional: ['dump']
         },
 
         widget: {
-            requires: ['base', 'node', 'classnamemanager'],
+            requires: [BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
@@ -2859,13 +2885,13 @@ var BASE = 'base',
         // Since YUI is required for everything else, it should not be specified as
         // a dependency.
         yui: {
-            supersedes: ['yui-base', 'get', 'loader']
+            supersedes: [YUIBASE, GET, 'loader']
         },
 
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['collection', 'substitute', 'node', 'json']                                                                                                                     
+            requires: ['collection', 'substitute', NODE, 'json']                                                                                                                     
         }  
 
     }

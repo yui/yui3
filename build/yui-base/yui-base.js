@@ -392,6 +392,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
 
