@@ -744,7 +744,7 @@ YUI.add('dd-drag', function(Y) {
         * @description The method passed to setTimeout to determine if the clickTimeThreshold was met.
         */
         _timeoutCheck: function() {
-            if (!this.get('lock')) {
+            if (!this.get('lock') && !this._dragThreshMet) {
                 this._fromTimeout = this._dragThreshMet = true;
                 this.start();
                 this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
@@ -939,6 +939,7 @@ YUI.add('dd-drag', function(Y) {
         * @param {Event} e The drag:align event.
         */
         _defAlignFn: function(e) {
+            console.log('def: ', [e.pageX, e.pageY]);
             this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
         },
         /**
@@ -967,6 +968,9 @@ YUI.add('dd-drag', function(Y) {
 
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
+            console.log('ActXY: ', xy);            
+            console.log('lastXY: ', this.lastXY);
+            console.log('diffXY: ', diffXY);
 
 
             this.region = {
@@ -1056,6 +1060,7 @@ YUI.add('dd-drag', function(Y) {
             DDM._unregDrag(this);
 
             this._unprep();
+            this.detachAll();
             if (this.target) {
                 this.target.destroy();
             }

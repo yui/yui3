@@ -143,7 +143,7 @@ YUI.add('dd-scroll', function(Y) {
         */        
         _checkWinScroll: function(move) {
             var r = this._getVPRegion(),
-                xy = this.get('owner').realXY,
+                xy = this.get('owner').lastXY,
                 scroll = false,
                 b = this.get('buffer'),
                 win = this.get('parentScroll'),
@@ -200,16 +200,13 @@ YUI.add('dd-scroll', function(Y) {
                 nl = xy[0];
             }
             if (move) {
-                console.log(r.top, top);
-                console.log('xy', xy[0], xy[1]);
-                console.log('scroll', sLeft, sTop);
-                console.log('moveNode', nl, nt);
-                console.log('set scroll', sl, st);
                 this.get('owner').actXY = [nl, nt];
-                //this.get('owner')._alignNode([nl, nt]);
                 this.get('owner')._moveNode();
                 win.set(SCROLL_TOP, st);
                 win.set(SCROLL_LEFT, sl);
+                if (!st && !sl) {
+                    this._cancelScroll();
+                }
             } else {
                 if (scroll) {
                     this._initScroll();
@@ -327,7 +324,83 @@ YUI.add('dd-scroll', function(Y) {
     };
     NS.ATTRS = {};
     Y.mix(NS.ATTRS, S.ATTRS);
-    Y.extend(NS, S);
+    Y.extend(NS, S, {
+        _checkWinScroll: function(move) {
+            var r = this._getVPRegion(),
+                xy = this.get('owner').lastXY,
+                scroll = false,
+                b = this.get('buffer'),
+                win = this.get('parentScroll'),
+                sTop = win.get(SCROLL_TOP),
+                sLeft = win.get(SCROLL_LEFT),
+                w = this._dimCache.w,
+                h = this._dimCache.h,
+                bottom = xy[1] + h,
+                top = xy[1],
+                right = xy[0] + w,
+                left = xy[0],
+                nt = top,
+                nl = left,
+                st = sTop,
+                sl = sLeft;
+
+
+            if (left <= r.left) {
+                scroll = true;
+                nl = xy[0] - b;
+                sl = sLeft - b;
+            }
+            if (right >= r.right) {
+                scroll = true;
+                nl = xy[0] + b;
+                sl = sLeft + b;
+            }
+            if (bottom >= r.bottom) {
+                scroll = true;
+                nt = xy[1] + b;
+                st = sTop + b;
+
+            }
+            if (top <= r.top) {
+                scroll = true;
+                nt = xy[1] - b;
+                st = sTop - b;
+            }
+
+            if (st < 0) {
+                st = 0;
+                nt = xy[1];
+            }
+
+            if (sl < 0) {
+                sl = 0;
+                nl = xy[0];
+            }
+
+            if (nt < 0) {
+                nt = xy[1];
+            }
+            if (nl < 0) {
+                nl = xy[0];
+            }
+            if (move) {
+                this.get('owner').actXY = [nl, nt];
+                //console.log('ActXY: ', this.get('owner').actXY);
+                this.get('owner')._moveNode();
+                win.set(SCROLL_TOP, st);
+                win.set(SCROLL_LEFT, sl);
+                if (!st && !sl) {
+                    this._cancelScroll();
+                }
+            } else {
+                if (scroll) {
+                    this._initScroll();
+                } else {
+                    this._cancelScroll();
+                }
+            }
+        },
+    });
     NS.NAME = 'nodescroll';
     NS.NS = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;

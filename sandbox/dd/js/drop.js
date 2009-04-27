@@ -241,7 +241,8 @@ YUI.add('dd-drop', function(Y) {
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
-        },        
+            this.detachAll();
+        },
         /**
         * @private
         * @method _deactivateShim

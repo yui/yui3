@@ -32,6 +32,9 @@
             height: 400px;
             width: 400px;
             overflow: auto;
+            position: absolute;
+            top: 200px;
+            left: 300px;
         }
         #wrap {
             height: 900px;
