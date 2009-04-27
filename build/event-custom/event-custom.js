@@ -765,9 +765,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
@@ -780,9 +777,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -796,9 +790,6 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -1525,8 +1516,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -1635,7 +1624,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
@@ -1651,15 +1641,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
@@ -1980,8 +1970,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
@@ -2036,4 +2024,4 @@ ET.call(Y);
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['oop']});
