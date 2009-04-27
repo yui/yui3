@@ -192,6 +192,15 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 "frameDoc.query('#demo li').get('innerHTML')");
 
             Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id=form.foo@bar:baz]')), "#form.foo@bar:baz");
+
+            var firstChild = Y.get('body :first-child');
+            Y.get('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
+            console.log(Y.Node.getDOMNode(Y.get('body :first-child')));
+            Assert.isFalse(Y.Node.getDOMNode(firstChild) === Y.Node.getDOMNode(Y.get('body :first-child')), "wrong node: Y.get('body :first-child')");
+
+            Y.get('body').removeChild(Y.get('body :first-child'));
+            Assert.areEqual(Y.Selector.query('body :firstChild', null, true), Y.Node.getDOMNode(Y.get('body : first-child')), "body :first-child === #test-append");
+
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');
             Assert.areEqual(3, Y.all('#test-select option').size(), 'Y.get("#test-select option").size()');
@@ -585,7 +594,15 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             document.body.style.width = '';
 
             window.scrollTo(0, 0);
-        }
+        },
+
+        test_aria: function() {
+            Y.get('body').set('role', 'menu');
+            Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.get('body').set('role', 'menu')")
+
+            Y.get('body').set('aria-checked', true);
+            Assert.isTrue(document.body.getAttribute('aria-checked') === 'true', "Y.get('body').set('aria-checked', true)")
+        },
     }));
 
     suite.add( new tool.TestCase({
