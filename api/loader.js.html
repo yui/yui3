@@ -171,7 +171,8 @@
     <span class="nx">CSSFONTS</span> <span class="o">=</span> <span class="s1">&#39;cssfonts&#39;</span><span class="o">,</span>
     <span class="nx">CSSGRIDS</span> <span class="o">=</span> <span class="s1">&#39;cssgrids&#39;</span><span class="o">,</span>
     <span class="nx">CSSBASE</span> <span class="o">=</span> <span class="s1">&#39;cssbase&#39;</span><span class="o">,</span>
-    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
+    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> 
+                 <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
     <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">],</span>
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span>
     <span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="o">,</span>
@@ -370,8 +371,8 @@
         <span class="o">},</span>
 
         <span class="nx">get</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
-        <span class="o">},</span>
+            <span class="c">// requires: [&#39;yui-base&#39;]</span>
+<span class="c"></span>        <span class="o">},</span>
 
         <span class="nx">history</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
@@ -422,8 +423,8 @@
         <span class="o">},</span>
         
         <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
-        <span class="o">},</span>
+            <span class="c">// requires: [&#39;yui-base&#39;]</span>
+<span class="c"></span>        <span class="o">},</span>
 
         <span class="nx">overlay</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;widget&#39;</span><span class="o">,</span> <span class="s1">&#39;widget-position&#39;</span><span class="o">,</span> <span class="s1">&#39;widget-position-ext&#39;</span><span class="o">,</span> <span class="s1">&#39;widget-stack&#39;</span><span class="o">,</span> <span class="s1">&#39;widget-stdmod&#39;</span><span class="o">],</span>

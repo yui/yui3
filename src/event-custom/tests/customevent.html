@@ -2,23 +2,25 @@
 <html>
 <head>
 <title>YUI Event Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
 <script type="text/javascript">
 
 (function() {
     YUI({
         base: "../../../build/",
         filter: "debug",
+        combine: false,
         useConsole: true,
         // logInclude: ['event', 'test']
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+    }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun');
 
