@@ -2766,7 +2766,7 @@ var BASE = 'base',
             submodules: {
 
                 'io-base': {
-                    requires: [NODE]
+                    requires: [EVENTCUSTOM]
                 }, 
 
                 'io-xdr': {
@@ -2774,11 +2774,11 @@ var BASE = 'base',
                 }, 
 
                 'io-form': {
-                    requires: ['io-base']
+                    requires: ['io-base', NODE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: ['io-base']
+                    requires: ['io-base', NODE]
                 },
 
                 'io-queue': {
