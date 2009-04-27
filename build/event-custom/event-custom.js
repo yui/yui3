@@ -1624,7 +1624,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
