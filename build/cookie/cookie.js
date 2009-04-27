@@ -61,7 +61,7 @@ YUI.add('cookie', function(Y) {
          * Creates a cookie string that can be assigned into document.cookie.
          * @param {String} name The name of the cookie.
          * @param {String} value The value of the cookie.
-         * @param {encodeValue} encodeValue True to encode the value, false to leave as-is.
+         * @param {Boolean} encodeValue True to encode the value, false to leave as-is.
          * @param {Object} options (Optional) Options for the cookie.
          * @return {String} The formatted cookie string.
          * @method _createCookieString
@@ -250,7 +250,7 @@ YUI.add('cookie', function(Y) {
                 options = {};
             }
             
-            cookies = this._parseCookieString(document.cookie, !options.raw);
+            cookies = this._parseCookieString(doc.cookie, !options.raw);
             cookie = cookies[name];
             
             //should return null, not undefined if the cookie doesn't exist
@@ -398,7 +398,7 @@ YUI.add('cookie', function(Y) {
          * @param {Variant} value The value to set for the cookie.
          * @param {Object} options (Optional) An object containing one or more
          *      cookie options: path (a string), domain (a string), expires (a Date object),
-         *      secure (true/false), and raw(true/false). Setting raw to true indicates
+         *      secure (true/false), and raw (true/false). Setting raw to true indicates
          *      that the cookie should not be URI encoded before being set.
          * @return {String} The created cookie string.
          * @method set
