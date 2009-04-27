@@ -768,9 +768,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
@@ -783,9 +780,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -799,9 +793,6 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -1533,8 +1524,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -1992,8 +1981,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
@@ -2048,4 +2035,4 @@ ET.call(Y);
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['oop']});

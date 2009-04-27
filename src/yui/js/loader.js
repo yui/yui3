@@ -122,7 +122,8 @@ var BASE = 'base',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
     CSSBASE = 'cssbase',
-    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
+                 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', 'base'],
     VERSION = '@VERSION@',
     ROOT = VERSION + '/build/',
@@ -321,7 +322,7 @@ var BASE = 'base',
         },
 
         get: { 
-            requires: ['yui-base']
+            // requires: ['yui-base']
         },
 
         history: { 
@@ -373,7 +374,7 @@ var BASE = 'base',
         },
         
         oop: { 
-            requires: ['yui-base']
+            // requires: ['yui-base']
         },
 
         overlay: {
