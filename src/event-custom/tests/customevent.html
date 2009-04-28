@@ -2,23 +2,25 @@
 <html>
 <head>
 <title>YUI Event Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
 <script type="text/javascript">
 
 (function() {
     YUI({
         base: "../../../build/",
         filter: "debug",
+        combine: false,
         useConsole: true,
         // logInclude: ['event', 'test']
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+    }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun');
 
@@ -300,7 +302,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.publish('y:foo', {
                     emitFacade: true,
                     preventedFn: function() {
-                        count++
+                        count++;
                     }
                 });
 
@@ -315,6 +317,57 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.fire('y:foo');
 
                 Y.Assert.areEqual(1, count);
+            },
+
+            testDetachHandle: function() {
+                var count = 0, handle, handle2;
+                Y.publish('y:foo', {
+                    emitFacade: true,
+                });
+
+                Y.on('y:foo', function(e) {
+                    count++;
+                    handle2.detach();
+                });
+
+                handle = Y.on('y:foo', function(e) {
+                    count += 100;
+                });
+
+                handle2 = Y.on('y:foo', function(e) {
+                    count += 1000;
+                });
+
+                Y.detach(handle);
+
+                Y.fire('y:foo');
+
+                Y.Assert.areEqual(1, count);
+
+                count = 0;
+
+                var handle3 = Y.on('y:click', function() {
+                    count++;
+                    handle3.detach();
+                });
+
+                Y.fire('y:click');
+                Y.fire('y:click');
+
+                count = 0;
+                Y.on('y:foo', function(e) {
+                    count++;
+                });
+                Y.on('y:foo', function(e) {
+                    count++;
+                });
+
+                Y.detachAll('y:click');
+
+                Y.fire('y:click');
+
+                Y.Assert.areEqual(0, count);
+
             }
 
         });

@@ -35,6 +35,8 @@ var onsubscribeType = "_event:onsub",
         'type'
     ],
 
+    FACADE = new Y.EventFacade(),
+
     YUI3_SIGNATURE = 9;
 
 Y.EventHandle = function(evt, sub) {
@@ -337,9 +339,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
@@ -352,9 +351,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -368,9 +364,6 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -443,15 +436,13 @@ Y.CustomEvent.prototype = {
 
             o2 = {};
 
-            // protect the event facade prototype properties
-            // Y.mix(o2, ef, true, Y.EventFacade.prototype);
-            // Y.mix(o2, ef, true, Y.merge(Y.EventFacade.prototype, Y.CustomEvent.prototype));
-            Y.mix(o2, ef, true, new Y.EventFacade());
+            // protect the event facade properties
+            Y.mix(o2, ef, true, FACADE);
 
             // mix the data
             Y.mix(ef, o, true);
 
-            // restore ef proto
+            // restore ef
             Y.mix(ef, o2, true);
         }
 
@@ -753,8 +744,18 @@ Y.CustomEvent.prototype = {
      * Removes all listeners
      * @method unsubscribeAll
      * @return {int} The number of listeners unsubscribed
+     * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+        return this.detachAll.apply(this, arguments);
+    },
+
+    /**
+     * Removes all listeners
+     * @method detachAll
+     * @return {int} The number of listeners unsubscribed
+     */
+    detachAll: function() {
         var subs = this.subscribers, i, l=0;
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -825,6 +826,22 @@ Y.CustomEvent.prototype = {
 
             this.events.fire('prevented', this);
         }
+    },
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    halt: function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this.preventDefault();
     }
 
 };
@@ -960,3 +977,4 @@ Y.Subscriber.prototype = {
     }
 };
 
+// FACADE = new Y.EventFacade(new Y.CustomEvent('x'));

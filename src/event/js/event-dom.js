@@ -479,7 +479,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             ce = _wrappers[id];
 
             if (ce) {
-                return ce.unsubscribe(fn);
+                return ce.detach(fn);
             } else {
                 return false;
             }
@@ -724,7 +724,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
-                    lis[i].unsubscribeAll();
+                    lis[i].detachAll();
                 }
             }
 
@@ -747,12 +747,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null;
 
             if (!evts) {
                 return null;
             }
-
 
             if (key) {
                 if (evts[key]) {
@@ -779,7 +778,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             var E = Y.Event;
 
             Y.each(_wrappers, function(v, k) {
-                v.unsubscribeAll();
+                v.detachAll();
                 remove(v.el, v.type, v.fn);
                 delete _wrappers[k];
             });

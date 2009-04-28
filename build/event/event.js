@@ -959,7 +959,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             ce = _wrappers[id];
 
             if (ce) {
-                return ce.unsubscribe(fn);
+                return ce.detach(fn);
             } else {
                 return false;
             }
@@ -1198,7 +1198,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
-                    lis[i].unsubscribeAll();
+                    lis[i].detachAll();
                 }
             }
 
@@ -1221,12 +1221,11 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null;
 
             if (!evts) {
                 return null;
             }
-
 
             if (key) {
                 if (evts[key]) {
@@ -1253,7 +1252,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             var E = Y.Event;
 
             Y.each(_wrappers, function(v, k) {
-                v.unsubscribeAll();
+                v.detachAll();
                 remove(v.el, v.type, v.fn);
                 delete _wrappers[k];
             });
@@ -1481,14 +1480,13 @@ Y.Env.evt.plugins.key = {
         return Y.on.apply(Y, a);
     }
 };
-
 /**
- * Set up a delegated listener container.
+ * Sets up a delegated listener container.
  * @event delegate
  * @param type {string} 'delegate'
  * @param fn {string} the function to execute
  * @param el {string|node} the element that is the delegation container
- * @param event {string} the event type to delegate
+ * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
  * @param o optional context object
@@ -1500,40 +1498,40 @@ Y.Env.evt.plugins.key = {
 
 Y.Env.evt.plugins.delegate = {
 
-    on: function(type, fn, el, event, spec, o) {
+    on: function(type, fn, el, delegateType, spec, o) {
 
-        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + event + spec,
+        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + delegateType + spec,
             a     = Y.Array(arguments, 0, true);
 
         if (!Y.getEvent(ename)) {
 
             // set up the listener on the container
-            Y.on(event, function(e) {
+            Y.on(delegateType, function(e) {
 
-                var targets = e.currentTarget.queryAll(spec),
-                    target  = e.target, 
+                var target  = e.target, 
                     passed  = false;
 
-                if (targets) {
+				// @TODO we need Node.some 
+				e.currentTarget.queryAll(spec).each(function (v, k) {
 
-                    // @TODO we need Node.some 
-                    targets.each(function (v, k) {
+					if ((!passed) && (v.compareTo(target) || v.contains(target))) {
 
-                        if ((!passed) && (v == target)) {
-                            Y.fire(ename, e);
-                            passed = true;
-                        }
+						e.target = v;
+						Y.fire(ename, e);
+						passed = true;
 
-                    });
+					}
 
-                }
+				});
+
 
             }, el);
+
         }
 
         a[0] = ename;
 
-        // remove element, delegation event, and delegation spec from the args
+        // remove element, delegation spec and context object from the args
         a.splice(2, 3);
             
         // subscribe to the custom event for the delegation spec
@@ -1542,7 +1540,6 @@ Y.Env.evt.plugins.delegate = {
     }
 
 };
-
 (function() {
 
 var detachHandle,
@@ -1596,6 +1593,114 @@ Y.Env.evt.plugins.windowresize = {
 };
 
 })();
+var fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
+
+	var bReturnVal = false;
+
+	if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
+
+		if (spec && !node.compareTo(e.currentTarget)) {
+			e.target = node;
+		}
+
+		Y.fire(eventName, e);
+			
+		bReturnVal = true;
+			
+	}
+	
+	return bReturnVal;
+
+};
 
 
-}, '@VERSION@' );
+var handleMouseEvent = function(e, eventName, spec) {
+
+	var relatedTarget = e.relatedTarget,
+		target = e.target,
+		bStop = false;
+
+	if (spec) {
+
+		this.queryAll(spec).each(function (v) {
+
+			if ((!bStop) && (v.compareTo(target) || v.contains(target))) {
+				bStop = fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
+			}
+			
+		});
+		
+	}
+	else {
+		fireMouseEventForNode(this, relatedTarget, eventName, e);
+	}
+
+};
+
+var eventConfig = {
+
+    on: function(type, fn, el, spec) {
+
+        var sDOMEvent = (type === 'mouseenter') ? 'mouseover' : 'mouseout',
+			ename = type + ':' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + sDOMEvent + spec,
+            a     = Y.Array(arguments, 0, true),
+			selector = Y.Lang.isString(spec) ? spec : null;
+
+        if (!Y.getEvent(ename)) {
+
+            // Set up the listener on the container
+            Y.on(sDOMEvent, Y.rbind(handleMouseEvent, Y.Node.get(el), ename, selector), el);
+        }
+
+        a[0] = ename;
+
+
+        // Remove the element (and the spec--if defined) from the args
+		
+		if (selector) {
+        	a.splice(2, 2);
+		}
+		else {
+			a.splice(2, 1);
+		}
+            
+
+        // Subscribe to the custom event for the delegation spec
+        return Y.on.apply(Y, a);
+
+    }
+
+};
+
+/**
+ * Sets up a "mouseenter" listener--a listener that is called the first time 
+ * the user's mouse enters the specified element(s).  Can be used to listen for 
+ * the "mouseenter" event on a single element, or a collection of elements as
+ * specified via a CSS selector passed as the fourth argument when subscribing 
+ * to the event. 
+ * @event mouseenter
+ * @param type {string} 'mouseenter'
+ * @param fn {string} The method the event invokes.
+ * @param el {string|node} The element to assign the listener to.
+ * @return {Event.Handle} the detach handle
+ * @for YUI
+ */
+Y.Env.evt.plugins.mouseenter = eventConfig;
+
+/**
+* Sets up a "mouseleave" listener--a listener that is called the first time 
+* the user's mouse enters the specified element(s).  Can be used to listen for 
+* the "mouseleave" event on a single element, or a collection of elements as
+* specified via a CSS selector passed as the fourth argument when subscribing 
+* to the event.
+* @event mouseleave
+* @param type {string} 'mouseleave'
+* @param fn {string} The method the event invokes.
+* @param el {string|node} The element to assign the listener to.
+* @return {Event.Handle} the detach handle
+* @for YUI
+ */
+Y.Env.evt.plugins.mouseleave = eventConfig;
+
+
+}, '@VERSION@' ,{requires:['event-custom']});

@@ -1,3 +1,13 @@
+/**
+ * The selector-native module provides support for native querySelector
+ * @module selector-native
+ */
+
+/**
+ * Provides a wrapper for native querySelectorAll 
+ * @for Selector
+ */
+
 Y.namespace('Selector'); // allow native module to standalone
 
 var PARENT_NODE = 'parentNode',

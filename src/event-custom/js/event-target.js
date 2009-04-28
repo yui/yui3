@@ -107,8 +107,9 @@ var L = Y.Lang,
             defaults: {
                 context: this, 
                 host: this,
-                emitFacade: o.emitFacade || false,
-                fireOnce: o.fireOnce || false,
+                emitFacade: o.emitFacade,
+                fireOnce: o.fireOnce,
+                queuable: o.queuable,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -124,8 +125,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -237,7 +236,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
@@ -253,15 +253,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
@@ -583,8 +583,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {

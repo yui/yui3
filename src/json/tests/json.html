@@ -37,6 +37,33 @@
 <body class="yui-skin-sam">
 <h1>Tests</h1>
 <div id="testbed"></div>
+<form action=''>
+    <h3>Form used for field value extraction, stringification</h3>
+    <input type="text" id="empty_text">
+    <input type="text" id="text" value="text">
+    <input type="radio" name="radio" id="unchecked_radio" value="unchecked">
+    <input type="radio" name="radio" id="checked_radio" value="radio" checked="checked">
+    <input type="checkbox" name="box" id="unchecked_box" value="unchecked">
+    <input type="checkbox" name="box" id="checked_box" value="box" checked="checked">
+    <textarea id="empty_textarea"></textarea>
+    <textarea id="textarea">textarea</textarea>
+    <select id="select">
+        <option value="unselected">Unselected</option>
+        <option value="selected" selected="selected">Selected</option>
+    </select>
+    <select id="multiple_select" multiple="multiple" size="3">
+        <option value="unselected">Unselected</option>
+        <option value="selected" selected="selected">Selected</option>
+        <option value="selected also" selected="selected">Selected also</option>
+    </select>
+    <button id="button" type="button">content; no value</button>
+    <button id="button_with_value" type="button" value="button value">content and value</button>
+    <button id="button_submit" type="submit">content; no value</button>
+    <button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>
+    <input type="button" id="input_button" value="input button">
+    <input type="submit" id="input_submit" value="input submit">
+    <input type="image" id="input_image" src="404.png" value="input image">
+</form>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/console/console-debug.js"></script>
@@ -46,8 +73,8 @@
 YUI({
     base : '../../../build/',
     filter : 'debug',
-    useBrowserConsole : false,
-    logInclude : { TestRunner: true }
+    //useBrowserConsole : false,
+    logInclude : { TestRunner: true, json: true, JSON: true }
 }).use('test','console','json',function (Y) {
 
 var d = document,
@@ -474,6 +501,50 @@ suite.add(new Y.Test.Case({
         // This assumes Pacific Time Zone (GMT -7:00)
         Y.Assert.areSame('{"dt":"1946-07-06T07:00:00Z"}',
             Y.JSON.stringify({dt : new Date(1946,6,6)}));
+    },
+
+    test_stringifyFormValue : function () {
+        function $(id) { return document.getElementById(id); }
+
+        var data = {
+            empty_text              : $('empty_text').value,
+            text                    : $('text').value,
+            unchecked_radio         : $('unchecked_radio').value,
+            checked_radio           : $('checked_radio').value,
+            unchecked_box           : $('unchecked_box').value,
+            checked_box             : $('checked_box').value,
+            empty_textarea          : $('empty_textarea').value,
+            textarea                : $('textarea').value,
+            select                  : $('select').value,
+            multiple_select         : $('multiple_select').value,
+            button                  : $('button').value,
+            button_with_value       : $('button_with_value').value,
+            button_submit           : $('button_submit').value,
+            button_submit_with_value: $('button_submit_with_value').value,
+            input_button            : $('input_button').value,
+            input_submit            : $('input_submit').value,
+            input_image             : $('input_image').value
+        };
+
+        Y.Assert.areSame('{'+
+            '"empty_text":"",'+
+            '"text":"text",'+
+            '"unchecked_radio":"unchecked",'+
+            '"checked_radio":"radio",'+
+            '"unchecked_box":"unchecked",'+
+            '"checked_box":"box",'+
+            '"empty_textarea":"",'+
+            '"textarea":"textarea",'+
+            '"select":"selected",'+
+            '"multiple_select":"selected",'+
+            '"button":"",'+
+            '"button_with_value":"button value",'+
+            '"button_submit":"",'+
+            '"button_submit_with_value":"submit button value",'+
+            '"input_button":"input button",'+
+            '"input_submit":"input submit",'+
+            '"input_image":"input image"}',
+            Y.JSON.stringify(data));
     }
 
 }));
@@ -523,8 +594,10 @@ suite.add(new Y.Test.Case({
                 ],
                 baz : true},["foo","baz"]));
 
-    },
+    }
 
+    /*
+    // REMOVED for spec compatibility
     test_whitelistObject : function () {
         // (undocumented) supports an obj literal as well
         Y.Assert.areSame('{"foo":[1,2,3,{"foo":"FOO","baz":true}],"baz":true}',
@@ -544,6 +617,7 @@ suite.add(new Y.Test.Case({
                 baz : true
             }, {foo : true, baz : false})); // values ignored
     }
+    */
 
 }));
 
@@ -551,9 +625,9 @@ suite.add(new Y.Test.Case({
     name : "formatting",
 
     test_falseyIndents : function () {
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
+        Y.Assert.areSame('{"foo0":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
-                foo : [ 2, {
+                foo0 : [ 2, {
                     bar : [ 4, {
                         baz : [ 6, {
                             "deep enough" : 7
@@ -562,9 +636,31 @@ suite.add(new Y.Test.Case({
                 }]
             },null,0));
 
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
+        Y.Assert.areSame('{"foo-4":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
-                foo : [ 2, {
+                "foo-4" : [ 2, {
+                    bar : [ 4, {
+                        baz : [ 6, {
+                            "deep enough" : 7
+                        }]
+                    }]
+                }]
+            },null,-4));
+
+        Y.Assert.areSame('{"foo_false":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
+            Y.JSON.stringify({
+                foo_false : [ 2, {
+                    bar : [ 4, {
+                        baz : [ 6, {
+                            "deep enough" : 7
+                        }]
+                    }]
+                }]
+            },null,false));
+
+        Y.Assert.areSame('{"foo_empty":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
+            Y.JSON.stringify({
+                foo_empty : [ 2, {
                     bar : [ 4, {
                         baz : [ 6, {
                             "deep enough" : 7
@@ -573,30 +669,20 @@ suite.add(new Y.Test.Case({
                 }]
             },null,""));
 
-        Y.Assert.areSame('{"foo":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
-            Y.JSON.stringify({
-                foo : [ 2, {
-                    bar : [ 4, {
-                        baz : [ 6, {
-                            "deep enough" : 7
-                        }]
-                    }]
-                }]
-            },null,false));
     },
 
     test_indentNumber : function () {
         Y.Assert.areSame("{\n\
-  \"foo\":[\n\
+  \"foo\": [\n\
     2,\n\
     {\n\
-      \"bar\":[\n\
+      \"bar\": [\n\
         4,\n\
         {\n\
-          \"baz\":[\n\
+          \"baz\": [\n\
             6,\n\
             {\n\
-              \"deep enough\":7\n\
+              \"deep enough\": 7\n\
             }\n\
           ]\n\
         }\n\
@@ -616,16 +702,16 @@ suite.add(new Y.Test.Case({
     },
     test_indentString : function () {
         Y.Assert.areSame("{\n\
-Xo\"foo\":[\n\
+Xo\"foo\": [\n\
 XoXo2,\n\
 XoXo{\n\
-XoXoXo\"bar\":[\n\
+XoXoXo\"bar\": [\n\
 XoXoXoXo4,\n\
 XoXoXoXo{\n\
-XoXoXoXoXo\"baz\":[\n\
+XoXoXoXoXo\"baz\": [\n\
 XoXoXoXoXoXo6,\n\
 XoXoXoXoXoXo{\n\
-XoXoXoXoXoXoXo\"deep enough\":7\n\
+XoXoXoXoXoXoXo\"deep enough\": 7\n\
 XoXoXoXoXoXo}\n\
 XoXoXoXoXo]\n\
 XoXoXoXo}\n\
@@ -686,15 +772,97 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-/*
 suite.add(new Y.Test.Case({
     name : "replacer",
 
-    test_ : function () {
-        Y.Assert.areSame();
-    },
+    test_replacer : function () {
+        // replacer applies to even simple value stringifications
+        Y.Assert.areSame("20",
+            Y.JSON.stringify(10,function (k,v) {
+                return typeof(v) === 'number' ? v * 2 : v;
+            }));
+
+        // replacer is applied to every nested property as well.
+        // can modify the host object en route
+        // executes from the context of the key:value container
+        Y.Assert.areSame('{"num":2,"alpha":"ABC","obj":{"nested_num":100,"alpha":"abc"},"arr":[2,null,4]}',
+            Y.JSON.stringify({
+                    num: 1,
+                    alpha: "abc",
+                    ignore: "me",
+                    change: "to a function",
+                    toUpper: true,
+                    obj: {
+                        nested_num: 50,
+                        undef: undefined,
+                        alpha: "abc"
+                    },
+                    arr: [1, 7, 2]
+                }
+                ,function (k,v) {
+                    var t = typeof v;
+
+                    if (k === 'change') {
+                        // this property should then be ignored
+                        return function () {};
+                    } else if (k === 'ignore') {
+                        // this property should then be ignored
+                        return undefined;
+                    } else if (t === 'number') {
+                        // undefined returned to arrays should become null
+                        return v % 7 ? v * 2 : undefined;
+
+                    // this refers to the object containing the key:value
+                    } else if (t === 'string' && (this.toUpper)) {
+                        // modify the object during stringification
+                        delete this.toUpper;
+                        return v.toUpperCase();
+                    } else {
+                        return v;
+                    }
+                }));
+
+        // replacer works in conjunction with indent
+        Y.Assert.areSame("{\n_\"num\": 2,\n_\"alpha\": \"ABC\",\n_\"obj\": {\n__\"nested_num\": 100,\n__\"alpha\": \"abc\"\n_},\n_\"arr\": [\n__2,\n__null,\n__4\n_]\n}",
+            Y.JSON.stringify({
+                    num: 1,
+                    alpha: "abc",
+                    ignore: "me",
+                    change: "to a function",
+                    toUpper: true,
+                    obj: {
+                        nested_num: 50,
+                        undef: undefined,
+                        alpha: "abc"
+                    },
+                    arr: [1, 7, 2]
+                }
+                ,function (k,v) {
+                    var t = typeof v;
+
+                    if (k === 'change') {
+                        // this property should then be ignored
+                        return function () {};
+                    } else if (k === 'ignore') {
+                        // this property should then be ignored
+                        return undefined;
+                    } else if (t === 'number') {
+                        // undefined returned to arrays should become null
+                        return v % 7 ? v * 2 : undefined;
+
+                    // this refers to the object containing the key:value
+                    } else if (t === 'string' && (this.toUpper)) {
+                        // modify the object during stringification
+                        delete this.toUpper;
+                        return v.toUpperCase();
+                    } else {
+                        return v;
+                    }
+                },'_'));
+    }
 }));
 
+/*
 suite.add(new Y.Test.Case({
     name : "unicode",
 
@@ -723,7 +891,8 @@ Y.Console.prototype.printLogEntry = function (m) {
 
 var yconsole = new Y.Console({
     contentBox:"log",
-    newestOnTop: false
+    newestOnTop: false,
+    height: '600px'
 }).render();
 
 //yconsole.hideCategory('info');
@@ -740,6 +909,10 @@ yconsole.printLogEntry = function (m) {
         return Y.Console.prototype.printLogEntry.call(this,m);
     }
 };
+
+if (Object.prototype.toString.call(window.JSON) === '[object JSON]') {
+    Y.log("Browser has native JSON implementation","info","TestRunner");
+}
 
 Y.log("Tests","section","TestRunner");
 

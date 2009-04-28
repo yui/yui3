@@ -156,7 +156,7 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
             v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
@@ -396,6 +396,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
                 // Y.log('Use complete');
@@ -629,11 +630,12 @@ var instance = Y;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Logger widget and anything else
+ * dispatched, which the Console widget and anything else
  * can consume.  If the 'useBrowserConsole' config is true, it will
  * write to the browser console if available.  YUI-specific log
  * messages will only be present in the -debug versions of the
- * JS files.
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
  *
  * @method log
  * @for YUI
@@ -693,7 +695,7 @@ instance.log = function(msg, cat, src, silent) {
 
 /**
  * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files, unlike log statements
+ * minified and raw versions of the YUI files, unlike log statements.
  * @method message
  * @for YUI
  * @param  {String}  msg  The message to log.
@@ -1021,7 +1023,7 @@ A.test = function(o) {
  */
 A.each = (Native.forEach) ?
     function (a, f, o) { 
-        Native.forEach.call(a, f, o || Y);
+        Native.forEach.call(a || [], f, o || Y);
         return Y;
     } :
     function (a, f, o) { 
@@ -1562,7 +1564,7 @@ Y.UA = function() {
          * @type boolean
          * @static
          */
-        secure: (Y.config.win.location.href.toLowerCase().indexOf("https") === 0),
+        secure: false,
 
         /**
          * The operating system.  Currently only detecting windows or macintosh
@@ -1574,70 +1576,80 @@ Y.UA = function() {
         
     },
 
-    ua = navigator.userAgent, 
-    m ;
+    ua = navigator && navigator.userAgent, 
 
-    if ((/windows|win32/).test(ua)) {
-        o.os = 'windows';
-    } else if ((/macintosh/).test(ua)) {
-        o.os = 'macintosh';
-    }
+    loc = Y.config.win.location,
 
-    // Modern KHTML browsers should qualify as Safari X-Grade
-    if ((/KHTML/).test(ua)) {
-        o.webkit=1;
-    }
-    // Modern WebKit browsers are at least X-Grade
-    m=ua.match(/AppleWebKit\/([^\s]*)/);
-    if (m&&m[1]) {
-        o.webkit=parseFloat(m[1]);
+    href = loc && loc.href,
+    
+    m;
 
-        // Mobile browser check
-        if (/ Mobile\//.test(ua)) {
-            o.mobile = "Apple"; // iPhone or iPod Touch
-        } else {
-            m=ua.match(/NokiaN[^\/]*/);
-            if (m) {
-                o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
-            }
+    o.secure = href && (href.toLowerCase().indexOf("https") === 0);
+
+    if (ua) {
+
+        if ((/windows|win32/).test(ua)) {
+            o.os = 'windows';
+        } else if ((/macintosh/).test(ua)) {
+            o.os = 'macintosh';
         }
 
-        m=ua.match(/AdobeAIR\/([^\s]*)/);
-        if (m) {
-            o.air = m[0]; // Adobe AIR 1.0 or better
+        // Modern KHTML browsers should qualify as Safari X-Grade
+        if ((/KHTML/).test(ua)) {
+            o.webkit=1;
         }
-
-    }
-
-    if (!o.webkit) { // not webkit
-        // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
-        m=ua.match(/Opera[\s\/]([^\s]*)/);
+        // Modern WebKit browsers are at least X-Grade
+        m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.opera=parseFloat(m[1]);
-            m=ua.match(/Opera Mini[^;]*/);
-            if (m) {
-                o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
-            }
-        } else { // not opera or webkit
-            m=ua.match(/MSIE\s([^;]*)/);
-            if (m&&m[1]) {
-                o.ie=parseFloat(m[1]);
-            } else { // not opera, webkit, or ie
-                m=ua.match(/Gecko\/([^\s]*)/);
+            o.webkit=parseFloat(m[1]);
+
+            // Mobile browser check
+            if (/ Mobile\//.test(ua)) {
+                o.mobile = "Apple"; // iPhone or iPod Touch
+            } else {
+                m=ua.match(/NokiaN[^\/]*/);
                 if (m) {
-                    o.gecko=1; // Gecko detected, look for revision
-                    m=ua.match(/rv:([^\s\)]*)/);
-                    if (m&&m[1]) {
-                        o.gecko=parseFloat(m[1]);
+                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                }
+            }
+
+            m=ua.match(/AdobeAIR\/([^\s]*)/);
+            if (m) {
+                o.air = m[0]; // Adobe AIR 1.0 or better
+            }
+
+        }
+
+        if (!o.webkit) { // not webkit
+            // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
+            m=ua.match(/Opera[\s\/]([^\s]*)/);
+            if (m&&m[1]) {
+                o.opera=parseFloat(m[1]);
+                m=ua.match(/Opera Mini[^;]*/);
+                if (m) {
+                    o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
+                }
+            } else { // not opera or webkit
+                m=ua.match(/MSIE\s([^;]*)/);
+                if (m&&m[1]) {
+                    o.ie=parseFloat(m[1]);
+                } else { // not opera, webkit, or ie
+                    m=ua.match(/Gecko\/([^\s]*)/);
+                    if (m) {
+                        o.gecko=1; // Gecko detected, look for revision
+                        m=ua.match(/rv:([^\s\)]*)/);
+                        if (m&&m[1]) {
+                            o.gecko=parseFloat(m[1]);
+                        }
                     }
                 }
             }
         }
-    }
 
-    m=ua.match(/Caja\/([^\s]*)/);
-    if (m&&m[1]) {
-        o.caja=parseFloat(m[1]);
+        m=ua.match(/Caja\/([^\s]*)/);
+        if (m&&m[1]) {
+            o.caja=parseFloat(m[1]);
+        }
     }
     
     return o;

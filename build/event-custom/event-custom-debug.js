@@ -306,6 +306,127 @@ Y.Do.Error = Y.Do.Halt;
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
 })();
+(function() {
+
+/**
+ * Wraps and protects a custom event for use when emitFacade is set to true.
+ * @class EventFacade
+ * @param e {Event} the custom event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ */
+
+/*
+var PROPS = {
+    details: 1,
+    type: 1,
+    target: 1,
+    currentTarget: 1,
+    stopPropagation: 2,
+    stopImmediatePropagation: 2,
+    preventDefault: 2,
+    halt: 2
+};
+
+Y.EventFacade = function(e, currentTarget) {
+    if (e) {
+        Y.Object.each(PROPS, function(v, k) {
+            //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];
+            var val = e[k];
+            if (val) {
+                this[k] = (v == 2) ? function() {
+                    if (val) {
+                        val.apply(e, arguments);
+                    }
+                } : val;
+            } else {
+                console.log('missing ' + k);
+            }
+        });
+    }
+};
+*/
+
+Y.EventFacade = function(e, currentTarget) {
+
+    e = e || {};
+
+    /**
+     * The arguments passed to fire 
+     * @property details
+     * @type Array
+     */
+    this.details = e.details;
+
+    /**
+     * The event type
+     * @property type
+     * @type string
+     */
+    this.type = e.type;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Node reference for the targeted eventtarget
+     * @propery target
+     * @type Node
+     */
+    this.target = e.target;
+
+    /**
+     * Node reference for the element that the listener was attached to.
+     * @propery currentTarget
+     * @type Node
+     */
+    this.currentTarget = currentTarget;
+
+    /**
+     * Node reference to the relatedTarget
+     * @propery relatedTarget
+     * @type Node
+     */
+    this.relatedTarget = e.relatedTarget;
+    
+    /**
+     * Stops the propagation to the next bubble target
+     * @method stopPropagation
+     */
+    this.stopPropagation = function() {
+        e.stopPropagation();
+    };
+
+    /**
+     * Stops the propagation to the next bubble target and
+     * prevents any additional listeners from being exectued
+     * on the current target.
+     * @method stopImmediatePropagation
+     */
+    this.stopImmediatePropagation = function() {
+        e.stopImmediatePropagation();
+    };
+
+    /**
+     * Prevents the event's default behavior
+     * @method preventDefault
+     */
+    this.preventDefault = function() {
+        e.preventDefault();
+    };
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    this.halt = function(immediate) {
+        e.halt(immediate);
+    };
+
+};
+
+})();
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
@@ -342,6 +463,8 @@ var onsubscribeType = "_event:onsub",
         'target',
         'type'
     ],
+
+    FACADE = new Y.EventFacade(),
 
     YUI3_SIGNATURE = 9;
 
@@ -645,9 +768,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
@@ -660,9 +780,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -676,9 +793,6 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -751,15 +865,13 @@ Y.CustomEvent.prototype = {
 
             o2 = {};
 
-            // protect the event facade prototype properties
-            // Y.mix(o2, ef, true, Y.EventFacade.prototype);
-            // Y.mix(o2, ef, true, Y.merge(Y.EventFacade.prototype, Y.CustomEvent.prototype));
-            Y.mix(o2, ef, true, new Y.EventFacade());
+            // protect the event facade properties
+            Y.mix(o2, ef, true, FACADE);
 
             // mix the data
             Y.mix(ef, o, true);
 
-            // restore ef proto
+            // restore ef
             Y.mix(ef, o2, true);
         }
 
@@ -1061,8 +1173,18 @@ Y.CustomEvent.prototype = {
      * Removes all listeners
      * @method unsubscribeAll
      * @return {int} The number of listeners unsubscribed
+     * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+        return this.detachAll.apply(this, arguments);
+    },
+
+    /**
+     * Removes all listeners
+     * @method detachAll
+     * @return {int} The number of listeners unsubscribed
+     */
+    detachAll: function() {
         var subs = this.subscribers, i, l=0;
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -1133,6 +1255,22 @@ Y.CustomEvent.prototype = {
 
             this.events.fire('prevented', this);
         }
+    },
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    halt: function(immediate) {
+        if (immediate) {
+            this.stopImmediatePropagation();
+        } else {
+            this.stopPropagation();
+        }
+        this.preventDefault();
     }
 
 };
@@ -1268,6 +1406,7 @@ Y.Subscriber.prototype = {
     }
 };
 
+// FACADE = new Y.EventFacade(new Y.CustomEvent('x'));
 (function() {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
@@ -1377,8 +1516,9 @@ var L = Y.Lang,
             defaults: {
                 context: this, 
                 host: this,
-                emitFacade: o.emitFacade || false,
-                fireOnce: o.fireOnce || false,
+                emitFacade: o.emitFacade,
+                fireOnce: o.fireOnce,
+                queuable: o.queuable,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1394,8 +1534,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -1507,7 +1645,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
@@ -1523,15 +1662,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
@@ -1853,8 +1992,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
@@ -1907,118 +2044,6 @@ Y.mix(Y, ET.prototype, false, false, {
 ET.call(Y);
 
 })();
-(function() {
-
-/**
- * Wraps and protects a custom event for use when emitFacade is set to true.
- * @class EventFacade
- * @param e {Event} the custom event
- * @param currentTarget {HTMLElement} the element the listener was attached to
- */
-
-/*
-var PROPS = {
-    details: 1,
-    type: 1,
-    target: 1,
-    currentTarget,
-    related
-
-}
-
-function makeFacade(target, properties, methods) {
-    return function (target, properties, methods) {
-        Y.mix(this
-    };
-}
-*/
-
-Y.EventFacade = function(e, currentTarget) {
-
-    e = e || {};
-
-    /**
-     * The arguments passed to fire 
-     * @property details
-     * @type Array
-     */
-    this.details = e.details;
-
-    /**
-     * The event type
-     * @property type
-     * @type string
-     */
-    this.type = e.type;
-
-    //////////////////////////////////////////////////////
-
-    /**
-     * Node reference for the targeted eventtarget
-     * @propery target
-     * @type Node
-     */
-    this.target = e.target;
-
-    /**
-     * Node reference for the element that the listener was attached to.
-     * @propery currentTarget
-     * @type Node
-     */
-    this.currentTarget = currentTarget;
-
-    /**
-     * Node reference to the relatedTarget
-     * @propery relatedTarget
-     * @type Node
-     */
-    this.relatedTarget = e.relatedTarget;
-    
-    /**
-     * Stops the propagation to the next bubble target
-     * @method stopPropagation
-     */
-    this.stopPropagation = function() {
-        e.stopPropagation();
-    };
-
-    /**
-     * Stops the propagation to the next bubble target and
-     * prevents any additional listeners from being exectued
-     * on the current target.
-     * @method stopImmediatePropagation
-     */
-    this.stopImmediatePropagation = function() {
-        e.stopImmediatePropagation();
-    };
-
-    /**
-     * Prevents the event's default behavior
-     * @method preventDefault
-     */
-    this.preventDefault = function() {
-        e.preventDefault();
-    };
-
-    /**
-     * Stops the event propagation and prevents the default
-     * event behavior.
-     * @method halt
-     * @param immediate {boolean} if true additional listeners
-     * on the current target will not be executed
-     */
-    this.halt = function(immediate) {
-        if (immediate) {
-            this.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-        this.preventDefault();
-    };
-
-};
-
-})();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['oop']});

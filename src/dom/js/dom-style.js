@@ -29,7 +29,8 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 
 Y.mix(Y.DOM, {
-    CUSTOM_STYLES: {},
+    CUSTOM_STYLES: {
+    },
 
 
     /**
@@ -44,6 +45,9 @@ Y.mix(Y.DOM, {
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
+            if (val === null) {
+                val = ''; // normalize for unsetting
+            }
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);

@@ -1,5 +1,15 @@
 YUI.add('selector', function(Y) {
 
+/**
+ * The selector-native module provides support for native querySelector
+ * @module selector-native
+ */
+
+/**
+ * Provides a wrapper for native querySelectorAll 
+ * @for Selector
+ */
+
 Y.namespace('Selector'); // allow native module to standalone
 
 var PARENT_NODE = 'parentNode',
@@ -188,8 +198,8 @@ if (NativeSelector._supportsNative()) {
 Y.Selector.test = NativeSelector._test;
 Y.Selector.filter = NativeSelector._filter;
 /**
- * The selector-css1 module provides helper methods allowing CSS1 Selectors to be used with DOM elements.
- * @module selector-css1
+ * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
+ * @module selector
  * @title Selector Utility
  * @requires yahoo, dom
  */
@@ -213,8 +223,8 @@ var PARENT_NODE = 'parentNode',
 
     Selector = Y.Selector,
 
-    SelectorCSS1 = {
-        SORT_RESULTS: false,
+    SelectorCSS2 = {
+        SORT_RESULTS: true,
         _children: function(node) {
             var ret = node.children;
 
@@ -292,6 +302,15 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
+        /**
+         * Executes the supplied function against each node until true is returned.
+         * @method some
+         *
+         * @param {Array} nodes The nodes to run the function against 
+         * @param {Function} fn  The function to run against each node
+         * @return {Boolean} whether or not any element passed
+         * @static
+         */
         some: function() { return (Array.prototype.some) ?
             function(nodes, fn, context) {
                 return Array.prototype.some.call(nodes, fn, context);
@@ -328,7 +347,7 @@ var PARENT_NODE = 'parentNode',
                             root, firstOnly, true)); 
                 }
 
-                ret = Selector.SORT_RESULT ? Selector._sort(ret) : ret;
+                ret = Selector.SORT_RESULTS ? Selector._sort(ret) : ret;
                 Selector._clearFoundCache();
             } else {
                 root = root || Y.config.doc;
@@ -387,7 +406,7 @@ var PARENT_NODE = 'parentNode',
                     i++;
                     test = attr.test;
                     if (test.test) {
-                        if (!test.test(node[attr.name])) {
+                        if (!test.test(Y.DOM.getAttribute(node, attr.name))) {
                             return false;
                         }
                     } else if (!test(node, attr.match)) {
@@ -609,7 +628,7 @@ var PARENT_NODE = 'parentNode',
         }
     };
 
-Y.mix(Y.Selector, SelectorCSS1, true);
+Y.mix(Y.Selector, SelectorCSS2, true);
 
 // only override native when not supported
 if (!Y.Selector._supportsNative()) {
