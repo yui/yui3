@@ -13,6 +13,7 @@ var SLIDER = 'slider',
     VALUE  = 'value',
     MIN    = 'min',
     MAX    = 'max',
+    GUTTER = 'gutter',
     THUMB_IMAGE = 'thumbImage',
     RAIL_SIZE   = 'railSize',
     CONTENT_BOX = 'contentBox',
@@ -86,7 +87,8 @@ Y.mix(Slider, {
      */
     AXIS_KEYS : {
         x : {
-            offsetEdge    : 'left',
+            minGutter     : 'left',
+            maxGutter     : 'right',
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
             eventPageAxis : 'pageX',
@@ -94,7 +96,8 @@ Y.mix(Slider, {
             xyIndex       : 0
         },
         y : {
-            offsetEdge    : 'top',
+            minGutter     : 'top',
+            maxGutter     : 'bottom',
             dim           : HEIGHT,
             offAxisDim    : WIDTH,
             eventPageAxis : 'pageY',
@@ -293,12 +296,35 @@ Y.mix(Slider, {
          * trigger thumb movement.
          *
          * @attribute railEnabled
-         * @type @Boolean
+         * @type Boolean
          * @default true
          */
         railEnabled : {
             value : true,
             validator : isBoolean
+        },
+
+        /**
+         * Like CSS padding, the distance in pixels from the inner edge of the
+         * rail node within which the thumb can move.  Negative values allow
+         * the edges of the thumb to escape the rail node.  Accepts CSS-like
+         * style values as a string. E.g. "0" for no gutter, "5 0" for a 5px
+         * top and bottom gutter, "5 2 -5 -7" to limit the thumb to be within
+         * 5px from the top and 2px from the right, but allow the thumb's
+         * bottom left corner to move 5px below and 7px to the left of the rail
+         * node's corner.
+         *
+         * This is a pass through to DDConstrain's gutter config.
+         *
+         * @attribute gutter
+         * @type String
+         * @default "0"
+         */
+        gutter : {
+            value : "0",
+            setter : function (v) {
+                return this._setGutterFn(v);
+            }
         }
     }
 });
@@ -893,38 +919,24 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setRailOffsetXY : function () {
-        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
-                         this._thumbOffset;
+        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] +
+                         this.get(GUTTER)[this._key.minGutter];
     },
 
-    /**
-     * Assigns the gutter attribute to the DD instance to allow the thumb to
-     * overshoot the edges of the rail element up to the _thumbOffset.  By
-     * default, this allows the thumb's center point to align with the far left
-     * or top edge of the rail element to represent the min value and the far
-     * right or bottom edge for the max.
+   /**
+    * Passes the gutter attribute value to the DDConstrain gutter attribute.
     *
     * @method _setDDGutter
     * @protected
     */
     _setDDGutter : function () {
-        var gutter = [0,0,0,0],
-            i      = this._key.xyIndex,
-            dim    = this._thumbOffset,
-            start  = -dim,
-            end    = -1 * (this._thumbSize - dim);
+        var gutter = this.get(GUTTER),
+            conGutter = gutter.top    + ' ' + gutter.right + ' ' +
+                        gutter.bottom + ' ' + gutter.left;
 
-        if (i) { // y axis
-            gutter[0] = start;
-            gutter[2] = end;
-        } else {
-            gutter[3] = start;
-            gutter[1] = end;
-        }
-            
-        Y.log('setting DD gutter '+gutter.join(' '),'info','slider');
+        Y.log('setting DD gutter "'+conGutter+'"','info','slider');
 
-        this._dd.set('gutter', gutter.join(' '));
+        this._dd.set(GUTTER, conGutter);
     },
 
     /**
@@ -935,9 +947,15 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setFactor : function () {
+        var gutter = this.get(GUTTER),
+            range  = this._railSize - this._thumbSize -
+                     gutter[this._key.minGutter] -
+                     gutter[this._key.maxGutter];
+
         this._factor = this._railSize ?
-            (this.get(MAX) - this.get(MIN)) / this._railSize :
+            (this.get(MAX) - this.get(MIN)) / range :
             1;
+
         Y.log('_factor set to '+this._factor,'info','slider');
     },
 
@@ -1139,7 +1157,28 @@ Y.extend(Slider, Y.Widget, {
                 null;
     },
 
-
+    /**
+     * Setter applied to the gutter attribute. Strings resembling e.g. CSS
+     * padding values are allowed.  Some valid examples: "5", "3px -4px",
+     * "0 2px 7px", "10px -6 -2 6".  Value will be split up into an object
+     * with top, right, bottom, and left properties.
+     *
+     * NOTE: Units are always pixels, but tokens are passed through parseInt,
+     * so 'px' is harmless, but redundant, and tokens like ".2em" or "1%" are
+     * treated as ".2px" and "1px" respectively.
+     *
+     * @method _setGutterFn
+     * @param v {String} proposed value for the gutter attribute
+     * @return Object
+     * @protected
+     */
+    _setGutterFn : function (v) {
+        if (isString(v) && /^-?\d+(?:\.\d+)?\S*(?:\s+-?\d+(?:\.\d+)?\S*){0,3}$/.test(v)) {
+            return Y.DD.DDM.cssSizestoObject(v);
+        } else {
+            return Y.Attribute.INVALID_VALUE;
+        }
+    },
 
 
     /**
@@ -1231,8 +1270,6 @@ Y.extend(Slider, Y.Widget, {
     _uiPositionThumb : function (xy) {
         var dd  = this._dd;
 
-        xy += this._offsetXY;
-
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
@@ -1253,7 +1290,7 @@ Y.extend(Slider, Y.Widget, {
         if (!e.ddEvent) {
             var xy = this._convertValueToOffset(e.newVal);
 
-            Y.log('firing valueSet to position thumb', 'info', 'slider');
+            Y.log('firing positionThumb to position thumb', 'info', 'slider');
 
             this.fire(POSITION_THUMB,{ value: e.newVal, offset: xy });
         }
@@ -1267,10 +1304,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _convertValueToOffset : function (v) {
-        var min = this.get(MIN),
-            max = this.get(MAX);
-
-        return round(((v - min) / (max - min)) * this._railSize);
+        return round((v - this.get(MIN)) / this._factor) + this._offsetXY;
     },
 
     /**
