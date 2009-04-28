@@ -1,4 +1,4 @@
-Development Master
+3.0.0 beta1
 
 * Removed Attribute.CLONE support in the interests of simplicity.
   Was not being used. Can add support if real demand for it exists. 
