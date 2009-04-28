@@ -378,7 +378,8 @@
         <span class="o">},</span>
 
         <span class="nx">event</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">],</span>
+            <span class="nx">expound</span><span class="o">:</span> <span class="nx">NODE</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-custom&#39;</span><span class="o">:</span> <span class="o">{</span> 
@@ -1346,19 +1347,32 @@
 <span class="c">     */</span>
     <span class="nx">_explode</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
+                <span class="nx">mod</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+                <span class="k">var</span> <span class="nx">expound</span> <span class="o">=</span> <span class="nx">mod</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="o">.</span><span class="nx">expound</span><span class="o">;</span>
                 <span class="c">// Y.log(&#39;exploding &#39; + i);</span>
 <span class="c"></span>
-                <span class="nx">req</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">expound</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">expound</span><span class="o">);</span>
+                        <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
+                    <span class="o">}</span>
+
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+
                     <span class="c">// Y.log(&#39;via explode: &#39; + req);</span>
 <span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
                 <span class="o">}</span>
+            <span class="o">};</span>
+
+
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>

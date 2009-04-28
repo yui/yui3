@@ -57,16 +57,17 @@ PluginHost.prototype = {
      * Unregister and destroy a plugin already instantiated with the Widget.
      * 
      * @method unplug
-     * @param {String} ns The namespace key for the Plugin. If not provided,
+     * @param {String | Function} plugin The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,
      * all registered plugins are unplugged.
      * @chainable
      */
-    unplug: function(ns) {
-        if (ns) {
-            this._unplug(ns);
+    unplug: function(plugin) {
+        if (plugin) {
+            this._unplug(plugin);
         } else {
+            var ns;
             for (ns in this._plugins) {
-                if (Y.Object.owns(this._plugins, ns)) {
+                if (this._plugins.hasOwnProperty(ns)) {
                     this._unplug(ns);
                 }
             }
@@ -134,7 +135,7 @@ PluginHost.prototype = {
             var ns = PluginClass.NS;
 
             config = config || {};
-            config.owner = this;
+            config.host = this;
 
             if (this.hasPlugin(ns)) {
                 // Update config
@@ -152,17 +153,26 @@ PluginHost.prototype = {
      *
      * @method _unplug
      * @private
-     * @param {String} ns The namespace key for the Plugin. If not provided,
-     * all registered plugins are unplugged.
+     * @param {String | Function} plugin The namespace for the Plugin, or a Plugin class, with the static NS property defined.
      */
-    _unplug : function(ns) {
+    _unplug : function(plugin) {
+        var ns = plugin, 
+            plugins = this._plugins;
+
+        if (L.isFunction(plugin)) {
+            ns = plugin.NS;
+            if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
+                ns = null;
+            }
+        }
+
         if (ns) {
             if (this[ns]) {
                 this[ns].destroy();
                 delete this[ns];
             }
-            if (this._plugins[ns]) {
-                delete this._plugins[ns];
+            if (plugins[ns]) {
+                delete plugins[ns];
             }
         }
     }
