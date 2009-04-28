@@ -1,4 +1,4 @@
-Development Master
+3.0.0 beta1
 
 * Host/Owner object now available through public "host" attribute, 
   as opposed to protected _owner property (this.get("host"))
