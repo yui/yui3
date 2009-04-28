@@ -209,6 +209,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -411,6 +412,13 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     dd.on('drag:drag', function() {
         console.log('drag-event: ', (new Date()).getTime());        
     });
+    
+    dd.on('drag:drag', function(e) {
+        console.log('drag-event: ', e.pageX);
+        if (e.pageX > 250) {
+            e.preventDefault();
+        }
+    });
     */
     //}).addHandle('h2')._bubbles.beforeMouseDown.subscribe('drag:beforeMouseDown', function(e) {
     /*
@@ -426,6 +434,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         dd.addToGroup('two');
     });
     */
+    /*
     Y.Node.get('document').on('keypress', function(e) {
         if ((e.keyCode === 27) || (e.charCode === 27)) {
             if (Y.DD.DDM.activeDrag) {
@@ -434,7 +443,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             }
         }
     });
-    
+    */
     /*
     dd.on('drag:enter', function() {
         //Y.log('drag:enter', arguments);
@@ -456,6 +465,9 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     dd.on('drag:dropmiss', function() {
         console.log('drag:dropmiss', arguments);
     });
+
+    dd.destroy();
+    console.log(dd);
     
     
     /*

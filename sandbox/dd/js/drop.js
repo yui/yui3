@@ -51,7 +51,9 @@ YUI.add('dd-drop', function(Y) {
 
 
         //DD init speed up.
-        Y.later(100, this, this._createShim);
+        Y.on('event:ready', Y.bind(function() {
+            Y.later(100, this, this._createShim);
+        }, this));
         DDM._regTarget(this);
 
         /* TODO
@@ -237,6 +239,7 @@ YUI.add('dd-drop', function(Y) {
         destructor: function() {
             DDM._unregTarget(this);
             if (this.shim) {
+                this.shim.detachAll();
                 this.shim.get('parentNode').removeChild(this.shim);
                 this.shim = null;
             }
@@ -363,6 +366,15 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
+            //No playground, defer
+            if (!DDM._pg) {
+                Y.later(10, this, this._createShim);
+                return;
+            }
+            //Shim already here, cancel
+            if (this.shim) {
+                return;
+            }
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
 
             s.setStyles({

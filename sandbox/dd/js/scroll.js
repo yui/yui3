@@ -62,7 +62,7 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         scrollDelay: {
-            value: 900
+            value: 120
         },
         owner: {
             value: null
@@ -201,9 +201,9 @@ YUI.add('dd-scroll', function(Y) {
             }
             if (move) {
                 this.get('owner').actXY = [nl, nt];
-                this.get('owner')._moveNode();
-                win.set(SCROLL_TOP, st);
-                win.set(SCROLL_LEFT, sl);
+                this.get('owner')._moveNode({ node: win, top: st, left: sl});
+                //win.set(SCROLL_TOP, st);
+                //win.set(SCROLL_LEFT, sl);
                 if (!st && !sl) {
                     this._cancelScroll();
                 }
@@ -347,23 +347,23 @@ YUI.add('dd-scroll', function(Y) {
 
             if (left <= r.left) {
                 scroll = true;
-                nl = xy[0] - b;
+                nl = xy[0];
                 sl = sLeft - b;
             }
             if (right >= r.right) {
                 scroll = true;
-                nl = xy[0] + b;
+                nl = xy[0];
                 sl = sLeft + b;
             }
             if (bottom >= r.bottom) {
                 scroll = true;
-                nt = xy[1] + b;
+                nt = xy[1];
                 st = sTop + b;
 
             }
             if (top <= r.top) {
                 scroll = true;
-                nt = xy[1] - b;
+                nt = xy[1];
                 st = sTop - b;
             }
 
@@ -385,10 +385,10 @@ YUI.add('dd-scroll', function(Y) {
             }
             if (move) {
                 this.get('owner').actXY = [nl, nt];
-                //console.log('ActXY: ', this.get('owner').actXY);
-                this.get('owner')._moveNode();
+
                 win.set(SCROLL_TOP, st);
                 win.set(SCROLL_LEFT, sl);
+                this.get('owner')._moveNode();
                 if (!st && !sl) {
                     this._cancelScroll();
                 }
