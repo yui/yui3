@@ -1281,24 +1281,30 @@ Y.Loader.prototype = {
      */
     _explode: function() {
 
-        var r=this.required, i, mod, req;
+        var r=this.required, i, mod, req, me = this, f = function(name) {
 
-        for (i in r) {
-            if (r.hasOwnProperty(i)) {
-                mod = this.getModule(i), expound = mod && mod.expound;
+                mod = me.getModule(name);
+
+                var expound = mod && mod.expound;
 
                 if (mod) {
 
                     if (expound) {
-                        r[expound] = this.getModule(expound);
-                        req = this.getRequires(r[expound]);
+                        r[expound] = me.getModule(expound);
+                        req = me.getRequires(r[expound]);
                         Y.mix(r, Y.Array.hash(req));
                     }
 
-                    req = this.getRequires(mod);
+                    req = me.getRequires(mod);
 
                     Y.mix(r, Y.Array.hash(req));
                 }
+            };
+
+
+        for (i in r) {
+            if (r.hasOwnProperty(i)) {
+                f(i);
             }
         }
     },
