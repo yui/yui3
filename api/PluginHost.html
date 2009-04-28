@@ -237,7 +237,7 @@ for the instance through the "plugins" configuration property.
                                            (
                                                 
                                                         
-                                                         ns
+                                                         plugin
                                                     
                                                 
                                             )
@@ -252,11 +252,10 @@ for the instance through the "plugins" configuration property.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ns</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">String | Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The namespace key for the Plugin. If not provided,
-all registered plugins are unplugged.</span>
+                                                        <span property="yui:description"> The namespace for the Plugin, or a Plugin class, with the static NS property defined.</span>
                                                         </dd>
                                                 </dl>
 
@@ -390,7 +389,7 @@ a single call.
                                            (
                                                 
                                                         
-                                                         ns
+                                                         plugin
                                                     
                                                 
                                             )
@@ -405,10 +404,10 @@ a single call.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ns</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">String | Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The namespace key for the Plugin. If not provided,
+                                                        <span property="yui:description"> The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,
 all registered plugins are unplugged.</span>
                                                         </dd>
                                                 </dl>
