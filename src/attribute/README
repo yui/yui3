@@ -1,3 +1,41 @@
+Development Master
+
+* Removed Attribute.CLONE support in the interests of simplicity.
+  Was not being used. Can add support if real demand for it exists. 
+
+* Changed "set" and "get" configuration properties for setter and 
+  getter methods to "setter" and "getter" respectively.
+
+* Added support for setter to return Attribute.INVALID_VALUE
+  to prevent attribute state from being changed. 
+
+  This allows developers to combine setter and validator 
+  functionality into one method if performance optimization 
+  is required.
+
+* "validator" is now invoked before "setter". Didn't make sense
+  to validate values which were already massaged by the setter.
+
+* Renamed xxxAtt and xxxAtts methods to xxxAttr, xxxAttrs for
+  consistency.
+  
+* After listeners are only notified if attribute value really
+  changed (using ===).
+
+* Extending classes can now overwrite ATTRS configuration propreties 
+  from super classes, including writeOnce and readOnly attributes.
+  
+  The ATTRS configurations are merged across the class heirarchy,
+  before they are used to initialize the attributes.
+
+* addAttr now prevents re-adding attributes which are already 
+  configured inorder to maintain consistent state.
+
+* Event prefix wrapper functions (on, after etc.) removed - 
+  Event.Target now accepts an event prefix configuration value
+  
+* Added additional log messages to assist with debugging.
+
 3.0.0PR2
 
 * Added valueFn support, to allowing static 
