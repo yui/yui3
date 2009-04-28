@@ -4,6 +4,6 @@
 
     <property environment="env" />
 
-    <property file="build.jsonparser.properties" />
+    <property file="build.jsonschema.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
 </project>

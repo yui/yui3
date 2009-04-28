@@ -1,22 +1,24 @@
+YUI.add('dataschema-json', function(Y) {
+
 /**
- * The DataParser utility provides a common configurable interface for widgets to
- * parse a variety of data against a given schema.
+ * The DataSchema utility provides a common configurable interface for widgets to
+ * apply a given schema to a variety of data.
  *
- * @module dataparser
+ * @module dataschema
  */
 var LANG = Y.Lang,
 
 /**
- * JSON subclass for the YUI DataParser utility.
- * @class DataParser.JSON
- * @extends DataParser.Base
+ * JSON subclass for the YUI DataSchema utility.
+ * @class DataSchema.JSON
+ * @extends DataSchema.Base
  * @static
  */
-DPJSON = {
+SchemaJSON = {
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataParser.JSON static methods
+    // DataSchema.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
@@ -26,13 +28,13 @@ DPJSON = {
      * @return {String} String representation for this object.
      */
     toString: function() {
-        return "DataParser.JSON";
+        return "DataSchema.JSON";
     },
 
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
-     * @method DataParser.JSON.buildPath
+     * @method DataSchema.JSON.buildPath
      * @param locator {String} JSON value locator.
      * @return {String[]} Walkable path to data value.
      * @static
@@ -61,7 +63,7 @@ DPJSON = {
                 }
             }
             else {
-                Y.log("Invalid locator: " + locator, "error", DPJSON.toString());
+                Y.log("Invalid locator: " + locator, "error", SchemaJSON.toString());
             }
         }
         return path;
@@ -70,7 +72,7 @@ DPJSON = {
     /**
      * Utility function to walk a path and return the value located there.
      *
-     * @method DataParser.JSON.getLocationValue
+     * @method DataSchema.JSON.getLocationValue
      * @param path {String[]} Locator path.
      * @param data {String} Data to traverse.
      * @return {Object} Data value at location.
@@ -86,15 +88,15 @@ DPJSON = {
     },
 
     /**
-     * Overriding parse method filters JSON data according to given schema.
+     * Applies a given schema to given JSON data.
      *
-     * @method parse
-     * @param schema {Object} Schema to parse against.
-     * @param data {Object} Data to parse.
+     * @method apply
+     * @param schema {Object} Schema to apply.
+     * @param data {Object} JSON data.
      * @return {Object} Schema-parsed data.
      * @static
      */
-    parse: function(schema, data) {
+    apply: function(schema, data) {
         var data_in = data,
             data_out = {results:[],meta:{}};
             
@@ -112,16 +114,16 @@ DPJSON = {
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
             if(!LANG.isUndefined(schema.resultsLocator)) {
-                data_out = DPJSON._parseResults(schema, data_in, data_out);
+                data_out = SchemaJSON._parseResults(schema, data_in, data_out);
             }
 
             // Parse meta data
             if(!LANG.isUndefined(schema.metaFields)) {
-                data_out = DPJSON._parseMeta(schema.metaFields, data_in, data_out);
+                data_out = SchemaJSON._parseMeta(schema.metaFields, data_in, data_out);
             }
         }
         else {
-            Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", DPJSON.toString());
+            Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaJSON.toString());
             data_out.error = true;
         }
 
@@ -145,19 +147,19 @@ DPJSON = {
             error;
 
         if(schema.resultsLocator) {
-            path = DPJSON.buildPath(schema.resultsLocator);
+            path = SchemaJSON.buildPath(schema.resultsLocator);
             if(path) {
-                results = DPJSON.getLocationValue(path, data_in);
+                results = SchemaJSON.getLocationValue(path, data_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
                     if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
-                        data_out = DPJSON._getFieldValues(schema.resultsFields, results, data_out);
+                        data_out = SchemaJSON._getFieldValues(schema.resultsFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
-                        data_out.error = new Error(this.toString() + " Fields retrieval failure");
+                        error = new Error(this.toString() + " Fields retrieval failure");
                     }
             }
             else {
@@ -165,7 +167,7 @@ DPJSON = {
             }
 
             if (error) {
-                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", DPJSON.toString());
+                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", SchemaJSON.toString());
                 data_out.error = error;
             }
             
@@ -192,65 +194,64 @@ DPJSON = {
             simplePaths = [], complexPaths = [], fieldParsers = [],
             result, record;
 
-        if(LANG.isArray(fields)) {
-            // First collect hashes of simple paths, complex paths, and parsers
-            for (i=0; i<len; i++) {
-                field = fields[i]; // A field can be a simple string or a hash
-                key = field.key || field; // Find the key
+        // First collect hashes of simple paths, complex paths, and parsers
+        for (i=0; i<len; i++) {
+            field = fields[i]; // A field can be a simple string or a hash
+            key = field.key || field; // Find the key
 
-                // Validate and store locators for later
-                path = DPJSON.buildPath(key);
-                if (path) {
-                    if (path.length === 1) {
-                        simplePaths[simplePaths.length] = {key:key, path:path[0]};
-                    } else {
-                        complexPaths[complexPaths.length] = {key:key, path:path};
-                    }
+            // Validate and store locators for later
+            path = SchemaJSON.buildPath(key);
+            if (path) {
+                if (path.length === 1) {
+                    simplePaths[simplePaths.length] = {key:key, path:path[0]};
                 } else {
-                    Y.log("Invalid key syntax: " + key, "warn", DPJSON.toString());
+                    complexPaths[complexPaths.length] = {key:key, path:path};
                 }
-
-                // Validate and store parsers for later
-                //TODO: implement shortcuts
-                parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataParser[field.parser+''];
-                if (parser) {
-                    fieldParsers[fieldParsers.length] = {key:key, parser:parser};
-                }
+            } else {
+                Y.log("Invalid key syntax: " + key, "warn", SchemaJSON.toString());
             }
 
-            // Traverse list of data_in, creating records of simple fields,
-            // complex fields, and applying parsers as necessary
-            for (i=data_in.length-1; i>=0; --i) {
-                record = {};
-                result = data_in[i];
-                if(result) {
-                    // Cycle through simpleLocators
-                    for (j=simplePaths.length-1; j>=0; --j) {
-                        // Bug 1777850: The result might be an array instead of object
-                        record[simplePaths[j].key] =
-                                LANG.isUndefined(result[simplePaths[j].path]) ?
-                                result[j] : result[simplePaths[j].path];
-                    }
-
-                    // Cycle through complexLocators
-                    for (j=complexPaths.length - 1; j>=0; --j) {
-                        record[complexPaths[j].key] = DPJSON.getLocationValue(complexPaths[j].path, result);
-                    }
-
-                    // Cycle through fieldParsers
-                    for (j=fieldParsers.length-1; j>=0; --j) {
-                        key = fieldParsers[j].key;
-                        record[key] = fieldParsers[j].parser(record[key]);
-                        // Safety net
-                        if (LANG.isUndefined(record[key])) {
-                            record[key] = null;
-                        }
-                    }
-                }
-                results[i] = record;
+            // Validate and store parsers for later
+            //TODO: use Y.DataSchema.parse?
+            parser = (LANG.isFunction(field.parser)) ? field.parser : Y.Parsers[field.parser+''];
+            if (parser) {
+                fieldParsers[fieldParsers.length] = {key:key, parser:parser};
             }
-            data_out.results = results;
         }
+
+        // Traverse list of data_in, creating records of simple fields,
+        // complex fields, and applying parsers as necessary
+        for (i=data_in.length-1; i>=0; --i) {
+            record = {};
+            result = data_in[i];
+            if(result) {
+                // Cycle through simpleLocators
+                for (j=simplePaths.length-1; j>=0; --j) {
+                    // Bug 1777850: The result might be an array instead of object
+                    record[simplePaths[j].key] = Y.DataSchema.Base.parse(
+                            (LANG.isUndefined(result[simplePaths[j].path]) ?
+                            result[j] : result[simplePaths[j].path]), simplePaths[j]);
+                }
+
+                // Cycle through complexLocators
+                for (j=complexPaths.length - 1; j>=0; --j) {
+                    record[complexPaths[j].key] = Y.DataSchema.Base.parse(
+                        (SchemaJSON.getLocationValue(complexPaths[j].path, result)), complexPaths[j] );
+                }
+
+                // Cycle through fieldParsers
+                for (j=fieldParsers.length-1; j>=0; --j) {
+                    key = fieldParsers[j].key;
+                    record[key] = fieldParsers[j].parser(record[key]);
+                    // Safety net
+                    if (LANG.isUndefined(record[key])) {
+                        record[key] = null;
+                    }
+                }
+            }
+            results[i] = record;
+        }
+        data_out.results = results;
         return data_out;
     },
 
@@ -269,9 +270,9 @@ DPJSON = {
             var key, path;
             for(key in metaFields) {
                 if (metaFields.hasOwnProperty(key)) {
-                    path = DPJSON.buildPath(metaFields[key]);
+                    path = SchemaJSON.buildPath(metaFields[key]);
                     if (path && data_in) {
-                        data_out.meta[key] = DPJSON.getLocationValue(path, data_in);
+                        data_out.meta[key] = SchemaJSON.getLocationValue(path, data_in);
                     }
                 }
             }
@@ -283,4 +284,8 @@ DPJSON = {
     }
 };
 
-Y.DataParser.JSON = Y.mix(DPJSON, Y.DataParser.Base);
+Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
+
+
+
+}, '@VERSION@' ,{requires:['dataschema-base']});
