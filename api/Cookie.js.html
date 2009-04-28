@@ -108,7 +108,7 @@
 <span class="c">         * Creates a cookie string that can be assigned into document.cookie.</span>
 <span class="c">         * @param {String} name The name of the cookie.</span>
 <span class="c">         * @param {String} value The value of the cookie.</span>
-<span class="c">         * @param {encodeValue} encodeValue True to encode the value, false to leave as-is.</span>
+<span class="c">         * @param {Boolean} encodeValue True to encode the value, false to leave as-is.</span>
 <span class="c">         * @param {Object} options (Optional) Options for the cookie.</span>
 <span class="c">         * @return {String} The formatted cookie string.</span>
 <span class="c">         * @method _createCookieString</span>
@@ -297,7 +297,7 @@
                 <span class="nx">options</span> <span class="o">=</span> <span class="o">{};</span>
             <span class="o">}</span>
             
-            <span class="nx">cookies</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_parseCookieString</span><span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">cookie</span><span class="o">,</span> <span class="o">!</span><span class="nx">options</span><span class="o">.</span><span class="nx">raw</span><span class="o">);</span>
+            <span class="nx">cookies</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_parseCookieString</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">cookie</span><span class="o">,</span> <span class="o">!</span><span class="nx">options</span><span class="o">.</span><span class="nx">raw</span><span class="o">);</span>
             <span class="nx">cookie</span> <span class="o">=</span> <span class="nx">cookies</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
             
             <span class="c">//should return null, not undefined if the cookie doesn&#39;t exist</span>
@@ -445,7 +445,7 @@
 <span class="c">         * @param {Variant} value The value to set for the cookie.</span>
 <span class="c">         * @param {Object} options (Optional) An object containing one or more</span>
 <span class="c">         *      cookie options: path (a string), domain (a string), expires (a Date object),</span>
-<span class="c">         *      secure (true/false), and raw(true/false). Setting raw to true indicates</span>
+<span class="c">         *      secure (true/false), and raw (true/false). Setting raw to true indicates</span>
 <span class="c">         *      that the cookie should not be URI encoded before being set.</span>
 <span class="c">         * @return {String} The created cookie string.</span>
 <span class="c">         * @method set</span>
