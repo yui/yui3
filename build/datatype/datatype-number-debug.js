@@ -125,6 +125,7 @@ Number = {
 };
 
 Y.namespace("DataType").Number = Number;
+Y.namespace("Parsers").number = Number.parse;
 
 
 

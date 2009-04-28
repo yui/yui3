@@ -6,13 +6,13 @@ YUI.add('dataschema-base', function(Y) {
  *
  * @module dataschema
  */
-
+var LANG = Y.Lang,
 /**
  * Base class for the YUI DataSchema utility.
  * @class DataSchema.Base
  * @static
  */
-var SchemaBase = {
+    SchemaBase = {
     /**
      * Returns string name.
      *
@@ -34,6 +34,25 @@ var SchemaBase = {
      */
     apply: function(schema, data) {
         return data;
+    },
+    
+    /**
+     * Applies field parser, if defined
+     *
+     * @method parse
+     * @param value {Object} Original value.
+     * @param field {Object} Field.
+     * @return {Object} Type-converted value.
+     */
+    parse: function(value, field) {
+        if(field.parser) {
+            var parser = (LANG.isFunction(field.parser)) ?
+            field.parser : Y.Parsers[field.parser+''];
+            if(parser) {
+                value = parser.call(this, value);
+            }
+        }
+        return value;
     }
 };
 

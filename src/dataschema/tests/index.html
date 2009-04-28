@@ -36,7 +36,24 @@
         var testJSON = new Y.Test.Case({
             name: "JSON Tests",
         
-            testResults: function() {
+            testJSONMeta: function() {
+                var schema = {
+                        metaFields: {top:"top", nested:"second.nested"}
+                    },
+                    data_in = {
+                        top: "foo",
+                        second: {nested: "bar"}
+                    },
+                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
+                ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
+            },
+
+            testJSONResults: function() {
                 var schema = {
                         resultsLocator: "response",
                         resultsFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
@@ -59,24 +76,7 @@
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
             
-            testMeta: function() {
-                var schema = {
-                        metaFields: {top:"top", nested:"second.nested"}
-                    },
-                    data_in = {
-                        top: "foo",
-                        second: {nested: "bar"}
-                    },
-                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
-
-                ASSERT.isObject(data_out.meta, "Expected meta property.");
-                ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
-                ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
-                ASSERT.isArray(data_out.results, "Expected results property.");
-                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
-            },
-            
-            testComplex: function() {
+            testJSONComplex: function() {
                 var schema = {
                         metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
                         resultsLocator:"response['data array'][0].response['i t e m s']",
@@ -149,6 +149,10 @@
                     },
                     data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
+                ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
+                ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(2, data_out.results.length, "Expected 2 results.");
                 ASSERT.areSame(10, data_out.results[0]["['customer.data']['alert(\'id\')']"], "Expected first id.");
@@ -156,13 +160,9 @@
                 ASSERT.areSame("Fido", data_out.results[1]["['array-pets'][0].name"], "Expected nested array item data.");
                 ASSERT.isArray(data_out.results[0]["['array-pets']"], "Expected array.");
                 ASSERT.areSame(2, data_out.results[0]["['array-pets']"].length, "Expected array length.");
-                ASSERT.isObject(data_out.meta, "Expected meta property.");
-                ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
-                ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
-                ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
             },
 
-            testError: function() {
+            testJSONError: function() {
                 var schema = {
                         resultsLocator: "response",
                         resultsFields: ["name", "number", "letter"]
@@ -194,10 +194,25 @@
         var testXML = new Y.Test.Case({
             name: "XML Tests",
 
-            testResults: function() {
+            testXMLMeta: function() {
+                var schema = {
+                        metaFields: {rootatt:{parser:Y.DataType.Number.parse, locator:"/myroot/@rootatt"}, topnode:"//top", nestedatt:"//second/@nested"}
+                    },
+                    data_in = Y.DataType.XML.parse("<myroot rootatt='5'><top>topvalue</top><second nested='nestedvalue' /><item type='foo'><name>Abc</name><rank>0</rank></item><item type='bar'><name>Def</name><rank>1</rank></item><item type='bat'><name>Ghi</name><rank>2</rank></item></myroot>"),
+                    data_out = Y.DataSchema.XML.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                ASSERT.areSame(5, data_out.meta.rootatt, "Expected rootatt.");
+                ASSERT.areSame("topvalue", data_out.meta.topnode, "Expected topvalue.");
+                ASSERT.areSame("nestedvalue", data_out.meta.nestedatt, "Expected nestedvalue.");
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
+            },
+
+            testXMLResults: function() {
                 var schema = {
                         resultsLocator: "item",
-                        resultsFields: ["type", {key:"rank", parser:Y.DataType.Number.parse}, "name"]
+                        resultsFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name"]
                     },
                     data_in = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>0</rank></item><item type='bar'><name>Def</name><rank>1</rank></item><item type='bat'><name>Ghi</name><rank>2</rank></item></myroot>"),
                     data_out = Y.DataSchema.XML.apply(schema, data_in);
@@ -211,107 +226,32 @@
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
             },
 
-            /*testMeta: function() {
+            testXMLComplex: function() {
                 var schema = {
-                        metaFields: {top:"top", nested:"second.nested"}
+                        metaFields: {rootatt:{parser:Y.DataType.Number.parse, locator:"/myroot/@rootatt"}, topnode:"//top", nestedatt:"//second/@nested"},
+                        resultsLocator: "item",
+                        resultsFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name", {key:"subnameatt", locator:"subitem/name/@type"}, {key:"age", locator:"subitem/age", parser:"number"}]
                     },
-                    data_in = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>0</rank></item><item type='bar'><name>Def</name><rank>1</rank></item><item type='bat'><name>Ghhi</name><rank>2</rank></item></myroot>"),
+                    data_in = Y.DataType.XML.parse("<myroot rootatt='5'><top>topvalue</top><second nested='nestedsecond' /><allitems><livehere><item type='foo'><name type='nametype0'>Abc</name><rank>0</rank><subitem><name type='subnametype0'>subABC</name><age>10</age></subitem></item><item type='bar'><name type='nametype1'>Def</name><rank>1</rank><subitem><name type='subnametype1'>subDEF</name><age>11</age></subitem></item><item type='bat'><name type='nametype2'>Ghi</name><rank>2</rank><subitem><name type='subnametype2'>subGHI</name><age>12</age></subitem></item></livehere></allitems></myroot>"),
                     data_out = Y.DataSchema.XML.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-                ASSERT.areSame("foo", data_out.meta.top, "Expected first meta.");
-                ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
+                ASSERT.areSame(5, data_out.meta.rootatt, "Expected rootatt.");
+                ASSERT.areSame("topvalue", data_out.meta.topnode, "Expected topvalue.");
+                ASSERT.areSame("nestedsecond", data_out.meta.nestedatt, "Expected nestedvalue.");
                 ASSERT.isArray(data_out.results, "Expected results property.");
-                ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("foo", data_out.results[0].type, "Expected first type att.");
+                ASSERT.areSame("bat", data_out.results[2].type, "Expected last type att.");
+                ASSERT.areSame(0, data_out.results[0].rank, "Expected first number to be parsed.");
+                ASSERT.areSame(2, data_out.results[2].rank, "Expected last number to be parsed.");
+                ASSERT.areSame("subnametype0", data_out.results[0].subnameatt, "Expected first subitem name attribute.");
+                ASSERT.areSame("subnametype2", data_out.results[2].subnameatt, "Expected last subitemnameattribute.");
+                ASSERT.areSame(10, data_out.results[0].age, "Expected first age.");
+                ASSERT.areSame(12, data_out.results[2].age, "Expected last age.");
             },
 
-            testComplex: function() {
-                var schema = {
-                        metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
-                        resultsLocator:"response['data array'][0].response['i t e m s']",
-                        resultsFields: [
-                            "name",
-                            "['customer.data']['alert(\'id\')']",
-                            "['customer.data']['phone/email']",
-                            "['array-pets'][0].name",
-                            "['array-pets']"
-                        ]
-                    },
-                    data_in = {
-                        request: "orig request",
-                        response: {
-                            "meta-total": 3,
-                            "data array" : [{
-                                position: "array.item.0",
-                                "response": {
-                                    "i t e m s":
-                                    [
-                                        { // result 0
-                                            name: "Bob",
-                                            "customer.data":
-                                            {
-                                                "alert('id')":10,
-                                                "phone/email": "123-4567",
-                                                "catch":true
-                                            },
-                                            "array-pets":
-                                            [
-                                                { //  pet 0
-                                                    "name":"Brutus",
-                                                    "breed": "bulldog"
-                                                },
-                                                { //  pet 1
-                                                    "name":"Bobo",
-                                                    "breed": "bernese"
-                                                }
-                                            ]
-                                        },
-                                        { // result 1
-                                            name: "Fran",
-                                            "customer.data": { "alert('id')":11, "phone/email": "234-5678", "catch":false},
-                                            "array-pets":
-                                            [
-                                                { //  pet 0
-                                                    "name":"Fido",
-                                                    "breed": "french poodle"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                position: "array.item.1",
-                                "response": {
-                                    "message": {
-                                        type: "xyz",
-                                        error: false
-                                    }
-                                }
-                            }],
-
-                            metaid: {
-                                id:1234,
-                                date: new Date()
-                            }
-                        }
-                    },
-                    data_out = Y.DataSchema.JSON.apply(schema, data_in);
-
-                ASSERT.isArray(data_out.results, "Expected results property.");
-                ASSERT.areSame(2, data_out.results.length, "Expected 2 results.");
-                ASSERT.areSame(10, data_out.results[0]["['customer.data']['alert(\'id\')']"], "Expected first id.");
-                ASSERT.areSame("234-5678", data_out.results[1]["['customer.data']['phone/email']"], "Expected second phone/email.");
-                ASSERT.areSame("Fido", data_out.results[1]["['array-pets'][0].name"], "Expected nested array item data.");
-                ASSERT.isArray(data_out.results[0]["['array-pets']"], "Expected array.");
-                ASSERT.areSame(2, data_out.results[0]["['array-pets']"].length, "Expected array length.");
-                ASSERT.isObject(data_out.meta, "Expected meta property.");
-                ASSERT.areSame(3, data_out.meta.metaTotal, "Expected meta total.");
-                ASSERT.areSame("xyz", data_out.meta.metaMessage.type, "Expected nested meta message type.");
-                ASSERT.areSame(false, data_out.meta.metaMessage.error, "Expected nested meta message error.");
-            },*/
-
-            testError: function() {
+            testXMLError: function() {
                 var schema = {
                         resultsLocator: "item",
                         resultsFields: ["type", {key:"rank", parser:Y.DataType.Number.parse}, "name"]

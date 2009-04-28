@@ -212,8 +212,8 @@ SchemaJSON = {
             }
 
             // Validate and store parsers for later
-            //TODO: implement shortcuts
-            parser = (LANG.isFunction(field.parser)) ? field.parser : Y.DataSchema[field.parser+''];
+            //TODO: use Y.DataSchema.parse?
+            parser = (LANG.isFunction(field.parser)) ? field.parser : Y.Parsers[field.parser+''];
             if (parser) {
                 fieldParsers[fieldParsers.length] = {key:key, parser:parser};
             }
@@ -228,14 +228,15 @@ SchemaJSON = {
                 // Cycle through simpleLocators
                 for (j=simplePaths.length-1; j>=0; --j) {
                     // Bug 1777850: The result might be an array instead of object
-                    record[simplePaths[j].key] =
-                            LANG.isUndefined(result[simplePaths[j].path]) ?
-                            result[j] : result[simplePaths[j].path];
+                    record[simplePaths[j].key] = Y.DataSchema.Base.parse(
+                            (LANG.isUndefined(result[simplePaths[j].path]) ?
+                            result[j] : result[simplePaths[j].path]), simplePaths[j]);
                 }
 
                 // Cycle through complexLocators
                 for (j=complexPaths.length - 1; j>=0; --j) {
-                    record[complexPaths[j].key] = SchemaJSON.getLocationValue(complexPaths[j].path, result);
+                    record[complexPaths[j].key] = Y.DataSchema.Base.parse(
+                        (SchemaJSON.getLocationValue(complexPaths[j].path, result)), complexPaths[j] );
                 }
 
                 // Cycle through fieldParsers

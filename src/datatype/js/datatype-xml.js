@@ -38,14 +38,18 @@ XML = {
                 if(!LANG.isUndefined(DOMParser)) {
                     xmlDoc = new DOMParser().parseFromString(data, "text/xml");
                 }
-                else if(!LANG.isUndefined(ActiveXObject)) {
-                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                        xmlDoc.async= "false";
-                        xmlDoc.load(data);
-                }
             }
             catch(e) {
-                Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", Number.toString());
+                try {
+                    if(!LANG.isUndefined(ActiveXObject)) {
+                            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                            xmlDoc.async = false;
+                            xmlDoc.loadXML(data);
+                    }
+                }
+                catch(e) {
+                    Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", Number.toString());
+                }
             }
         }
         return xmlDoc;
@@ -53,3 +57,4 @@ XML = {
 };
 
 Y.namespace("DataType").XML = XML;
+Y.namespace("Parsers").xml = XML.parse;

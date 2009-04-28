@@ -1,1 +1,1 @@
-YUI.add("dataschema-base",function(A){var B={toString:function(){return"DataSchema.Base";},apply:function(C,D){return D;}};A.namespace("DataSchema").Base=B;},"@VERSION@",{requires:["base"]});
+YUI.add("dataschema-base",function(B){var A=B.Lang,C={toString:function(){return"DataSchema.Base";},apply:function(D,E){return E;},parse:function(D,E){if(E.parser){var F=(A.isFunction(E.parser))?E.parser:B.Parsers[E.parser+""];if(F){D=F.call(this,D);}}return D;}};B.namespace("DataSchema").Base=C;},"@VERSION@",{requires:["base"]});
