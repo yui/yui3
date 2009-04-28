@@ -8,7 +8,7 @@ YUI.add('plugin', function(Y) {
 
         /**
          * Plugin provides a base class for all Plugin classes.
-         * 
+         *
          * @class Plugin 
          * @extends Base
          * @param {Object} config The configuration object for the
@@ -18,6 +18,19 @@ YUI.add('plugin', function(Y) {
             Plugin.superclass.constructor.apply(this, arguments);
         }
 
+        Plugin.ATTRS = {
+
+            /**
+             * The plugin's host object.
+             *
+             * @attribute host
+             * @writeOnce
+             * @type PluginHost
+             */
+            host : {
+                writeOnce: true
+            }
+        };
 
         /**
          * Static property provides a string to identify the class.
@@ -38,7 +51,8 @@ YUI.add('plugin', function(Y) {
          */
         Plugin.NS = 'plugin';
 
-        var proto = {
+        Y.extend(Plugin, Y.Base, {
+
             _handles: null,
 
             /**
@@ -48,14 +62,10 @@ YUI.add('plugin', function(Y) {
              * @param {Object} config Configuration object literal for the plugin
              */
             initializer : function(config) {
-                config = config || {};
-
-                if (config.owner) {
-                    this._owner = config.owner;
-                } else {
-                }
-
                 this._handles = [];
+
+                // TODO: Temporary
+                this._owner = this.get("host");
 
             },
 
@@ -77,7 +87,7 @@ YUI.add('plugin', function(Y) {
             },
 
             /**
-             * Listens for events and methods fired by the owner widget.
+             * Listens for events and methods fired by the host.
              * The handler is called before the event handler or method is called.
              * @method doBefore
              * @param sFn The event of method to listen for.
@@ -87,15 +97,15 @@ YUI.add('plugin', function(Y) {
              * @return Handle A handle that can be used to detach the handler (e.g. "handle.detach()").
              */
             doBefore: function(sFn, fn, context) {
-                var owner = this._owner,
+                var host = this.get("host"),
                     handle;
 
                 context = context || this;
 
-                if (sFn in owner) { // method
-                    handle = Y.Do.before(fn, this._owner, sFn, context);
-                } else if (owner.on) { // event
-                    handle = owner.on(sFn, fn, context);
+                if (sFn in host) { // method
+                    handle = Y.Do.before(fn, host, sFn, context);
+                } else if (host.on) { // event
+                    handle = host.on(sFn, fn, context);
                 }
 
                 this._handles.push(handle);
@@ -113,15 +123,15 @@ YUI.add('plugin', function(Y) {
              * @return Handle A handle that can be used to detach the handler (e.g. "handle.detach()").
              */
             doAfter: function(sFn, fn, context) {
-                var owner = this._owner,
+                var host = this.get("host"),
                     handle;
 
                 context = context || this;
 
-                if (sFn in owner) { // method
-                    handle = Y.Do.after(fn, this._owner, sFn, context);
-                } else if (owner.after) { // event
-                    handle = owner.after(sFn, fn, context);
+                if (sFn in host) { // method
+                    handle = Y.Do.after(fn, host, sFn, context);
+                } else if (host.after) { // event
+                    handle = host.after(sFn, fn, context);
                 }
 
                 this._handles.push(handle);
@@ -131,9 +141,8 @@ YUI.add('plugin', function(Y) {
             toString: function() {
                 return this.constructor.NAME + '[' + this.constructor.NS + ']';
             }
-        };
+        });
 
-        Y.extend(Plugin, Y.Base, proto);
         Y.Plugin = Plugin;
 
 
