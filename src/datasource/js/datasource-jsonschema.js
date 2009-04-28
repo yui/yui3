@@ -1,20 +1,20 @@
 /**
- * Extends DataSource with schema-based JSON parsing functionality.
+ * Extends DataSource with schema-parsing on JSON data.
  *
  * @module datasource
- * @submodule datasource-dataparser
+ * @submodule datasource-jsonschema
  */
 
 /**
- * Adds parsability to the YUI DataSource utility.
- * @class DataSourceJSONParser
+ * Adds schema-parfing to the YUI DataSource utility.
+ * @class DataSourceJSONSchema
  * @extends Plugin
  */    
-var DataSourceJSONParser = function() {
-    DataSourceJSONParser.superclass.constructor.apply(this, arguments);
+var DataSourceJSONSchema = function() {
+    DataSourceJSONSchema.superclass.constructor.apply(this, arguments);
 };
 
-Y.mix(DataSourceJSONParser, {
+Y.mix(DataSourceJSONSchema, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -23,9 +23,9 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "parser"
+     * @value "schema"
      */
-    NS: "parser",
+    NS: "schema",
 
     /**
      * Class name.
@@ -34,29 +34,24 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONParser"
+     * @value "DataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONParser",
+    NAME: "DataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceCache Attributes
+    // DataSourceJSONSchema Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
     ATTRS: {
-        parser: {
-            readOnly: true,
-            value: Y.DataParser.JSON,
-            useRef: true
-        },
         schema: {
             //value: {}
         }
     }
 });
 
-Y.extend(DataSourceJSONParser, Y.Plugin, {
+Y.extend(DataSourceJSONSchema, Y.Plugin, {
     /**
     * Internal init() handler.
     *
@@ -88,7 +83,7 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      */
     _beforeDefDataFn: function(e) {
         var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = (this.get("parser").parse(this.get("schema"), data));
+            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -99,8 +94,8 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
         }
         
         this._owner.fire("response", Y.mix({response:response}, e));
-        return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
+        return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONSchame = DataSourceJSONSchema;
