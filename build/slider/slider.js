@@ -13,7 +13,8 @@ var SLIDER = 'slider',
     VALUE  = 'value',
     MIN    = 'min',
     MAX    = 'max',
-    GUTTER = 'gutter',
+    MIN_GUTTER = 'minGutter',
+    MAX_GUTTER = 'maxGutter',
     THUMB_IMAGE = 'thumbImage',
     RAIL_SIZE   = 'railSize',
     CONTENT_BOX = 'contentBox',
@@ -87,8 +88,6 @@ Y.mix(Slider, {
      */
     AXIS_KEYS : {
         x : {
-            minGutter     : 'left',
-            maxGutter     : 'right',
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
             eventPageAxis : 'pageX',
@@ -96,8 +95,6 @@ Y.mix(Slider, {
             xyIndex       : 0
         },
         y : {
-            minGutter     : 'top',
-            maxGutter     : 'bottom',
             dim           : HEIGHT,
             offAxisDim    : WIDTH,
             eventPageAxis : 'pageY',
@@ -305,26 +302,33 @@ Y.mix(Slider, {
         },
 
         /**
-         * Like CSS padding, the distance in pixels from the inner edge of the
-         * rail node within which the thumb can move.  Negative values allow
-         * the edges of the thumb to escape the rail node.  Accepts CSS-like
-         * style values as a string. E.g. "0" for no gutter, "5 0" for a 5px
-         * top and bottom gutter, "5 2 -5 -7" to limit the thumb to be within
-         * 5px from the top and 2px from the right, but allow the thumb's
-         * bottom left corner to move 5px below and 7px to the left of the rail
-         * node's corner.
+         * Like CSS padding, the distance in pixels from the inner top left
+         * corner of the rail node within which the thumb can travel.  Negative
+         * values allow the edge of the thumb to escape the rail node
+         * boundaries.
          *
-         * This is a pass through to DDConstrain's gutter config.
-         *
-         * @attribute gutter
-         * @type String
-         * @default "0"
+         * @attribute minGutter
+         * @type Number
+         * @default 0
          */
-        gutter : {
-            value : "0",
-            setter : function (v) {
-                return this._setGutterFn(v);
-            }
+        minGutter : {
+            value : 0,
+            validator : isNumber
+        },
+
+        /**
+         * Like CSS padding, the distance in pixels from the inner bottom right
+         * corner of the rail node within which the thumb can travel.  Negative
+         * values allow the edge of the thumb to escape the rail node
+         * boundaries.
+         *
+         * @attribute maxGutter
+         * @type Number
+         * @default 0
+         */
+        maxGutter : {
+            value : 0,
+            validator : isNumber
         }
     }
 });
@@ -907,7 +911,7 @@ Y.extend(Slider, Y.Widget, {
      */
     _setRailOffsetXY : function () {
         this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] +
-                         this.get(GUTTER)[this._key.minGutter];
+                         this.get(MIN_GUTTER);
     },
 
    /**
@@ -917,12 +921,12 @@ Y.extend(Slider, Y.Widget, {
     * @protected
     */
     _setDDGutter : function () {
-        var gutter = this.get(GUTTER),
-            conGutter = gutter.top    + ' ' + gutter.right + ' ' +
-                        gutter.bottom + ' ' + gutter.left;
+        var gutter = this._key.xyIndex ?
+            this.get(MIN_GUTTER) + " 0 " + this.get(MAX_GUTTER) :
+            "0 " + this.get(MAX_GUTTER) + " 0 " + this.get(MIN_GUTTER);
 
 
-        this._dd.set(GUTTER, conGutter);
+        this._dd.set('gutter', gutter);
     },
 
     /**
@@ -933,10 +937,8 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setFactor : function () {
-        var gutter = this.get(GUTTER),
-            range  = this._railSize - this._thumbSize -
-                     gutter[this._key.minGutter] -
-                     gutter[this._key.maxGutter];
+        var range = this._railSize - this._thumbSize -
+                    this.get(MIN_GUTTER) - this.get(MAX_GUTTER);
 
         this._factor = this._railSize ?
             (this.get(MAX) - this.get(MIN)) / range :
@@ -1142,28 +1144,6 @@ Y.extend(Slider, Y.Widget, {
                 null;
     },
 
-    /**
-     * Setter applied to the gutter attribute. Strings resembling e.g. CSS
-     * padding values are allowed.  Some valid examples: "5", "3px -4px",
-     * "0 2px 7px", "10px -6 -2 6".  Value will be split up into an object
-     * with top, right, bottom, and left properties.
-     *
-     * NOTE: Units are always pixels, but tokens are passed through parseInt,
-     * so 'px' is harmless, but redundant, and tokens like ".2em" or "1%" are
-     * treated as ".2px" and "1px" respectively.
-     *
-     * @method _setGutterFn
-     * @param v {String} proposed value for the gutter attribute
-     * @return Object
-     * @protected
-     */
-    _setGutterFn : function (v) {
-        if (isString(v) && /^-?\d+(?:\.\d+)?\S*(?:\s+-?\d+(?:\.\d+)?\S*){0,3}$/.test(v)) {
-            return Y.DD.DDM.cssSizestoObject(v);
-        } else {
-            return Y.Attribute.INVALID_VALUE;
-        }
-    },
 
 
     /**

@@ -35,7 +35,7 @@ YUI({
     base:'../../../build/',
     filter: 'debug',
     logExclude:{
-        slider:true,
+        //slider:true,
         drag:true,
         Selector:true,
         base:true,
@@ -51,12 +51,13 @@ var report = Y.get('#report');
 var s = new Y.Slider({
     contentBox : '#slider',
     //axis : 'y',
-    width: '318px',
-    //railSize: '318px',
+    //width: '318px',
+    railSize: '318px',
     min : 37,
     max : -218,
     value : -136,
-    gutter : "0 -7px 0 -30%"
+    minGutter : -7,
+    maxGutter : -30
     //thumbImage : Y.config.base+'slider/assets/skins/sam/thumb-classic-x.png'
     //thumb: '#t'
 });
