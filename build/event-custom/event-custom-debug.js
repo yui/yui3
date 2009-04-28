@@ -1173,8 +1173,18 @@ Y.CustomEvent.prototype = {
      * Removes all listeners
      * @method unsubscribeAll
      * @return {int} The number of listeners unsubscribed
+     * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+        return this.detachAll.apply(this, arguments);
+    },
+
+    /**
+     * Removes all listeners
+     * @method detachAll
+     * @return {int} The number of listeners unsubscribed
+     */
+    detachAll: function() {
         var subs = this.subscribers, i, l=0;
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
