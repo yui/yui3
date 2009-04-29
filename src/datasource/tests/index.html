@@ -26,7 +26,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
             BTNRUN = Y.get("#btnRun"),
-            WAITTIMEOUT = 1000; // On a slow connection set to 5000
+            WAITTIMEOUT = 5000; // On a slow connection set to 5000
 
         // Set up the page
         
@@ -213,7 +213,7 @@
                     method: "handleResponse",
                     args: [Y.Mock.Value(function(e){
                         ASSERT.isNumber(e.tId, "response: Expected transaction ID.");
-                        ASSERT.areSame("a", e.request, "response: Expected request.");
+                        ASSERT.areSame(null, e.request, "response: Expected request.");
                         ASSERT.areSame("callback", e.callback, "response: Expected callback.");
                         ASSERT.isObject(e.data, "response: Expected raw data.");
                         ASSERT.isObject(e.response, "response: Expected normalized response object.");
@@ -229,7 +229,7 @@
 
             testXHRError: function() {
                 var ds = new Y.DataSource.XHR({
-                    source: "./php/ysearch_json_madonna.php",
+                    source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.plugin.DataSourceJSONSchema, cfg: {
                     schema: {
@@ -427,7 +427,7 @@
                         Y.Mock.verify(handler);
                     }, 500);
                 }, 1000);
-            },
+            }
         });
 
         Y.Test.Runner.add(testClass);
