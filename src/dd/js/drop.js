@@ -9,6 +9,7 @@
      * @class Drop
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var NODE = 'node',
@@ -19,21 +20,21 @@
         * @event drop:over
         * @description Fires when a drag element is over this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_EXIT = 'drop:exit',
 
@@ -41,7 +42,7 @@
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         
 

@@ -7,6 +7,7 @@ YUI.add('dd-ddm', function(Y) {
      * @module dd
      * @submodule dd-ddm
      * @for DDM
+     * @namespace DD
      */
     Y.mix(Y.DD.DDM, {
         /**

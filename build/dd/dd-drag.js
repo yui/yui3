@@ -11,6 +11,7 @@ YUI.add('dd-drag', function(Y) {
      * @class Drag
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var DDM = Y.DD.DDM,
@@ -26,66 +27,66 @@ YUI.add('dd-drag', function(Y) {
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable _defMouseDownFn
-        * @param {Event} ev The mousedown event.
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_MOUSE_DOWN = 'drag:mouseDown',
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
-        * @param {Event} ev The mousedown event.
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_AFTER_MOUSE_DOWN = 'drag:afterMouseDown',
         /**
         * @event drag:removeHandle
         * @description Fires after a handle is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_HANDLE = 'drag:removeHandle',
         /**
         * @event drag:addHandle
         * @description Fires after a handle is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_HANDLE = 'drag:addHandle',
         /**
         * @event drag:removeInvalid
         * @description Fires after an invalid selector is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_INVALID = 'drag:removeInvalid',
         /**
         * @event drag:addInvalid
         * @description Fires after an invalid selector is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_INVALID = 'drag:addInvalid',
         /**
         * @event drag:start
         * @description Fires at the start of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_START = 'drag:start',
         /**
         * @event drag:end
         * @description Fires at the end of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_END = 'drag:end',
         /**
         * @event drag:drag
         * @description Fires every mousemove during a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DRAG = 'drag:drag',
         /**
@@ -93,38 +94,38 @@ YUI.add('dd-drag', function(Y) {
         * @preventable _defAlignFn
         * @description Fires when this node is aligned.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ALIGN = 'drag:align',
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:enter
         * @description Fires when this node enters a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:exit
         * @description Fires when this node exits a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:drophit
         * @description Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:dropmiss
         * @description Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
     
     Drag = function() {
@@ -434,6 +435,14 @@ YUI.add('dd-drag', function(Y) {
                 prefix: 'drag'
             });
             
+            this.publish(EV_END, {
+                preventedFn: this._prevEndFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
             var ev = [
                 EV_AFTER_MOUSE_DOWN,
                 EV_REMOVE_HANDLE,
@@ -441,7 +450,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_REMOVE_INVALID,
                 EV_ADD_INVALID,
                 EV_START,
-                EV_END,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -470,7 +478,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @property _ev_md
         * @description A private reference to the mousedown DOM event
-        * @type {Event}
+        * @type {Event.Facade}
         */
         _ev_md: null,
         /**
@@ -581,7 +589,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseUp
         * @description Handler for the mouseup DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseUp: function(ev) {
             this._fixIEMouseUp();
@@ -636,7 +644,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseDownEvent
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseDownEvent: function(ev) {
             this.fire(EV_MOUSE_DOWN, { ev: ev });
@@ -645,7 +653,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _defMouseDownFn: function(e) {
             var ev = e.ev;
@@ -669,7 +677,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @method validClick
         * @description Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
-        * @param {Event}
+        * @param {Event.Facade}
         * @return {Boolean}
         */
         validClick: function(ev) {
@@ -921,6 +929,16 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
+        * @method _prevEndFn
+        * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
+        */
+        _prevEndFn: function(e) {
+            //TODO - We are in the wrong scope here..
+            //Bug #1852577
+            e.host.get(DRAG_NODE).setXY(e.host.nodeXY);
+        },
+        /**
+        * @private
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
         * @param {Array} xy The xy coords to align with.
@@ -932,7 +950,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defAlignFn
         * @description Calculates the offsets and set's the XY that the element will move to.
-        * @param {Event} e The drag:align event.
+        * @param {Event.Facade} e The drag:align event.
         */
         _defAlignFn: function(e) {
             this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
@@ -993,7 +1011,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defDragFn
         * @description Default function for drag:drag. Fired from _moveNode.
-        * @param {Event} ev The drag:drag event
+        * @param {Event.Facade} ev The drag:drag event
         */
         _defDragFn: function(e) {
             if (this.get('move')) {
@@ -1009,7 +1027,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _move
         * @description Fired from DragDropMgr (DDM) on mousemove.
-        * @param {Event} ev The mousemove DOM event
+        * @param {Event.Facade} ev The mousemove DOM event
         */
         _move: function(ev) {
             if (this.get('lock')) {

@@ -11,6 +11,7 @@ YUI.add('dd-ddm-base', function(Y) {
      * @class DDM
      * @extends Base
      * @constructor
+     * @namespace DD
      */
     
     var DDMBase = function() {
@@ -199,7 +200,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {Event} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
@@ -268,6 +269,7 @@ YUI.add('dd-ddm', function(Y) {
      * @module dd
      * @submodule dd-ddm
      * @for DDM
+     * @namespace DD
      */
     Y.mix(Y.DD.DDM, {
         /**
@@ -394,6 +396,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @module dd
      * @submodule dd-ddm-drop
      * @for DDM
+     * @namespace DD
      */
 
     //TODO CSS class name for the bestMatch..
@@ -795,6 +798,7 @@ YUI.add('dd-drag', function(Y) {
      * @class Drag
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var DDM = Y.DD.DDM,
@@ -810,66 +814,66 @@ YUI.add('dd-drag', function(Y) {
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable _defMouseDownFn
-        * @param {Event} ev The mousedown event.
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_MOUSE_DOWN = 'drag:mouseDown',
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
-        * @param {Event} ev The mousedown event.
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_AFTER_MOUSE_DOWN = 'drag:afterMouseDown',
         /**
         * @event drag:removeHandle
         * @description Fires after a handle is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_HANDLE = 'drag:removeHandle',
         /**
         * @event drag:addHandle
         * @description Fires after a handle is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_HANDLE = 'drag:addHandle',
         /**
         * @event drag:removeInvalid
         * @description Fires after an invalid selector is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_INVALID = 'drag:removeInvalid',
         /**
         * @event drag:addInvalid
         * @description Fires after an invalid selector is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_INVALID = 'drag:addInvalid',
         /**
         * @event drag:start
         * @description Fires at the start of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_START = 'drag:start',
         /**
         * @event drag:end
         * @description Fires at the end of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_END = 'drag:end',
         /**
         * @event drag:drag
         * @description Fires every mousemove during a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DRAG = 'drag:drag',
         /**
@@ -877,38 +881,38 @@ YUI.add('dd-drag', function(Y) {
         * @preventable _defAlignFn
         * @description Fires when this node is aligned.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ALIGN = 'drag:align',
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:enter
         * @description Fires when this node enters a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:exit
         * @description Fires when this node exits a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:drophit
         * @description Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:dropmiss
         * @description Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
     
     Drag = function() {
@@ -1218,6 +1222,14 @@ YUI.add('dd-drag', function(Y) {
                 prefix: 'drag'
             });
             
+            this.publish(EV_END, {
+                preventedFn: this._prevEndFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
             var ev = [
                 EV_AFTER_MOUSE_DOWN,
                 EV_REMOVE_HANDLE,
@@ -1225,7 +1237,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_REMOVE_INVALID,
                 EV_ADD_INVALID,
                 EV_START,
-                EV_END,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -1254,7 +1265,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @property _ev_md
         * @description A private reference to the mousedown DOM event
-        * @type {Event}
+        * @type {Event.Facade}
         */
         _ev_md: null,
         /**
@@ -1365,7 +1376,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseUp
         * @description Handler for the mouseup DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseUp: function(ev) {
             this._fixIEMouseUp();
@@ -1420,7 +1431,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseDownEvent
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseDownEvent: function(ev) {
             this.fire(EV_MOUSE_DOWN, { ev: ev });
@@ -1429,7 +1440,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _defMouseDownFn: function(e) {
             var ev = e.ev;
@@ -1453,7 +1464,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @method validClick
         * @description Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
-        * @param {Event}
+        * @param {Event.Facade}
         * @return {Boolean}
         */
         validClick: function(ev) {
@@ -1705,6 +1716,16 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @private
+        * @method _prevEndFn
+        * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
+        */
+        _prevEndFn: function(e) {
+            //TODO - We are in the wrong scope here..
+            //Bug #1852577
+            e.host.get(DRAG_NODE).setXY(e.host.nodeXY);
+        },
+        /**
+        * @private
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
         * @param {Array} xy The xy coords to align with.
@@ -1716,7 +1737,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defAlignFn
         * @description Calculates the offsets and set's the XY that the element will move to.
-        * @param {Event} e The drag:align event.
+        * @param {Event.Facade} e The drag:align event.
         */
         _defAlignFn: function(e) {
             this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
@@ -1777,7 +1798,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defDragFn
         * @description Default function for drag:drag. Fired from _moveNode.
-        * @param {Event} ev The drag:drag event
+        * @param {Event.Facade} ev The drag:drag event
         */
         _defDragFn: function(e) {
             if (this.get('move')) {
@@ -1793,7 +1814,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _move
         * @description Fired from DragDropMgr (DDM) on mousemove.
-        * @param {Event} ev The mousemove DOM event
+        * @param {Event.Facade} ev The mousemove DOM event
         */
         _move: function(ev) {
             if (this.get('lock')) {
@@ -1985,6 +2006,7 @@ YUI.add('dd-proxy', function(Y) {
         /**
         * @private
         * @for DDM
+        * @namespace DD
         * @method _createFrame
         * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
@@ -2012,6 +2034,7 @@ YUI.add('dd-proxy', function(Y) {
         /**
         * @private
         * @for DDM
+        * @namespace DD
         * @method _setFrame
         * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
@@ -2287,7 +2310,7 @@ YUI.add('dd-constrain', function(Y) {
         /**
         * @private
         * @method _checkRegion
-        * @description
+        * @description Check if xy is inside a given region, if not change to it be inside.
         * @param {Array} _xy The XY to check if it's in the current region, if it isn't inside the region, it will reset the xy array to be inside the region.
         * @return {Array} The new XY that is inside the region
         */
@@ -2391,6 +2414,7 @@ YUI.add('dd-constrain', function(Y) {
     Y.mix(DDM, {
         /**
         * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -2422,6 +2446,7 @@ YUI.add('dd-constrain', function(Y) {
         },
         /**
         * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
@@ -2481,6 +2506,7 @@ YUI.add('dd-scroll', function(Y) {
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
+     * @namespace DD
      * @constructor
      */
 
@@ -2499,6 +2525,11 @@ YUI.add('dd-scroll', function(Y) {
 
 
     S.ATTRS = {
+        /**
+        * @attribute parentScroll
+        * @description Internal config option to hold the node that we are scrolling. Should not be set by the developer.
+        * @type Node
+        */
         parentScroll: {
             value: false,
             setter: function(node) {
@@ -2506,21 +2537,6 @@ YUI.add('dd-scroll', function(Y) {
                     return node;
                 }
                 return false;
-            }
-        },
-        node: {
-            value: false,
-            setter: function(node) {
-                var n = Y.get(node);
-                if (!n) {
-                    if (node !== false) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
-                    }
-                } else {
-                    n = n.item(0);
-                    this.set(PARENT_SCROLL, n);
-                }
-                return n;
             }
         },
         /**
@@ -2539,34 +2555,64 @@ YUI.add('dd-scroll', function(Y) {
         scrollDelay: {
             value: 235
         },
+        /**
+        * @attribute host
+        * @description The host we are plugged into.
+        * @type Object
+        */
         host: {
             value: null
         },
+        /**
+        * @attribute windowScroll
+        * @description Turn on window scroll support, default: false
+        * @type Boolean
+        */
         windowScroll: {
             value: false
+        },
+        /**
+        * @attribute vertical
+        * @description Allow vertical scrolling, default: true.
+        * @type Boolean
+        */
+        vertical: {
+            value: true
+        },
+        /**
+        * @attribute horizontal
+        * @description Allow horizontal scrolling, default: true.
+        * @type Boolean
+        */
+        horizontal: {
+            value: true
         }
     };
 
     Y.extend(S, Y.Base, {
         /**
+        * @private
         * @property _scrolling
         * @description Tells if we are actively scrolling or not.
         * @type Boolean
         */
         _scrolling: null,
         /**
+        * @private
         * @property _vpRegionCache
         * @description Cache of the Viewport dims.
         * @type Object
         */
         _vpRegionCache: null,
         /**
+        * @private
         * @property _dimCache
         * @description Cache of the dragNode dims.
         * @type Object
         */
         _dimCache: null,
         /**
+        * @private
         * @property _scrollTimer
         * @description Holder for the Timer object returned from Y.later.
         * @type {Y.later}
@@ -2605,7 +2651,7 @@ YUI.add('dd-scroll', function(Y) {
             var h = this.get(HOST);
             h.after('drag:start', Y.bind(this.start, this));
             h.after('drag:end', Y.bind(this.end, this));
-            h.on('drag:align', Y.bind(this._align, this));
+            h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
             Y.get(window).on('scroll', Y.bind(function() {
@@ -2638,28 +2684,31 @@ YUI.add('dd-scroll', function(Y) {
                 nl = left,
                 st = sTop,
                 sl = sLeft;
-
-
-            if (left <= r.left) {
-                scroll = true;
-                nl = xy[0] - ((ws) ? b : 0);
-                sl = sLeft - b;
+            
+            if (this.get('horizontal')) {
+                if (left <= r.left) {
+                    scroll = true;
+                    nl = xy[0] - ((ws) ? b : 0);
+                    sl = sLeft - b;
+                }
+                if (right >= r.right) {
+                    scroll = true;
+                    nl = xy[0] + ((ws) ? b : 0);
+                    sl = sLeft + b;
+                }
             }
-            if (right >= r.right) {
-                scroll = true;
-                nl = xy[0] + ((ws) ? b : 0);
-                sl = sLeft + b;
-            }
-            if (bottom >= r.bottom) {
-                scroll = true;
-                nt = xy[1] + ((ws) ? b : 0);
-                st = sTop + b;
+            if (this.get('vertical')) {
+                if (bottom >= r.bottom) {
+                    scroll = true;
+                    nt = xy[1] + ((ws) ? b : 0);
+                    st = sTop + b;
 
-            }
-            if (top <= r.top) {
-                scroll = true;
-                nt = xy[1] - ((ws) ? b : 0);
-                st = sTop - b;
+                }
+                if (top <= r.top) {
+                    scroll = true;
+                    nt = xy[1] - ((ws) ? b : 0);
+                    st = sTop - b;
+                }
             }
 
             if (st < 0) {
@@ -2714,7 +2763,11 @@ YUI.add('dd-scroll', function(Y) {
                 delete this._scrollTimer;
             }
         },
-        _align: function(e) {
+        /**
+        * @method align
+        * @description Called from the drag:align event to determine if we need to scroll.
+        */        
+        align: function(e) {
             if (this._scrolling) {
                 this._cancelScroll();
                 e.preventDefault();
@@ -2735,9 +2788,17 @@ YUI.add('dd-scroll', function(Y) {
                 w: node.get(OFFSET_WIDTH)
             };
         },
+        /**
+        * @method start
+        * @description Called from the drag:start event
+        */
         start: function() {
             this._setDimCache();
         },
+        /**
+        * @method end
+        * @description Called from the drag:end event
+        */
         end: function(xy) {
             this._dimCache = null;
             this._cancelScroll();
@@ -2769,7 +2830,7 @@ YUI.add('dd-scroll', function(Y) {
     WS.ATTRS = Y.merge(S.ATTRS, {
         /**
         * @attribute windowScroll
-        * @description Turn on window scroll support
+        * @description Turn on window scroll support, default: true
         * @type Boolean
         */
         windowScroll: {
@@ -2798,10 +2859,30 @@ YUI.add('dd-scroll', function(Y) {
         NS.superclass.constructor.apply(this, arguments);
 
     };
-    NS.ATTRS = {};
-    Y.mix(NS.ATTRS, S.ATTRS);
+    NS.ATTRS = Y.merge(S.ATTRS, {
+        /**
+        * @attribute node
+        * @description The node we want to scroll. Used to set the internal parentScroll attribute.
+        * @type Node
+        */
+        node: {
+            value: false,
+            setter: function(node) {
+                var n = Y.get(node);
+                if (!n) {
+                    if (node !== false) {
+                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    }
+                } else {
+                    n = n.item(0);
+                    this.set(PARENT_SCROLL, n);
+                }
+                return n;
+            }
+        },
+    });
     Y.extend(NS, S);
-    NS.NAME = NS.NAME = 'nodescroll';
+    NS.NAME = NS.NS = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    
@@ -2814,13 +2895,13 @@ YUI.add('dd-plugin', function(Y) {
 
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd
         * @submodule dd-plugin
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @class DragPlugin
-        * @extends Drag
+        * @class Drag
+        * @extends DD.Drag
         * @constructor
         * @namespace plugin
         */
@@ -2868,6 +2949,7 @@ YUI.add('dd-drop', function(Y) {
      * @class Drop
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var NODE = 'node',
@@ -2878,21 +2960,21 @@ YUI.add('dd-drop', function(Y) {
         * @event drop:over
         * @description Fires when a drag element is over this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_EXIT = 'drop:exit',
 
@@ -2900,7 +2982,7 @@ YUI.add('dd-drop', function(Y) {
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         
 
@@ -3334,13 +3416,13 @@ YUI.add('dd-drop-plugin', function(Y) {
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd
         * @submodule dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @class DropPlugin
-        * @extends Drop
+        * @class Drop
+        * @extends DD.Drop
         * @constructor
         * @namespace plugin
         */

@@ -9,6 +9,7 @@
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
+     * @namespace DD
      * @constructor
      */
 
@@ -27,6 +28,11 @@
 
 
     S.ATTRS = {
+        /**
+        * @attribute parentScroll
+        * @description Internal config option to hold the node that we are scrolling. Should not be set by the developer.
+        * @type Node
+        */
         parentScroll: {
             value: false,
             setter: function(node) {
@@ -34,21 +40,6 @@
                     return node;
                 }
                 return false;
-            }
-        },
-        node: {
-            value: false,
-            setter: function(node) {
-                var n = Y.get(node);
-                if (!n) {
-                    if (node !== false) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
-                    }
-                } else {
-                    n = n.item(0);
-                    this.set(PARENT_SCROLL, n);
-                }
-                return n;
             }
         },
         /**
@@ -67,34 +58,64 @@
         scrollDelay: {
             value: 235
         },
+        /**
+        * @attribute host
+        * @description The host we are plugged into.
+        * @type Object
+        */
         host: {
             value: null
         },
+        /**
+        * @attribute windowScroll
+        * @description Turn on window scroll support, default: false
+        * @type Boolean
+        */
         windowScroll: {
             value: false
+        },
+        /**
+        * @attribute vertical
+        * @description Allow vertical scrolling, default: true.
+        * @type Boolean
+        */
+        vertical: {
+            value: true
+        },
+        /**
+        * @attribute horizontal
+        * @description Allow horizontal scrolling, default: true.
+        * @type Boolean
+        */
+        horizontal: {
+            value: true
         }
     };
 
     Y.extend(S, Y.Base, {
         /**
+        * @private
         * @property _scrolling
         * @description Tells if we are actively scrolling or not.
         * @type Boolean
         */
         _scrolling: null,
         /**
+        * @private
         * @property _vpRegionCache
         * @description Cache of the Viewport dims.
         * @type Object
         */
         _vpRegionCache: null,
         /**
+        * @private
         * @property _dimCache
         * @description Cache of the dragNode dims.
         * @type Object
         */
         _dimCache: null,
         /**
+        * @private
         * @property _scrollTimer
         * @description Holder for the Timer object returned from Y.later.
         * @type {Y.later}
@@ -133,7 +154,7 @@
             var h = this.get(HOST);
             h.after('drag:start', Y.bind(this.start, this));
             h.after('drag:end', Y.bind(this.end, this));
-            h.on('drag:align', Y.bind(this._align, this));
+            h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
             Y.get(window).on('scroll', Y.bind(function() {
@@ -166,28 +187,31 @@
                 nl = left,
                 st = sTop,
                 sl = sLeft;
-
-
-            if (left <= r.left) {
-                scroll = true;
-                nl = xy[0] - ((ws) ? b : 0);
-                sl = sLeft - b;
+            
+            if (this.get('horizontal')) {
+                if (left <= r.left) {
+                    scroll = true;
+                    nl = xy[0] - ((ws) ? b : 0);
+                    sl = sLeft - b;
+                }
+                if (right >= r.right) {
+                    scroll = true;
+                    nl = xy[0] + ((ws) ? b : 0);
+                    sl = sLeft + b;
+                }
             }
-            if (right >= r.right) {
-                scroll = true;
-                nl = xy[0] + ((ws) ? b : 0);
-                sl = sLeft + b;
-            }
-            if (bottom >= r.bottom) {
-                scroll = true;
-                nt = xy[1] + ((ws) ? b : 0);
-                st = sTop + b;
+            if (this.get('vertical')) {
+                if (bottom >= r.bottom) {
+                    scroll = true;
+                    nt = xy[1] + ((ws) ? b : 0);
+                    st = sTop + b;
 
-            }
-            if (top <= r.top) {
-                scroll = true;
-                nt = xy[1] - ((ws) ? b : 0);
-                st = sTop - b;
+                }
+                if (top <= r.top) {
+                    scroll = true;
+                    nt = xy[1] - ((ws) ? b : 0);
+                    st = sTop - b;
+                }
             }
 
             if (st < 0) {
@@ -242,7 +266,11 @@
                 delete this._scrollTimer;
             }
         },
-        _align: function(e) {
+        /**
+        * @method align
+        * @description Called from the drag:align event to determine if we need to scroll.
+        */        
+        align: function(e) {
             if (this._scrolling) {
                 this._cancelScroll();
                 e.preventDefault();
@@ -263,9 +291,17 @@
                 w: node.get(OFFSET_WIDTH)
             };
         },
+        /**
+        * @method start
+        * @description Called from the drag:start event
+        */
         start: function() {
             this._setDimCache();
         },
+        /**
+        * @method end
+        * @description Called from the drag:end event
+        */
         end: function(xy) {
             this._dimCache = null;
             this._cancelScroll();
@@ -297,7 +333,7 @@
     WS.ATTRS = Y.merge(S.ATTRS, {
         /**
         * @attribute windowScroll
-        * @description Turn on window scroll support
+        * @description Turn on window scroll support, default: true
         * @type Boolean
         */
         windowScroll: {
@@ -326,10 +362,30 @@
         NS.superclass.constructor.apply(this, arguments);
 
     };
-    NS.ATTRS = {};
-    Y.mix(NS.ATTRS, S.ATTRS);
+    NS.ATTRS = Y.merge(S.ATTRS, {
+        /**
+        * @attribute node
+        * @description The node we want to scroll. Used to set the internal parentScroll attribute.
+        * @type Node
+        */
+        node: {
+            value: false,
+            setter: function(node) {
+                var n = Y.get(node);
+                if (!n) {
+                    if (node !== false) {
+                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                    }
+                } else {
+                    n = n.item(0);
+                    this.set(PARENT_SCROLL, n);
+                }
+                return n;
+            }
+        },
+    });
     Y.extend(NS, S);
-    NS.NAME = NS.NAME = 'nodescroll';
+    NS.NAME = NS.NS = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    

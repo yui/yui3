@@ -229,7 +229,7 @@ YUI.add('dd-constrain', function(Y) {
         /**
         * @private
         * @method _checkRegion
-        * @description
+        * @description Check if xy is inside a given region, if not change to it be inside.
         * @param {Array} _xy The XY to check if it's in the current region, if it isn't inside the region, it will reset the xy array to be inside the region.
         * @return {Array} The new XY that is inside the region
         */
@@ -333,6 +333,7 @@ YUI.add('dd-constrain', function(Y) {
     Y.mix(DDM, {
         /**
         * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -364,6 +365,7 @@ YUI.add('dd-constrain', function(Y) {
         },
         /**
         * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
