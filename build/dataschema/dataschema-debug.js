@@ -99,12 +99,12 @@ SchemaJSON = {
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
-     * @method DataSchema.JSON.buildPath
+     * @method DataSchema.JSON.getPath
      * @param locator {String} JSON value locator.
      * @return {String[]} Walkable path to data value.
      * @static
      */
-    buildPath: function(locator) {
+    getPath: function(locator) {
         var path = null,
             keys = [],
             i = 0;
@@ -189,7 +189,7 @@ SchemaJSON = {
         }
         else {
             Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaJSON.toString());
-            data_out.error = true;
+            data_out.error = new Error(this.toString() + " Schema parse failure");
         }
 
         return data_out;
@@ -200,21 +200,21 @@ SchemaJSON = {
      *
      * @method _parseResults
      * @param schema {Object} Schema to parse against.
-     * @param data_in {Object} Data to parse.
+     * @param json_in {Object} JSON to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _parseResults: function(schema, data_in, data_out) {
+    _parseResults: function(schema, json_in, data_out) {
         var results = [],
             path,
             error;
 
         if(schema.resultsLocator) {
-            path = SchemaJSON.buildPath(schema.resultsLocator);
+            path = SchemaJSON.getPath(schema.resultsLocator);
             if(path) {
-                results = SchemaJSON.getLocationValue(path, data_in);
+                results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
@@ -232,7 +232,7 @@ SchemaJSON = {
             }
 
             if (error) {
-                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", SchemaJSON.toString());
+                Y.log("JSON data could not be parsed: " + Y.dump(json_in), "error", SchemaJSON.toString());
                 data_out.error = error;
             }
             
@@ -245,13 +245,13 @@ SchemaJSON = {
      *
      * @method _getFieldValues
      * @param fields {Array} Fields to find.
-     * @param data_in {Array} Results data to parse.
+     * @param array_in {Array} Results to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _getFieldValues: function(fields, data_in, data_out) {
+    _getFieldValues: function(fields, array_in, data_out) {
         var results = [],
             len = fields.length,
             i, j,
@@ -265,7 +265,7 @@ SchemaJSON = {
             key = field.key || field; // Find the key
 
             // Validate and store locators for later
-            path = SchemaJSON.buildPath(key);
+            path = SchemaJSON.getPath(key);
             if (path) {
                 if (path.length === 1) {
                     simplePaths[simplePaths.length] = {key:key, path:path[0]};
@@ -284,11 +284,11 @@ SchemaJSON = {
             }
         }
 
-        // Traverse list of data_in, creating records of simple fields,
+        // Traverse list of array_in, creating records of simple fields,
         // complex fields, and applying parsers as necessary
-        for (i=data_in.length-1; i>=0; --i) {
+        for (i=array_in.length-1; i>=0; --i) {
             record = {};
-            result = data_in[i];
+            result = array_in[i];
             if(result) {
                 // Cycle through simpleLocators
                 for (j=simplePaths.length-1; j>=0; --j) {
@@ -324,20 +324,21 @@ SchemaJSON = {
      * Parses results data according to schema
      *
      * @method _parseMeta
-     * @param data_out {Object} Data to parse.
-     * @param data_in {Object} In-progress parsed data to update.
+     * @param metaFields {Object} Metafields definitions.
+     * @param json_in {Object} JSON to parse.
+     * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Schema-parsed meta data.
      * @static
      * @protected
      */
-    _parseMeta: function(metaFields, data_in, data_out) {
+    _parseMeta: function(metaFields, json_in, data_out) {
         if(LANG.isObject(metaFields)) {
             var key, path;
             for(key in metaFields) {
                 if (metaFields.hasOwnProperty(key)) {
-                    path = SchemaJSON.buildPath(metaFields[key]);
-                    if (path && data_in) {
-                        data_out.meta[key] = SchemaJSON.getLocationValue(path, data_in);
+                    path = SchemaJSON.getPath(metaFields[key]);
+                    if (path && json_in) {
+                        data_out.meta[key] = SchemaJSON.getLocationValue(path, json_in);
                     }
                 }
             }
@@ -410,7 +411,7 @@ SchemaXML = {
         }
         else {
             Y.log("XML data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaXML.toString());
-            data_out.error = true;
+            data_out.error = new Error(this.toString() + " Schema parse failure");
         }
 
         return data_out;
@@ -456,16 +457,16 @@ SchemaXML = {
      * Parses results data according to schema
      *
      * @method _parseMeta
-     * @param data_out {Object} Data to parse.
-     * @param data_in {Object} In-progress parsed data to update.
-     * @return {Object} Schema-parsed meta data.
+     * @param xmldoc_in {Object} XML document parse.
+     * @param data_out {Object} In-progress schema-parsed data to update.
+     * @return {Object} Schema-parsed data.
      * @static
      * @protected
      */
-    _parseMeta: function(metaFields, data_in, data_out) {
+    _parseMeta: function(metaFields, xmldoc_in, data_out) {
         if(LANG.isObject(metaFields)) {
             var key,
-                xmldoc = data_in.ownerDocument || data_in;
+                xmldoc = xmldoc_in.ownerDocument || xmldoc_in;
 
             for(key in metaFields) {
                 if (metaFields.hasOwnProperty(key)) {
@@ -481,15 +482,15 @@ SchemaXML = {
      *
      * @method _parseResults
      * @param schema {Object} Schema to parse against.
-     * @param xmldoc {Object} XML document parse.
+     * @param xmldoc_in {Object} XML document parse.
      * @param data_out {Object} In-progress schema-parsed data to update.
      * @return {Object} Schema-parsed data.
      * @static
      * @protected
      */
-    _parseResults: function(schema, xmldoc, data_out) {
+    _parseResults: function(schema, xmldoc_in, data_out) {
         if(schema.resultsLocator && LANG.isArray(schema.resultsFields)) {
-            var nodeList = xmldoc.getElementsByTagName(schema.resultsLocator),
+            var nodeList = xmldoc_in.getElementsByTagName(schema.resultsLocator),
                 fields = schema.resultsFields,
                 results = [],
                 node, field, result, i, j;
@@ -524,7 +525,120 @@ Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 }, '@VERSION@' ,{requires:['dataschema-base']});
 
+YUI.add('dataschema-array', function(Y) {
+
+/**
+ * The DataSchema utility provides a common configurable interface for widgets to
+ * apply a given schema to a variety of data.
+ *
+ * @module dataschema
+ */
+var LANG = Y.Lang,
+
+/**
+ * Array subclass for the YUI DataSchema utility.
+ * @class DataSchema.Array
+ * @extends DataSchema.Base
+ * @static
+ */
+SchemaArray = {
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSchema.Array static methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataSchema.Array";
+    },
+
+    /**
+     * Applies a given schema to given Array data.
+     *
+     * @method apply
+     * @param schema {Object} Schema to apply.
+     * @param data {Object} Array data.
+     * @return {Object} Schema-parsed data.
+     * @static
+     */
+    apply: function(schema, data) {
+        var data_in = data,
+            data_out = {results:[],meta:{}};
+            
+        if(LANG.isArray(data_in)) {
+            if(LANG.isArray(schema.resultsFields)) {
+                // Parse results data
+                data_out = SchemaArray._parseResults(schema.resultsFields, data_in, data_out);
+            }
+            else {
+                data_out.results = data_in;
+                Y.log("Schema resultsFields property not found: " + Y.dump(schema), "warn", SchemaArray.toString());
+            }
+        }
+        else {
+            Y.log("Array data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaArray.toString());
+            data_out.error = new Error(this.toString() + " Schema parse failure");
+        }
+
+        return data_out;
+    },
+
+    /**
+     * Schema-parsed list of results from full data
+     *
+     * @method _parseResults
+     * @param fields {Array} Schema to parse against.
+     * @param array_in {Array} Array to parse.
+     * @param data_out {Object} In-progress parsed data to update.
+     * @return {Object} Parsed data object.
+     * @static
+     * @protected
+     */
+    _parseResults: function(fields, array_in, data_out) {
+        var results = [],
+            result, item, type, field, key, value, i, j;
+            
+        for(i=array_in.length-1; i>-1; i--) {
+            result = {};
+            item = array_in[i];
+            type = (LANG.isObject(item) && !LANG.isFunction(item)) ? 2 : (LANG.isArray(item)) ? 1 : (LANG.isString(item)) ? 0 : -1;
+            if(type > 0) {
+                for(j=fields.length-1; j>-1; j--) {
+                    field = fields[j];
+                    key = (!LANG.isUndefined(field.key)) ? field.key : field;
+                    value = (!LANG.isUndefined(item[key])) ? item[key] : item[j];
+                    result[key] = Y.DataSchema.Base.parse(value, field);
+                }
+            }
+            else if(type === 0) {
+                result = item;
+            }
+            else {
+                //TODO: null or {}?
+                result = null;
+                Y.log("Unexpected type while parsing array: " + Y.dump(item), "warn", SchemaArray.toString());
+            }
+            results[i] = result;
+        }
+        data_out.results = results;
+
+        return data_out;
+    }
+};
+
+Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
-YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml']});
+
+}, '@VERSION@' ,{requires:['dataschema-base']});
+
+
+
+YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array']});
 
