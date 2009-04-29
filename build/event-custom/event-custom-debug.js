@@ -675,6 +675,10 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
+    this.hasSubscribers = false;
+
+    this.hasAfters = false;
+
     /**
      * If set to true, the custom event will deliver an EventFacade object
      * that is similar to a DOM event object.
@@ -756,8 +760,10 @@ Y.CustomEvent.prototype = {
 
         if (when == AFTER) {
             this.afters[s.id] = s;
+            this.hasAfters = true;
         } else {
             this.subscribers[s.id] = s;
+            this.hasSubscribers = true;
         }
 
         return new Y.EventHandle(this, s);
@@ -971,6 +977,10 @@ Y.CustomEvent.prototype = {
             subs, s, args, i, ef, q, queue, ce, hasSub,
             ret = true, events;
 
+        // @TODO find a better way to short circuit this.  
+        // if (!this.broadcast && !this.defaultFn && !this.hasSubscribers && !this.hasAfters) {
+        //     return true;
+        // }
 
         if (es) {
 
@@ -1007,15 +1017,12 @@ Y.CustomEvent.prototype = {
             es = Y.Env._eventstack;
         }
 
-
         if (this.fireOnce && this.fired) {
 
             this.log('fireOnce event: ' + this.type + ' already fired');
 
         } else {
 
-            // var subs = this.subscribers.slice(), len=subs.length,
-            subs = Y.merge(this.subscribers);
             args = Y.Array(arguments, 0, true);
 
             this.stopped = 0;
@@ -1069,24 +1076,28 @@ Y.CustomEvent.prototype = {
                 }
             }
 
-            for (i in subs) {
-                if (subs.hasOwnProperty(i)) {
+            if (this.hasSubscribers) {
+                subs = Y.merge(this.subscribers);
 
-                    if (!hasSub) {
-                        es.logging = (es.logging || (this.type === 'yui:log'));
-                        hasSub = true;
-                    }
+                for (i in subs) {
+                    if (subs.hasOwnProperty(i)) {
 
-                    // stopImmediatePropagation
-                    if (this.stopped == 2) {
-                        break;
-                    }
+                        if (!hasSub) {
+                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            hasSub = true;
+                        }
 
-                    s = subs[i];
-                    if (s && s.fn) {
-                        ret = this._notify(s, args, ef);
-                        if (false === ret) {
-                            this.stopped = 2;
+                        // stopImmediatePropagation
+                        if (this.stopped == 2) {
+                            break;
+                        }
+
+                        s = subs[i];
+                        if (s && s.fn) {
+                            ret = this._notify(s, args, ef);
+                            if (false === ret) {
+                                this.stopped = 2;
+                            }
                         }
                     }
                 }
@@ -1113,8 +1124,14 @@ Y.CustomEvent.prototype = {
                 this.defaultFn.apply(this.host || this, args);
             }
 
-            if (!this.stopped && this.broadcast && this.host !== Y) {
-                Y.fire.apply(Y, args);
+            // broadcast listeners are fired as discreet events on the
+            // YUI instance and potentially the YUI global.
+            if (!this.stopped && this.broadcast) {
+
+                if (this.host !== Y) {
+                    Y.fire.apply(Y, args);
+                }
+
                 if (this.broadcast == 2) {
                     Y.Global.fire.apply(Y.Global, args);
                 }
@@ -1122,7 +1139,7 @@ Y.CustomEvent.prototype = {
 
             // process after listeners.  If the default behavior was
             // prevented, the after events don't fire.
-            if (!this.prevented && this.stopped < 2) {
+            if (this.hasAfters && !this.prevented && this.stopped < 2) {
                 subs = Y.merge(this.afters);
                 for (i in subs) {
                     if (subs.hasOwnProperty(i)) {
@@ -1436,6 +1453,8 @@ Y.Subscriber.prototype = {
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     AFTER_PREFIX = '~AFTER~',
+    typeCache = {},
+    parseCache = {},
 
     /**
      * If the instance has a prefix attribute and the
@@ -1444,13 +1463,17 @@ var L = Y.Lang,
      * @method _getType
      */
     _getType = function(instance, type) {
+        var t = type, 
+            pre = instance._yuievt.config.prefix,
+            key = pre + t;
 
         if (!L.isString(type)) {
             return type;
+        } 
+        
+        else if (typeCache[key]) {
+            return typeCache[key];
         }
-
-        var t = type, 
-            pre = instance._yuievt.config.prefix;
 
         // Y.log("pre: " + pre, 'info', 'event');
 
@@ -1459,6 +1482,8 @@ var L = Y.Lang,
         }
 
         // Y.log("type: " + t, 'info', 'event');
+
+        typeCache[key] = t;
 
         return t;
     },
@@ -1472,11 +1497,19 @@ var L = Y.Lang,
      */
     _parseType = function(instance, type) {
 
+        var t = type, 
+            key = instance._yuievt.config.prefix + t,
+            parts, detachkey, after, i;
+
         if (!L.isString(type)) {
             return type;
+        } 
+        
+        else if (parseCache[key]) {
+            return parseCache[key];
         }
 
-        var t = type, parts, detachkey, after, i = t.indexOf(AFTER_PREFIX);
+        i = t.indexOf(AFTER_PREFIX);
 
         if (i > -1) {
             after = true;
@@ -1493,7 +1526,9 @@ var L = Y.Lang,
 
         t = _getType(instance, t);
 
-        return [detachkey, t, after];
+        parseCache[key] = [detachkey, t, after];
+
+        return parseCache[key];
     },
 
     /**
@@ -1513,6 +1548,8 @@ var L = Y.Lang,
         var o = (L.isObject(opts)) ? opts : {};
 
         this._yuievt = {
+
+            id: Y.guid(),
 
             events: {},
 
