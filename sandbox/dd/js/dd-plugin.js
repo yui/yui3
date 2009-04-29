@@ -15,7 +15,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
         var Drag = function(config) {
-            config.node = config.owner;
+            config.node = config.host;
             Drag.superclass.constructor.apply(this, arguments);
         };
         
