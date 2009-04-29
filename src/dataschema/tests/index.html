@@ -55,8 +55,8 @@
 
             testJSONResults: function() {
                 var schema = {
-                        resultsLocator: "response",
-                        resultsFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
+                        resultListLocator: "response",
+                        resultFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
                     },
                     data_in = {
                         response: [
@@ -79,8 +79,8 @@
             testJSONComplex: function() {
                 var schema = {
                         metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
-                        resultsLocator:"response['data array'][0].response['i t e m s']",
-                        resultsFields: [
+                        resultListLocator:"response['data array'][0].response['i t e m s']",
+                        resultFields: [
                             "name",
                             "['customer.data']['alert(\'id\')']",
                             "['customer.data']['phone/email']",
@@ -107,8 +107,8 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testJSONError: function() {
                 var schema = {
-                        resultsLocator: "response",
-                        resultsFields: ["name", "number", "letter"]
+                        resultListLocator: "response",
+                        resultFields: ["name", "number", "letter"]
                     },
                     data_in = 123,
                     data_out = Y.DataSchema.JSON.apply(schema, data_in);
@@ -156,8 +156,8 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testXMLResults: function() {
                 var schema = {
-                        resultsLocator: "item",
-                        resultsFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name"]
+                        resultListLocator: "item",
+                        resultFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name"]
                     },
                     data_in = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>0</rank></item><item type='bar'><name>Def</name><rank>1</rank></item><item type='bat'><name>Ghi</name><rank>2</rank></item></myroot>"),
                     data_out = Y.DataSchema.XML.apply(schema, data_in);
@@ -174,8 +174,8 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
             testXMLComplex: function() {
                 var schema = {
                         metaFields: {rootatt:{parser:Y.DataType.Number.parse, locator:"/myroot/@rootatt"}, topnode:"//top", nestedatt:"//second/@nested"},
-                        resultsLocator: "item",
-                        resultsFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name", {key:"subnameatt", locator:"subitem/name/@type"}, {key:"age", locator:"subitem/age", parser:"number"}]
+                        resultListLocator: "item",
+                        resultFields: [{key:"type", locator:"@type"}, {key:"rank", parser:Y.DataType.Number.parse}, "name", {key:"subnameatt", locator:"subitem/name/@type"}, {key:"age", locator:"subitem/age", parser:"number"}]
                     },
                     data_in = Y.DataType.XML.parse("<myroot rootatt='5'><top>topvalue</top><second nested='nestedsecond' /><allitems><livehere><item type='foo'><name type='nametype0'>Abc</name><rank>0</rank><subitem><name type='subnametype0'>subABC</name><age>10</age></subitem></item><item type='bar'><name type='nametype1'>Def</name><rank>1</rank><subitem><name type='subnametype1'>subDEF</name><age>11</age></subitem></item><item type='bat'><name type='nametype2'>Ghi</name><rank>2</rank><subitem><name type='subnametype2'>subGHI</name><age>12</age></subitem></item></livehere></allitems></myroot>"),
                     data_out = Y.DataSchema.XML.apply(schema, data_in);
@@ -198,8 +198,8 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testXMLError: function() {
                 var schema = {
-                        resultsLocator: "item",
-                        resultsFields: ["type", {key:"rank", parser:Y.DataType.Number.parse}, "name"]
+                        resultListLocator: "item",
+                        resultFields: ["type", {key:"rank", parser:Y.DataType.Number.parse}, "name"]
                     },
                    data_in = Y.DataType.XML.parse("<mismatch><item type='foo'><name>Abc</name><rank>1</rank></item></mismatchedtags>"),
                    data_out = Y.DataSchema.XML.apply(schema, data_in);
@@ -216,7 +216,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testSimpleArrayResults: function() {
                 var schema = {
-                        resultsFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
                     },
                     data_in = ["a","b","c"],
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -230,7 +230,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testNestedArrayResults: function() {
                 var schema = {
-                        resultsFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
                     },
                     data_in = [["a","0","c"], ["d","1","f"], ["g","-2","i"]],
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -248,7 +248,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testObjectArrayResults: function() {
                 var schema = {
-                        resultsFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
                     },
                     data_in = [{type:"a",age:0,name:"c"},{type:"d",age:1,name:"f"},{type:"g",age:-1,name:"i"}],
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -266,7 +266,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testComboArrayResults: function() {
                 var schema = {
-                        resultsFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
                     },
                     data_in = [["a","0","c"], "abc", {type:"g",age:-1,name:"i"}],
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -285,7 +285,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testArrayError: function() {
                 var schema = {
-                        resultsFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
                     },
                     data_in = "abc",
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -293,7 +293,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
                 //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
-                ASSERT.isObject(data_out.error, "Expected Array parse error.");
+                ASSERT.isObject(data_out.error, "Expected array parse error.");
 
                 data_in = [["a","0","c"], function() {}, {type:"g",age:-1,name:"h"}];
                 data_out = Y.DataSchema.Array.apply(schema, data_in);
@@ -304,15 +304,73 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
             }
         });
 
-        var testNestedArray = new Y.Test.Case({
-        });
-        
-        var testObjectArray = new Y.Test.Case({
+        var testText = new Y.Test.Case({
+            name: "Text Tests",
+
+            testTextResultsAndFields: function() {
+                var schema = {
+                        resultDelimiter: "\n",
+                        fieldDelimiter: "\t",
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                    },
+                    data_in = "foo\t0\tabc\nbar\t1\tdef\nbat\t-1\tghi",
+                    data_out = Y.DataSchema.Text.apply(schema, data_in);
+
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("foo", data_out.results[0].type, "Expected first type.");
+                ASSERT.areSame("bat", data_out.results[2].type, "Expected last type.");
+                ASSERT.areSame(0, data_out.results[0].age, "Expected first age.");
+                ASSERT.areSame(-1, data_out.results[2].age, "Expected last age.");
+                ASSERT.areSame("abc", data_out.results[0].name, "Expected first name.");
+                ASSERT.areSame("ghi", data_out.results[2].name, "Expected last name.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+            },
+            
+            testTextResultsOnly: function() {
+                var schema = {
+                        resultDelimiter: ","
+                    },
+                    data_in = "foo,bar,bat,",
+                    data_out = Y.DataSchema.Text.apply(schema, data_in);
+
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("foo", data_out.results[0], "Expected first result.");
+                ASSERT.areSame("bat", data_out.results[2], "Expected last result.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+            },
+
+            testTextError: function() {
+                var schema = {
+                        resultDelimiter: "\n",
+                        fieldDelimiter: ","
+                    },
+                    data_in = 123,
+                    data_out = Y.DataSchema.Text.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+                ASSERT.isObject(data_out.error, "Expected text parse error.");
+                
+                schema = {
+                    foo: "bar"
+                };
+                data_in = "foo,0,abc\nbar,1,def\nbat,-1,ghi",
+                data_out = Y.DataSchema.Text.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+                ASSERT.isObject(data_out.error, "Expected text parse error.");
+            }
         });
 
-        //Y.Test.Runner.add(testJSON);
-        //Y.Test.Runner.add(testXML);
+        Y.Test.Runner.add(testJSON);
+        Y.Test.Runner.add(testXML);
         Y.Test.Runner.add(testArray);
+        Y.Test.Runner.add(testText);
         Y.Test.Runner.run();
     });
 })();

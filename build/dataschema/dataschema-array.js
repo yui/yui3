@@ -45,9 +45,9 @@ SchemaArray = {
             data_out = {results:[],meta:{}};
             
         if(LANG.isArray(data_in)) {
-            if(LANG.isArray(schema.resultsFields)) {
+            if(LANG.isArray(schema.resultFields)) {
                 // Parse results data
-                data_out = SchemaArray._parseResults(schema.resultsFields, data_in, data_out);
+                data_out = SchemaArray._parseResults(schema.resultFields, data_in, data_out);
             }
             else {
                 data_out.results = data_in;
