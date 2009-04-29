@@ -154,7 +154,7 @@
             <span class="nx">chain</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;chain&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">chain</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chain</span><span class="o">,</span>
 
             <span class="nx">defaults</span><span class="o">:</span> <span class="o">{</span>
-                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span> 
+                <span class="nx">context</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> 
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                 <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">,</span>
                 <span class="nx">fireOnce</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">fireOnce</span><span class="o">,</span>
@@ -469,14 +469,14 @@
                 <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribeEvent</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">onSubscribeCallback</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="c">// make sure we turn the broadcast flag off if this</span>
-<span class="c"></span>            <span class="c">// event was published as a result of bubbling</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">broadcast</span><span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">}</span>
 
         <span class="o">}</span>
 
+        <span class="c">// make sure we turn the broadcast flag off if this</span>
+<span class="c"></span>        <span class="c">// event was published as a result of bubbling</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">].</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
     <span class="o">},</span>
