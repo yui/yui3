@@ -467,7 +467,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
 
     dd.destroy();
-    console.log(dd);
+    //console.log(dd);
     
     
     /*
@@ -499,23 +499,6 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     }).addInvalid('h2 a');
 
 
-    <?php
-    if ($_GET['events']) {
-    ?>
-    dd2.on('drag:enter', function() {
-        //Y.log('drag2:enter', arguments);
-    });
-    
-    dd2.on('drag:over', function() {
-        //Y.log('drag2:over', arguments);
-    });
-    
-    dd2.on('drag:exit', function() {
-        //Y.log('drag2:exit', arguments);
-    });
-    <?php
-    }
-    ?>
     
     dd3 = Y.Node.get('#drag3');
     dd3.plug(Y.plugin.Drag, {
@@ -523,6 +506,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     dd3.dd.plug(Y.plugin.DDProxy, {});
     dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    
 
 /*
     dd3.dd.on('activeHandle', function(e) {
