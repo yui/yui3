@@ -609,18 +609,17 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _bindThumbDD : function () {
-        var ddConf = {
-                node           : this.get(THUMB),
-                constrain2node : this.get(RAIL)
-            },
-            dd;
+        var ddConf = { node : this.get(THUMB) };
 
         ddConf[this._key.ddStick] = true;
 
-        this._dd = dd = new Y.DD.Drag(ddConf);
-        dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
-        dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
-        dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
+        this._dd = new Y.DD.Drag(ddConf).plug(Y.plugin.DDConstrained, {
+            constrain2node : this.get(RAIL)
+        });
+
+        this._dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
+        this._dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
+        this._dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
 
         this._initRailDD();
     },
@@ -938,7 +937,7 @@ Y.extend(Slider, Y.Widget, {
 
         Y.log('setting DDConstrain gutter "'+gutter+'"','info','slider');
 
-        this._dd.set('gutter', gutter);
+        this._dd.con.set('gutter', gutter);
     },
 
     /**
