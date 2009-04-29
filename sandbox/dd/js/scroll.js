@@ -28,6 +28,11 @@ YUI.add('dd-scroll', function(Y) {
 
 
     S.ATTRS = {
+        /**
+        * @attribute parentScroll
+        * @description Internal config option to hold the node that we are scrolling. Should not be set by the developer.
+        * @type Node
+        */
         parentScroll: {
             value: false,
             setter: function(node) {
@@ -37,6 +42,11 @@ YUI.add('dd-scroll', function(Y) {
                 return false;
             }
         },
+        /**
+        * @attribute node
+        * @description The node we want to scroll, when using node based scrolling. Used to set the internal parentScroll attribute.
+        * @type Node
+        */
         node: {
             value: false,
             setter: function(node) {
@@ -68,11 +78,37 @@ YUI.add('dd-scroll', function(Y) {
         scrollDelay: {
             value: 235
         },
+        /**
+        * @attribute host
+        * @description The host we are plugged into.
+        * @type Object
+        */
         host: {
             value: null
         },
+        /**
+        * @attribute windowScroll
+        * @description Turn on window scroll support
+        * @type Boolean
+        */
         windowScroll: {
             value: false
+        },
+        /**
+        * @attribute vertical
+        * @description Allow vertical scrolling, default: true.
+        * @type Boolean
+        */
+        vertical: {
+            value: true
+        },
+        /**
+        * @attribute horizontal
+        * @description Allow horizontal scrolling, default: true.
+        * @type Boolean
+        */
+        horizontal: {
+            value: true
         }
     };
 
@@ -134,7 +170,7 @@ YUI.add('dd-scroll', function(Y) {
             var h = this.get(HOST);
             h.after('drag:start', Y.bind(this.start, this));
             h.after('drag:end', Y.bind(this.end, this));
-            h.on('drag:align', Y.bind(this._align, this));
+            h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
             Y.get(window).on('scroll', Y.bind(function() {
@@ -167,28 +203,31 @@ YUI.add('dd-scroll', function(Y) {
                 nl = left,
                 st = sTop,
                 sl = sLeft;
-
-
-            if (left <= r.left) {
-                scroll = true;
-                nl = xy[0] - ((ws) ? b : 0);
-                sl = sLeft - b;
+            
+            if (this.get('horizontal')) {
+                if (left <= r.left) {
+                    scroll = true;
+                    nl = xy[0] - ((ws) ? b : 0);
+                    sl = sLeft - b;
+                }
+                if (right >= r.right) {
+                    scroll = true;
+                    nl = xy[0] + ((ws) ? b : 0);
+                    sl = sLeft + b;
+                }
             }
-            if (right >= r.right) {
-                scroll = true;
-                nl = xy[0] + ((ws) ? b : 0);
-                sl = sLeft + b;
-            }
-            if (bottom >= r.bottom) {
-                scroll = true;
-                nt = xy[1] + ((ws) ? b : 0);
-                st = sTop + b;
+            if (this.get('vertical')) {
+                if (bottom >= r.bottom) {
+                    scroll = true;
+                    nt = xy[1] + ((ws) ? b : 0);
+                    st = sTop + b;
 
-            }
-            if (top <= r.top) {
-                scroll = true;
-                nt = xy[1] - ((ws) ? b : 0);
-                st = sTop - b;
+                }
+                if (top <= r.top) {
+                    scroll = true;
+                    nt = xy[1] - ((ws) ? b : 0);
+                    st = sTop - b;
+                }
             }
 
             if (st < 0) {
@@ -243,7 +282,11 @@ YUI.add('dd-scroll', function(Y) {
                 delete this._scrollTimer;
             }
         },
-        _align: function(e) {
+        /**
+        * @method align
+        * @description Called from the drag:align event to determine if we need to scroll.
+        */        
+        align: function(e) {
             if (this._scrolling) {
                 this._cancelScroll();
                 e.preventDefault();
@@ -264,9 +307,17 @@ YUI.add('dd-scroll', function(Y) {
                 w: node.get(OFFSET_WIDTH)
             };
         },
+        /**
+        * @method start
+        * @description Called from the drag:start event
+        */
         start: function() {
             this._setDimCache();
         },
+        /**
+        * @method end
+        * @description Called from the drag:end event
+        */
         end: function(xy) {
             this._dimCache = null;
             this._cancelScroll();
@@ -296,11 +347,6 @@ YUI.add('dd-scroll', function(Y) {
 
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
-        /**
-        * @attribute windowScroll
-        * @description Turn on window scroll support
-        * @type Boolean
-        */
         windowScroll: {
             value: true,
             setter: function(scroll) {
@@ -330,7 +376,7 @@ YUI.add('dd-scroll', function(Y) {
     NS.ATTRS = {};
     Y.mix(NS.ATTRS, S.ATTRS);
     Y.extend(NS, S);
-    NS.NAME = NS.NAME = 'nodescroll';
+    NS.NAME = NS.NS = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    
