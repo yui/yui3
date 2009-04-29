@@ -15,7 +15,6 @@ YUI.add('dd-proxy', function(Y) {
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        PROXY = 'proxy',
         HOST = 'host',
         TRUE = true;
 
