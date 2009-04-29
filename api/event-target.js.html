@@ -159,6 +159,7 @@
                 <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">,</span>
                 <span class="nx">fireOnce</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">fireOnce</span><span class="o">,</span>
                 <span class="nx">queuable</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">queuable</span><span class="o">,</span>
+                <span class="nx">broadcast</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">broadcast</span><span class="o">,</span>
                 <span class="nx">bubbles</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="kc">true</span>
             <span class="o">}</span>
         <span class="o">};</span>
@@ -434,7 +435,7 @@
 
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="o">{};</span>
@@ -457,8 +458,6 @@
             <span class="c">// ce.configured = true;</span>
 <span class="c"></span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
-
             <span class="c">// apply defaults</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">);</span>
 
@@ -471,6 +470,7 @@
             <span class="o">}</span>
 
         <span class="o">}</span>
+
 
         <span class="k">return</span> <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
     <span class="o">},</span>
@@ -682,6 +682,16 @@
 <span class="o">});</span>
 
 <span class="nx">ET</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
+
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">globalEvents</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">globalEvents</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">ET</span><span class="o">();</span>
+
+<span class="c">/**</span>
+<span class="c"> * Hosts YUI page level events.  This is where events bubble to</span>
+<span class="c"> * when the broadcast config is set to 2.</span>
+<span class="c"> * @property Global</span>
+<span class="c"> * @type EventTarget</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">globalEvents</span><span class="o">;</span>
 
 <span class="o">})();</span>
 </pre></div>

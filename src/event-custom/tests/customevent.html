@@ -368,6 +368,53 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.areEqual(0, count);
 
+            },
+
+            testBroadcast: function() {
+                var o = new Y.EventTarget(), s1, s2, s3, s4;
+
+                o.publish('y:foo', {
+                    emitFacade: true,
+                    broadcast: 1
+                });
+
+                Y.on('y:foo', function() {
+                    Y.log('Y executed');
+                    s1 = 1;
+                });
+
+                Y.Global.on('y:foo', function() {
+                    Y.log('GLOBAL executed');
+                    s2 = 1;
+                });
+
+                o.fire('y:foo');
+
+                Y.Assert.areEqual(1, s1);
+                Y.Assert.areNotEqual(1, s2);
+
+                s1 = 0;
+                s2 = 0;
+
+                o.publish('y:bar', {
+                    emitFacade: true,
+                    broadcast: 2
+                });
+
+                Y.on('y:bar', function() {
+                    Y.log('Y executed');
+                    s3 = 1;
+                });
+
+                Y.Global.on('y:bar', function() {
+                    Y.log('GLOBAL executed');
+                    s4 = 1;
+                });
+
+                o.fire('y:bar');
+
+                Y.Assert.areEqual(1, s3);
+                // Y.Assert.areEqual(1, s4);
             }
 
         });

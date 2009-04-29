@@ -674,12 +674,21 @@ Y.CustomEvent.prototype = {
 
                 this.stopped = Math.max(this.stopped, es.stopped);
                 this.prevented = Math.max(this.prevented, es.prevented);
+
             }
+
 
             // execute the default behavior if not prevented
             // @TODO need context
             if (this.defaultFn && !this.prevented) {
                 this.defaultFn.apply(this.host || this, args);
+            }
+
+            if (!this.stopped && this.broadcast && this.host !== Y) {
+                Y.fire.apply(Y, args);
+                if (this.broadcast == 2) {
+                    Y.Global.fire.apply(Y, args);
+                }
             }
 
             // process after listeners.  If the default behavior was
