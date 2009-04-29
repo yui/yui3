@@ -191,11 +191,10 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
                 "frameDoc.query('#demo li').get('innerHTML')");
 
-            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id=form.foo@bar:baz]')), "#form.foo@bar:baz");
+            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.get('body :first-child');
             Y.get('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
-            console.log(Y.Node.getDOMNode(Y.get('body :first-child')));
             Assert.isFalse(Y.Node.getDOMNode(firstChild) === Y.Node.getDOMNode(Y.get('body :first-child')), "wrong node: Y.get('body :first-child')");
 
             Y.get('body').removeChild(Y.get('body :first-child'));
@@ -602,7 +601,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Y.get('body').set('aria-checked', true);
             Assert.isTrue(document.body.getAttribute('aria-checked') === 'true', "Y.get('body').set('aria-checked', true)")
-        },
+        }
     }));
 
     suite.add( new tool.TestCase({
