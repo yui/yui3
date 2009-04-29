@@ -55,3 +55,4 @@ var LANG = Y.Lang,
 };
 
 Y.namespace("DataSchema").Base = SchemaBase;
+Y.namespace("Parsers");
