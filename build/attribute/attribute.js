@@ -375,32 +375,34 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
-            // TODO: Performance pass - prevent allowSet fallthrough
-            if (!initialSet && !force) {
-                if (conf.get(name, WRITE_ONCE)) {
-                    allowSet = false;
-                }
-                if (conf.get(name, READ_ONLY)) {
-                    allowSet = false;
-                }
-            }
-
-            if (!conf.get(name)) {
+            if (!this.attrAdded(name)) {
                 allowSet = false;
-            }
 
-            currVal = this.get(name);
+            } else {
 
-            if (path) {
-               val = O.setValue(Y.clone(currVal), path, val);
+                if (!initialSet && !force) {
+                    if (conf.get(name, WRITE_ONCE)) {
+                        allowSet = false;
+                    }
+                    if (conf.get(name, READ_ONLY)) {
+                        allowSet = false;
+                    }
+                }
 
-               if (val === undefined) {
-                   allowSet = false;
-               }
-            }
+                if (allowSet) {
+                    currVal = this.get(name);
+                    if (path) {
+                       val = O.setValue(Y.clone(currVal), path, val);
 
-            if (allowSet) {
-                this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                       if (val === undefined) {
+                           allowSet = false;
+                       }
+                    }
+        
+                    if (allowSet) {
+                        this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                    }
+                }
             }
 
             return this;

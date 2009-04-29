@@ -277,36 +277,38 @@
                 name = path.shift();
             }
 
-            // TODO: Performance pass - prevent allowSet fallthrough
-            if (!initialSet && !force) {
-                if (conf.get(name, WRITE_ONCE)) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
-                    allowSet = false;
-                }
-                if (conf.get(name, READ_ONLY)) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
-                    allowSet = false;
-                }
-            }
-
-            if (!conf.get(name)) {
+            if (!this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
                 allowSet = false;
-            }
 
-            currVal = this.get(name);
+            } else {
 
-            if (path) {
-               val = O.setValue(Y.clone(currVal), path, val);
+                if (!initialSet && !force) {
+                    if (conf.get(name, WRITE_ONCE)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
+                        allowSet = false;
+                    }
+                    if (conf.get(name, READ_ONLY)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
+                        allowSet = false;
+                    }
+                }
 
-               if (val === undefined) {
-                   Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
-                   allowSet = false;
-               }
-            }
+                if (allowSet) {
+                    currVal = this.get(name);
+                    if (path) {
+                       val = O.setValue(Y.clone(currVal), path, val);
 
-            if (allowSet) {
-                this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                       if (val === undefined) {
+                           Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
+                           allowSet = false;
+                       }
+                    }
+        
+                    if (allowSet) {
+                        this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                    }
+                }
             }
 
             return this;
