@@ -2,23 +2,25 @@
 <html>
 <head>
 <title>YUI Event Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
 <script type="text/javascript">
 
 (function() {
     YUI({
         base: "../../../build/",
         filter: "debug",
+        combine: false,
         useConsole: true,
         // logInclude: ['event', 'test']
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+    }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun');
 
@@ -297,24 +299,123 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             testPreventFnOnce: function() {
                 var count = 0;
-                Y.publish('y:foo', {
+                Y.publish('y:foo1', {
                     emitFacade: true,
                     preventedFn: function() {
-                        count++
+                        count++;
+                        Y.Assert.isTrue(this instanceof YUI);
                     }
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
+
+                Y.fire('y:foo1');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testDetachHandle: function() {
+                var count = 0, handle, handle2;
+                Y.publish('y:foo', {
+                    emitFacade: true,
+                });
+
+                Y.on('y:foo', function(e) {
+                    count++;
+                    handle2.detach();
+                });
+
+                handle = Y.on('y:foo', function(e) {
+                    count += 100;
+                });
+
+                handle2 = Y.on('y:foo', function(e) {
+                    count += 1000;
+                });
+
+                Y.detach(handle);
 
                 Y.fire('y:foo');
 
                 Y.Assert.areEqual(1, count);
+
+                count = 0;
+
+                var handle3 = Y.on('y:click', function() {
+                    count++;
+                    handle3.detach();
+                });
+
+                Y.fire('y:click');
+                Y.fire('y:click');
+
+                count = 0;
+                Y.on('y:foo', function(e) {
+                    count++;
+                });
+                Y.on('y:foo', function(e) {
+                    count++;
+                });
+
+                Y.detachAll('y:click');
+
+                Y.fire('y:click');
+
+                Y.Assert.areEqual(0, count);
+
+            },
+
+            testBroadcast: function() {
+                var o = new Y.EventTarget(), s1, s2, s3, s4;
+
+                o.publish('y:foo2', {
+                    emitFacade: true,
+                    broadcast: 1
+                });
+
+                Y.on('y:foo2', function() {
+                    Y.log('Y foo2 executed');
+                    s1 = 1;
+                });
+
+                Y.Global.on('y:foo2', function() {
+                    Y.log('GLOBAL foo2 executed');
+                    s2 = 1;
+                });
+
+                o.fire('y:foo2');
+
+                Y.Assert.areEqual(1, s1);
+                Y.Assert.areNotEqual(1, s2);
+
+                s1 = 0;
+                s2 = 0;
+
+                o.publish('y:bar', {
+                    emitFacade: true,
+                    broadcast: 2
+                });
+
+                Y.on('y:bar', function() {
+                    Y.log('Y bar executed');
+                    s3 = 1;
+                });
+
+                Y.Global.on('y:bar', function() {
+                    Y.log('GLOBAL bar executed');
+                    s4 = 1;
+                });
+
+                o.fire('y:bar');
+
+                Y.Assert.areEqual(1, s3);
+                Y.Assert.areEqual(1, s4);
             }
 
         });

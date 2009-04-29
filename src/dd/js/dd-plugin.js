@@ -1,20 +1,20 @@
 
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd
         * @submodule dd-plugin
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @class DragPlugin
-        * @extends Drag
+        * @class Drag
+        * @extends DD.Drag
         * @constructor
         * @namespace plugin
         */
 
 
         var Drag = function(config) {
-            config.node = config.owner;
+            config.node = config.host;
             Drag.superclass.constructor.apply(this, arguments);
         };
         
@@ -24,6 +24,7 @@
         * @type {String}
         */
         Drag.NAME = "dd-plugin";
+
         /**
         * @property NS
         * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;

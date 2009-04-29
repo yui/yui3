@@ -67,7 +67,7 @@ function StyleSheet(seed, name) {
 
     head = d.getElementsByTagName('head')[0];
     if (!head) {
-        Y.fail('HEAD element not found to append STYLE node');
+        Y.error('HEAD element not found to append STYLE node');
     }
 
     node = seed && (seed.nodeName ? seed :

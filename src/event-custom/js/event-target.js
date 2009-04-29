@@ -105,11 +105,12 @@ var L = Y.Lang,
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
-                context: this, 
+                context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -236,7 +237,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
@@ -252,15 +254,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
@@ -384,7 +386,7 @@ ET.prototype = {
 
         type = _getType(this, type);
 
-        var events, ce, ret, o;
+        var events, ce, ret, o = opts || {};
 
         if (L.isObject(type)) {
             ret = {};
@@ -407,8 +409,6 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            o = opts || {};
-
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
 
@@ -417,9 +417,16 @@ ET.prototype = {
             events[type] = ce;
 
             if (o.onSubscribeCallback) {
-                ce.subscribeEvent.subscribe(o.onSubscribeCallback);
+                ce.subscribeEvent.on(o.onSubscribeCallback);
             }
 
+
+        }
+
+        // make sure we turn the broadcast flag off if this
+        // event was published as a result of bubbling
+        if (typeof o == Y.CustomEvent) {
+            events[type].broadcast = false;
         }
 
         return events[type];
@@ -632,5 +639,17 @@ Y.mix(Y, ET.prototype, false, false, {
 });
 
 ET.call(Y);
+
+YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
+
+/**
+ * Hosts YUI page level events.  This is where events bubble to
+ * when the broadcast config is set to 2.
+ * @property Global
+ * @type EventTarget
+ */
+Y.Global = YUI.Env.globalEvents;
+
+// @TODO implement a global namespace function on Y.Global?
 
 })();

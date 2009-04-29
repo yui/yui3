@@ -1,7 +1,7 @@
 Queue
     The Queue module allows you create a chain of function callbacks executed in order via setTimeout.  Also supports timeout chained iterations for each item in the Queue.
 
-Development master
+3.0.0 beta1
 Queue overhaul.  Breaking into submodules queue-base, queue-full, and queue-io.
 queue-base
     * basic synchronous queuing

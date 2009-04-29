@@ -34,7 +34,7 @@ YUI({
 
     base: '../../build/'
 
-}).use('node', 'dump', 'substitute', function(Y) {
+}).use('event', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
         Y.log('window load event');
@@ -111,7 +111,6 @@ YUI({
     */
 
 
-/*
 
     var el = Y.get('#button1');
     Y.log("get got " + el);
@@ -127,12 +126,14 @@ YUI({
 
     Y.on('click', function(e) {
         Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
-        h.detach();
+        // h.detach();
         // Y.detach('click', f, el);
-        // Y.Event.purgeElement(this);
+        // console.log(Y.Event.getListeners(this, 'click'));
+        // console.log(Y.Event.getListeners(this));
+        // Y.Event.purgeElement(this, true, 'click');
+        Y.Event.detach('click', null, this);
     }, el);
 
-*/
 
 
 

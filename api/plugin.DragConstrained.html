@@ -50,7 +50,7 @@
                         
                             Class <b property="yui:name">plugin.DragConstrained</b>
                         <span class="extends">
-                           - extends <a href="Drag.html" title="Drag">Drag</a>
+                           - extends <a href="Base.html" title="Base">Base</a>
                         </span>
 
                     </h2>
@@ -60,7 +60,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
+                        This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
 supports tick based moves and XY axis constraints.
                     </div>
 
@@ -100,66 +100,44 @@ supports tick based moves and XY axis constraints.
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_con">
+                                    <h4><a name="property_con" property="yui:name">con</a>
+                                        - <code><span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The Constrained instance will be placed on the Drag instance under the con namespace.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class="" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__align">
-                                    <h4>
-                                        <a name="method__align">_align</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        Array
-                                            <strong property="yui:name">_align</strong>
-                                           (
-                                                
-                                                        
-                                                         xy
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Override of Drag _align to account for region checking and tick checking
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">xy</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The XY to check for ticks and region</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The modified XY coords.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__cacheRegion">
                                     <h4>
                                         <a name="method__cacheRegion">_cacheRegion</a></h4>
@@ -197,171 +175,6 @@ supports tick based moves and XY axis constraints.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__calcTickArray">
-                                    <h4>
-                                        <a name="method__calcTickArray">_calcTickArray</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">_calcTickArray</strong>
-                                           (
-                                                
-                                                        
-                                                         pos
-                                                    
-                                                
-                                                        , 
-                                                         ticks
-                                                    
-                                                
-                                                        , 
-                                                         off1
-                                                    
-                                                
-                                                        , 
-                                                         off2
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            This method is used with the tickXArray and tickYArray config options
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">pos</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The current X or Y position</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ticks</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The array containing our custom tick positions.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">off1</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The min offset that we can't pass (region)</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">off2</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The max offset that we can't pass (region)</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__calcTicks">
-                                    <h4>
-                                        <a name="method__calcTicks">_calcTicks</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        Number
-                                            <strong property="yui:name">_calcTicks</strong>
-                                           (
-                                                
-                                                        
-                                                         pos
-                                                    
-                                                
-                                                        , 
-                                                         start
-                                                    
-                                                
-                                                        , 
-                                                         tick
-                                                    
-                                                
-                                                        , 
-                                                         off1
-                                                    
-                                                
-                                                        , 
-                                                         off2
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Helper method to calculate the tick offsets for a given position
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">pos</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The current X or Y position</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">start</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The start X or Y position</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">tick</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The X or Y tick increment</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">off1</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The min offset that we can't pass (region)</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">off2</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The max offset that we can't pass (region)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Number
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The new position based on the tick calculation</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__checkRegion">
                                     <h4>
                                         <a name="method__checkRegion">_checkRegion</a></h4>
@@ -382,7 +195,7 @@ supports tick based moves and XY axis constraints.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            Check if xy is inside a given region, if not change to it be inside.
                                         </div>
 
                                         <div class="description">
@@ -464,6 +277,80 @@ supports tick based moves and XY axis constraints.
                                                         Array
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The calced XY coords</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleStart">
+                                    <h4>
+                                        <a name="method__handleStart">_handleStart</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_handleStart</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires on drag:start and clears the _regionCache
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_align">
+                                    <h4>
+                                        <a name="method_align">align</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">align</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -579,6 +466,51 @@ supports tick based moves and XY axis constraints.
                             </div>
                         </div>
 
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__aggregateAttrs">                                        
+                                            <a class="private" href="Base.html#method__aggregateAttrs" property="yui:name" title="_aggregateAttrs">_aggregateAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__filterAttrCfs">                                        
+                                            <a class="private" href="Base.html#method__filterAttrCfs" property="yui:name" title="_filterAttrCfs">_filterAttrCfs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getAttrCfgs">                                        
+                                            <a class="protected" href="Base.html#method__getAttrCfgs" property="yui:name" title="_getAttrCfgs">_getAttrCfgs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
+                                            <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div rel="yui:events" resource="#events">
@@ -1029,6 +961,28 @@ supports tick based moves and XY axis constraints.
                         </div>
 
 
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
@@ -1179,6 +1133,22 @@ supports tick based moves and XY axis constraints.
                             </div>
                         </div>
 
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
                     </div>
 
 			</div>
@@ -1196,7 +1166,6 @@ supports tick based moves and XY axis constraints.
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class="selected"><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -1225,17 +1194,23 @@ supports tick based moves and XY axis constraints.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="plugin.DDM.html" title="plugin.DDM">plugin.DDM</a></li>
+                                <li class=""><a href="DD.DDM.html" title="DD.DDM">DD.DDM</a></li>
+                                <li class=""><a href="DD.Drag.html" title="DD.Drag">DD.Drag</a></li>
+                                <li class=""><a href="DD.Drop.html" title="DD.Drop">DD.Drop</a></li>
+                                <li class=""><a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a></li>
+                                <li class=""><a href="plugin.DDNodeScroll.html" title="plugin.DDNodeScroll">plugin.DDNodeScroll</a></li>
+                                <li class=""><a href="plugin.DDProxy.html" title="plugin.DDProxy">plugin.DDProxy</a></li>
+                                <li class=""><a href="plugin.DDWindowScroll.html" title="plugin.DDWindowScroll">plugin.DDWindowScroll</a></li>
                                 <li class=""><a href="plugin.Drag.html" title="plugin.Drag">plugin.Drag</a></li>
                                 <li class="selected"><a href="plugin.DragConstrained.html" title="plugin.DragConstrained">plugin.DragConstrained</a></li>
                                 <li class=""><a href="plugin.Drop.html" title="plugin.Drop">plugin.Drop</a></li>
-                                <li class=""><a href="plugin.Proxy.html" title="plugin.Proxy">plugin.Proxy</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="constrain.js.html" title="constrain.js">constrain.js</a></li>
                                 <li class=""><a href="dd-drop-plugin.js.html" title="dd-drop-plugin.js">dd-drop-plugin.js</a></li>
                                 <li class=""><a href="dd-plugin.js.html" title="dd-plugin.js">dd-plugin.js</a></li>
                                 <li class=""><a href="ddm-base.js.html" title="ddm-base.js">ddm-base.js</a></li>
@@ -1244,6 +1219,7 @@ supports tick based moves and XY axis constraints.
                                 <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
                                 <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
                                 <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>
+                                <li class=""><a href="scroll.js.html" title="scroll.js">scroll.js</a></li>
                         </ul>
                     </div>
 
@@ -1251,18 +1227,18 @@ supports tick based moves and XY axis constraints.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property__regionCache" title="_regionCache">_regionCache</a></li>
+                                <li class=""><a href="#property_con" title="con">con</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#method__align" title="_align">_align</a></li>
                                 <li class="private"><a href="#method__cacheRegion" title="_cacheRegion">_cacheRegion</a></li>
-                                <li class="private"><a href="#method__calcTickArray" title="_calcTickArray">_calcTickArray</a></li>
-                                <li class="private"><a href="#method__calcTicks" title="_calcTicks">_calcTicks</a></li>
                                 <li class="private"><a href="#method__checkRegion" title="_checkRegion">_checkRegion</a></li>
                                 <li class="private"><a href="#method__checkTicks" title="_checkTicks">_checkTicks</a></li>
+                                <li class="private"><a href="#method__handleStart" title="_handleStart">_handleStart</a></li>
+                                <li class=""><a href="#method_align" title="align">align</a></li>
                                 <li class=""><a href="#method_getRegion" title="getRegion">getRegion</a></li>
                                 <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
                         </ul>
@@ -1309,7 +1285,7 @@ supports tick based moves and XY axis constraints.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "plugin.DragConstrained", "name": "_align", "url": "plugin.DragConstrained.html#method__align", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_cacheRegion", "url": "plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_calcTickArray", "url": "plugin.DragConstrained.html#method__calcTickArray", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_calcTicks", "url": "plugin.DragConstrained.html#method__calcTicks", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_checkRegion", "url": "plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_checkTicks", "url": "plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2node", "url": "plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2nodeChange", "url": "plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2region", "url": "plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2regionChange", "url": "plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2view", "url": "plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2viewChange", "url": "plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "getRegion", "url": "plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "gutter", "url": "plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "gutterChange", "url": "plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "inRegion", "url": "plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_regionCache", "url": "plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickX", "url": "plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickXChange", "url": "plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickY", "url": "plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickYChange", "url": "plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickX", "url": "plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXArray", "url": "plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXArrayChange", "url": "plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXChange", "url": "plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickY", "url": "plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYArray", "url": "plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYArrayChange", "url": "plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYChange", "url": "plugin.DragConstrained.html#event_tickYChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DD.Scroll", "name": "align", "url": "DD.Scroll.html#method_align", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "align", "url": "plugin.DragConstrained.html#method_align", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "buffer", "url": "DD.Scroll.html#config_buffer", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "bufferChange", "url": "DD.Scroll.html#event_bufferChange", "type": "event"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_cacheRegion", "url": "plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_cancelScroll", "url": "DD.Scroll.html#method__cancelScroll", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_checkRegion", "url": "plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_checkTicks", "url": "plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_checkWinScroll", "url": "DD.Scroll.html#method__checkWinScroll", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "con", "url": "plugin.DragConstrained.html#property_con", "type": "property"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2node", "url": "plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2nodeChange", "url": "plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2region", "url": "plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2regionChange", "url": "plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2view", "url": "plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "constrain2viewChange", "url": "plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_dimCache", "url": "DD.Scroll.html#property__dimCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "end", "url": "DD.Scroll.html#method_end", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "getRegion", "url": "plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_getVPRegion", "url": "DD.Scroll.html#method__getVPRegion", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "gutter", "url": "plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "gutterChange", "url": "plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_handleStart", "url": "plugin.DragConstrained.html#method__handleStart", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "horizontal", "url": "DD.Scroll.html#config_horizontal", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "horizontalChange", "url": "DD.Scroll.html#event_horizontalChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "host", "url": "DD.Scroll.html#config_host", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "hostChange", "url": "DD.Scroll.html#event_hostChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_initScroll", "url": "DD.Scroll.html#method__initScroll", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "inRegion", "url": "plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "", "host": "plugin.Drop", "name": "NAME", "url": "plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DDNodeScroll", "name": "node", "url": "plugin.DDNodeScroll.html#config_node", "type": "config"}, {"access": "", "host": "plugin.DDNodeScroll", "name": "nodeChange", "url": "plugin.DDNodeScroll.html#event_nodeChange", "type": "event"}, {"access": "", "host": "plugin.Drop", "name": "NS", "url": "plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "parentScroll", "url": "DD.Scroll.html#config_parentScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "parentScrollChange", "url": "DD.Scroll.html#event_parentScrollChange", "type": "event"}, {"access": "private", "host": "plugin.DragConstrained", "name": "_regionCache", "url": "plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelay", "url": "DD.Scroll.html#config_scrollDelay", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelayChange", "url": "DD.Scroll.html#event_scrollDelayChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_scrolling", "url": "DD.Scroll.html#property__scrolling", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_scrollTimer", "url": "DD.Scroll.html#property__scrollTimer", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_setDimCache", "url": "DD.Scroll.html#method__setDimCache", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "start", "url": "DD.Scroll.html#method_start", "type": "method"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickX", "url": "plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickXChange", "url": "plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickY", "url": "plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "stickYChange", "url": "plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickX", "url": "plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXArray", "url": "plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXArrayChange", "url": "plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickXChange", "url": "plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickY", "url": "plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYArray", "url": "plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYArrayChange", "url": "plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "plugin.DragConstrained", "name": "tickYChange", "url": "plugin.DragConstrained.html#event_tickYChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "toString", "url": "DD.Scroll.html#method_toString", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "vertical", "url": "DD.Scroll.html#config_vertical", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "verticalChange", "url": "DD.Scroll.html#event_verticalChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_vpRegionCache", "url": "DD.Scroll.html#property__vpRegionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "windowScroll", "url": "DD.Scroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "plugin.DDWindowScroll", "name": "windowScroll", "url": "plugin.DDWindowScroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "windowScrollChange", "url": "DD.Scroll.html#event_windowScrollChange", "type": "event"}, {"access": "", "host": "plugin.DDWindowScroll", "name": "windowScrollChange", "url": "plugin.DDWindowScroll.html#event_windowScrollChange", "type": "event"}];
 </script>
 </body>
 </html>

@@ -155,7 +155,7 @@
 <span class="c">         * @type boolean</span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
-        <span class="nx">secure</span><span class="o">:</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">href</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;https&quot;</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">),</span>
+        <span class="nx">secure</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
 
         <span class="c">/**</span>
 <span class="c">         * The operating system.  Currently only detecting windows or macintosh</span>
@@ -167,70 +167,80 @@
         
     <span class="o">},</span>
 
-    <span class="nx">ua</span> <span class="o">=</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">,</span> 
-    <span class="nx">m</span> <span class="o">;</span>
+    <span class="nx">ua</span> <span class="o">=</span> <span class="nx">navigator</span> <span class="o">&amp;&amp;</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">,</span> 
 
-    <span class="k">if</span> <span class="o">((</span><span class="sr">/windows|win32/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;windows&#39;</span><span class="o">;</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="sr">/macintosh/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;macintosh&#39;</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="nx">loc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">,</span>
 
-    <span class="c">// Modern KHTML browsers should qualify as Safari X-Grade</span>
-<span class="c"></span>    <span class="k">if</span> <span class="o">((</span><span class="sr">/KHTML/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">=</span><span class="m">1</span><span class="o">;</span>
-    <span class="o">}</span>
-    <span class="c">// Modern WebKit browsers are at least X-Grade</span>
-<span class="c"></span>    <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/AppleWebKit\/([^\s]*)/</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+    <span class="nx">href</span> <span class="o">=</span> <span class="nx">loc</span> <span class="o">&amp;&amp;</span> <span class="nx">loc</span><span class="o">.</span><span class="nx">href</span><span class="o">,</span>
+    
+    <span class="nx">m</span><span class="o">;</span>
 
-        <span class="c">// Mobile browser check</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="sr">/ Mobile\//</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="s2">&quot;Apple&quot;</span><span class="o">;</span> <span class="c">// iPhone or iPod Touch</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/NokiaN[^\/]*/</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Nokia N-series, ex: NokiaN95</span>
-<span class="c"></span>            <span class="o">}</span>
+    <span class="nx">o</span><span class="o">.</span><span class="nx">secure</span> <span class="o">=</span> <span class="nx">href</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">href</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;https&quot;</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">);</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">if</span> <span class="o">((</span><span class="sr">/windows|win32/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;windows&#39;</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="sr">/macintosh/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;macintosh&#39;</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/AdobeAIR\/([^\s]*)/</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">air</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Adobe AIR 1.0 or better</span>
-<span class="c"></span>        <span class="o">}</span>
-
-    <span class="o">}</span>
-
-    <span class="k">if</span> <span class="o">(!</span><span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span> <span class="c">// not webkit</span>
-<span class="c"></span>        <span class="c">// @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)</span>
-<span class="c"></span>        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Opera[\s\/]([^\s]*)/</span><span class="o">);</span>
+        <span class="c">// Modern KHTML browsers should qualify as Safari X-Grade</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">((</span><span class="sr">/KHTML/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">=</span><span class="m">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c">// Modern WebKit browsers are at least X-Grade</span>
+<span class="c"></span>        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/AppleWebKit\/([^\s]*)/</span><span class="o">);</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">opera</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
-            <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Opera Mini[^;]*/</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// ex: Opera Mini/2.0.4509/1316</span>
-<span class="c"></span>            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// not opera or webkit</span>
-<span class="c"></span>            <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/MSIE\s([^;]*)/</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">o</span><span class="o">.</span><span class="nx">ie</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// not opera, webkit, or ie</span>
-<span class="c"></span>                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Gecko\/([^\s]*)/</span><span class="o">);</span>
+            <span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+
+            <span class="c">// Mobile browser check</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="sr">/ Mobile\//</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="s2">&quot;Apple&quot;</span><span class="o">;</span> <span class="c">// iPhone or iPod Touch</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/NokiaN[^\/]*/</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">o</span><span class="o">.</span><span class="nx">gecko</span><span class="o">=</span><span class="m">1</span><span class="o">;</span> <span class="c">// Gecko detected, look for revision</span>
-<span class="c"></span>                    <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/rv:([^\s\)]*)/</span><span class="o">);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="nx">o</span><span class="o">.</span><span class="nx">gecko</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+                    <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Nokia N-series, ex: NokiaN95</span>
+<span class="c"></span>                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/AdobeAIR\/([^\s]*)/</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">o</span><span class="o">.</span><span class="nx">air</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Adobe AIR 1.0 or better</span>
+<span class="c"></span>            <span class="o">}</span>
+
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">o</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span> <span class="c">// not webkit</span>
+<span class="c"></span>            <span class="c">// @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)</span>
+<span class="c"></span>            <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Opera[\s\/]([^\s]*)/</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+                <span class="nx">o</span><span class="o">.</span><span class="nx">opera</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Opera Mini[^;]*/</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// ex: Opera Mini/2.0.4509/1316</span>
+<span class="c"></span>                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// not opera or webkit</span>
+<span class="c"></span>                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/MSIE\s([^;]*)/</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">o</span><span class="o">.</span><span class="nx">ie</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// not opera, webkit, or ie</span>
+<span class="c"></span>                    <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Gecko\/([^\s]*)/</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">o</span><span class="o">.</span><span class="nx">gecko</span><span class="o">=</span><span class="m">1</span><span class="o">;</span> <span class="c">// Gecko detected, look for revision</span>
+<span class="c"></span>                        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/rv:([^\s\)]*)/</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+                            <span class="nx">o</span><span class="o">.</span><span class="nx">gecko</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>
-    <span class="o">}</span>
 
-    <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Caja\/([^\s]*)/</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">caja</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Caja\/([^\s]*)/</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">o</span><span class="o">.</span><span class="nx">caja</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+        <span class="o">}</span>
     <span class="o">}</span>
     
     <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
@@ -252,7 +262,6 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>

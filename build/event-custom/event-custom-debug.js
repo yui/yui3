@@ -768,9 +768,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
@@ -783,9 +780,6 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -799,9 +793,6 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn        The function to execute
-     * @param {Object}   context   Specifies the value of the 
-     * 'this' keyword in the listener.
-     * @param args* 0..n params to provide to the listener
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
@@ -1033,7 +1024,7 @@ Y.CustomEvent.prototype = {
 
             events = new Y.EventTarget({
                 fireOnce: true,
-                context: this.host || this
+                context: this.host
             });
 
             this.events = events;
@@ -1112,12 +1103,21 @@ Y.CustomEvent.prototype = {
 
                 this.stopped = Math.max(this.stopped, es.stopped);
                 this.prevented = Math.max(this.prevented, es.prevented);
+
             }
+
 
             // execute the default behavior if not prevented
             // @TODO need context
             if (this.defaultFn && !this.prevented) {
                 this.defaultFn.apply(this.host || this, args);
+            }
+
+            if (!this.stopped && this.broadcast && this.host !== Y) {
+                Y.fire.apply(Y, args);
+                if (this.broadcast == 2) {
+                    Y.Global.fire.apply(Y.Global, args);
+                }
             }
 
             // process after listeners.  If the default behavior was
@@ -1182,8 +1182,18 @@ Y.CustomEvent.prototype = {
      * Removes all listeners
      * @method unsubscribeAll
      * @return {int} The number of listeners unsubscribed
+     * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+        return this.detachAll.apply(this, arguments);
+    },
+
+    /**
+     * Removes all listeners
+     * @method detachAll
+     * @return {int} The number of listeners unsubscribed
+     */
+    detachAll: function() {
         var subs = this.subscribers, i, l=0;
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
@@ -1513,11 +1523,12 @@ var L = Y.Lang,
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
-                context: this, 
+                context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1533,8 +1544,6 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
@@ -1646,7 +1655,8 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), detachkey = parts[0], key,
+        var parts = _parseType(this, type), 
+        detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
         evts = this._yuievt.events, ce, i, ret = true;
@@ -1662,15 +1672,15 @@ ET.prototype = {
 
                 return (this._yuievt.chain) ? this : true;
             }
-        }
+
+            type = parts[1];
 
         // If this is an event handle, use it to detach
-        if (L.isObject(type) && type.detach) {
+        } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
         }
 
-        type = parts[1];
         adapt = Y.Env.evt.plugins[type];
 
         // The YUI instance handles DOM events and adaptors
@@ -1794,7 +1804,7 @@ ET.prototype = {
 
         type = _getType(this, type);
 
-        var events, ce, ret, o;
+        var events, ce, ret, o = opts || {};
 
         if (L.isObject(type)) {
             ret = {};
@@ -1817,8 +1827,6 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            o = opts || {};
-
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
 
@@ -1827,9 +1835,16 @@ ET.prototype = {
             events[type] = ce;
 
             if (o.onSubscribeCallback) {
-                ce.subscribeEvent.subscribe(o.onSubscribeCallback);
+                ce.subscribeEvent.on(o.onSubscribeCallback);
             }
 
+
+        }
+
+        // make sure we turn the broadcast flag off if this
+        // event was published as a result of bubbling
+        if (typeof o == Y.CustomEvent) {
+            events[type].broadcast = false;
         }
 
         return events[type];
@@ -1992,8 +2007,6 @@ ET.prototype = {
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
-     * @param context The execution context
-     * @param args* 0..n params to supply to the callback
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
@@ -2045,7 +2058,19 @@ Y.mix(Y, ET.prototype, false, false, {
 
 ET.call(Y);
 
+YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
+
+/**
+ * Hosts YUI page level events.  This is where events bubble to
+ * when the broadcast config is set to 2.
+ * @property Global
+ * @type EventTarget
+ */
+Y.Global = YUI.Env.globalEvents;
+
+// @TODO implement a global namespace function on Y.Global?
+
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['oop']});

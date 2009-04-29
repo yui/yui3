@@ -156,7 +156,7 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
             v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
@@ -396,6 +396,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
                 // Y.log('Use complete');

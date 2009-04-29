@@ -9,6 +9,7 @@
      * @class Drag
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var DDM = Y.DD.DDM,
@@ -23,98 +24,106 @@
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
-        * @preventable _handleMouseDown
-        * @param {Event} ev The mousedown event.
+        * @preventable _defMouseDownFn
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_MOUSE_DOWN = 'drag:mouseDown',
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
-        * @param {Event} ev The mousedown event.
+        * @param {Event.Facade} ev The mousedown event.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_AFTER_MOUSE_DOWN = 'drag:afterMouseDown',
         /**
         * @event drag:removeHandle
         * @description Fires after a handle is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_HANDLE = 'drag:removeHandle',
         /**
         * @event drag:addHandle
         * @description Fires after a handle is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_HANDLE = 'drag:addHandle',
         /**
         * @event drag:removeInvalid
         * @description Fires after an invalid selector is removed.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_REMOVE_INVALID = 'drag:removeInvalid',
         /**
         * @event drag:addInvalid
         * @description Fires after an invalid selector is added.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_ADD_INVALID = 'drag:addInvalid',
         /**
         * @event drag:start
         * @description Fires at the start of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_START = 'drag:start',
         /**
         * @event drag:end
         * @description Fires at the end of a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_END = 'drag:end',
         /**
         * @event drag:drag
         * @description Fires every mousemove during a drag operation.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DRAG = 'drag:drag',
+        /**
+        * @event drag:align
+        * @preventable _defAlignFn
+        * @description Fires when this node is aligned.
+        * @bubbles DDM
+        * @type {Event.Custom}
+        */
+        EV_ALIGN = 'drag:align',
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:enter
         * @description Fires when this node enters a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:exit
         * @description Fires when this node exits a Drop Target. (Fired from dd-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:drophit
         * @description Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         /**
         * @event drag:dropmiss
         * @description Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
     
     Drag = function() {
@@ -135,7 +144,7 @@
             setter: function(node) {
                 var n = Y.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                    Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
                     n = n.item(0);
                 }
@@ -151,7 +160,7 @@
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                    Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
                 return n;
             }
@@ -401,7 +410,31 @@
         _createEvents: function() {
             
             this.publish(EV_MOUSE_DOWN, {
-                defaultFn: this._handleMouseDown,
+                defaultFn: this._defMouseDownFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_ALIGN, {
+                defaultFn: this._defAlignFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_DRAG, {
+                defaultFn: this._defDragFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
+            this.publish(EV_END, {
+                preventedFn: this._prevEndFn,
                 queuable: false,
                 emitFacade: true,
                 bubbles: true,
@@ -415,8 +448,6 @@
                 EV_REMOVE_INVALID,
                 EV_ADD_INVALID,
                 EV_START,
-                EV_END,
-                EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -445,7 +476,7 @@
         * @private
         * @property _ev_md
         * @description A private reference to the mousedown DOM event
-        * @type {Event}
+        * @type {Event.Facade}
         */
         _ev_md: null,
         /**
@@ -528,6 +559,17 @@
         * @type {Array}
         */
         lastXY: null,
+        /**
+        * @property actXY
+        * @description The xy that the node will be set to. Changing this will alter the position as it's dragged.
+        * @type {Array}
+        */
+        actXY: null,
+        /**
+        * @property realXY
+        * @description The real xy position of the node.
+        * @type {Array}
+        */
         realXY: null,
         /**
         * @property mouseXY
@@ -545,7 +587,7 @@
         * @private
         * @method _handleMouseUp
         * @description Handler for the mouseup DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseUp: function(ev) {
             this._fixIEMouseUp();
@@ -600,18 +642,18 @@
         * @private
         * @method _handleMouseDownEvent
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
         _handleMouseDownEvent: function(ev) {
             this.fire(EV_MOUSE_DOWN, { ev: ev });
         },
         /**
         * @private
-        * @method _handleMouseDown
+        * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
-        * @param {Event}
+        * @param {Event.Facade}
         */
-        _handleMouseDown: function(e) {
+        _defMouseDownFn: function(e) {
             var ev = e.ev;
             this._dragThreshMet = false;
             this._ev_md = ev;
@@ -633,11 +675,11 @@
         /**
         * @method validClick
         * @description Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
-        * @param {Event}
+        * @param {Event.Facade}
         * @return {Boolean}
         */
         validClick: function(ev) {
-            var r = false,
+            var r = false, n = false,
             tar = ev.target,
             hTest = null,
             els = null,
@@ -653,7 +695,8 @@
                     }
                 });
             } else {
-                if (this.get(NODE).contains(tar) || this.get(NODE).compareTo(tar)) {
+                n = this.get(NODE)
+                if (n.contains(tar) || n.compareTo(tar)) {
                     r = true;
                 }
             }
@@ -694,9 +737,7 @@
         _setStartPosition: function(xy) {
             this.startXY = xy;
             
-            this.nodeXY = this.get(NODE).getXY();
-            this.lastXY = this.nodeXY;
-            this.realXY = this.nodeXY;
+            this.nodeXY = this.lastXY = this.realXY = this.get(NODE).getXY();
 
             if (this.get('offsetNode')) {
                 this.deltaXY = [(this.startXY[0] - this.nodeXY[0]), (this.startXY[1] - this.nodeXY[1])];
@@ -710,9 +751,8 @@
         * @description The method passed to setTimeout to determine if the clickTimeThreshold was met.
         */
         _timeoutCheck: function() {
-            if (!this.get('lock')) {
-                this._fromTimeout = true;
-                this._dragThreshMet = true;
+            if (!this.get('lock') && !this._dragThreshMet) {
+                this._fromTimeout = this._dragThreshMet = true;
                 this.start();
                 this._alignNode([this._ev_md.pageX, this._ev_md.pageY], true);
             }
@@ -789,13 +829,12 @@
                 var id = Y.stamp(this.get(NODE));
                 this.get(NODE).set('id', id);
             }
-            
 
+            this.actXY = [];
+            
             this._invalids = Y.clone(this._invalidsDefault, true);
 
-            //this._createEvents();
-            Y.later(100, this, this._createEvents);
-            
+            this._createEvents();
             
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
@@ -811,21 +850,19 @@
         _prep: function() {
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.on(MOUSE_UP, this._handleMouseUp, this, true);
-            node.on(DRAG_START, this._fixDragStart, this, true);
+            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
+            node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
+            node.on(DRAG_START, Y.bind(this._fixDragStart, this));
         },
         /**
         * @private
         * @method _unprep
-        * @description Detach event listners and remove classname
+        * @description Detach event listeners and remove classname
         */
         _unprep: function() {
             var node = this.get(NODE);
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
-            node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            node.detach(MOUSE_UP, this._handleMouseUp, this, true);
-            node.detach(DRAG_START, this._fixDragStart, this, true);
+            node.detachAll();
         },
         /**
         * @method start
@@ -835,21 +872,26 @@
         */
         start: function() {
             if (!this.get('lock') && !this.get(DRAGGING)) {
-                DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
-                this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
-                this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
-                this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
+                this._startTime = (new Date()).getTime();
+
+                DDM._start(this.deltaXY, [oh, ow]);
+                node.addClass(DDM.CSS_PREFIX + '-dragging');
+                this.fire(EV_START, {
+                    pageX: this.nodeXY[0],
+                    pageY: this.nodeXY[1],
+                    startTime: this._startTime
+                });
                 var xy = this.nodeXY;
 
-                this._startTime = (new Date()).getTime();
                 
                 this.region = {
                     '0': xy[0], 
                     '1': xy[1],
                     area: 0,
                     top: xy[1],
-                    right: xy[0] + this.get(NODE).get(OFFSET_WIDTH),
-                    bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
+                    right: xy[0] + ow,
+                    bottom: xy[1] + oh,
                     left: xy[0]
                 };
                 this.set(DRAGGING, true);
@@ -880,44 +922,56 @@
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-dragging');
             this.set(DRAGGING, false);
             this.deltaXY = [0, 0];
-            this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
 
             return this;
+        },
+        /**
+        * @private
+        * @method _prevEndFn
+        * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
+        */
+        _prevEndFn: function(e) {
+            //Bug #1852577
+            this.get(DRAG_NODE).setXY(this.nodeXY);
         },
         /**
         * @private
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
         * @param {Array} xy The xy coords to align with.
-        * @return Array
-        * @type {Array}
         */
         _align: function(xy) {
-            return [xy[0] - this.deltaXY[0], xy[1] - this.deltaXY[1]];
+            this.fire(EV_ALIGN, {pageX: xy[0], pageY: xy[1] });
+        },
+        /**
+        * @private
+        * @method _defAlignFn
+        * @description Calculates the offsets and set's the XY that the element will move to.
+        * @param {Event.Facade} e The drag:align event.
+        */
+        _defAlignFn: function(e) {
+            this.actXY = [e.pageX - this.deltaXY[0], e.pageY - this.deltaXY[1]];
         },
         /**
         * @private
         * @method _alignNode
         * @description This method performs the alignment before the element move.
         * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _alignNode: function(eXY, noFire) {
-            var xy = this._align(eXY);
-            this._moveNode(xy, noFire);
+        _alignNode: function(eXY) {
+            this._align(eXY);
+            this._moveNode();
         },
         /**
         * @private
         * @method _moveNode
         * @description This method performs the actual element move.
-        * @param {Array} eXY The XY to move the element to, usually comes from the _alignNode method.
-        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        _moveNode: function(xy, noFire) {
-            if (!this.get(DRAGGING)) {
-                noFire = true;
-            }
-            var diffXY = [], diffXY2 = [], startXY = null;
+        _moveNode: function(scroll) {
+            //if (!this.get(DRAGGING)) {
+            //    return;
+            //}
+            var diffXY = [], diffXY2 = [], startXY = this.nodeXY, xy = this.actXY;
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
@@ -925,16 +979,6 @@
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
-
-            if (this.get('move')) {
-                if (Y.UA.opera) {
-                    this.get(DRAG_NODE).setXY(xy);
-                } else {
-                    DDM.setXY(this.get(DRAG_NODE), diffXY);
-                    //this.get(DRAG_NODE).setXY(xy);
-                }
-                this.realXY = xy;
-            }
 
             this.region = {
                 '0': xy[0], 
@@ -946,27 +990,41 @@
                 left: xy[0]
             };
 
-            startXY = this.nodeXY;
-            if (!noFire) {
-                this.fire(EV_DRAG, {
-                    pageX: xy[0],
-                    pageY: xy[1],
-                    info: {
-                        start: startXY,
-                        xy: xy,
-                        delta: diffXY,
-                        offset: diffXY2
-                    } 
-                });
-            }
+            this.fire(EV_DRAG, {
+                pageX: xy[0],
+                pageY: xy[1],
+                scroll: scroll,
+                info: {
+                    start: startXY,
+                    xy: xy,
+                    delta: diffXY,
+                    offset: diffXY2
+                } 
+            });
             
             this.lastXY = xy;
         },
         /**
         * @private
+        * @method _defDragFn
+        * @description Default function for drag:drag. Fired from _moveNode.
+        * @param {Event.Facade} ev The drag:drag event
+        */
+        _defDragFn: function(e) {
+            if (this.get('move')) {
+                if (e.scroll) {
+                    e.scroll.node.set('scrollTop', e.scroll.top);
+                    e.scroll.node.set('scrollLeft', e.scroll.left);
+                }
+                this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
+                this.realXY = [e.pageX, e.pageY];
+            }
+        },
+        /**
+        * @private
         * @method _move
         * @description Fired from DragDropMgr (DDM) on mousemove.
-        * @param {Event} ev The mousemove DOM event
+        * @param {Event.Facade} ev The mousemove DOM event
         */
         _move: function(ev) {
             if (this.get('lock')) {
@@ -1007,12 +1065,12 @@
         * @description Lifecycle destructor, unreg the drag from the DDM and remove listeners
         */
         destructor: function() {
-            DDM._unregDrag(this);
-
             this._unprep();
+            this.detachAll();
             if (this.target) {
                 this.target.destroy();
             }
+            DDM._unregDrag(this);
         }
     });
     Y.namespace('DD');    
