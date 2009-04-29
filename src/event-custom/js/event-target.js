@@ -18,6 +18,8 @@
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     AFTER_PREFIX = '~AFTER~',
+    typeCache = {},
+    parseCache = {},
 
     /**
      * If the instance has a prefix attribute and the
@@ -26,13 +28,17 @@ var L = Y.Lang,
      * @method _getType
      */
     _getType = function(instance, type) {
+        var t = type, 
+            pre = instance._yuievt.config.prefix,
+            key = pre + t;
 
         if (!L.isString(type)) {
             return type;
+        } 
+        
+        else if (typeCache[key]) {
+            return typeCache[key];
         }
-
-        var t = type, 
-            pre = instance._yuievt.config.prefix;
 
         // Y.log("pre: " + pre, 'info', 'event');
 
@@ -41,6 +47,8 @@ var L = Y.Lang,
         }
 
         // Y.log("type: " + t, 'info', 'event');
+
+        typeCache[key] = t;
 
         return t;
     },
@@ -54,11 +62,19 @@ var L = Y.Lang,
      */
     _parseType = function(instance, type) {
 
+        var t = type, 
+            key = instance._yuievt.config.prefix + t,
+            parts, detachkey, after, i;
+
         if (!L.isString(type)) {
             return type;
+        } 
+        
+        else if (parseCache[key]) {
+            return parseCache[key];
         }
 
-        var t = type, parts, detachkey, after, i = t.indexOf(AFTER_PREFIX);
+        i = t.indexOf(AFTER_PREFIX);
 
         if (i > -1) {
             after = true;
@@ -75,7 +91,9 @@ var L = Y.Lang,
 
         t = _getType(instance, t);
 
-        return [detachkey, t, after];
+        parseCache[key] = [detachkey, t, after];
+
+        return parseCache[key];
     },
 
     /**
@@ -95,6 +113,8 @@ var L = Y.Lang,
         var o = (L.isObject(opts)) ? opts : {};
 
         this._yuievt = {
+
+            id: Y.guid(),
 
             events: {},
 
