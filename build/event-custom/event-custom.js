@@ -1099,12 +1099,21 @@ Y.CustomEvent.prototype = {
 
                 this.stopped = Math.max(this.stopped, es.stopped);
                 this.prevented = Math.max(this.prevented, es.prevented);
+
             }
+
 
             // execute the default behavior if not prevented
             // @TODO need context
             if (this.defaultFn && !this.prevented) {
                 this.defaultFn.apply(this.host || this, args);
+            }
+
+            if (!this.stopped && this.broadcast && this.host !== Y) {
+                Y.fire.apply(Y, args);
+                if (this.broadcast == 2) {
+                    Y.Global.fire.apply(Y, args);
+                }
             }
 
             // process after listeners.  If the default behavior was
@@ -1511,6 +1520,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1783,7 +1793,7 @@ ET.prototype = {
 
         type = _getType(this, type);
 
-        var events, ce, ret, o;
+        var events, ce, ret, o = opts || {};
 
         if (L.isObject(type)) {
             ret = {};
@@ -1806,8 +1816,6 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            o = opts || {};
-
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
 
@@ -1820,6 +1828,7 @@ ET.prototype = {
             }
 
         }
+
 
         return events[type];
     },
@@ -2030,6 +2039,16 @@ Y.mix(Y, ET.prototype, false, false, {
 });
 
 ET.call(Y);
+
+YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
+
+/**
+ * Hosts YUI page level events.  This is where events bubble to
+ * when the broadcast config is set to 2.
+ * @property Global
+ * @type EventTarget
+ */
+Y.Global = YUI.Env.globalEvents;
 
 })();
 

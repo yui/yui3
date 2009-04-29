@@ -2,6 +2,11 @@ YUI Custom Events
     Custom event system
 
 3.0.0b1
+    - Implemented the broadcast flag.  broadcast = 1: local, accessible
+      via Y.on('prefix:event'). broadcast =2: global, accessible
+      via Y.Global.on('prefix:event).  Broadcast listeners cannot effect the
+      defaultFn or host subscribers, although this is still possible
+      by added either Y on Y.Global as event targets.
     - Moved custom event out of event package
     - Event.Target accepts a prefix configuration.  This is used
       in all exposed methods to handle shortcuts to event names,
