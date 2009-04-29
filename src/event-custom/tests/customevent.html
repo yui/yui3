@@ -380,12 +380,12 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 Y.on('y:foo2', function() {
-                    Y.log('Y executed');
+                    Y.log('Y foo2 executed');
                     s1 = 1;
                 });
 
                 Y.Global.on('y:foo2', function() {
-                    Y.log('GLOBAL executed');
+                    Y.log('GLOBAL foo2 executed');
                     s2 = 1;
                 });
 
@@ -403,19 +403,19 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 Y.on('y:bar', function() {
-                    Y.log('Y executed');
+                    Y.log('Y bar executed');
                     s3 = 1;
                 });
 
                 Y.Global.on('y:bar', function() {
-                    Y.log('GLOBAL executed');
+                    Y.log('GLOBAL bar executed');
                     s4 = 1;
                 });
 
                 o.fire('y:bar');
 
                 Y.Assert.areEqual(1, s3);
-                // Y.Assert.areEqual(1, s4);
+                Y.Assert.areEqual(1, s4);
             }
 
         });

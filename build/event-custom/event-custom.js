@@ -1112,7 +1112,7 @@ Y.CustomEvent.prototype = {
             if (!this.stopped && this.broadcast && this.host !== Y) {
                 Y.fire.apply(Y, args);
                 if (this.broadcast == 2) {
-                    Y.Global.fire.apply(Y, args);
+                    Y.Global.fire.apply(Y.Global, args);
                 }
             }
 
