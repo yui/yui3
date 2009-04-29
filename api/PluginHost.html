@@ -237,7 +237,7 @@ for the instance through the "plugins" configuration property.
                                            (
                                                 
                                                         
-                                                         ns
+                                                         plugin
                                                     
                                                 
                                             )
@@ -252,11 +252,10 @@ for the instance through the "plugins" configuration property.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ns</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">String | Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The namespace key for the Plugin. If not provided,
-all registered plugins are unplugged.</span>
+                                                        <span property="yui:description"> The namespace for the Plugin, or a Plugin class, with the static NS property defined.</span>
                                                         </dd>
                                                 </dl>
 
@@ -390,7 +389,7 @@ a single call.
                                            (
                                                 
                                                         
-                                                         ns
+                                                         plugin
                                                     
                                                 
                                             )
@@ -405,10 +404,10 @@ a single call.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">ns</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">String | Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The namespace key for the Plugin. If not provided,
+                                                        <span property="yui:description"> The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,
 all registered plugins are unplugged.</span>
                                                         </dd>
                                                 </dl>
@@ -461,7 +460,6 @@ all registered plugins are unplugged.</span>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>

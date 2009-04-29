@@ -6,6 +6,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @module dd
      * @submodule dd-ddm-drop
      * @for DDM
+     * @namespace DD
      */
 
     //TODO CSS class name for the bestMatch..
@@ -226,7 +227,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
-
+            
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
@@ -393,4 +394,4 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});

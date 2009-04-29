@@ -10,6 +10,7 @@ YUI.add('dd-ddm-base', function(Y) {
      * @class DDM
      * @extends Base
      * @constructor
+     * @namespace DD
      */
     
     var DDMBase = function() {
@@ -133,8 +134,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description DDM's init method
         */
         initializer: function() {
-            Y.Node.get('document').on('mousemove', this._move, this, true);
-            Y.Node.get('document').on('mouseup', this._end, this, true);
+            var doc = Y.Node.get('document');
+            doc.on('mousemove', Y.bind(this._move, this));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -146,6 +148,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Number} h The height of the drag element
         */
         _start: function(x, y, w, h) {
+            this.fire('ddm:start');
             this._startDrag.apply(this, arguments);
         },
         /**
@@ -175,6 +178,7 @@ YUI.add('dd-ddm-base', function(Y) {
             //Add as a config option??
             if (this.activeDrag) {
                 this._endDrag();
+                this.fire('ddm:end');
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
@@ -195,36 +199,13 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {Event} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
-        },
-        /**
-        * @method setXY
-        * @description A simple method to set the top and left position from offsets instead of page coordinates
-        * @param {Object} node The node to set the position of 
-        * @param {Array} xy The Array of left/top position to be set.
-        */
-        setXY: function(node, xy) {
-            var t = parseInt(node.getStyle('top'), 10),
-            l = parseInt(node.getStyle('left'), 10),
-            pos = node.getStyle('position');
-
-            if (pos === 'static') {
-                node.setStyle('position', 'relative');
-            }
-
-            // in case of 'auto'
-            if (isNaN(t)) { t = 0; }
-            if (isNaN(l)) { l = 0; }
-            
-            node.setStyle('top', (xy[1] + t) + 'px');
-            node.setStyle('left', (xy[0] + l) + 'px');
-            
         },
         /**
         * //TODO Private, rename??...

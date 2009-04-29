@@ -78,7 +78,7 @@ Y.extend(DataSourceCache, Y.Cache, {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this._owner.fire("response", Y.mix({response: entry.response}, e));
+            this.get("host").fire("response", Y.mix({response: entry.response}, e));
             return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
         }
     },

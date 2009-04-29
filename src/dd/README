@@ -1,3 +1,49 @@
+**** version 3.0.0 Beta1 ***
+
+Added a plugin to support Window and Node based scrolling
+
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    }).plug(Y.plugin.DDWinScroll);
+
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    }).plug(Y.plugin.DDNodeScroll, {
+        node: '#some-parent-with-scroll'
+    });
+
+Proxy and Constrained where moved to the plugin modal, there are some syntax changes:
+
+PR2 - Proxy:
+    var dd = new Y.DD.Drag({
+        node: '#drag',
+        proxy: true,
+        moveOnEnd: false
+    });
+
+Current - Proxy:
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    }).plug(Y.plugin.DDProxy, {
+        moveOnEnd: false
+    });
+
+PR2 - Constrained:
+    var dd = new Y.DD.Drag({
+        node: '#drag',
+        constrain2node: '#wrap'
+    });
+
+Current - Constrained:
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    }).plug(Y.plugin.DDConstrained, {
+        constrain2node: '#wrap'
+    });
+
+Converted Everything to use setXY now that FF2 is not supported.
+Performance tweaks to dragging over a target.
+
 **** version 3.0.0 PR2 ***
 
 Added bubbles config option to help with extending later.
