@@ -13,6 +13,8 @@ var SLIDER = 'slider',
     VALUE  = 'value',
     MIN    = 'min',
     MAX    = 'max',
+    MIN_GUTTER = 'minGutter',
+    MAX_GUTTER = 'maxGutter',
     THUMB_IMAGE = 'thumbImage',
     RAIL_SIZE   = 'railSize',
     CONTENT_BOX = 'contentBox',
@@ -86,7 +88,6 @@ Y.mix(Slider, {
      */
     AXIS_KEYS : {
         x : {
-            offsetEdge    : 'left',
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
             eventPageAxis : 'pageX',
@@ -94,7 +95,6 @@ Y.mix(Slider, {
             xyIndex       : 0
         },
         y : {
-            offsetEdge    : 'top',
             dim           : HEIGHT,
             offAxisDim    : WIDTH,
             eventPageAxis : 'pageY',
@@ -293,12 +293,42 @@ Y.mix(Slider, {
          * trigger thumb movement.
          *
          * @attribute railEnabled
-         * @type @Boolean
+         * @type Boolean
          * @default true
          */
         railEnabled : {
             value : true,
             validator : isBoolean
+        },
+
+        /**
+         * Like CSS padding, the distance in pixels from the inner top left
+         * corner of the rail node within which the thumb can travel.  Negative
+         * values allow the edge of the thumb to escape the rail node
+         * boundaries.
+         *
+         * @attribute minGutter
+         * @type Number
+         * @default 0
+         */
+        minGutter : {
+            value : 0,
+            validator : isNumber
+        },
+
+        /**
+         * Like CSS padding, the distance in pixels from the inner bottom right
+         * corner of the rail node within which the thumb can travel.  Negative
+         * values allow the edge of the thumb to escape the rail node
+         * boundaries.
+         *
+         * @attribute maxGutter
+         * @type Number
+         * @default 0
+         */
+        maxGutter : {
+            value : 0,
+            validator : isNumber
         }
     }
 });
@@ -581,18 +611,17 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _bindThumbDD : function () {
-        var ddConf = {
-                node           : this.get(THUMB),
-                constrain2node : this.get(RAIL)
-            },
-            dd;
+        var ddConf = { node : this.get(THUMB) };
 
         ddConf[this._key.ddStick] = true;
 
-        this._dd = dd = new Y.DD.Drag(ddConf);
-        dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
-        dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
-        dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
+        this._dd = new Y.DD.Drag(ddConf).plug(Y.plugin.DDConstrained, {
+            constrain2node : this.get(RAIL)
+        });
+
+        this._dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
+        this._dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
+        this._dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
 
         this._initRailDD();
     },
@@ -880,37 +909,23 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setRailOffsetXY : function () {
-        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
-                         this._thumbOffset;
+        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] +
+                         this.get(MIN_GUTTER);
     },
 
-    /**
-     * Assigns the gutter attribute to the DD instance to allow the thumb to
-     * overshoot the edges of the rail element up to the _thumbOffset.  By
-     * default, this allows the thumb's center point to align with the far left
-     * or top edge of the rail element to represent the min value and the far
-     * right or bottom edge for the max.
+   /**
+    * Passes the gutter attribute value to the DDConstrain gutter attribute.
     *
     * @method _setDDGutter
     * @protected
     */
     _setDDGutter : function () {
-        var gutter = [0,0,0,0],
-            i      = this._key.xyIndex,
-            dim    = this._thumbOffset,
-            start  = -dim,
-            end    = -1 * (this._thumbSize - dim);
+        var gutter = this._key.xyIndex ?
+            this.get(MIN_GUTTER) + " 0 " + this.get(MAX_GUTTER) :
+            "0 " + this.get(MAX_GUTTER) + " 0 " + this.get(MIN_GUTTER);
 
-        if (i) { // y axis
-            gutter[0] = start;
-            gutter[2] = end;
-        } else {
-            gutter[3] = start;
-            gutter[1] = end;
-        }
-            
 
-        this._dd.set('gutter', gutter.join(' '));
+        this._dd.con.set('gutter', gutter);
     },
 
     /**
@@ -921,9 +936,13 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setFactor : function () {
+        var range = this._railSize - this._thumbSize -
+                    this.get(MIN_GUTTER) - this.get(MAX_GUTTER);
+
         this._factor = this._railSize ?
-            (this.get(MAX) - this.get(MIN)) / this._railSize :
+            (this.get(MAX) - this.get(MIN)) / range :
             1;
+
     },
 
     /**
@@ -1126,7 +1145,6 @@ Y.extend(Slider, Y.Widget, {
 
 
 
-
     /**
      * Caches the current page position of the rail element and fires the
      * slideStart event in response to the DD's drag:start.
@@ -1211,8 +1229,6 @@ Y.extend(Slider, Y.Widget, {
     _uiPositionThumb : function (xy) {
         var dd  = this._dd;
 
-        xy += this._offsetXY;
-
         dd._setStartPosition(dd.get('dragNode').getXY());
 
         // stickX/stickY config on DD instance will negate off-axis move
@@ -1246,10 +1262,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _convertValueToOffset : function (v) {
-        var min = this.get(MIN),
-            max = this.get(MAX);
-
-        return round(((v - min) / (max - min)) * this._railSize);
+        return round((v - this.get(MIN)) / this._factor) + this._offsetXY;
     },
 
     /**

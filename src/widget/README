@@ -1,3 +1,10 @@
+3.0.0 beta1
+
+* PluginHost moved down to Base.
+
+* Render event args added to event facade instead of being passed
+  across separately (e.parentNode).
+
 3.0.0PR2 - Initial release
 
 Module Name: "widget"

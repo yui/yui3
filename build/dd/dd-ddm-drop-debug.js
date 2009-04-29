@@ -6,6 +6,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @module dd
      * @submodule dd-ddm-drop
      * @for DDM
+     * @namespace DD
      */
 
     //TODO CSS class name for the bestMatch..
@@ -393,4 +394,4 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});

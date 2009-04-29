@@ -3,20 +3,20 @@ YUI.add('dd-drop-plugin', function(Y) {
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd
         * @submodule dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @class DropPlugin
-        * @extends Drop
+        * @class Drop
+        * @extends DD.Drop
         * @constructor
         * @namespace plugin
         */
 
 
         var Drop = function(config) {
-            config.node = config.owner;
+            config.node = config.host;
             Drop.superclass.constructor.apply(this, arguments);
         };
         
@@ -42,4 +42,4 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});

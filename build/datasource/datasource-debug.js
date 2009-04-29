@@ -240,7 +240,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");;
+            e.error = new Error(this.toString() + " Source undefined");
         }
         if(e.error) {
             this.fire("error", e);
@@ -569,7 +569,7 @@ Y.extend(DataSourceCache, Y.Cache, {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this._owner.fire("response", Y.mix({response: entry.response}, e));
+            this.get("host").fire("response", Y.mix({response: entry.response}, e));
             return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
         }
     },
@@ -612,25 +612,25 @@ Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 }, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
 
-YUI.add('datasource-jsonparser', function(Y) {
+YUI.add('datasource-jsonschema', function(Y) {
 
 /**
- * Extends DataSource with schema-based JSON parsing functionality.
+ * Extends DataSource with schema-parsing on JSON data.
  *
  * @module datasource
- * @submodule datasource-dataparser
+ * @submodule datasource-jsonschema
  */
 
 /**
- * Adds parsability to the YUI DataSource utility.
- * @class DataSourceJSONParser
+ * Adds schema-parfing to the YUI DataSource utility.
+ * @class DataSourceJSONSchema
  * @extends Plugin
  */    
-var DataSourceJSONParser = function() {
-    DataSourceJSONParser.superclass.constructor.apply(this, arguments);
+var DataSourceJSONSchema = function() {
+    DataSourceJSONSchema.superclass.constructor.apply(this, arguments);
 };
 
-Y.mix(DataSourceJSONParser, {
+Y.mix(DataSourceJSONSchema, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -639,9 +639,9 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "parser"
+     * @value "schema"
      */
-    NS: "parser",
+    NS: "schema",
 
     /**
      * Class name.
@@ -650,29 +650,24 @@ Y.mix(DataSourceJSONParser, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONParser"
+     * @value "DataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONParser",
+    NAME: "DataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceCache Attributes
+    // DataSourceJSONSchema Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
     ATTRS: {
-        parser: {
-            readOnly: true,
-            value: Y.DataParser.JSON,
-            useRef: true
-        },
         schema: {
             //value: {}
         }
     }
 });
 
-Y.extend(DataSourceJSONParser, Y.Plugin, {
+Y.extend(DataSourceJSONSchema, Y.Plugin, {
     /**
     * Internal init() handler.
     *
@@ -703,8 +698,8 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = (this.get("parser").parse(this.get("schema"), data));
+        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -714,16 +709,16 @@ Y.extend(DataSourceJSONParser, Y.Plugin, {
             };
         }
         
-        this._owner.fire("response", Y.mix({response:response}, e));
-        return new Y.Do.Halt("DataSourceJSONParser plugin halted _defDataFn");
+        this.get("host").fire("response", Y.mix({response:response}, e));
+        return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceJSONParser = DataSourceJSONParser;
+Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataparser-json']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-json']});
 
 YUI.add('datasource-polling', function(Y) {
 
@@ -816,5 +811,5 @@ Y.augment(Y.DataSource.Local, Pollable);
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-xhr','datasource-cache','datasource-jsonparser','datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-xhr','datasource-cache','datasource-jsonschema','datasource-polling']});
 

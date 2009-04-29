@@ -1,3 +1,16 @@
+3.0.0 beta1
+
+* Config argument for init event now merged into the event facade, 
+  instead of being passed separately (available as e.cfg).
+  
+* Removed Base.create. On review considered to be overkill.
+
+* Moved PluginHost down from Widget to Base, since utils and 
+  Node will also support Plugins.
+  
+* PluginHost.plug and unplug now accept the plugin class as arguments.
+  [ plug(pluginClass, cfg) and unplug(pluginClass) ]
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"

@@ -11,6 +11,7 @@ YUI.add('dd-drop', function(Y) {
      * @class Drop
      * @extends Base
      * @constructor
+     * @namespace DD
      */
 
     var NODE = 'node',
@@ -21,21 +22,21 @@ YUI.add('dd-drop', function(Y) {
         * @event drop:over
         * @description Fires when a drag element is over this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         EV_DROP_EXIT = 'drop:exit',
 
@@ -43,7 +44,7 @@ YUI.add('dd-drop', function(Y) {
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
         * @bubbles DDM
-        * @type Event.Custom
+        * @type {Event.Custom}
         */
         
 
@@ -52,7 +53,9 @@ YUI.add('dd-drop', function(Y) {
 
 
         //DD init speed up.
-        Y.later(100, this, this._createShim);
+        Y.on('event:ready', Y.bind(function() {
+            Y.later(100, this, this._createShim);
+        }, this));
         DDM._regTarget(this);
 
         /* TODO
@@ -76,7 +79,7 @@ YUI.add('dd-drop', function(Y) {
             setter: function(node) {
                 var n = Y.Node.get(node);
                 if (!n) {
-                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                    Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
                 return n;               
             }
@@ -238,11 +241,13 @@ YUI.add('dd-drop', function(Y) {
         destructor: function() {
             DDM._unregTarget(this);
             if (this.shim) {
+                this.shim.detachAll();
                 this.shim.get('parentNode').removeChild(this.shim);
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
-        },        
+            this.detachAll();
+        },
         /**
         * @private
         * @method _deactivateShim
@@ -363,6 +368,15 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
+            //No playground, defer
+            if (!DDM._pg) {
+                Y.later(10, this, this._createShim);
+                return;
+            }
+            //Shim already here, cancel
+            if (this.shim) {
+                return;
+            }
             var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
 
             s.setStyles({
@@ -379,8 +393,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', this._handleOverEvent, this, true);
-            s.on('mouseout', this._handleOutEvent, this, true);
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
@@ -458,4 +472,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});

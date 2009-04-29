@@ -171,11 +171,25 @@
     <span class="nx">CSSFONTS</span> <span class="o">=</span> <span class="s1">&#39;cssfonts&#39;</span><span class="o">,</span>
     <span class="nx">CSSGRIDS</span> <span class="o">=</span> <span class="s1">&#39;cssgrids&#39;</span><span class="o">,</span>
     <span class="nx">CSSBASE</span> <span class="o">=</span> <span class="s1">&#39;cssbase&#39;</span><span class="o">,</span>
-    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
-    <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">],</span>
+    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> 
+                 <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
+    <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span>
     <span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="o">,</span>
     <span class="nx">CONTEXT</span> <span class="o">=</span> <span class="s1">&#39;-context&#39;</span><span class="o">,</span>
+
+    <span class="nx">YUIBASE</span> <span class="o">=</span> <span class="s1">&#39;yui-base&#39;</span><span class="o">,</span>
+
+    <span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span>
+
+    <span class="nx">EVENT</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="o">,</span>
+
+    <span class="nx">EVENTCUSTOM</span> <span class="o">=</span> <span class="s1">&#39;event-custom&#39;</span><span class="o">,</span>
+
+    <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
+
+    <span class="nx">OOP</span> <span class="o">=</span> <span class="s1">&#39;oop&#39;</span><span class="o">,</span>
+
     <span class="nx">META</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="nx">version</span><span class="o">:</span> <span class="nx">VERSION</span><span class="o">,</span>
@@ -190,18 +204,19 @@
         <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="o">,</span>
         <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;assets/skins/&#39;</span><span class="o">,</span>
         <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;skin.css&#39;</span><span class="o">,</span>
-        <span class="nx">after</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">]</span>
+        <span class="c">// after: [&#39;reset&#39;, &#39;fonts&#39;, &#39;grids&#39;, &#39;base&#39;]</span>
+<span class="c"></span>        <span class="nx">after</span><span class="o">:</span> <span class="nx">CSS_AFTER</span>
         <span class="c">//rollup: 3</span>
 <span class="c"></span>    <span class="o">},</span>
 
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
 
        <span class="nx">dom</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">],</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;dom-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;dom-style&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -229,11 +244,11 @@
         <span class="o">},</span>
 
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
 
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;node-style&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -253,11 +268,11 @@
         <span class="o">},</span>
 
         <span class="nx">anim</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">],</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;anim-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node-style&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;node-style&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-color&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -269,6 +284,7 @@
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-easing&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-scroll&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -280,13 +296,13 @@
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-node-plugin&#39;</span><span class="o">:</span> <span class="o">{</span>
-                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
+                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">base</span><span class="o">:</span> <span class="o">{</span>
@@ -294,19 +310,25 @@
         <span class="o">},</span>
         
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
-        <span class="nx">collection</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">collection</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">console</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;widget&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
         
-        <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="c">// Note: CSS attributes are modified programmatically to reduce metadata size</span>
 <span class="c"></span>        <span class="c">// cssbase: {</span>
@@ -321,7 +343,7 @@
         <span class="nx">dd</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">]</span>
                 <span class="o">},</span> 
                 <span class="s1">&#39;dd-ddm&#39;</span><span class="o">:{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">]</span>
@@ -351,37 +373,40 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
-        <span class="nx">dump</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">dump</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">event</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">],</span>
+            <span class="nx">expound</span><span class="o">:</span> <span class="nx">NODE</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-custom&#39;</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;oop&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-simulate&#39;</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">focusmanager</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">get</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">history</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
         <span class="o">},</span>
         
         <span class="nx">io</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;io-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-xdr&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -389,11 +414,11 @@
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-form&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-upload-iframe&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;io-queue&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -405,24 +430,26 @@
         <span class="nx">json</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;json-parse&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;json-stringify&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">loader</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;get&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">GET</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;node-menunav&#39;</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
         
         <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">overlay</span><span class="o">:</span> <span class="o">{</span>
@@ -431,21 +458,25 @@
         <span class="o">},</span>
 
         <span class="nx">plugin</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">queue</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
-                <span class="s1">&#39;queue-base&#39;</span><span class="o">:</span> <span class="o">{}</span>
+                <span class="s1">&#39;queue-base&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">}</span>
             <span class="o">},</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;queue-io&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">},</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>
@@ -453,14 +484,16 @@
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
 
-        <span class="nx">stylesheet</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">stylesheet</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">substitute</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dump&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">widget</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;widget-position&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
                 <span class="s1">&#39;widget-position-ext&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -477,13 +510,13 @@
         <span class="c">// Since YUI is required for everything else, it should not be specified as</span>
 <span class="c"></span>        <span class="c">// a dependency.</span>
 <span class="c"></span>        <span class="nx">yui</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">,</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
+            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">,</span> <span class="nx">GET</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;yui-base&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="nx">test</span><span class="o">:</span> <span class="o">{</span>                                                                                                                                                        
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;collection&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;json&#39;</span><span class="o">]</span>                                                                                                                     
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;collection&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;json&#39;</span><span class="o">]</span>                                                                                                                     
         <span class="o">}</span>  
 
     <span class="o">}</span>
@@ -1314,19 +1347,32 @@
 <span class="c">     */</span>
     <span class="nx">_explode</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
+                <span class="nx">mod</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+                <span class="k">var</span> <span class="nx">expound</span> <span class="o">=</span> <span class="nx">mod</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="o">.</span><span class="nx">expound</span><span class="o">;</span>
                 <span class="c">// Y.log(&#39;exploding &#39; + i);</span>
 <span class="c"></span>
-                <span class="nx">req</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">expound</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">expound</span><span class="o">);</span>
+                        <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
+                    <span class="o">}</span>
+
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+
                     <span class="c">// Y.log(&#39;via explode: &#39; + req);</span>
 <span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
                 <span class="o">}</span>
+            <span class="o">};</span>
+
+
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>
