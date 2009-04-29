@@ -240,7 +240,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");;
+            e.error = new Error(this.toString() + " Source undefined");
         }
         if(e.error) {
             this.fire("error", e);
@@ -563,7 +563,7 @@ Y.extend(DataSourceCache, Y.Cache, {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this._owner.fire("response", Y.mix({response: entry.response}, e));
+            this.get("host").fire("response", Y.mix({response: entry.response}, e));
             return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
         }
     },
@@ -692,7 +692,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
@@ -703,12 +703,12 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
             };
         }
         
-        this._owner.fire("response", Y.mix({response:response}, e));
+        this.get("host").fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchame = DataSourceJSONSchema;
+Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
