@@ -17,6 +17,10 @@ YUI.add('dd-scroll', function(Y) {
         S.superclass.constructor.apply(this, arguments);
 
     },
+    HOST = 'host',
+    BUFFER = 'buffer',
+    PARENT_SCROLL = 'parentScroll',
+    WINDOW_SCROLL = 'windowScroll',
     SCROLL_TOP = 'scrollTop',
     SCROLL_LEFT = 'scrollLeft',
     OFFSET_WIDTH = 'offsetWidth',
@@ -43,7 +47,7 @@ YUI.add('dd-scroll', function(Y) {
                     }
                 } else {
                     n = n.item(0);
-                    this.set('parentScroll', n);
+                    this.set(PARENT_SCROLL, n);
                 }
                 return n;
             }
@@ -58,13 +62,13 @@ YUI.add('dd-scroll', function(Y) {
         },
         /**
         * @attribute scrollDelay
-        * @description The number of milliseconds delay to pass to the auto scroller. Default: 90
+        * @description The number of milliseconds delay to pass to the auto scroller. Default: 235
         * @type Number
         */
         scrollDelay: {
-            value: 120
+            value: 235
         },
-        owner: {
+        host: {
             value: null
         },
         windowScroll: {
@@ -105,13 +109,14 @@ YUI.add('dd-scroll', function(Y) {
         _getVPRegion: function() {
             var r = {};
             //if (!this._vpRegionCache) {
-                var n = this.get('parentScroll'),
-                b = this.get('buffer'),
-                ws = this.get('windowScroll'),
+                var n = this.get(PARENT_SCROLL),
+                b = this.get(BUFFER),
+                ws = this.get(WINDOW_SCROLL),
+                xy = ((ws) ? [] : n.getXY()),
                 w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
                 h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
-                t = ((ws) ? n.get(SCROLL_TOP) : n.getXY()[1]),
-                l = ((ws) ? n.get(SCROLL_LEFT) : n.getXY()[0]);
+                t = ((ws) ? n.get(SCROLL_TOP) : xy[1]),
+                l = ((ws) ? n.get(SCROLL_LEFT) : xy[0]);
 
                 r = {
                     top: t + b,
@@ -126,11 +131,12 @@ YUI.add('dd-scroll', function(Y) {
             return r;
         },
         initializer: function() {
+            var h = this.get(HOST);
+            h.after('drag:start', Y.bind(this.start, this));
+            h.after('drag:end', Y.bind(this.end, this));
+            h.on('drag:align', Y.bind(this._align, this));
 
-            this.get('owner').after('drag:start', Y.bind(this.start, this));
-            this.get('owner').after('drag:end', Y.bind(this.end, this));
-            this.get('owner').on('drag:align', Y.bind(this._align, this));
-            
+            //TODO - This doesn't work yet??
             Y.get(window).on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
             }, this));
@@ -143,10 +149,12 @@ YUI.add('dd-scroll', function(Y) {
         */        
         _checkWinScroll: function(move) {
             var r = this._getVPRegion(),
-                xy = this.get('owner').lastXY,
+                ho = this.get(HOST),
+                ws = this.get(WINDOW_SCROLL),
+                xy = ho.lastXY,
                 scroll = false,
-                b = this.get('buffer'),
-                win = this.get('parentScroll'),
+                b = this.get(BUFFER),
+                win = this.get(PARENT_SCROLL),
                 sTop = win.get(SCROLL_TOP),
                 sLeft = win.get(SCROLL_LEFT),
                 w = this._dimCache.w,
@@ -163,23 +171,23 @@ YUI.add('dd-scroll', function(Y) {
 
             if (left <= r.left) {
                 scroll = true;
-                nl = xy[0] - b;
+                nl = xy[0] - ((ws) ? b : 0);
                 sl = sLeft - b;
             }
             if (right >= r.right) {
                 scroll = true;
-                nl = xy[0] + b;
+                nl = xy[0] + ((ws) ? b : 0);
                 sl = sLeft + b;
             }
             if (bottom >= r.bottom) {
                 scroll = true;
-                nt = xy[1] + b;
+                nt = xy[1] + ((ws) ? b : 0);
                 st = sTop + b;
 
             }
             if (top <= r.top) {
                 scroll = true;
-                nt = xy[1] - b;
+                nt = xy[1] - ((ws) ? b : 0);
                 st = sTop - b;
             }
 
@@ -200,10 +208,8 @@ YUI.add('dd-scroll', function(Y) {
                 nl = xy[0];
             }
             if (move) {
-                this.get('owner').actXY = [nl, nt];
-                this.get('owner')._moveNode({ node: win, top: st, left: sl});
-                //win.set(SCROLL_TOP, st);
-                //win.set(SCROLL_LEFT, sl);
+                ho.actXY = [nl, nt];
+                ho._moveNode({ node: win, top: st, left: sl});
                 if (!st && !sl) {
                     this._cancelScroll();
                 }
@@ -234,7 +240,7 @@ YUI.add('dd-scroll', function(Y) {
             this._scrolling = false;
             if (this._scrollTimer) {
                 this._scrollTimer.cancel();
-                this._scrollTimer = false;
+                delete this._scrollTimer;
             }
         },
         _align: function(e) {
@@ -252,7 +258,7 @@ YUI.add('dd-scroll', function(Y) {
         * @description Set the cache of the dragNode dims.
         */        
         _setDimCache: function() {
-            var node = this.get('owner').get('dragNode');
+            var node = this.get(HOST).get('dragNode');
             this._dimCache = {
                 h: node.get(OFFSET_HEIGHT),
                 w: node.get(OFFSET_WIDTH)
@@ -299,15 +305,14 @@ YUI.add('dd-scroll', function(Y) {
             value: true,
             setter: function(scroll) {
                 if (scroll) {
-                    this.set('parentScroll', Y.get(window));
+                    this.set(PARENT_SCROLL, Y.get(window));
                 }
                 return scroll;
             }
         }
     });
     Y.extend(WS, S);
-    WS.NAME = 'winscroll';
-    WS.NS = 'winscroll';    
+    WS.NAME = WS.NS = 'winscroll';
     Y.plugin.DDWinScroll = WS;
     
 
@@ -324,85 +329,8 @@ YUI.add('dd-scroll', function(Y) {
     };
     NS.ATTRS = {};
     Y.mix(NS.ATTRS, S.ATTRS);
-    Y.extend(NS, S, {
-        _checkWinScroll: function(move) {
-            var r = this._getVPRegion(),
-                xy = this.get('owner').lastXY,
-                scroll = false,
-                b = this.get('buffer'),
-                win = this.get('parentScroll'),
-                sTop = win.get(SCROLL_TOP),
-                sLeft = win.get(SCROLL_LEFT),
-                w = this._dimCache.w,
-                h = this._dimCache.h,
-                bottom = xy[1] + h,
-                top = xy[1],
-                right = xy[0] + w,
-                left = xy[0],
-                nt = top,
-                nl = left,
-                st = sTop,
-                sl = sLeft;
-
-
-            if (left <= r.left) {
-                scroll = true;
-                nl = xy[0];
-                sl = sLeft - b;
-            }
-            if (right >= r.right) {
-                scroll = true;
-                nl = xy[0];
-                sl = sLeft + b;
-            }
-            if (bottom >= r.bottom) {
-                scroll = true;
-                nt = xy[1];
-                st = sTop + b;
-
-            }
-            if (top <= r.top) {
-                scroll = true;
-                nt = xy[1];
-                st = sTop - b;
-            }
-
-            if (st < 0) {
-                st = 0;
-                nt = xy[1];
-            }
-
-            if (sl < 0) {
-                sl = 0;
-                nl = xy[0];
-            }
-
-            if (nt < 0) {
-                nt = xy[1];
-            }
-            if (nl < 0) {
-                nl = xy[0];
-            }
-            if (move) {
-                this.get('owner').actXY = [nl, nt];
-
-                win.set(SCROLL_TOP, st);
-                win.set(SCROLL_LEFT, sl);
-                this.get('owner')._moveNode();
-                if (!st && !sl) {
-                    this._cancelScroll();
-                }
-            } else {
-                if (scroll) {
-                    this._initScroll();
-                } else {
-                    this._cancelScroll();
-                }
-            }
-        },
-    });
-    NS.NAME = 'nodescroll';
-    NS.NS = 'nodescroll';
+    Y.extend(NS, S);
+    NS.NAME = NS.NAME = 'nodescroll';
     Y.plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    

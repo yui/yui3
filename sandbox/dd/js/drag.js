@@ -977,8 +977,8 @@ YUI.add('dd-drag', function(Y) {
             this.fire(EV_DRAG, {
                 pageX: xy[0],
                 pageY: xy[1],
+                scroll: scroll,
                 info: {
-                    scroll: scroll,
                     start: startXY,
                     xy: xy,
                     delta: diffXY,
@@ -1000,11 +1000,7 @@ YUI.add('dd-drag', function(Y) {
                     e.scroll.node.set('scrollTop', e.scroll.top);
                     e.scroll.node.set('scrollLeft', e.scroll.left);
                 }
-                //if (Y.UA.opera) {
-                    this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
-                //} else {
-                //    DDM.setXY(this.get(DRAG_NODE), e.info.delta);
-                //}
+                this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
                 this.realXY = [e.pageX, e.pageY];
             }
         },
