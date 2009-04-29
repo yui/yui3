@@ -395,7 +395,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         target: true,
         dragMode: 'intersect',
         handles: ['h2'],
-        bubbles: false,
+        //bubbles: false,
         //dragMode: 'strict',
         data: {
             one: 'This is my data object',
@@ -403,10 +403,12 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             three: 'This is my data object'
         }
     });
+    /*
     dd.on('drag:end', function(e) {
         console.log('drag:end: ', e);
         //e.preventDefault();
     });
+    */
     //}).addHandle('h2');
     
     /*
@@ -462,11 +464,11 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     */
 
-    dd.on('drag:drophit', function(e) {
+    Y.DD.DDM.on('drag:drophit', function(e) {
         console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
     });
     
-    dd.on('drag:dropmiss', function() {
+    Y.DD.DDM.on('drag:dropmiss', function() {
         console.log('drag:dropmiss', arguments);
     });
 
@@ -506,7 +508,8 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     
     dd3 = Y.Node.get('#drag3');
     dd3.plug(Y.plugin.Drag, {
-        groups: ['one', 'three']
+        groups: ['one', 'three'],
+        dragMode: 'intersect'
     });
     dd3.dd.plug(Y.plugin.DDProxy, {});
     dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
