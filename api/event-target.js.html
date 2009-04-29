@@ -67,6 +67,8 @@
 <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="o">,</span>
+    <span class="nx">typeCache</span> <span class="o">=</span> <span class="o">{},</span>
+    <span class="nx">parseCache</span> <span class="o">=</span> <span class="o">{},</span>
 
     <span class="c">/**</span>
 <span class="c">     * If the instance has a prefix attribute and the</span>
@@ -75,13 +77,17 @@
 <span class="c">     * @method _getType</span>
 <span class="c">     */</span>
     <span class="nx">_getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
+            <span class="nx">pre</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">t</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
+        <span class="o">}</span> 
+        
+        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">typeCache</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">typeCache</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
         <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
-            <span class="nx">pre</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">;</span>
 
         <span class="c">// Y.log(&quot;pre: &quot; + pre, &#39;info&#39;, &#39;event&#39;);</span>
 <span class="c"></span>
@@ -91,6 +97,8 @@
 
         <span class="c">// Y.log(&quot;type: &quot; + t, &#39;info&#39;, &#39;event&#39;);</span>
 <span class="c"></span>
+        <span class="nx">typeCache</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
+
         <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -103,11 +111,19 @@
 <span class="c">     */</span>
     <span class="nx">_parseType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">t</span><span class="o">,</span>
+            <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
+        <span class="o">}</span> 
+        
+        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">parseCache</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">parseCache</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">AFTER_PREFIX</span><span class="o">);</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">AFTER_PREFIX</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">after</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -124,7 +140,9 @@
 
         <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
 
-        <span class="k">return</span> <span class="o">[</span><span class="nx">detachkey</span><span class="o">,</span> <span class="nx">t</span><span class="o">,</span> <span class="nx">after</span><span class="o">];</span>
+        <span class="nx">parseCache</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="nx">detachkey</span><span class="o">,</span> <span class="nx">t</span><span class="o">,</span> <span class="nx">after</span><span class="o">];</span>
+
+        <span class="k">return</span> <span class="nx">parseCache</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -144,6 +162,8 @@
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
+
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
 
             <span class="nx">events</span><span class="o">:</span> <span class="o">{},</span>
 
