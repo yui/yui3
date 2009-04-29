@@ -105,7 +105,7 @@ var L = Y.Lang,
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
-                context: this, 
+                context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
@@ -420,14 +420,14 @@ ET.prototype = {
                 ce.subscribeEvent.on(o.onSubscribeCallback);
             }
 
-            // make sure we turn the broadcast flag off if this
-            // event was published as a result of bubbling
-            if (typeof o = Y.CustomEvent) {
-                broadcast: false;
-            }
 
         }
 
+        // make sure we turn the broadcast flag off if this
+        // event was published as a result of bubbling
+        if (typeof o == Y.CustomEvent) {
+            events[type].broadcast = false;
+        }
 
         return events[type];
     },

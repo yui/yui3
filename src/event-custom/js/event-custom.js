@@ -595,7 +595,7 @@ Y.CustomEvent.prototype = {
 
             events = new Y.EventTarget({
                 fireOnce: true,
-                context: this.host || this
+                context: this.host
             });
 
             this.events = events;

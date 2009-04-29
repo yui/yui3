@@ -1020,7 +1020,7 @@ Y.CustomEvent.prototype = {
 
             events = new Y.EventTarget({
                 fireOnce: true,
-                context: this.host || this
+                context: this.host
             });
 
             this.events = events;
@@ -1515,7 +1515,7 @@ var L = Y.Lang,
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
             defaults: {
-                context: this, 
+                context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
@@ -1824,11 +1824,17 @@ ET.prototype = {
             events[type] = ce;
 
             if (o.onSubscribeCallback) {
-                ce.subscribeEvent.subscribe(o.onSubscribeCallback);
+                ce.subscribeEvent.on(o.onSubscribeCallback);
             }
+
 
         }
 
+        // make sure we turn the broadcast flag off if this
+        // event was published as a result of bubbling
+        if (typeof o == Y.CustomEvent) {
+            events[type].broadcast = false;
+        }
 
         return events[type];
     },
@@ -2049,6 +2055,8 @@ YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
  * @type EventTarget
  */
 Y.Global = YUI.Env.globalEvents;
+
+// @TODO implement a global namespace function on Y.Global?
 
 })();
 
