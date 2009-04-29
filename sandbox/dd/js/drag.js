@@ -433,6 +433,14 @@ YUI.add('dd-drag', function(Y) {
                 prefix: 'drag'
             });
             
+            this.publish(EV_END, {
+                preventedFn: this._prevEndFn,
+                queuable: false,
+                emitFacade: true,
+                bubbles: true,
+                prefix: 'drag'
+            });
+            
             var ev = [
                 EV_AFTER_MOUSE_DOWN,
                 EV_REMOVE_HANDLE,
@@ -440,7 +448,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_REMOVE_INVALID,
                 EV_ADD_INVALID,
                 EV_START,
-                EV_END,
                 'drag:drophit',
                 'drag:dropmiss',
                 'drag:over',
@@ -917,6 +924,16 @@ YUI.add('dd-drag', function(Y) {
             this.deltaXY = [0, 0];
 
             return this;
+        },
+        /**
+        * @private
+        * @method _prevEndFn
+        * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
+        */
+        _prevEndFn: function(e) {
+            //TODO - We are in the wrong scope here..
+            //Bug #1852577
+            e.host.get(DRAG_NODE).setXY(e.host.nodeXY);
         },
         /**
         * @private
