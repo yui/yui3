@@ -113,7 +113,7 @@ SchemaJSON = {
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            if(!LANG.isUndefined(schema.resultsLocator)) {
+            if(!LANG.isUndefined(schema.resultListLocator)) {
                 data_out = SchemaJSON._parseResults(schema, data_in, data_out);
             }
 
@@ -146,16 +146,16 @@ SchemaJSON = {
             path,
             error;
 
-        if(schema.resultsLocator) {
-            path = SchemaJSON.getPath(schema.resultsLocator);
+        if(schema.resultListLocator) {
+            path = SchemaJSON.getPath(schema.resultListLocator);
             if(path) {
                 results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
-                    if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
-                        data_out = SchemaJSON._getFieldValues(schema.resultsFields, results, data_out);
+                    if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
+                        data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
