@@ -14,8 +14,7 @@
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        PROXY = 'proxy',
-        OWNER = 'owner',
+        HOST = 'host',
         TRUE = true;
 
     var P = function(config) {
@@ -31,6 +30,8 @@
     P.NS = 'proxy';
 
     P.ATTRS = {
+        host: {
+        },
         /**
         * @attribute moveOnEnd
         * @description Move the original node at the end of the drag. Default: true
@@ -62,15 +63,6 @@
         */
         borderStyle: {
             value: '1px solid #808080'
-        },
-        /**
-        * @attribute owner
-        * @description The object that this was plugged into.
-        * @type Object
-        */
-        owner: {
-            writeOnce: TRUE,
-            value: false
         }
     };
 
@@ -94,26 +86,26 @@
             if (!this._hands) {
                 this._hands = [];
             }
-            var i, h, h1, owner = this.get(OWNER), dnode = owner.get(DRAG_NODE);
-            if (dnode.compareTo(owner.get(NODE))) {
+            var i, h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);
+            if (dnode.compareTo(host.get(NODE))) {
                 if (DDM._proxy) {
-                    owner.set(DRAG_NODE, DDM._proxy);
+                    host.set(DRAG_NODE, DDM._proxy);
                 }
             }
             for (i in this._hands) {
                 this._hands[i].detach();
             }
             h = DDM.on('ddm:start', Y.bind(function() {
-                if (DDM.activeDrag === owner) {
-                    DDM._setFrame(owner);
+                if (DDM.activeDrag === host) {
+                    DDM._setFrame(host);
                 }
             }, this));
             h1 = DDM.on('ddm:end', Y.bind(function() {
-                if (owner.get('dragging')) {
+                if (host.get('dragging')) {
                     if (this.get('moveOnEnd')) {
-                        owner.get(NODE).setXY(owner.lastXY);
+                        host.get(NODE).setXY(host.lastXY);
                     }
-                    owner.get(DRAG_NODE).setStyle('display', 'none');
+                    host.get(DRAG_NODE).setStyle('display', 'none');
                 }
             }, this));
             this._hands = [h, h1];
@@ -122,11 +114,11 @@
             this._init();
         },
         destructor: function() {
-            var owner = this.get(OWNER);
+            var host = this.get(HOST);
             for (var i in this._hands) {
                 this._hands[i].detach();
             }
-            owner.set(DRAG_NODE, owner.get(NODE));
+            host.set(DRAG_NODE, host.get(NODE));
         }
     };
     

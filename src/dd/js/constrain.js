@@ -16,7 +16,7 @@
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
-        OWNER = 'owner',
+        HOST = 'host',
         CON_2_REGION = 'constrain2region',
         TICK_X_ARRAY = 'tickXArray',
         TICK_Y_ARRAY = 'tickYArray',
@@ -36,14 +36,7 @@
     C.NS = 'con';
 
     C.ATTRS = {
-        /**
-        * @attribute owner
-        * @description A reference to the plugged Drag instance
-        * @type {Drag}
-        */        
-        owner: {
-            writeOnce: true,
-            value: false
+        host: {
         },
         /**
         * @attribute stickX
@@ -165,8 +158,8 @@
 
     proto = {
         initializer: function() {
-            this.get(OWNER).on('drag:start', Y.bind(this._handleStart, this));
-            this.get(OWNER).after('drag:align', Y.bind(this.align, this));
+            this.get(HOST).on('drag:start', Y.bind(this._handleStart, this));
+            this.get(HOST).after('drag:align', Y.bind(this.align, this));
         },
         /**
         * @private
@@ -200,7 +193,7 @@
         getRegion: function(inc) {
             var r = {}, oh = null, ow = null,
                 g = this.get('gutter'),
-                owner = this.get(OWNER);
+                host = this.get(HOST);
 
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
@@ -224,8 +217,8 @@
                 }
             });
             if (inc) {
-                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT);
-                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
+                oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -241,9 +234,9 @@
         _checkRegion: function(_xy) {
             var oxy = _xy,
                 r = this.getRegion(),
-                owner = this.get(OWNER),
-                oh = owner.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                ow = owner.get(DRAG_NODE).get(OFFSET_WIDTH);
+                host = this.get(HOST),
+                oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
             
                 if (oxy[1] > (r.bottom - oh)) {
                     _xy[1] = (r.bottom - oh);
@@ -268,7 +261,7 @@
         * @return {Boolean} True if the XY is inside the region, false otherwise.
         */
         inRegion: function(xy) {
-            xy = xy || this.get(OWNER).get(DRAG_NODE).getXY();
+            xy = xy || this.get(HOST).get(DRAG_NODE).getXY();
 
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
@@ -282,15 +275,15 @@
         * @description Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
         */
         align: function() {
-            var owner = this.get(OWNER),
-                _xy = owner.actXY,
+            var host = this.get(HOST),
+                _xy = host.actXY,
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
-                _xy[1] = (owner.startXY[1] - owner.deltaXY[1]);
+                _xy[1] = (host.startXY[1] - host.deltaXY[1]);
             }
             if (this.get('stickY')) {
-                _xy[0] = (owner.startXY[0] - owner.deltaXY[0]);
+                _xy[0] = (host.startXY[0] - host.deltaXY[0]);
             }
 
             if (r) {
@@ -298,7 +291,7 @@
             }
                 
             _xy = this._checkTicks(_xy, r);
-            owner.actXY = _xy;
+            host.actXY = _xy;
         },
         /**
         * @private
@@ -309,9 +302,9 @@
         * @return {Array} The calced XY coords
         */
         _checkTicks: function(xy, r) {
-            var owner = this.get(OWNER),
-                lx = (owner.startXY[0] - owner.deltaXY[0]),
-                ly = (owner.startXY[1] - owner.deltaXY[1]),
+            var host = this.get(HOST),
+                lx = (host.startXY[0] - host.deltaXY[0]),
+                ly = (host.startXY[1] - host.deltaXY[1]),
                 xt = this.get('tickX'),
                 yt = this.get('tickY');
                 if (xt && !this.get(TICK_X_ARRAY)) {
