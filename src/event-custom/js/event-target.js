@@ -110,6 +110,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -385,7 +386,7 @@ ET.prototype = {
 
         type = _getType(this, type);
 
-        var events, ce, ret, o;
+        var events, ce, ret, o = opts || {};
 
         if (L.isObject(type)) {
             ret = {};
@@ -408,8 +409,6 @@ ET.prototype = {
             // ce.configured = true;
 
         } else {
-            o = opts || {};
-
             // apply defaults
             Y.mix(o, this._yuievt.defaults);
 
@@ -422,6 +421,7 @@ ET.prototype = {
             }
 
         }
+
 
         return events[type];
     },
@@ -633,5 +633,15 @@ Y.mix(Y, ET.prototype, false, false, {
 });
 
 ET.call(Y);
+
+YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
+
+/**
+ * Hosts YUI page level events.  This is where events bubble to
+ * when the broadcast config is set to 2.
+ * @property Global
+ * @type EventTarget
+ */
+Y.Global = YUI.Env.globalEvents;
 
 })();
