@@ -16,7 +16,7 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
         var Drop = function(config) {
-            config.node = config.owner;
+            config.node = config.host;
             Drop.superclass.constructor.apply(this, arguments);
         };
         
@@ -42,4 +42,4 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
