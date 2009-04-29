@@ -1,5 +1,6 @@
 YUI.add('dd-scroll', function(Y) {
 
+
     /**
      * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
@@ -335,4 +336,6 @@ YUI.add('dd-scroll', function(Y) {
 
     Y.DD.Scroll = S;    
 
-}, '3.0.0', { requires: ['dd-drag'] });
+
+
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-proxy']});

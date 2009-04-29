@@ -15,7 +15,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
         var Drag = function(config) {
-            config.node = config.owner;
+            config.node = config.host;
             Drag.superclass.constructor.apply(this, arguments);
         };
         
@@ -25,6 +25,7 @@ YUI.add('dd-plugin', function(Y) {
         * @type {String}
         */
         Drag.NAME = "dd-plugin";
+
         /**
         * @property NS
         * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;

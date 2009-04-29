@@ -1,3 +1,6 @@
+<?php
+$count = (($_GET['count']) ? $_GET['count'] : 10);
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -25,16 +28,13 @@
         #drag4 {
             position: relative;
             top: 30px;
-            left: 200px;
+            left: 300px;
         }
         #drag4Cont {
             border: 1px solid black;
             height: 400px;
             width: 400px;
             overflow: auto;
-            position: absolute;
-            top: 200px;
-            left: 300px;
         }
         #wrap {
             height: 900px;
@@ -45,11 +45,11 @@
 <div id="davdoc" class="yui-t7">
     <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
     <div id="bd">
-        <div id="drag4Cont">
-            <div id="wrap">
+        <!--div id="drag4Cont">
+            <div id="wrap"-->
                 <div id="drag4">Drag Me IV <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
-            </div>
-        </div>
+            <!--/div>
+        </div-->
 
     </div>
     <div id="ft">&nbsp;</div>
@@ -93,16 +93,15 @@ var yConfig = {
 };
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
-    
-
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-scroll', function(Y) {
+    myY = Y;
     Y.DD.DDM._debugShim = true;
 
     dd4 = new Y.DD.Drag({
         node: '#drag4'
-    }).plug(Y.plugin.DDNodeScroll, {
-        node: '#drag4Cont'
-    });
+    }).plug(
+        Y.plugin.DDProxy
+    ).plug(Y.plugin.DDWinScroll);
 
 });
 

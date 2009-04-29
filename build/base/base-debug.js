@@ -63,9 +63,9 @@ PluginHost.prototype = {
      * all registered plugins are unplugged.
      * @chainable
      */
-    unplug: function(plugin) {
-        if (plugin) {
-            this._unplug(plugin);
+    unplug: function(ns) {
+        if (ns) {
+            this._unplug(ns);
         } else {
             var ns;
             for (ns in this._plugins) {
