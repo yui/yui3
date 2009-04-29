@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dd   (YUI Library)</title>
+	<title>API: dd  plugin.DDProxy   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>dd&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
-                
+                 &gt; plugin.DDProxy 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -43,65 +43,476 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: dd
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">plugin.DDProxy</b>
+                        <span class="extends">
+                           - extends <a href="Base.html" title="Base">Base</a>
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
                     
+                
+  
 
-
-                    </h3>
-                    <div class="description summary">
-                        Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
+                    <div class="summary description" property="yui:description">
+                        This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
                     </div>
 
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "Provides the base Drag Drop Manger required for making a Node draggable.", "guessedname": "plugin.DDM", "name": "plugin.DDM"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Extends the Scroll class to make a parent node scroll while dragging.", "guessedname": "plugin.DDNodeScroll", "name": "plugin.DDNodeScroll"}, {"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.", "guessedname": "plugin.DDProxy", "name": "plugin.DDProxy"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Extends the Scroll class to make the window scroll while dragging.", "guessedname": "plugin.DDWindowScroll", "name": "plugin.DDWindowScroll"}, {"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "This class provides the ability to drag a Node.", "guessedname": "plugin.Drag", "name": "plugin.Drag"}, {"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also\nsupports tick based moves and XY axis constraints.", "guessedname": "plugin.DragConstrained", "name": "plugin.DragConstrained"}, {"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "This class provides the ability to create a Drop Target.", "guessedname": "plugin.Drop", "name": "plugin.Drop"}, {"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "This class is the base scroller class used to create the plugin.DDNodeScroll and plugin.DDWinScroll.\nThis class should not be called on it's own, it's designed to be a plugin.", "guessedname": "Scroll", "name": "Scroll"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="plugin.DDM.html" title="plugin.DDM" id="class_0">plugin.DDM</a></li>
-                                    <li><a href="plugin.DDNodeScroll.html" title="plugin.DDNodeScroll" id="class_1">plugin.DDNodeScroll</a></li>
-                                    <li><a href="plugin.DDProxy.html" title="plugin.DDProxy" id="class_2">plugin.DDProxy</a></li>
-                                    <li><a href="plugin.DDWindowScroll.html" title="plugin.DDWindowScroll" id="class_3">plugin.DDWindowScroll</a></li>
-                                    <li><a href="plugin.Drag.html" title="plugin.Drag" id="class_4">plugin.Drag</a></li>
-                                    <li><a href="plugin.DragConstrained.html" title="plugin.DragConstrained" id="class_5">plugin.DragConstrained</a></li>
-                                    <li><a href="plugin.Drop.html" title="plugin.Drop" id="class_6">plugin.Drop</a></li>
-                                    <li><a href="Scroll.html" title="Scroll" id="class_7">Scroll</a></li>
-                                </ul>
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">plugin.DDProxy</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
                             </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code><a href="DDM.html" title="dd-ddm-drop">dd-ddm-drop</a></code></dt>
-                                            <dd>Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.</dd>
-                                            <dt><code><a href="plugin.DDNodeScroll.html" title="dd-scroll">dd-scroll</a></code></dt>
-                                            <dd>Extends the Scroll class to make a parent node scroll while dragging.</dd>
-                                            <dt><code><a href="plugin.DragConstrained.html" title="dd-constrain">dd-constrain</a></code></dt>
-                                            <dd>This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
-supports tick based moves and XY axis constraints.</dd>
-                                            <dt><code><a href="plugin.Drag.html" title="dd-drag">dd-drag</a></code></dt>
-                                            <dd>This class provides the ability to drag a Node.</dd>
-                                            <dt><code><a href="DDM.html" title="dd-ddm">dd-ddm</a></code></dt>
-                                            <dd>Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
-It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.</dd>
-                                            <dt><code><a href="plugin.Drop.html" title="dd-drop">dd-drop</a></code></dt>
-                                            <dd>This class provides the ability to create a Drop Target.</dd>
-                                            <dt><code><a href="plugin.DDM.html" title="dd-ddm-base">dd-ddm-base</a></code></dt>
-                                            <dd>Provides the base Drag Drop Manger required for making a Node draggable.</dd>
-                                            <dt><code><a href="plugin.DDProxy.html" title="dd-proxy">dd-proxy</a></code></dt>
-                                            <dd>This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.</dd>
-                                        </dl>
-                                    </div>
-
                         </div>
-                </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__hands">
+                                    <h4><a name="property__hands" property="yui:name">_hands</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Holds the event handles for setting the proxy
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_proxy">
+                                    <h4><a name="property_proxy" property="yui:name">proxy</a>
+                                        - <code><span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The Proxy instance will be placed on the Drag instance under the proxy namespace.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class="" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__init">
+                                    <h4>
+                                        <a name="method__init">_init</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_init</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handler for the proxy config attribute
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__aggregateAttrs">                                        
+                                            <a class="private" href="Base.html#method__aggregateAttrs" property="yui:name" title="_aggregateAttrs">_aggregateAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__filterAttrCfs">                                        
+                                            <a class="private" href="Base.html#method__filterAttrCfs" property="yui:name" title="_filterAttrCfs">_filterAttrCfs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getAttrCfgs">                                        
+                                            <a class="protected" href="Base.html#method__getAttrCfgs" property="yui:name" title="_getAttrCfgs">_getAttrCfgs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
+                                            <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_borderStyleChange">
+                                    <h4>
+                                        <a name="event_borderStyleChange">borderStyleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">borderStyleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'borderStyle' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_moveOnEndChange">
+                                    <h4>
+                                        <a name="event_moveOnEndChange">moveOnEndChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">moveOnEndChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'moveOnEnd' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_positionProxyChange">
+                                    <h4>
+                                        <a name="event_positionProxyChange">positionProxyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">positionProxyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'positionProxy' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_resizeFrameChange">
+                                    <h4>
+                                        <a name="event_resizeFrameChange">resizeFrameChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">resizeFrameChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'resizeFrame' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_borderStyle">
+                                    <h4><a name="config_borderStyle">borderStyle</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default border style for the border of the proxy. Default: 1px solid #808080
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_moveOnEnd">
+                                    <h4><a name="config_moveOnEnd">moveOnEnd</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Move the original node at the end of the drag. Default: true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_positionProxy">
+                                    <h4><a name="config_positionProxy">positionProxy</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Make the Proxy node appear in the same place as the original node. Default: true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_resizeFrame">
+                                    <h4><a name="config_resizeFrame">resizeFrame</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Make the Proxy node assume the size of the original node. Default: true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
 
 			</div>
 		</div>
@@ -149,7 +560,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                         <ul class="content">
                                 <li class=""><a href="plugin.DDM.html" title="plugin.DDM">plugin.DDM</a></li>
                                 <li class=""><a href="plugin.DDNodeScroll.html" title="plugin.DDNodeScroll">plugin.DDNodeScroll</a></li>
-                                <li class=""><a href="plugin.DDProxy.html" title="plugin.DDProxy">plugin.DDProxy</a></li>
+                                <li class="selected"><a href="plugin.DDProxy.html" title="plugin.DDProxy">plugin.DDProxy</a></li>
                                 <li class=""><a href="plugin.DDWindowScroll.html" title="plugin.DDWindowScroll">plugin.DDWindowScroll</a></li>
                                 <li class=""><a href="plugin.Drag.html" title="plugin.Drag">plugin.Drag</a></li>
                                 <li class=""><a href="plugin.DragConstrained.html" title="plugin.DragConstrained">plugin.DragConstrained</a></li>
@@ -173,9 +584,40 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                         </ul>
                     </div>
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__hands" title="_hands">_hands</a></li>
+                                <li class=""><a href="#property_proxy" title="proxy">proxy</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__init" title="_init">_init</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_borderStyleChange" title="borderStyleChange">borderStyleChange</a></li>
+                                <li class=""><a href="#event_moveOnEndChange" title="moveOnEndChange">moveOnEndChange</a></li>
+                                <li class=""><a href="#event_positionProxyChange" title="positionProxyChange">positionProxyChange</a></li>
+                                <li class=""><a href="#event_resizeFrameChange" title="resizeFrameChange">resizeFrameChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_borderStyle" title="borderStyle">borderStyle</a></li>
+                                <li class=""><a href="#config_moveOnEnd" title="moveOnEnd">moveOnEnd</a></li>
+                                <li class=""><a href="#config_positionProxy" title="positionProxy">positionProxy</a></li>
+                                <li class=""><a href="#config_resizeFrame" title="resizeFrame">resizeFrame</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
