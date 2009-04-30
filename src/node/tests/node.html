@@ -105,7 +105,7 @@ body {
         <div id="test-children">foo <span>bar</span> <strong>baz</strong> </div>
     </div>
     <div id="inline-style" style="color: green">inline style</div>
-    <div id="foo"></div>
+    <div id="foo" aria-checked="true"></div>
     <div id="test-computed">test computed style</div>
     <form id="form.foo@bar:baz">
         <select id="test-select" name="test-select">
@@ -600,7 +600,12 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.get('body').set('role', 'menu')")
 
             Y.get('body').set('aria-checked', true);
-            Assert.isTrue(document.body.getAttribute('aria-checked') === 'true', "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', document.body.getAttribute('aria-checked', 2), "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.get('body').getAttribute('aria-checked'), "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.get('#foo').get('aria-checked'), "Y.get('#foo').get('aria-checked')");
+
+            Y.get('body').set('aria-checked', false);
+            Assert.areEqual('false', Y.get('body').get('aria-checked'), "Y.get('body').set('aria-checked', false)");
         }
     }));
 
