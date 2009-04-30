@@ -131,9 +131,9 @@ SchemaXML = {
      * @protected
      */
     _parseResults: function(schema, xmldoc_in, data_out) {
-        if(schema.resultsLocator && LANG.isArray(schema.resultsFields)) {
-            var nodeList = xmldoc_in.getElementsByTagName(schema.resultsLocator),
-                fields = schema.resultsFields,
+        if(schema.resultListLocator && LANG.isArray(schema.resultFields)) {
+            var nodeList = xmldoc_in.getElementsByTagName(schema.resultListLocator),
+                fields = schema.resultFields,
                 results = [],
                 node, field, result, i, j;
 

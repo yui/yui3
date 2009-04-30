@@ -178,7 +178,7 @@ SchemaJSON = {
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            if(!LANG.isUndefined(schema.resultsLocator)) {
+            if(!LANG.isUndefined(schema.resultListLocator)) {
                 data_out = SchemaJSON._parseResults(schema, data_in, data_out);
             }
 
@@ -211,16 +211,16 @@ SchemaJSON = {
             path,
             error;
 
-        if(schema.resultsLocator) {
-            path = SchemaJSON.getPath(schema.resultsLocator);
+        if(schema.resultListLocator) {
+            path = SchemaJSON.getPath(schema.resultListLocator);
             if(path) {
                 results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
-                    if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
-                        data_out = SchemaJSON._getFieldValues(schema.resultsFields, results, data_out);
+                    if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
+                        data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
@@ -489,9 +489,9 @@ SchemaXML = {
      * @protected
      */
     _parseResults: function(schema, xmldoc_in, data_out) {
-        if(schema.resultsLocator && LANG.isArray(schema.resultsFields)) {
-            var nodeList = xmldoc_in.getElementsByTagName(schema.resultsLocator),
-                fields = schema.resultsFields,
+        if(schema.resultListLocator && LANG.isArray(schema.resultFields)) {
+            var nodeList = xmldoc_in.getElementsByTagName(schema.resultListLocator),
+                fields = schema.resultFields,
                 results = [],
                 node, field, result, i, j;
 
@@ -572,13 +572,13 @@ SchemaArray = {
             data_out = {results:[],meta:{}};
             
         if(LANG.isArray(data_in)) {
-            if(LANG.isArray(schema.resultsFields)) {
+            if(LANG.isArray(schema.resultFields)) {
                 // Parse results data
-                data_out = SchemaArray._parseResults(schema.resultsFields, data_in, data_out);
+                data_out = SchemaArray._parseResults(schema.resultFields, data_in, data_out);
             }
             else {
                 data_out.results = data_in;
-                Y.log("Schema resultsFields property not found: " + Y.dump(schema), "warn", SchemaArray.toString());
+                Y.log("Schema resultFields property not found: " + Y.dump(schema), "warn", SchemaArray.toString());
             }
         }
         else {
@@ -638,7 +638,126 @@ Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 }, '@VERSION@' ,{requires:['dataschema-base']});
 
+YUI.add('dataschema-text', function(Y) {
+
+/**
+ * The DataSchema utility provides a common configurable interface for widgets to
+ * apply a given schema to a variety of data.
+ *
+ * @module dataschema
+ */
+var LANG = Y.Lang,
+
+/**
+ * Text subclass for the YUI DataSchema utility.
+ * @class DataSchema.Text
+ * @extends DataSchema.Base
+ * @static
+ */
+SchemaText = {
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSchema.Text static methods
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataSchema.Text";
+    },
+
+    /**
+     * Applies a given schema to given delimited text data.
+     *
+     * @method apply
+     * @param schema {Object} Schema to apply.
+     * @param data {Object} Text data.
+     * @return {Object} Schema-parsed data.
+     * @static
+     */
+    apply: function(schema, data) {
+        var data_in = data,
+            data_out = {results:[],meta:{}};
+            
+        if(LANG.isString(data_in) && LANG.isString(schema.resultDelimiter)) {
+            // Parse results data
+            data_out = SchemaText._parseResults(schema, data_in, data_out);
+        }
+        else {
+            Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaText.toString());
+            data_out.error = new Error(this.toString() + " Schema parse failure");
+        }
+
+        return data_out;
+    },
+
+    /**
+     * Schema-parsed list of results from full data
+     *
+     * @method _parseResults
+     * @param schema {Array} Schema to parse against.
+     * @param text_in {String} Text to parse.
+     * @param data_out {Object} In-progress parsed data to update.
+     * @return {Object} Parsed data object.
+     * @static
+     * @protected
+     */
+    _parseResults: function(schema, text_in, data_out) {
+        var resultDelim = schema.resultDelimiter,
+            results = [],
+            results_in, fields_in, result, item, type, fields, field, key, value, i, j,
+            
+        // Delete final delimiter at end of string if there
+        tmpLength = text_in.length-resultDelim.length;
+        if(text_in.substr(tmpLength) == resultDelim) {
+            text_in = text_in.substr(0, tmpLength);
+        }
+        
+        // Split into results
+        results_in = text_in.split(schema.resultDelimiter);
+
+        for(i=results_in.length-1; i>-1; i--) {
+            result = {};
+            item = results_in[i];
+            
+            if(LANG.isString(schema.fieldDelimiter)) {
+                fields_in = item.split(schema.fieldDelimiter);
+
+                if(LANG.isArray(schema.resultFields)) {
+                    fields = schema.resultFields;
+                    for(j=fields.length-1; j>-1; j--) {
+                        field = fields[j];
+                        key = (!LANG.isUndefined(field.key)) ? field.key : field;
+                        value = (!LANG.isUndefined(fields_in[key])) ? fields_in[key] : fields_in[j];
+                        result[key] = Y.DataSchema.Base.parse(value, field);
+                    }
+                }
+
+            }
+            else {
+                result = item;
+            }
+            
+            results[i] = result;
+        }
+        data_out.results = results;
+
+        return data_out;
+    }
+};
+
+Y.DataSchema.Text = Y.mix(SchemaText, Y.DataSchema.Base);
 
 
-YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array']});
+
+}, '@VERSION@' ,{requires:['dataschema-base']});
+
+
+
+YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array','dataschema-text']});
 

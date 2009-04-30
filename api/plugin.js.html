@@ -110,10 +110,6 @@
 <span class="c">             */</span>
             <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="o">[];</span>
-
-                <span class="c">// TODO: Temporary</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_owner</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">);</span>
-
                 <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">))</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;No host defined for plugin &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="o">);}</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Initializing: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
             <span class="o">},</span>

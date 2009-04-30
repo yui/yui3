@@ -1235,6 +1235,32 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+/**
+ * Returns a wrapper for a function which caches the
+ * return value of that function, keyed off of the combined 
+ * argument values.
+ * @function cached
+ * @param source {function} the function to memoize
+ * @param context an optional execution context
+ * @param cache an optional cache seed
+ * @return {Function} the wrapped function
+ */
+Y.cached = function(source, context, cache){
+    cache = cache || {};
+
+    var wrapper = function() {
+        var a = arguments, 
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+        if (!(key in cache)) {
+            // console.log('cached adding: ' + key);
+            cache[key] = source.apply(context || source, arguments);
+        }
+        return cache[key];
+    };
+
+    return wrapper;
+};
+
 })();
 (function() {
 
