@@ -461,6 +461,10 @@ Y.DOM = {
                             getElementsByTagName('*'), node) : null;
         },
 
+    isWindow: function(obj) {
+        return obj.alert && obj.document;
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
