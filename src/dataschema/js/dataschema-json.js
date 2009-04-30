@@ -32,12 +32,12 @@ SchemaJSON = {
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
-     * @method DataSchema.JSON.buildPath
+     * @method DataSchema.JSON.getPath
      * @param locator {String} JSON value locator.
      * @return {String[]} Walkable path to data value.
      * @static
      */
-    buildPath: function(locator) {
+    getPath: function(locator) {
         var path = null,
             keys = [],
             i = 0;
@@ -111,7 +111,7 @@ SchemaJSON = {
 
         if(LANG.isObject(data_in) && schema) {
             // Parse results data
-            if(!LANG.isUndefined(schema.resultsLocator)) {
+            if(!LANG.isUndefined(schema.resultListLocator)) {
                 data_out = SchemaJSON._parseResults(schema, data_in, data_out);
             }
 
@@ -122,7 +122,7 @@ SchemaJSON = {
         }
         else {
             Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaJSON.toString());
-            data_out.error = true;
+            data_out.error = new Error(this.toString() + " Schema parse failure");
         }
 
         return data_out;
@@ -133,27 +133,27 @@ SchemaJSON = {
      *
      * @method _parseResults
      * @param schema {Object} Schema to parse against.
-     * @param data_in {Object} Data to parse.
+     * @param json_in {Object} JSON to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _parseResults: function(schema, data_in, data_out) {
+    _parseResults: function(schema, json_in, data_out) {
         var results = [],
             path,
             error;
 
-        if(schema.resultsLocator) {
-            path = SchemaJSON.buildPath(schema.resultsLocator);
+        if(schema.resultListLocator) {
+            path = SchemaJSON.getPath(schema.resultListLocator);
             if(path) {
-                results = SchemaJSON.getLocationValue(path, data_in);
+                results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
-                    if(LANG.isArray(schema.resultsFields) && LANG.isArray(results)) {
-                        data_out = SchemaJSON._getFieldValues(schema.resultsFields, results, data_out);
+                    if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
+                        data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
                     }
                     else {
                         data_out.results = [];
@@ -165,7 +165,7 @@ SchemaJSON = {
             }
 
             if (error) {
-                Y.log("JSON data could not be parsed: " + Y.dump(data_in), "error", SchemaJSON.toString());
+                Y.log("JSON data could not be parsed: " + Y.dump(json_in), "error", SchemaJSON.toString());
                 data_out.error = error;
             }
             
@@ -178,13 +178,13 @@ SchemaJSON = {
      *
      * @method _getFieldValues
      * @param fields {Array} Fields to find.
-     * @param data_in {Array} Results data to parse.
+     * @param array_in {Array} Results to parse.
      * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Parsed data object.
      * @static
      * @protected
      */
-    _getFieldValues: function(fields, data_in, data_out) {
+    _getFieldValues: function(fields, array_in, data_out) {
         var results = [],
             len = fields.length,
             i, j,
@@ -198,7 +198,7 @@ SchemaJSON = {
             key = field.key || field; // Find the key
 
             // Validate and store locators for later
-            path = SchemaJSON.buildPath(key);
+            path = SchemaJSON.getPath(key);
             if (path) {
                 if (path.length === 1) {
                     simplePaths[simplePaths.length] = {key:key, path:path[0]};
@@ -217,11 +217,11 @@ SchemaJSON = {
             }
         }
 
-        // Traverse list of data_in, creating records of simple fields,
+        // Traverse list of array_in, creating records of simple fields,
         // complex fields, and applying parsers as necessary
-        for (i=data_in.length-1; i>=0; --i) {
+        for (i=array_in.length-1; i>=0; --i) {
             record = {};
-            result = data_in[i];
+            result = array_in[i];
             if(result) {
                 // Cycle through simpleLocators
                 for (j=simplePaths.length-1; j>=0; --j) {
@@ -257,20 +257,21 @@ SchemaJSON = {
      * Parses results data according to schema
      *
      * @method _parseMeta
-     * @param data_out {Object} Data to parse.
-     * @param data_in {Object} In-progress parsed data to update.
+     * @param metaFields {Object} Metafields definitions.
+     * @param json_in {Object} JSON to parse.
+     * @param data_out {Object} In-progress parsed data to update.
      * @return {Object} Schema-parsed meta data.
      * @static
      * @protected
      */
-    _parseMeta: function(metaFields, data_in, data_out) {
+    _parseMeta: function(metaFields, json_in, data_out) {
         if(LANG.isObject(metaFields)) {
             var key, path;
             for(key in metaFields) {
                 if (metaFields.hasOwnProperty(key)) {
-                    path = SchemaJSON.buildPath(metaFields[key]);
-                    if (path && data_in) {
-                        data_out.meta[key] = SchemaJSON.getLocationValue(path, data_in);
+                    path = SchemaJSON.getPath(metaFields[key]);
+                    if (path && json_in) {
+                        data_out.meta[key] = SchemaJSON.getLocationValue(path, json_in);
                     }
                 }
             }

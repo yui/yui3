@@ -932,9 +932,8 @@ YUI.add('dd-drag', function(Y) {
         * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
         */
         _prevEndFn: function(e) {
-            //TODO - We are in the wrong scope here..
             //Bug #1852577
-            e.host.get(DRAG_NODE).setXY(e.host.nodeXY);
+            this.get(DRAG_NODE).setXY(this.nodeXY);
         },
         /**
         * @private

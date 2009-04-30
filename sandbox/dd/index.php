@@ -403,12 +403,12 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             three: 'This is my data object'
         }
     });
-    /*
+    
     dd.on('drag:end', function(e) {
-        console.log('drag:end: ', e);
+        //console.log('drag:end: ', e);
         //e.preventDefault();
     });
-    */
+    
     //}).addHandle('h2');
     
     /*
