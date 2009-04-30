@@ -31,13 +31,17 @@ YUI.add('attribute', function(Y) {
          * @param o hash of attributes
          */
         add: function(name, o) {
-            Y.each(o, function(v, k) {
-                if (!this.data[k]) {
-                    this.data[k] = {};
-                }
+            var d = this.data,
+                key;
 
-                this.data[k][name] = v;
-            }, this);
+            for (key in o) {
+                if (o.hasOwnProperty(key)) {
+                    if (!d[key]) {
+                        d[key] = {};
+                    }
+                    d[key][name] = o[key];
+                }
+            }
         },
 
         /**
@@ -81,21 +85,19 @@ YUI.add('attribute', function(Y) {
          * all data.
          */
         get: function(name, key) {
-            var d = this.data,
-                o;
+            var d = this.data;
 
             if (key) {
                 return (d[key] && name in d[key]) ?  d[key][name] : undefined;
             } else {
+                var o;
                 Y.each(d, function(v, k) {
                     if (name in d[k]) {
                         o = o || {};
                         o[k] = v[name];
                     }
                 }, this);
-
                 return o;
-
             }
         }
     };
@@ -117,6 +119,8 @@ YUI.add('attribute', function(Y) {
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
+        PUBLISHED = "published",
+        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -149,6 +153,9 @@ YUI.add('attribute', function(Y) {
      */
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
+
+        this._ATTR_E_CFG = {queuable:false, defaultFn:this._defAttrChangeFn, silent:true};
+        this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
         this._conf = new Y.State();
@@ -379,36 +386,36 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
-            // TODO: Performance pass - prevent allowSet fallthrough
-            if (!initialSet && !force) {
-                if (conf.get(name, WRITE_ONCE)) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
-                    allowSet = false;
-                }
-                if (conf.get(name, READ_ONLY)) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
-                    allowSet = false;
-                }
-            }
-
-            if (!conf.get(name)) {
+            if (!this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
-                allowSet = false;
-            }
+            } else {
 
-            currVal = this.get(name);
+                if (!initialSet && !force) {
+                    if (conf.get(name, WRITE_ONCE)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
+                        allowSet = false;
+                    }
+                    if (conf.get(name, READ_ONLY)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
+                        allowSet = false;
+                    }
+                }
 
-            if (path) {
-               val = O.setValue(Y.clone(currVal), path, val);
+                if (allowSet) {
+                    currVal = this.get(name);
+                    if (path) {
+                       val = O.setValue(Y.clone(currVal), path, val);
 
-               if (val === undefined) {
-                   Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
-                   allowSet = false;
-               }
-            }
+                       if (val === undefined) {
+                           Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
+                           allowSet = false;
+                       }
+                    }
 
-            if (allowSet) {
-                this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                    if (allowSet) {
+                        this._fireAttrChange(name, currVal, val, strPath, opts);
+                    }
+                }
             }
 
             return this;
@@ -420,33 +427,32 @@ YUI.add('attribute', function(Y) {
          * 
          * @method _fireAttrChange
          * @private
-         * @param {String} type The event name
+         * @param {String} name The name of the attribute
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
-         * @param {String} attrName The name of the attribute
          * @param {String} strFullPath The full path of the property being changed, 
          * if this is a sub-attribute value being change
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttrChange : function(type, currVal, newVal, attrName, strFullPath, opts) {
-            type = type + CHANGE;
+        _fireAttrChange : function(name, currVal, newVal, strFullPath, opts) {
+            var eventName = name + CHANGE,
+                conf = this._conf,
+                facade;
 
-            // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
-
-            var eData = {
-                type: type,
-                prevVal: currVal,
-                newVal: newVal,
-                attrName: attrName,
-                subAttrName: strFullPath
-            };
-
-            if (opts) {
-                Y.mix(eData, opts);
+            if (!conf.get(name, PUBLISHED)) {
+                this.publish(eventName, this._ATTR_E_CFG);
+                conf.add(name, SET_PUBLISHED);
             }
 
-            this.fire(eData);
+            facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
+
+            facade.type = eventName;
+            facade.attrName = name;
+            facade.subAttrName = strFullPath;
+            facade.prevVal = currVal;
+            facade.newVal = newVal;
+
+            this.fire(facade);
         },
 
         /**
@@ -495,9 +501,7 @@ YUI.add('attribute', function(Y) {
                     storedVal[INIT_VALUE] = val;
                 }
                 conf.add(name, storedVal);
-
-                // Honor set normalization
-                e.newVal = conf.get(name, VALUE);
+                e.newVal = val;
             } else {
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
