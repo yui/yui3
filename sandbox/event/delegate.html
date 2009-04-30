@@ -54,6 +54,26 @@ YUI({
          
          2);
 
+    var handle4 = 
+
+        Y.on('delegate', 
+
+         function(e) {
+            Y.log(e.type + ": " + e.target.get('innerHTML') + ' SECOND -- ' + arguments[1]);
+         }, 
+         
+         '#ul1', 
+
+         'click', 
+          
+         'li', 
+
+         Y, 
+
+         'firstone', 
+         
+         2);
+
     var handle2 = 
 
         Y.on('delegate', 
