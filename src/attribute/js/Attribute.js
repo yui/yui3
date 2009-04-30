@@ -15,6 +15,8 @@
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
+        PUBLISHED = "published",
+        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -47,6 +49,9 @@
      */
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
+
+        this._ATTR_E_CFG = {queuable:false, defaultFn:this._defAttrChangeFn, silent:true};
+        this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
         this._conf = new Y.State();
@@ -279,8 +284,6 @@
 
             if (!this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
-                allowSet = false;
-
             } else {
 
                 if (!initialSet && !force) {
@@ -304,9 +307,9 @@
                            allowSet = false;
                        }
                     }
-        
+
                     if (allowSet) {
-                        this._fireAttrChange(name, currVal, val, name, strPath, opts);
+                        this._fireAttrChange(name, currVal, val, strPath, opts);
                     }
                 }
             }
@@ -320,33 +323,32 @@
          * 
          * @method _fireAttrChange
          * @private
-         * @param {String} type The event name
+         * @param {String} name The name of the attribute
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
-         * @param {String} attrName The name of the attribute
          * @param {String} strFullPath The full path of the property being changed, 
          * if this is a sub-attribute value being change
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttrChange : function(type, currVal, newVal, attrName, strFullPath, opts) {
-            type = type + CHANGE;
+        _fireAttrChange : function(name, currVal, newVal, strFullPath, opts) {
+            var eventName = name + CHANGE,
+                conf = this._conf,
+                facade;
 
-            // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttrChangeFn, silent:true});
-
-            var eData = {
-                type: type,
-                prevVal: currVal,
-                newVal: newVal,
-                attrName: attrName,
-                subAttrName: strFullPath
-            };
-
-            if (opts) {
-                Y.mix(eData, opts);
+            if (!conf.get(name, PUBLISHED)) {
+                this.publish(eventName, this._ATTR_E_CFG);
+                conf.add(name, SET_PUBLISHED);
             }
 
-            this.fire(eData);
+            facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
+
+            facade.type = eventName;
+            facade.attrName = name;
+            facade.subAttrName = strFullPath;
+            facade.prevVal = currVal;
+            facade.newVal = newVal;
+
+            this.fire(facade);
         },
 
         /**
@@ -395,9 +397,7 @@
                     storedVal[INIT_VALUE] = val;
                 }
                 conf.add(name, storedVal);
-
-                // Honor set normalization
-                e.newVal = conf.get(name, VALUE);
+                e.newVal = val;
             } else {
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
