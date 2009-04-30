@@ -18,8 +18,25 @@
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     AFTER_PREFIX = '~AFTER~',
-    typeCache = {},
-    parseCache = {},
+
+    __getType = function(pre, type) {
+
+        // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
+
+        var t = type;
+
+        if (!L.isString(type)) {
+            return type;
+        } 
+        
+        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
+            t = pre + PREFIX_DELIMITER + t;
+        }
+
+        // Y.log("type: " + t, 'info', 'event');
+
+        return t;
+    },
 
     /**
      * If the instance has a prefix attribute and the
@@ -27,53 +44,17 @@ var L = Y.Lang,
      * applied to the supplied type.
      * @method _getType
      */
-    _getType = function(instance, type) {
-        var t = type, 
-            pre = instance._yuievt.config.prefix,
-            key = pre + t;
+    _getType = Y.cached(__getType),
 
-        if (!L.isString(type)) {
-            return type;
-        } 
-        
-        else if (typeCache[key]) {
-            return typeCache[key];
-        }
-
-        // Y.log("pre: " + pre, 'info', 'event');
-
-        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
-            t = pre + PREFIX_DELIMITER + t;
-        }
-
-        // Y.log("type: " + t, 'info', 'event');
-
-        typeCache[key] = t;
-
-        return t;
-    },
-
-    /**
-     * Returns an array with the detach key (if provided),
-     * and the prefixed event name from _getType
-     * Y.on('detachkey, menu:click', fn)
-     * @method _parseType
-     * @private
-     */
-    _parseType = function(instance, type) {
+    __parseType = function(pre, type) {
 
         var t = type, 
-            key = instance._yuievt.config.prefix + t,
             parts, detachkey, after, i;
 
         if (!L.isString(type)) {
             return type;
         } 
         
-        else if (parseCache[key]) {
-            return parseCache[key];
-        }
-
         i = t.indexOf(AFTER_PREFIX);
 
         if (i > -1) {
@@ -89,12 +70,21 @@ var L = Y.Lang,
             t = parts[1];
         }
 
-        t = _getType(instance, t);
+        t = _getType(pre, t);
+        t = _getType(pre, t);
+        t = _getType(pre, t);
 
-        parseCache[key] = [detachkey, t, after];
-
-        return parseCache[key];
+        return [detachkey, t, after];
     },
+
+    /**
+     * Returns an array with the detach key (if provided),
+     * and the prefixed event name from _getType
+     * Y.on('detachkey, menu:click', fn)
+     * @method _parseType
+     * @private
+     */
+    _parseType = Y.cached(__parseType),
 
     /**
      * An event target can fire events and be targeted by events.
@@ -149,8 +139,9 @@ ET.prototype = {
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
+        // this._yuievt.config.prefix
 
-        var parts = _parseType(this, type), f, c, args, ret, ce,
+        var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
             detachkey, handle, store = Y.Env.evt.handles,
             key, after, adapt;
 
@@ -257,7 +248,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this, type), 
+        var parts = _parseType(this._yuievt.config.prefix, type), 
         detachkey = L.isArray(parts) ? parts[0] : null, key,
         details, handle, adapt,
 
@@ -330,7 +321,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(this, type);
+        type = _getType(this._yuievt.config.prefix, type);
         return this.detach(type);
     },
 
@@ -403,8 +394,9 @@ ET.prototype = {
      *
      */
     publish: function(type, opts) {
+        // this._yuievt.config.prefix
 
-        type = _getType(this, type);
+        type = _getType(this._yuievt.config.prefix, type);
 
         var events, ce, ret, o = opts || {};
 
@@ -498,7 +490,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(this, t);
+        t = _getType(this._yuievt.config.prefix, t);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -536,7 +528,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(this, type);
+        type = _getType(this._yuievt.config.prefix, type);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },

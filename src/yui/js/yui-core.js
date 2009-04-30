@@ -157,4 +157,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+/**
+ * Returns a wrapper for a function that caches the
+ * return value, keyed off of the combined argument
+ * list.
+ * @function cached
+ * @param source {function} the function to memoize
+ * @param cache An option cache seed hash
+ */
+Y.cached = function(source, cache){
+
+    cache = cache || {};
+
+    var wrapper = function() {
+
+        var key = Y.Array(arguments, 0, true).join(',');
+
+        if (!(key in cache)) {
+            // console.log('cached adding: ' + key);
+            cache[key] = source.apply(source, arguments);
+        }
+
+        return cache[key];
+    };
+
+    return wrapper;
+};
+
 })();
