@@ -979,9 +979,8 @@
 <span class="c">        * @description Handler for preventing the drag:end event. It will reset the node back to it&#39;s start position</span>
 <span class="c">        */</span>
         <span class="nx">_prevEndFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">//TODO - We are in the wrong scope here..</span>
-<span class="c"></span>            <span class="c">//Bug #1852577</span>
-<span class="c"></span>            <span class="nx">e</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">);</span>
+            <span class="c">//Bug #1852577</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">setXY</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
@@ -1155,6 +1154,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>

@@ -71,8 +71,6 @@ var L = Y.Lang,
         }
 
         t = _getType(pre, t);
-        t = _getType(pre, t);
-        t = _getType(pre, t);
 
         return [detachkey, t, after];
     },
@@ -431,8 +429,6 @@ ET.prototype = {
             if (o.onSubscribeCallback) {
                 ce.subscribeEvent.on(o.onSubscribeCallback);
             }
-
-
         }
 
         // make sure we turn the broadcast flag off if this

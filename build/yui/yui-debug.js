@@ -1086,6 +1086,33 @@ A.numericSort = function(a, b) {
     return (a - b); 
 };
 
+/**
+ * Executes the supplied function on each item in the array.
+ * Returning true from the processing function will stop the 
+ * processing of the remaining
+ * items.
+ * @method Array.some
+ * @param a {Array} the array to iterate
+ * @param f {Function} the function to execute on each item
+ * @param o Optional context object
+ * @static
+ * @return {boolean} true if the function returns true on
+ * any of the items in the array
+ */
+ A.some = (Native.some) ?
+    function (a, f, o) { 
+        return Native.some.call(a, f, o);
+    } :
+    function (a, f, o) {
+        var l = a.length, i;
+        for (i=0; i<l; i=i+1) {
+            if (f.call(o, a[i], i, a)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
 })();
 (function() {
 
@@ -1246,16 +1273,23 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     return r;
 };
 
+/**
+ * Returns a wrapper for a function which caches the
+ * return value of that function, keyed off of the combined 
+ * argument values.
+ * @function cached
+ * @param source {function} the function to memoize
+ * @param cache an optional cache seed
+ * @return {Function} the wrapped function
+ */
 Y.cached = function(source, cache){
-
     cache = cache || {};
 
     var wrapper = function() {
-
-        var key = Y.Array(arguments, 0, true).join(',');
+        var a = arguments, 
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
 
         if (!(key in cache)) {
-            // console.log('cached adding: ' + key);
             cache[key] = source.apply(source, arguments);
         }
 
@@ -2928,7 +2962,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['collection', 'substitute', NODE, 'json']                                                                                                                     
+            requires: ['substitute', NODE, 'json']                                                                                                                     
         }  
 
     }

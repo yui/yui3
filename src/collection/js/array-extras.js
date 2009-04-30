@@ -7,32 +7,11 @@
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array
+ * Adds the following array utilities to the YUI instance
+ * (Y.Array).  This is in addition to the methods provided
+ * in the core.
+ * @class YUI~array~extras
  */
- A.some = (Native.some) ?
-    function (a, f, o) { 
-        return Native.some.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length, i;
-        for (i=0; i<l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
 
 /**
  * Returns the index of the last item in the array

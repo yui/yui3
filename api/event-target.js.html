@@ -68,23 +68,16 @@
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="o">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the instance has a prefix attribute and the</span>
-<span class="c">     * event type is not prefixed, the instance prefix is</span>
-<span class="c">     * applied to the supplied type.</span>
-<span class="c">     * @method _getType</span>
-<span class="c">     */</span>
-    <span class="nx">_getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">__getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c">// console.log(&#39;__getType: &#39; + pre + &#39;, &#39; + type, &#39;info&#39;, &#39;event&#39;);</span>
+<span class="c"></span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
-            <span class="nx">pre</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">;</span>
-
-        <span class="c">// Y.log(&quot;pre: &quot; + pre, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>
+        <span class="o">}</span> 
+        
         <span class="k">if</span> <span class="o">(</span><span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PREFIX_DELIMITER</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">t</span><span class="o">;</span>
         <span class="o">}</span>
@@ -95,19 +88,23 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Returns an array with the detach key (if provided),</span>
-<span class="c">     * and the prefixed event name from _getType</span>
-<span class="c">     * Y.on(&#39;detachkey, menu:click&#39;, fn)</span>
-<span class="c">     * @method _parseType</span>
-<span class="c">     * @private</span>
+<span class="c">     * If the instance has a prefix attribute and the</span>
+<span class="c">     * event type is not prefixed, the instance prefix is</span>
+<span class="c">     * applied to the supplied type.</span>
+<span class="c">     * @method _getType</span>
 <span class="c">     */</span>
-    <span class="nx">_parseType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="nx">__getType</span><span class="o">),</span>
+
+    <span class="nx">__parseType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
+            <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">AFTER_PREFIX</span><span class="o">);</span>
+        <span class="o">}</span> 
+        
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">AFTER_PREFIX</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">after</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -122,10 +119,19 @@
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
         <span class="o">}</span>
 
-        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="o">[</span><span class="nx">detachkey</span><span class="o">,</span> <span class="nx">t</span><span class="o">,</span> <span class="nx">after</span><span class="o">];</span>
     <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns an array with the detach key (if provided),</span>
+<span class="c">     * and the prefixed event name from _getType</span>
+<span class="c">     * Y.on(&#39;detachkey, menu:click&#39;, fn)</span>
+<span class="c">     * @method _parseType</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="nx">__parseType</span><span class="o">),</span>
 
     <span class="c">/**</span>
 <span class="c">     * An event target can fire events and be targeted by events.</span>
@@ -144,6 +150,8 @@
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
+
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
 
             <span class="nx">events</span><span class="o">:</span> <span class="o">{},</span>
 
@@ -178,8 +186,9 @@
 <span class="c">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="c">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
+        <span class="c">// this._yuievt.config.prefix</span>
+<span class="c"></span>
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
             <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span>
             <span class="nx">key</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">;</span>
 
@@ -286,7 +295,7 @@
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> 
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> 
         <span class="nx">detachkey</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span>
         <span class="nx">details</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span>
 
@@ -359,7 +368,7 @@
 <span class="c">     * @param type {string}   The type, or name of the event</span>
 <span class="c">     */</span>
     <span class="nx">detachAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -432,8 +441,9 @@
 <span class="c">     *</span>
 <span class="c">     */</span>
     <span class="nx">publish</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="c">// this._yuievt.config.prefix</span>
+<span class="c"></span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -468,8 +478,6 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">onSubscribeCallback</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribeEvent</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">onSubscribeCallback</span><span class="o">);</span>
             <span class="o">}</span>
-
-
         <span class="o">}</span>
 
         <span class="c">// make sure we turn the broadcast flag off if this</span>
@@ -527,7 +535,7 @@
             <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">),</span>
             <span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
 
-        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
         <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
 
         <span class="c">// this event has not been published or subscribed to</span>
@@ -565,7 +573,7 @@
 <span class="c">     * @return {Event.Custom} the custom event or null</span>
 <span class="c">     */</span>
     <span class="nx">getEvent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span>
         <span class="k">return</span> <span class="o">(</span><span class="nx">e</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">?</span> <span class="nx">e</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>
@@ -733,6 +741,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>

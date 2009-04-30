@@ -2045,7 +2045,7 @@ var PARENT_NODE = 'parentNode',
         _children: function(node) {
             var ret = node.children;
 
-            if (!ret) {
+            if (!ret && node[TAG_NAME]) { // only HTMLElements have children
                 ret = [];
                 for (var i = 0, n; n = node.childNodes[i++];) {
                     if (n.tagName) {
@@ -2056,7 +2056,7 @@ var PARENT_NODE = 'parentNode',
                 node.children = ret;
             }
 
-            return ret;
+            return ret || [];
         },
 
         _regexCache: {},

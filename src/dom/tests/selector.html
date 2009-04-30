@@ -258,6 +258,11 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), '*'), 'universal tag');
             },
 
+            testIframe: function() {
+                var frameDoc = Y.DOM.byId('test-frame').contentWindow.document;
+                Assert.areEqual('iframe foo', $('#demo li', frameDoc, true).innerHTML, "Y.get('#demo li', frameDoc, true)");
+            },
+
 
             // to support:
             // $('> p', myNode) === ('#my-node-id > p');
@@ -346,5 +351,6 @@ onload = function() {
     <div class="Bar" id="class-bar"></div>
     <div id="contains-special">contains "' & ]</div>
     <div id="test-rel-div" rel="foo2"></div>
+    <iframe src="test-frame.html" id="test-frame"></iframe>
 </body>
 </html>
