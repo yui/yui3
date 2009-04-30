@@ -207,26 +207,23 @@
 <span class="o">};</span>
 
 <span class="c">/**</span>
-<span class="c"> * Returns a wrapper for a function that caches the</span>
-<span class="c"> * return value, keyed off of the combined argument</span>
-<span class="c"> * list.</span>
+<span class="c"> * Returns a wrapper for a function which caches the</span>
+<span class="c"> * return value of that function, keyed off of the combined </span>
+<span class="c"> * argument values.</span>
 <span class="c"> * @function cached</span>
 <span class="c"> * @param source {function} the function to memoize</span>
-<span class="c"> * @param cache An option cache seed hash</span>
+<span class="c"> * @param cache an optional cache seed</span>
+<span class="c"> * @return {Function} the wrapped function</span>
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">cache</span><span class="o">){</span>
-
     <span class="nx">cache</span> <span class="o">=</span> <span class="nx">cache</span> <span class="o">||</span> <span class="o">{};</span>
 
     <span class="k">var</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-
-        <span class="k">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">);</span>
-
+        <span class="k">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;`&#39;</span><span class="o">);</span>
         <span class="k">if</span> <span class="o">(!(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">cache</span><span class="o">))</span> <span class="o">{</span>
             <span class="c">// console.log(&#39;cached adding: &#39; + key);</span>
 <span class="c"></span>            <span class="nx">cache</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">source</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
-
         <span class="k">return</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
     <span class="o">};</span>
 
