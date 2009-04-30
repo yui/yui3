@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: plugin   (YUI Library)</title>
+	<title>API: stylesheet   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>plugin&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_plugin.html" title="plugin">plugin</a>
+            &gt; <a href="./module_stylesheet.html" title="stylesheet">stylesheet</a>
                 
                 
         <form onsubmit="return false">
@@ -44,13 +44,14 @@
             </form>
 
                    
-                    <h3>Module: plugin
+                    <h3>Module: stylesheet
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Provides the base Plugin class for building widget plugins.
+                        The StyleSheet component is a utility for managing css rules at the
+stylesheet level
                     </div>
 
 
@@ -60,11 +61,11 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Base": [{"access": "", "deprecated": false, "name": "name"}]}, "methods": {"Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "Plugin provides a base class for all Plugin classes.", "guessedname": "Plugin", "name": "Plugin"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Create an instance of StyleSheet to encapsulate a css stylesheet.\nThe constructor can be called using function or constructor syntax.\n<pre><code>var sheet = Y.StyleSheet(..);<\/pre><\/code>\nor\n<pre><code>var sheet = new Y.StyleSheet(..);<\/pre><\/code>\nThe first parameter passed can be any of the following things:\n<ul>\n<li>The desired string name to register a new empty sheet<\/li>\n<li>The string name of an existing StyleSheet instance<\/li>\n<li>The unique guid generated for an existing StyleSheet instance<\/li>\n<li>The id of an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>The node reference for an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>The Y.Node instance wrapping an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>A chunk of css text to create a new stylesheet from<\/li>\n<\/ul>\n<p>If a string is passed, StyleSheet will first look in its static name\nregistry for an existing sheet, then in the DOM for an element with that id.\nIf neither are found and the string contains the { character, it will be\nused as a the initial cssText for a new StyleSheet.  Otherwise, a new empty\nStyleSheet is created, assigned the string value as a name, and registered\nstatically by that name.<\/p>\n<p>The optional second parameter is a string name to register the sheet as.\nThis param is largely useful when providing a node id\/ref or chunk of css\ntext to create a populated instance.<\/p>", "guessedname": "StyleSheet", "name": "StyleSheet"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="Plugin.html" title="Plugin" id="class_0">Plugin</a></li>
+                                    <li><a href="StyleSheet.html" title="StyleSheet" id="class_0">StyleSheet</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -99,10 +100,10 @@
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
-                                <li class="selected"><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
-                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class="selected"><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
@@ -117,14 +118,14 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.html" title="Plugin">Plugin</a></li>
+                                <li class=""><a href="StyleSheet.html" title="StyleSheet">StyleSheet</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="plugin.js.html" title="plugin.js">plugin.js</a></li>
+                                <li class=""><a href="stylesheet.js.html" title="stylesheet.js">stylesheet.js</a></li>
                         </ul>
                     </div>
 
@@ -141,7 +142,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin", "name": "destructor", "url": "Plugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin", "name": "doAfter", "url": "Plugin.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin", "name": "doBefore", "url": "Plugin.html#method_doBefore", "type": "method"}, {"access": "", "host": "Plugin", "name": "host", "url": "Plugin.html#config_host", "type": "config"}, {"access": "", "host": "Plugin", "name": "hostChange", "url": "Plugin.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin", "name": "initializer", "url": "Plugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin", "name": "Plugin.NAME", "url": "Plugin.html#property_Plugin.NAME", "type": "property"}, {"access": "", "host": "Plugin", "name": "Plugin.NS", "url": "Plugin.html#property_Plugin.NS", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "StyleSheet", "name": "disable", "url": "StyleSheet.html#method_disable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "enable", "url": "StyleSheet.html#method_enable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getCssText", "url": "StyleSheet.html#method_getCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getId", "url": "StyleSheet.html#method_getId", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "isEnabled", "url": "StyleSheet.html#method_isEnabled", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "set", "url": "StyleSheet.html#method_set", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.isValidSelector", "url": "StyleSheet.html#method_StyleSheet.isValidSelector", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.register", "url": "StyleSheet.html#method_StyleSheet.register", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.toCssText", "url": "StyleSheet.html#method_StyleSheet.toCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "unset", "url": "StyleSheet.html#method_unset", "type": "method"}];
 </script>
 </body>
 </html>
