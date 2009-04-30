@@ -6,7 +6,12 @@
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
-
+/**
+ * Adds the following array utilities to the YUI instance
+ * (Y.Array).  This is in addition to the methods provided
+ * in the core.
+ * @class YUI~array~extras
+ */
 
 /**
  * Returns the index of the last item in the array
