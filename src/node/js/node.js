@@ -78,7 +78,9 @@ Node.DOM_EVENTS = {
     'submit': true,
     'change': true,
     'error': true,
-    'load': true
+    'load': true,
+    'mouseenter': true,
+    'mouseleave': true
 };
 
 Node._instances = {};
@@ -96,7 +98,7 @@ Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
             node = g_nodes[node[UID]];
-        } else if (!node[NODE_NAME] || !node.alert) { // must already be a DOMNode 
+        } else if (!node[NODE_NAME] || Y.DOM.isWindow(node)) { // must already be a DOMNode 
             node = null;
         }
     }
@@ -104,22 +106,18 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    if (val) { // only truthy values are risky
+    var isWindow = false;
+    if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
-            if (    NODE_TYPE in val || // dom node
-                    val.item || // dom collection or Node instance
-                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document ) // window TODO: restrict?
-                { 
-                if (node && g_restrict[node[UID]] && !node.contains(val)) {
+            if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
+                if (g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
-                    if (val[NODE_TYPE] || val.document) { // node or window
-                        val = Node.get(val);
-                    } else { // assume nodeList
-                        val = Y.all(val);
-                    }
+                    val = Node.get(val);
                 }
+            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                    (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
+                val = Y.all(val);
             } else {
                 depth = (depth === undefined) ? 4 : depth;
                 if (depth > 0) {
@@ -129,7 +127,6 @@ Node.scrubVal = function(val, node, depth) {
                         }
                     }
                 }
-                
             }
         }
     } else if (val === undefined) {
