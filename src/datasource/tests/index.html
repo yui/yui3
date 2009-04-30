@@ -261,7 +261,7 @@
         var testJSONSchema = new Y.Test.Case({
             name: "DataSource.XHR JSONSchema Tests",
 
-            testXHRPlug: function() {
+            testJSONSchemaPlug: function() {
                 var ds = new Y.DataSource.XHR({
                     source: "./php/ysearch_json_madonna.php"
                 });
@@ -295,7 +295,47 @@
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
+        
+        var testXMLSchema = new Y.Test.Case({
+            name: "DataSource.XHR XMLSchema Tests",
 
+            testXMLSchemaPlug: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "./php/ysearch_xml_madonna.php"
+                });
+                ds.plug({fn: Y.plugin.DataSourceXMLSchema, cfg: {
+                    schema: {
+                        resultListLocator: "result",
+                        resultFields: [{key:"title", locator:"*[local-name() ='title']"}]
+                        //resultListLocator: "result",
+                        //resultFields: ["title"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "Expected results array.");
+                        ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
+                        ASSERT.isString(e.response.results[0].title, "Expected title.")
+                    })]
+                });
+
+                ds.sendRequest(null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    },
+                    scope: this
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            }
+        });
+        
         var testCaching = new Y.Test.Case({
             name: "DataSource Caching Tests",
 
@@ -437,6 +477,7 @@
         Y.Test.Runner.add(testJSONSchema);
         Y.Test.Runner.add(testCaching);
         Y.Test.Runner.add(testPolling);
+        Y.Test.Runner.add(testXMLSchema);
         Y.Test.Runner.run();
     });
 })();
