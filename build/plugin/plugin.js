@@ -139,7 +139,7 @@ YUI.add('plugin', function(Y) {
             }
         });
 
-        Y.Plugin = Plugin;
+        Y.namespace("Plugin").Base = Plugin;
 
 
 
