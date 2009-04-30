@@ -303,16 +303,13 @@ Y.mix(Node.prototype, {
     },
 
     _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this[UID]],
-            topAttr = attr.split('.')[0]; // support foo.bar
+        var domNode = g_nodes[this[UID]];
 
-        if (domNode && domNode[topAttr] !== undefined) {
-            this.addAttr(attr, { // attr or topAttr?
-/*
+        if (domNode && domNode[attr] !== undefined) {
+            this.addAttr(attr, {
                 getter: function() {
                     return Node.DEFAULT_GETTER.call(this, attr);
                 },
-*/
 
                 setter: function(val) {
                     return Node.DEFAULT_SETTER.call(this, attr, val);
@@ -351,10 +348,12 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        //if (!this.attrAdded(attr)) {
-        if (!this._conf.data.getter || !this._conf.data.getter[attr]) {
-            //this._addAttr(attr);
-            return Node.DEFAULT_GETTER.call(this, attr);
+        if (!this.attrAdded(attr)) {
+            if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
+                this._addDOMAttr(attr);
+            } else {
+                return Node.DEFAULT_GETTER.apply(this, arguments);
+            }
         }
 
         return SuperConstrProto.get.apply(this, arguments);

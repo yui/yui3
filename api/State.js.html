@@ -78,13 +78,17 @@
 <span class="c">         * @param o hash of attributes</span>
 <span class="c">         */</span>
         <span class="nx">add</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
-                <span class="o">}</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
+                <span class="nx">key</span><span class="o">;</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">[</span><span class="nx">k</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
-            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">key</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
+                    <span class="o">}</span>
+                    <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -128,21 +132,19 @@
 <span class="c">         * all data.</span>
 <span class="c">         */</span>
         <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-                <span class="nx">o</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">?</span>  <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">o</span><span class="o">;</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">d</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
                         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
                         <span class="nx">o</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
                     <span class="o">}</span>
                 <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
-
                 <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -163,7 +165,6 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>

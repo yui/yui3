@@ -1,7 +1,7 @@
 /**
- * The Date.Locale class is a container and base class for all
- * localised date strings used by Y.DataType.Date. It is used
- * internally, but may be extended to provide new date localisations.
+ * The Date.Locale class is a container for all localised date strings
+ * used by Y.DataType.Date. It is used internally, but may be extended
+ * to provide new date localisations.
  *
  * To create your own Locale, follow these steps:
  * <ol>

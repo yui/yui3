@@ -178,8 +178,8 @@ YUI.add('dd-ddm-base', function(Y) {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
-                this.fire('ddm:end');
                 this._endDrag();
+                this.fire('ddm:end');
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
@@ -617,7 +617,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
-
+            
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
@@ -1720,9 +1720,8 @@ YUI.add('dd-drag', function(Y) {
         * @description Handler for preventing the drag:end event. It will reset the node back to it's start position
         */
         _prevEndFn: function(e) {
-            //TODO - We are in the wrong scope here..
             //Bug #1852577
-            e.host.get(DRAG_NODE).setXY(e.host.nodeXY);
+            this.get(DRAG_NODE).setXY(this.nodeXY);
         },
         /**
         * @private
@@ -3370,7 +3369,7 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
-        * @method _handleOut
+        * @method _handleOutEvent
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {

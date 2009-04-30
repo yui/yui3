@@ -294,6 +294,10 @@
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">signature</span> <span class="o">=</span> <span class="nx">YUI3_SIGNATURE</span><span class="o">;</span>
 
+    <span class="k">this</span><span class="o">.</span><span class="nx">hasSubscribers</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+    <span class="k">this</span><span class="o">.</span><span class="nx">hasAfters</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
     <span class="c">/**</span>
 <span class="c">     * If set to true, the custom event will deliver an EventFacade object</span>
 <span class="c">     * that is similar to a DOM event object.</span>
@@ -375,8 +379,10 @@
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">when</span> <span class="o">==</span> <span class="nx">AFTER</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">afters</span><span class="o">[</span><span class="nx">s</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">hasAfters</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">[</span><span class="nx">s</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">hasSubscribers</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventHandle</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
@@ -590,7 +596,11 @@
             <span class="nx">subs</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">queue</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">hasSub</span><span class="o">,</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">events</span><span class="o">;</span>
 
-
+        <span class="c">// @TODO find a better way to short circuit this.  </span>
+<span class="c"></span>        <span class="c">// if (!this.broadcast &amp;&amp; !this.defaultFn &amp;&amp; !this.hasSubscribers &amp;&amp; !this.hasAfters) {</span>
+<span class="c"></span>        <span class="c">//     return true;</span>
+<span class="c"></span>        <span class="c">// }</span>
+<span class="c"></span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="c">// var b = this.bubbles, h = this.host;</span>
@@ -626,15 +636,12 @@
             <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">;</span>
         <span class="o">}</span>
 
-
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">fired</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;fireOnce event: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; already fired&#39;</span><span class="o">);</span>
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
-            <span class="c">// var subs = this.subscribers.slice(), len=subs.length,</span>
-<span class="c"></span>            <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">);</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
@@ -643,7 +650,7 @@
 
             <span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">({</span>
                 <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span>
+                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span>
             <span class="o">});</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">events</span><span class="o">;</span>
@@ -688,24 +695,28 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">subs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">hasSubscribers</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">);</span>
 
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">hasSub</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">logging</span> <span class="o">||</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">));</span>
-                        <span class="nx">hasSub</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">subs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
-                    <span class="c">// stopImmediatePropagation</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">==</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="o">}</span>
+                        <span class="k">if</span> <span class="o">(!</span><span class="nx">hasSub</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">logging</span> <span class="o">||</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">));</span>
+                            <span class="nx">hasSub</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span>
 
-                    <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_notify</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ef</span><span class="o">);</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
+                        <span class="c">// stopImmediatePropagation</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">==</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="o">}</span>
+
+                        <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_notify</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ef</span><span class="o">);</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
+                            <span class="o">}</span>
                         <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -732,16 +743,22 @@
                 <span class="k">this</span><span class="o">.</span><span class="nx">defaultFn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="c">// broadcast listeners are fired as discreet events on the</span>
+<span class="c"></span>            <span class="c">// YUI instance and potentially the YUI global.</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                <span class="o">}</span>
+
                 <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">==</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="c">// process after listeners.  If the default behavior was</span>
 <span class="c"></span>            <span class="c">// prevented, the after events don&#39;t fire.</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&lt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">hasAfters</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&lt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">afters</span><span class="o">);</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">subs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
@@ -1052,7 +1069,6 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class="selected"><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
