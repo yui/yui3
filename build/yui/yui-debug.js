@@ -1259,7 +1259,8 @@ Y.cached = function(source, cache){
     cache = cache || {};
 
     var wrapper = function() {
-        var key = Y.Array(arguments, 0, true).join('`');
+        var a = arguments, 
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
         if (!(key in cache)) {
             // console.log('cached adding: ' + key);
             cache[key] = source.apply(source, arguments);
