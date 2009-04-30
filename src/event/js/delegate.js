@@ -4,20 +4,21 @@ var delegates = {},
 
     worker = function(delegateKey, e) {
 
-        var target = e.target, passed, spec, tests = delegates[delegateKey], ename;
+        var target = e.target, 
+            tests  = delegates[delegateKey], 
+            passed, spec, ename;
 
         for (spec in tests) {
 
             if (tests.hasOwnProperty(spec)) {
             
                 passed = false;
-                ename = tests[spec];
+                ename  = tests[spec];
 
                 // @TODO we need Node.some 
                 e.currentTarget.queryAll(spec).each(function (v, k) {
 
                     if ((!passed) && (v.compareTo(target) || v.contains(target))) {
-
                         e.target = v;
                         Y.fire(ename, e);
 
@@ -47,10 +48,16 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec, o) {
 
+        // identifier to target the container
         var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+                
+            // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + spec,
-            a     = Y.Array(arguments, 0, true), 
-            delegateKey = delegateType + guid;
+
+            // the key to the listener for the event type and container
+            delegateKey = delegateType + guid,
+
+            a = Y.Array(arguments, 0, true);
 
         if (!(delegateKey in delegates)) {
 

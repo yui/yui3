@@ -467,7 +467,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['collection', 'substitute', NODE, 'json']                                                                                                                     
+            requires: ['substitute', NODE, 'json']                                                                                                                     
         }  
 
     }

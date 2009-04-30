@@ -8,32 +8,6 @@ YUI.add('collection', function(Y) {
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
-/**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array
- */
- A.some = (Native.some) ?
-    function (a, f, o) { 
-        return Native.some.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length, i;
-        for (i=0; i<l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
 
 
 /**

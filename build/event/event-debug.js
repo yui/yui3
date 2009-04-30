@@ -1557,10 +1557,16 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec, o) {
 
+        // identifier to target the container
         var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+                
+            // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + spec,
-            a     = Y.Array(arguments, 0, true), 
-            delegateKey = delegateType + guid;
+
+            // the key to the listener for the event type and container
+            delegateKey = delegateType + guid,
+
+            a = Y.Array(arguments, 0, true);
 
         if (!(delegateKey in delegates)) {
 
