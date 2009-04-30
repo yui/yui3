@@ -178,4 +178,4 @@ PluginHost.prototype = {
     }
 };
 
-Y.PluginHost = PluginHost;
+Y.namespace("Plugin").Host = PluginHost;

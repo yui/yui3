@@ -142,7 +142,7 @@
             });
 
             // TODO: Look at why this needs to be done after publish.
-            Y.PluginHost.call(this);
+            Y.Plugin.Host.call(this);
 
             this.fire(INIT, {cfg: config});
             return this;
@@ -407,7 +407,7 @@
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.PluginHost, false, null, 1);
+    Y.mix(Base, Y.Plugin.Host, false, null, 1);
 
     // Fix constructor
     Base.prototype.constructor = Base;
