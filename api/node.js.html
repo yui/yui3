@@ -352,16 +352,13 @@
     <span class="o">},</span>
 
     <span class="nx">_addDOMAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span>
-            <span class="nx">topAttr</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span> <span class="c">// support foo.bar</span>
-<span class="c"></span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">domNode</span> <span class="o">&amp;&amp;</span> <span class="nx">domNode</span><span class="o">[</span><span class="nx">topAttr</span><span class="o">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">addAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="o">{</span> <span class="c">// attr or topAttr?</span>
-<span class="c">/*</span>
-<span class="c">                getter: function() {</span>
-<span class="c">                    return Node.DEFAULT_GETTER.call(this, attr);</span>
-<span class="c">                },</span>
-<span class="c">*/</span>
+        <span class="k">var</span> <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">domNode</span> <span class="o">&amp;&amp;</span> <span class="nx">domNode</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">addAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="o">{</span>
+                <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">);</span>
+                <span class="o">},</span>
 
                 <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
@@ -400,10 +397,12 @@
     <span class="o">},</span>
 
     <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">//if (!this.attrAdded(attr)) {</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">getter</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">getter</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
-            <span class="c">//this._addAttr(attr);</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// handling chained properties at Node level</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_addDOMAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">SuperConstrProto</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
