@@ -34,18 +34,12 @@
         
             testCached: function() {
 
-                var r1 = "", r2 = "";
+                var r1 = "", r2 = "", r3 = "";
 
                 var f1 = function(a) {
                     r1 += a;
                 };
-
-                var f2 = function(a, b) {
-                    r2 += (a + b);
-                };
-
                 var c1 = Y.cached(f1);
-                var c2 = Y.cached(f2);
 
                 c1('a');
                 c1('b');
@@ -56,6 +50,11 @@
 
                 Y.Assert.areEqual('ab', r1);
 
+                var f2 = function(a, b) {
+                    r2 += (a + b);
+                };
+                var c2 = Y.cached(f2);
+
                 c2('a', 'b');
                 c2('c', 'd');
                 c2('a', 'b');
@@ -63,7 +62,27 @@
                 c2('a', 'b');
                 c2('c', 'd');
 
-                Y.Assert.areEqual('abcd', r2);
+
+                var o = new Y.EventTarget();
+                o.foo = 1;
+
+                var f3 = function(a, b) {
+                    Y.Assert.areEqual(1, this.foo);
+                    r3 += a;
+                };
+
+                var c3 = Y.cached(f3, o, {
+                    a: 'z'
+                });
+
+                c3('a');
+                c3('b');
+                c3('a');
+                c3('b');
+                c3('a');
+                c3('b');
+
+                Y.Assert.areEqual('b', r3);
             }
         });
         
