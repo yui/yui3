@@ -53,7 +53,7 @@
 <span class="c"> */</span>
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
+    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
 
 <span class="c">// @TODO: this needs to be created at build time from module metadata</span>
 <span class="c"></span>
@@ -242,8 +242,8 @@
 
         <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;) init &#39;</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="c">// this.log(this.id + &#39;) init &#39;);</span>
+<span class="c"></span>    <span class="o">},</span>
     
     <span class="c">/**</span>
 <span class="c">     * Finishes the instance setup. Attaches whatever modules were defined</span>
@@ -360,8 +360,8 @@
                     <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
                 <span class="o">}</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
-
+                <span class="c">// this.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;YUI&#39;);</span>
+<span class="c"></span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -651,18 +651,17 @@
 <span class="c">// provides global metadata, so env needs to be configured.</span>
 <span class="c">// @TODO review</span>
 <span class="c"></span>
-    <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span> 
-    <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+    <span class="nx">p</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">// inheritance utilities are not available yet</span>
 <span class="c"></span>    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="nx">YUI</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
     <span class="c">// set up the environment</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
+<span class="c"></span>    <span class="nx">YUI</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
 
 
 <span class="o">})();</span>
