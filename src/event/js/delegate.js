@@ -38,9 +38,6 @@ var delegates = {},
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @param o optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
