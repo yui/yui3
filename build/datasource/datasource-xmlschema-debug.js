@@ -1,20 +1,22 @@
+YUI.add('datasource-xmlschema', function(Y) {
+
 /**
- * Extends DataSource with schema-parsing on JSON data.
+ * Extends DataSource with schema-parsing on XML data.
  *
  * @module datasource
- * @submodule datasource-jsonschema
+ * @submodule datasource-xmlschema
  */
 
 /**
  * Adds schema-parsing to the YUI DataSource utility.
- * @class DataSourceJSONSchema
+ * @class DataSourceXMLSchema
  * @extends Plugin
  */    
-var DataSourceJSONSchema = function() {
-    DataSourceJSONSchema.superclass.constructor.apply(this, arguments);
+var DataSourceXMLSchema = function() {
+    DataSourceXMLSchema.superclass.constructor.apply(this, arguments);
 };
 
-Y.mix(DataSourceJSONSchema, {
+Y.mix(DataSourceXMLSchema, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -34,13 +36,13 @@ Y.mix(DataSourceJSONSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONSchema"
+     * @value "DataSourceXMLSchema"
      */
-    NAME: "DataSourceJSONSchema",
+    NAME: "DataSourceXMLSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceJSONSchema Attributes
+    // DataSourceXMLSchema Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +53,7 @@ Y.mix(DataSourceJSONSchema, {
     }
 });
 
-Y.extend(DataSourceJSONSchema, Y.Plugin, {
+Y.extend(DataSourceXMLSchema, Y.Plugin, {
     /**
     * Internal init() handler.
     *
@@ -82,8 +84,8 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
+        var data = ((this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
+            response = Y.DataSchema.XML.apply(this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -94,8 +96,12 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
         }
         
         this.get("host").fire("response", Y.mix({response:response}, e));
-        return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
+        return new Y.Do.Halt("DataSourceXMLSchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
+Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+
+
+
+}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-xml']});
