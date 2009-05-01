@@ -53,7 +53,7 @@ Y.mix(DataSourceXMLSchema, {
     }
 });
 
-Y.extend(DataSourceXMLSchema, Y.Plugin, {
+Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
     /**
     * Internal init() handler.
     *

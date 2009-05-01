@@ -51,7 +51,7 @@ Y.mix(DataSourceJSONSchema, {
     }
 });
 
-Y.extend(DataSourceJSONSchema, Y.Plugin, {
+Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     /**
     * Internal init() handler.
     *
