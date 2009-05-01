@@ -1,20 +1,20 @@
 /**
- * Extends DataSource with schema-parsing on XML data.
+ * Extends DataSource with schema-parsing on array data.
  *
  * @module datasource
- * @submodule datasource-xmlschema
+ * @submodule datasource-arrayschema
  */
 
 /**
  * Adds schema-parsing to the YUI DataSource utility.
- * @class DataSourceXMLSchema
+ * @class DataSourceArraySchema
  * @extends Plugin
  */    
-var DataSourceXMLSchema = function() {
-    DataSourceXMLSchema.superclass.constructor.apply(this, arguments);
+var DataSourceArraySchema = function() {
+    DataSourceArraySchema.superclass.constructor.apply(this, arguments);
 };
 
-Y.mix(DataSourceXMLSchema, {
+Y.mix(DataSourceArraySchema, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -34,13 +34,13 @@ Y.mix(DataSourceXMLSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceXMLSchema"
+     * @value "DataSourceArraySchema"
      */
-    NAME: "DataSourceXMLSchema",
+    NAME: "DataSourceArraySchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSourceXMLSchema Attributes
+    // DataSourceArraySchema Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ Y.mix(DataSourceXMLSchema, {
     }
 });
 
-Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
+Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     /**
     * Internal init() handler.
     *
@@ -82,8 +82,8 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
-            response = Y.DataSchema.XML.apply(this.get("schema"), data);
+        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = Y.DataSchema.Array.apply(this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -94,8 +94,8 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
         }
         
         this.get("host").fire("response", Y.mix({response:response}, e));
-        return new Y.Do.Halt("DataSourceXMLSchema plugin halted _defDataFn");
+        return new Y.Do.Halt("DataSourceArraySchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
