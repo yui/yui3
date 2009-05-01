@@ -430,7 +430,7 @@
         },
         /**
         * @private
-        * @method _handleOut
+        * @method _handleOutEvent
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {

@@ -63,10 +63,6 @@ YUI.add('plugin', function(Y) {
              */
             initializer : function(config) {
                 this._handles = [];
-
-                // TODO: Temporary
-                this._owner = this.get("host");
-
             },
 
             /**
@@ -143,7 +139,7 @@ YUI.add('plugin', function(Y) {
             }
         });
 
-        Y.Plugin = Plugin;
+        Y.namespace("Plugin").Base = Plugin;
 
 
 

@@ -6,7 +6,7 @@
  */
 
 /**
- * Adds schema-parfing to the YUI DataSource utility.
+ * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceJSONSchema
  * @extends Plugin
  */    

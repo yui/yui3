@@ -63,9 +63,9 @@ PluginHost.prototype = {
      * all registered plugins are unplugged.
      * @chainable
      */
-    unplug: function(ns) {
-        if (ns) {
-            this._unplug(ns);
+    unplug: function(plugin) {
+        if (plugin) {
+            this._unplug(plugin);
         } else {
             var ns;
             for (ns in this._plugins) {
@@ -180,7 +180,7 @@ PluginHost.prototype = {
     }
 };
 
-Y.PluginHost = PluginHost;
+Y.namespace("Plugin").Host = PluginHost;
 
     /**
      * Base class support for objects requiring managed attributes and acting as event targets. 
@@ -301,8 +301,7 @@ Y.PluginHost = PluginHost;
              * @property name
              * @type String
              */
-            this.name = this.constructor.NAME;
-            this._yuievt.config.prefix = this.name;
+            this._yuievt.config.prefix = this.name = this.constructor.NAME;
 
             /**
              * <p>
@@ -326,9 +325,8 @@ Y.PluginHost = PluginHost;
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish. Theoretically, just needs to
-            // be done before publish, as long as it's done before fire.
-            Y.PluginHost.call(this);
+            // TODO: Look at why this needs to be done after publish.
+            Y.Plugin.Host.call(this);
 
             this.fire(INIT, {cfg: config});
             return this;
@@ -430,7 +428,6 @@ Y.PluginHost = PluginHost;
         },
 
         /**
-         * 
          * @method _filterAttrCfs
          * @private
          * @param {Function} clazz
@@ -592,11 +589,13 @@ Y.PluginHost = PluginHost;
         }
     };
 
-    // straightup augment, no wrapper functions
+    // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.PluginHost, false, null, 1);
+    Y.mix(Base, Y.Plugin.Host, false, null, 1);
 
+    // Fix constructor
     Base.prototype.constructor = Base;
+
     Y.Base = Base;
 
     var B = Y.Base;

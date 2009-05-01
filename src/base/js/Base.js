@@ -117,8 +117,7 @@
              * @property name
              * @type String
              */
-            this.name = this.constructor.NAME;
-            this._yuievt.config.prefix = this.name;
+            this._yuievt.config.prefix = this.name = this.constructor.NAME;
 
             /**
              * <p>
@@ -142,9 +141,8 @@
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish. Theoretically, just needs to
-            // be done before publish, as long as it's done before fire.
-            Y.PluginHost.call(this);
+            // TODO: Look at why this needs to be done after publish.
+            Y.Plugin.Host.call(this);
 
             this.fire(INIT, {cfg: config});
             return this;
@@ -246,7 +244,6 @@
         },
 
         /**
-         * 
          * @method _filterAttrCfs
          * @private
          * @param {Function} clazz
@@ -408,9 +405,11 @@
         }
     };
 
-    // straightup augment, no wrapper functions
+    // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.PluginHost, false, null, 1);
+    Y.mix(Base, Y.Plugin.Host, false, null, 1);
 
+    // Fix constructor
     Base.prototype.constructor = Base;
+
     Y.Base = Base;

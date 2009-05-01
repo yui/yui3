@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dd-plugin   (YUI Library)</title>
+	<title>API: stylesheet   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dd-plugin&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dd-plugin.html" title="dd-plugin">dd-plugin</a>
+            &gt; <a href="./module_stylesheet.html" title="stylesheet">stylesheet</a>
                 
                 
         <form onsubmit="return false">
@@ -44,13 +44,14 @@
             </form>
 
                    
-                    <h3>Module: dd-plugin
+                    <h3>Module: stylesheet
                     
 
 
                     </h3>
                     <div class="description summary">
-                        This is a simple Drop plugin that can be attached to a Node via the plug method.
+                        The StyleSheet component is a utility for managing css rules at the
+stylesheet level
                     </div>
 
 
@@ -60,25 +61,15 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "This is a simple Drag plugin that can be attached to a Node via the plug method.", "guessedname": "plugin.DragPlugin", "name": "plugin.DragPlugin"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "This is a simple Drop plugin that can be attached to a Node via the plug method.", "guessedname": "plugin.DropPlugin", "name": "plugin.DropPlugin"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Create an instance of StyleSheet to encapsulate a css stylesheet.\nThe constructor can be called using function or constructor syntax.\n<pre><code>var sheet = Y.StyleSheet(..);<\/pre><\/code>\nor\n<pre><code>var sheet = new Y.StyleSheet(..);<\/pre><\/code>\nThe first parameter passed can be any of the following things:\n<ul>\n<li>The desired string name to register a new empty sheet<\/li>\n<li>The string name of an existing StyleSheet instance<\/li>\n<li>The unique guid generated for an existing StyleSheet instance<\/li>\n<li>The id of an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>The node reference for an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>The Y.Node instance wrapping an existing <code>&lt;link&gt;<\/code> or <code>&lt;style&gt;<\/code> node<\/li>\n<li>A chunk of css text to create a new stylesheet from<\/li>\n<\/ul>\n<p>If a string is passed, StyleSheet will first look in its static name\nregistry for an existing sheet, then in the DOM for an element with that id.\nIf neither are found and the string contains the { character, it will be\nused as a the initial cssText for a new StyleSheet.  Otherwise, a new empty\nStyleSheet is created, assigned the string value as a name, and registered\nstatically by that name.<\/p>\n<p>The optional second parameter is a string name to register the sheet as.\nThis param is largely useful when providing a node id\/ref or chunk of css\ntext to create a populated instance.<\/p>", "guessedname": "StyleSheet", "name": "StyleSheet"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="plugin.DragPlugin.html" title="plugin.DragPlugin" id="class_0">plugin.DragPlugin</a></li>
-                                    <li><a href="plugin.DropPlugin.html" title="plugin.DropPlugin" id="class_1">plugin.DropPlugin</a></li>
+                                    <li><a href="StyleSheet.html" title="StyleSheet" id="class_0">StyleSheet</a></li>
                                 </ul>
                             </div>
                     </div>
                     <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code><a href="plugin.DropPlugin.html" title="dd-drop-plugin">dd-drop-plugin</a></code></dt>
-                                            <dd>This is a simple Drop plugin that can be attached to a Node via the plug method.</dd>
-                                            <dt><code><a href="plugin.DragPlugin.html" title="dd-plugin">dd-plugin</a></code></dt>
-                                            <dd>This is a simple Drag plugin that can be attached to a Node via the plug method.</dd>
-                                        </dl>
-                                    </div>
 
                         </div>
                 </div>
@@ -98,7 +89,6 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class="selected"><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -113,6 +103,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class="selected"><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
@@ -127,15 +118,14 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="plugin.DragPlugin.html" title="plugin.DragPlugin">plugin.DragPlugin</a></li>
-                                <li class=""><a href="plugin.DropPlugin.html" title="plugin.DropPlugin">plugin.DropPlugin</a></li>
+                                <li class=""><a href="StyleSheet.html" title="StyleSheet">StyleSheet</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="constrain.js.html" title="constrain.js">constrain.js</a></li>
+                                <li class=""><a href="stylesheet.js.html" title="stylesheet.js">stylesheet.js</a></li>
                         </ul>
                     </div>
 
@@ -152,7 +142,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "plugin.DropPlugin", "name": "NAME", "url": "plugin.DropPlugin.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DragPlugin", "name": "NAME", "url": "plugin.DragPlugin.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DropPlugin", "name": "NS", "url": "plugin.DropPlugin.html#property_NS", "type": "property"}, {"access": "", "host": "plugin.DragPlugin", "name": "NS", "url": "plugin.DragPlugin.html#property_NS", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "StyleSheet", "name": "disable", "url": "StyleSheet.html#method_disable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "enable", "url": "StyleSheet.html#method_enable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getCssText", "url": "StyleSheet.html#method_getCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getId", "url": "StyleSheet.html#method_getId", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "isEnabled", "url": "StyleSheet.html#method_isEnabled", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "set", "url": "StyleSheet.html#method_set", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.isValidSelector", "url": "StyleSheet.html#method_StyleSheet.isValidSelector", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.register", "url": "StyleSheet.html#method_StyleSheet.register", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.toCssText", "url": "StyleSheet.html#method_StyleSheet.toCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "unset", "url": "StyleSheet.html#method_unset", "type": "method"}];
 </script>
 </body>
 </html>

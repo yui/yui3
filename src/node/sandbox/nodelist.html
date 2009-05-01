@@ -27,11 +27,8 @@
 
 <script type="text/javascript">
 YUI().use('*', function(Y) {
-    var a = ['foo', 'bar', 'baz:', 'fool'],
-        b = ['foo', 'baz', 'boo', 'bool'];
-
-    nodelist = Y.all('p');
-    console.log(nodelist.addClass('foo').addClass('bar'));
+    nodelist = Y.all('body :first-child');
+    Y.log(nodelist.addClass('foo').addClass('bar'));
 
 /*
 1. set title on all nodes

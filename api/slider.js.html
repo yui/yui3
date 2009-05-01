@@ -658,18 +658,17 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_bindThumbDD</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ddConf</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="nx">node</span>           <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">),</span>
-                <span class="nx">constrain2node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">)</span>
-            <span class="o">},</span>
-            <span class="nx">dd</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">ddConf</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">)</span> <span class="o">};</span>
 
         <span class="nx">ddConf</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">ddStick</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span> <span class="o">=</span> <span class="nx">dd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">(</span><span class="nx">ddConf</span><span class="o">);</span>
-        <span class="nx">dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:start&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDStartDrag</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-        <span class="nx">dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:drag&#39;</span><span class="o">,</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDDrag</span><span class="o">,</span>      <span class="k">this</span><span class="o">));</span>
-        <span class="nx">dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:end&#39;</span><span class="o">,</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDEndDrag</span><span class="o">,</span>   <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">(</span><span class="nx">ddConf</span><span class="o">).</span><span class="nx">plug</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">plugin</span><span class="o">.</span><span class="nx">DDConstrained</span><span class="o">,</span> <span class="o">{</span>
+            <span class="nx">constrain2node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">)</span>
+        <span class="o">});</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:start&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDStartDrag</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:drag&#39;</span><span class="o">,</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDDrag</span><span class="o">,</span>      <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:end&#39;</span><span class="o">,</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDEndDrag</span><span class="o">,</span>   <span class="k">this</span><span class="o">));</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_initRailDD</span><span class="o">();</span>
     <span class="o">},</span>
@@ -987,7 +986,7 @@
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;setting DDConstrain gutter &quot;&#39;</span><span class="o">+</span><span class="nx">gutter</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">,</span> <span class="nx">gutter</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">con</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">,</span> <span class="nx">gutter</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1504,7 +1503,6 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -1519,6 +1517,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>

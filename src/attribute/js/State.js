@@ -29,13 +29,17 @@
          * @param o hash of attributes
          */
         add: function(name, o) {
-            Y.each(o, function(v, k) {
-                if (!this.data[k]) {
-                    this.data[k] = {};
-                }
+            var d = this.data,
+                key;
 
-                this.data[k][name] = v;
-            }, this);
+            for (key in o) {
+                if (o.hasOwnProperty(key)) {
+                    if (!d[key]) {
+                        d[key] = {};
+                    }
+                    d[key][name] = o[key];
+                }
+            }
         },
 
         /**
@@ -79,21 +83,19 @@
          * all data.
          */
         get: function(name, key) {
-            var d = this.data,
-                o;
+            var d = this.data;
 
             if (key) {
                 return (d[key] && name in d[key]) ?  d[key][name] : undefined;
             } else {
+                var o;
                 Y.each(d, function(v, k) {
                     if (name in d[k]) {
                         o = o || {};
                         o[k] = v[name];
                     }
                 }, this);
-
                 return o;
-
             }
         }
     };
