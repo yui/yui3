@@ -10,7 +10,6 @@
  * @event delegate
  * @param type {string} 'delegate'
  * @param fn {string} the function to execute
- * @param el {string|node} the element that is the delegation container
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the event.
  * @return {Event.Handle} the detach handle
