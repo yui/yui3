@@ -30,16 +30,15 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	KEY = "key",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 	FOCUS_MANAGER = "focusManager",
+	HOST = "host",
 
 	//	Collection of keys that, when pressed, cause the browser viewport
 	//	to scroll.
 	scrollKeys = {
-		
 		37: true,
 		38: true,
 		39: true,
 		40: true
-		
 	},
 
 	//	Library shortcuts
@@ -91,14 +90,7 @@ FocusManager.ATTRS = {
 
 		getter: function (value) {
 
-			var descendants,
-				oNode = this._node;
-
-			if (oNode) {
-				descendants = oNode.queryAll(value);
-			}
-			
-			return descendants;
+			return this.get(HOST).queryAll(value);
 			
 		}
 
@@ -229,7 +221,7 @@ FocusManager.ATTRS = {
 	
 };
 
-Y.extend(FocusManager, Y.Base, {
+Y.extend(FocusManager, Y.Plugin.Base, {
 
 	//	Protected properties
 
@@ -447,16 +439,17 @@ Y.extend(FocusManager, Y.Base, {
 		this._detachKeyHandler();
 
 		var sNextKey = this.get("keys.next"),
-			sPreviousKey = this.get("keys.previous");
+			sPreviousKey = this.get("keys.previous"),
+			oNode = this.get(HOST);
 
 		if (sPreviousKey) {
  			this._prevKeyHandler = 
-				Y.on(KEY, Y.bind(this._focusPrevious, this), this._node, sPreviousKey);
+				Y.on(KEY, Y.bind(this._focusPrevious, this), oNode, sPreviousKey);
 		}
 
 		if (sNextKey) {
  			this._nextKeyHandler = 
-				Y.on(KEY, Y.bind(this._focusNext, this), this._node, sNextKey);
+				Y.on(KEY, Y.bind(this._focusNext, this), oNode, sNextKey);
 		}
 
 
@@ -467,7 +460,7 @@ Y.extend(FocusManager, Y.Base, {
 		if (UA.opera || (UA.gecko && UA.gecko < 1.9)) {	
 
 			this._keyPressHandler = 
-				this._node.on("keypress", Y.bind(this._preventScroll, this));
+				oNode.on("keypress", Y.bind(this._preventScroll, this));
 
 		}
 
@@ -501,41 +494,47 @@ Y.extend(FocusManager, Y.Base, {
 	/**
 	* @method _detachEventHandlers
 	* @description Attaches all event handlers used by the FocusManager.
-	* @protected
+	* @protected	
 	*/
 	_attachEventHandlers: function () {
 
 		var descendants = this._descendants,
-			aHandlers = this._eventHandlers,
-			oNode,
+			aHandlers,
 			oDocument;
 
-		if (descendants && descendants.size() > 1 && !aHandlers) {
+		if (descendants && descendants.size() > 1) {
+
+			aHandlers = this._eventHandlers || [];
+			oDocument = this.get(HOST).get("ownerDocument");
+
+			//	For performance: defer attaching all event handlers until the 
+			//	first time one of the specified descendants receives focus
+
+			if (aHandlers.length === 0) {
+
+		    	aHandlers.push(
+					Y.on("focus", Y.bind(this._onDocFocus, this), oDocument));
+
+				aHandlers.push(
+					Y.on("mousedown", 
+						Y.bind(this._onDocMouseDown, this), oDocument));
+				
+			}
+			else {
+
+				this._attachKeyHandler();
+
+				aHandlers.push(
+						this.after("keysChange", this._attachKeyHandler));
+
+				aHandlers.push(
+						this.after("descendantsChange", this._initDescendants));
+
+				aHandlers.push(
+						this.after(ACTIVE_DESCENDANT_CHANGE, 
+								this._afterActiveDescendantChange));
 			
-			oNode = this._node;
-
-			this._attachKeyHandler();
-
-			aHandlers = [];
-
-			aHandlers[aHandlers.length] = 
-				this.after("keysChange", this._attachKeyHandler);
-
-
-			oDocument = oNode.get("ownerDocument");
-
-		    aHandlers[aHandlers.length] =	
-				Y.on("focus", Y.bind(this._onDocFocus, this), oDocument);
-
-			aHandlers[aHandlers.length] = 
-				Y.on("mousedown", Y.bind(this._onDocMouseDown, this), oDocument);
-
-			aHandlers[aHandlers.length] = 
-				this.after("descendantsChange", this._initDescendants);
-
-			aHandlers[aHandlers.length] = 
-				this.after(ACTIVE_DESCENDANT_CHANGE, 
-								this._afterActiveDescendantChange);
+			}
 
 			this._eventHandlers = aHandlers;
 			
@@ -556,12 +555,13 @@ Y.extend(FocusManager, Y.Base, {
 	_onDocMouseDown: function (event) {
 	
 		var oTarget = event.target,
-			bChildNode = this._node.contains(oTarget);
+			bChildNode = this.get(HOST).contains(oTarget);
 
 		if (bChildNode && this._isDescendant(oTarget)) {
 
 			//	Fix general problem in Webkit: mousing down on a button or an 
 			//	anchor element doesn't focus it.
+
 			//	For all browsers: makes sure that the descendant that 
 			//	was the target of the mousedown event is now considered the
 			//	active descendant.
@@ -604,7 +604,7 @@ Y.extend(FocusManager, Y.Base, {
 		}
 
 
-		if (this._node.contains(oTarget)) {	
+		if (this.get(HOST).contains(oTarget)) {	
 
 			//	The target is a descendant of the root Node.
 
@@ -650,6 +650,10 @@ Y.extend(FocusManager, Y.Base, {
 			
 		}
 
+
+		if (bHasFocus && this._eventHandlers.length === 2) {
+			this._attachEventHandlers();
+		}
 
 		this._set(HAS_FOCUS, bHasFocus);			
 
@@ -766,7 +770,6 @@ Y.extend(FocusManager, Y.Base, {
 
     initializer: function (config) {
 
-		this._node = config.owner;
 		this.start();
 
     },
@@ -774,7 +777,7 @@ Y.extend(FocusManager, Y.Base, {
 	destructor: function () {
 		
 		this.stop();
-		this._node.focusManager = null;
+		this.get(HOST).focusManager = null;
 		
     },
 
@@ -812,7 +815,7 @@ Y.extend(FocusManager, Y.Base, {
 				this._focusTarget = oNode;
 			}
 
-			oNode.focus();		
+			oNode.focus();
 
 		}
 
@@ -899,27 +902,6 @@ Y.extend(FocusManager, Y.Base, {
 
 		this._initDescendants();
 		
-	},
-
-
-	/**
-	* @method removeFromTabIndex
-	* @description Removes the specified Node(s) from the tab flow by setting 
-	* their <code>tabIndex</code> attribute to -1.
-	* @param nodes {String} String representing the CSS selector used to 
-	* retrieve the Node(s) to be removed from the tab flow.
-	* @param nodes {NodeList} NodeList representing the Nodes to be removed 
-	* from the tab flow.
-	* @param node {Node} Node to be removed from the tab flow.
-	*/	
-	removeFromTabIndex: function (nodes) {
-
-		if (Lang.isString(nodes)) {
-			nodes = Y.all(nodes);
-		}
-
-		nodes.set(TAB_INDEX, -1);
-		
 	}
 	
 });
@@ -928,5 +910,5 @@ Y.extend(FocusManager, Y.Base, {
 FocusManager.NAME = FOCUS_MANAGER;
 FocusManager.NS = FOCUS_MANAGER;
 
-Y.namespace("plugin");
-Y.plugin.FocusManager = FocusManager;
+Y.namespace("Plugin");
+Y.Plugin.FocusManager = FocusManager;
