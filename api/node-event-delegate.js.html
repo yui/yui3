@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: node   (YUI Library)</title>
+	<title>API: node   node-event-delegate.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                 
-                
+                 &gt; node-event-delegate.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,64 +43,34 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: node
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/*</span>
+<span class="c"> * Functionality to make the node a delegated event container</span>
+<span class="c"> * @module node</span>
+<span class="c"> * @for Node</span>
+<span class="c"> * @submodule node-event-delegate</span>
+<span class="c"> */</span>
 
-
-                    </h3>
-                    <div class="description summary">
-                        The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+<span class="c">/**</span>
+<span class="c"> * Functionality to make the node a delegated event container</span>
+<span class="c"> * @event delegate</span>
+<span class="c"> * @param type {string} &#39;delegate&#39;</span>
+<span class="c"> * @param fn {string} the function to execute</span>
+<span class="c"> * @param delegateType {string} the event type to delegate</span>
+<span class="c"> * @param spec {string} a selector that must match the target of the event.</span>
+<span class="c"> * @return {Event.Handle} the detach handle</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+<span class="o">};</span>
+</pre></div>
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The NodeList class provides a wrapper for manipulating DOM NodeLists.\nNodeList properties can be accessed via the set\/get methods.\nUse Y.get() to retrieve NodeList instances.\n<strong>NOTE:<\/strong> NodeList properties are accessed using\nthe <code>set<\/code> and <code>get<\/code> methods.", "guessedname": "NodeList", "name": "NodeList"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The NodeList class provides a wrapper for manipulating DOM NodeLists.\nNodeList properties can be accessed via the set\/get methods.\nUse Y.get() to retrieve NodeList instances.\n<strong>NOTE:<\/strong> NodeList properties are accessed using\nthe <code>set<\/code> and <code>get<\/code> methods.", "guessedname": "NodeList", "name": "NodeList"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="NodeList.html" title="NodeList" id="class_0">NodeList</a></li>
-                                    <li><a href="NodeList.html" title="NodeList" id="class_1">NodeList</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code><a href="NodeList.html" title="node-list">node-list</a></code></dt>
-                                            <dd>The NodeList class provides a wrapper for manipulating DOM NodeLists.
-NodeList properties can be accessed via the set/get methods.
-Use Y.get() to retrieve NodeList instances.
-<strong>NOTE:</strong> NodeList properties are accessed using
-the <code>set</code> and <code>get</code> methods.</dd>
-                                            <dt><code><a href="NodeList.html" title="node-base">node-base</a></code></dt>
-                                            <dd>The NodeList class provides a wrapper for manipulating DOM NodeLists.
-NodeList properties can be accessed via the set/get methods.
-Use Y.get() to retrieve NodeList instances.
-<strong>NOTE:</strong> NodeList properties are accessed using
-the <code>set</code> and <code>get</code> methods.</dd>
-                                            <dt><code><a href="Node.html" title="node-style">node-style</a></code></dt>
-                                            <dd>Extended Node interface for managing node styles.</dd>
-                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
-                                            <dd>Extended Node interface for managing regions and screen positioning.
-Adds support for positioning elements and normalizes window size and scroll detection.</dd>
-                                            <dt><code><a href="Node.html" title="node">node</a></code></dt>
-                                            <dd>Extended Node interface for managing classNames.</dd>
-                                            <dt><code><a href="Node.html" title="node-screen">node-screen</a></code></dt>
-                                            <dd>Extended Node interface for managing regions and screen positioning.
-Adds support for positioning elements and normalizes window size and scroll detection.</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -154,7 +124,7 @@ Adds support for positioning elements and normalizes window size and scroll dete
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
-                                <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
+                                <li class="selected"><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
