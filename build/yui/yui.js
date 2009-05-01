@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
+    var _instances = {}, _startTime = new Date().getTime(), p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -193,7 +193,7 @@ YUI.prototype = {
 
         this.constructor = YUI;
 
-        this.log(this.id + ') init ');
+        // this.log(this.id + ') init ');
     },
     
     /**
@@ -311,7 +311,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'YUI');
 
                 if (m.fn) {
                     m.fn(this);
@@ -592,18 +592,17 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    Y = YUI; 
-    p = Y.prototype;
+    p = YUI.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
         if (true) {
-            Y[i] = p[i];
+            YUI[i] = p[i];
         }
     }
 
     // set up the environment
-    Y._init();
+    YUI._init();
 
 
 })();
@@ -1274,7 +1273,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    var wrapper = function() {
+    return function() {
         var a = arguments, 
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
 
@@ -1285,7 +1284,6 @@ Y.cached = function(source, cache){
         return cache[key];
     };
 
-    return wrapper;
 };
 
 })();

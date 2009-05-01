@@ -169,7 +169,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    var wrapper = function() {
+    return function() {
         var a = arguments, 
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
 
@@ -180,7 +180,6 @@ Y.cached = function(source, cache){
         return cache[key];
     };
 
-    return wrapper;
 };
 
 })();
