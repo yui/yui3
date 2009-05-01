@@ -139,4 +139,4 @@
             }
         });
 
-        Y.Plugin = Plugin;
+        Y.namespace("Plugin").Base = Plugin;
