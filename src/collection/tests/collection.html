@@ -4,16 +4,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>Collection Unit Tests</title>	
-  <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0pr2/build/cssfonts/fonts-min.css" />
-  <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr2/build/yui/yui-min.js"></script>
-  <script type="text/javascript">
-    //Bootstrap array-extras by declaring the necessary YUI objects
-  var Y = {
-    Lang: {},
-    Array: {}
-  };
-  </script>
-  <script type="text/javascript" src="../js/array-extras.js"></script>
+  <link type="text/css" rel="stylesheet" href="../../../build/cssfonts/fonts-min.css" />
+  <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 </head>
 <body class="yui-skin-sam">
   <div id="doc2" class="yui-t7">
@@ -33,15 +25,20 @@
   </div>
   <script type="text/javascript">
 
-    YUI().use('console', 'yuitest', function(Y2) {
-        //finish bootstrapping
-        Y.Array.each = Y2.Array.each;
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        combine: false,
+        useConsole: true,
+        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+    }).use('collection', 'console', 'test', function(Y) {
 
-        var Assert      = Y2.Assert;
-        var ArrayAssert = Y2.ArrayAssert;
-        var TestRunner  = Y2.Test.Runner;
+        var Assert      = Y.Assert;
+        var ArrayAssert = Y.ArrayAssert;
+        var TestRunner  = Y.Test.Runner;
+        var A = Y.Array;
 
-        var method_test = new Y2.Test.Case({
+        var method_test = new Y.Test.Case({
             name: "Collection Unit Tests", 
             setUp: function () {
                 this.data = [1, 2, 3, 4, 5];
@@ -232,7 +229,7 @@
             }
         }); 
           
-        var r = new Y2.Console({ verbose: true, newestOnTop: false });
+        var r = new Y.Console({ verbose: true, newestOnTop: false });
         r.render('#logger');
         TestRunner.add(method_test); 
         TestRunner.run();

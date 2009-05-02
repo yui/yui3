@@ -8,7 +8,7 @@ YUI.add('datasource-jsonschema', function(Y) {
  */
 
 /**
- * Adds schema-parfing to the YUI DataSource utility.
+ * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceJSONSchema
  * @extends Plugin
  */    
@@ -53,7 +53,7 @@ Y.mix(DataSourceJSONSchema, {
     }
 });
 
-Y.extend(DataSourceJSONSchema, Y.Plugin, {
+Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     /**
     * Internal init() handler.
     *
