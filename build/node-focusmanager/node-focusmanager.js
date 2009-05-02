@@ -16,7 +16,7 @@ YUI.add('node-focusmanager', function(Y) {
 * styling focus.
 * </p>
 *  
-* @module focusmanager
+* @module node-focusmanager
 */
 
 	//	Frequently used strings
@@ -51,20 +51,20 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 
 
 /**
-* The FocusManager class is a plugin for a Node instance.  The class is used 
+* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
 * via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
 * and should not be instantiated directly.
 * @namespace plugin
-* @class FocusManager
+* @class NodeFocusManager
 */	
-var FocusManager = function () {
+var NodeFocusManager = function () {
 
-	FocusManager.superclass.constructor.apply(this, arguments);
+	NodeFocusManager.superclass.constructor.apply(this, arguments);
 
 };
 
 
-FocusManager.ATTRS = {
+NodeFocusManager.ATTRS = {
 
 	/**
 	* Boolean indicating that one of the descendants is focused.
@@ -223,11 +223,11 @@ FocusManager.ATTRS = {
 	
 };
 
-Y.extend(FocusManager, Y.Plugin.Base, {
+Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	//	Protected properties
 
-	//	Boolean indicating if the FocusManager is active.
+	//	Boolean indicating if the NodeFocusManager is active.
 	_stopped: true,
 
 	//	NodeList representing the descendants selected via the 
@@ -245,7 +245,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 	//	Number representing the index of the last descendant Node.
 	_lastNodeIndex: 0,
 
-	//	Array of handles for event handlers used for a FocusManager instance.
+	//	Array of handles for event handlers used for a NodeFocusManager instance.
 	_eventHandlers: null,
 
 
@@ -358,10 +358,10 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 	/**
 	* @method _isDescendant
 	* @description Determines if the specified Node instance is a descendant
-	* managed by the FocusManager.
+	* managed by the NodeFocusManager.
 	* @param node {Node} Node instance to be checked.
 	* @return {Boolean} Boolean indicating if the specified Node instance is a 
-	* descendant managed by the FocusManager.
+	* descendant managed by the NodeFocusManager.
 	*/
 	_isDescendant: function (node) {
 
@@ -471,7 +471,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Detaches all event handlers used by the FocusManager.
+	* @description Detaches all event handlers used by the NodeFocusManager.
 	* @protected
 	*/
 	_detachEventHandlers: function () {
@@ -495,7 +495,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Attaches all event handlers used by the FocusManager.
+	* @description Attaches all event handlers used by the NodeFocusManager.
 	* @protected	
 	*/
 	_attachEventHandlers: function () {
@@ -550,7 +550,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 	/**
 	* @method _onDocMouseDown
 	* @description "mousedown" event handler for the owner document of the 
-	* FocusManager's Node.
+	* NodeFocusManager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
@@ -589,7 +589,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 	/**
 	* @method _onDocFocus
 	* @description "focus" event handler for the owner document of the 
-	* FocusManager's Node.
+	* NodeFocusManager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
@@ -622,7 +622,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 			else if (bHasFocus && !bInCollection) {  
 			
 				//	The user has focused a child of the root Node that is 
-				//	not one of the descendants managed by this FocusManager
+				//	not one of the descendants managed by this NodeFocusManager
 				//	so clear the currently focused descendant.
 				
 				bHasFocus = false;
@@ -859,7 +859,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method start
-	* @description Enables the FocusManager.
+	* @description Enables the NodeFocusManager.
 	*/
 	start: function () {
 
@@ -877,7 +877,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method stop
-	* @description Disables the FocusManager by detaching all event handlers.
+	* @description Disables the NodeFocusManager by detaching all event handlers.
 	*/	
 	stop: function () {
 
@@ -897,7 +897,7 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method refresh
-	* @description Refreshes the FocusManager's descendants by re-executing the 
+	* @description Refreshes the NodeFocusManager's descendants by re-executing the 
 	* CSS selector query specified by the "descendants" attribute.
 	*/
 	refresh: function () {
@@ -909,11 +909,11 @@ Y.extend(FocusManager, Y.Plugin.Base, {
 });
 
 
-FocusManager.NAME = FOCUS_MANAGER;
-FocusManager.NS = FOCUS_MANAGER;
+NodeFocusManager.NAME = "NodeFocusManager";
+NodeFocusManager.NS = "focusManager";
 
 Y.namespace("Plugin");
-Y.Plugin.FocusManager = FocusManager;
+Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
 }, '@VERSION@' ,{requires:['node', 'plugin']});

@@ -93,7 +93,7 @@
 					
 					var oList1 = Y.Node.get("#list-1");
 
-					oList1.plug(Y.Plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -111,7 +111,7 @@
 
 					var oList2 = Y.Node.get("#list-2");
 
-					oList2.plug(Y.Plugin.FocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -130,7 +130,7 @@
 					//	The value specified for the activeDescendant attribute
 					//	via the configuration object, should supercede the 
 					//	value interpreted via the markup					
-					oList1.plug(Y.Plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						activeDescendant: 3,
 						keys: { next: "down:40", previous: "down:38" },
@@ -235,7 +235,7 @@
 
 					var oList1 = Y.Node.get("#list-1");
 
-					oList1.plug(Y.Plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -273,7 +273,7 @@
 					//	The "hasFocus" attribute should be false by default
 					var oList2 = Y.Node.get("#list-2");
 
-					oList2.plug(Y.Plugin.FocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
