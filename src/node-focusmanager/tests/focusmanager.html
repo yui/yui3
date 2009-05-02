@@ -73,7 +73,7 @@
 <script src="/yui3/build/yui/yui.js" type="text/javascript"></script>
 <script type="text/javascript">
 
-	YUI({base:"../../../build/", timeout: 10000}).use("node-event-simulate", "focusmanager", "test", "console", function(Y) {
+	YUI({base:"../../../build/", timeout: 10000}).use("node-event-simulate", "node-focusmanager", "test", "console", function(Y) {
 
 		Y.on("contentready", function () {
 
@@ -93,7 +93,7 @@
 					
 					var oList1 = Y.Node.get("#list-1");
 
-					oList1.plug(Y.plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -111,7 +111,7 @@
 
 					var oList2 = Y.Node.get("#list-2");
 
-					oList2.plug(Y.plugin.FocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -130,7 +130,7 @@
 					//	The value specified for the activeDescendant attribute
 					//	via the configuration object, should supercede the 
 					//	value interpreted via the markup					
-					oList1.plug(Y.plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						activeDescendant: 3,
 						keys: { next: "down:40", previous: "down:38" },
@@ -235,7 +235,7 @@
 
 					var oList1 = Y.Node.get("#list-1");
 
-					oList1.plug(Y.plugin.FocusManager, { 
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -273,7 +273,7 @@
 					//	The "hasFocus" attribute should be false by default
 					var oList2 = Y.Node.get("#list-2");
 
-					oList2.plug(Y.plugin.FocusManager, { 
+					oList2.plug(Y.Plugin.NodeFocusManager, { 
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
@@ -316,48 +316,6 @@
 	
 					//	Clean up for next set of tests
 					oList2.unplug("focusManager");	
-					
-				},
-				
-				testRemoveFromTabIndex: function () {
-
-					//	TEST #1:
-					//	Pass a CSS selector to the "removeFromTabIndex" method
-					var oList2 = Y.Node.get("#list-2");
-
-					oList2.plug(Y.plugin.FocusManager, { 
-						descendants: ">li>.focusable",
-						keys: { next: "down:40", previous: "down:38" },
-						focusClass: "focused",
-						rollThrough: true
-					});
-					
-					oList2.focusManager.removeFromTabIndex("#list-2-2>li>.focusable");
-					
-					var oNodeList = Y.all("#list-2-2>li>.focusable");
-
-					oNodeList.each(function (node) {
-
-						Y.Assert.isTrue((node.get("tabIndex") === -1));
-						node.set("tabIndex", 0);
-						
-					});
-					
-
-					//	TEST #2:
-					//	Pass a NodeList to the "removeFromTabIndex" method
-					oList2.focusManager.removeFromTabIndex(oNodeList);
-
-					oNodeList.each(function (node) {
-
-						Y.Assert.isTrue((node.get("tabIndex") === -1));
-						node.set("tabIndex", 0);
-						
-					});
-					
-
-					//	Clean up for next set of tests
-					oList2.unplug("focusManager");					
 					
 				}
 
