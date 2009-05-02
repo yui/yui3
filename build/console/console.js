@@ -101,10 +101,10 @@ Y.mix(Console, {
      * incoming messages to generate Console entries.
      *
      * @property Console.LOG_LEVEL_INFO
-     * @type Number
+     * @type String
      * @static
      */
-    LOG_LEVEL_INFO  : 30,
+    LOG_LEVEL_INFO  : INFO,
 
     /**
      * Static identifier for logLevel configuration setting to allow only
@@ -112,10 +112,10 @@ Y.mix(Console, {
      * to generate Console entries.
      *
      * @property Console.LOG_LEVEL_WARN
-     * @type Number
+     * @type String
      * @static
      */
-    LOG_LEVEL_WARN  : 20,
+    LOG_LEVEL_WARN  : WARN,
 
     /**
      * Static identifier for logLevel configuration setting to allow only
@@ -123,10 +123,10 @@ Y.mix(Console, {
      * Console entries.
      *
      * @property Console.LOG_LEVEL_ERROR
-     * @type Number
+     * @type String
      * @static
      */
-    LOG_LEVEL_ERROR : 10,
+    LOG_LEVEL_ERROR : ERROR,
 
     /**
      * Map (object) of classNames used to populate the placeholders in the
@@ -412,10 +412,7 @@ Y.mix(Console, {
          * @default Y.config.logLevel or Console.LOG_LEVEL_INFO
          */
         logLevel : {
-            value : Y.config.logLevel || 30,
-            validator : function (v) {
-                return this._validateNewLogLevel(v);
-            },
+            value : Y.config.logLevel || INFO,
             setter : function (v) {
                 return this._setLogLevel(v);
             }
@@ -535,25 +532,9 @@ Y.mix(Console, {
         width: {
             value: "300px"
         }
-    },
-
-    /**
-     * Used to normalize input values for available logLevels.
-     *
-     * @property Console._logLevels
-     * @type Object
-     * @protected
-     */
-    _logLevels : {}
+    }
 
 });
-
-Console._logLevels[INFO] = Console.LOG_LEVEL_INFO;
-Console._logLevels[WARN] = Console.LOG_LEVEL_WARN;
-Console._logLevels[ERROR] = Console.LOG_LEVEL_ERROR;
-Console._logLevels[Console.LOG_LEVEL_INFO]  = Console.LOG_LEVEL_INFO;
-Console._logLevels[Console.LOG_LEVEL_WARN]  = Console.LOG_LEVEL_WARN;
-Console._logLevels[Console.LOG_LEVEL_ERROR] = Console.LOG_LEVEL_ERROR;
 
 Y.extend(Console,Y.Widget,{
 
@@ -875,12 +856,22 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _isInLogLevel : function (msg,cat) {
-        var lvl = this.get('logLevel'),
-            mlvl = cat === ERROR ? Console.LOG_LEVEL_ERROR :
-                    cat === WARN ? Console.LOG_LEVEL_WARN  :
-                                   Console.LOG_LEVEL_INFO;
+        var lvl = this.get('logLevel');
 
-        return lvl >= mlvl;
+        if (lvl !== INFO) {
+            cat = cat || INFO;
+
+            if (isString(cat)) {
+                cat = cat.toLowerCase();
+            }
+
+            if ((cat === WARN && lvl === ERROR) ||
+                (cat === INFO && lvl !== INFO)) {
+                return false;
+            }
+        }
+
+        return true;
     },
 
     /**
@@ -888,7 +879,7 @@ Y.extend(Console,Y.Widget,{
      * <ul>
      *     <li>time - this moment</li>
      *     <li>message - leg message</li>
-     *     <li>category - aka logLevel</li>
+     *     <li>category - logLevel or custom category for the message</li>
      *     <li>source - when provided, the widget or util calling Y.log</li>
      *     <li>sourceAndDetail - same as source but can include instance info</li>
      *     <li>label - logLevel/category label for the entry</li>
@@ -1102,31 +1093,22 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Setter method for logLevel attribute.  Acceptable values are
-     * &quot;error&quot, &quot;warn&quot, &quot;info&quot, and
-     * Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-     * Y.Console.LOG_LEVEL_INFO.  Any other value becomes
+     * &quot;error&quot, &quot;warn&quot, &quot;info&quot (case insensitive),
+     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
+     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as
      * Y.Console.LOG_LEVEL_INFO.
      *
      * @method _setLogLevel
-     * @param v {String|Number} String or numeric alias for the desired logLevel
-     * @return Number LOG_LEVEL_ERROR, _WARN, or _INFO
+     * @param v {String} the desired log level
+     * @return String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR
      * @protected
      */
     _setLogLevel : function (v) {
-        return Console._logLevels[(v+'').toLowerCase()];
-    },
-
-    /**
-     * Verifies input logLevel is one of Y.Console.LOG_LEVEL_ERROR,
-     * Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
-     *
-     * @method _validateNewLogLevel
-     * @param v {Number} requested logLevel
-     * @return Boolean
-     * @protected
-     */
-    _validateNewLogLevel : function (v) {
-        return (v+'').toLowerCase() in Console._logLevels;
+        if (isString(v)) {
+            v = v.toLowerCase();
+        }
+        
+        return (v === WARN || v === ERROR) ? v : INFO;
     },
 
     /**
