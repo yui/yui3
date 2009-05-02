@@ -1,4 +1,4 @@
-YUI.add('focusmanager', function(Y) {
+YUI.add('node-focusmanager', function(Y) {
 
 /**
 * <p>The FocusManager Node Plugin makes it easy to manage focus among  
@@ -16,7 +16,7 @@ YUI.add('focusmanager', function(Y) {
 * styling focus.
 * </p>
 *  
-* @module focusmanager
+* @module node-focusmanager
 */
 
 	//	Frequently used strings
@@ -32,14 +32,15 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	KEY = "key",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 	FOCUS_MANAGER = "focusManager",
+	HOST = "host",
 
+	//	Collection of keys that, when pressed, cause the browser viewport
+	//	to scroll.
 	scrollKeys = {
-		
 		37: true,
 		38: true,
 		39: true,
 		40: true
-		
 	},
 
 	//	Library shortcuts
@@ -50,20 +51,20 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 
 
 /**
-* The FocusManager class is a plugin for a Node instance.  The class is used 
+* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
 * via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
 * and should not be instantiated directly.
 * @namespace plugin
-* @class FocusManager
+* @class NodeFocusManager
 */	
-var FocusManager = function () {
+var NodeFocusManager = function () {
 
-	FocusManager.superclass.constructor.apply(this, arguments);
+	NodeFocusManager.superclass.constructor.apply(this, arguments);
 
 };
 
 
-FocusManager.ATTRS = {
+NodeFocusManager.ATTRS = {
 
 	/**
 	* Boolean indicating that one of the descendants is focused.
@@ -91,14 +92,7 @@ FocusManager.ATTRS = {
 
 		getter: function (value) {
 
-			var descendants,
-				oNode = this._node;
-
-			if (oNode) {
-				descendants = oNode.queryAll(value);
-			}
-			
-			return descendants;
+			return this.get(HOST).queryAll(value);
 			
 		}
 
@@ -229,11 +223,11 @@ FocusManager.ATTRS = {
 	
 };
 
-Y.extend(FocusManager, Y.Base, {
+Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	//	Protected properties
 
-	//	Boolean indicating if the FocusManager is active.
+	//	Boolean indicating if the NodeFocusManager is active.
 	_stopped: true,
 
 	//	NodeList representing the descendants selected via the 
@@ -251,7 +245,7 @@ Y.extend(FocusManager, Y.Base, {
 	//	Number representing the index of the last descendant Node.
 	_lastNodeIndex: 0,
 
-	//	Array of handles for event handlers used for a FocusManager instance.
+	//	Array of handles for event handlers used for a NodeFocusManager instance.
 	_eventHandlers: null,
 
 
@@ -364,10 +358,10 @@ Y.extend(FocusManager, Y.Base, {
 	/**
 	* @method _isDescendant
 	* @description Determines if the specified Node instance is a descendant
-	* managed by the FocusManager.
+	* managed by the NodeFocusManager.
 	* @param node {Node} Node instance to be checked.
 	* @return {Boolean} Boolean indicating if the specified Node instance is a 
-	* descendant managed by the FocusManager.
+	* descendant managed by the NodeFocusManager.
 	*/
 	_isDescendant: function (node) {
 
@@ -404,7 +398,8 @@ Y.extend(FocusManager, Y.Base, {
 	_detachKeyHandler: function () {
 
 		var prevKeyHandler = this._prevKeyHandler,
-			nextKeyHandler = this._nextKeyHandler;
+			nextKeyHandler = this._nextKeyHandler,
+			keyPressHandler = this._keyPressHandler;
 
 		if (prevKeyHandler) {
 			prevKeyHandler.detach();
@@ -412,6 +407,10 @@ Y.extend(FocusManager, Y.Base, {
 		
 		if (nextKeyHandler) {
 			nextKeyHandler.detach();
+		}
+
+		if (keyPressHandler) {
+			keyPressHandler.detach();
 		}
 		
 	},
@@ -442,16 +441,17 @@ Y.extend(FocusManager, Y.Base, {
 		this._detachKeyHandler();
 
 		var sNextKey = this.get("keys.next"),
-			sPreviousKey = this.get("keys.previous");
+			sPreviousKey = this.get("keys.previous"),
+			oNode = this.get(HOST);
 
 		if (sPreviousKey) {
  			this._prevKeyHandler = 
-				Y.on(KEY, this._focusPrevious, this._node, sPreviousKey, this);
+				Y.on(KEY, Y.bind(this._focusPrevious, this), oNode, sPreviousKey);
 		}
 
 		if (sNextKey) {
  			this._nextKeyHandler = 
-				Y.on(KEY, this._focusNext, this._node, sNextKey, this);
+				Y.on(KEY, Y.bind(this._focusNext, this), oNode, sNextKey);
 		}
 
 
@@ -460,7 +460,10 @@ Y.extend(FocusManager, Y.Base, {
 		//	to prevent the viewport from scrolling.
 		
 		if (UA.opera || (UA.gecko && UA.gecko < 1.9)) {	
-			this._node.on("keypress", this._preventScroll, this);
+
+			this._keyPressHandler = 
+				oNode.on("keypress", Y.bind(this._preventScroll, this));
+
 		}
 
 	},
@@ -468,7 +471,7 @@ Y.extend(FocusManager, Y.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Detaches all event handlers used by the FocusManager.
+	* @description Detaches all event handlers used by the NodeFocusManager.
 	* @protected
 	*/
 	_detachEventHandlers: function () {
@@ -492,42 +495,48 @@ Y.extend(FocusManager, Y.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Attaches all event handlers used by the FocusManager.
-	* @protected
+	* @description Attaches all event handlers used by the NodeFocusManager.
+	* @protected	
 	*/
 	_attachEventHandlers: function () {
 
 		var descendants = this._descendants,
-			aHandlers = this._eventHandlers,
-			oNode,
+			aHandlers,
 			oDocument;
 
-		if (descendants && descendants.size() > 1 && !aHandlers) {
+		if (descendants && descendants.size() > 1) {
+
+			aHandlers = this._eventHandlers || [];
+			oDocument = this.get(HOST).get("ownerDocument");
+
+			//	For performance: defer attaching all event handlers until the 
+			//	first time one of the specified descendants receives focus
+
+			if (aHandlers.length === 0) {
+
+		    	aHandlers.push(
+					Y.on("focus", Y.bind(this._onDocFocus, this), oDocument));
+
+				aHandlers.push(
+					Y.on("mousedown", 
+						Y.bind(this._onDocMouseDown, this), oDocument));
+
+				aHandlers.push(
+						this.after("keysChange", this._attachKeyHandler));
+
+				aHandlers.push(
+						this.after("descendantsChange", this._initDescendants));
+
+				aHandlers.push(
+						this.after(ACTIVE_DESCENDANT_CHANGE, 
+								this._afterActiveDescendantChange));
+				
+			}
+			else {
+
+				this._attachKeyHandler();
 			
-			oNode = this._node;
-
-			this._attachKeyHandler();
-
-			aHandlers = [];
-
-			aHandlers[aHandlers.length] = 
-				this.after("keysChange", this._attachKeyHandler);
-
-
-			oDocument = oNode.get("ownerDocument");
-
-		    aHandlers[aHandlers.length] =	
-				Y.on("focus", this._onDocFocus, oDocument, this);
-
-			aHandlers[aHandlers.length] = 
-				Y.on("mousedown", this._onDocMouseDown, oDocument, this);
-
-			aHandlers[aHandlers.length] = 
-				this.after("descendantsChange", this._initDescendants);
-
-			aHandlers[aHandlers.length] = 
-				this.after(ACTIVE_DESCENDANT_CHANGE, 
-								this._afterActiveDescendantChange);
+			}
 
 			this._eventHandlers = aHandlers;
 			
@@ -541,19 +550,20 @@ Y.extend(FocusManager, Y.Base, {
 	/**
 	* @method _onDocMouseDown
 	* @description "mousedown" event handler for the owner document of the 
-	* FocusManager's Node.
+	* NodeFocusManager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
 	_onDocMouseDown: function (event) {
 	
 		var oTarget = event.target,
-			bChildNode = this._node.contains(oTarget);
+			bChildNode = this.get(HOST).contains(oTarget);
 
 		if (bChildNode && this._isDescendant(oTarget)) {
 
 			//	Fix general problem in Webkit: mousing down on a button or an 
 			//	anchor element doesn't focus it.
+
 			//	For all browsers: makes sure that the descendant that 
 			//	was the target of the mousedown event is now considered the
 			//	active descendant.
@@ -579,7 +589,7 @@ Y.extend(FocusManager, Y.Base, {
 	/**
 	* @method _onDocFocus
 	* @description "focus" event handler for the owner document of the 
-	* FocusManager's Node.
+	* NodeFocusManager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
@@ -596,7 +606,7 @@ Y.extend(FocusManager, Y.Base, {
 		}
 
 
-		if (this._node.contains(oTarget)) {	
+		if (this.get(HOST).contains(oTarget)) {	
 
 			//	The target is a descendant of the root Node.
 
@@ -612,7 +622,7 @@ Y.extend(FocusManager, Y.Base, {
 			else if (bHasFocus && !bInCollection) {  
 			
 				//	The user has focused a child of the root Node that is 
-				//	not one of the descendants managed by this FocusManager
+				//	not one of the descendants managed by this NodeFocusManager
 				//	so clear the currently focused descendant.
 				
 				bHasFocus = false;
@@ -642,6 +652,10 @@ Y.extend(FocusManager, Y.Base, {
 			
 		}
 
+
+		if (bHasFocus && this._eventHandlers.length === 5) {
+			this._attachEventHandlers();
+		}
 
 		this._set(HAS_FOCUS, bHasFocus);			
 
@@ -758,7 +772,6 @@ Y.extend(FocusManager, Y.Base, {
 
     initializer: function (config) {
 
-		this._node = config.owner;
 		this.start();
 
     },
@@ -766,7 +779,7 @@ Y.extend(FocusManager, Y.Base, {
 	destructor: function () {
 		
 		this.stop();
-		this._node.focusManager = null;
+		this.get(HOST).focusManager = null;
 		
     },
 
@@ -804,7 +817,7 @@ Y.extend(FocusManager, Y.Base, {
 				this._focusTarget = oNode;
 			}
 
-			oNode.focus();		
+			oNode.focus();
 
 		}
 
@@ -846,7 +859,7 @@ Y.extend(FocusManager, Y.Base, {
 
 	/**
 	* @method start
-	* @description Enables the FocusManager.
+	* @description Enables the NodeFocusManager.
 	*/
 	start: function () {
 
@@ -864,7 +877,7 @@ Y.extend(FocusManager, Y.Base, {
 
 	/**
 	* @method stop
-	* @description Disables the FocusManager by detaching all event handlers.
+	* @description Disables the NodeFocusManager by detaching all event handlers.
 	*/	
 	stop: function () {
 
@@ -884,44 +897,23 @@ Y.extend(FocusManager, Y.Base, {
 
 	/**
 	* @method refresh
-	* @description Refreshes the FocusManager's descendants by re-executing the 
+	* @description Refreshes the NodeFocusManager's descendants by re-executing the 
 	* CSS selector query specified by the "descendants" attribute.
 	*/
 	refresh: function () {
 
 		this._initDescendants();
 		
-	},
-
-
-	/**
-	* @method removeFromTabIndex
-	* @description Removes the specified Node(s) from the tab flow by setting 
-	* their <code>tabIndex</code> attribute to -1.
-	* @param nodes {String} String representing the CSS selector used to 
-	* retrieve the Node(s) to be removed from the tab flow.
-	* @param nodes {NodeList} NodeList representing the Nodes to be removed 
-	* from the tab flow.
-	* @param node {Node} Node to be removed from the tab flow.
-	*/	
-	removeFromTabIndex: function (nodes) {
-
-		if (Lang.isString(nodes)) {
-			nodes = Y.all(nodes);
-		}
-
-		nodes.set(TAB_INDEX, -1);
-		
 	}
 	
 });
 
 
-FocusManager.NAME = FOCUS_MANAGER;
-FocusManager.NS = FOCUS_MANAGER;
+NodeFocusManager.NAME = "NodeFocusManager";
+NodeFocusManager.NS = "focusManager";
 
-Y.namespace("plugin");
-Y.plugin.FocusManager = FocusManager;
+Y.namespace("Plugin");
+Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
-}, '@VERSION@' ,{requires:['node']});
+}, '@VERSION@' ,{requires:['node', 'plugin']});
