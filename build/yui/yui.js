@@ -2858,7 +2858,7 @@ var BASE = 'base',
         },
 
         'node-menunav': {
-            requires: [NODE, 'classnamemanager', PLUGIN],
+            requires: [NODE, 'classnamemanager', PLUGIN, 'node-focusmanager'],
             skinnable: true
         },
         
