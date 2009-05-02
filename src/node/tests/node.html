@@ -107,7 +107,7 @@ body {
     <div id="inline-style" style="color: green">inline style</div>
     <div id="foo"></div>
     <div id="test-computed">test computed style</div>
-    <form>
+    <form id="form.foo@bar:baz">
         <select id="test-select" name="test-select">
             <option value="0">foo</option>
             <option value="1">bar</option>
@@ -127,6 +127,7 @@ body {
         </ol>
     </div>
 
+<iframe src="test-frame"></iframe>
 <script type="text/javascript">
 YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var tool = YAHOO.tool,
@@ -185,6 +186,19 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                     Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
 
             Assert.areEqual(document.body, Y.Node.getDOMNode(Y.get('div, .foo, body')), "Y.get('div, .foo, body')");
+
+            var frameDoc = Y.get('iframe').get('contentWindow.document');
+            Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
+                "frameDoc.query('#demo li').get('innerHTML')");
+
+            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
+
+            var firstChild = Y.get('body :first-child');
+            Y.get('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
+            Assert.isFalse(Y.Node.getDOMNode(firstChild) === Y.Node.getDOMNode(Y.get('body :first-child')), "wrong node: Y.get('body :first-child')");
+
+            Y.get('body').removeChild(Y.get('body :first-child'));
+            Assert.areEqual(Y.Selector.query('body :firstChild', null, true), Y.Node.getDOMNode(Y.get('body : first-child')), "body :first-child === #test-append");
 
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');
@@ -543,6 +557,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.isNull(parent.query('#text-xy'), 'parent.query("test-xy")');
 
             Assert.areEqual(id, parent.queryAll('#' + id).item(0).get('id'), 'parent.queryAll(node, "#id")');
+            Assert.areEqual(id, parent.queryAll('#' + id).item(0).get('id'), 'parent.queryAll(node, "#id")');
         },
 
         test_window: function() {
@@ -578,6 +593,14 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             document.body.style.width = '';
 
             window.scrollTo(0, 0);
+        },
+
+        test_aria: function() {
+            Y.get('body').set('role', 'menu');
+            Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.get('body').set('role', 'menu')")
+
+            Y.get('body').set('aria-checked', true);
+            Assert.isTrue(document.body.getAttribute('aria-checked') === 'true', "Y.get('body').set('aria-checked', true)")
         }
     }));
 

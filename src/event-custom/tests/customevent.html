@@ -299,22 +299,23 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             testPreventFnOnce: function() {
                 var count = 0;
-                Y.publish('y:foo', {
+                Y.publish('y:foo1', {
                     emitFacade: true,
                     preventedFn: function() {
                         count++;
+                        Y.Assert.isTrue(this instanceof YUI);
                     }
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
 
-                Y.fire('y:foo');
+                Y.fire('y:foo1');
 
                 Y.Assert.areEqual(1, count);
             },
@@ -373,22 +374,22 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
             testBroadcast: function() {
                 var o = new Y.EventTarget(), s1, s2, s3, s4;
 
-                o.publish('y:foo', {
+                o.publish('y:foo2', {
                     emitFacade: true,
                     broadcast: 1
                 });
 
-                Y.on('y:foo', function() {
-                    Y.log('Y executed');
+                Y.on('y:foo2', function() {
+                    Y.log('Y foo2 executed');
                     s1 = 1;
                 });
 
-                Y.Global.on('y:foo', function() {
-                    Y.log('GLOBAL executed');
+                Y.Global.on('y:foo2', function() {
+                    Y.log('GLOBAL foo2 executed');
                     s2 = 1;
                 });
 
-                o.fire('y:foo');
+                o.fire('y:foo2');
 
                 Y.Assert.areEqual(1, s1);
                 Y.Assert.areNotEqual(1, s2);
@@ -402,19 +403,19 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 });
 
                 Y.on('y:bar', function() {
-                    Y.log('Y executed');
+                    Y.log('Y bar executed');
                     s3 = 1;
                 });
 
                 Y.Global.on('y:bar', function() {
-                    Y.log('GLOBAL executed');
+                    Y.log('GLOBAL bar executed');
                     s4 = 1;
                 });
 
                 o.fire('y:bar');
 
                 Y.Assert.areEqual(1, s3);
-                // Y.Assert.areEqual(1, s4);
+                Y.Assert.areEqual(1, s4);
             }
 
         });

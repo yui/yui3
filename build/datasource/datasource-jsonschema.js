@@ -8,7 +8,7 @@ YUI.add('datasource-jsonschema', function(Y) {
  */
 
 /**
- * Adds schema-parfing to the YUI DataSource utility.
+ * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceJSONSchema
  * @extends Plugin
  */    
@@ -53,7 +53,7 @@ Y.mix(DataSourceJSONSchema, {
     }
 });
 
-Y.extend(DataSourceJSONSchema, Y.Plugin, {
+Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     /**
     * Internal init() handler.
     *
@@ -84,7 +84,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this._owner instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
@@ -95,12 +95,12 @@ Y.extend(DataSourceJSONSchema, Y.Plugin, {
             };
         }
         
-        this._owner.fire("response", Y.mix({response:response}, e));
+        this.get("host").fire("response", Y.mix({response:response}, e));
         return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchame = DataSourceJSONSchema;
+Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 

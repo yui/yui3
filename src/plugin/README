@@ -1,5 +1,7 @@
 3.0.0 beta1
 
+* Moved Y.Plugin to Y.Plugin.Base
+
 * Host/Owner object now available through public "host" attribute, 
   as opposed to protected _owner property (this.get("host"))
 

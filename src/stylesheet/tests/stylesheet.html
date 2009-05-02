@@ -39,111 +39,168 @@
 <div id="testbed"></div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../build/console/console-debug.js"></script>
+<script type="text/javascript" src="../../../build/stylesheet/stylesheet-debug.js"></script>
+<script type="text/javascript" src="../../../build/test/test-debug.js"></script>
 <script type="text/javascript">
 YUI({
     base : '../../../build/',
     filter : 'debug',
-    useBrowserConsole : false,
-    logInclude : { TestRunner: true }
+    //useBrowserConsole : false,
+    logInclude : { TestRunner: true, stylesheet: true }
 }).use('test','console','stylesheet',function (Y) {
 
 var d = document,
-    testbed = Y.DOM.byId('testbed'),
-    suite,
-    StyleAssert = {
-        normalizeColor : function (c) {
-            return c && (c+'').
-                replace(/#([0-9a-f])([0-9a-f])([0-9a-f])(?![0-9a-f])/i,'#$1$1$2$2$3$3').
-                replace(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})(?![0-9a-f])/i,
-                    function (m,r,g,b) {
-                        return "rgb("+parseInt(r,16)+", "+
-                                      parseInt(g,16)+", "+
-                                      parseInt(b,16)+")" });
-        },
-        areEqual : function (a,b,msg) {
-            var aa = StyleAssert.normalizeColor(a),
-                bb = StyleAssert.normalizeColor(b);
-            if (aa !== bb) {
-                throw new Y.Assert.ComparisonFailure(
-                    Y.Assert._formatMessage(msg, "Values should be equal."), a, b);
-            }
-        }
-    };
+    Assert = Y.Assert,
+    Dom    = {},
+    StyleSheet = Y.StyleSheet,
+    suite = new Y.Test.Suite("StyleSheet Tests"),
+    StyleAssert = {},
+    testbed     = d.getElementById('testbed');
 
-function add(el,tag,conf) {
+StyleAssert.normalizeColor = function (c) {
+    return c && (c+'').
+        replace(/#([0-9a-f])([0-9a-f])([0-9a-f])(?![0-9a-f])/i,'#$1$1$2$2$3$3').
+        replace(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})(?![0-9a-f])/i,
+            function (m,r,g,b) {
+                return "rgb("+parseInt(r,16)+", "+
+                              parseInt(g,16)+", "+
+                              parseInt(b,16)+")" });
+};
+StyleAssert.areEqual = function (a,b,msg) {
+    var aa = StyleAssert.normalizeColor(a),
+        bb = StyleAssert.normalizeColor(b);
+
+    if (aa === 'bold') { aa = '700'; }
+    if (bb === 'bold') { bb = '700'; }
+
+    if (aa !== bb) {
+        throw new Assert.ComparisonFailure(
+            Assert._formatMessage(msg, "Values should be equal."), a, b);
+    }
+};
+
+Dom.add = function (el,tag,conf) {
     var child = d.createElement(tag);
     if (conf) {
-        Y.mix(child,conf);
+        Y.mix(child,conf,true);
     }
     return el.appendChild(child);
-}
-function getNodeCount (tag,root) {
+};
+Dom.getNodeCount = function (tag,root) {
     return (root||d).getElementsByTagName(tag||'*').length;
-}
+};
+Dom.getSheet = function (yuid) {
+    var nodes = d.getElementsByTagName('style'),
+        i;
 
-suite = new Y.Test.Suite("Tests");
+    for (i = nodes.length - 1; i >= 0; --i) {
+        if (nodes[i]._yuid === yuid) {
+            return (nodes[i].sheet || nodes[i].stylesheet);
+        }
+    }
+};
 
 suite.add(new Y.Test.Case({
     name : "Test &lt;style&gt; node creation",
 
     setUp : function () {
-        this.styleNodeCount = getNodeCount('style');
-        this.linkNodeCount  = getNodeCount('link');
+        this.styleNodeCount = Dom.getNodeCount('style');
+        this.linkNodeCount  = Dom.getNodeCount('link');
 
-        this.testNode = add(testbed,'div',{id:'target'});
+        this.testNode = Dom.add(testbed,'div',{id:'target'});
     },
 
     tearDown : function () {
-        testbed.innerHTML + '';
+        testbed.innerHTML = '';
     },
 
     test_createNew : function () {
-        var s = new Y.StyleSheet('test');
+        var s = new StyleSheet('test');
 
-        Y.Assert.areSame(this.styleNodeCount + 1, getNodeCount('style'));
+        Assert.areSame(this.styleNodeCount + 1, Dom.getNodeCount('style'));
     },
 
     test_createFromExistingStyle : function () {
-        var s = new Y.StyleSheet('styleblock');
+        var s = new StyleSheet('styleblock');
 
-        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
+        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
     },
 
     test_createFromExistingLink : function () {
-        var s = new Y.StyleSheet('locallink');
+        var s = new StyleSheet('locallink');
 
-        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'),"style");
-        Y.Assert.areSame(this.linkNodeCount, getNodeCount('link'),"link");
+        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'),"style");
+        Assert.areSame(this.linkNodeCount, Dom.getNodeCount('link'),"link");
     },
 
     test_createEntireSheet : function () {
-        var s = new Y.StyleSheet("#target { font-weight: bold; }");
+        var s = new StyleSheet("#target { font-weight: bold; }");
 
-        Y.Assert.areSame(this.styleNodeCount + 1, getNodeCount('style'));
+        Assert.areSame(this.styleNodeCount + 1, Dom.getNodeCount('style'));
 
-        Y.Assert.areEqual('bold',Y.DOM.getStyle(this.testNode,'font-weight'));
+        StyleAssert.areEqual('bold',Y.DOM.getStyle(this.testNode,'fontWeight'));
     },
 
     test_gettingFromCache : function () {
         // By name
-        var a = new Y.StyleSheet('test'),
-            b = new Y.StyleSheet('test');
+        var a = new StyleSheet('test'),
+            b = new StyleSheet('test');
 
-        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
-        Y.Assert.areSame(a,b,"From cache by name");
+        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
+        Assert.areSame(a,b,"From cache by name");
 
         // By generated id
-        b = new Y.StyleSheet(a.getId());
+        b = new StyleSheet(a.getId());
 
-        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
-        Y.Assert.areSame(a,b,"From cache by yuiSSID");
+        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
+        Assert.areSame(a,b,"From cache by yuiSSID");
 
         // By node
-        a = new Y.StyleSheet(d.getElementById('styleblock'));
-        b = new Y.StyleSheet('styleblock');
+        a = new StyleSheet(d.getElementById('styleblock'));
+        b = new StyleSheet('styleblock');
 
-        Y.Assert.areSame(this.styleNodeCount, getNodeCount('style'));
-        Y.Assert.areSame(a,b,"From cache by node vs id");
+        Assert.areSame(this.styleNodeCount, Dom.getNodeCount('style'));
+        Assert.areSame(a,b,"From cache by node vs id");
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name : "Test xdomain stylesheet access",
+
+    setUp : function () {
+        this.remoteLink = Dom.add(
+            d.getElementsByTagName('head')[0],'link',{
+                type : 'text/css',
+                rel  : 'stylesheet',
+                href : 'http://yui.yahooapis.com/2.6.0/build/base/base-min.css'
+            });
+    },
+
+    tearDown : function () {
+        this.remoteLink.parentNode.removeChild(this.remoteLink);
+    },
+
+    _should : {
+        error : {
+            test_remoteStyleSheet : true
+        }
+    },
+
+    test_remoteStyleSheet : function () {
+        // Each line should throw an exception
+        var sheet = Y.StyleSheet(this.remoteLink);
+
+        sheet.getCssText();
+
+        sheet.set('#target', { color: '#f00' });
+
+        sheet.unset('#target', 'color');
+
+        sheet.disable();
+
+        sheet.enable();
     }
 }));
 
@@ -151,9 +208,9 @@ suite.add(new Y.Test.Case({
     name : "Test set",
 
     setUp : function () {
-        this.stylesheet = new Y.StyleSheet('test');
+        this.stylesheet = new StyleSheet('test');
 
-        this.testNode = add(testbed,'div',{
+        this.testNode = Dom.add(testbed,'div',{
             id:'target',
             innerHTML:'<p>1</p><p>2</p><pre>pre</pre>'
         });
@@ -162,8 +219,9 @@ suite.add(new Y.Test.Case({
         testbed.innerHTML = '';
         this.stylesheet.unset('#target');
         this.stylesheet.unset('#target p');
-        this.stylesheet.unset('garbage in');
-        this.stylesheet.unset('#target p, #target pre');
+        this.stylesheet.unset('#target pre');
+        // This should be unnecessary, but for the sake of cleanliness...
+        this.stylesheet.unset('#target, #target p, #target pre');
     },
 
     test_addSimpleSelector : function () {
@@ -184,6 +242,11 @@ suite.add(new Y.Test.Case({
                         "border");
     },
 
+    test_addRuleWithInvalidValue : function () {
+        // This would throw an exception in IE if anywhere
+        this.stylesheet.set('#target .foo .bar', { color : 'invalid-value' });
+    },
+
     test_descendantSelector : function () {
         var before = Y.DOM.getStyle(
                         testbed.getElementsByTagName('pre')[0],'textAlign');
@@ -201,40 +264,28 @@ suite.add(new Y.Test.Case({
                         "#target pre should not be set (maybe auto/inherit?)");
     },
 
-    test_garbageIn : function () {
-        var x = d.getElementsByTagName('style'),i,
-            id = this.stylesheet.getId(),
-            before = 0;
+    test_setCommaSelector : function () {
+        var sheet = Dom.getSheet(this.stylesheet.getId());
 
-        for (i = x.length - 1; i >= 0; --i) {
-            if (Y.stamp(x[i]) === id) {
-                x = x[i].sheet || x[i].styleSheet;
-                before = (x.cssRules || x.rules).length;
-                break;
-            }
+        if (!sheet) {
+            Assert.fail("Could not find this StyleSheet's node or sheet");
         }
 
-        this.stylesheet.set('garbage in', { foo : 'bar' });
+        this.stylesheet.set('#target, #target p, #target pre', {
+            paddingLeft: '16px'
+        });
 
-        Y.Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "garbage rule not added");
+        Assert.areEqual(3,(sheet.cssRules || sheet.rules).length, "Comma selector split failure");
 
-        this.stylesheet.set('^*Q$(FUY(Q[{}_-',{ 'f*^$%{]@! \n\t' : 'boom' });
-
-        Y.Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "syntax error rule added");
-    },
-
-    test_commaSelector : function () {
-        this.stylesheet.set('#target p, #target pre', { textAlign: 'right' });
-
-        StyleAssert.areEqual('right',
+        StyleAssert.areEqual('16px', Y.DOM.getStyle(this.testNode,'paddingLeft'));
+        StyleAssert.areEqual('16px',
                         Y.DOM.getStyle(
-                            testbed.getElementsByTagName('p')[0],'textAlign'),
-                        "#target p, #target pre { text-align: right }");
-
-        StyleAssert.areEqual('right',
+                            testbed.getElementsByTagName('p')[0],'paddingLeft'),
+                        "#target p");
+        StyleAssert.areEqual('16px',
                         Y.DOM.getStyle(
-                            testbed.getElementsByTagName('pre')[0],'textAlign'),
-                        "#target p, #target pre { text-align: right }");
+                            testbed.getElementsByTagName('pre')[0],'paddingLeft'),
+                        "#target pre");
     }
 }));
 
@@ -242,11 +293,11 @@ suite.add(new Y.Test.Case({
     name : "Test Enable/Disable sheet",
 
     setUp : function () {
-        this.stylesheet = new Y.StyleSheet('test');
+        this.stylesheet = new StyleSheet('test');
 
         this.stylesheet.enable();
 
-        this.testNode = add(testbed,'div',{id:'target'});
+        this.testNode = Dom.add(testbed,'div',{id:'target'});
 
         this.before = {
             color           : Y.DOM.getStyle(this.testNode,'color'),
@@ -330,11 +381,11 @@ suite.add(new Y.Test.Case({
     name : "Test unset",
 
     setUp : function () {
-        this.stylesheet = new Y.StyleSheet('test');
+        this.stylesheet = new StyleSheet('test');
 
-        this.testNode = add(testbed,'div',{
-            id: 'target',
-            innerHTML: 'This is a test'
+        this.testNode = Dom.add(testbed,'div',{
+            id:'target',
+            innerHTML:'<p>1</p><p>2</p><pre>pre</pre>'
         });
 
         this.before = {
@@ -349,6 +400,9 @@ suite.add(new Y.Test.Case({
         testbed.innerHTML = '';
         this.stylesheet.unset('#target');
         this.stylesheet.unset('#target p');
+        this.stylesheet.unset('#target pre');
+        // This should be unnecessary, but for the sake of cleanliness...
+        this.stylesheet.unset('#target, #target p, #target pre');
     },
 
     test_unset : function () {
@@ -395,6 +449,127 @@ suite.add(new Y.Test.Case({
         StyleAssert.areEqual(this.before.textAlign,
                         Y.DOM.getStyle(this.testNode,'textAlign'),
                         "#target text-align still in place");
+    },
+
+    test_unsetCommaSelector : function () {
+        var p      = this.testNode.getElementsByTagName('p')[0],
+            pre    = this.testNode.getElementsByTagName('pre')[0],
+            before = {
+                paddingLeft:[
+                    Y.DOM.getStyle(this.testNode,'paddingLeft'),
+                    Y.DOM.getStyle(p,'paddingLeft'),
+                    Y.DOM.getStyle(pre,'paddingLeft')
+                ],
+                marginRight:[
+                    Y.DOM.getStyle(this.testNode,'marginRight'),
+                    Y.DOM.getStyle(p,'marginRight'),
+                    Y.DOM.getStyle(pre,'marginRight')
+                ]
+            },
+            after,
+            sheet = Dom.getSheet(this.stylesheet.getId());
+
+        if (!sheet) {
+            Assert.fail("Could not find this StyleSheet's node or sheet");
+        }
+
+        this.stylesheet.set('#target, #target p, #target pre', {
+            marginRight: '30px',
+            paddingLeft: '16px'
+        });
+
+
+        Assert.areEqual(3,(sheet.cssRules || sheet.rules).length,
+                        "Comma selector split failure");
+
+
+        this.stylesheet.unset('#target, #target p, #target pre','paddingLeft');
+
+        after = [
+            Y.DOM.getStyle(this.testNode,'paddingLeft'),
+            Y.DOM.getStyle(p,'paddingLeft'),
+            Y.DOM.getStyle(pre,'paddingLeft')
+        ];
+
+        Assert.areEqual(3,(sheet.cssRules || sheet.rules).length,
+                        "Should still be 3 rules");
+
+        Y.ArrayAssert.itemsAreEqual(before.paddingLeft,after);
+
+        after = [
+            Y.DOM.getStyle(this.testNode,'marginRight'),
+            Y.DOM.getStyle(p,'marginRight'),
+            Y.DOM.getStyle(pre,'marginRight')
+        ];
+        Y.ArrayAssert.itemsAreEqual(['30px','30px','30px'],after);
+    },
+
+    test_removeCommaSelector : function () {
+        var p      = this.testNode.getElementsByTagName('p')[0],
+            pre    = this.testNode.getElementsByTagName('pre')[0],
+            before = {
+                paddingLeft: [
+                    Y.DOM.getStyle(this.testNode,'paddingLeft'),
+                    Y.DOM.getStyle(p,'paddingLeft'),
+                    Y.DOM.getStyle(pre,'paddingLeft')
+                ]
+            },
+            sheet = Dom.getSheet(this.stylesheet.getId());
+
+        if (!sheet) {
+            Assert.fail("Could not capture this StyleSheet's node or sheet");
+        }
+
+        this.stylesheet.set('#target, #target p, #target pre', {
+            paddingLeft: '16px'
+        });
+
+        Assert.areEqual(3,(sheet.cssRules || sheet.rules).length,
+                        "Comma selector split failure");
+
+        this.stylesheet.unset('#target, #target pre','paddingLeft');
+
+        Assert.areEqual(1,(sheet.cssRules || sheet.rules).length);
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name : "Test getCssText",
+
+    setUp : function () {
+        this.stylesheet = new StyleSheet('test');
+
+        this.testNode = Dom.add(testbed,'div',{
+            id:'target',
+            innerHTML:'<p>1</p><p>2</p><pre>pre</pre>'
+        });
+
+        this.stylesheet.set('#target, #target p', {
+            padding: '3px'
+        });
+    },
+    tearDown : function () {
+        testbed.innerHTML = '';
+        this.stylesheet.unset('#target');
+        this.stylesheet.unset('#target p');
+    },
+
+    test_getRuleCSS : function () {
+        var css = this.stylesheet.getCssText('#target p');
+        Y.log(css, 'info','TestLogger');
+        Assert.isString(css);
+        Assert.areSame(true, /padding/i.test(css));
+    },
+
+    test_getSheetCSS : function () {
+        var css = this.stylesheet.getCssText();
+
+        Y.log(css, 'info','TestLogger');
+
+        Assert.isString(css);
+        Assert.areSame(true, /padding/i.test(css));
+        Assert.areSame(true, /#target/i.test(css));
+        Assert.areSame(true, /#target\s+p\s+\{/i.test(css));
     }
 }));
 
@@ -402,10 +577,10 @@ suite.add(new Y.Test.Case({
     name : "Test float/opacity",
 
     setUp : function () {
-        this.stylesheet = new Y.StyleSheet('test');
+        this.stylesheet = new StyleSheet('test');
 
-        if (!Y.DOM.byId('target')) {
-            this.testNode = add(testbed,'div',{
+        if (!d.getElementById('target')) {
+            this.testNode = Dom.add(testbed,'div',{
                 id:'target',
                 innerHTML:'<p id="p1">1</p><p id="p2">2</p><p id="p3">3</p>'
             });
@@ -413,6 +588,10 @@ suite.add(new Y.Test.Case({
     },
 
     test_float : function () {
+        var p1 = Y.DOM.byId('p1'),
+            p2 = Y.DOM.byId('p2'),
+            p3 = Y.DOM.byId('p3');
+
         this.stylesheet.set('#target',{
                             overflow: 'hidden',
                             background: '#000',
@@ -429,25 +608,47 @@ suite.add(new Y.Test.Case({
                         set('#p2',{ cssFloat: 'left' }).
                         set('#p3',{ styleFloat: 'left' });
 
-        Y.Assert.areEqual('left', Y.DOM.getStyle('p1','float'));
-        Y.Assert.areEqual('left', Y.DOM.getStyle('p2','float'));
-        Y.Assert.areEqual('left', Y.DOM.getStyle('p3','float'));
+        Assert.areEqual('left', Y.DOM.getStyle(p1,'float'));
+        Assert.areEqual('left', Y.DOM.getStyle(p2,'float'));
+        Assert.areEqual('left', Y.DOM.getStyle(p3,'float'));
     },
 
     test_opacity : function () {
+        var p1 = Y.DOM.byId('p1'),
+            p2 = Y.DOM.byId('p2'),
+            p3 = Y.DOM.byId('p3');
+
         this.stylesheet.set('#p1',{ opacity: .5 }).
-                        set('#p2',{ opacity: .2 }).
+                        set('#p2',{ opacity: ".2" }).
                         set('#p3',{ opacity: 1 });
 
-        Y.Assert.areEqual(0.5,Y.DOM.getStyle('p1','opacity'));
-        Y.Assert.areEqual(0.2,Y.DOM.getStyle('p2','opacity'));
-        Y.Assert.areEqual(1,Y.DOM.getStyle('p3','opacity'));
+        Assert.areEqual(0.5,Y.DOM.getStyle(p1,'opacity'));
+        Assert.areEqual(0.2,Y.DOM.getStyle(p2,'opacity'));
+        Assert.areEqual(1,Y.DOM.getStyle(p3,'opacity'));
     }
 }));
 
+Y.Console.prototype.printLogEntry = function (m) {
+    m = Y.merge(
+        this._htmlEscapeMessage(m),
+        Y.Console.ENTRY_CLASSES,
+        {
+            cat_class : this.getClassName('entry',m.category),
+            src_class : this.getClassName('entry',m.source)
+        });
+    
+    var n = Y.Node.create(this.get('entryTemplate').replace(/\{([\w-]+)\}/g,
+            function (_,k) { return k in m ? m[k] : ''; }));
+    
+    this._addToConsole(n);
+    
+    return this;
+};
+
 var yconsole = new Y.Console({
     contentBox:"log",
-    newestOnTop: false
+    newestOnTop: false,
+    height: '600px'
 }).render();
 
 //yconsole.hideCategory('info');
@@ -471,7 +672,7 @@ Y.Test.Runner.add(suite);
 
 Y.Test.Runner.run();
 
-});
+})();
 </script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>

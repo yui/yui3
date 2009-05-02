@@ -52,7 +52,7 @@ SchemaXML = {
             data_out = SchemaXML._parseMeta(schema.metaFields, xmldoc, data_out);
         }
         else {
-            data_out.error = true;
+            data_out.error = new Error(this.toString() + " Schema parse failure");
         }
 
         return data_out;
@@ -98,16 +98,16 @@ SchemaXML = {
      * Parses results data according to schema
      *
      * @method _parseMeta
-     * @param data_out {Object} Data to parse.
-     * @param data_in {Object} In-progress parsed data to update.
-     * @return {Object} Schema-parsed meta data.
+     * @param xmldoc_in {Object} XML document parse.
+     * @param data_out {Object} In-progress schema-parsed data to update.
+     * @return {Object} Schema-parsed data.
      * @static
      * @protected
      */
-    _parseMeta: function(metaFields, data_in, data_out) {
+    _parseMeta: function(metaFields, xmldoc_in, data_out) {
         if(LANG.isObject(metaFields)) {
             var key,
-                xmldoc = data_in.ownerDocument || data_in;
+                xmldoc = xmldoc_in.ownerDocument || xmldoc_in;
 
             for(key in metaFields) {
                 if (metaFields.hasOwnProperty(key)) {
@@ -123,16 +123,16 @@ SchemaXML = {
      *
      * @method _parseResults
      * @param schema {Object} Schema to parse against.
-     * @param xmldoc {Object} XML document parse.
+     * @param xmldoc_in {Object} XML document parse.
      * @param data_out {Object} In-progress schema-parsed data to update.
      * @return {Object} Schema-parsed data.
      * @static
      * @protected
      */
-    _parseResults: function(schema, xmldoc, data_out) {
-        if(schema.resultsLocator && LANG.isArray(schema.resultsFields)) {
-            var nodeList = xmldoc.getElementsByTagName(schema.resultsLocator),
-                fields = schema.resultsFields,
+    _parseResults: function(schema, xmldoc_in, data_out) {
+        if(schema.resultListLocator && LANG.isArray(schema.resultFields)) {
+            var nodeList = xmldoc_in.getElementsByTagName(schema.resultListLocator),
+                fields = schema.resultFields,
                 results = [],
                 node, field, result, i, j;
 

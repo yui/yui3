@@ -61,10 +61,6 @@
              */
             initializer : function(config) {
                 this._handles = [];
-
-                // TODO: Temporary
-                this._owner = this.get("host");
-
                 if (!this.get("host")) { Y.log('No host defined for plugin ' + this, 'warn', 'Plugin');}
                 Y.log('Initializing: ' + this.constructor.NAME, 'info', 'Plugin');
             },
@@ -143,4 +139,4 @@
             }
         });
 
-        Y.Plugin = Plugin;
+        Y.namespace("Plugin").Base = Plugin;

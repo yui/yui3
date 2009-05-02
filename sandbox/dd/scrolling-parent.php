@@ -75,7 +75,7 @@
 <script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript" src="js/scroll.js"></script>
+<script type="text/javascript" src="js/scroll.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -101,7 +101,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
     dd4 = new Y.DD.Drag({
         node: '#drag4'
     }).plug(Y.plugin.DDNodeScroll, {
-        node: '#drag4Cont'
+        node: '#drag4Cont',
+        horizontal: false
     });
 
 });

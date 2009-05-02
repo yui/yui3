@@ -240,7 +240,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");;
+            e.error = new Error(this.toString() + " Source undefined");
         }
         if(e.error) {
             this.fire("error", e);

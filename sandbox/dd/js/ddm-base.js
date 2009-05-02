@@ -10,6 +10,7 @@ YUI.add('dd-ddm-base', function(Y) {
      * @class DDM
      * @extends Base
      * @constructor
+     * @namespace DD
      */
     
     var DDMBase = function() {
@@ -176,8 +177,8 @@ YUI.add('dd-ddm-base', function(Y) {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
-                this.fire('ddm:end');
                 this._endDrag();
+                this.fire('ddm:end');
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
@@ -198,7 +199,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {Event} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {

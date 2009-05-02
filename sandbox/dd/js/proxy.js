@@ -132,6 +132,7 @@ YUI.add('dd-proxy', function(Y) {
         /**
         * @private
         * @for DDM
+        * @namespace DD
         * @method _createFrame
         * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
@@ -159,6 +160,7 @@ YUI.add('dd-proxy', function(Y) {
         /**
         * @private
         * @for DDM
+        * @namespace DD
         * @method _setFrame
         * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
