@@ -190,6 +190,8 @@
 
     <span class="nx">OOP</span> <span class="o">=</span> <span class="s1">&#39;oop&#39;</span><span class="o">,</span>
 
+	<span class="nx">PLUGIN</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="o">,</span>
+
     <span class="nx">META</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="nx">version</span><span class="o">:</span> <span class="nx">VERSION</span><span class="o">,</span>
@@ -390,8 +392,8 @@
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">focusmanager</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
+        <span class="s1">&#39;node-focusmanager&#39;</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">get</span><span class="o">:</span> <span class="o">{</span> 
@@ -444,7 +446,7 @@
         <span class="o">},</span>
 
         <span class="s1">&#39;node-menunav&#39;</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;node-focusmanager&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
         
