@@ -4,14 +4,15 @@ Documentation: http://developer.yahoo.com/yui/3/event
 
 3.0.0b1
 
-  * Moved out of event module.
-  * References to document changed to Y.config.doc.
-  * Removed methods on Y.Event in favor of just simulate().
+    * Moved out of event module.
+    * References to document changed to Y.config.doc.
+    * Removed methods on Y.Event in favor of just simulate().
+    * simulate() now throws an error if the event isn't supported (trac# 2527823).
 
 3.0.0PR2
 
-  * No changes.
+    * No changes.
 
 3.0.0PR1
 
-  * Initial release.
+    * Initial release.
