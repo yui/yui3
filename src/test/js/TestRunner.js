@@ -351,11 +351,13 @@
            _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
                 
                 //add the test suite
-                var node = parentNode.appendChild(testCase);
+                var node = parentNode.appendChild(testCase),
+                    prop,
+                    testName;
                 
                 //iterate over the items in the test case
-                for (var prop in testCase){
-                    if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
+                for (prop in testCase){
+                    if ((prop.indexOf("test") === 0 || (prop.toLowerCase().indexOf("should") > -1 && prop.indexOf(" ") > -1 ))&& Y.Lang.isFunction(testCase[prop])){
                         node.appendChild(prop);
                     }
                 }
