@@ -28,7 +28,7 @@
 		</div>
 	</div>
 <script  type="text/javascript">
-YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserConsole:false}).use('widget','treeview','test','console',function(Y) {
+YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserConsole:true}).use('widget','treeview','test','console',function(Y) {
 
 	
 	var tv, PARENT 		= 'parent',
@@ -40,8 +40,8 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 
 	Y.on('event:ready', function () {
 
-		var yconsole = new Y.Console(); 
-		yconsole.render(); 
+		//var yconsole = new Y.Console(); 
+		//yconsole.render(); 
 		
 		var rel = function (tv,msg) {
 			console.log('---------'+msg+'-------------');
@@ -75,7 +75,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.isNull(tv.get(NEXT),'tree should have no next sibling');
 				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
 				A.isArray(tv._children,'children should be an array');
-				A.areEqual(tv._children.length,0,'children should contain zero elements');
+				A.areEqual(0,tv._children.length,'children should contain zero elements');
 			},
 			testFatherChild:function() {
 				console.log('testFatherChild');
@@ -88,7 +88,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.isNull(tv.get(NEXT),'tree should have no next sibling');
 				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
 				A.isArray(tv._children,'children should be an array');
-				A.areEqual(tv._children.length,1,'children should contain one element');
+				A.areEqual(1,tv._children.length,'children should contain one element');
 				A.areSame(tv._children[0],tn,'tv should have tn as child');
 				
 				A.isInstanceOf(Y.TreeNode,tn,'tn should be a TreeNode');
@@ -97,7 +97,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.isNull(tn.get(NEXT),'tree should have no next sibling');
 				A.isNull(tn.get(PREVIOUS),'tree should have no previous sibling');
 				A.isArray(tn._children,'children should be an array');
-				A.areEqual(tn._children.length,0,'children should contain no elements');
+				A.areEqual(0,tn._children.length,'children should contain no elements');
 			},
 			testFatherWithChildAdded:function() {
 				console.log('testFatherWithChildAdded');
@@ -110,7 +110,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.isNull(tv.get(NEXT),'tree should have no next sibling');
 				A.isNull(tv.get(PREVIOUS),'tree should have no previous sibling');
 				A.isArray(tv._children,'children should be an array');
-				A.areEqual(tv._children.length,1,'children should contain one element');
+				A.areEqual(1,tv._children.length,'children should contain one element');
 				A.areSame(tv._children[0],tn,'tv should have tn as child');
 				
 				A.isInstanceOf(Y.TreeNode,tn,'tn should be a TreeNode');
@@ -119,7 +119,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.isNull(tn.get(NEXT),'tree should have no next sibling');
 				A.isNull(tn.get(PREVIOUS),'tree should have no previous sibling');
 				A.isArray(tn._children,'children should be an array');
-				A.areEqual(tn._children.length,0,'children should contain no elements');
+				A.areEqual(0,tn._children.length,'children should contain no elements');
 			},
 			testAddingBySibling:function() {
 				console.log('testAddingBySibling');
@@ -131,7 +131,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				
 				A.areSame(t2,t1.get(PREVIOUS),'t2 should be previous to t1');
 				A.areSame(t3,t1.get(NEXT),'t1 should be previous to t3');
-				A.areEqual(tv._children.length,3,'tree should have three branches');
+				A.areEqual(3,tv._children.length,'tree should have three branches');
 				A.areSame(tv._children[0],t2,'t2 should be the first');
 				A.areSame(tv._children[1],t1,'t1 should be in the middle');
 				A.areSame(tv._children[2],t3,'t3 should be the last');
@@ -146,30 +146,15 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 			testMoveNode: function () {
 				console.log('testMoveNode');
 				tv.set('content','testMoveNode');
-				rel(tv,1);
 				var t1 = new Y.TreeNode({parent:tv, content:'t1'});
-				rel(tv,2);
-				rel(t1,2);
 				var t2 = new Y.TreeNode({previousSibling:t1, content:'t2'});
-				rel(tv,3);
-				rel(t1,3);
-				rel(t2,3);
 				var t3 = new Y.TreeNode({previousSibling:t2, content:'t3'});
-				rel(tv,4);
-				rel(t1,4);
-				rel(t2,4);
-				rel(t3,4);
 				tv.render('#bd');
 				A.areSame(tv._children[0],t1,'t1 should be the first');
 				A.areSame(tv._children[1],t2,'t2 should be in the middle');
 				A.areSame(tv._children[2],t3,'t3 should be the last');
 				
 				t2.set(PARENT,t1);
-				
-				rel(tv,5);
-				rel(t1,5);
-				rel(t2,5);
-				rel(t3,5);
 	
 				A.areSame(tv._children[0],t1,'t1 should be the first');
 				A.areSame(tv._children[1],t3,'t3 should be in the middle');
@@ -178,37 +163,28 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 
 		});
 		Y.Test.Runner.add(testCase);
-if (false) {
+if (true) {
 		Y.Test.Runner.run();
 } else {	
 				tv = new Y.TreeNode();
 
 
-				console.log('testMoveNode');
-				tv.set('content','testMoveNode');
+				console.log('testAddingBySibling');
+				tv.set('content','testAddingBySibling');
 				rel(tv,1);
-				var t1 = new Y.TreeNode({parent:tv, content:'t1'});
+				var t1 = new Y.TreeNode({parent:tv});
 				rel(tv,2);
 				rel(t1,2);
-				debugger;
-				var t2 = new Y.TreeNode({content:'t2'});
-				t2.set(PREVIOUS,t1);
+				var t2 = new Y.TreeNode({nextSibling:t1});
 				rel(tv,3);
 				rel(t1,3);
 				rel(t2,3);
-				var t3 = new Y.TreeNode({previousSibling:t2, content:'t3'});
+				var t3 = new Y.TreeNode({previousSibling:t1});
 				rel(tv,4);
 				rel(t1,4);
 				rel(t2,4);
 				rel(t3,4);
 				tv.render('#bd');
-			
-				t2.set(PARENT,t1);
-				
-				rel(tv,5);
-				rel(t1,5);
-				rel(t2,5);
-				rel(t3,5);
 //		tv.destroy();
 }
 		

@@ -3,6 +3,7 @@
  * 
  * @module treeNode
  */
+
 var TREENODE = 'treenode',
 
 	CONTENT_BOX  = 'contentBox',
@@ -56,7 +57,11 @@ var TREENODE = 'treenode',
 	
 	NODE_MARKUP = '<div class ="' + C_TOGGLE + '"><span class ="' + C_CONTENT + '"></span><a class ="' + C_MAGNET + '" href ="#">&nbsp;</a></div>',
 	CHILDREN_MARKUP = '<div class ="' + C_CHILDREN + '"></div>',
-	EMPTY_DIV_MARKUP = '<div></div>';
+	EMPTY_DIV_MARKUP = '<div></div>',
+	
+	
+	Q = new Y.Queue(),
+	silent = false;
 	
 	/**
  * Create a hierarchical tree
@@ -161,15 +166,30 @@ Y.mix(TreeNode,{
 		},
 		content: {
 			value: null,
-			validator: function (value) {
-				return this._contentValidator(value);
-			},
 			setter: function (value) {
 				return this._contentSetter(value);
 			}
 		},
 		container: {
 			writeOnce:true
+		},
+		strings: {
+			value: {
+				badContent:'Rejected attempt to set invalid content [{val}] on node [{me}]',
+				orphan:'TreeNode [{me}] was already an orphan',
+				setParent:'Setting new parent [{parent}] of [{me}]',
+				setNextSibling:'Setting new next sibling [{next}] of [{me}]',
+				setPreviousSibling:'Setting new previous sibling [{previous}] of [{me}]',
+				nextSiblingNotChild:'Position of next sibling [{next}] amongst parent [{parent}] children not found',
+				previousSiblingNotChild:'Position of previous sibling [{previous}] amongst parent [{parent}] children not found',
+				moving:'Moving [{node}] under [{parent}] in between [{previous}] and [{next}]',
+				removing:'Removing child [{child}] from parent [{me}]',
+				inserting:'Inserting child [{child}] into [{me}] at position [{position}]',
+				positionOutOfBounds:'Tried to insert child [{child}] out of bounds at position [{position}] under parent [{me}]',
+				positionNotInParent:'Cannot insert node [{child}] before a node [{position}] that is not a child of this node [{me}]',
+				positionArgumentInvalid:'Argument position in method insertNode should be an integer, a TreeNode reference or undefined, was [{position}]'
+				
+			}
 		}
 	}
 });
@@ -182,18 +202,50 @@ Y.extend(TreeNode,Y.Widget,{
 	
 	
 	initializer: function (config) {
-		Y.log('initializer [' + this + ']');
+		Y.log(Y.substitute('initializer [{me}]',{me:this}));
 		this._children = [];
+		this.set('locale','es');
+		this.set('strings', {
+			badContent:'Rechazada la asignaci&oacute;n de contenido inv&aacute;lido [{val}] al nodo [{me}]',
+			orphan:'El TreeNode [{me}] ya era hu&eacute;rfano',
+			setParent:'Estableciendo nuevo padre [{parent}] para [{me}]',
+			setNextSibling:'Estableciendo nuevo hermano siguiente [{next}] para [{me}]',
+			setPreviousSibling:'Estableciendo nuevo hermano previo [{previous}] para [{me}]',
+			nextSiblingNotChild:'No se ha encontrado la position del hermano siguiente [{next}] entre los hijos del padre [{parent}]',
+			previousSiblingNotChild:'No se ha encontrado la position del hermano previo [{previous}] entre los hijos del padre [{parent}]',
+			moving:'Moviendo [{node}] bajo [{parent}] entre [{previous}] y [{next}]',
+			removing:'Retirando el hijo [{child}] del padre [{me}]',
+			inserting:'Insertando el hijo [{child}] bajo el padre [{me}] en la posici&oacute;n [{position}]',
+			positionOutOfBounds:'Rechazado el intento de insertar el hijo [{child}] fuera de rango en la posici&oacute;n [{position}] bajo el padre [{me}]',
+			positionNotInParent:'No se puede insertar el nodo [{child}] antes de un nodo [{position}] que no es hijo de este padre [{me}]',
+			positionArgumentInvalid:"El argumento 'position' en el m&eacute;todo 'insertNode' debe ser un entero, un TreeNode o 'undefined', fue [{position}]"
+		});
+
+
 		config = config || {};
 
 		
-		this.on('parentChange',     	this._doWhenNotSilent,this,  this._onParentChange);
-		this.on('nextSiblingChange',   	this._doWhenNotSilent,this,  this._onNextSiblingChange);
-		this.on('previousSiblingChange',this._doWhenNotSilent,this,  this._onPreviousSiblingChange);	
+		this.after('parentChange',     		this._doWhenNotSilent,this,  this._afterParentChange);
+		this.after('nextSiblingChange',   	this._doWhenNotSilent,this,  this._afterNextSiblingChange);
+		this.after('previousSiblingChange',	this._doWhenNotSilent,this,  this._afterPreviousSiblingChange);	
 		
 		this.after('contentChange',    this._afterContentChange);	
 
-		this.setAttrs(config);
+		
+		silent = true;
+	
+		if (PARENT in config) {
+			this._changeParent(config[PARENT]);
+		}
+		if (NEXT in config) {
+			this._changeNextSibling(config[NEXT]);
+		}
+		
+		if (PREVIOUS in config) {
+			this._changePreviousSibling(config[PREVIOUS]);
+		}
+
+		silent = false;
 
 		this._findRoot();
 	},
@@ -210,8 +262,11 @@ Y.extend(TreeNode,Y.Widget,{
 		if (!this.get(ROOT)) {
 			this._findRoot();
 		}
-        this._renderUIContainer();
-        this._renderUIChildren();
+        Q.add(Y.bind(this._renderUIContainer,this));
+        Q.add(Y.bind(this._renderUIChildren,this));
+		if (!this.get(PARENT)) {
+			Q.run();
+		}
 	},
 	_findRoot : function () {
 		var findParent = function (node) {
@@ -228,7 +283,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 		
 	_renderUIContainer: function () {
-		Y.log('_renderUIContainer [' + this  + ']');
+		Y.log(Y.substitute('_renderUIContainer [{me}]',{me:this}));
 		var cb   = this.get(CONTENT_BOX);
 		cb.appendChild(Y.Node.create(NODE_MARKUP));
 		cb.addClass(C_TOGGLE_F_N);
@@ -241,7 +296,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	_renderUIChildren: function () {
 
-		Y.log('_renderUIChildren [' + this  + ']');
+		Y.log(Y.substitute('_renderUIChildren [{me}]',{me:this}));
 		var cb   = this.get(CONTENT_BOX);
 		cb.appendChild(Y.Node.create(CHILDREN_MARKUP));
 		this._childContainerEl = cb.query('.' + C_CHILDREN);
@@ -262,8 +317,9 @@ Y.extend(TreeNode,Y.Widget,{
 		// If the new node is the same as the existing, don't waste time
 		// Besides, it prevents looping forever into updating reciprocal relationships
 		// You've been warned!
-		var other = this.get(who);
-		return (node === null && other !== null) || (node instanceof TreeNode && node !== other);
+		var prevVal = this.get(who);
+		//console.log('node validator',who,this,node,prevVal,(node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal));
+		return (node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal);
 	},
 	
 	_parentValidator: function (node) {
@@ -276,22 +332,21 @@ Y.extend(TreeNode,Y.Widget,{
 		return this._genericNodeValidator(node,PREVIOUS);
 	},
 	
-	_contentValidator:function(value) {
-		return value === null || value instanceof Y.Node || (value.nodeType && value.nodeType == 1) ||  Y.Lang.isString(value);
-	},
 	_contentSetter: function(value) {
-		switch(true) {
-			case Y.Lang.isNull(value):
-				return null;
-			case value instanceof Y.Node:
-				return value;
-			case value.nodeType && value.nodeType == 1:
-				return Y.get(value);
-			case Y.Lang.isString(value):
-				return Y.Node.create(value);
-			default:
-				return undefined;
-		}	
+		if (Y.Lang.isNull(value)) {
+			return null;
+		}
+		if (value instanceof Y.Node) {
+			return value;
+		}
+		if (value.nodeType && value.nodeType == 1) {
+			return Y.get(value);
+		}
+		if (Y.Lang.isString(value)) {
+			return Y.Node.create(value);
+		}
+		Y.log(Y.substitute(this.getString('badContent'),{me:this,val:value}),'error');
+		return Y.Attribute.INVALID_VALUE;
 	},
 	
 	_afterContentChange: function (e) {
@@ -303,8 +358,8 @@ Y.extend(TreeNode,Y.Widget,{
 		}
 	},
 	
-	_detach:  function(newParent) {
-		var parent = this.get(PARENT), found = false;
+	_detach:  function(newParent,oldParent) {
+		var parent = oldParent || this.get(PARENT), found = false;
 		if (parent && parent !== newParent) {
 			var siblings = parent._children;
 			for (var i = 0; i < siblings.length;i++) {
@@ -315,7 +370,7 @@ Y.extend(TreeNode,Y.Widget,{
 				}
 			}
 			if (!found && siblings.length) {
-				Y.error(Y.substitute('I [{me}] was already an orphan!',{me:this}));
+				Y.error(Y.substitute(this.getString('orphan'),{me:this}));
 			}
 		}
 		var next = this.get(NEXT),
@@ -329,90 +384,108 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	
 	_doWhenNotSilent : function(ev,f) {
-		var root = this.get(ROOT);
-		if (!root || root._silent) { return; }
-		root._silent = true;
+		if (silent) { 
+			//console.log('drop',ev.type,ev.target,ev.newVal,ev.prevVal);
+			return; 
+		}
+		//console.log('do',ev.type,ev.target,ev.newVal,ev.prevVal);
+		silent = true;
 		f.call(this,ev);
-		root._silent = false;
+		silent = false;
+		Q.run();
 	},
 	
-	_onParentChange : function(e) {
+	_afterParentChange : function(e) {
 		var newParent = e.newVal;
-		Y.log('setting parent [' + newParent + '] of  [' + this  + ']');
-		this._detach(newParent);
-		if (newParent) {
-			this.set(NEXT,null);
-			var siblings = newParent._children;
-			this.set(PREVIOUS,siblings[siblings.length -1]);
-			siblings.push(this);
-		}
+		this._detach(newParent,e.prevVal);
+		this._changeParent(newParent);
 		if (this.get(RENDERED)) {
-			this._move();
+			Q.add(Y.bind(this._move,this));
 		}
 	},
-	_onNextSiblingChange : function(e) {
+	_changeParent: function (newParent) {
+		var siblings;
+
+		Y.log(Y.substitute(this.getString('setParent'),{parent:newParent,me:this}));
+		this.set(NEXT,null);
+		siblings = newParent._children;
+		this.set(PREVIOUS,siblings[siblings.length -1] || null);
+		siblings.push(this);
+	},
+	
+	_afterNextSiblingChange : function(e) {
 		var next = e.newVal;
-		Y.log('setting next sibling [' + next + '] to  [' + this  + ']');
-		var newParent = next && next.get(PARENT);
-		this._detach(newParent);
-		if (next) {
-			if (newParent) {
-				var siblings = newParent._children, found = false;
-				for (var i = 0;i < siblings.length;i++){
-					if (next === siblings[i]) {
-						siblings.splice(i,0,this);
-						found = true;
-						break;
-					}
-				}
-				if (!found && siblings.length) {
-					Y.error('Position of nextSibling amongst parent children not found');
-				}
-				this.set(PARENT,newParent);
-			}
-			this.set(NEXT,next);
-			var previous = next.get(PREVIOUS);
-			if (previous) {
-				this.set(PREVIOUS,previous);
-				previous.set(NEXT,this);
-			}
-			next.set(PREVIOUS,this);
-		}
+		this._detach(next && next.get(PARENT));
+		this._changeNextSibling(next);
 		if (this.get(RENDERED)) {
-			this._move();
+			Q.add(Y.bind(this._move,this));
 		}
 	},
-	_onPreviousSiblingChange : function(e) {
-		var previous = e.newVal;
-		Y.log('setting previous sibling [' + previous + '] to  [' + this  + ']');
-		var newParent = previous && previous.get(PARENT);
-		this._detach(newParent);
+	_changeNextSibling: function (next) {
+		var	newParent,siblings, previous, found,i;
+
+		Y.log(Y.substitute(this.getString('setNextSibling'),{next:next,me:this}));
+		newParent = next && next.get(PARENT);
+		if (newParent) {
+			siblings = newParent._children;
+			found = false;
+			for (i = 0;i < siblings.length;i++){
+				if (next === siblings[i]) {
+					//console.log('::::n',next,i,siblings.length);
+					siblings.splice(i,0,this);
+					found = true;
+					break;
+				}
+			}
+			if (!found && siblings.length) {
+				Y.error(Y.substitute(this.getString('nextSiblingNotChild'),{me:this,next:next,parent:newParent}));
+			}
+			this.set(PARENT,newParent);
+		}
+		this.set(NEXT,next);
+		previous = next.get(PREVIOUS);
 		if (previous) {
-			if (newParent) {
-				var siblings = newParent._children, found = false;
-				for (var i = 0;i < siblings.length;i++){
-					if (previous === siblings[i]) {
-						siblings.splice(i+1, 0, this);
-						found = true;
-						break;
-					}
-				}
-				if (!found && siblings.length) {
-					Y.error('Position of previousSibling amongst parent children not found');
-				}
-				this.set(PARENT,newParent);
-			}
 			this.set(PREVIOUS,previous);
-			var next = previous.get(NEXT);
-			if (next) {
-				this.set(NEXT,next);
-				next.set(PREVIOUS,this);
-			}
 			previous.set(NEXT,this);
 		}
+		next.set(PREVIOUS,this);
+	},
+	_afterPreviousSiblingChange : function(e) {
+		var previous = e.newVal;
+		this._detach(previous && previous.get(PARENT));
+		this._changePreviousSibling(previous);
 		if (this.get(RENDERED)) {
-			this._move();
+			Q.add(Y.bind(this._move,this));
 		}
+	},
+	_changePreviousSibling: function (previous) {
+		var	newParent,siblings, next, found,i;
+		Y.log(Y.substitute(this.getString('setPreviousSibling'),{previous:previous,me:this}));
+		newParent = previous && previous.get(PARENT);
+		if (newParent) {
+			siblings = newParent._children;
+			found = false;
+			for (i = 0;i < siblings.length;i++){
+				if (previous === siblings[i]) {
+					//console.log('::::p',previous,i,siblings.length);
+					siblings.splice(i+1, 0, this);
+					found = true;
+					break;
+				}
+			}
+			if (!found && siblings.length) {
+				Y.error(Y.substitute(this.getString('previousSiblingNotChild'),{me:this,previous:previous,parent:newParent}));
+			}
+			this.set(PARENT,newParent);
+		}
+		this.set(PREVIOUS,previous);
+		next = previous.get(NEXT);
+		if (next) {
+			this.set(NEXT,next);
+			next.set(PREVIOUS,this);
+		}
+		previous.set(NEXT,this);
+
 	},
 	_move: function () {
 		var myBB = this.get(BOUNDING_BOX),
@@ -421,7 +494,7 @@ Y.extend(TreeNode,Y.Widget,{
 			next= this.get(NEXT),
 			nextBB = next && next.get(BOUNDING_BOX);
 			
-		Y.log(Y.substitute('Moving [{node}] under [{parent}] in between [{previous}] and [{next}]',{
+		Y.log(Y.substitute(this.getString('moving'),{
 			node:this,
 			parent:parent,
 			previous:this.get(PREVIOUS),
@@ -435,8 +508,9 @@ Y.extend(TreeNode,Y.Widget,{
 			}
 		}
 	},
+	
 	removeChild: function (node) {
-		Y.log('removing [' + node + '] from  [' + this  + ']');
+		Y.log(Y.substitute(this.getString('removing'),{child:node,me:this}));
 		node.set(PARENT,null);
 		return node;
 	},
@@ -445,7 +519,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	insertChild: function (node, position) {
 		var next,previous,siblings,bb,i;
-		Y.log('inserting [' + node + '] into [' + this + '] at [' + position + ']');
+		Y.log(Y.substitute(this.getString('inserting'),{child:node,me:this,position:position}));
 		if (node.get(PREVIOUS) || node.get(PREVIOUS) || node.get(PARENT)) {
 			Y.error('Cannot insert a node attached elsewhere [' + node + ']');
 			return false;
@@ -454,7 +528,7 @@ Y.extend(TreeNode,Y.Widget,{
 			if (position >=0 && position < this._children.length) {
 				next = this._children[next];
 			} else {
-				Y.error('Tried to insert child [' + node + '] out of bounds at next ' + next + ' in [' + this + ']');
+				Y.error(Y.substritute(this.getString('positionOutOfBounds'),{child:node,position:next,me:this}));
 				return false;
 			}
 		} else {
@@ -462,7 +536,7 @@ Y.extend(TreeNode,Y.Widget,{
 		}
 		if (next instanceof TreeNode) {
 			if (next.get(PARENT) !== this) {
-				Y.error('Cannot insert node [' + node + '] before a node [' + next + '] that is not a children of this node [' + this + ']');
+				Y.error(Y.substitute(this.getString('positionNotInParent'),{child:node,position:next,me:this }));
 				return false;
 			}
 			node.set(NEXT,next);
