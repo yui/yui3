@@ -77,21 +77,26 @@
             //if the method is expected to be called
             if (callCount > 0){
                 mock[name] = function(){   
-                    expectation.actualCallCount++;
-                    Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
-                    for (var i=0, len=args.length; i < len; i++){
-                        if (args[i]){
-                            args[i].verify(arguments[i]);
-                        } else {
-                            Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
-                        }
+                    try {
+                        expectation.actualCallCount++;
+                        Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
+                        for (var i=0, len=args.length; i < len; i++){
+                            //if (args[i]){
+                                args[i].verify(arguments[i]);
+                            //} else {
+                            //    Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
+                            //}
+                            
+                        }                
+    
+                        run.apply(this, arguments);
                         
-                    }                
-
-                    run.apply(this, arguments);
-                    
-                    if (error){
-                        throw error;
+                        if (error){
+                            throw error;
+                        }
+                    } catch (ex){
+                        //route through TestRunner for proper handling
+                        Y.Test.Runner._handleError(ex);
                     }
                     
                     return result;
@@ -127,16 +132,16 @@
         });    
     };
 
-    Y.Mock.Value = function(method, args, message){
+    Y.Mock.Value = function(method, originalArgs, message){
         if (this instanceof Y.Mock.Value){
             this.verify = function(value){
-                args = [].concat(args || []);
+                var args = [].concat(originalArgs || []);
                 args.push(value);
                 args.push(message);
                 method.apply(null, args);
             };
         } else {
-            return new Y.Mock.Value(method, args, message);
+            return new Y.Mock.Value(method, originalArgs, message);
         }
     };
     
