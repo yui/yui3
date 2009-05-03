@@ -56,6 +56,23 @@
                     </h2>
                     <!-- class tree goes here -->
                     
+                        <dl class="subclasses" rel="yui:subclasses">
+                            <dt>Known Subclasses:</dt>
+                            <dd>
+                                    <span rel="yui:subclass" resource="DataSourceXMLSchema.html">
+                                    <a href="DataSourceXMLSchema.html" property="yui:name" title="DataSourceXMLSchema">DataSourceXMLSchema</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="DataSourceArraySchema.html">
+                                    <a href="DataSourceArraySchema.html" property="yui:name" title="DataSourceArraySchema">DataSourceArraySchema</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="DataSourceJSONSchema.html">
+                                    <a href="DataSourceJSONSchema.html" property="yui:name" title="DataSourceJSONSchema">DataSourceJSONSchema</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="Cache.html">
+                                    <a href="Cache.html" property="yui:name" title="Cache">Cache</a>
+                                    </span>
+                            </dd>
+                       </dl>
                 
   
 
@@ -255,7 +272,7 @@ Default context is the plugin instance.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Listens for events and methods fired by the owner widget.
+                                            Listens for events and methods fired by the host.
 The handler is called before the event handler or method is called.
                                         </div>
 
@@ -395,6 +412,55 @@ Default context is the plugin instance.</span>
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_hostChange">
+                                    <h4>
+                                        <a name="event_hostChange">hostChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">hostChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'host' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
@@ -422,6 +488,26 @@ Default context is the plugin instance.</span>
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_host">
+                                    <h4><a name="config_host">host</a>
+                                        <code>- writeonce <span property="yui:type">PluginHost</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The plugin's host object.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
                         <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
@@ -452,11 +538,14 @@ Default context is the plugin instance.</span>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -465,12 +554,14 @@ Default context is the plugin instance.</span>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class="selected"><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
@@ -514,7 +605,19 @@ Default context is the plugin instance.</span>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_hostChange" title="hostChange">hostChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_host" title="host">host</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -525,7 +628,7 @@ Default context is the plugin instance.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin", "name": "destructor", "url": "Plugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin", "name": "doAfter", "url": "Plugin.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin", "name": "doBefore", "url": "Plugin.html#method_doBefore", "type": "method"}, {"access": "", "host": "Plugin", "name": "initializer", "url": "Plugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin", "name": "Plugin.NAME", "url": "Plugin.html#property_Plugin.NAME", "type": "property"}, {"access": "", "host": "Plugin", "name": "Plugin.NS", "url": "Plugin.html#property_Plugin.NS", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Plugin", "name": "destructor", "url": "Plugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin", "name": "doAfter", "url": "Plugin.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin", "name": "doBefore", "url": "Plugin.html#method_doBefore", "type": "method"}, {"access": "", "host": "Plugin", "name": "host", "url": "Plugin.html#config_host", "type": "config"}, {"access": "", "host": "Plugin", "name": "hostChange", "url": "Plugin.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin", "name": "initializer", "url": "Plugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin", "name": "Plugin.NAME", "url": "Plugin.html#property_Plugin.NAME", "type": "property"}, {"access": "", "host": "Plugin", "name": "Plugin.NS", "url": "Plugin.html#property_Plugin.NS", "type": "property"}];
 </script>
 </body>
 </html>

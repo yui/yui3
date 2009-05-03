@@ -2614,4 +2614,4 @@ YUI.add('test', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['substitute','event-custom','array','oop','event-target','event-simulate']});
+}, '@VERSION@' ,{requires:['substitute','event-custom','array','oop','event','event-simulate']});

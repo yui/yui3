@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
+    var _instances = {}, _startTime = new Date().getTime(), p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -156,7 +156,7 @@ YUI.prototype = {
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
-        var w = (o.win) ? (o.win.contentWindow) : o.win  || window,
+        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
             v = '@VERSION@';
         o.win = w;
         o.doc = w.document;
@@ -193,7 +193,7 @@ YUI.prototype = {
 
         this.constructor = YUI;
 
-        this.log(this.id + ') init ');
+        // this.log(this.id + ') init ');
     },
     
     /**
@@ -311,7 +311,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'YUI');
 
                 if (m.fn) {
                     m.fn(this);
@@ -396,6 +396,7 @@ YUI.prototype = {
                 r.push(name);
 
             },
+
             onComplete = function(fromLoader) {
 
                 // Y.log('Use complete');
@@ -601,18 +602,17 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    Y = YUI; 
-    p = Y.prototype;
+    p = YUI.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
         if (true) {
-            Y[i] = p[i];
+            YUI[i] = p[i];
         }
     }
 
     // set up the environment
-    Y._init();
+    YUI._init();
 
 
 })();
@@ -1085,6 +1085,33 @@ A.numericSort = function(a, b) {
     return (a - b); 
 };
 
+/**
+ * Executes the supplied function on each item in the array.
+ * Returning true from the processing function will stop the 
+ * processing of the remaining
+ * items.
+ * @method Array.some
+ * @param a {Array} the array to iterate
+ * @param f {Function} the function to execute on each item
+ * @param o Optional context object
+ * @static
+ * @return {boolean} true if the function returns true on
+ * any of the items in the array
+ */
+ A.some = (Native.some) ?
+    function (a, f, o) { 
+        return Native.some.call(a, f, o);
+    } :
+    function (a, f, o) {
+        var l = a.length, i;
+        for (i=0; i<l; i=i+1) {
+            if (f.call(o, a[i], i, a)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
 })();
 (function() {
 
@@ -1243,6 +1270,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     }
 
     return r;
+};
+
+/**
+ * Returns a wrapper for a function which caches the
+ * return value of that function, keyed off of the combined 
+ * argument values.
+ * @function cached
+ * @param source {function} the function to memoize
+ * @param cache an optional cache seed
+ * @return {Function} the wrapped function
+ */
+Y.cached = function(source, cache){
+    cache = cache || {};
+
+    return function() {
+        var a = arguments, 
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+
+        if (!(key in cache)) {
+            cache[key] = source.apply(source, arguments);
+        }
+
+        return cache[key];
+    };
+
 };
 
 })();
@@ -1563,7 +1615,7 @@ Y.UA = function() {
          * @type boolean
          * @static
          */
-        secure: (Y.config.win.location.href.toLowerCase().indexOf("https") === 0),
+        secure: false,
 
         /**
          * The operating system.  Currently only detecting windows or macintosh
@@ -1575,70 +1627,80 @@ Y.UA = function() {
         
     },
 
-    ua = navigator.userAgent, 
-    m ;
+    ua = navigator && navigator.userAgent, 
 
-    if ((/windows|win32/).test(ua)) {
-        o.os = 'windows';
-    } else if ((/macintosh/).test(ua)) {
-        o.os = 'macintosh';
-    }
+    loc = Y.config.win.location,
 
-    // Modern KHTML browsers should qualify as Safari X-Grade
-    if ((/KHTML/).test(ua)) {
-        o.webkit=1;
-    }
-    // Modern WebKit browsers are at least X-Grade
-    m=ua.match(/AppleWebKit\/([^\s]*)/);
-    if (m&&m[1]) {
-        o.webkit=parseFloat(m[1]);
+    href = loc && loc.href,
+    
+    m;
 
-        // Mobile browser check
-        if (/ Mobile\//.test(ua)) {
-            o.mobile = "Apple"; // iPhone or iPod Touch
-        } else {
-            m=ua.match(/NokiaN[^\/]*/);
-            if (m) {
-                o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
-            }
+    o.secure = href && (href.toLowerCase().indexOf("https") === 0);
+
+    if (ua) {
+
+        if ((/windows|win32/).test(ua)) {
+            o.os = 'windows';
+        } else if ((/macintosh/).test(ua)) {
+            o.os = 'macintosh';
         }
 
-        m=ua.match(/AdobeAIR\/([^\s]*)/);
-        if (m) {
-            o.air = m[0]; // Adobe AIR 1.0 or better
+        // Modern KHTML browsers should qualify as Safari X-Grade
+        if ((/KHTML/).test(ua)) {
+            o.webkit=1;
         }
-
-    }
-
-    if (!o.webkit) { // not webkit
-        // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
-        m=ua.match(/Opera[\s\/]([^\s]*)/);
+        // Modern WebKit browsers are at least X-Grade
+        m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.opera=parseFloat(m[1]);
-            m=ua.match(/Opera Mini[^;]*/);
-            if (m) {
-                o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
-            }
-        } else { // not opera or webkit
-            m=ua.match(/MSIE\s([^;]*)/);
-            if (m&&m[1]) {
-                o.ie=parseFloat(m[1]);
-            } else { // not opera, webkit, or ie
-                m=ua.match(/Gecko\/([^\s]*)/);
+            o.webkit=parseFloat(m[1]);
+
+            // Mobile browser check
+            if (/ Mobile\//.test(ua)) {
+                o.mobile = "Apple"; // iPhone or iPod Touch
+            } else {
+                m=ua.match(/NokiaN[^\/]*/);
                 if (m) {
-                    o.gecko=1; // Gecko detected, look for revision
-                    m=ua.match(/rv:([^\s\)]*)/);
-                    if (m&&m[1]) {
-                        o.gecko=parseFloat(m[1]);
+                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                }
+            }
+
+            m=ua.match(/AdobeAIR\/([^\s]*)/);
+            if (m) {
+                o.air = m[0]; // Adobe AIR 1.0 or better
+            }
+
+        }
+
+        if (!o.webkit) { // not webkit
+            // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
+            m=ua.match(/Opera[\s\/]([^\s]*)/);
+            if (m&&m[1]) {
+                o.opera=parseFloat(m[1]);
+                m=ua.match(/Opera Mini[^;]*/);
+                if (m) {
+                    o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
+                }
+            } else { // not opera or webkit
+                m=ua.match(/MSIE\s([^;]*)/);
+                if (m&&m[1]) {
+                    o.ie=parseFloat(m[1]);
+                } else { // not opera, webkit, or ie
+                    m=ua.match(/Gecko\/([^\s]*)/);
+                    if (m) {
+                        o.gecko=1; // Gecko detected, look for revision
+                        m=ua.match(/rv:([^\s\)]*)/);
+                        if (m&&m[1]) {
+                            o.gecko=parseFloat(m[1]);
+                        }
                     }
                 }
             }
         }
-    }
 
-    m=ua.match(/Caja\/([^\s]*)/);
-    if (m&&m[1]) {
-        o.caja=parseFloat(m[1]);
+        m=ua.match(/Caja\/([^\s]*)/);
+        if (m&&m[1]) {
+            o.caja=parseFloat(m[1]);
+        }
     }
     
     return o;
@@ -2553,11 +2615,27 @@ var BASE = 'base',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
     CSSBASE = 'cssbase',
-    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
-    YUI_CSS = ['reset', 'fonts', 'grids', 'base'],
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
+                 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    YUI_CSS = ['reset', 'fonts', 'grids', BASE],
     VERSION = '@VERSION@',
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
+
+    YUIBASE = 'yui-base',
+
+    GET = 'get',
+
+    EVENT = 'event',
+
+    EVENTCUSTOM = 'event-custom',
+
+    NODE = 'node',
+
+    OOP = 'oop',
+
+	PLUGIN = 'plugin',
+
     META = {
 
     version: VERSION,
@@ -2572,18 +2650,19 @@ var BASE = 'base',
         defaultSkin: 'sam',
         base: 'assets/skins/',
         path: 'skin.css',
-        after: ['reset', 'fonts', 'grids', 'base']
+        // after: ['reset', 'fonts', 'grids', 'base']
+        after: CSS_AFTER
         //rollup: 3
     },
 
     modules: {
 
        dom: {
-            requires: ['event'],
+            requires: [EVENT],
             submodules: {
 
                 'dom-base': {
-                    requires: ['event']
+                    requires: [EVENT]
                 },
 
                 'dom-style': {
@@ -2611,11 +2690,11 @@ var BASE = 'base',
         },
 
         node: {
-            requires: ['dom', 'base'],
+            requires: ['dom', BASE],
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', 'base', 'selector']
+                    requires: ['dom-base', BASE, 'selector']
                 },
 
                 'node-style': {
@@ -2635,11 +2714,11 @@ var BASE = 'base',
         },
 
         anim: {
-            requires: [BASE, 'node'],
+            requires: [BASE, NODE],
             submodules: {
 
                 'anim-base': {
-                    requires: ['base', 'node-style']
+                    requires: [BASE, 'node-style']
                 },
 
                 'anim-color': {
@@ -2651,6 +2730,7 @@ var BASE = 'base',
                 },
 
                 'anim-easing': {
+                    requires: [YUIBASE]
                 },
 
                 'anim-scroll': {
@@ -2662,13 +2742,13 @@ var BASE = 'base',
                 },
 
                 'anim-node-plugin': {
-                     requires: ['node', 'anim-base']
+                     requires: [NODE, 'anim-base']
                 }
             }
         },
 
         attribute: { 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM]
         },
 
         base: {
@@ -2676,19 +2756,25 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: ['node', 'dump', 'substitute']
+            requires: [NODE, 'dump', 'substitute']
         },
 
-        classnamemanager: { },
+        classnamemanager: { 
+            requires: [YUIBASE]
+        },
 
-        collection: { },
+        collection: { 
+            requires: [OOP]
+        },
 
         console: {
             requires: ['widget', 'substitute'],
             skinnable: true
         },
         
-        cookie: { },
+        cookie: { 
+            requires: [YUIBASE]
+        },
 
         // Note: CSS attributes are modified programmatically to reduce metadata size
         // cssbase: {
@@ -2703,7 +2789,7 @@ var BASE = 'base',
         dd:{
             submodules: {
                 'dd-ddm-base': {
-                    requires: ['node', BASE]
+                    requires: [NODE, BASE]
                 }, 
                 'dd-ddm':{
                     requires: ['dd-ddm-base']
@@ -2733,37 +2819,40 @@ var BASE = 'base',
             }
         },
 
-        dump: { },
+        dump: { 
+            requires: [YUIBASE]
+        },
 
         event: { 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM],
+            expound: NODE
         },
 
         'event-custom': { 
-            requires: ['oop']
+            requires: [OOP]
         },
 
         'event-simulate': { 
-            requires: ['event']
+            requires: [EVENT]
         },
 
-        focusmanager: { 
-            requires: ['node']
+        'node-focusmanager': { 
+            requires: [NODE, PLUGIN]
         },
 
         get: { 
-            requires: ['yui-base']
+            requires: [YUIBASE]
         },
 
         history: { 
-            requires: ['node']
+            requires: [NODE]
         },
         
         io:{
             submodules: {
 
                 'io-base': {
-                    requires: ['node']
+                    requires: [EVENTCUSTOM]
                 }, 
 
                 'io-xdr': {
@@ -2771,11 +2860,11 @@ var BASE = 'base',
                 }, 
 
                 'io-form': {
-                    requires: ['io-base']
+                    requires: ['io-base', NODE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: ['io-base']
+                    requires: ['io-base', NODE]
                 },
 
                 'io-queue': {
@@ -2787,24 +2876,26 @@ var BASE = 'base',
         json: {
             submodules: {
                 'json-parse': {
+                    requires: [YUIBASE]
                 },
 
                 'json-stringify': {
+                    requires: [YUIBASE]
                 }
             }
         },
 
         loader: { 
-            requires: ['get']
+            requires: [GET]
         },
 
         'node-menunav': {
-            requires: ['node', 'classnamemanager'],
+            requires: [NODE, 'classnamemanager', PLUGIN, 'node-focusmanager'],
             skinnable: true
         },
         
         oop: { 
-            requires: ['yui-base']
+            requires: [YUIBASE]
         },
 
         overlay: {
@@ -2813,21 +2904,25 @@ var BASE = 'base',
         },
 
         plugin: { 
-            requires: ['base']
+            requires: [BASE]
         },
 
-        profiler: { },
+        profiler: { 
+            requires: [YUIBASE]
+        },
 
         queue: {
             submodules: {
-                'queue-base': {}
+                'queue-base': {
+                    requires: [YUIBASE]
+                }
             },
             plugins: {
                 'queue-io': {
                     requires: ['io-base']
                 }
             }, 
-            requires: ['event-custom']
+            requires: [EVENTCUSTOM]
         },
 
         slider: {
@@ -2835,14 +2930,16 @@ var BASE = 'base',
             skinnable: true
         },
 
-        stylesheet: { },
+        stylesheet: { 
+            requires: [YUIBASE]
+        },
 
         substitute: {
             optional: ['dump']
         },
 
         widget: {
-            requires: ['base', 'node', 'classnamemanager'],
+            requires: [BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
@@ -2859,13 +2956,13 @@ var BASE = 'base',
         // Since YUI is required for everything else, it should not be specified as
         // a dependency.
         yui: {
-            supersedes: ['yui-base', 'get', 'loader']
+            supersedes: [YUIBASE, GET, 'loader']
         },
 
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['collection', 'substitute', 'node', 'json']                                                                                                                     
+            requires: ['substitute', NODE, 'json']                                                                                                                     
         }  
 
     }
@@ -3696,19 +3793,32 @@ Y.Loader.prototype = {
      */
     _explode: function() {
 
-        var r=this.required, i, mod, req;
+        var r=this.required, i, mod, req, me = this, f = function(name) {
 
-        for (i in r) {
-            if (r.hasOwnProperty(i)) {
-                mod = this.getModule(i);
+                mod = me.getModule(name);
+
+                var expound = mod && mod.expound;
                 // Y.log('exploding ' + i);
 
-                req = this.getRequires(mod);
+                if (mod) {
 
-                if (req) {
+                    if (expound) {
+                        r[expound] = me.getModule(expound);
+                        req = me.getRequires(r[expound]);
+                        Y.mix(r, Y.Array.hash(req));
+                    }
+
+                    req = me.getRequires(mod);
+
                     // Y.log('via explode: ' + req);
                     Y.mix(r, Y.Array.hash(req));
                 }
+            };
+
+
+        for (i in r) {
+            if (r.hasOwnProperty(i)) {
+                f(i);
             }
         }
     },

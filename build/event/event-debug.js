@@ -976,7 +976,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             ce = _wrappers[id];
 
             if (ce) {
-                return ce.unsubscribe(fn);
+                return ce.detach(fn);
             } else {
                 return false;
             }
@@ -1221,7 +1221,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
-                    lis[i].unsubscribeAll();
+                    lis[i].detachAll();
                 }
             }
 
@@ -1244,12 +1244,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */           
         getListeners: function(el, type) {
             var ek = Y.stamp(el, true), evts = _el_events[ek],
-                results=[] , key = (type) ? 'event:' + type : null;
+                results=[] , key = (type) ? 'event:' + ek + type : null;
 
             if (!evts) {
                 return null;
             }
-
 
             if (key) {
                 if (evts[key]) {
@@ -1276,7 +1275,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             var E = Y.Event;
 
             Y.each(_wrappers, function(v, k) {
-                v.unsubscribeAll();
+                v.detachAll();
                 remove(v.el, v.type, v.fn);
                 delete _wrappers[k];
             });
@@ -1509,6 +1508,36 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
+(function() {
+
+var delegates = {},
+
+    worker = function(delegateKey, e) {
+
+        var target = e.target, passed, spec, tests = delegates[delegateKey], ename;
+
+        for (spec in tests) {
+
+            if (tests.hasOwnProperty(spec)) {
+            
+                passed = false;
+                ename = tests[spec];
+
+                // @TODO we need Node.some 
+                e.currentTarget.queryAll(spec).each(function (v, k) {
+
+                    if ((!passed) && (v.compareTo(target) || v.contains(target))) {
+
+                        e.target = v;
+                        Y.fire(ename, e);
+
+                    }
+                });
+            }
+        }
+
+    };
+
 /**
  * Sets up a delegated listener container.
  * @event delegate
@@ -1524,39 +1553,33 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
-
 Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec, o) {
 
-        var ename = 'delegate:' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + delegateType + spec,
-            a     = Y.Array(arguments, 0, true);
+        // identifier to target the container
+        var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+                
+            // the custom event for the delegation spec
+            ename = 'delegate:' + guid + delegateType + spec,
 
-        if (!Y.getEvent(ename)) {
+            // the key to the listener for the event type and container
+            delegateKey = delegateType + guid,
+
+            a = Y.Array(arguments, 0, true);
+
+        if (!(delegateKey in delegates)) {
+
+            delegates[delegateKey] = {};
 
             // set up the listener on the container
             Y.on(delegateType, function(e) {
-
-                var target  = e.target, 
-                    passed  = false;
-
-				// @TODO we need Node.some 
-				e.currentTarget.queryAll(spec).each(function (v, k) {
-
-					if ((!passed) && (v.compareTo(target) || v.contains(target))) {
-
-						e.target = v;
-						Y.fire(ename, e);
-						passed = true;
-
-					}
-
-				});
-
-
+                worker(delegateKey, e);
             }, el);
 
         }
+
+        delegates[delegateKey][spec] = ename;
 
         a[0] = ename;
 
@@ -1569,6 +1592,8 @@ Y.Env.evt.plugins.delegate = {
     }
 
 };
+
+})();
 (function() {
 
 var detachHandle,
@@ -1732,4 +1757,4 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 Y.Env.evt.plugins.mouseleave = eventConfig;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom']});

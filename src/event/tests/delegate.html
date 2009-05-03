@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>YUI Event Delegate Tests</title>
+</head>
+<body class="yui-skin-sam">
+    <div id="doc">
+
+		<div id="mod1">
+			<div class="hd"><h3 class="title">H3 - Title</h3></div>
+			<div class="bd">
+				<p>simple parragraph with a link <a href="#"id="firstlink">simple link</a></p>
+				<p>another parragraph with a complex link <a href="#" id="secondlink"><strong>strong within link</strong><img alt="fake image" id="fakeimage" /> - complex <span id="spanwithinlink">link</span></a></p>
+			</div>
+		</div>
+
+    </div>
+	<!-- YUI3 Core //-->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<!-- Initialization process //-->
+	<script type="text/javascript">
+		YUI({
+		    base: "../../../build/",
+		    filter: 'debug',
+		    combine: false,
+	        useConsole: true,
+	        // logInclude: ['event', 'test']
+	        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
+			
+		    // creating the console...
+			(new Y.Console()).render();
+			
+			// starting the testing process
+			
+			// add the test cases and suites 
+			Y.Test.Runner.add(new Y.Test.Case({
+				
+				name: "Event Delegate Tests",
+				
+				test_simple_delegate_for_anchors: function(){
+					
+					var foo = false, t;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'click', 'a');
+					
+					Y.Event.simulate (document.getElementById('firstlink'), 'click');
+					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
+					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+					
+				},
+				
+				test_checking_delegation_target: function(){
+					
+					var foo = false, t;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'click', 'a');
+					
+					Y.Event.simulate (document.getElementById('fakeimage'), 'click');
+					Y.Assert.isTrue(foo, "delegation fails for an image within an anchor, mod1 should pickup the event and test target [secondlink]");
+					// in this case, the target should be the anchor, and not the image
+					Y.Assert.areEqual(t, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+					
+				},
+				
+				test_including_container_in_selector: function(){
+					
+					var foo = false, t;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'click', '#mod1 a');
+					
+					Y.Event.simulate (document.getElementById('firstlink'), 'click');
+					Y.Assert.isFalse(foo, "delegation fails, the container (specified in the on) can not be part of the selectors");
+					
+				},
+				
+				test_targeting_container_without_selectors: function(){
+					
+					var foo = false, t;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'click');
+					
+					Y.Event.simulate (document.getElementById('firstlink'), 'click');
+					Y.Assert.isFalse(foo, "delegation fails, delegation without at least one selector should never trigger an event");
+				},
+				
+				
+				
+				test_multiple_selectors_one_match: function(){
+					
+					var foo = false, t;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'click', 'hd h3,a,a span');
+					
+					Y.Event.simulate (document.getElementById('firstlink'), 'click');
+					Y.Assert.isTrue(foo, "multiple selectors fails, delegate should be able to match different selectors");
+					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					
+				},
+				
+				test_multiple_delegate_matches: function(){
+					
+					var foo1 = false, foo2 = false, t1, t2;
+					
+					Y.on('delegate', function(e) {
+						foo1 = true;
+						t1 = e.target;
+					}, '#mod1', 'click', 'a');
+					
+					Y.on('delegate', function(e) {
+						foo2 = true;
+						t2 = e.target;
+					}, '#mod1', 'click', 'a span');
+					
+					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isTrue(foo2, "second match fail, delagete should be able to match [a span]");
+					Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					
+				}
+				
+				
+				/* 
+				 * Other things that I consider should be tested in the future:
+				 * - stopping the event, verifying the event ourside of the container
+				 * - stopping the event and verify what happen with multiple matches
+				 */
+				
+			})); 
+			
+			//run all tests 
+			Y.Test.Runner.run();
+			
+			/* finishing the testing process */
+			
+		});
+	</script>
+</body>
+</html>

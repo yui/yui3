@@ -164,7 +164,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {String} (Otional)</dt>
+	 *   <dt>format {String} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
@@ -228,7 +228,7 @@ var Dt = {
 	 *  <dt>locale {String} (Optional)</dt>
 	 *  <dd>
 	 *   The locale to use when displaying days of week, months of the year, and other locale specific
-	 *   strings. If not specified, this defaults to "en" which may be overridden by changing Y.config.locale.
+	 *   strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
 	 *   The following locales are built in:
 	 *   <dl>
 	 *    <dt>en</dt>
@@ -291,7 +291,7 @@ var Dt = {
 				case "array":					// built in function with padding
 					if(Y.Lang.type(f[0]) === "string") {
 						return xPad(oDate[f[0]](), f[1]);
-					} // else fall through to default:
+					} // no break; (fall through to default:)
 				default:
 					Y.log("unrecognised replacement type, please file a bug (format: " + oConfig.format || Y.config.dateFormat + ")", "WARN", "datatype-date");
 					return m1;

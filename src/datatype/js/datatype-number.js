@@ -13,30 +13,32 @@ var LANG = Y.Lang,
  * @static
  */
 Number = {
+    /**
+     * Returns string name.
+     *
+     * @method toString
+     * @return {String} String representation for this object.
+     */
+    toString: function() {
+        return "DataType.Number";
+    },
 
     /**
      * Converts data to type Number.
      *
      * @method parse
-     * @param data {String | Number | Boolean} Data to convert. Note, the following
+     * @param data {String | Number | Boolean} Data to convert. The following
      * values return as null: null, undefined, NaN, "".
      * @return {Number} A number, or null.
      * @static
      */
-    parse : function(data) {
-        if(!LANG.isValue(data) || (data === "")) {
-            return null;
-        }
-
-        //Convert to number
-        var number = data * 1;
-
-        // Validate
+    parse: function(data) {
+        var number = (data === null) ? data : +data;
         if(LANG.isNumber(number)) {
             return number;
         }
         else {
-            Y.log("Could not convert data " + Y.dump(data) + " to type Number", "warn", this.toString());
+            Y.log("Could not parse data " + Y.dump(data) + " to type Number", "warn", Number.toString());
             return null;
         }
     },
@@ -45,8 +47,8 @@ Number = {
      * Takes a Number and formats to string for display to user.
      *
      * @method format
-     * @param nData {Number} Number.
-     * @param oConfig {Object} (Optional) Optional configuration values:
+     * @param data {Number} Number.
+     * @param config {Object} (Optional) Optional configuration values:
      *  <dl>
      *   <dt>prefix {String}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
@@ -62,79 +64,63 @@ Number = {
      * @return {String} Formatted number for display. Note, the following values
      * return as "": null, undefined, NaN, "".
      */
-    format : function(nData, oConfig) {
-        var lang = YAHOO.lang;
-        if(!lang.isValue(nData) || (nData === "")) {
-            return "";
-        }
+    format: function(data, config) {
+        data = LANG.isNumber(data) ? data : Number.parse(data);
 
-        oConfig = oConfig || {};
+        if(LANG.isNumber(data)) {
+            config = config || {};
 
-        if(!lang.isNumber(nData)) {
-            nData *= 1;
-        }
+            var isNeg = (data < 0),
+                output = data + "",
+                decPlaces = config.decimalPlaces,
+                decSep = config.decimalSeparator || ".",
+                thouSep = config.thousandsSeparator,
+                decIndex,
+                newOutput, count, i;
 
-        if(lang.isNumber(nData)) {
-            var bNegative = (nData < 0);
-            var sOutput = nData + "";
-            var sDecimalSeparator = (oConfig.decimalSeparator) ? oConfig.decimalSeparator : ".";
-            var nDotIndex;
-
-            // Manage decimals
-            if(lang.isNumber(oConfig.decimalPlaces)) {
+            // Decimal precision
+            if(LANG.isNumber(decPlaces)) {
                 // Round to the correct decimal place
-                var nDecimalPlaces = oConfig.decimalPlaces;
-                var nDecimal = Math.pow(10, nDecimalPlaces);
-                sOutput = Math.round(nData*nDecimal)/nDecimal + "";
-                nDotIndex = sOutput.lastIndexOf(".");
+                output = data.toFixed(decPlaces);
+            }
 
-                if(nDecimalPlaces > 0) {
-                    // Add the decimal separator
-                    if(nDotIndex < 0) {
-                        sOutput += sDecimalSeparator;
-                        nDotIndex = sOutput.length-1;
-                    }
-                    // Replace the "."
-                    else if(sDecimalSeparator !== "."){
-                        sOutput = sOutput.replace(".",sDecimalSeparator);
-                    }
-                    // Add missing zeros
-                    while((sOutput.length - 1 - nDotIndex) < nDecimalPlaces) {
-                        sOutput += "0";
-                    }
-                }
+            // Decimal separator
+            if(decSep !== "."){
+                output = output.replace(".", decSep);
             }
 
             // Add the thousands separator
-            if(oConfig.thousandsSeparator) {
-                var sThousandsSeparator = oConfig.thousandsSeparator;
-                nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
-                nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
-                var sNewOutput = sOutput.substring(nDotIndex);
-                var nCount = -1;
-                for (var i=nDotIndex; i>0; i--) {
-                    nCount++;
-                    if ((nCount%3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
-                        sNewOutput = sThousandsSeparator + sNewOutput;
+            if(thouSep) {
+                // Find the dot or where it would be
+                decIndex = output.lastIndexOf(decSep);
+                decIndex = (decIndex > -1) ? decIndex : output.length;
+                // Start with the dot and everything to the right
+                newOutput = output.substring(decIndex);
+                // Working left, every third time add a separator, every time add a digit
+                for (count = 0, i=decIndex; i>0; i--) {
+                    if ((count%3 === 0) && (i !== decIndex) && (!isNeg || (i > 1))) {
+                        newOutput = thouSep + newOutput;
                     }
-                    sNewOutput = sOutput.charAt(i-1) + sNewOutput;
+                    newOutput = output.charAt(i-1) + newOutput;
+                    count++;
                 }
-                sOutput = sNewOutput;
+                output = newOutput;
             }
 
             // Prepend prefix
-            sOutput = (oConfig.prefix) ? oConfig.prefix + sOutput : sOutput;
+            output = (config.prefix) ? config.prefix + output : output;
 
             // Append suffix
-            sOutput = (oConfig.suffix) ? sOutput + oConfig.suffix : sOutput;
+            output = (config.suffix) ? output + config.suffix : output;
 
-            return sOutput;
+            return output;
         }
         // Still not a Number, just return unaltered
         else {
-            return nData;
+            return data;
         }
     }
 };
 
 Y.namespace("DataType").Number = Number;
+Y.namespace("Parsers").number = Number.parse;

@@ -93,14 +93,13 @@ var yConfig = {
 };
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
-    
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-scroll', function(Y) {
+    myY = Y;
     Y.DD.DDM._debugShim = true;
 
-    dd4 = new Y.DD.DragScroll({
-        node: '#drag4',
-        windowScroll: true
-    });
+    dd4 = new Y.DD.Drag({
+        node: '#drag4'
+    }).plug(Y.plugin.DDWinScroll);
 
 });
 

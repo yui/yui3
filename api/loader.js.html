@@ -171,11 +171,27 @@
     <span class="nx">CSSFONTS</span> <span class="o">=</span> <span class="s1">&#39;cssfonts&#39;</span><span class="o">,</span>
     <span class="nx">CSSGRIDS</span> <span class="o">=</span> <span class="s1">&#39;cssgrids&#39;</span><span class="o">,</span>
     <span class="nx">CSSBASE</span> <span class="o">=</span> <span class="s1">&#39;cssbase&#39;</span><span class="o">,</span>
-    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
-    <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">],</span>
+    <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> 
+                 <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
+    <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span>
     <span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="o">,</span>
     <span class="nx">CONTEXT</span> <span class="o">=</span> <span class="s1">&#39;-context&#39;</span><span class="o">,</span>
+
+    <span class="nx">YUIBASE</span> <span class="o">=</span> <span class="s1">&#39;yui-base&#39;</span><span class="o">,</span>
+
+    <span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span>
+
+    <span class="nx">EVENT</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="o">,</span>
+
+    <span class="nx">EVENTCUSTOM</span> <span class="o">=</span> <span class="s1">&#39;event-custom&#39;</span><span class="o">,</span>
+
+    <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
+
+    <span class="nx">OOP</span> <span class="o">=</span> <span class="s1">&#39;oop&#39;</span><span class="o">,</span>
+
+	<span class="nx">PLUGIN</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="o">,</span>
+
     <span class="nx">META</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="nx">version</span><span class="o">:</span> <span class="nx">VERSION</span><span class="o">,</span>
@@ -190,18 +206,19 @@
         <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="o">,</span>
         <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;assets/skins/&#39;</span><span class="o">,</span>
         <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;skin.css&#39;</span><span class="o">,</span>
-        <span class="nx">after</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">]</span>
+        <span class="c">// after: [&#39;reset&#39;, &#39;fonts&#39;, &#39;grids&#39;, &#39;base&#39;]</span>
+<span class="c"></span>        <span class="nx">after</span><span class="o">:</span> <span class="nx">CSS_AFTER</span>
         <span class="c">//rollup: 3</span>
 <span class="c"></span>    <span class="o">},</span>
 
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
 
        <span class="nx">dom</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">],</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;dom-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;dom-style&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -229,11 +246,11 @@
         <span class="o">},</span>
 
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
 
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;node-style&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -253,11 +270,11 @@
         <span class="o">},</span>
 
         <span class="nx">anim</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">],</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;anim-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node-style&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="s1">&#39;node-style&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-color&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -269,6 +286,7 @@
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-easing&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-scroll&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -280,13 +298,13 @@
                 <span class="o">},</span>
 
                 <span class="s1">&#39;anim-node-plugin&#39;</span><span class="o">:</span> <span class="o">{</span>
-                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
+                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">base</span><span class="o">:</span> <span class="o">{</span>
@@ -294,19 +312,25 @@
         <span class="o">},</span>
         
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
-        <span class="nx">collection</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">collection</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">console</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;widget&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
         
-        <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="c">// Note: CSS attributes are modified programmatically to reduce metadata size</span>
 <span class="c"></span>        <span class="c">// cssbase: {</span>
@@ -321,7 +345,7 @@
         <span class="nx">dd</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">]</span>
                 <span class="o">},</span> 
                 <span class="s1">&#39;dd-ddm&#39;</span><span class="o">:{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">]</span>
@@ -351,37 +375,40 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
-        <span class="nx">dump</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">dump</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">event</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">],</span>
+            <span class="nx">expound</span><span class="o">:</span> <span class="nx">NODE</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-custom&#39;</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;oop&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-simulate&#39;</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">focusmanager</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+        <span class="s1">&#39;node-focusmanager&#39;</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">get</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">history</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
         <span class="o">},</span>
         
         <span class="nx">io</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;io-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-xdr&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -389,11 +416,11 @@
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-form&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-upload-iframe&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;io-queue&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -405,24 +432,26 @@
         <span class="nx">json</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;json-parse&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;json-stringify&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">loader</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;get&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">GET</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;node-menunav&#39;</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;node-focusmanager&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
         
         <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">overlay</span><span class="o">:</span> <span class="o">{</span>
@@ -431,21 +460,25 @@
         <span class="o">},</span>
 
         <span class="nx">plugin</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">queue</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
-                <span class="s1">&#39;queue-base&#39;</span><span class="o">:</span> <span class="o">{}</span>
+                <span class="s1">&#39;queue-base&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">}</span>
             <span class="o">},</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;queue-io&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;io-base&#39;</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">},</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event-custom&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>
@@ -453,14 +486,16 @@
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="o">},</span>
 
-        <span class="nx">stylesheet</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">stylesheet</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">substitute</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dump&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">widget</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;widget-position&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
                 <span class="s1">&#39;widget-position-ext&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -477,13 +512,13 @@
         <span class="c">// Since YUI is required for everything else, it should not be specified as</span>
 <span class="c"></span>        <span class="c">// a dependency.</span>
 <span class="c"></span>        <span class="nx">yui</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">,</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
+            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">,</span> <span class="nx">GET</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;yui-base&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="nx">test</span><span class="o">:</span> <span class="o">{</span>                                                                                                                                                        
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;collection&#39;</span><span class="o">,</span> <span class="s1">&#39;substitute&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;json&#39;</span><span class="o">]</span>                                                                                                                     
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;substitute&#39;</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;json&#39;</span><span class="o">]</span>                                                                                                                     
         <span class="o">}</span>  
 
     <span class="o">}</span>
@@ -1314,19 +1349,32 @@
 <span class="c">     */</span>
     <span class="nx">_explode</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">mod</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
+                <span class="nx">mod</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+                <span class="k">var</span> <span class="nx">expound</span> <span class="o">=</span> <span class="nx">mod</span> <span class="o">&amp;&amp;</span> <span class="nx">mod</span><span class="o">.</span><span class="nx">expound</span><span class="o">;</span>
                 <span class="c">// Y.log(&#39;exploding &#39; + i);</span>
 <span class="c"></span>
-                <span class="nx">req</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">req</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">expound</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">expound</span><span class="o">);</span>
+                        <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="nx">expound</span><span class="o">]);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
+                    <span class="o">}</span>
+
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">me</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">mod</span><span class="o">);</span>
+
                     <span class="c">// Y.log(&#39;via explode: &#39; + req);</span>
 <span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
                 <span class="o">}</span>
+            <span class="o">};</span>
+
+
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>
@@ -1976,11 +2024,14 @@
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -1989,12 +2040,14 @@
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
@@ -2014,6 +2067,7 @@
                                 <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
                                 <li class=""><a href="UA.html" title="UA">UA</a></li>
                                 <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
+                                <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
                                 <li class=""><a href="YUI~object.html" title="YUI~object">YUI~object</a></li>
                         </ul>
                     </div>
@@ -2047,7 +2101,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.every", "url": "YUI.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.filter", "url": "YUI.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.find", "url": "YUI.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.grep", "url": "YUI.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.map", "url": "YUI.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.partition", "url": "YUI.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reduce", "url": "YUI.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.reject", "url": "YUI.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.some", "url": "YUI.html#method_Array.some", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.unique", "url": "YUI.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI", "name": "Array.zip", "url": "YUI.html#method_Array.zip", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "lastIndexOf", "url": "YUI.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "private", "host": "Get", "name": "nidx", "url": "Get.html#property_nidx", "type": "property"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "", "host": "YUI", "name": "set", "url": "YUI.html#method_set", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI~array~extras", "name": "lastIndexOf", "url": "YUI~array~extras.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "private", "host": "Get", "name": "nidx", "url": "Get.html#property_nidx", "type": "property"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
 </script>
 </body>
 </html>
