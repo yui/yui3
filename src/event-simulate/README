@@ -1,6 +1,17 @@
 YUI Event Simulation Utilities
-    Synthetic DOM events
+Module Name: "event-simulate"
+Documentation: http://developer.yahoo.com/yui/3/event
 
-3.0.0next
-    - Moved out of event module
-    - References to document changed to Y.config.doc
+3.0.0b1
+
+  * Moved out of event module.
+  * References to document changed to Y.config.doc.
+  * Removed methods on Y.Event in favor of just simulate().
+
+3.0.0PR2
+
+  * No changes.
+
+3.0.0PR1
+
+  * Initial release.
