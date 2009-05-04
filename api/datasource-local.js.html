@@ -1,0 +1,480 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datasource   datasource-local.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>datasource&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
+                
+                 &gt; datasource-local.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * The DataSource utility provides a common configurable interface for widgets to</span>
+<span class="c"> * access a variety of data, from JavaScript arrays to online database servers.</span>
+<span class="c"> *</span>
+<span class="c"> * @module datasource</span>
+<span class="c"> */</span>
+<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    
+<span class="c">/**</span>
+<span class="c"> * Base class for the YUI DataSource utility.</span>
+<span class="c"> * @class DataSource.Local</span>
+<span class="c"> * @extends Base</span>
+<span class="c"> * @constructor</span>
+<span class="c"> */</span>    
+<span class="nx">DSLocal</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="o">};</span>
+    
+    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">// DataSource static properties</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSLocal</span><span class="o">,</span> <span class="o">{</span>
+    <span class="c">/**</span>
+<span class="c">     * Class name.</span>
+<span class="c">     *</span>
+<span class="c">     * @property NAME</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static     </span>
+<span class="c">     * @final</span>
+<span class="c">     * @value &quot;DataSource.Local&quot;</span>
+<span class="c">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;DataSource.Local&quot;</span><span class="o">,</span>
+
+    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">// DataSource Attributes</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute source</span>
+<span class="c">        * @description Pointer to live data.</span>
+<span class="c">        * @type MIXED</span>
+<span class="c">        * @default null        </span>
+<span class="c">        */</span>
+        <span class="nx">source</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Global transaction counter.</span>
+<span class="c">     *</span>
+<span class="c">     * @property DataSource._tId</span>
+<span class="c">     * @type Number</span>
+<span class="c">     * @static</span>
+<span class="c">     * @private</span>
+<span class="c">     * @default 0</span>
+<span class="c">     */</span>
+    <span class="nx">_tId</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes a given callback.  The third param determines whether to execute</span>
+<span class="c">     *</span>
+<span class="c">     * @method DataSource.issueCallback</span>
+<span class="c">     * @param callback {Object} The callback object.</span>
+<span class="c">     * @param params {Array} params to be passed to the callback method</span>
+<span class="c">     * @param error {Boolean} whether an error occurred</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">issueCallback</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">scope</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span>
+                <span class="nx">callbackFunc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">failure</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">success</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callbackFunc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">callbackFunc</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">scope</span><span class="o">,</span> <span class="o">[</span><span class="nx">e</span><span class="o">]);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+    
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSLocal</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+    <span class="c">/**</span>
+<span class="c">    * Internal init() handler.</span>
+<span class="c">    *</span>
+<span class="c">    * @method initializer</span>
+<span class="c">    * @param config {Object} Config object.</span>
+<span class="c">    * @private        </span>
+<span class="c">    */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_initEvents</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * Internal destroy() handler.</span>
+<span class="c">    *</span>
+<span class="c">    * @method destructor</span>
+<span class="c">    * @private        </span>
+<span class="c">    */</span>
+    <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">    * This method creates all the events for this module.</span>
+<span class="c">    * @method _initEvents</span>
+<span class="c">    * @private        </span>
+<span class="c">    */</span>
+    <span class="nx">_initEvents</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Fired when a data request is received.</span>
+<span class="c">         *</span>
+<span class="c">         * @event request</span>
+<span class="c">         * @param e {Event.Facade} Event Facade.         </span>
+<span class="c">         * @param o {Object} Object with the following properties:</span>
+<span class="c">         * &lt;dl&gt;                          </span>
+<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         * @preventable _defRequestFn</span>
+<span class="c">         */</span>
+        <span class="c">//this.publish(&quot;request&quot;, {defaultFn: this._defRequestFn});</span>
+<span class="c"></span>        <span class="c">//this.publish(&quot;request&quot;, {defaultFn:function(e){</span>
+<span class="c"></span>        <span class="c">//    this._defRequestFn(e);</span>
+<span class="c"></span>        <span class="c">//}});</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+         
+        <span class="c">/**</span>
+<span class="c">         * Fired when raw data is received.</span>
+<span class="c">         *</span>
+<span class="c">         * @event data</span>
+<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">         *     &lt;dl&gt;</span>
+<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">         *     &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         * @preventable _defDataFn</span>
+<span class="c">         */</span>
+         <span class="c">//this.publish(&quot;data&quot;, {defaultFn: this._defDataFn});</span>
+<span class="c"></span>         <span class="c">//this.publish(&quot;data&quot;, {defaultFn:function(e){</span>
+<span class="c"></span>         <span class="c">//   this._defDataFn(e);</span>
+<span class="c"></span>         <span class="c">//}});</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired when response is returned.</span>
+<span class="c">         *</span>
+<span class="c">         * @event response</span>
+<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">         *     &lt;dl&gt;</span>
+<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">         *     &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
+<span class="c">         *     &lt;dl&gt;</span>
+<span class="c">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
+<span class="c">         *     &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         * @preventable _defResponseFn</span>
+<span class="c">         */</span>
+         <span class="c">//this.publish(&quot;response&quot;, {defaultFn: this._defResponseFn});</span>
+<span class="c"></span>         <span class="c">//this.publish(&quot;response&quot;, {defaultFn:function(e){</span>
+<span class="c"></span>         <span class="c">//   this._defResponseFn(e);</span>
+<span class="c"></span>         <span class="c">//}});</span>
+<span class="c"></span>         <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired when an error is encountered.</span>
+<span class="c">         *</span>
+<span class="c">         * @event error</span>
+<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">         *     &lt;dl&gt;</span>
+<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">         *     &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
+<span class="c">         *     &lt;dl&gt;</span>
+<span class="c">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="c">         *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
+<span class="c">         *     &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         */</span>
+
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Manages request/response transaction. Must fire &lt;code&gt;response&lt;/code&gt;</span>
+<span class="c">     * event when response is received. This method should be implemented by</span>
+<span class="c">     * subclasses to achieve more complex behavior such as accessing remote data.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defRequestFn</span>
+<span class="c">     * @param e {Event.Facade} Event Facadewith the following properties:</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">);</span>
+        
+        <span class="c">// Problematic data</span>
+<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Source undefined&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Error in response&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">data</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; complete. Request: &quot;</span> <span class="o">+</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; . Response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Normalizes raw data into a response that includes results and meta properties.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defDataFn</span>
+<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defDataFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
+            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">meta</span><span class="o">,</span>
+            <span class="nx">response</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">results</span><span class="o">:</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="o">[</span><span class="nx">data</span><span class="o">],</span>
+                <span class="nx">meta</span><span class="o">:</span> <span class="o">(</span><span class="nx">meta</span><span class="o">)</span> <span class="o">?</span> <span class="nx">meta</span> <span class="o">:</span> <span class="o">{}</span>
+            <span class="o">};</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">response</span><span class="o">:</span> <span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sends data as a normalized response to callback.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defResponseFn</span>
+<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
+<span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="c">     *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defResponseFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// Send the response back to the callback</span>
+<span class="c"></span>        <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">issueCallback</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Generates a unique transaction ID and fires &lt;code&gt;request&lt;/code&gt; event.</span>
+<span class="c">     *</span>
+<span class="c">     * @method sendRequest</span>
+<span class="c">     * @param request {Object} Request.</span>
+<span class="c">     * @param callback {Object} An object literal with the following properties:</span>
+<span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *     &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;&lt;code&gt;scope&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;The object to serve as the scope for the success and failure handlers.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;Arbitrary data payload that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
+<span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * @return {Number} Transaction ID.</span>
+<span class="c">     */</span>
+    <span class="nx">sendRequest</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">tId</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">_tId</span><span class="o">++;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">tId</span><span class="o">:</span><span class="nx">tId</span><span class="o">,</span> <span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="o">,</span><span class="nx">callback</span><span class="o">:</span><span class="nx">callback</span><span class="o">});</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; sent request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+        <span class="k">return</span> <span class="nx">tId</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+    
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataSource&quot;</span><span class="o">).</span><span class="nx">Local</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
+                                <li class=""><a href="DataSource.XHR.html" title="DataSource.XHR">DataSource.XHR</a></li>
+                                <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
+                                <li class=""><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
+                                <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
+                                <li class=""><a href="DataSourceXMLSchema.html" title="DataSourceXMLSchema">DataSourceXMLSchema</a></li>
+                                <li class=""><a href="Pollable.html" title="Pollable">Pollable</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="datasource-arrayschema.js.html" title="datasource-arrayschema.js">datasource-arrayschema.js</a></li>
+                                <li class=""><a href="datasource-cache.js.html" title="datasource-cache.js">datasource-cache.js</a></li>
+                                <li class=""><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
+                                <li class="selected"><a href="datasource-local.js.html" title="datasource-local.js">datasource-local.js</a></li>
+                                <li class=""><a href="datasource-polling.js.html" title="datasource-polling.js">datasource-polling.js</a></li>
+                                <li class=""><a href="datasource-xhr.js.html" title="datasource-xhr.js">datasource-xhr.js</a></li>
+                                <li class=""><a href="datasource-xmlschema.js.html" title="datasource-xmlschema.js">datasource-xmlschema.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceXMLSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceXMLSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceJSONSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceJSONSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "", "host": "Pollable", "name": "clearAllIntervals", "url": "Pollable.html#method_clearAllIntervals", "type": "method"}, {"access": "", "host": "Pollable", "name": "clearInterval", "url": "Pollable.html#method_clearInterval", "type": "method"}, {"access": "", "host": "DataSource.Local", "name": "data", "url": "DataSource.Local.html#event_data", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "DataSource.issueCallback", "url": "DataSource.Local.html#method_DataSource.issueCallback", "type": "method"}, {"access": "private", "host": "DataSource.Local", "name": "DataSource._tId", "url": "DataSource.Local.html#property_DataSource._tId", "type": "property"}, {"access": "protected", "host": "DataSource.Local", "name": "_defDataFn", "url": "DataSource.Local.html#method__defDataFn", "type": "method"}, {"access": "protected", "host": "DataSource.Local", "name": "_defRequestFn", "url": "DataSource.Local.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.XHR", "name": "_defRequestFn", "url": "DataSource.XHR.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Local", "name": "_defResponseFn", "url": "DataSource.Local.html#method__defResponseFn", "type": "method"}, {"access": "private", "host": "DataSource.Local", "name": "destructor", "url": "DataSource.Local.html#method_destructor", "type": "method"}, {"access": "", "host": "DataSource.Local", "name": "error", "url": "DataSource.Local.html#event_error", "type": "event"}, {"access": "private", "host": "DataSource.Local", "name": "_initEvents", "url": "DataSource.Local.html#method__initEvents", "type": "method"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceXMLSchema", "name": "initializer", "url": "DataSourceXMLSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceJSONSchema", "name": "initializer", "url": "DataSourceJSONSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.Local", "name": "initializer", "url": "DataSource.Local.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.XHR", "name": "initializer", "url": "DataSource.XHR.html#method_initializer", "type": "method"}, {"access": "private", "host": "Pollable", "name": "_intervals", "url": "Pollable.html#property__intervals", "type": "property"}, {"access": "", "host": "DataSource.XHR", "name": "io", "url": "DataSource.XHR.html#config_io", "type": "config"}, {"access": "", "host": "DataSource.XHR", "name": "ioChange", "url": "DataSource.XHR.html#event_ioChange", "type": "event"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NAME", "url": "DataSourceXMLSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NAME", "url": "DataSourceJSONSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Local", "name": "NAME", "url": "DataSource.Local.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.XHR", "name": "NAME", "url": "DataSource.XHR.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NS", "url": "DataSourceXMLSchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NS", "url": "DataSourceJSONSchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "private", "host": "DataSource.XHR", "name": "_queue", "url": "DataSource.XHR.html#property__queue", "type": "property"}, {"access": "", "host": "DataSource.Local", "name": "request", "url": "DataSource.Local.html#event_request", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "response", "url": "DataSource.Local.html#event_response", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "sendRequest", "url": "DataSource.Local.html#method_sendRequest", "type": "method"}, {"access": "", "host": "Pollable", "name": "setInterval", "url": "Pollable.html#method_setInterval", "type": "method"}, {"access": "", "host": "DataSource.Local", "name": "source", "url": "DataSource.Local.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Local", "name": "sourceChange", "url": "DataSource.Local.html#event_sourceChange", "type": "event"}];
+</script>
+</body>
+</html>

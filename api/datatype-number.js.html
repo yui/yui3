@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datatype   datatype-number.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>DataType Date Formatter Submodule&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
+                
+                 &gt; datatype-number.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * The DataType utility provides a set of utility functions to operate on native</span>
+<span class="c"> * JavaScript data types.</span>
+<span class="c"> *</span>
+<span class="c"> * @module datatype</span>
+<span class="c"> */</span>
+<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+
+<span class="c">/**</span>
+<span class="c"> * Number submodule.</span>
+<span class="c"> *</span>
+<span class="c"> * @class DataType.Number</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nb">Number</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="c">/**</span>
+<span class="c">     * Returns string name.</span>
+<span class="c">     *</span>
+<span class="c">     * @method toString</span>
+<span class="c">     * @return {String} String representation for this object.</span>
+<span class="c">     */</span>
+    <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s2">&quot;DataType.Number&quot;</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Converts data to type Number.</span>
+<span class="c">     *</span>
+<span class="c">     * @method parse</span>
+<span class="c">     * @param data {String | Number | Boolean} Data to convert. The following</span>
+<span class="c">     * values return as null: null, undefined, NaN, &quot;&quot;.</span>
+<span class="c">     * @return {Number} A number, or null.</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">parse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="o">(</span><span class="nx">data</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="o">+</span><span class="nx">data</span><span class="o">;</span>
+        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">number</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">number</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not parse data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; to type Number&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="nb">Number</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+     <span class="c">/**</span>
+<span class="c">     * Takes a Number and formats to string for display to user.</span>
+<span class="c">     *</span>
+<span class="c">     * @method format</span>
+<span class="c">     * @param data {Number} Number.</span>
+<span class="c">     * @param config {Object} (Optional) Optional configuration values:</span>
+<span class="c">     *  &lt;dl&gt;</span>
+<span class="c">     *   &lt;dt&gt;prefix {String}&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dd&gt;String prepended before each number, like a currency designator &quot;$&quot;&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dt&gt;decimalPlaces {Number}&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dd&gt;Number of decimal places to round.&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dt&gt;decimalSeparator {String}&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dd&gt;Decimal separator&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dt&gt;thousandsSeparator {String}&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dd&gt;Thousands separator&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dt&gt;suffix {String}&lt;/dd&gt;</span>
+<span class="c">     *   &lt;dd&gt;String appended after each number, like &quot; items&quot; (note the space)&lt;/dd&gt;</span>
+<span class="c">     *  &lt;/dl&gt;</span>
+<span class="c">     * @return {String} Formatted number for display. Note, the following values</span>
+<span class="c">     * return as &quot;&quot;: null, undefined, NaN, &quot;&quot;.</span>
+<span class="c">     */</span>
+    <span class="nx">format</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">data</span> <span class="o">=</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="nb">Number</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">data</span><span class="o">);</span>
+
+        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
+
+            <span class="k">var</span> <span class="nx">isNeg</span> <span class="o">=</span> <span class="o">(</span><span class="nx">data</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">),</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">,</span>
+                <span class="nx">decPlaces</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">decimalPlaces</span><span class="o">,</span>
+                <span class="nx">decSep</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">decimalSeparator</span> <span class="o">||</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
+                <span class="nx">thouSep</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">thousandsSeparator</span><span class="o">,</span>
+                <span class="nx">decIndex</span><span class="o">,</span>
+                <span class="nx">newOutput</span><span class="o">,</span> <span class="nx">count</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+
+            <span class="c">// Decimal precision</span>
+<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">decPlaces</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c">// Round to the correct decimal place</span>
+<span class="c"></span>                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toFixed</span><span class="o">(</span><span class="nx">decPlaces</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// Decimal separator</span>
+<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">decSep</span> <span class="o">!==</span> <span class="s2">&quot;.&quot;</span><span class="o">){</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s2">&quot;.&quot;</span><span class="o">,</span> <span class="nx">decSep</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// Add the thousands separator</span>
+<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">thouSep</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Find the dot or where it would be</span>
+<span class="c"></span>                <span class="nx">decIndex</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">decSep</span><span class="o">);</span>
+                <span class="nx">decIndex</span> <span class="o">=</span> <span class="o">(</span><span class="nx">decIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">decIndex</span> <span class="o">:</span> <span class="nx">output</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+                <span class="c">// Start with the dot and everything to the right</span>
+<span class="c"></span>                <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">decIndex</span><span class="o">);</span>
+                <span class="c">// Working left, every third time add a separator, every time add a digit</span>
+<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">count</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">=</span><span class="nx">decIndex</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">((</span><span class="nx">count</span><span class="o">%</span><span class="m">3</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">decIndex</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">isNeg</span> <span class="o">||</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)))</span> <span class="o">{</span>
+                        <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">thouSep</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="o">;</span>
+                    <span class="o">}</span>
+                    <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="o">;</span>
+                    <span class="nx">count</span><span class="o">++;</span>
+                <span class="o">}</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">newOutput</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="c">// Prepend prefix</span>
+<span class="c"></span>            <span class="nx">output</span> <span class="o">=</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">)</span> <span class="o">?</span> <span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">output</span> <span class="o">:</span> <span class="nx">output</span><span class="o">;</span>
+
+            <span class="c">// Append suffix</span>
+<span class="c"></span>            <span class="nx">output</span> <span class="o">=</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">suffix</span><span class="o">)</span> <span class="o">?</span> <span class="nx">output</span> <span class="o">+</span> <span class="nx">config</span><span class="o">.</span><span class="nx">suffix</span> <span class="o">:</span> <span class="nx">output</span><span class="o">;</span>
+
+            <span class="k">return</span> <span class="nx">output</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c">// Still not a Number, just return unaltered</span>
+<span class="c"></span>        <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType&quot;</span><span class="o">).</span><span class="nb">Number</span> <span class="o">=</span> <span class="nb">Number</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Parsers&quot;</span><span class="o">).</span><span class="nx">number</span> <span class="o">=</span> <span class="nb">Number</span><span class="o">.</span><span class="nx">parse</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class="selected"><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
+                                <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="datatype-number.js.html" title="datatype-number.js">datatype-number.js</a></li>
+                                <li class=""><a href="datatype-xml.js.html" title="datatype-xml.js">datatype-xml.js</a></li>
+                                <li class=""><a href="date-formatter.js.html" title="date-formatter.js">date-formatter.js</a></li>
+                                <li class=""><a href="date-locales.js.html" title="date-locales.js">date-locales.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "toString", "url": "DataType.Number.html#method_toString", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "toString", "url": "DataType.XML.html#method_toString", "type": "method"}, {"access": "private", "host": "DataType.Date.Locale", "name": "xPad", "url": "DataType.Date.Locale.html#method_xPad", "type": "method"}];
+</script>
+</body>
+</html>

@@ -15,115 +15,22 @@ var L   = Y.Lang,
     doc         = Y.config.doc,
     
     //mouse events supported
-    mouseEvents = [
-    
-        /**
-         * Simulates a click on a particular element.
-         * @param {HTMLElement} target The element to click on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method click
-         * @static   
-         * @for Event
-         */        
-        "click", 
-        
-        /**
-         * Simulates a double click on a particular element.
-         * @param {HTMLElement} target The element to double click on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method dblclick
-         * @static
-         */            
-        "dblclick", 
-        
-        /**
-         * Simulates a mouseover event on a particular element. Use "relatedTarget"
-         * on the options object to specify where the mouse moved from.
-         * Quirks: Firefox less than 2.0 doesn't set relatedTarget properly, so
-         * fromElement is assigned in its place. IE doesn't allow fromElement to be
-         * be assigned, so relatedTarget is assigned in its place. Both of these
-         * concessions allow YAHOO.util.Event.getRelatedTarget() to work correctly
-         * in both browsers.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method mouseover
-         * @static
-         */             
-        "mouseover", 
-        
-        /**
-         * Simulates a mouseout event on a particular element. Use "relatedTarget"
-         * on the options object to specify where the mouse moved to.
-         * Quirks: Firefox less than 2.0 doesn't set relatedTarget properly, so
-         * toElement is assigned in its place. IE doesn't allow toElement to be
-         * be assigned, so relatedTarget is assigned in its place. Both of these
-         * concessions allow YAHOO.util.Event.getRelatedTarget() to work correctly
-         * in both browsers.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method mouseout
-         * @static
-         */            
-        "mouseout", 
-        
-        /**
-         * Simulates a mousedown on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method mousedown
-         * @static
-         */            
-        "mousedown", 
-        
-        /**
-         * Simulates a mouseup on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method mouseup
-         * @static
-         */            
-        "mouseup", 
-        
-        /**
-         * Simulates a mousemove on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method mousemove
-         * @static
-         */           
-        "mousemove"
-    ],
+    mouseEvents = {
+        click:      1,
+        dblclick:   1,
+        mouseover:  1,
+        mouseout:   1,
+        mousedown:  1,
+        mouseup:    1,
+        mousemove:  1
+    },
     
     //key events supported
-    keyEvents   = [
-    
-        /**
-         * Simulates a keydown event on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method keydown
-         * @static
-         */        
-        "keydown", 
-        
-        /**
-         * Simulates a keyup event on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method keyup
-         * @static
-         */            
-        "keyup", 
-        
-        /**
-         * Simulates a keypress on a particular element.
-         * @param {HTMLElement} target The element to act on.
-         * @param {Object} options Additional event options (use DOM standard names).
-         * @method keypress
-         * @static
-         */            
-        "keypress"
-    ];
+    keyEvents   = {
+        keydown:    1,
+        keyup:      1,
+        keypress:   1
+    };
 
 /*
  * Note: Intentionally not for YUIDoc generation.
@@ -383,7 +290,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         type = type.toLowerCase();
         
         //make sure it's a supported mouse event
-        if (array.indexOf(mouseEvents, type) == -1){
+        if (!mouseEvents[type]){
             Y.error("simulateMouseEvent(): Event type '" + type + "' not supported.");
         }
     } else {
@@ -533,28 +440,6 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     }
 }
 
-//add mouse event methods
-array.each(mouseEvents, function(type){
-    Y.Event[type] = function(target, options){
-        options = options || {};
-        simulateMouseEvent(target, type, options.bubbles,
-            options.cancelable, options.view, options.detail, options.screenX,        
-            options.screenY, options.clientX, options.clientY, options.ctrlKey,
-            options.altKey, options.shiftKey, options.metaKey, options.button,         
-            options.relatedTarget);        
-    };
-});
-
-//add key event methods
-array.each(keyEvents, function(type){
-    Y.Event[type] = function(target, options){
-        options = options || {};
-        simulateKeyEvent(target, type, options.bubbles,
-            options.cancelable, options.view, options.ctrlKey,
-            options.altKey, options.shiftKey, options.metaKey, 
-            options.keyCode, options.charCode);       
-    };
-});
 
 /**
  * Simulates the event with the given name on a target.
@@ -566,8 +451,22 @@ array.each(keyEvents, function(type){
  * @static
  */
 Y.Event.simulate = function(target, type, options){
-    if (isFunction(Y.Event[type])){
-        Y.Event[type](target, options);
+
+    options = options || {};
+    
+    if (mouseEvents[type]){
+        simulateMouseEvent(target, type, options.bubbles,
+            options.cancelable, options.view, options.detail, options.screenX,        
+            options.screenY, options.clientX, options.clientY, options.ctrlKey,
+            options.altKey, options.shiftKey, options.metaKey, options.button,         
+            options.relatedTarget);        
+    } else if (keyEvents[type]){
+        simulateKeyEvent(target, type, options.bubbles,
+            options.cancelable, options.view, options.ctrlKey,
+            options.altKey, options.shiftKey, options.metaKey, 
+            options.keyCode, options.charCode);     
+    } else {
+        Y.error("simulate(): Event '" + type + "' can't be simulated.");
     }
 };
 
