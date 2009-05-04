@@ -111,7 +111,7 @@ Y.mix(Cache, {
     }
 });
     
-Y.extend(Cache, Y.Plugin, {
+Y.extend(Cache, Y.Plugin.Base, {
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache private properties

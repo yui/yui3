@@ -145,6 +145,16 @@
              */
             this._log = true;
             
+            /**
+             * Indicates if the TestRunner is waiting as a result of
+             * wait() being called.
+             * @type Boolean
+             * @property _waiting
+             * @private
+             * @static
+             */
+            this._waiting = false;
+            
             //create events
             var events = [
                 this.TEST_CASE_BEGIN_EVENT,
@@ -351,11 +361,13 @@
            _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
                 
                 //add the test suite
-                var node = parentNode.appendChild(testCase);
+                var node = parentNode.appendChild(testCase),
+                    prop,
+                    testName;
                 
                 //iterate over the items in the test case
-                for (var prop in testCase){
-                    if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
+                for (prop in testCase){
+                    if ((prop.indexOf("test") === 0 || (prop.toLowerCase().indexOf("should") > -1 && prop.indexOf(" ") > -1 ))&& Y.Lang.isFunction(testCase[prop])){
                         node.appendChild(prop);
                     }
                 }
@@ -590,6 +602,7 @@
                                     testCase.__yui_wait = setTimeout(function(){
                                         Y.Test.Runner._resumeTest(thrown.segment);
                                     }, thrown.delay);
+                                    this._waiting = true;
                                 } else {
                                     throw new Error("Asynchronous tests not supported in this environment.");
                                 }
@@ -660,6 +673,9 @@
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
+                
+                //we know there's no more waiting now
+                this._waiting = false;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -669,6 +685,31 @@
                 } else {
                     this._run();
                 }
+            
+            },
+            
+            /**
+             * Handles an error as if it occurred within the currently executing
+             * test. This is for mock methods that may be called asynchronously
+             * and therefore out of the scope of the TestRunner. Previously, this
+             * error would bubble up to the browser. Now, this method is used
+             * to tell TestRunner about the error. This should never be called
+             * by anyplace other than the Mock object.
+             * @param {Error} error The error object.
+             * @return {Void}
+             * @method _handleError
+             * @private
+             * @static
+             */
+            _handleError: function(error){
+            
+                if (this._waiting){
+                    this._resumeTest(function(){
+                        throw error;
+                    });
+                } else {
+                    throw error;
+                }           
             
             },
                     
@@ -769,6 +810,16 @@
              */
             clear : function () /*:Void*/ {
                 this.masterSuite.items = [];
+            },
+            
+            /**
+             * Indicates if the TestRunner is waiting for a test to resume
+             * @return {Boolean} True if the TestRunner is waiting, false if not.
+             * @method isWaiting
+             * @static
+             */
+            isWaiting: function() {
+                return this._waiting;
             },
             
             /**

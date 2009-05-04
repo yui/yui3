@@ -1,13 +1,22 @@
-YUI Library - Test - Release Notes
+YUI Test Framework
+Module Name: "test"
+Documentation: http://developer.yahoo.com/yui/3/test
 
-**** version 3.0.0 PR3 ***
+3.0.0b1
 
-* Changed component name to "test" from "yuitest".
-* Fixed bug in Y.Mock.Value() where omitting second argument caused an error.
-* Removed dependencies on Y.Object.owns().
+    * Changed component name to "test" from "yuitest".
+    * Fixed bug in Y.Mock.Value() where omitting second argument caused an error.
+    * Removed dependencies on Y.Object.owns().
+    * Fixed bug in Y.Mock.Value() that resulting in multiple calls to the same verification to include old information.
+    * Fixed bug in mock objects where a mock method called asynchronously (via timeout or XHR callback) could throw an error up to the browser and cause the test to incorrectly be marked as passing.
+    * Renamed Y.ObjectAssert.has() to Y.ObjectAssert.hasKey() to better match Y.Object.hasKey().
+    * Removed Y.ObjectAssert.hasAll() and replaced with Y.ObjectAssert.hasKeys() to better match Y.Object.hasKey().
+    * Renamed Y.ObjectAssert.owns() to Y.ObjectAssert.ownsKey() to better match Y.Object.hasKey().
+    * Removed Y.ObjectAssert.ownsAll() and replaced with Y.ObjectAssert.ownsKeys() to better match Y.Object.hasKey().
+    * Added unit tests for mock and object asserts.
+    
+3.0.0PR2
 
-**** version 3.0.0 PR2 ***
-
-* Initial port from 2.x version
-* Introduction of mock objects (Y.Mock())
-* Event simulation moved to Y.Event.simulate() (no longer part of Test component)
+    * Initial port from 2.x version
+    * Introduction of mock objects (Y.Mock())
+    * Event simulation moved to Y.Event.simulate() (no longer part of Test component)

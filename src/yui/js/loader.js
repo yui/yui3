@@ -141,6 +141,8 @@ var BASE = 'base',
 
     OOP = 'oop',
 
+	PLUGIN = 'plugin',
+
     META = {
 
     version: VERSION,
@@ -312,7 +314,10 @@ var BASE = 'base',
                     requires: ['dd-drag']
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag', 'dd-proxy']
+                    requires: ['dd-drag']
+                }, 
+                'dd-scroll':{
+                    requires: ['dd-drag']
                 }, 
                 'dd-plugin':{
                     requires: ['dd-drag'],
@@ -341,8 +346,8 @@ var BASE = 'base',
             requires: [EVENT]
         },
 
-        focusmanager: { 
-            requires: [NODE]
+        'node-focusmanager': { 
+            requires: [NODE, PLUGIN]
         },
 
         get: { 
@@ -395,7 +400,7 @@ var BASE = 'base',
         },
 
         'node-menunav': {
-            requires: [NODE, 'classnamemanager'],
+            requires: [NODE, 'classnamemanager', PLUGIN, 'node-focusmanager'],
             skinnable: true
         },
         
@@ -467,7 +472,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['collection', 'substitute', NODE, 'json']                                                                                                                     
+            requires: ['substitute', NODE, 'json']                                                                                                                     
         }  
 
     }

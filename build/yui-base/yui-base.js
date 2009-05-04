@@ -4,7 +4,7 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), Y, p, i,
+    var _instances = {}, _startTime = new Date().getTime(), p, i,
 
 // @TODO: this needs to be created at build time from module metadata
 
@@ -193,7 +193,7 @@ YUI.prototype = {
 
         this.constructor = YUI;
 
-        this.log(this.id + ') init ');
+        // this.log(this.id + ') init ');
     },
     
     /**
@@ -311,7 +311,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'YUI');
 
                 if (m.fn) {
                     m.fn(this);
@@ -592,18 +592,17 @@ YUI.prototype = {
 // provides global metadata, so env needs to be configured.
 // @TODO review
 
-    Y = YUI; 
-    p = Y.prototype;
+    p = YUI.prototype;
 
     // inheritance utilities are not available yet
     for (i in p) {
         if (true) {
-            Y[i] = p[i];
+            YUI[i] = p[i];
         }
     }
 
     // set up the environment
-    Y._init();
+    YUI._init();
 
 
 })();
@@ -1076,6 +1075,33 @@ A.numericSort = function(a, b) {
     return (a - b); 
 };
 
+/**
+ * Executes the supplied function on each item in the array.
+ * Returning true from the processing function will stop the 
+ * processing of the remaining
+ * items.
+ * @method Array.some
+ * @param a {Array} the array to iterate
+ * @param f {Function} the function to execute on each item
+ * @param o Optional context object
+ * @static
+ * @return {boolean} true if the function returns true on
+ * any of the items in the array
+ */
+ A.some = (Native.some) ?
+    function (a, f, o) { 
+        return Native.some.call(a, f, o);
+    } :
+    function (a, f, o) {
+        var l = a.length, i;
+        for (i=0; i<l; i=i+1) {
+            if (f.call(o, a[i], i, a)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
 })();
 (function() {
 
@@ -1241,24 +1267,23 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
  * argument values.
  * @function cached
  * @param source {function} the function to memoize
- * @param context an optional execution context
  * @param cache an optional cache seed
  * @return {Function} the wrapped function
  */
-Y.cached = function(source, context, cache){
+Y.cached = function(source, cache){
     cache = cache || {};
 
-    var wrapper = function() {
+    return function() {
         var a = arguments, 
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+
         if (!(key in cache)) {
-            // console.log('cached adding: ' + key);
-            cache[key] = source.apply(context || source, arguments);
+            cache[key] = source.apply(source, arguments);
         }
+
         return cache[key];
     };
 
-    return wrapper;
 };
 
 })();
@@ -1284,6 +1309,8 @@ Y.Object = function(o) {
 }; 
 
 var O = Y.Object,
+
+UNDEFINED = undefined,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -1415,7 +1442,6 @@ O.each = function (o, f, c, proto) {
     return Y;
 };
 
-
 /**
  * Retrieves the sub value at the provided path,
  * from the value object provided.
@@ -1430,7 +1456,7 @@ O.each = function (o, f, c, proto) {
 O.getValue = function (o, path) {
     var p=Y.Array(path), l=p.length, i;
 
-    for (i=0; o !== undefined && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
         o = o[p[i]];
     }
 
@@ -1455,14 +1481,14 @@ O.setValue = function(o, path, val) {
     var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== undefined && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
             ref = ref[p[i]];
         }
 
-        if (ref !== undefined) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return undefined;
+            return UNDEFINED;
         }
     }
 

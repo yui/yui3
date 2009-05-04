@@ -62,16 +62,15 @@
                 c2('a', 'b');
                 c2('c', 'd');
 
-
                 var o = new Y.EventTarget();
                 o.foo = 1;
 
-                var f3 = function(a, b) {
+                var f3 = function(a) {
                     Y.Assert.areEqual(1, this.foo);
                     r3 += a;
                 };
 
-                var c3 = Y.cached(f3, o, {
+                var c3 = Y.cached(Y.bind(f3, o), {
                     a: 'z'
                 });
 
@@ -86,7 +85,6 @@
             }
         });
         
-
         Y.Test.Runner.add(testCore);
         Y.Test.Runner.run();
     });

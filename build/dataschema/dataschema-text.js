@@ -69,7 +69,7 @@ SchemaText = {
     _parseResults: function(schema, text_in, data_out) {
         var resultDelim = schema.resultDelimiter,
             results = [],
-            results_in, fields_in, result, item, type, fields, field, key, value, i, j,
+            results_in, fields_in, result, item, fields, field, key, value, i, j,
             
         // Delete final delimiter at end of string if there
         tmpLength = text_in.length-resultDelim.length;
