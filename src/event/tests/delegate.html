@@ -16,7 +16,8 @@
 
     </div>
 	<!-- YUI3 Core //-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+	<script type="text/javascript" src="../../../build/event/event-debug.js"></script>
 	<!-- Initialization process //-->
 	<script type="text/javascript">
 		YUI({
@@ -37,7 +38,7 @@
 			Y.Test.Runner.add(new Y.Test.Case({
 				
 				name: "Event Delegate Tests",
-				
+				/*
 				test_simple_delegate_for_anchors: function(){
 					
 					var foo = false, t;
@@ -96,7 +97,7 @@
 					Y.Assert.isFalse(foo, "delegation fails, delegation without at least one selector should never trigger an event");
 				},
 				
-				
+				*/
 				
 				test_multiple_selectors_one_match: function(){
 					
@@ -105,14 +106,14 @@
 					Y.on('delegate', function(e) {
 						foo = true;
 						t = e.target;
-					}, '#mod1', 'click', 'hd h3,a,a span');
+					}, '#mod1', 'click', 'a,a span');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isTrue(foo, "multiple selectors fails, delegate should be able to match different selectors");
 					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
 					
-				},
-				
+				}
+				/*
 				test_multiple_delegate_matches: function(){
 					
 					var foo1 = false, foo2 = false, t1, t2;
@@ -134,7 +135,7 @@
 					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
 					
 				}
-				
+				*/
 				
 				/* 
 				 * Other things that I consider should be tested in the future:
