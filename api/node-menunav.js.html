@@ -500,7 +500,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* Boolean indicating if use of the WAI-ARIA Roles and States should be </span>
-<span class="c">	* enabled for the NodeMenuNav.</span>
+<span class="c">	* enabled for the menu.</span>
 <span class="c">	*</span>
 <span class="c">	* @attribute useARIA</span>
 <span class="c">	* @readOnly</span>
@@ -524,7 +524,7 @@
 
 				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li&quot;</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="s2">&quot;content&quot;</span><span class="o">)).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
 
 				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="s2">&quot;content&quot;</span><span class="o">))).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
 
@@ -651,7 +651,7 @@
 <span class="c"></span>
 	<span class="c">/** </span>
 <span class="c">	* @property _rootMenu</span>
-<span class="c">	* @description Node instance representing the root menu in the NodeMenuNav.</span>
+<span class="c">	* @description Node instance representing the root menu in the menu.</span>
 <span class="c">	* @default null</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @type Node</span>
@@ -661,7 +661,7 @@
 
 	<span class="c">/** </span>
 <span class="c">	* @property _activeItem</span>
-<span class="c">	* @description Node instance representing the NodeMenuNav&#39;s active descendent: </span>
+<span class="c">	* @description Node instance representing the menu&#39;s active descendent: </span>
 <span class="c">	* the menuitem or menu label the user is currently interacting with.</span>
 <span class="c">	* @default null</span>
 <span class="c">	* @protected</span>
@@ -673,7 +673,7 @@
 	<span class="c">/** </span>
 <span class="c">	* @property _activeMenu</span>
 <span class="c">	* @description Node instance representing the menu that is the parent of </span>
-<span class="c">	* the NodeMenuNav&#39;s active descendent.</span>
+<span class="c">	* the menu&#39;s active descendent.</span>
 <span class="c">	* @default null</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @type Node</span>
@@ -683,7 +683,7 @@
 
 	<span class="c">/** </span>
 <span class="c">	* @property _hasFocus</span>
-<span class="c">	* @description Boolean indicating if the NodeMenuNav has focus.</span>
+<span class="c">	* @description Boolean indicating if the menu has focus.</span>
 <span class="c">	* @default false</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @type Boolean</span>
@@ -693,11 +693,11 @@
 
 	<span class="c">//	In gecko-based browsers a mouseover and mouseout event will fire even </span>
 <span class="c"></span>	<span class="c">//	if a DOM element moves out from under the mouse without the user </span>
-<span class="c"></span>	<span class="c">//	actually moving the mouse.  This bug affects NodeMenuNav because the user </span>
-<span class="c"></span>	<span class="c">//	can hit the Esc key to hide a menu, and if the mouse is over the menu </span>
-<span class="c"></span>	<span class="c">//	when the user presses Esc, the _onMenuMouseOut handler will be called.  </span>
-<span class="c"></span>	<span class="c">//	To fix this bug the following flag (_blockMouseEvent) is used to block </span>
-<span class="c"></span>	<span class="c">//	the code in the _onMenuMouseOut handler from executing.</span>
+<span class="c"></span>	<span class="c">//	actually moving the mouse.  This bug affects NodeMenuNav because the  </span>
+<span class="c"></span>	<span class="c">//	user can hit the Esc key to hide a menu, and if the mouse is over the  </span>
+<span class="c"></span>	<span class="c">//	menu when the user presses Esc, the _onMenuMouseOut handler will be </span>
+<span class="c"></span>	<span class="c">//	called.  To fix this bug the following flag (_blockMouseEvent) is used </span>
+<span class="c"></span>	<span class="c">// to block the code in the _onMenuMouseOut handler from executing.</span>
 <span class="c"></span>
 	<span class="c">/** </span>
 <span class="c">	* @property _blockMouseEvent</span>
@@ -713,7 +713,7 @@
 	<span class="c">/** </span>
 <span class="c">	* @property _currentMouseX</span>
 <span class="c">	* @description Number representing the current x coordinate of the mouse </span>
-<span class="c">	* inside the NodeMenuNav.</span>
+<span class="c">	* inside the menu.</span>
 <span class="c">	* @default 0</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @type Number</span>
@@ -765,7 +765,7 @@
 	<span class="c">/** </span>
 <span class="c">	* @property _firstItem</span>
 <span class="c">	* @description Node instance representing the first item (menuitem or menu </span>
-<span class="c">	* label) in the root menu of a NodeMenuNav.</span>
+<span class="c">	* label) in the root menu of a menu.</span>
 <span class="c">	* @default null</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @type Node</span>
@@ -779,11 +779,11 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _isRoot</span>
 <span class="c">	* @description Returns a boolean indicating if the specified menu is the </span>
-<span class="c">	* root menu in the NodeMenuNav.</span>
+<span class="c">	* root menu in the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Node} menu Node instance representing a menu.</span>
 <span class="c">	* @return {Boolean} Boolean indicating if the specified menu is the root </span>
-<span class="c">	* menu in the NodeMenuNav.</span>
+<span class="c">	* menu in the menu.</span>
 <span class="c">	*/</span>
 	<span class="nx">_isRoot</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
 
@@ -823,7 +823,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _clearActiveItem</span>
-<span class="c">	* @description Clears the NodeMenuNav&#39;s active descendent.</span>
+<span class="c">	* @description Clears the menu&#39;s active descendent.</span>
 <span class="c">	* @protected</span>
 <span class="c">	*/</span>
 	<span class="nx">_clearActiveItem</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
@@ -842,7 +842,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _setActiveItem</span>
-<span class="c">	* @description Sets the specified menuitem or menu label as the NodeMenuNav&#39;s </span>
+<span class="c">	* @description Sets the specified menuitem or menu label as the menu&#39;s </span>
 <span class="c">	* active descendent.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Node} item Node instance representing a menuitem or menu label.</span>
@@ -1435,7 +1435,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onVerticalMenuKeyDown</span>
-<span class="c">	* @description &quot;keydown&quot; event handler for vertical menus of a NodeMenuNav.</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for vertical menus.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1581,7 +1581,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onHorizontalMenuKeyDown</span>
-<span class="c">	* @description &quot;keydown&quot; event handler for horizontal menus of a NodeMenuNav.</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for horizontal menus.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1635,7 +1635,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onMouseMove</span>
-<span class="c">	* @description &quot;mousemove&quot; event handler for the NodeMenuNav.</span>
+<span class="c">	* @description &quot;mousemove&quot; event handler for the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1658,7 +1658,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onMouseOver</span>
-<span class="c">	* @description &quot;mouseover&quot; event handler for the NodeMenuNav.</span>
+<span class="c">	* @description &quot;mouseover&quot; event handler for the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1726,7 +1726,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onMouseOut</span>
-<span class="c">	* @description &quot;mouseout&quot; event handler for the NodeMenuNav.</span>
+<span class="c">	* @description &quot;mouseout&quot; event handler for the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1803,7 +1803,7 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _toggleSubmenuDisplay</span>
 <span class="c">	* @description &quot;mousedown,&quot; &quot;keydown,&quot; and &quot;click&quot; event handler for the </span>
-<span class="c">	* NodeMenuNav used to toggle the display of a submenu.</span>
+<span class="c">	* menu used to toggle the display of a submenu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1918,7 +1918,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onKeyPress</span>
-<span class="c">	* @description &quot;keypress&quot; event handler for the NodeMenuNav.</span>
+<span class="c">	* @description &quot;keypress&quot; event handler for the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -1944,7 +1944,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _onKeyDown</span>
-<span class="c">	* @description &quot;keydown&quot; event handler for the NodeMenuNav.</span>
+<span class="c">	* @description &quot;keydown&quot; event handler for the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -2004,7 +2004,7 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _onDocMouseDown</span>
 <span class="c">	* @description &quot;mousedown&quot; event handler for the owner document of </span>
-<span class="c">	* the NodeMenuNav.</span>
+<span class="c">	* the menu.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param {Object} event Object representing the DOM event.</span>
 <span class="c">	*/</span>
