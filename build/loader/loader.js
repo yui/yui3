@@ -316,7 +316,10 @@ var BASE = 'base',
                     requires: ['dd-drag']
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag', 'dd-proxy']
+                    requires: ['dd-drag']
+                }, 
+                'dd-scroll':{
+                    requires: ['dd-drag']
                 }, 
                 'dd-plugin':{
                     requires: ['dd-drag'],
