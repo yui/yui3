@@ -472,7 +472,7 @@ Y.DOM = {
         return frag.removeChild(frag[FIRST_CHILD]);
     },
 
-    insertNode: function(node, content, where, execScripts) {
+    insertHTML: function(node, content, where, execScripts) {
         var scripts,
             newNode = Y.DOM.create(content);
 

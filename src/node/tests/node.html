@@ -128,6 +128,7 @@ body {
     </div>
 
 <iframe src="test-frame"></iframe>
+<div id="test-insert-html">foo</div>
 <script type="text/javascript">
 YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var tool = YAHOO.tool,
@@ -376,7 +377,10 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             }), 'ancestor');
             Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
+            Assert.isTrue(Y.get(document.body).inDoc(document));
             Assert.isTrue(node.inDoc(), 'node.inDoc()');
+            Assert.isTrue(node.inDoc(document), 'node.inDoc(document)');
+            Assert.isTrue(node.inDoc(Y.get(document)), 'node.inDoc(Y.get(document))');
 
             Assert.areEqual(byId('test-contains'), Y.Node.getDOMNode(node.getById('test-contains')), 'node.getById("test-contains")');
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
@@ -593,6 +597,21 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             document.body.style.width = '';
 
             window.scrollTo(0, 0);
+        },
+
+        test_inject: function() {
+            Y.get('#test-insert-html').insertHTML('<strong>bar</strong>');
+            Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').insertHTML('<strong>bar</strong>')");
+
+            Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin');
+            Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
+                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin'));
+
+            Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>', 'afterBegin');
+            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>', 'afterBegin')");
+
         },
 
         test_aria: function() {

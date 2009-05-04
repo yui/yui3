@@ -317,19 +317,18 @@ Y.mix(Node.prototype, {
         }
     },
 
-    addNode: function(content, where) {
-        return Y.DOM.insertNode(g_nodes[this[UID]], content, where);
-    },
-
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
+        var args;
+            ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            Y.Event.attach.apply(Y.Event, args);
+            args = g_slice.call(arguments, 0),
+            args.splice(2, 0, g_nodes[this[UID]]);
+            ret = Y.Event.attach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.on.apply(this, arguments);
         }
-
-        return SuperConstrProto.on.apply(this, arguments);
+        return ret;
     },
 
    /**
@@ -339,9 +338,16 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The handler to call when the event fires 
      */
     detach: function(type, fn) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
-        return Y.Event.detach.apply(Y.Event, args);
+        var args, ret = null;
+        if (Node.DOM_EVENTS[type]) {
+            args = g_slice.call(arguments, 0);
+            args.splice(2, 0, g_nodes[this[UID]]);
+
+            ret = Y.Event.detach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.detach.apply(this, arguments);
+        }
+        return ret;
     },
 
     get: function(attr) {
@@ -480,6 +486,11 @@ Y.mix(Node.prototype, {
      */
     test: function(selector) {
         return Y.Selector.test(g_nodes[this[UID]], selector);
+    },
+
+    remove: function() {
+        g_nodes[this[UID]].parentNode.removeChild();
+        return this;
     },
 
     // TODO: safe enough? 
