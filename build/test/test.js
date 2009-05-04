@@ -347,6 +347,16 @@ YUI.add('test', function(Y) {
              */
             this._log = true;
             
+            /**
+             * Indicates if the TestRunner is waiting as a result of
+             * wait() being called.
+             * @type Boolean
+             * @property _waiting
+             * @private
+             * @static
+             */
+            this._waiting = false;
+            
             //create events
             var events = [
                 this.TEST_CASE_BEGIN_EVENT,
@@ -553,11 +563,13 @@ YUI.add('test', function(Y) {
            _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
                 
                 //add the test suite
-                var node = parentNode.appendChild(testCase);
+                var node = parentNode.appendChild(testCase),
+                    prop,
+                    testName;
                 
                 //iterate over the items in the test case
-                for (var prop in testCase){
-                    if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
+                for (prop in testCase){
+                    if ((prop.indexOf("test") === 0 || (prop.toLowerCase().indexOf("should") > -1 && prop.indexOf(" ") > -1 ))&& Y.Lang.isFunction(testCase[prop])){
                         node.appendChild(prop);
                     }
                 }
@@ -792,6 +804,7 @@ YUI.add('test', function(Y) {
                                     testCase.__yui_wait = setTimeout(function(){
                                         Y.Test.Runner._resumeTest(thrown.segment);
                                     }, thrown.delay);
+                                    this._waiting = true;
                                 } else {
                                     throw new Error("Asynchronous tests not supported in this environment.");
                                 }
@@ -862,6 +875,9 @@ YUI.add('test', function(Y) {
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
+                
+                //we know there's no more waiting now
+                this._waiting = false;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -871,6 +887,31 @@ YUI.add('test', function(Y) {
                 } else {
                     this._run();
                 }
+            
+            },
+            
+            /**
+             * Handles an error as if it occurred within the currently executing
+             * test. This is for mock methods that may be called asynchronously
+             * and therefore out of the scope of the TestRunner. Previously, this
+             * error would bubble up to the browser. Now, this method is used
+             * to tell TestRunner about the error. This should never be called
+             * by anyplace other than the Mock object.
+             * @param {Error} error The error object.
+             * @return {Void}
+             * @method _handleError
+             * @private
+             * @static
+             */
+            _handleError: function(error){
+            
+                if (this._waiting){
+                    this._resumeTest(function(){
+                        throw error;
+                    });
+                } else {
+                    throw error;
+                }           
             
             },
                     
@@ -971,6 +1012,16 @@ YUI.add('test', function(Y) {
              */
             clear : function () /*:Void*/ {
                 this.masterSuite.items = [];
+            },
+            
+            /**
+             * Indicates if the TestRunner is waiting for a test to resume
+             * @return {Boolean} True if the TestRunner is waiting, false if not.
+             * @method isWaiting
+             * @static
+             */
+            isWaiting: function() {
+                return this._waiting;
             },
             
             /**
@@ -2049,31 +2100,31 @@ YUI.add('test', function(Y) {
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method has
+         * @method hasKey
          * @static
          */    
-        has : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
             Y.Assert._increment();               
-            if (!(propertyName in object)){
+            if (!Y.Object.hasKey(object, propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
         /**
          * Asserts that an object has all properties of a reference object.
-         * @param {Object} refObject The object whose properties should be on the object to test.
+         * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method hasAll
+         * @method hasKeys
          * @static
          */    
-        hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            Y.Assert._increment();               
-            Y.Object.each(refObject, function(value, name){
-                if (!(name in object)){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object."));
-                }    
-            });
+        hasKeys : function (properties, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();  
+            for (var i=0; i < properties.length; i++){
+                if (!Y.Object.hasKey(object, properties[i])){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                }      
+            }
         },
         
         /**
@@ -2081,10 +2132,10 @@ YUI.add('test', function(Y) {
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method owns
+         * @method ownsKey
          * @static
          */    
-        owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
             Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
@@ -2092,20 +2143,20 @@ YUI.add('test', function(Y) {
         },
         
         /**
-         * Asserts that all properties on a given object also exist on an object instance (not on its prototype).
-         * @param {Object} refObject The object whose properties should be owned by the object to test.
+         * Asserts that all properties exist on an object instance (not on its prototype).
+         * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
          * @method ownsAll
          * @static
          */    
-        ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            Y.Assert._increment();               
-            Y.Object.each(refObject, function(value, name){
-                if (!object.hasOwnProperty(name)){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
-                }     
-            });
+        ownsKeys : function (properties /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            Y.Assert._increment();        
+            for (var i=0; i < properties.length; i++){
+                if (!object.hasOwnProperty(properties[i])){
+                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                }      
+            }
         }
     };
 
@@ -2486,21 +2537,26 @@ YUI.add('test', function(Y) {
             //if the method is expected to be called
             if (callCount > 0){
                 mock[name] = function(){   
-                    expectation.actualCallCount++;
-                    Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
-                    for (var i=0, len=args.length; i < len; i++){
-                        if (args[i]){
-                            args[i].verify(arguments[i]);
-                        } else {
-                            Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
-                        }
+                    try {
+                        expectation.actualCallCount++;
+                        Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
+                        for (var i=0, len=args.length; i < len; i++){
+                            //if (args[i]){
+                                args[i].verify(arguments[i]);
+                            //} else {
+                            //    Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
+                            //}
+                            
+                        }                
+    
+                        run.apply(this, arguments);
                         
-                    }                
-
-                    run.apply(this, arguments);
-                    
-                    if (error){
-                        throw error;
+                        if (error){
+                            throw error;
+                        }
+                    } catch (ex){
+                        //route through TestRunner for proper handling
+                        Y.Test.Runner._handleError(ex);
                     }
                     
                     return result;
@@ -2536,16 +2592,16 @@ YUI.add('test', function(Y) {
         });    
     };
 
-    Y.Mock.Value = function(method, args, message){
+    Y.Mock.Value = function(method, originalArgs, message){
         if (this instanceof Y.Mock.Value){
             this.verify = function(value){
-                args = [].concat(args || []);
+                var args = [].concat(originalArgs || []);
                 args.push(value);
                 args.push(message);
                 method.apply(null, args);
             };
         } else {
-            return new Y.Mock.Value(method, args, message);
+            return new Y.Mock.Value(method, originalArgs, message);
         }
     };
     
