@@ -21,6 +21,8 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
+UNDEFINED = undefined,
+
 /**
  * Extracts the keys, values, or size from an object
  * 
@@ -151,7 +153,6 @@ O.each = function (o, f, c, proto) {
     return Y;
 };
 
-
 /**
  * Retrieves the sub value at the provided path,
  * from the value object provided.
@@ -166,7 +167,7 @@ O.each = function (o, f, c, proto) {
 O.getValue = function (o, path) {
     var p=Y.Array(path), l=p.length, i;
 
-    for (i=0; o !== undefined && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
         o = o[p[i]];
     }
 
@@ -191,14 +192,14 @@ O.setValue = function(o, path, val) {
     var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== undefined && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
             ref = ref[p[i]];
         }
 
-        if (ref !== undefined) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return undefined;
+            return UNDEFINED;
         }
     }
 
