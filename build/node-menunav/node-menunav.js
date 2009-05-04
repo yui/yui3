@@ -453,7 +453,7 @@ NodeMenuNav.ATTRS = {
 
 	/**
 	* Boolean indicating if use of the WAI-ARIA Roles and States should be 
-	* enabled for the NodeMenuNav.
+	* enabled for the menu.
 	*
 	* @attribute useARIA
 	* @readOnly
@@ -477,7 +477,7 @@ NodeMenuNav.ATTRS = {
 
 				oMenu.set(ROLE, MENU);
 
-				oMenu.queryAll("ul,li").set(ROLE, PRESENTATION);
+				oMenu.queryAll("ul,li,." + getClassName(MENU, "content")).set(ROLE, PRESENTATION);
 
 				oMenu.queryAll((PERIOD + getClassName(MENUITEM, "content"))).set(ROLE, MENUITEM);
 
@@ -604,7 +604,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/** 
 	* @property _rootMenu
-	* @description Node instance representing the root menu in the NodeMenuNav.
+	* @description Node instance representing the root menu in the menu.
 	* @default null
 	* @protected
 	* @type Node
@@ -614,7 +614,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/** 
 	* @property _activeItem
-	* @description Node instance representing the NodeMenuNav's active descendent: 
+	* @description Node instance representing the menu's active descendent: 
 	* the menuitem or menu label the user is currently interacting with.
 	* @default null
 	* @protected
@@ -626,7 +626,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/** 
 	* @property _activeMenu
 	* @description Node instance representing the menu that is the parent of 
-	* the NodeMenuNav's active descendent.
+	* the menu's active descendent.
 	* @default null
 	* @protected
 	* @type Node
@@ -636,7 +636,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/** 
 	* @property _hasFocus
-	* @description Boolean indicating if the NodeMenuNav has focus.
+	* @description Boolean indicating if the menu has focus.
 	* @default false
 	* @protected
 	* @type Boolean
@@ -646,11 +646,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	//	In gecko-based browsers a mouseover and mouseout event will fire even 
 	//	if a DOM element moves out from under the mouse without the user 
-	//	actually moving the mouse.  This bug affects NodeMenuNav because the user 
-	//	can hit the Esc key to hide a menu, and if the mouse is over the menu 
-	//	when the user presses Esc, the _onMenuMouseOut handler will be called.  
-	//	To fix this bug the following flag (_blockMouseEvent) is used to block 
-	//	the code in the _onMenuMouseOut handler from executing.
+	//	actually moving the mouse.  This bug affects NodeMenuNav because the  
+	//	user can hit the Esc key to hide a menu, and if the mouse is over the  
+	//	menu when the user presses Esc, the _onMenuMouseOut handler will be 
+	//	called.  To fix this bug the following flag (_blockMouseEvent) is used 
+	// to block the code in the _onMenuMouseOut handler from executing.
 
 	/** 
 	* @property _blockMouseEvent
@@ -666,7 +666,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/** 
 	* @property _currentMouseX
 	* @description Number representing the current x coordinate of the mouse 
-	* inside the NodeMenuNav.
+	* inside the menu.
 	* @default 0
 	* @protected
 	* @type Number
@@ -718,7 +718,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/** 
 	* @property _firstItem
 	* @description Node instance representing the first item (menuitem or menu 
-	* label) in the root menu of a NodeMenuNav.
+	* label) in the root menu of a menu.
 	* @default null
 	* @protected
 	* @type Node
@@ -732,11 +732,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/**
 	* @method _isRoot
 	* @description Returns a boolean indicating if the specified menu is the 
-	* root menu in the NodeMenuNav.
+	* root menu in the menu.
 	* @protected
 	* @param {Node} menu Node instance representing a menu.
 	* @return {Boolean} Boolean indicating if the specified menu is the root 
-	* menu in the NodeMenuNav.
+	* menu in the menu.
 	*/
 	_isRoot: function (menu) {
 
@@ -776,7 +776,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _clearActiveItem
-	* @description Clears the NodeMenuNav's active descendent.
+	* @description Clears the menu's active descendent.
 	* @protected
 	*/
 	_clearActiveItem: function () {
@@ -795,7 +795,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _setActiveItem
-	* @description Sets the specified menuitem or menu label as the NodeMenuNav's 
+	* @description Sets the specified menuitem or menu label as the menu's 
 	* active descendent.
 	* @protected
 	* @param {Node} item Node instance representing a menuitem or menu label.
@@ -1388,7 +1388,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onVerticalMenuKeyDown
-	* @description "keydown" event handler for vertical menus of a NodeMenuNav.
+	* @description "keydown" event handler for vertical menus.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1534,7 +1534,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onHorizontalMenuKeyDown
-	* @description "keydown" event handler for horizontal menus of a NodeMenuNav.
+	* @description "keydown" event handler for horizontal menus.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1588,7 +1588,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onMouseMove
-	* @description "mousemove" event handler for the NodeMenuNav.
+	* @description "mousemove" event handler for the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1611,7 +1611,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onMouseOver
-	* @description "mouseover" event handler for the NodeMenuNav.
+	* @description "mouseover" event handler for the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1679,7 +1679,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onMouseOut
-	* @description "mouseout" event handler for the NodeMenuNav.
+	* @description "mouseout" event handler for the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1756,7 +1756,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/**
 	* @method _toggleSubmenuDisplay
 	* @description "mousedown," "keydown," and "click" event handler for the 
-	* NodeMenuNav used to toggle the display of a submenu.
+	* menu used to toggle the display of a submenu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1871,7 +1871,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onKeyPress
-	* @description "keypress" event handler for the NodeMenuNav.
+	* @description "keypress" event handler for the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1897,7 +1897,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	/**
 	* @method _onKeyDown
-	* @description "keydown" event handler for the NodeMenuNav.
+	* @description "keydown" event handler for the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
@@ -1957,7 +1957,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	/**
 	* @method _onDocMouseDown
 	* @description "mousedown" event handler for the owner document of 
-	* the NodeMenuNav.
+	* the menu.
 	* @protected
 	* @param {Object} event Object representing the DOM event.
 	*/
