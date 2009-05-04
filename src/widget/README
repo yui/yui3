@@ -1,9 +1,25 @@
-3.0.0 beta1
+3.0.0 Beta1
 
 * PluginHost moved down to Base.
 
 * Render event args added to event facade instead of being passed
   across separately (e.parentNode).
+
+* "hasFocus" attribute is read only
+
+* "hasFocus" attribute is set via:
+   - user interaction
+   - the "focus" and "blur" methods
+
+* Only one DOM focus event handler is used now (two for WebKit) and it is 
+  bound to the widget's ownerDocument.  This allows modal widgets to maintain
+  a reference to the element in the document that previously had focus and 
+  to be able to restore that focus when the modal widget is hidden.
+
+* "tabIndex" attribute was updated
+  - accepts a number or null
+  -	more documentation
+
 
 3.0.0PR2 - Initial release
 
