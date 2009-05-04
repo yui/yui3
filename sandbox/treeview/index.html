@@ -26,6 +26,30 @@
 		</div>
 		<div id="bd" class="pepe">
 		</div>
+		<div id="markup">
+			<ul>
+				<li class="expanded">List 0
+					<ul>
+						<li class="expanded">List 0-0
+							<ul>
+								<li>item 0-0-0</li>
+								<li><a target="_new" href="www.elsewhere.com" title="go elsewhere">elsewhere</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>List 1
+					<ul>
+						<li>List 1-0
+							<ul>
+								<li yuiConfig='{"type":"DateNode","editable":true}'>02/01/2009</li>
+								<li><span>item <strong>1-1-0</strong></span></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 	</div>
 <script  type="text/javascript">
 YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserConsole:true}).use('widget','treeview','test','console',function(Y) {
@@ -163,28 +187,11 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 
 		});
 		Y.Test.Runner.add(testCase);
-if (true) {
+if (false) {
 		Y.Test.Runner.run();
 } else {	
-				tv = new Y.TreeNode();
-
-
-				console.log('testAddingBySibling');
-				tv.set('content','testAddingBySibling');
-				rel(tv,1);
-				var t1 = new Y.TreeNode({parent:tv});
-				rel(tv,2);
-				rel(t1,2);
-				var t2 = new Y.TreeNode({nextSibling:t1});
-				rel(tv,3);
-				rel(t1,3);
-				rel(t2,3);
-				var t3 = new Y.TreeNode({previousSibling:t1});
-				rel(tv,4);
-				rel(t1,4);
-				rel(t2,4);
-				rel(t3,4);
-				tv.render('#bd');
+				tv = new Y.TreeNode({contentBox:'#markup'});
+				tv.render();
 //		tv.destroy();
 }
 		

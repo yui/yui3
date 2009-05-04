@@ -60,8 +60,15 @@ var TREENODE = 'treenode',
 	EMPTY_DIV_MARKUP = '<div></div>',
 	
 	
-	Q = new Y.Queue(),
 	silent = false;
+	
+	var Q = new Y.Queue();
+	Q.on('executeCallback',function(ev) {
+		console.log('executeCallback',ev.name,ev.context,ev.args);
+	});
+	Q.on('complete',function() {
+		console.log('Q complete');
+	});
 	
 	/**
  * Create a hierarchical tree
@@ -86,19 +93,6 @@ Y.mix(TreeNode,{
 	NAME: TREENODE,
 	
 	
-	    /**
-     * Static Object hash used to capture existing markup for progressive
-     * enhancement.  Keys correspond to config attribute names and values
-     * are selectors used to inspect the contentBox for an existing node
-     * structure.
-     *
-     * @property Slider.HTML_PARSER
-     * @Type Object
-     * @static
-     */
-    HTML_PARSER : {
-
-    },
 
     /**
      * Static property used to define the default attribute configuration of
@@ -191,6 +185,35 @@ Y.mix(TreeNode,{
 				
 			}
 		}
+	},
+	HTML_PARSER: {
+		content: function(contentBox) {
+			//console.log('+++ content',contentBox.get('innerHTML'));
+			var child = contentBox.get('firstChild');
+			var tag = child.get('nodeName').toUpperCase();
+			if ( tag == 'UL' || tag == 'OL') {
+				//console.log('=== content','');
+				return '';
+			} 
+			if (child.get('nodeType') == 3) {
+				//console.log('=== content',child.get('textContent'));
+				return child.get('textContent');
+			}
+			//console.log('=== content',child.get('nodeName'),child.get('innerHTML'));
+			return child;
+		},
+		children: ['ul > li, ol > li'],
+		/*function (contentBox) {
+			var ul = contentBox.query('ul');
+			var ol = contentBox.query('ol');
+			if (ol && ((ul && Y.DOM.contains(ol,ul)) || !ul)) {
+				ul = ol;
+			}
+			return ul?ul.queryAll('li'):undefined;
+		},*/
+		yuiconfig: function(contentBox) { 
+	        return contentBox.getAttribute('yuiconfig'); 
+	    }
 	}
 });
 
@@ -246,6 +269,18 @@ Y.extend(TreeNode,Y.Widget,{
 		}
 
 		silent = false;
+		if (CONTENT in config) {
+			console.log('content',this,this.get(CONTENT) && (this.get(CONTENT).get('innerHTML') || this.get(CONTENT).get('textContent')));
+		}
+		if ('yuiconfig' in config) {
+			console.log('yuiconfig',this,config.yuiconfig);
+		}
+		if (CHILDREN in config) {
+			config[CHILDREN].each(function (node) {
+				console.log('child',this,node.get('innerHTML'));
+				(new Y.TreeNode({parent:this,contentBox:node}));
+			},this);
+		}
 
 		this._findRoot();
 	},
@@ -257,15 +292,22 @@ Y.extend(TreeNode,Y.Widget,{
 		cb.set('innerHTML','');
 		cb.set('className',cb.get('className').replace(regexp_C_TOGGLE,''));
 	},
+	render: function (parentNode) {
+		var root = this.get(ROOT);
+		if (root !== this && !root.get(RENDERED)) {
+			root.render(parentNode);
+		} else {
+			TreeNode.superclass.render.apply(this,arguments);
+		}
+	},
+		
 	renderUI : function () {
 			
-		if (!this.get(ROOT)) {
-			this._findRoot();
-		}
-        Q.add(Y.bind(this._renderUIContainer,this));
-        Q.add(Y.bind(this._renderUIChildren,this));
+        Q.add({fn:this._renderUIContainer,context:this,name:'renderUIContainer'});
+        Q.add({fn:this._renderUIChildren,context:this,name:'renderUIChildren'});
 		if (!this.get(PARENT)) {
 			Q.run();
+			console.log('Q launched');
 		}
 	},
 	_findRoot : function () {
@@ -285,14 +327,47 @@ Y.extend(TreeNode,Y.Widget,{
 	_renderUIContainer: function () {
 		Y.log(Y.substitute('_renderUIContainer [{me}]',{me:this}));
 		var cb   = this.get(CONTENT_BOX);
+		console.log('antes1',this.get(BOUNDING_BOX).get('innerHTML'));
+		if (this === this.get(ROOT)) {
+			cb.set('innerHTML','');
+		}
+		//console.log('antes',this.get(BOUNDING_BOX).get('innerHTML'));
+		if (cb.get('nodeName').toUpperCase() == 'LI') {
+			var bb = this.get(BOUNDING_BOX);
+			var newCb = Y.Node.create('<div></div>');
+			bb.replaceChild(newCb,cb);
+			var attrs =	cb.get('attributes');
+			if (attrs) {
+				attrs.each(function(a) {
+					newCb.setAttribute(a.get('name'),a.get('value'));
+				});
+			}
+			var children = 	cb.get(CHILDREN);
+			if (children) {
+				children.each(function(e) {
+					if (e.get('nodeName').toUpperCase() == 'UL' || e.get('nodeName').toUpperCase() == 'OL') {
+						var grandChildren = e.get(CHILDREN);
+						if (grandChildren) {
+							grandChildren.each(function(ee) {
+								newCb.appendChild(ee);
+							});
+						}
+					} else {
+						newCb.appendChild(e);
+					}
+				});
+			}
+			cb = newCb;
+		}
 		cb.appendChild(Y.Node.create(NODE_MARKUP));
 		cb.addClass(C_TOGGLE_F_N);
-		var container = this.get(CONTENT_BOX).query('.' + C_CONTENT);
+		var container = cb.query('.' + C_CONTENT);
 		this.set('container',container);
 		var newContent = this.get('content');
 		if (newContent instanceof Y.Node) {
 			container.appendChild(newContent);
 		}
+		//console.log('despues',this.get(BOUNDING_BOX).get('innerHTML'));
 	},
 	_renderUIChildren: function () {
 
@@ -301,7 +376,7 @@ Y.extend(TreeNode,Y.Widget,{
 		cb.appendChild(Y.Node.create(CHILDREN_MARKUP));
 		this._childContainerEl = cb.query('.' + C_CHILDREN);
 		for (var i = 0;i < this._children.length; i++) {
-			this._children[i].render(this._childContainerEl);
+			Q.add({fn:this._children[i].render,context:this._children[i],args:[this._childContainerEl],name:'render'});
 		}
 	
 	},
@@ -343,7 +418,8 @@ Y.extend(TreeNode,Y.Widget,{
 			return Y.get(value);
 		}
 		if (Y.Lang.isString(value)) {
-			return Y.Node.create(value);
+			value = Y.Lang.trim(value);
+			return value?Y.Node.create(value):null;
 		}
 		Y.log(Y.substitute(this.getString('badContent'),{me:this,val:value}),'error');
 		return Y.Attribute.INVALID_VALUE;
@@ -400,7 +476,7 @@ Y.extend(TreeNode,Y.Widget,{
 		this._detach(newParent,e.prevVal);
 		this._changeParent(newParent);
 		if (this.get(RENDERED)) {
-			Q.add(Y.bind(this._move,this));
+			Q.add({fn:this._move,context:this,name:'_move'});
 		}
 	},
 	_changeParent: function (newParent) {
@@ -418,7 +494,7 @@ Y.extend(TreeNode,Y.Widget,{
 		this._detach(next && next.get(PARENT));
 		this._changeNextSibling(next);
 		if (this.get(RENDERED)) {
-			Q.add(Y.bind(this._move,this));
+			Q.add({fn:this._move,context:this,name:'_move'});
 		}
 	},
 	_changeNextSibling: function (next) {
@@ -455,7 +531,7 @@ Y.extend(TreeNode,Y.Widget,{
 		this._detach(previous && previous.get(PARENT));
 		this._changePreviousSibling(previous);
 		if (this.get(RENDERED)) {
-			Q.add(Y.bind(this._move,this));
+			Q.add({fn:this._move,context:this,name:'_move'});
 		}
 	},
 	_changePreviousSibling: function (previous) {
@@ -518,7 +594,7 @@ Y.extend(TreeNode,Y.Widget,{
 		return this.insertNode(node);
 	},
 	insertChild: function (node, position) {
-		var next,previous,siblings,bb,i;
+		var next;
 		Y.log(Y.substitute(this.getString('inserting'),{child:node,me:this,position:position}));
 		if (node.get(PREVIOUS) || node.get(PREVIOUS) || node.get(PARENT)) {
 			Y.error('Cannot insert a node attached elsewhere [' + node + ']');
