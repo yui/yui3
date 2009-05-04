@@ -17,7 +17,6 @@
     </div>
 	<!-- YUI3 Core //-->
 	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
-	<script type="text/javascript" src="../../../build/event/event-debug.js"></script>
 	<!-- Initialization process //-->
 	<script type="text/javascript">
 		YUI({
@@ -25,7 +24,6 @@
 		    filter: 'debug',
 		    combine: false,
 	        useConsole: true,
-	        // logInclude: ['event', 'test']
 	        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
@@ -38,7 +36,7 @@
 			Y.Test.Runner.add(new Y.Test.Case({
 				
 				name: "Event Delegate Tests",
-				/*
+				
 				test_simple_delegate_for_anchors: function(){
 					
 					var foo = false, t;
@@ -96,9 +94,7 @@
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(foo, "delegation fails, delegation without at least one selector should never trigger an event");
 				},
-				
-				*/
-				
+
 				test_multiple_selectors_one_match: function(){
 					
 					var foo = false, t;
@@ -112,8 +108,8 @@
 					Y.Assert.isTrue(foo, "multiple selectors fails, delegate should be able to match different selectors");
 					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
 					
-				}
-				/*
+				},
+				
 				test_multiple_delegate_matches: function(){
 					
 					var foo1 = false, foo2 = false, t1, t2;
@@ -130,12 +126,50 @@
 					
 					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
 					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
-					Y.Assert.isTrue(foo2, "second match fail, delagete should be able to match [a span]");
+					Y.Assert.isTrue(foo2, "second match fail, delegate should be able to match [a span]");
 					Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
 					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
 					
+				},
+				
+				test_bubble_up_after_delegate: function(){
+					
+					var foo1 = false, foo2 = false, t1, t2;
+					
+					Y.on('delegate', function(e) {
+						foo1 = true;
+						t1 = e.target;
+					}, '#mod1', 'click', 'a');
+					
+					Y.on('click', function(e) {
+						foo2 = true;
+						t2 = e.target;
+					}, '#doc');
+					
+					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isTrue(foo2, "second match fail, the event doesn't bubble up after the delegate routine");
+					Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but it doesn't restore e.target to the original value.");
+				},
+				
+				test_bubble_up_after_delegate_halt: function(){
+					
+					var foo1 = false, foo2 = false;
+					
+					Y.on('delegate', function(e) {
+						foo1 = true;
+						e.halt();
+					}, '#mod1', 'click', 'a');
+					
+					Y.on('click', function(e) {
+						foo2 = true;
+					}, '#doc');
+					
+					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isFalse(foo2, "the listener for 'doc' got executed, which means that e.halt fails during the delegate routine");
 				}
-				*/
 				
 				/* 
 				 * Other things that I consider should be tested in the future:
