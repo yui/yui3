@@ -1,16 +1,28 @@
 /**
-* <p>The FocusManager Node Plugin makes it easy to manage focus among  
+* <p>The Focus Manager Node Plugin makes it easy to manage focus among  
 * a Node's descendants.  Primarily intended to help with widget development, 
-* use of the FocusManager Node Plugin improves the keyboard accessibility 
-* of widgets by reducing the number of Nodes in the browser's default tab flow 
-* to one per widget.  With one tab stop per widget, users can quickly 
-* navigate between widgets by pressing the tab key.  Additionally, the 
-* FocusManager provides an easy means of defining the key(s) used to move 
-* focus between a Node's descendants.  Finally, as the CSS 
+* the Focus Manager Node Plugin can be used to improve the keyboard 
+* accessibility of widgets.</p>
+* 
+* <p>
+* When designing widgets that manage a set of descendant controls (i.e. buttons
+* in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to 
+* limit the number of descendants in the browser's default tab flow.  The fewer 
+* number of descendants in the default tab flow, the easier it is for keyboard 
+* users to navigate between widgets by pressing the tab key.  When a widget has 
+* focus it should provide a set of shortcut keys (typically the arrow keys) 
+* to move focus among its descendants.
+* </p>
+* 
+* <p>
+* To this end, the Focus Manager Node Plugin makes it easy to define a Node's 
+* focusable descendants, define which descendant should be in the default tab 
+* flow, and define the keys that move focus among each descendant.
+* Additionally, as the CSS 
 * <a href="http://www.w3.org/TR/CSS21/selector.html#x38"><code>:focus</code></a> 
 * pseudo class is not supported on all elements in all 
 * <a href="http://developer.yahoo.com/yui/articles/gbs/">A-Grade browsers</a>,
-* the FocusManager Node Plugin provides an easy, cross-browser means of 
+* the Focus Manager Node Plugin provides an easy, cross-browser means of 
 * styling focus.
 * </p>
 *  
@@ -81,7 +93,8 @@ NodeFocusManager.ATTRS = {
 
 
 	/**
-	* String representing the CSS selector used to define the descendant Nodes.
+	* String representing the CSS selector used to define the descendant Nodes 
+	* whose focus should be managed.
 	*
 	* @attribute descendants
 	* @type string
@@ -98,12 +111,12 @@ NodeFocusManager.ATTRS = {
 
 
 	/**
-	* Node, or index of the Node, representing the descendant that is either 
+	* <p>Node, or index of the Node, representing the descendant that is either 
 	* focused or is focusable (<code>tabIndex</code> attribute is set to 0).  
 	* The value cannot represent a disabled descendant Node.  Use a value of -1
 	* to remove all descendant Nodes from the default tab flow.
 	* If no value is specified, the active descendant will be inferred using 
-	* the following criteria:
+	* the following criteria:</p>
 	* <ol>
 	* <li>Examining the <code>tabIndex</code> attribute of each descendant and 
 	* using the first descendant whose <code>tabIndex</code> attribute is set 
@@ -178,8 +191,9 @@ NodeFocusManager.ATTRS = {
 	* Object literal representing the keys to be used to navigate between the 
 	* next/previous decendant.  The format for the attribute's value is 
 	* <code>{ next: "down:40", previous: "down:38" }</code>.  The value for the 
-	* "next" and "previous" properties are used to attach "key" event listeners.
-	* See the <a href="event/#keylistener">Using the key Event</a> section of 
+	* "next" and "previous" properties are used to attach 
+	* <a href="event/#keylistener"><code>key</code></a> event listeners. See 
+	* the <a href="event/#keylistener">Using the key Event</a> section of 
 	* the Event documentation for more information on "key" event listeners.
 	* 
 	* @attribute keys
@@ -356,10 +370,11 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	/**
 	* @method _isDescendant
 	* @description Determines if the specified Node instance is a descendant
-	* managed by the NodeFocusManager.
+	* managed by the Focus Manager.
 	* @param node {Node} Node instance to be checked.
 	* @return {Boolean} Boolean indicating if the specified Node instance is a 
-	* descendant managed by the NodeFocusManager.
+	* descendant managed by the Focus Manager.
+	* @protected
 	*/
 	_isDescendant: function (node) {
 
@@ -469,7 +484,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Detaches all event handlers used by the NodeFocusManager.
+	* @description Detaches all event handlers used by the Focus Manager.
 	* @protected
 	*/
 	_detachEventHandlers: function () {
@@ -493,7 +508,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method _detachEventHandlers
-	* @description Attaches all event handlers used by the NodeFocusManager.
+	* @description Attaches all event handlers used by the Focus Manager.
 	* @protected	
 	*/
 	_attachEventHandlers: function () {
@@ -548,7 +563,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	/**
 	* @method _onDocMouseDown
 	* @description "mousedown" event handler for the owner document of the 
-	* NodeFocusManager's Node.
+	* Focus Manager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
@@ -587,7 +602,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	/**
 	* @method _onDocFocus
 	* @description "focus" event handler for the owner document of the 
-	* NodeFocusManager's Node.
+	* Focus Manager's Node.
 	* @protected
 	* @param event {Object} Object representing the DOM event.
 	*/
@@ -620,7 +635,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			else if (bHasFocus && !bInCollection) {  
 			
 				//	The user has focused a child of the root Node that is 
-				//	not one of the descendants managed by this NodeFocusManager
+				//	not one of the descendants managed by this Focus Manager
 				//	so clear the currently focused descendant.
 				
 				bHasFocus = false;
@@ -784,8 +799,8 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method focus
-	* @description Focuses the active descendant and sets the "hasFocus" 
-	* attribute to true.
+	* @description Focuses the active descendant and sets the  
+	* <code>hasFocus</code> attribute to true.
 	* @param index {Number} Optional. Number representing the index of the 
 	* descendant to be set as the active descendant.
 	* @param index {Node} Optional. Node instance representing the 
@@ -824,8 +839,8 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method blur
-	* @description Blurs the current active descendant and sets the hasFocus 
-	* attribute to false.
+	* @description Blurs the current active descendant and sets the 
+	* <code>hasFocus</code> attribute to false.
 	*/
 	blur: function () {
 
@@ -857,7 +872,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method start
-	* @description Enables the NodeFocusManager.
+	* @description Enables the Focus Manager.
 	*/
 	start: function () {
 
@@ -875,7 +890,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method stop
-	* @description Disables the NodeFocusManager by detaching all event handlers.
+	* @description Disables the Focus Manager by detaching all event handlers.
 	*/	
 	stop: function () {
 
@@ -895,8 +910,8 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method refresh
-	* @description Refreshes the NodeFocusManager's descendants by re-executing the 
-	* CSS selector query specified by the "descendants" attribute.
+	* @description Refreshes the Focus Manager's descendants by re-executing the 
+	* CSS selector query specified by the <code>descendants</code> attribute.
 	*/
 	refresh: function () {
 
