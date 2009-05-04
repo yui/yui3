@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datatype   date-locales.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>DataType Date Formatter Submodule&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
+                
+                 &gt; date-locales.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * The Date.Locale class is a container for all localised date strings</span>
+<span class="c"> * used by Y.DataType.Date. It is used internally, but may be extended</span>
+<span class="c"> * to provide new date localisations.</span>
+<span class="c"> *</span>
+<span class="c"> * To create your own Locale, follow these steps:</span>
+<span class="c"> * &lt;ol&gt;</span>
+<span class="c"> *  &lt;li&gt;Find an existing locale that matches closely with your needs&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;Use this as your base class.  Use Y.DataType.Date.Locale[&quot;en&quot;] if nothing</span>
+<span class="c"> *   matches.&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;Create your own class as an extension of the base class using</span>
+<span class="c"> *   Y.merge, and add your own localisations where needed.&lt;/li&gt;</span>
+<span class="c"> * &lt;/ol&gt;</span>
+<span class="c"> * See the Y.DataType.Date.Locale[&quot;en-US&quot;] and Y.DataType.Date.Locale[&quot;en-GB&quot;]</span>
+<span class="c"> * classes which extend Y.DataType.Date.Locale[&quot;en&quot;].</span>
+<span class="c"> *</span>
+<span class="c"> * For example, to implement locales for French french and Canadian french,</span>
+<span class="c"> * we would do the following:</span>
+<span class="c"> * &lt;ol&gt;</span>
+<span class="c"> *  &lt;li&gt;For French french, we have no existing similar locale, so use</span>
+<span class="c"> *   Y.DataType.Date.Locale[&quot;en&quot;] as the base, and extend it:</span>
+<span class="c"> *   &lt;pre&gt;</span>
+<span class="c"> *      Y.DataType.Date.Locale[&quot;fr&quot;] = Y.merge(Y.DataType.Date.Locale, {</span>
+<span class="c"> *          a: [&quot;dim&quot;, &quot;lun&quot;, &quot;mar&quot;, &quot;mer&quot;, &quot;jeu&quot;, &quot;ven&quot;, &quot;sam&quot;],</span>
+<span class="c"> *          A: [&quot;dimanche&quot;, &quot;lundi&quot;, &quot;mardi&quot;, &quot;mercredi&quot;, &quot;jeudi&quot;, &quot;vendredi&quot;, &quot;samedi&quot;],</span>
+<span class="c"> *          b: [&quot;jan&quot;, &quot;f&amp;eacute;v&quot;, &quot;mar&quot;, &quot;avr&quot;, &quot;mai&quot;, &quot;jun&quot;, &quot;jui&quot;, &quot;ao&amp;ucirc;&quot;, &quot;sep&quot;, &quot;oct&quot;, &quot;nov&quot;, &quot;d&amp;eacute;c&quot;],</span>
+<span class="c"> *          B: [&quot;janvier&quot;, &quot;f&amp;eacute;vrier&quot;, &quot;mars&quot;, &quot;avril&quot;, &quot;mai&quot;, &quot;juin&quot;, &quot;juillet&quot;, &quot;ao&amp;ucirc;t&quot;, &quot;septembre&quot;, &quot;octobre&quot;, &quot;novembre&quot;, &quot;d&amp;eacute;cembre&quot;],</span>
+<span class="c"> *          c: &quot;%a %d %b %Y %T %Z&quot;,</span>
+<span class="c"> *          p: [&quot;&quot;, &quot;&quot;],</span>
+<span class="c"> *          P: [&quot;&quot;, &quot;&quot;],</span>
+<span class="c"> *          x: &quot;%d.%m.%Y&quot;,</span>
+<span class="c"> *          X: &quot;%T&quot;</span>
+<span class="c"> *      });</span>
+<span class="c"> *   &lt;/pre&gt;</span>
+<span class="c"> *  &lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;For Canadian french, we start with French french and change the meaning of \%x:</span>
+<span class="c"> *   &lt;pre&gt;</span>
+<span class="c"> *      Y.DataType.Date.Locale[&quot;fr-CA&quot;] = Y.merge(Y.DataType.Date.Locale[&quot;fr&quot;], {</span>
+<span class="c"> *          x: &quot;%Y-%m-%d&quot;</span>
+<span class="c"> *      });</span>
+<span class="c"> *   &lt;/pre&gt;</span>
+<span class="c"> *  &lt;/li&gt;</span>
+<span class="c"> * &lt;/ol&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * With that, you can use your new locales:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *    var d = new Date(&quot;2008/04/22&quot;);</span>
+<span class="c"> *    Y.DataType.Date.format(d, { format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr&quot; });</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> * will return:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *    mardi, 22 avril == 22.04.2008</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> * And</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *    Y.DataType.Date.format(d, {format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr-CA&quot; });</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> * Will return:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *   mardi, 22 avril == 2008-04-22</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> * @module datatype</span>
+<span class="c"> * @requires oop</span>
+<span class="c"> * @class DataType.Date.Locale</span>
+<span class="c"> */</span>
+<span class="k">var</span> <span class="nx">YDateEn</span> <span class="o">=</span> <span class="o">{</span>
+	<span class="nx">a</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Sun&quot;</span><span class="o">,</span> <span class="s2">&quot;Mon&quot;</span><span class="o">,</span> <span class="s2">&quot;Tue&quot;</span><span class="o">,</span> <span class="s2">&quot;Wed&quot;</span><span class="o">,</span> <span class="s2">&quot;Thu&quot;</span><span class="o">,</span> <span class="s2">&quot;Fri&quot;</span><span class="o">,</span> <span class="s2">&quot;Sat&quot;</span><span class="o">],</span>
+	<span class="nx">A</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Sunday&quot;</span><span class="o">,</span> <span class="s2">&quot;Monday&quot;</span><span class="o">,</span> <span class="s2">&quot;Tuesday&quot;</span><span class="o">,</span> <span class="s2">&quot;Wednesday&quot;</span><span class="o">,</span> <span class="s2">&quot;Thursday&quot;</span><span class="o">,</span> <span class="s2">&quot;Friday&quot;</span><span class="o">,</span> <span class="s2">&quot;Saturday&quot;</span><span class="o">],</span>
+	<span class="nx">b</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Jan&quot;</span><span class="o">,</span> <span class="s2">&quot;Feb&quot;</span><span class="o">,</span> <span class="s2">&quot;Mar&quot;</span><span class="o">,</span> <span class="s2">&quot;Apr&quot;</span><span class="o">,</span> <span class="s2">&quot;May&quot;</span><span class="o">,</span> <span class="s2">&quot;Jun&quot;</span><span class="o">,</span> <span class="s2">&quot;Jul&quot;</span><span class="o">,</span> <span class="s2">&quot;Aug&quot;</span><span class="o">,</span> <span class="s2">&quot;Sep&quot;</span><span class="o">,</span> <span class="s2">&quot;Oct&quot;</span><span class="o">,</span> <span class="s2">&quot;Nov&quot;</span><span class="o">,</span> <span class="s2">&quot;Dec&quot;</span><span class="o">],</span>
+	<span class="nx">B</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;January&quot;</span><span class="o">,</span> <span class="s2">&quot;February&quot;</span><span class="o">,</span> <span class="s2">&quot;March&quot;</span><span class="o">,</span> <span class="s2">&quot;April&quot;</span><span class="o">,</span> <span class="s2">&quot;May&quot;</span><span class="o">,</span> <span class="s2">&quot;June&quot;</span><span class="o">,</span> <span class="s2">&quot;July&quot;</span><span class="o">,</span> <span class="s2">&quot;August&quot;</span><span class="o">,</span> <span class="s2">&quot;September&quot;</span><span class="o">,</span> <span class="s2">&quot;October&quot;</span><span class="o">,</span> <span class="s2">&quot;November&quot;</span><span class="o">,</span> <span class="s2">&quot;December&quot;</span><span class="o">],</span>
+	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %T %Z&quot;</span><span class="o">,</span>
+	<span class="nx">p</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;AM&quot;</span><span class="o">,</span> <span class="s2">&quot;PM&quot;</span><span class="o">],</span>
+	<span class="nx">P</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;am&quot;</span><span class="o">,</span> <span class="s2">&quot;pm&quot;</span><span class="o">],</span>
+	<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="o">,</span>
+	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%d/%m/%y&quot;</span><span class="o">,</span>
+	<span class="nx">X</span><span class="o">:</span> <span class="s2">&quot;%T&quot;</span>
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.Date.Locale&quot;</span><span class="o">);</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">YDateEn</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-US&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">,</span> <span class="o">{</span>
+	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %I:%M:%S %p %Z&quot;</span><span class="o">,</span>
+	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%m/%d/%Y&quot;</span><span class="o">,</span>
+	<span class="nx">X</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span>
+<span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-GB&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">,</span> <span class="o">{</span>
+	<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%l:%M:%S %P %Z&quot;</span>
+<span class="o">});</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-AU&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class="selected"><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
+                                <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="datatype-number.js.html" title="datatype-number.js">datatype-number.js</a></li>
+                                <li class=""><a href="datatype-xml.js.html" title="datatype-xml.js">datatype-xml.js</a></li>
+                                <li class=""><a href="date-formatter.js.html" title="date-formatter.js">date-formatter.js</a></li>
+                                <li class="selected"><a href="date-locales.js.html" title="date-locales.js">date-locales.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "toString", "url": "DataType.Number.html#method_toString", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "toString", "url": "DataType.XML.html#method_toString", "type": "method"}, {"access": "private", "host": "DataType.Date.Locale", "name": "xPad", "url": "DataType.Date.Locale.html#method_xPad", "type": "method"}];
+</script>
+</body>
+</html>

@@ -78,7 +78,7 @@ YUI({
                 var cookieString = "a=b";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("a", cookies, "Cookie 'a' is missing.");
+                ObjectAssert.hasKey("a", cookies, "Cookie 'a' is missing.");
                 
                 Assert.areEqual("b", cookies.a, "Cookie 'a' should have value 'b'.");        
             },
@@ -88,7 +88,7 @@ YUI({
                 var cookieString = "12345=b";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("12345", cookies, "Cookie '12345' is missing.");
+                ObjectAssert.hasKey("12345", cookies, "Cookie '12345' is missing.");
                 
                 Assert.areEqual("b", cookies["12345"], "Cookie '12345' should have value 'b'.");        
             },
@@ -98,10 +98,10 @@ YUI({
                 var cookieString = "a=b; c=d; e=f; g=h";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("a", cookies, "Cookie 'a' is missing.");
-                ObjectAssert.has("c", cookies, "Cookie 'c' is missing.");
-                ObjectAssert.has("e", cookies, "Cookie 'e' is missing.");
-                ObjectAssert.has("g", cookies, "Cookie 'g' is missing.");
+                ObjectAssert.hasKey("a", cookies, "Cookie 'a' is missing.");
+                ObjectAssert.hasKey("c", cookies, "Cookie 'c' is missing.");
+                ObjectAssert.hasKey("e", cookies, "Cookie 'e' is missing.");
+                ObjectAssert.hasKey("g", cookies, "Cookie 'g' is missing.");
                 
                 Assert.areEqual("b", cookies.a, "Cookie 'a' should have value 'b'.");
                 Assert.areEqual("d", cookies.c, "Cookie 'c' should have value 'd'.");
@@ -115,8 +115,8 @@ YUI({
                 var cookieString = "name=Nicholas%20Zakas; title=front%20end%20engineer";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("name", cookies, "Cookie 'name' is missing.");
-                ObjectAssert.has("title", cookies, "Cookie 'title' is missing.");
+                ObjectAssert.hasKey("name", cookies, "Cookie 'name' is missing.");
+                ObjectAssert.hasKey("title", cookies, "Cookie 'title' is missing.");
                 
                 Assert.areEqual("Nicholas Zakas", cookies.name, "Cookie 'name' should have value 'Nicholas Zakas'.");
                 Assert.areEqual("front end engineer", cookies.title, "Cookie 'title' should have value 'front end engineer'.");
@@ -126,9 +126,9 @@ YUI({
                 var cookieString = "B=2nk0a3t3lj7cr&b=3&s=13; LYC=l_v=2&l_lv=10&l_l=94ddoa70d&l_s=qz54t4qwrsqquyv51w0z4xxwtx31x1t0&l_lid=146p1u6&l_r=4q&l_lc=0_0_0_0_0&l_mpr=50_0_0&l_um=0_0_1_0_0;YMRAD=1215072198*0_0_7318647_1_0_40123839_1; l%5FPD3=840";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("B", cookies, "Cookie 'B' is missing.");
-                ObjectAssert.has("LYC", cookies, "Cookie 'LYC' is missing.");
-                ObjectAssert.has("l_PD3", cookies, "Cookie 'l_PD3' is missing.");                       
+                ObjectAssert.hasKey("B", cookies, "Cookie 'B' is missing.");
+                ObjectAssert.hasKey("LYC", cookies, "Cookie 'LYC' is missing.");
+                ObjectAssert.hasKey("l_PD3", cookies, "Cookie 'l_PD3' is missing.");                       
             },
             
             testParseCookieStringWithEscapedCharactersInCookieName: function(){
@@ -137,7 +137,7 @@ YUI({
                 var cookieString = encodeURIComponent(cookieName) + "=" + encodeURIComponent(cookieValue);
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has(cookieName, cookies, "Cookie '" + cookieName + "' is missing.");
+                ObjectAssert.hasKey(cookieName, cookies, "Cookie '" + cookieName + "' is missing.");
                 Assert.areEqual(cookieValue, cookies[cookieName], "Cookie value for '" + cookieName + "' is wrong.");
             },
             
@@ -145,11 +145,11 @@ YUI({
                 var cookieString = "SESSION=27bedbdf3d35252d0db07f34d81dcca6; STATS=OK; SCREEN=1280x1024; undefined; ys-bottom-preview=o%3Aheight%3Dn%253A389";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("SCREEN", cookies, "Cookie 'SCREEN' is missing.");
-                ObjectAssert.has("STATS", cookies, "Cookie 'STATS' is missing.");
-                ObjectAssert.has("SESSION", cookies, "Cookie 'SESSION' is missing.");
-                ObjectAssert.has("ys-bottom-preview", cookies, "Cookie 'ys-bottom-preview' is missing.");
-                ObjectAssert.has("undefined", cookies, "Cookie 'undefined' is missing.");
+                ObjectAssert.hasKey("SCREEN", cookies, "Cookie 'SCREEN' is missing.");
+                ObjectAssert.hasKey("STATS", cookies, "Cookie 'STATS' is missing.");
+                ObjectAssert.hasKey("SESSION", cookies, "Cookie 'SESSION' is missing.");
+                ObjectAssert.hasKey("ys-bottom-preview", cookies, "Cookie 'ys-bottom-preview' is missing.");
+                ObjectAssert.hasKey("undefined", cookies, "Cookie 'undefined' is missing.");
             },
             
             /*
@@ -180,9 +180,9 @@ YUI({
                 var cookieString = "name=Nicholas%20Zakas; hash=a=b&c=d&e=f&g=h; title=front%20end%20engineer";
                 var cookies = Y.Cookie._parseCookieString(cookieString);
                 
-                ObjectAssert.has("name", cookies, "Cookie 'name' is missing.");
-                ObjectAssert.has("hash", cookies, "Cookie 'hash' is missing.");
-                ObjectAssert.has("title", cookies, "Cookie 'title' is missing.");
+                ObjectAssert.hasKey("name", cookies, "Cookie 'name' is missing.");
+                ObjectAssert.hasKey("hash", cookies, "Cookie 'hash' is missing.");
+                ObjectAssert.hasKey("title", cookies, "Cookie 'title' is missing.");
                 
                 Assert.areEqual("Nicholas Zakas", cookies.name, "Cookie 'name' should have value 'Nicholas Zakas'.");
                 Assert.areEqual("a=b&c=d&e=f&g=h", cookies.hash, "Cookie 'hash' should have value 'a=b&c=d&e=f&g=h'.");
@@ -194,10 +194,10 @@ YUI({
                 var cookieHash = "a=b&c=d&e=f&g=h";
                 var hash = Y.Cookie._parseCookieHash(cookieHash);
                 
-                ObjectAssert.has("a", hash, "Hash 'a' is missing.");
-                ObjectAssert.has("c", hash, "Hash 'c' is missing.");
-                ObjectAssert.has("e", hash, "Hash 'e' is missing.");
-                ObjectAssert.has("g", hash, "Hash 'g' is missing.");
+                ObjectAssert.hasKey("a", hash, "Hash 'a' is missing.");
+                ObjectAssert.hasKey("c", hash, "Hash 'c' is missing.");
+                ObjectAssert.hasKey("e", hash, "Hash 'e' is missing.");
+                ObjectAssert.hasKey("g", hash, "Hash 'g' is missing.");
                 
                 Assert.areEqual("b", hash.a, "Hash 'a' should have value 'b'.");
                 Assert.areEqual("d", hash.c, "Hash 'c' should have value 'd'.");
@@ -211,7 +211,7 @@ YUI({
                 var cookieHash = encodeURIComponent(cookieName) + "=" + encodeURIComponent(cookieValue);
                 var hash = Y.Cookie._parseCookieHash(cookieHash);
                 
-                ObjectAssert.has(cookieName, hash, "Hash 'something[1]' is missing.");
+                ObjectAssert.hasKey(cookieName, hash, "Hash 'something[1]' is missing.");
                 
                 Assert.areEqual(cookieValue, hash[cookieName], "Hash 'a' should have value 'b'.");
                         
@@ -657,10 +657,10 @@ YUI({
                 
                 var hash = Y.Cookie.getSubs("data");
                 
-                ObjectAssert.has("a", hash, "Hash 'a' is missing.");
-                ObjectAssert.has("c", hash, "Hash 'c' is missing.");
-                ObjectAssert.has("e", hash, "Hash 'e' is missing.");
-                ObjectAssert.has("g", hash, "Hash 'g' is missing.");
+                ObjectAssert.hasKey("a", hash, "Hash 'a' is missing.");
+                ObjectAssert.hasKey("c", hash, "Hash 'c' is missing.");
+                ObjectAssert.hasKey("e", hash, "Hash 'e' is missing.");
+                ObjectAssert.hasKey("g", hash, "Hash 'g' is missing.");
                 
                 Assert.areEqual("b", hash.a, "Hash 'a' should have value 'b'.");
                 Assert.areEqual("d", hash.c, "Hash 'c' should have value 'd'.");
@@ -685,9 +685,9 @@ YUI({
                 
                 var hash = Y.Cookie.getSubs("data");
                 
-                ObjectAssert.has("age", hash, "Hash 'age' is missing.");
-                ObjectAssert.has("title", hash, "Hash 'title' is missing.");
-                ObjectAssert.has("stuff", hash, "Hash 'stuff' is missing.");
+                ObjectAssert.hasKey("age", hash, "Hash 'age' is missing.");
+                ObjectAssert.hasKey("title", hash, "Hash 'title' is missing.");
+                ObjectAssert.hasKey("stuff", hash, "Hash 'stuff' is missing.");
     
                 Assert.areEqual("29", hash.age, "Hash 'a' should have value 'b'.");
                 Assert.areEqual("f2e", hash.title, "Hash 'c' should have value 'd'.");
