@@ -169,7 +169,7 @@
                     <span class="nx">delete</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
                 <span class="o">}</span>
                 <span class="nx">config</span><span class="o">[</span><span class="nx">INIT</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">addAll</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">hasValue</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// Go through set, so that raw values get normalized/validated</span>
@@ -222,7 +222,7 @@
 
             <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">path</span><span class="o">,</span>
-                <span class="nx">getFn</span><span class="o">,</span>
+                <span class="nx">getter</span><span class="o">,</span>
                 <span class="nx">val</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
@@ -231,9 +231,9 @@
             <span class="o">}</span>
 
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
-            <span class="nx">getFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">);</span>
+            <span class="nx">getter</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">);</span>
 
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getter</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
 
             <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
@@ -317,10 +317,10 @@
 <span class="c">         * @return {Object} Reference to the host object</span>
 <span class="c">         */</span>
         <span class="nx">_setAttr</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">data</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-                <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="nx">initialSet</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">data</span><span class="o">.</span><span class="nx">value</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">data</span><span class="o">.</span><span class="nx">value</span><span class="o">)),</span>
+                <span class="nx">initialSet</span><span class="o">,</span>
                 <span class="nx">strPath</span><span class="o">,</span>
                 <span class="nx">path</span><span class="o">,</span>
                 <span class="nx">currVal</span><span class="o">;</span>
@@ -331,15 +331,19 @@
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
             <span class="o">}</span>
 
+            <span class="nx">initialSet</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">data</span><span class="o">.</span><span class="nx">value</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">data</span><span class="o">.</span><span class="nx">value</span><span class="o">));</span>
+
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is not configured&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">initialSet</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
+
                     <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">WRITE_ONCE</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is writeOnce&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                     <span class="o">}</span>
+
                     <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">READ_ONLY</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is readOnly&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
@@ -348,6 +352,7 @@
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
                     <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
 
@@ -358,7 +363,11 @@
                     <span class="o">}</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">_fireAttrChange</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">initialSet</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">this</span><span class="o">.</span><span class="nx">_setAttrVal</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="k">this</span><span class="o">.</span><span class="nx">_fireAttrChange</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -372,28 +381,28 @@
 <span class="c">         * </span>
 <span class="c">         * @method _fireAttrChange</span>
 <span class="c">         * @private</span>
-<span class="c">         * @param {String} name The name of the attribute</span>
+<span class="c">         * @param {String} attrName The name of the attribute</span>
+<span class="c">         * @param {String} subAttrName The full path of the property being changed, </span>
+<span class="c">         * if this is a sub-attribute value being change. Otherwise null.</span>
 <span class="c">         * @param {Any} currVal The current value of the attribute</span>
 <span class="c">         * @param {Any} newVal The new value of the attribute</span>
-<span class="c">         * @param {String} strFullPath The full path of the property being changed, </span>
-<span class="c">         * if this is a sub-attribute value being change</span>
 <span class="c">         * @param {Object} opts Any additional event data to mix into the attribute change event&#39;s event facade.</span>
 <span class="c">         */</span>
-        <span class="nx">_fireAttrChange</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">,</span>
+        <span class="nx">_fireAttrChange</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">subAttrName</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">,</span>
                 <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">facade</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_CFG</span><span class="o">);</span>
-                <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">SET_PUBLISHED</span><span class="o">);</span>
+                <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="nx">facade</span> <span class="o">=</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_FACADE</span><span class="o">;</span>
 
             <span class="nx">facade</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">eventName</span><span class="o">;</span>
-            <span class="nx">facade</span><span class="o">.</span><span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span>
-            <span class="nx">facade</span><span class="o">.</span><span class="nx">subAttrName</span> <span class="o">=</span> <span class="nx">strFullPath</span><span class="o">;</span>
+            <span class="nx">facade</span><span class="o">.</span><span class="nx">attrName</span> <span class="o">=</span> <span class="nx">attrName</span><span class="o">;</span>
+            <span class="nx">facade</span><span class="o">.</span><span class="nx">subAttrName</span> <span class="o">=</span> <span class="nx">subAttrName</span><span class="o">;</span>
             <span class="nx">facade</span><span class="o">.</span><span class="nx">prevVal</span> <span class="o">=</span> <span class="nx">currVal</span><span class="o">;</span>
             <span class="nx">facade</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">newVal</span><span class="o">;</span>
 
@@ -408,52 +417,70 @@
 <span class="c">         * @param {Event.Facade} e The event object for the custom event</span>
 <span class="c">         */</span>
         <span class="nx">_defAttrChangeFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_setAttrVal</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">subAttrName</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">prevVal</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;State not updated and stopImmediatePropagation called for attribute: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39; , value:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                <span class="c">// Prevent &quot;after&quot; listeners from being invoked since nothing changed.</span>
+<span class="c"></span>                <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Updates the stored value of the attribute in the privately held State object,</span>
+<span class="c">         * if validation and setter passes.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _setAttrVal</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {String} attrName The attribute name.</span>
+<span class="c">         * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property (&quot;x.y.z&quot;).</span>
+<span class="c">         * @param {Any} prevVal The currently stored value of the attribute.</span>
+<span class="c">         * @param {Any} newVal The value which is going to be stored.</span>
+<span class="c">         * </span>
+<span class="c">         * @return {booolean} true if the new attribute value was stored, false if not.</span>
+<span class="c">         */</span>
+        <span class="nx">_setAttrVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">subAttrName</span><span class="o">,</span> <span class="nx">prevVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
                 <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
-                <span class="nx">name</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span>
-                <span class="nx">valFn</span>  <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
-                <span class="nx">setFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">SETTER</span><span class="o">),</span>
+                <span class="nx">validator</span>  <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
+                <span class="nx">setter</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">SETTER</span><span class="o">),</span>
                 <span class="nx">storedVal</span><span class="o">,</span>
                 <span class="nx">retVal</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">valFn</span> <span class="o">||</span> <span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">setFn</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">validator</span> <span class="o">||</span> <span class="nx">validator</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">setter</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">);</span>
+
                     <span class="k">if</span> <span class="o">(</span><span class="nx">retVal</span> <span class="o">===</span> <span class="nx">INVALID_VALUE</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, setter returned Attribute.INVALID_VALUE for value:&#39;</span> <span class="o">+</span> <span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, setter returned Attribute.INVALID_VALUE for value:&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">retVal</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">){</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, raw value: &#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39; modified by setter to:&#39;</span> <span class="o">+</span> <span class="nx">retVal</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
-                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">retVal</span><span class="o">;</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, raw value: &#39;</span> <span class="o">+</span> <span class="nx">newVal</span> <span class="o">+</span> <span class="s1">&#39; modified by setter to:&#39;</span> <span class="o">+</span> <span class="nx">retVal</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                        <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">retVal</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, Validation failed for value:&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
-                <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">}</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">e</span><span class="o">.</span><span class="nx">subAttrName</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">===</span> <span class="nx">e</span><span class="o">.</span><span class="nx">prevVal</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, value unchanged:&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
-                <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Store value</span>
-<span class="c"></span>                <span class="nx">storedVal</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">val</span> <span class="o">};</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">INIT_VALUE</span><span class="o">)</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">storedVal</span><span class="o">[</span><span class="nx">INIT_VALUE</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span><span class="o">(!</span><span class="nx">subAttrName</span> <span class="o">&amp;&amp;</span> <span class="nx">newVal</span> <span class="o">===</span> <span class="nx">prevVal</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, value unchanged:&#39;</span> <span class="o">+</span> <span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                        <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="c">// Store value</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">INIT_VALUE</span><span class="o">)</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">INIT_VALUE</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">);</span>
+                        <span class="o">}</span>
+                        <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">);</span>
+                    <span class="o">}</span>
                 <span class="o">}</span>
-                <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">storedVal</span><span class="o">);</span>
-                <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;State not updated and stopImmediatePropagation called for attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; , value:&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
 
-                <span class="c">// Prevent &quot;after&quot; listeners from being </span>
-<span class="c"></span>                <span class="c">// invoked since nothing changed.</span>
-<span class="c"></span>                <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute:&#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, Validation failed for value:&#39;</span> <span class="o">+</span> <span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
+                <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">allowSet</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -619,7 +646,6 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-
             <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -705,7 +731,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

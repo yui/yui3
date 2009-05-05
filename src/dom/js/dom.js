@@ -461,6 +461,10 @@ Y.DOM = {
                             getElementsByTagName('*'), node) : null;
         },
 
+    isWindow: function(obj) {
+        return obj.alert && obj.document;
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
@@ -468,7 +472,7 @@ Y.DOM = {
         return frag.removeChild(frag[FIRST_CHILD]);
     },
 
-    insertNode: function(node, content, where, execScripts) {
+    insertHTML: function(node, content, where, execScripts) {
         var scripts,
             newNode = Y.DOM.create(content);
 

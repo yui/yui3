@@ -80,7 +80,9 @@ Node.DOM_EVENTS = {
     'submit': true,
     'change': true,
     'error': true,
-    'load': true
+    'load': true,
+    'mouseenter': true,
+    'mouseleave': true
 };
 
 Node._instances = {};
@@ -98,7 +100,7 @@ Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
             node = g_nodes[node[UID]];
-        } else if (!node[NODE_NAME] || !node.alert) { // must already be a DOMNode 
+        } else if (!node[NODE_NAME] || Y.DOM.isWindow(node)) { // must already be a DOMNode 
             node = null;
         }
     }
@@ -106,22 +108,18 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    if (val) { // only truthy values are risky
+    var isWindow = false;
+    if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
-            if (    NODE_TYPE in val || // dom node
-                    val.item || // dom collection or Node instance
-                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document ) // window TODO: restrict?
-                { 
-                if (node && g_restrict[node[UID]] && !node.contains(val)) {
+            if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
+                if (g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
-                    if (val[NODE_TYPE] || val.document) { // node or window
-                        val = Node.get(val);
-                    } else { // assume nodeList
-                        val = Y.all(val);
-                    }
+                    val = Node.get(val);
                 }
+            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                    (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
+                val = Y.all(val);
             } else {
                 depth = (depth === undefined) ? 4 : depth;
                 if (depth > 0) {
@@ -131,7 +129,6 @@ Node.scrubVal = function(val, node, depth) {
                         }
                     }
                 }
-                
             }
         }
     } else if (val === undefined) {
@@ -322,19 +319,18 @@ Y.mix(Node.prototype, {
         }
     },
 
-    addNode: function(content, where) {
-        return Y.DOM.insertNode(g_nodes[this[UID]], content, where);
-    },
-
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
+        var args;
+            ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            Y.Event.attach.apply(Y.Event, args);
+            args = g_slice.call(arguments, 0),
+            args.splice(2, 0, g_nodes[this[UID]]);
+            ret = Y.Event.attach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.on.apply(this, arguments);
         }
-
-        return SuperConstrProto.on.apply(this, arguments);
+        return ret;
     },
 
    /**
@@ -344,9 +340,16 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The handler to call when the event fires 
      */
     detach: function(type, fn) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
-        return Y.Event.detach.apply(Y.Event, args);
+        var args, ret = null;
+        if (Node.DOM_EVENTS[type]) {
+            args = g_slice.call(arguments, 0);
+            args.splice(2, 0, g_nodes[this[UID]]);
+
+            ret = Y.Event.detach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.detach.apply(this, arguments);
+        }
+        return ret;
     },
 
     get: function(attr) {
@@ -487,6 +490,11 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    remove: function() {
+        g_nodes[this[UID]].parentNode.removeChild();
+        return this;
+    },
+
     // TODO: safe enough? 
     invoke: function(method, a, b, c, d, e) {
         var node = g_nodes[this[UID]],
@@ -571,176 +579,6 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
-var UID = '_yuid';
-
-Y.Array.each([
-    /**
-     * Passes through to DOM method.
-     * @method replaceChild
-     * @param {HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
-     * @return {Node} The replaced node 
-     */
-    'replaceChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method appendChild
-     * @param {HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    'appendChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method insertBefore
-     * @param {HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    'insertBefore',
-
-    /**
-     * Passes through to DOM method.
-     * @method removeChild
-     * @param {HTMLElement | Node} node Node to be removed 
-     * @return {Node} The removed node 
-     */
-    'removeChild',
-
-    /**
-     * Passes through to DOM method.
-     * @method hasChildNodes
-     * @return {Boolean} Whether or not the node has any childNodes 
-     */
-    'hasChildNodes',
-
-    /**
-     * Passes through to DOM method.
-     * @method cloneNode
-     * @param {HTMLElement | Node} node Node to be cloned 
-     * @return {Node} The clone 
-     */
-    'cloneNode',
-
-    /**
-     * Passes through to DOM method.
-     * @method hasAttribute
-     * @param {String} attribute The attribute to test for 
-     * @return {Boolean} Whether or not the attribute is present 
-     */
-    'hasAttribute',
-
-    /**
-     * Passes through to DOM method.
-     * @method removeAttribute
-     * @param {String} attribute The attribute to be removed 
-     * @chainable
-     */
-    'removeAttribute',
-
-    /**
-     * Passes through to DOM method.
-     * @method scrollIntoView
-     * @chainable
-     */
-    'scrollIntoView',
-
-    /**
-     * Passes through to DOM method.
-     * @method getElementsByTagName
-     * @param {String} tagName The tagName to collect 
-     * @return {NodeList} A NodeList representing the HTMLCollection
-     */
-    'getElementsByTagName',
-
-    /**
-     * Passes through to DOM method.
-     * @method focus
-     * @chainable
-     */
-    'focus',
-
-    /**
-     * Passes through to DOM method.
-     * @method blur
-     * @chainable
-     */
-    'blur',
-
-    /**
-     * Passes through to DOM method.
-     * Only valid on FORM elements
-     * @method submit
-     * @chainable
-     */
-    'submit',
-
-    /**
-     * Passes through to DOM method.
-     * Only valid on FORM elements
-     * @method reset
-     * @chainable
-     */
-    'reset',
-
-    /**
-     * Passes through to DOM method.
-     * @method select
-     * @chainable
-     */
-     'select'
-], function(method) {
-    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
-        var ret = this.invoke(method, arg1, arg2, arg3);
-        return ret;
-    };
-});
-
-Node.importMethod(Y.DOM, [
-    /**
-     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
-     * @method contains
-     * @chainable
-     * @param {Node | HTMLElement} needle The possible node or descendent
-     * @return {Boolean} Whether or not this node is the needle its ancestor
-     */
-    'contains',
-    /**
-     * Normalizes troublesome attributes 
-     * @chainable
-     * @method setAttribute
-     * @param {string} name The attribute name 
-     * @param {string} value The value to set
-     */
-    'setAttribute',
-    /**
-     * Normalizes troublesome attributes 
-     * @chainable
-     * @method getAttribute
-     * @param {string} name The attribute name 
-     * @return {string} The attribute value 
-     */
-    'getAttribute'
-]);
-
-if (!document.documentElement.hasAttribute) { // IE < 8
-    Y.Node.prototype.hasAttribute = function(attr) {
-        return this.getAttribute(attr) !== '';
-    };
-}
-
-(function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div');
-    Y.stamp(node);
-    if (node[UID] === node.cloneNode(true)[UID]) {
-        Y.Node.prototype.cloneNode = function(deep) {
-            var node = Y.Node.getDOMNode(this).cloneNode(deep);
-            node[UID] = Y.guid();
-            return Y.get(node);
-        };
-    }
-})();
     /**
      * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
      * @module node
@@ -1081,7 +919,8 @@ Y.mix(NodeList.prototype, {
 
 NodeList.importMethod(Y.Node.prototype, [
     'addEventListener',
-    'removeEventListener'
+    'removeEventListener',
+    'remove'
 ]);
 
 Y.NodeList = NodeList;
@@ -1097,6 +936,180 @@ Y.all = function(nodes, doc, restrict) {
     return nodeList;
 };
 Y.Node.all = Y.all; // TODO: deprecated
+var UID = '_yuid';
+
+Y.Array.each([
+    /**
+     * Passes through to DOM method.
+     * @method replaceChild
+     * @param {HTMLElement | Node} node Node to be inserted 
+     * @param {HTMLElement | Node} refNode Node to be replaced 
+     * @return {Node} The replaced node 
+     */
+    'replaceChild',
+
+    /**
+     * Passes through to DOM method.
+     * @method appendChild
+     * @param {HTMLElement | Node} node Node to be appended 
+     * @return {Node} The appended node 
+     */
+    'appendChild',
+
+    /**
+     * Passes through to DOM method.
+     * @method insertBefore
+     * @param {HTMLElement | Node} newNode Node to be appended 
+     * @param {HTMLElement | Node} refNode Node to be inserted before 
+     * @return {Node} The inserted node 
+     */
+    'insertBefore',
+
+    /**
+     * Passes through to DOM method.
+     * @method removeChild
+     * @param {HTMLElement | Node} node Node to be removed 
+     * @return {Node} The removed node 
+     */
+    'removeChild',
+
+    /**
+     * Passes through to DOM method.
+     * @method hasChildNodes
+     * @return {Boolean} Whether or not the node has any childNodes 
+     */
+    'hasChildNodes',
+
+    /**
+     * Passes through to DOM method.
+     * @method cloneNode
+     * @param {HTMLElement | Node} node Node to be cloned 
+     * @return {Node} The clone 
+     */
+    'cloneNode',
+
+    /**
+     * Passes through to DOM method.
+     * @method hasAttribute
+     * @param {String} attribute The attribute to test for 
+     * @return {Boolean} Whether or not the attribute is present 
+     */
+    'hasAttribute',
+
+    /**
+     * Passes through to DOM method.
+     * @method removeAttribute
+     * @param {String} attribute The attribute to be removed 
+     * @chainable
+     */
+    'removeAttribute',
+
+    /**
+     * Passes through to DOM method.
+     * @method scrollIntoView
+     * @chainable
+     */
+    'scrollIntoView',
+
+    /**
+     * Passes through to DOM method.
+     * @method getElementsByTagName
+     * @param {String} tagName The tagName to collect 
+     * @return {NodeList} A NodeList representing the HTMLCollection
+     */
+    'getElementsByTagName',
+
+    /**
+     * Passes through to DOM method.
+     * @method focus
+     * @chainable
+     */
+    'focus',
+
+    /**
+     * Passes through to DOM method.
+     * @method blur
+     * @chainable
+     */
+    'blur',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on FORM elements
+     * @method submit
+     * @chainable
+     */
+    'submit',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on FORM elements
+     * @method reset
+     * @chainable
+     */
+    'reset',
+
+    /**
+     * Passes through to DOM method.
+     * @method select
+     * @chainable
+     */
+     'select'
+], function(method) {
+    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
+        var ret = this.invoke(method, arg1, arg2, arg3);
+        return ret;
+    };
+});
+
+Node.importMethod(Y.DOM, [
+    /**
+     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+     * @method contains
+     * @chainable
+     * @param {Node | HTMLElement} needle The possible node or descendent
+     * @return {Boolean} Whether or not this node is the needle its ancestor
+     */
+    'contains',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method setAttribute
+     * @param {string} name The attribute name 
+     * @param {string} value The value to set
+     */
+    'setAttribute',
+    /**
+     * Normalizes troublesome attributes 
+     * @chainable
+     * @method getAttribute
+     * @param {string} name The attribute name 
+     * @return {string} The attribute value 
+     */
+    'getAttribute',
+
+    'insertHTML'
+]);
+
+if (!document.documentElement.hasAttribute) { // IE < 8
+    Y.Node.prototype.hasAttribute = function(attr) {
+        return this.getAttribute(attr) !== '';
+    };
+}
+
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'insertHTML']);
+
+(function() { // IE clones expandos; regenerate UID
+    var node = document.createElement('div');
+    Y.stamp(node);
+    if (node[UID] === node.cloneNode(true)[UID]) {
+        Y.Node.prototype.cloneNode = function(deep) {
+            var node = Y.Node.getDOMNode(this).cloneNode(deep);
+            node[UID] = Y.guid();
+            return Y.get(node);
+        };
+    }
+})();
 /**
  * Extended Node interface for managing classNames.
  * @module node
@@ -1150,24 +1163,6 @@ Y.Node.all = Y.all; // TODO: deprecated
 
     Y.Node.importMethod(Y.DOM, methods);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
-var _addDOMAttr = Y.Node.prototype._addDOMAttr;
-
-Y.Node.prototype._addDOMAttr = function(name) {
-    if (/^(?:role|aria-)/.test(name)) {
-        this.addAttr(name, {
-            getter: function() {
-                return Y.Node.getDOMNode(this).getAttribute(name); 
-            },
-
-            setter: function(val) {
-                Y.Node.getDOMNode(this).setAttribute(name, val);
-                return val; 
-            }
-        });
-    } else {
-        _addDOMAttr.call(this, name);
-    }
-};
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});

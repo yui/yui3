@@ -28,18 +28,26 @@
          * @param name {string} identifier for this attribute
          * @param o hash of attributes
          */
-        add: function(name, o) {
-            var d = this.data,
-                key;
-
+        addAll: function(name, o) {
+            var key;
             for (key in o) {
                 if (o.hasOwnProperty(key)) {
-                    if (!d[key]) {
-                        d[key] = {};
-                    }
-                    d[key][name] = o[key];
+                    this.add(name, key, o[key]);
                 }
             }
+        },
+
+        /**
+         * Add an item with the property and value provided
+         * @method add
+         * @param name {string} identifier for this attribute
+         * @param key {string} property identifier
+         * @param val {Any} property value
+         */
+        add : function(name, key, val) {
+            var d = this.data;
+            d[key] = d[key] || {};
+            d[key][name] = val;
         },
 
         /**
@@ -84,18 +92,19 @@
          */
         get: function(name, key) {
             var d = this.data;
+            return (d[key] && name in d[key]) ?  d[key][name] : undefined;
+        },
 
-            if (key) {
-                return (d[key] && name in d[key]) ?  d[key][name] : undefined;
-            } else {
-                var o;
-                Y.each(d, function(v, k) {
-                    if (name in d[k]) {
-                        o = o || {};
-                        o[k] = v[name];
-                    }
-                }, this);
-                return o;
-            }
+        getAll : function(name) {
+            var d = this.data, o;
+
+            Y.each(d, function(v, k) {
+                if (name in d[k]) {
+                    o = o || {};
+                    o[k] = v[name];
+                }
+            }, this);
+
+            return o;
         }
     };

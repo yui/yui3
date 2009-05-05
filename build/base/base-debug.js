@@ -1,4 +1,4 @@
-YUI.add('base', function(Y) {
+YUI.add('base-base', function(Y) {
 
 /**
  * Provides the base Widget class along with an augmentable PluginHost interface
@@ -189,6 +189,13 @@ Y.namespace("Plugin").Host = PluginHost;
      *
      * @module base
      */
+
+    /**
+     * The base-base sub-module provides the Base class, without Base.build functionality
+     *
+     * @module base
+     * @sub-module base-base
+     */
     var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
@@ -213,7 +220,7 @@ Y.namespace("Plugin").Host = PluginHost;
      *
      * @constructor
      * @class Base
-     * @uses Attribute, PluginHost
+     * @uses Attribute, Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -486,19 +493,19 @@ Y.namespace("Plugin").Host = PluginHost;
                     attrs = allAttrs[i];
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
-    
+
+                            // Protect
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
                             if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
-    
+
+                            path = null;
                             if (attr.indexOf(DOT) !== -1) {
                                 path = attr.split(DOT);
                                 attr = path.shift();
-                            } else {
-                                path = null;
                             }
     
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
@@ -598,7 +605,22 @@ Y.namespace("Plugin").Host = PluginHost;
 
     Y.Base = Base;
 
-    var B = Y.Base;
+
+
+}, '@VERSION@' ,{requires:['attribute']});
+
+YUI.add('base-build', function(Y) {
+
+    /**
+     * The base-build sub-module provides the Base.build functionality
+     *
+     * @module base
+     * @sub-module base-build
+     */
+
+    var Base = Y.Base,
+        L = Y.Lang;
+
 
     /**
      * The build configuration for the Base class.
@@ -612,7 +634,7 @@ Y.namespace("Plugin").Host = PluginHost;
      * @final
      * @private
      */
-    B._buildCfg = {
+    Base._buildCfg = {
         aggregates : ["ATTRS", "PLUGINS"]
     };
 
@@ -651,9 +673,9 @@ Y.namespace("Plugin").Host = PluginHost;
      * @param {Object} cfg Optional. Configuration for the class.
      * @return {Function} A custom class, created from the provided main and extension classes
      */
-    B.build = function(name, main, extensions, cfg) {
+    Base.build = function(name, main, extensions, cfg) {
 
-        var build = B.build,
+        var build = Base.build,
             builtClass = build._getClass(main, cfg),
             aggregates = build._getAggregates(main, cfg),
             dynamic = builtClass._yuibuild.dynamic,
@@ -696,7 +718,7 @@ Y.namespace("Plugin").Host = PluginHost;
         return builtClass;
     };
 
-    Y.mix(B.build, {
+    Y.mix(Base.build, {
 
         _template: function(main) {
 
@@ -737,7 +759,7 @@ Y.namespace("Plugin").Host = PluginHost;
         _getClass : function(main, cfg) {
 
            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? B.build._template(main) : main;
+                builtClass = (dynamic) ? Base.build._template(main) : main;
 
             builtClass._yuibuild = {
                 id: null,
@@ -772,4 +794,9 @@ Y.namespace("Plugin").Host = PluginHost;
 
 
 
-}, '@VERSION@' ,{requires:['attribute']});
+}, '@VERSION@' ,{requires:['base']});
+
+
+
+YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-build']});
+

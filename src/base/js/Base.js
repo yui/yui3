@@ -5,6 +5,13 @@
      *
      * @module base
      */
+
+    /**
+     * The base-base sub-module provides the Base class, without Base.build functionality
+     *
+     * @module base
+     * @sub-module base-base
+     */
     var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
@@ -29,7 +36,7 @@
      *
      * @constructor
      * @class Base
-     * @uses Attribute, PluginHost
+     * @uses Attribute, Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -302,19 +309,19 @@
                     attrs = allAttrs[i];
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
-    
+
+                            // Protect
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
                             if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
-    
+
+                            path = null;
                             if (attr.indexOf(DOT) !== -1) {
                                 path = attr.split(DOT);
                                 attr = path.shift();
-                            } else {
-                                path = null;
                             }
     
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
