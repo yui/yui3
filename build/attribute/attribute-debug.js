@@ -123,13 +123,13 @@ YUI.add('attribute', function(Y) {
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
-        INIT = "init",
+        ADDED = "added",
+        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
-        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -223,7 +223,8 @@ YUI.add('attribute', function(Y) {
                 config = config || {};
 
                 var value,
-                    hasValue = (VALUE in config);
+                    hasValue = (VALUE in config),
+                    conf = this._conf;
 
                 if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
 
@@ -232,13 +233,19 @@ YUI.add('attribute', function(Y) {
                     value = config.value;
                     delete config.value;
                 }
-                config[INIT] = true;
-                this._conf.addAll(name, config);
+
+                config[ADDED] = true;
+                config[INITIALIZING] = true;
+
+                conf.addAll(name, config);
 
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
                 }
+
+                conf.remove(name, INITIALIZING);
+
             } else {
                 Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
@@ -254,7 +261,7 @@ YUI.add('attribute', function(Y) {
          * @return boolean, true if an attribute with the given name has been added.
          */
         attrAdded: function(name) {
-            return !!(this._conf.get(name, INIT));
+            return !!(this._conf.get(name, ADDED));
         },
 
         /**
@@ -427,7 +434,7 @@ YUI.add('attribute', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (initialSet) {
+                        if (conf.get(name, INITIALIZING)) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -509,7 +516,6 @@ YUI.add('attribute', function(Y) {
                 conf = this._conf,
                 validator  = conf.get(attrName, VALIDATOR),
                 setter = conf.get(attrName, SETTER),
-                storedVal,
                 retVal;
 
             if (!validator || validator.call(this, newVal)) {
@@ -591,7 +597,9 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Configures attributes, and sets initial values
+         * Configures attributes, and sets initial values. This method does not 
+         * isolate configuration object by merging/cloning. The caller is responsible for 
+         * merging/cloning the configuration object when required.
          *
          * @method addAttrs
          * @chainable
