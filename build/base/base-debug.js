@@ -507,7 +507,7 @@ Y.namespace("Plugin").Host = PluginHost;
                                 path = attr.split(DOT);
                                 attr = path.shift();
                             }
-    
+
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
                                 O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
@@ -543,6 +543,7 @@ Y.namespace("Plugin").Host = PluginHost;
                 el,
                 classes = this._getClasses(),
                 mergedCfgs = this._getAttrCfgs();
+                this._userCfgs = userConf;
 
             for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
@@ -554,7 +555,9 @@ Y.namespace("Plugin").Host = PluginHost;
                     }
                 }
 
-                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
+                this.addAttrs(this._classCfgs, userConf);
+                this._classCfgs = null;
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
@@ -582,6 +585,32 @@ Y.namespace("Plugin").Host = PluginHost;
                     constrProto[DESTRUCTOR].apply(this, arguments);
                 }
             }
+        },
+
+        get: function(attrName) {
+
+            if (this._classCfgs) {
+                var name = attrName;
+    
+                if (attrName.indexOf(DOT) !== -1) {
+                    var path = name.split(DOT);
+                    name = path.shift();
+                }
+    
+                if (!this.attrAdded(name) && this._classCfgs[name]) {
+                    var classCfg = this._classCfgs[name],
+                        userCfg = this._userCfgs,
+                        attrCfg;
+    
+                    if (classCfg) {
+                        attrCfg = {};
+                        attrCfg[name] = classCfg;
+                        this.addAttrs(attrCfg, userCfg);
+                    }
+                }
+            }
+
+            return Y.Attribute.prototype.get.call(this, attrName);
         },
 
         /**
