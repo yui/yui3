@@ -130,6 +130,19 @@
                     setter: function(val) { // Should be ignored. Can't set setters for complex sub vals
                         return val + 10000;
                     }
+                },
+
+                G : {
+                    valueFn:function(val) {
+                        return this.get("H") + 10;
+                    }
+                },
+
+                H: {
+                    value:5,
+                    getter: function(val) {
+                        return val*5;
+                    }
                 }
             };
 
@@ -657,6 +670,7 @@
 
                 tearDown : function() {},
 
+                //*
                 testDefault : function() {
                     var h = this.createHost();
 
@@ -766,6 +780,8 @@
                         F: "MyNewFVal",
                         DE: "MyNewDEVal",
                         complex: "MyNewComplexVal",
+                        G: 35,
+                        H: 25,
                         initialized:true,
                         destroyed:false
                     };
@@ -828,7 +844,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain" /* e.newVal is not "get" normalized */ ];
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain"  ]; // Last entry: e.newVal is not "get" normalized 
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -981,6 +997,14 @@
                     h.set("complex.Y.A", 22222);
                     h.set("complex.Y", 22233);
                     h.set("complex.W.A", 33333);
+                },
+                //*/
+
+                testOnDemandInit : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(35, h.get("G"));
+                    Y.Assert.areEqual(25, h.get("H"));
                 }
             };
 

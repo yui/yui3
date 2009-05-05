@@ -13,7 +13,7 @@
 
 <script>
 
-YUI({base: '../../../build/'}).use('base', 'node', function(Y) {
+YUI({base: '../../../build/'}).use('dump', 'base', 'node', function(Y) {
 
     var res = document.getElementById('results');
 
@@ -28,63 +28,80 @@ YUI({base: '../../../build/'}).use('base', 'node', function(Y) {
     Test.ATTRS = {
 
         attr1: {
-            setter: function(node) {
+            value: "Foo",
+            setter: function(n) {
                 return n;
             }
         },
+
         attr2: {
-            setter: function(node) {
+            value: "Bar",
+            setter: function(n) {
                 return n;
             }
         },
+
         attr3: {
             value: true
         },
+
         attr4: {
             value: 3
         },
+
         attr5: {
             value: 3
         },
+
         attr6: {
             value: false,
             setter: function(lock) {
                 return lock;
             }
         },
+
         attr7: {
             value: false
         },
+
         attr8: {
             value: true
         },
+
         attr9: {
             value: true
         },
+
         attr10: {
             value: false
         },
+
         attr11: {
             value: true
         },
+
         attr12: {
             value: false
         },
+
         attr13: {
             value: false
         },
+
         attr14: {
             value: false,
             setter: function(val) {
                 return val;
             }
         },
+
         attr15: {
             value: null,
             setter: function(val) {
                 return false;
             }
         },
+
         attr16: {
             value: ['default'],
 
@@ -136,8 +153,11 @@ YUI({base: '../../../build/'}).use('base', 'node', function(Y) {
     new Test();
     end = new Date().getTime();
     // console.profileEnd();
-
+    
     res.innerHTML = "Avg Time:" + ((end-start)/10);
+
+    var t = new Test();
+    res.innerHTML += "<pre>" + Y.dump(t.getAttrs()) + "</pre>";
 });
 </script>
 </body>
