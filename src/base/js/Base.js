@@ -5,6 +5,13 @@
      *
      * @module base
      */
+
+    /**
+     * The base-base sub-module provides the Base class, without Base.build functionality
+     *
+     * @module base
+     * @sub-module base-base
+     */
     var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
