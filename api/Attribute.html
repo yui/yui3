@@ -703,7 +703,9 @@ so if you need to protect the original values, you will need to merge or clone t
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Configures attributes, and sets initial values
+                                            Configures attributes, and sets initial values. This method does not 
+isolate configuration object by merging/cloning. The caller is responsible for 
+merging/cloning the configuration object when required.
                                         </div>
 
                                         <div class="description">
