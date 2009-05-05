@@ -11,6 +11,8 @@
 * PluginHost.plug and unplug now accept the plugin class as arguments.
   [ plug(pluginClass, cfg) and unplug(pluginClass) ]
 
+* Split base module up into base-base and base-build.
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"

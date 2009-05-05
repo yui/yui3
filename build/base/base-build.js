@@ -1,3 +1,5 @@
+YUI.add('base-build', function(Y) {
+
     /**
      * The base-build sub-module provides the Base.build functionality
      *
@@ -178,3 +180,7 @@
             return aggr;
         }
     });
+
+
+
+}, '@VERSION@' ,{requires:['base']});
