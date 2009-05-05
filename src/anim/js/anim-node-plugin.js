@@ -7,7 +7,7 @@
 
 var NodeFX = function(config) {
     config = (config) ? Y.merge(config) : {};
-    config.node = config.owner;
+    config.node = config.host;
     NodeFX.superclass.constructor.apply(this, arguments);
 };
 

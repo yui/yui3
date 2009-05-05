@@ -48,18 +48,30 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c">* &lt;p&gt;The FocusManager Node Plugin makes it easy to manage focus among  </span>
+<span class="c">* &lt;p&gt;The Focus Manager Node Plugin makes it easy to manage focus among  </span>
 <span class="c">* a Node&#39;s descendants.  Primarily intended to help with widget development, </span>
-<span class="c">* use of the FocusManager Node Plugin improves the keyboard accessibility </span>
-<span class="c">* of widgets by reducing the number of Nodes in the browser&#39;s default tab flow </span>
-<span class="c">* to one per widget.  With one tab stop per widget, users can quickly </span>
-<span class="c">* navigate between widgets by pressing the tab key.  Additionally, the </span>
-<span class="c">* FocusManager provides an easy means of defining the key(s) used to move </span>
-<span class="c">* focus between a Node&#39;s descendants.  Finally, as the CSS </span>
+<span class="c">* the Focus Manager Node Plugin can be used to improve the keyboard </span>
+<span class="c">* accessibility of widgets.&lt;/p&gt;</span>
+<span class="c">* </span>
+<span class="c">* &lt;p&gt;</span>
+<span class="c">* When designing widgets that manage a set of descendant controls (i.e. buttons</span>
+<span class="c">* in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to </span>
+<span class="c">* limit the number of descendants in the browser&#39;s default tab flow.  The fewer </span>
+<span class="c">* number of descendants in the default tab flow, the easier it is for keyboard </span>
+<span class="c">* users to navigate between widgets by pressing the tab key.  When a widget has </span>
+<span class="c">* focus it should provide a set of shortcut keys (typically the arrow keys) </span>
+<span class="c">* to move focus among its descendants.</span>
+<span class="c">* &lt;/p&gt;</span>
+<span class="c">* </span>
+<span class="c">* &lt;p&gt;</span>
+<span class="c">* To this end, the Focus Manager Node Plugin makes it easy to define a Node&#39;s </span>
+<span class="c">* focusable descendants, define which descendant should be in the default tab </span>
+<span class="c">* flow, and define the keys that move focus among each descendant.</span>
+<span class="c">* Additionally, as the CSS </span>
 <span class="c">* &lt;a href=&quot;http://www.w3.org/TR/CSS21/selector.html#x38&quot;&gt;&lt;code&gt;:focus&lt;/code&gt;&lt;/a&gt; </span>
 <span class="c">* pseudo class is not supported on all elements in all </span>
 <span class="c">* &lt;a href=&quot;http://developer.yahoo.com/yui/articles/gbs/&quot;&gt;A-Grade browsers&lt;/a&gt;,</span>
-<span class="c">* the FocusManager Node Plugin provides an easy, cross-browser means of </span>
+<span class="c">* the Focus Manager Node Plugin provides an easy, cross-browser means of </span>
 <span class="c">* styling focus.</span>
 <span class="c">* &lt;/p&gt;</span>
 <span class="c">*  </span>
@@ -130,7 +142,8 @@
 
 
 	<span class="c">/**</span>
-<span class="c">	* String representing the CSS selector used to define the descendant Nodes.</span>
+<span class="c">	* String representing the CSS selector used to define the descendant Nodes </span>
+<span class="c">	* whose focus should be managed.</span>
 <span class="c">	*</span>
 <span class="c">	* @attribute descendants</span>
 <span class="c">	* @type string</span>
@@ -147,12 +160,12 @@
 
 
 	<span class="c">/**</span>
-<span class="c">	* Node, or index of the Node, representing the descendant that is either </span>
+<span class="c">	* &lt;p&gt;Node, or index of the Node, representing the descendant that is either </span>
 <span class="c">	* focused or is focusable (&lt;code&gt;tabIndex&lt;/code&gt; attribute is set to 0).  </span>
 <span class="c">	* The value cannot represent a disabled descendant Node.  Use a value of -1</span>
 <span class="c">	* to remove all descendant Nodes from the default tab flow.</span>
 <span class="c">	* If no value is specified, the active descendant will be inferred using </span>
-<span class="c">	* the following criteria:</span>
+<span class="c">	* the following criteria:&lt;/p&gt;</span>
 <span class="c">	* &lt;ol&gt;</span>
 <span class="c">	* &lt;li&gt;Examining the &lt;code&gt;tabIndex&lt;/code&gt; attribute of each descendant and </span>
 <span class="c">	* using the first descendant whose &lt;code&gt;tabIndex&lt;/code&gt; attribute is set </span>
@@ -227,8 +240,9 @@
 <span class="c">	* Object literal representing the keys to be used to navigate between the </span>
 <span class="c">	* next/previous decendant.  The format for the attribute&#39;s value is </span>
 <span class="c">	* &lt;code&gt;{ next: &quot;down:40&quot;, previous: &quot;down:38&quot; }&lt;/code&gt;.  The value for the </span>
-<span class="c">	* &quot;next&quot; and &quot;previous&quot; properties are used to attach &quot;key&quot; event listeners.</span>
-<span class="c">	* See the &lt;a href=&quot;event/#keylistener&quot;&gt;Using the key Event&lt;/a&gt; section of </span>
+<span class="c">	* &quot;next&quot; and &quot;previous&quot; properties are used to attach </span>
+<span class="c">	* &lt;a href=&quot;event/#keylistener&quot;&gt;&lt;code&gt;key&lt;/code&gt;&lt;/a&gt; event listeners. See </span>
+<span class="c">	* the &lt;a href=&quot;event/#keylistener&quot;&gt;Using the key Event&lt;/a&gt; section of </span>
 <span class="c">	* the Event documentation for more information on &quot;key&quot; event listeners.</span>
 <span class="c">	* </span>
 <span class="c">	* @attribute keys</span>
@@ -405,10 +419,11 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _isDescendant</span>
 <span class="c">	* @description Determines if the specified Node instance is a descendant</span>
-<span class="c">	* managed by the NodeFocusManager.</span>
+<span class="c">	* managed by the Focus Manager.</span>
 <span class="c">	* @param node {Node} Node instance to be checked.</span>
 <span class="c">	* @return {Boolean} Boolean indicating if the specified Node instance is a </span>
-<span class="c">	* descendant managed by the NodeFocusManager.</span>
+<span class="c">	* descendant managed by the Focus Manager.</span>
+<span class="c">	* @protected</span>
 <span class="c">	*/</span>
 	<span class="nx">_isDescendant</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
@@ -518,7 +533,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _detachEventHandlers</span>
-<span class="c">	* @description Detaches all event handlers used by the NodeFocusManager.</span>
+<span class="c">	* @description Detaches all event handlers used by the Focus Manager.</span>
 <span class="c">	* @protected</span>
 <span class="c">	*/</span>
 	<span class="nx">_detachEventHandlers</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
@@ -542,7 +557,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method _detachEventHandlers</span>
-<span class="c">	* @description Attaches all event handlers used by the NodeFocusManager.</span>
+<span class="c">	* @description Attaches all event handlers used by the Focus Manager.</span>
 <span class="c">	* @protected	</span>
 <span class="c">	*/</span>
 	<span class="nx">_attachEventHandlers</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
@@ -597,7 +612,7 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _onDocMouseDown</span>
 <span class="c">	* @description &quot;mousedown&quot; event handler for the owner document of the </span>
-<span class="c">	* NodeFocusManager&#39;s Node.</span>
+<span class="c">	* Focus Manager&#39;s Node.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param event {Object} Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -636,7 +651,7 @@
 	<span class="c">/**</span>
 <span class="c">	* @method _onDocFocus</span>
 <span class="c">	* @description &quot;focus&quot; event handler for the owner document of the </span>
-<span class="c">	* NodeFocusManager&#39;s Node.</span>
+<span class="c">	* Focus Manager&#39;s Node.</span>
 <span class="c">	* @protected</span>
 <span class="c">	* @param event {Object} Object representing the DOM event.</span>
 <span class="c">	*/</span>
@@ -669,7 +684,7 @@
 			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">bHasFocus</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bInCollection</span><span class="o">)</span> <span class="o">{</span>  
 			
 				<span class="c">//	The user has focused a child of the root Node that is </span>
-<span class="c"></span>				<span class="c">//	not one of the descendants managed by this NodeFocusManager</span>
+<span class="c"></span>				<span class="c">//	not one of the descendants managed by this Focus Manager</span>
 <span class="c"></span>				<span class="c">//	so clear the currently focused descendant.</span>
 <span class="c"></span>				
 				<span class="nx">bHasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
@@ -833,8 +848,8 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method focus</span>
-<span class="c">	* @description Focuses the active descendant and sets the &quot;hasFocus&quot; </span>
-<span class="c">	* attribute to true.</span>
+<span class="c">	* @description Focuses the active descendant and sets the  </span>
+<span class="c">	* &lt;code&gt;hasFocus&lt;/code&gt; attribute to true.</span>
 <span class="c">	* @param index {Number} Optional. Number representing the index of the </span>
 <span class="c">	* descendant to be set as the active descendant.</span>
 <span class="c">	* @param index {Node} Optional. Node instance representing the </span>
@@ -873,8 +888,8 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method blur</span>
-<span class="c">	* @description Blurs the current active descendant and sets the hasFocus </span>
-<span class="c">	* attribute to false.</span>
+<span class="c">	* @description Blurs the current active descendant and sets the </span>
+<span class="c">	* &lt;code&gt;hasFocus&lt;/code&gt; attribute to false.</span>
 <span class="c">	*/</span>
 	<span class="nx">blur</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
@@ -906,7 +921,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method start</span>
-<span class="c">	* @description Enables the NodeFocusManager.</span>
+<span class="c">	* @description Enables the Focus Manager.</span>
 <span class="c">	*/</span>
 	<span class="nx">start</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
@@ -924,7 +939,7 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method stop</span>
-<span class="c">	* @description Disables the NodeFocusManager by detaching all event handlers.</span>
+<span class="c">	* @description Disables the Focus Manager by detaching all event handlers.</span>
 <span class="c">	*/</span>	
 	<span class="nx">stop</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
@@ -944,8 +959,8 @@
 
 	<span class="c">/**</span>
 <span class="c">	* @method refresh</span>
-<span class="c">	* @description Refreshes the NodeFocusManager&#39;s descendants by re-executing the </span>
-<span class="c">	* CSS selector query specified by the &quot;descendants&quot; attribute.</span>
+<span class="c">	* @description Refreshes the Focus Manager&#39;s descendants by re-executing the </span>
+<span class="c">	* CSS selector query specified by the &lt;code&gt;descendants&lt;/code&gt; attribute.</span>
 <span class="c">	*/</span>
 	<span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
@@ -1036,7 +1051,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocus", "url": "plugin.NodeFocusManager.html#config_hasFocus", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocusChange", "url": "plugin.NodeFocusManager.html#event_hasFocusChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocus", "url": "plugin.NodeFocusManager.html#config_hasFocus", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocusChange", "url": "plugin.NodeFocusManager.html#event_hasFocusChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>
