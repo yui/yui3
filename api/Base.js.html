@@ -372,7 +372,7 @@
                                 <span class="nx">path</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
                                 <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
                             <span class="o">}</span>
-    
+
                             <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
                             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
@@ -408,6 +408,7 @@
                 <span class="nx">el</span><span class="o">,</span>
                 <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
                 <span class="nx">mergedCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span> <span class="o">=</span> <span class="nx">userConf</span><span class="o">;</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
@@ -419,7 +420,9 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">),</span> <span class="nx">userConf</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">constrProto</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
@@ -447,6 +450,32 @@
                     <span class="nx">constrProto</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrName</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">attrName</span><span class="o">;</span>
+    
+                <span class="k">if</span> <span class="o">(</span><span class="nx">attrName</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                    <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                <span class="o">}</span>
+    
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">classCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span>
+                        <span class="nx">userCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span><span class="o">,</span>
+                        <span class="nx">attrCfg</span><span class="o">;</span>
+    
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">classCfg</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">attrCfg</span> <span class="o">=</span> <span class="o">{};</span>
+                        <span class="nx">attrCfg</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">classCfg</span><span class="o">;</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">attrCfg</span><span class="o">,</span> <span class="nx">userCfg</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
