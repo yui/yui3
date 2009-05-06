@@ -25,8 +25,23 @@ YUI.add('attribute', function(Y) {
     Y.State.prototype = {
 
         /**
-         * Add an item with all of the properties in the supplied object.
+         * Add an item with the property and value provided
+         *
          * @method add
+         * @param name {string} identifier for this attribute
+         * @param key {string} property identifier
+         * @param val {Any} property value
+         */
+        add : function(name, key, val) {
+            var d = this.data;
+            d[key] = d[key] || {};
+            d[key][name] = val;
+        },
+
+        /**
+         * Add an item with all of the properties in the supplied object.
+         * 
+         * @method addAll
          * @param name {string} identifier for this attribute
          * @param o hash of attributes
          */
@@ -40,63 +55,59 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Add an item with the property and value provided
-         * @method add
-         * @param name {string} identifier for this attribute
-         * @param key {string} property identifier
-         * @param val {Any} property value
-         */
-        add : function(name, key, val) {
-            var d = this.data;
-            d[key] = d[key] || {};
-            d[key][name] = val;
-        },
-
-        /**
-         * Remove entire item, or optionally specified fields
+         * Remove the given key for a specific item
+         *
          * @method remove
          * @param name {string} name of attribute
-         * @param o {string|object|array} single key or collection of keys to delete
+         * @param o {string} The key to delete.
          */
-        remove: function(name, o) {
-            var d = this.data, 
-                del = function(key) {
-                    if (d[key] && (name in d[key])) {
-                        delete d[key][name];
-                    }
-                };
-
-            if (Y.Lang.isString(o)) {
-                del(o);
-            } else {
-                Y.each(o || d, function(v, k) {
-                    if(Y.Lang.isString(k)) {
-                        del(k);
-                    } else {
-                        del(v);
-                    }
-                }, this);
-
+        remove: function(name, key) {
+            var d = this.data;
+            if (d[key] && (name in d[key])) {
+                delete d[key][name];
             }
         },
 
         /**
-         * For a given item, gets an attribute.  If key is not
-         * supplied, a disposable object with all attributes is 
-         * returned.  Use of the latter option makes sense when
-         * working with single items, but not if object explosion
-         * might cause gc problems.
+         * Remove entire item, or optionally specified fields
+         * 
+         * @method removeAll
+         * @param name {string} name of attribute
+         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.
+         */
+        removeAll: function(name, o) {
+            var d = this.data;
+
+            Y.each(o || d, function(v, k) {
+                if(Y.Lang.isString(k)) {
+                    this.remove(name, k);
+                } else {
+                    this.remove(name, v);
+                }
+            }, this);
+        },
+
+        /**
+         * For a given item, returns the value of the attribute requested, or undefined if not found.
+         *
          * @method get
          * @param name {string} name of attribute
-         * @param key {string} optional attribute to get
-         * @return either the value of the supplied key or an object with
-         * all data.
+         * @param key {string} optional The attribute value to retrieve.
+         * @return The value of the supplied key.
          */
         get: function(name, key) {
             var d = this.data;
             return (d[key] && name in d[key]) ?  d[key][name] : undefined;
         },
 
+        /**
+         * For a given item, returns a disposable object with all attribute 
+         * name/value pairs.
+         *
+         * @method getAll
+         * @param name {string} name of attribute
+         * @return An object withall data.
+         */
         getAll : function(name) {
             var d = this.data, o;
 
@@ -123,13 +134,13 @@ YUI.add('attribute', function(Y) {
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
-        INIT = "init",
+        ADDED = "added",
+        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
-        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -223,7 +234,8 @@ YUI.add('attribute', function(Y) {
                 config = config || {};
 
                 var value,
-                    hasValue = (VALUE in config);
+                    hasValue = (VALUE in config),
+                    conf = this._conf;
 
                 if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
 
@@ -232,13 +244,19 @@ YUI.add('attribute', function(Y) {
                     value = config.value;
                     delete config.value;
                 }
-                config[INIT] = true;
-                this._conf.addAll(name, config);
+
+                config[ADDED] = true;
+                config[INITIALIZING] = true;
+
+                conf.addAll(name, config);
 
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
                 }
+
+                conf.remove(name, INITIALIZING);
+
             } else {
                 Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
@@ -254,7 +272,7 @@ YUI.add('attribute', function(Y) {
          * @return boolean, true if an attribute with the given name has been added.
          */
         attrAdded: function(name) {
-            return !!(this._conf.get(name, INIT));
+            return !!(this._conf.get(name, ADDED));
         },
 
         /**
@@ -264,7 +282,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The attribute key
          */
         removeAttr: function(name) {
-            this._conf.remove(name);
+            this._conf.removeAll(name);
         },
 
         /**
@@ -276,7 +294,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method get
          *
-         * @param {String} key The attribute whose value will be returned. If
+         * @param {String} name The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          * 
@@ -427,7 +445,7 @@ YUI.add('attribute', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (initialSet) {
+                        if (conf.get(name, INITIALIZING)) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -509,7 +527,6 @@ YUI.add('attribute', function(Y) {
                 conf = this._conf,
                 validator  = conf.get(attrName, VALIDATOR),
                 setter = conf.get(attrName, SETTER),
-                storedVal,
                 retVal;
 
             if (!validator || validator.call(this, newVal)) {
@@ -591,7 +608,9 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Configures attributes, and sets initial values
+         * Configures attributes, and sets initial values. This method does not 
+         * isolate configuration object by merging/cloning. The caller is responsible for 
+         * merging/cloning the configuration object when required.
          *
          * @method addAttrs
          * @chainable

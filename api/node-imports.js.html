@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: node   node-class.js  (YUI Library)</title>
+	<title>API: node   node-imports.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                 
-                 &gt; node-class.js (source view) 
+                 &gt; node-imports.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,59 +47,180 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extended Node interface for managing classNames.</span>
-<span class="c"> * @module node</span>
-<span class="c"> * @submodule node</span>
-<span class="c"> * @for Node</span>
-<span class="c"> */</span>
+<div class="highlight" ><pre><span class="k">var</span> <span class="nx">UID</span> <span class="o">=</span> <span class="s1">&#39;_yuid&#39;</span><span class="o">;</span>
 
-    <span class="k">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="o">[</span>
-        <span class="c">/**</span>
-<span class="c">         * Determines whether the node has the given className.</span>
-<span class="c">         * @method hasClass</span>
-<span class="c">         * @param {String} className the class name to search for</span>
-<span class="c">         * @return {Boolean} Whether or not the node has the given class. </span>
-<span class="c">         */</span>
-        <span class="s1">&#39;hasClass&#39;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method replaceChild</span>
+<span class="c">     * @param {HTMLElement | Node} node Node to be inserted </span>
+<span class="c">     * @param {HTMLElement | Node} refNode Node to be replaced </span>
+<span class="c">     * @return {Node} The replaced node </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;replaceChild&#39;</span><span class="o">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Adds a class name to the node.</span>
-<span class="c">         * @method addClass         </span>
-<span class="c">         * @param {String} className the class name to add to the node&#39;s class attribute</span>
-<span class="c">         * @chainable</span>
-<span class="c">         */</span>
-        <span class="s1">&#39;addClass&#39;</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method appendChild</span>
+<span class="c">     * @param {HTMLElement | Node} node Node to be appended </span>
+<span class="c">     * @return {Node} The appended node </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;appendChild&#39;</span><span class="o">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Removes a class name from the node.</span>
-<span class="c">         * @method removeClass         </span>
-<span class="c">         * @param {String} className the class name to remove from the node&#39;s class attribute</span>
-<span class="c">         * @chainable</span>
-<span class="c">         */</span>
-        <span class="s1">&#39;removeClass&#39;</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method insertBefore</span>
+<span class="c">     * @param {HTMLElement | Node} newNode Node to be appended </span>
+<span class="c">     * @param {HTMLElement | Node} refNode Node to be inserted before </span>
+<span class="c">     * @return {Node} The inserted node </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;insertBefore&#39;</span><span class="o">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Replace a class with another class.</span>
-<span class="c">         * If no oldClassName is present, the newClassName is simply added.</span>
-<span class="c">         * @method replaceClass  </span>
-<span class="c">         * @param {String} oldClassName the class name to be replaced</span>
-<span class="c">         * @param {String} newClassName the class name that will be replacing the old class name</span>
-<span class="c">         * @chainable</span>
-<span class="c">         */</span>
-        <span class="s1">&#39;replaceClass&#39;</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method removeChild</span>
+<span class="c">     * @param {HTMLElement | Node} node Node to be removed </span>
+<span class="c">     * @return {Node} The removed node </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;removeChild&#39;</span><span class="o">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
-<span class="c">         * @method toggleClass  </span>
-<span class="c">         * @param {String} className the class name to be toggled</span>
-<span class="c">         * @chainable</span>
-<span class="c">         */</span>
-        <span class="s1">&#39;toggleClass&#39;</span>
-    <span class="o">];</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method hasChildNodes</span>
+<span class="c">     * @return {Boolean} Whether or not the node has any childNodes </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;hasChildNodes&#39;</span><span class="o">,</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method cloneNode</span>
+<span class="c">     * @param {HTMLElement | Node} node Node to be cloned </span>
+<span class="c">     * @return {Node} The clone </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;cloneNode&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method hasAttribute</span>
+<span class="c">     * @param {String} attribute The attribute to test for </span>
+<span class="c">     * @return {Boolean} Whether or not the attribute is present </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;hasAttribute&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method removeAttribute</span>
+<span class="c">     * @param {String} attribute The attribute to be removed </span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;removeAttribute&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method scrollIntoView</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;scrollIntoView&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method getElementsByTagName</span>
+<span class="c">     * @param {String} tagName The tagName to collect </span>
+<span class="c">     * @return {NodeList} A NodeList representing the HTMLCollection</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;getElementsByTagName&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method focus</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;focus&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method blur</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;blur&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * Only valid on FORM elements</span>
+<span class="c">     * @method submit</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;submit&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * Only valid on FORM elements</span>
+<span class="c">     * @method reset</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;reset&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Passes through to DOM method.</span>
+<span class="c">     * @method select</span>
+<span class="c">     * @chainable</span>
+<span class="c">     */</span>
+     <span class="s1">&#39;select&#39;</span>
+<span class="o">],</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">method</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">};</span>
+<span class="o">});</span>
+
+<span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">[</span>
+    <span class="c">/**</span>
+<span class="c">     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.</span>
+<span class="c">     * @method contains</span>
+<span class="c">     * @chainable</span>
+<span class="c">     * @param {Node | HTMLElement} needle The possible node or descendent</span>
+<span class="c">     * @return {Boolean} Whether or not this node is the needle its ancestor</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;contains&#39;</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Normalizes troublesome attributes </span>
+<span class="c">     * @chainable</span>
+<span class="c">     * @method setAttribute</span>
+<span class="c">     * @param {string} name The attribute name </span>
+<span class="c">     * @param {string} value The value to set</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;setAttribute&#39;</span><span class="o">,</span>
+    <span class="c">/**</span>
+<span class="c">     * Normalizes troublesome attributes </span>
+<span class="c">     * @chainable</span>
+<span class="c">     * @method getAttribute</span>
+<span class="c">     * @param {string} name The attribute name </span>
+<span class="c">     * @return {string} The attribute value </span>
+<span class="c">     */</span>
+    <span class="s1">&#39;getAttribute&#39;</span><span class="o">,</span>
+
+    <span class="s1">&#39;insertHTML&#39;</span>
+<span class="o">]);</span>
+
+<span class="k">if</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasAttribute</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="o">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="o">,</span> <span class="s1">&#39;insertHTML&#39;</span><span class="o">]);</span>
+
+<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="c">// IE clones expandos; regenerate UID</span>
+<span class="c"></span>    <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">)[</span><span class="nx">UID</span><span class="o">])</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">cloneNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">deep</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="nx">cloneNode</span><span class="o">(</span><span class="nx">deep</span><span class="o">);</span>
+            <span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">})();</span>
 </pre></div>
                     </div>
 			</div>
@@ -160,10 +281,10 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="node-aria.js.html" title="node-aria.js">node-aria.js</a></li>
-                                <li class="selected"><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
+                                <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
                                 <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
-                                <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
+                                <li class="selected"><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
                                 <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>

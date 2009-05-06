@@ -164,6 +164,9 @@
 	<span class="nx">DESCENDANTS</span> <span class="o">=</span> <span class="s2">&quot;descendants&quot;</span><span class="o">,</span>
 	<span class="nx">UI</span> <span class="o">=</span> <span class="s2">&quot;UI&quot;</span><span class="o">,</span>
 	<span class="nx">ACTIVE_DESCENDANT</span> <span class="o">=</span> <span class="s2">&quot;activeDescendant&quot;</span><span class="o">,</span>
+	<span class="nx">USE_ARIA</span> <span class="o">=</span> <span class="s2">&quot;useARIA&quot;</span><span class="o">,</span>
+	<span class="nx">ARIA_HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;aria-hidden&quot;</span><span class="o">,</span>
+	<span class="nx">CONTENT</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="o">,</span>
 
 	<span class="nx">STANDARD_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;a&quot;</span><span class="o">,</span>
 	<span class="nx">EXTENDED_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;.yui-menu-label&gt;a:first-child&quot;</span><span class="o">,</span>
@@ -196,39 +199,14 @@
 <span class="c">//	Utility functions</span>
 <span class="c"></span>
 
-<span class="c">//	TO DO: Remove once Node implements circular functionality</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">getPreviousSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+<span class="k">var</span> <span class="nx">getPreviousSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
 	<span class="k">var</span> <span class="nx">oPrevious</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">previous</span><span class="o">(),</span>
-		<span class="nx">oParentNode</span><span class="o">,</span>
-		<span class="nx">oChildren</span><span class="o">,</span>
-		<span class="nx">oULs</span><span class="o">,</span>
-		<span class="nx">oUL</span><span class="o">;</span>
-	
+		<span class="nx">oChildren</span><span class="o">;</span>
 
 	<span class="k">if</span> <span class="o">(!</span><span class="nx">oPrevious</span><span class="o">)</span> <span class="o">{</span>
-	
-		<span class="nx">oParentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">);</span>
-		<span class="nx">oULs</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-			
-			<span class="nx">oUL</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
-			
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oUL</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oUL</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oULs</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">-</span> <span class="m">1</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-			<span class="o">}</span>
-			
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-		<span class="o">}</span>
-
+		<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
 		<span class="nx">oPrevious</span> <span class="o">=</span> <span class="nx">oChildren</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">oChildren</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">-</span> <span class="m">1</span><span class="o">);</span>
-		
 	<span class="o">}</span>
 	
 	<span class="k">return</span> <span class="nx">oPrevious</span><span class="o">;</span>
@@ -236,39 +214,12 @@
 <span class="o">};</span>
 
 
-<span class="c">//	TO DO: Remove once Node implements circular functionality</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">getNextSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+<span class="k">var</span> <span class="nx">getNextSibling</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
-	<span class="k">var</span> <span class="nx">oNext</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">next</span><span class="o">(),</span>
-		<span class="nx">oParentNode</span><span class="o">,</span>
-		<span class="nx">oChildren</span><span class="o">,</span>
-		<span class="nx">oULs</span><span class="o">,</span>
-		<span class="nx">oUL</span><span class="o">;</span>
-	
+	<span class="k">var</span> <span class="nx">oNext</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
 
 	<span class="k">if</span> <span class="o">(!</span><span class="nx">oNext</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="nx">oParentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">);</span>
-		<span class="nx">oULs</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oULs</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-			
-			<span class="nx">oUL</span> <span class="o">=</span> <span class="nx">oParentNode</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
-			
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oUL</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oUL</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">oULs</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-			<span class="o">}</span>
-			
-		<span class="o">}</span>		
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">oChildren</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">);</span>
-		<span class="o">}</span>
-
-		<span class="nx">oNext</span> <span class="o">=</span> <span class="nx">oChildren</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>		
-
+		<span class="nx">oNext</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">CHILDREN</span><span class="o">).</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>		
 	<span class="o">}</span>
 	
 	<span class="k">return</span> <span class="nx">oNext</span><span class="o">;</span>
@@ -524,9 +475,9 @@
 
 				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="s2">&quot;content&quot;</span><span class="o">)).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">)).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="s2">&quot;content&quot;</span><span class="o">))).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">))).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
 
 				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">)).</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
@@ -543,23 +494,27 @@
 
 					<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
 
-					<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
+					<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
 
-					<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
-					<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
+						<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
 
-					<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
-						<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oMenuToggle</span><span class="o">;</span>
+						<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
+						<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
+
+						<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
+							<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oMenuToggle</span><span class="o">;</span>
+						<span class="o">}</span>
+
+						<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
+
+						<span class="k">if</span> <span class="o">(!</span><span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">))</span> <span class="o">{</span>
+							<span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
+						<span class="o">}</span>
+
+						<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;aria-labelledby&quot;</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
+						<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ARIA_HIDDEN</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+						
 					<span class="o">}</span>
-
-					<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
-
-					<span class="k">if</span> <span class="o">(!</span><span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">))</span> <span class="o">{</span>
-						<span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
-					<span class="o">}</span>
-
-					<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;aria-labelledby&quot;</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
-					<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;aria-hidden&quot;</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>			
 
 				<span class="o">});</span>
 				
@@ -773,6 +728,55 @@
 	<span class="nx">_firstItem</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
 
+	<span class="c">//	Public methods</span>
+<span class="c"></span>
+
+    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">);</span>
+
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oRootMenu</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">;</span>
+
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul:first-child&quot;</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
+
+			<span class="c">//	Hide all visible submenus</span>
+<span class="c"></span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+
+
+			<span class="c">//	Wire up all event handlers</span>
+<span class="c"></span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseover&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOver</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseout&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOut</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousemove&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseMove</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">CLICK</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+
+		    <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+
+			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">));</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
+
+		<span class="o">}</span>
+		
+
+    <span class="o">},</span>
+
+	<span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+		<span class="c">// TO DO -- clean up event handlers</span>
+<span class="c"></span>		
+    <span class="o">},</span>
+
+
 
 	<span class="c">//	Protected methods</span>
 <span class="c"></span>
@@ -906,6 +910,10 @@
 			<span class="nx">aXY</span> <span class="o">=</span> <span class="nx">oLI</span><span class="o">.</span><span class="nx">getXY</span><span class="o">();</span>
 
 
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">USE_ARIA</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">menu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ARIA_HIDDEN</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+		<span class="o">}</span>
+
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">isHorizontalMenu</span><span class="o">(</span><span class="nx">oParentMenu</span><span class="o">))</span> <span class="o">{</span>
 			<span class="nx">aXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">aXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">oLI</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">);</span>
@@ -968,8 +976,8 @@
 
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">activateAndFocusLabel</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>			
 		<span class="o">}</span>
 
 		<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">));</span>
@@ -985,6 +993,10 @@
 		<span class="nx">menu</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span> <span class="nx">left</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span><span class="o">,</span> <span class="nx">top</span><span class="o">:</span> <span class="nx">EMPTY_STRING</span> <span class="o">});</span>
 		
 		<span class="nx">menu</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">USE_ARIA</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">menu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ARIA_HIDDEN</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+		<span class="o">}</span>	
 		
 	<span class="o">},</span>
 
@@ -1045,64 +1057,12 @@
 	<span class="o">},</span>
 
 
-
-	<span class="c">//	Event handlers for discrete pieces of pieces of the menu</span>
-<span class="c"></span>
-	<span class="nx">_onActiveDescendantChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
-		
-			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">);</span>
-			<span class="o">}</span>
-
-		<span class="o">}</span>
-		
-	<span class="o">},</span>
-
-	<span class="nx">_afterActiveDescendantChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">oNode</span><span class="o">;</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DESCENDANTS</span><span class="o">).</span><span class="nx">item</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oNode</span><span class="o">);</span>
-		<span class="o">}</span>
-	
-	<span class="o">},</span>
-
-	<span class="nx">_afterHasFocusChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">)</span> <span class="o">{</span>
-		
-		<span class="k">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DESCENDANTS</span><span class="o">).</span><span class="nx">item</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">)),</span>
-			<span class="nx">oActiveItem</span><span class="o">;</span>
-
-		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">;</span>
-	
-		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>	<span class="c">// Initial focus</span>
-<span class="c"></span>	
-			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-		
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>	
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">);</span>
-			<span class="o">}</span>
-	
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>	<span class="c">// The root menu, or one of its submenus has lost focus</span>
-<span class="c"></span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
-
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="o">();</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
-
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">;</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
-			
-			<span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
-
-		<span class="o">}</span>
-		
-	<span class="o">},</span>
-
+	<span class="c">/**</span>
+<span class="c">	* @method _initFocusManager</span>
+<span class="c">	* @description Initializes and updates the Focus Manager so that is is </span>
+<span class="c">	* always managing descendants of the active menu.</span>
+<span class="c">	* @protected</span>
+<span class="c">	*/</span>
 	<span class="nx">_initFocusManager</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
@@ -1151,9 +1111,6 @@
 
 			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;activeDescendantChange&quot;</span><span class="o">,</span> 
 				<span class="k">this</span><span class="o">.</span><span class="nx">_afterActiveDescendantChange</span><span class="o">,</span> <span class="nx">oFocusManager</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-
-			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;hasFocusChange&quot;</span><span class="o">,</span> 
-				<span class="k">this</span><span class="o">.</span><span class="nx">_afterHasFocusChange</span><span class="o">,</span> <span class="nx">oFocusManager</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 			
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span> <span class="o">=</span> <span class="nx">oFocusManager</span><span class="o">;</span>
 			
@@ -1166,6 +1123,120 @@
 			
 		<span class="o">}</span>
 
+	<span class="o">},</span>
+
+
+	<span class="c">//	Event handlers for discrete pieces of pieces of the menu</span>
+<span class="c"></span>
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onActiveDescendantChange</span>
+<span class="c">	* @description &quot;activeDescendantChange&quot; event handler for menu&#39;s </span>
+<span class="c">	* Focus Manager.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the Attribute change event.</span>
+<span class="c">	* @param {NodeMenuNav} menuNav Object representing the NodeMenuNav instance.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onActiveDescendantChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">UI</span> <span class="o">&amp;&amp;</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">&amp;&amp;</span> 
+				<span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">);</span>
+
+		<span class="o">}</span>
+		
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _afterActiveDescendantChange</span>
+<span class="c">	* @description &quot;activeDescendantChange&quot; event handler for menu&#39;s </span>
+<span class="c">	* Focus Manager.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the Attribute change event.</span>
+<span class="c">	* @param {NodeMenuNav} menuNav Object representing the NodeMenuNav instance.</span>
+<span class="c">	*/</span>
+	<span class="nx">_afterActiveDescendantChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="k">var</span> <span class="nx">oItem</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DESCENDANTS</span><span class="o">).</span><span class="nx">item</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">),</span> <span class="kc">true</span><span class="o">);</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+		<span class="o">}</span>
+	
+	<span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method _onDocFocus</span>
+<span class="c">	* @description &quot;focus&quot; event handler for the owner document of the MenuNav.</span>
+<span class="c">	* @protected</span>
+<span class="c">	* @param {Object} event Object representing the DOM event.</span>
+<span class="c">	*/</span>
+	<span class="nx">_onDocFocus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	
+		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
+			<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span><span class="o">,</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oMenu</span><span class="o">;</span>
+	
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>	<span class="c">//	The menu has focus</span>
+<span class="c"></span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span><span class="o">)</span> <span class="o">{</span>	
+
+				<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
+
+				<span class="c">//	If the element that was focused is a descendant of the </span>
+<span class="c"></span>				<span class="c">//	root menu, but is in a submenu not currently being </span>
+<span class="c"></span>				<span class="c">//	managed by the Focus Manager, update the Focus Manager so </span>
+<span class="c"></span>				<span class="c">//	that it is now managing the submenu that is the parent of  </span>
+<span class="c"></span>				<span class="c">//	the element that was focused.</span>
+<span class="c"></span>				
+				<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">))</span> <span class="o">{</span>
+
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">oMenu</span><span class="o">;</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">);</span>
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+					
+				<span class="o">}</span>
+			
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span> <span class="c">//	Initial focus</span>
+<span class="c"></span>
+				<span class="c">//	First time the menu has been focused, need to setup focused </span>
+<span class="c"></span>				<span class="c">//	state and established active active descendant</span>
+<span class="c"></span>	
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+	
+				<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+	
+				<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>	
+					<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oActiveItem</span><span class="o">);</span>
+				<span class="o">}</span>
+				
+			<span class="o">}</span>
+		
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>	<span class="c">//	The menu has lost focus</span>
+<span class="c"></span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="o">();</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">;</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
+			
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+			
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+		<span class="o">}</span>
+	
 	<span class="o">},</span>
 
 
@@ -1305,9 +1376,9 @@
 			<span class="nx">oSubmenu</span><span class="o">;</span>
 
 
-		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">);</span>
 		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">);</span>
-		
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuLabel</span><span class="o">);</span>
+				
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
 	
@@ -1406,8 +1477,8 @@
 				<span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">AUTO_SUBMENU_DISPLAY</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="o">);</span>
 
 
-		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuItem</span><span class="o">);</span>
 		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">menuItem</span><span class="o">);</span>
+		<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">menuItem</span><span class="o">);</span>
 
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span><span class="o">)</span> <span class="o">{</span>
@@ -1543,10 +1614,10 @@
 
 							<span class="o">}</span>
 							<span class="k">else</span> <span class="o">{</span>
-	
+
 								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
-	
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>	
+
 							<span class="o">}</span>
 						
 						<span class="o">}</span>
@@ -1878,8 +1949,8 @@
 								
 								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
 								
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
 								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>								
+								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
 							
 							<span class="o">}</span>
 							<span class="k">else</span> <span class="o">{</span>
@@ -2012,58 +2083,39 @@
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
 			<span class="nx">oRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">,</span>
-			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">oMenu</span><span class="o">;</span>
 
 
-		<span class="k">if</span> <span class="o">(!</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="nx">oRoot</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+
+			<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
+
+			<span class="c">//	If the user mouses down on an element that is a descendant </span>
+<span class="c"></span>			<span class="c">//	of the root menu, but is in a submenu not currently being </span>
+<span class="c"></span>			<span class="c">//	managed by the Focus Manager, update the Focus Manager so </span>
+<span class="c"></span>			<span class="c">//	that it is now managing the submenu that is the parent of the </span>
+<span class="c"></span>			<span class="c">//	element that was the target of the mousedown event.</span>
+<span class="c"></span>			
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">oMenu</span><span class="o">;</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">);</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+				
+			<span class="o">}</span>
+
+			<span class="c">// menuNav._initFocusManager();</span>
+<span class="c"></span>			<span class="c">// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);</span>
+<span class="c"></span>			<span class="c">// menuNav._setActiveItem(getItem(oTarget, true));</span>
+<span class="c"></span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>			
 		<span class="o">}</span>
 
-	<span class="o">},</span>
-	
-
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
-			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">),</span>
-			<span class="nx">oDocument</span><span class="o">;</span>
-
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oRootMenu</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">;</span>
-
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul:first-child&quot;</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
-
-			<span class="c">//	Hide all visible submenus</span>
-<span class="c"></span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
-
-
-			<span class="c">//	Wire up all event handlers</span>
-<span class="c"></span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseover&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOver</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseout&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOut</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousemove&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseMove</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">CLICK</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-
-			<span class="nx">oDocument</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
-		    <span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
-
-		<span class="o">}</span>
-		
-
-    <span class="o">},</span>
-
-	<span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-		
-    <span class="o">}</span>
+	<span class="o">}</span>
 	
 <span class="o">});</span>
 
@@ -2146,7 +2198,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#config_autoSubmenuDisplay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplayChange", "url": "plugin.NodeMenuNav.html#event_autoSubmenuDisplayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAndFocusLabel", "url": "plugin.NodeMenuNav.html#method__hideAndFocusLabel", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelay", "url": "plugin.NodeMenuNav.html#config_mouseOutHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelayChange", "url": "plugin.NodeMenuNav.html#event_mouseOutHideDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelay", "url": "plugin.NodeMenuNav.html#config_submenuHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuHideDelayChange", "type": "event"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelay", "url": "plugin.NodeMenuNav.html#config_submenuShowDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuShowDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIA", "url": "plugin.NodeMenuNav.html#config_useARIA", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIAChange", "url": "plugin.NodeMenuNav.html#event_useARIAChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_afterActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#config_autoSubmenuDisplay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplayChange", "url": "plugin.NodeMenuNav.html#event_autoSubmenuDisplayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAndFocusLabel", "url": "plugin.NodeMenuNav.html#method__hideAndFocusLabel", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_initFocusManager", "url": "plugin.NodeMenuNav.html#method__initFocusManager", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelay", "url": "plugin.NodeMenuNav.html#config_mouseOutHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelayChange", "url": "plugin.NodeMenuNav.html#event_mouseOutHideDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__onActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocFocus", "url": "plugin.NodeMenuNav.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelay", "url": "plugin.NodeMenuNav.html#config_submenuHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuHideDelayChange", "type": "event"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelay", "url": "plugin.NodeMenuNav.html#config_submenuShowDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuShowDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIA", "url": "plugin.NodeMenuNav.html#config_useARIA", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIAChange", "url": "plugin.NodeMenuNav.html#event_useARIAChange", "type": "event"}];
 </script>
 </body>
 </html>
