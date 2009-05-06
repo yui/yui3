@@ -403,30 +403,44 @@
             }
         },
 
-        get: function(attrName) {
+        /**
+         * Wrapper for Attribute.get. Adds the ability to 
+         * initialize attributes on demand during initialization
+         * of the ATTRS definitions at each class level.
+         *
+         * @method get
+         *
+         * @param {String} name The attribute whose value will be returned. If 
+         * the attribute is not currently configured, but is part of the ATTRS 
+         * configuration for the class currently being configured, it will be
+         *
+         * @return {Any} The current value of the attribute
+         */
+        get: function(name) {
 
             if (this._classCfgs) {
-                var name = attrName;
-    
-                if (attrName.indexOf(DOT) !== -1) {
+                var attrName = name;
+
+                if (name.indexOf(DOT) !== -1) {
+                    // TODO: Faster way to get attrName?
                     var path = name.split(DOT);
-                    name = path.shift();
+                    attrName = path.shift();
                 }
-    
-                if (!this.attrAdded(name) && this._classCfgs[name]) {
-                    var classCfg = this._classCfgs[name],
+
+                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
+                    var classCfg = this._classCfgs[attrName],
                         userCfg = this._userCfgs,
                         attrCfg;
-    
+
                     if (classCfg) {
                         attrCfg = {};
-                        attrCfg[name] = classCfg;
+                        attrCfg[attrName] = classCfg;
                         this.addAttrs(attrCfg, userCfg);
                     }
                 }
             }
 
-            return Y.Attribute.prototype.get.call(this, attrName);
+            return Y.Attribute.prototype.get.call(this, name);
         },
 
         /**
