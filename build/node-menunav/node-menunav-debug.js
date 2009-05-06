@@ -117,6 +117,9 @@ var UA = Y.UA,
 	DESCENDANTS = "descendants",
 	UI = "UI",
 	ACTIVE_DESCENDANT = "activeDescendant",
+	USE_ARIA = "useARIA",
+	ARIA_HIDDEN = "aria-hidden",
+	CONTENT = "content",
 
 	STANDARD_QUERY = ">.yui-menu-content>ul>li>a",
 	EXTENDED_QUERY = ">.yui-menu-content>ul>li>.yui-menu-label>a:first-child",
@@ -149,39 +152,14 @@ var UA = Y.UA,
 //	Utility functions
 
 
-//	TO DO: Remove once Node implements circular functionality
 var getPreviousSibling = function (node) {
 
 	var oPrevious = node.previous(),
-		oParentNode,
-		oChildren,
-		oULs,
-		oUL;
-	
+		oChildren;
 
 	if (!oPrevious) {
-	
-		oParentNode = node.get(PARENT_NODE);
-		oULs = oParentNode.get(PARENT_NODE).get(CHILDREN);
-
-		if (oULs.size() > 1) {
-			
-			oUL = oParentNode.previous();
-			
-			if (oUL) {
-				oChildren = oUL.get(CHILDREN);
-			}
-			else {
-				oChildren = oULs.item(oULs.size() - 1).get(CHILDREN);
-			}
-			
-		}
-		else {
-			oChildren = oParentNode.get(CHILDREN);
-		}
-
+		oChildren = node.get(PARENT_NODE).get(CHILDREN);
 		oPrevious = oChildren.item(oChildren.size() - 1);
-		
 	}
 	
 	return oPrevious;
@@ -189,39 +167,12 @@ var getPreviousSibling = function (node) {
 };
 
 
-//	TO DO: Remove once Node implements circular functionality
 var getNextSibling = function (node) {
 
-	var oNext = node.next(),
-		oParentNode,
-		oChildren,
-		oULs,
-		oUL;
-	
+	var oNext = node.next();
 
 	if (!oNext) {
-
-		oParentNode = node.get(PARENT_NODE);
-		oULs = oParentNode.get(PARENT_NODE).get(CHILDREN);
-
-		if (oULs.size() > 1) {
-			
-			oUL = oParentNode.next();
-			
-			if (oUL) {
-				oChildren = oUL.get(CHILDREN);
-			}
-			else {
-				oChildren = oULs.item(0).get(CHILDREN);
-			}
-			
-		}		
-		else {
-			oChildren = node.get(PARENT_NODE).get(CHILDREN);
-		}
-
-		oNext = oChildren.item(0);		
-
+		oNext = node.get(PARENT_NODE).get(CHILDREN).item(0);		
 	}
 	
 	return oNext;
@@ -477,9 +428,9 @@ NodeMenuNav.ATTRS = {
 
 				oMenu.set(ROLE, MENU);
 
-				oMenu.queryAll("ul,li,." + getClassName(MENU, "content")).set(ROLE, PRESENTATION);
+				oMenu.queryAll("ul,li,." + getClassName(MENU, CONTENT)).set(ROLE, PRESENTATION);
 
-				oMenu.queryAll((PERIOD + getClassName(MENUITEM, "content"))).set(ROLE, MENUITEM);
+				oMenu.queryAll((PERIOD + getClassName(MENUITEM, CONTENT))).set(ROLE, MENUITEM);
 
 				oMenu.queryAll((PERIOD + CSS_MENU_LABEL)).each(function (node) {
 
@@ -496,23 +447,27 @@ NodeMenuNav.ATTRS = {
 
 					oSubmenu = node.next();
 
-					oSubmenu.set(ROLE, MENU);
+					if (oSubmenu) {
 
-					oMenuLabel = oSubmenu.previous();
-					oMenuToggle = oMenuLabel.query(MENU_TOGGLE_SELECTOR);
+						oSubmenu.set(ROLE, MENU);
 
-					if (oMenuToggle) {
-						oMenuLabel = oMenuToggle;
+						oMenuLabel = oSubmenu.previous();
+						oMenuToggle = oMenuLabel.query(MENU_TOGGLE_SELECTOR);
+
+						if (oMenuToggle) {
+							oMenuLabel = oMenuToggle;
+						}
+
+						sID = Y.stamp(oMenuLabel);
+
+						if (!oMenuLabel.get(ID)) {
+							oMenuLabel.set(ID, sID);
+						}
+
+						oSubmenu.set("aria-labelledby", sID);
+						oSubmenu.set(ARIA_HIDDEN, true);
+						
 					}
-
-					sID = Y.stamp(oMenuLabel);
-
-					if (!oMenuLabel.get(ID)) {
-						oMenuLabel.set(ID, sID);
-					}
-
-					oSubmenu.set("aria-labelledby", sID);
-					oSubmenu.set("aria-hidden", true);			
 
 				});
 				
@@ -726,6 +681,55 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	_firstItem: null,
 
 
+	//	Public methods
+
+
+    initializer: function (config) {
+
+		var menuNav = this,
+			oRootMenu = this.get("host");
+
+
+		if (oRootMenu) {
+
+			menuNav._rootMenu = oRootMenu;
+
+			oRootMenu.queryAll("ul:first-child").addClass(FIRST_OF_TYPE);
+
+			//	Hide all visible submenus
+
+			oRootMenu.queryAll(MENU_SELECTOR).addClass(CSS_MENU_HIDDEN);
+
+
+			//	Wire up all event handlers
+
+			oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
+			oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
+			oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
+			oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
+			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
+			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
+
+		    oRootMenu.get("ownerDocument").on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+
+			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oRootMenu.get("ownerDocument"));
+
+			menuNav._initFocusManager();
+
+		}
+		
+
+    },
+
+	destructor: function () {
+
+		// TO DO -- clean up event handlers
+		
+    },
+
+
 
 	//	Protected methods
 
@@ -859,6 +863,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			aXY = oLI.getXY();
 
 
+		if (this.get(USE_ARIA)) {
+			menu.set(ARIA_HIDDEN, false);
+		}
+
 
 		if (isHorizontalMenu(oParentMenu)) {
 			aXY[1] = aXY[1] + oLI.get(OFFSET_HEIGHT);
@@ -921,8 +929,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 
 		if (activateAndFocusLabel) {
-			menuNav._setActiveItem(oLabel);
 			menuNav._focusItem(oLabel);
+			menuNav._setActiveItem(oLabel);			
 		}
 
 		oActiveItem = menu.query((PERIOD + CSS_MENUITEM_ACTIVE));
@@ -938,6 +946,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		menu.setStyles({ left: EMPTY_STRING, top: EMPTY_STRING });
 		
 		menu.addClass(CSS_MENU_HIDDEN);
+
+		if (menuNav.get(USE_ARIA)) {
+			menu.set(ARIA_HIDDEN, true);
+		}	
 		
 	},
 
@@ -998,64 +1010,12 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 	},
 
 
-
-	//	Event handlers for discrete pieces of pieces of the menu
-
-	_onActiveDescendantChange: function (event, menuNav) {
-
-		if (event.src === UI) {
-		
-			if (menuNav._activeMenu && !menuNav._movingToSubmenu) {
-				menuNav._hideAllSubmenus(menuNav._activeMenu);
-			}
-
-		}
-		
-	},
-
-	_afterActiveDescendantChange: function (event, menuNav) {
-
-		var oNode;
-
-		if (event.src === UI) {
-			oNode = this.get(DESCENDANTS).item(event.newVal);
-			menuNav._setActiveItem(oNode);
-		}
-	
-	},
-
-	_afterHasFocusChange: function (event, menuNav) {
-		
-		var oTarget = this.get(DESCENDANTS).item(this.get(ACTIVE_DESCENDANT)),
-			oActiveItem;
-
-		menuNav._hasFocus = event.newVal;
-	
-		if (event.newVal) {	// Initial focus
-	
-			oActiveItem = getItem(oTarget, true);
-		
-			if (oActiveItem) {	
-				menuNav._setActiveItem(oActiveItem);
-			}
-	
-		}
-		else {	// The root menu, or one of its submenus has lost focus
-
-			menuNav._clearActiveItem();
-
-			menuNav._cancelShowSubmenuTimer();
-			menuNav._hideAllSubmenus(menuNav._rootMenu);
-
-			menuNav._activeMenu = menuNav._rootMenu;
-			menuNav._initFocusManager();
-			
-			this.set(ACTIVE_DESCENDANT, 0);
-
-		}
-		
-	},
-
+	/**
+	* @method _initFocusManager
+	* @description Initializes and updates the Focus Manager so that is is 
+	* always managing descendants of the active menu.
+	* @protected
+	*/
 	_initFocusManager: function () {
 
 		var menuNav = this,
@@ -1104,9 +1064,6 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oFocusManager.after("activeDescendantChange", 
 				this._afterActiveDescendantChange, oFocusManager, this);
-
-			oFocusManager.after("hasFocusChange", 
-				this._afterHasFocusChange, oFocusManager, this);
 			
 			menuNav._focusManager = oFocusManager;
 			
@@ -1119,6 +1076,120 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			
 		}
 
+	},
+
+
+	//	Event handlers for discrete pieces of pieces of the menu
+
+
+	/**
+	* @method _onActiveDescendantChange
+	* @description "activeDescendantChange" event handler for menu's 
+	* Focus Manager.
+	* @protected
+	* @param {Object} event Object representing the Attribute change event.
+	* @param {NodeMenuNav} menuNav Object representing the NodeMenuNav instance.
+	*/
+	_onActiveDescendantChange: function (event, menuNav) {
+
+		if (event.src === UI && menuNav._activeMenu && 
+				!menuNav._movingToSubmenu) {
+
+			menuNav._hideAllSubmenus(menuNav._activeMenu);
+
+		}
+		
+	},
+
+
+	/**
+	* @method _afterActiveDescendantChange
+	* @description "activeDescendantChange" event handler for menu's 
+	* Focus Manager.
+	* @protected
+	* @param {Object} event Object representing the Attribute change event.
+	* @param {NodeMenuNav} menuNav Object representing the NodeMenuNav instance.
+	*/
+	_afterActiveDescendantChange: function (event, menuNav) {
+
+		var oItem;
+
+		if (event.src === UI) {
+			oItem = getItem(this.get(DESCENDANTS).item(event.newVal), true);
+			menuNav._setActiveItem(oItem);
+		}
+	
+	},
+
+
+	/**
+	* @method _onDocFocus
+	* @description "focus" event handler for the owner document of the MenuNav.
+	* @protected
+	* @param {Object} event Object representing the DOM event.
+	*/
+	_onDocFocus: function (event) {
+	
+		var menuNav = this,
+			oActiveItem = menuNav._activeItem,
+			oTarget = event.target,
+			oMenu;
+	
+
+		if (menuNav._rootMenu.contains(oTarget)) {	//	The menu has focus
+
+			if (menuNav._hasFocus) {	
+
+				oMenu = getParentMenu(oTarget);
+
+				//	If the element that was focused is a descendant of the 
+				//	root menu, but is in a submenu not currently being 
+				//	managed by the Focus Manager, update the Focus Manager so 
+				//	that it is now managing the submenu that is the parent of  
+				//	the element that was focused.
+				
+				if (!menuNav._activeMenu.compareTo(oMenu)) {
+
+					menuNav._activeMenu = oMenu;
+					menuNav._initFocusManager();
+					menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
+					menuNav._setActiveItem(getItem(oTarget, true));
+					
+				}
+			
+			}
+			else { //	Initial focus
+
+				//	First time the menu has been focused, need to setup focused 
+				//	state and established active active descendant
+	
+				menuNav._hasFocus = true;
+	
+				oActiveItem = getItem(oTarget, true);
+	
+				if (oActiveItem) {	
+					menuNav._setActiveItem(oActiveItem);
+				}
+				
+			}
+		
+		}
+		else {	//	The menu has lost focus
+
+			menuNav._clearActiveItem();
+
+			menuNav._cancelShowSubmenuTimer();
+			menuNav._hideAllSubmenus(menuNav._rootMenu);
+
+			menuNav._activeMenu = menuNav._rootMenu;
+			menuNav._initFocusManager();
+			
+			menuNav._focusManager.set(ACTIVE_DESCENDANT, 0);
+			
+			menuNav._hasFocus = false;
+
+		}
+	
 	},
 
 
@@ -1258,9 +1329,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oSubmenu;
 
 
-		menuNav._setActiveItem(menuLabel);
 		menuNav._focusItem(menuLabel);
-		
+		menuNav._setActiveItem(menuLabel);
+				
 
 		if (bUseAutoSubmenuDisplay && !menuNav._movingToSubmenu) {
 	
@@ -1359,8 +1430,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot);
 
 
-		menuNav._setActiveItem(menuItem);
 		menuNav._focusItem(menuItem);
+		menuNav._setActiveItem(menuItem);
 
 
 		if (bUseAutoSubmenuDisplay && !menuNav._movingToSubmenu) {
@@ -1496,10 +1567,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 							}
 							else {
-	
+
 								menuNav._focusItem(oItem);
-								menuNav._setActiveItem(oItem);
-	
+								menuNav._setActiveItem(oItem);	
+
 							}
 						
 						}
@@ -1831,8 +1902,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 								
 								menuNav._hideMenu(oSubmenu);
 								
-								menuNav._setActiveItem(oMenuLabel);
 								menuNav._focusItem(oMenuLabel);								
+								menuNav._setActiveItem(oMenuLabel);
 							
 							}
 							else {
@@ -1965,58 +2036,39 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this,
 			oRoot = menuNav._rootMenu,
-			oTarget = event.target;
+			oTarget = event.target,
+			oMenu;
 
 
-		if (!oRoot.compareTo(oTarget) && !oRoot.contains(oTarget)) {
-			menuNav._hideAllSubmenus(oRoot);
-		}
+		if (oRoot.compareTo(oTarget) || oRoot.contains(oTarget)) {
 
-	},
-	
+			oMenu = getParentMenu(oTarget);
 
-    initializer: function (config) {
+			//	If the user mouses down on an element that is a descendant 
+			//	of the root menu, but is in a submenu not currently being 
+			//	managed by the Focus Manager, update the Focus Manager so 
+			//	that it is now managing the submenu that is the parent of the 
+			//	element that was the target of the mousedown event.
+			
+			if (!menuNav._activeMenu.compareTo(oMenu)) {
 
-		var menuNav = this,
-			oRootMenu = this.get("host"),
-			oDocument;
+				menuNav._activeMenu = oMenu;
+				menuNav._initFocusManager();
+				menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
+				menuNav._setActiveItem(getItem(oTarget, true));
+				
+			}
 
-
-		if (oRootMenu) {
-
-			menuNav._rootMenu = oRootMenu;
-
-			oRootMenu.queryAll("ul:first-child").addClass(FIRST_OF_TYPE);
-
-			//	Hide all visible submenus
-
-			oRootMenu.queryAll(MENU_SELECTOR).addClass(CSS_MENU_HIDDEN);
-
-
-			//	Wire up all event handlers
-
-			oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
-			oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
-			oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
-			oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
-			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
-
-			oDocument = oRootMenu.get("ownerDocument");
-		    oDocument.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
-
-			menuNav._initFocusManager();
+			// menuNav._initFocusManager();
+			// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
+			// menuNav._setActiveItem(getItem(oTarget, true));
 
 		}
-		
+		else {
+			menuNav._hideAllSubmenus(oRoot);			
+		}
 
-    },
-
-	destructor: function () {
-		
-    }
+	}
 	
 });
 
