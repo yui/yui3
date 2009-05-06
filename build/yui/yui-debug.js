@@ -205,7 +205,7 @@ YUI.prototype = {
     _setup: function(o) {
         this.use("yui-base");
         // @TODO eval the need to copy the config
-        // this.config = this.merge(this.config);
+        this.config = this.merge(this.config);
     },
 
     /**
