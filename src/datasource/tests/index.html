@@ -163,7 +163,7 @@
                     args: [Y.Mock.Value(function(e){
                         ASSERT.isNull(e.request, "Expected null request.");
                         ASSERT.isObject(e.response, "Expected response object.");
-                        OBJECTASSERT.ownsAll({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
                     })]
                 });
 
