@@ -83,6 +83,8 @@ Node.DOM_EVENTS = {
     'mouseleave': true
 };
 
+Node.EXEC_SCRIPTS = true;
+
 Node._instances = {};
 
 /**
@@ -554,6 +556,26 @@ Y.mix(Node.prototype, {
     size: function() {
         Y.log('size is deprecated on Node', 'warn', 'Node');
         return g_nodes[this[UID]] ? 1 : 0;
+    },
+
+    insert: function(content, refNode) {
+        if (this.contains(refNode)) { // only allow inserting into this Node's subtree
+            Y.DOM.insertHTML(Node.getDOMNode(refNode), Y.Node.create(content));
+        }
+        return this;
+    },
+
+    prepend: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.insertHTML(g_nodes[this[UID]], content, 'insert', execScripts);
+        return this;
+    },
+
+    append: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS),
+        var node = g_nodes[this[UID]];
+        Y.DOM.insertHTML(g_nodes[this[UID]], content, null, execScripts);
+        return this;
     },
 
     addEventListener: function() {

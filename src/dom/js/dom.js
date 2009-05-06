@@ -472,26 +472,22 @@ Y.DOM = {
         return frag.removeChild(frag[FIRST_CHILD]);
     },
 
-    insertHTML: function(node, content, where, execScripts) {
+    addHTML: function(node, content, how, execScripts) {
         var scripts,
             newNode = Y.DOM.create(content);
 
-        switch(where) {
-            case 'innerHTML': 
-                node.innerHTML = content; // TODO: purge?
-                newNode = node;
-                break;
-            case 'beforeBegin':
-                Y.DOM.insertBefore(newNode, node);
-                break;
-            case 'afterBegin':
-                Y.DOM.insertBefore(newNode, node[FIRST_CHILD]);
-                break;
-            case 'afterEnd':
-                Y.DOM.insertAfter(newNode, node);
-                break;
-            default: // and 'beforeEnd'
-                node.appendChild(newNode);
+        if (typeof where === 'string') {
+            switch(how) {
+                case 'replace': 
+                    node.innerHTML = content; // TODO: purge?
+                    newNode = node;
+                    break;
+                case 'insert':
+                    Y.DOM.insertBefore(newNode, node);
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
