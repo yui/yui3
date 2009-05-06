@@ -127,6 +127,77 @@ changing ones, this approach may perform better.
                                                     
                                                 
                                                         , 
+                                                         key
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Add an item with the property and value provided
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  identifier for this attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">key</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  property identifier</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  property value</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addAll">
+                                    <h4>
+                                        <a name="method_addAll">addAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">addAll</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
                                                          o
                                                     
                                                 
@@ -195,11 +266,7 @@ changing ones, this approach may perform better.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            For a given item, gets an attribute.  If key is not
-supplied, a disposable object with all attributes is 
-returned.  Use of the latter option makes sense when
-working with single items, but not if object explosion
-might cause gc problems.
+                                            For a given item, returns the value of the attribute requested, or undefined if not found.
                                         </div>
 
                                         <div class="description">
@@ -216,7 +283,52 @@ might cause gc problems.
                                                         <code><span property="yui:name">key</span>
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  optional attribute to get</span>
+                                                        <span property="yui:description">  optional The attribute value to retrieve.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getAll">
+                                    <h4>
+                                        <a name="method_getAll">getAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">getAll</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            For a given item, returns a disposable object with all attribute 
+name/value pairs.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  name of attribute</span>
                                                         </dd>
                                                 </dl>
 
@@ -253,6 +365,67 @@ might cause gc problems.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
+                                            Remove the given key for a specific item
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  name of attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The key to delete.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_removeAll">
+                                    <h4>
+                                        <a name="method_removeAll">removeAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">removeAll</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
                                             Remove entire item, or optionally specified fields
                                         </div>
 
@@ -268,9 +441,9 @@ might cause gc problems.
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">string|object|array</span>&gt;
+                                                        &lt;<span property="yui:type">object|array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  single key or collection of keys to delete</span>
+                                                        <span property="yui:description">  Collection of keys to delete. If not provided, entire item is removed.</span>
                                                         </dd>
                                                 </dl>
 
@@ -377,8 +550,11 @@ might cause gc problems.
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class=""><a href="#method_add" title="add">add</a></li>
+                                <li class=""><a href="#method_addAll" title="addAll">addAll</a></li>
                                 <li class=""><a href="#method_get" title="get">get</a></li>
+                                <li class=""><a href="#method_getAll" title="getAll">getAll</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                                <li class=""><a href="#method_removeAll" title="removeAll">removeAll</a></li>
                         </ul>
                     </div>
 
@@ -393,7 +569,7 @@ might cause gc problems.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

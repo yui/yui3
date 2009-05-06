@@ -452,30 +452,44 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Wrapper for Attribute.get. Adds the ability to </span>
+<span class="c">         * initialize attributes on demand during initialization</span>
+<span class="c">         * of the ATTRS definitions at each class level.</span>
+<span class="c">         *</span>
+<span class="c">         * @method get</span>
+<span class="c">         *</span>
+<span class="c">         * @param {String} name The attribute whose value will be returned. If </span>
+<span class="c">         * the attribute is not currently configured, but is part of the ATTRS </span>
+<span class="c">         * configuration for the class currently being configured, it will be</span>
+<span class="c">         *</span>
+<span class="c">         * @return {Any} The current value of the attribute</span>
+<span class="c">         */</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">attrName</span><span class="o">;</span>
-    
-                <span class="k">if</span> <span class="o">(</span><span class="nx">attrName</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
-                    <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                <span class="k">var</span> <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// TODO: Faster way to get attrName?</span>
+<span class="c"></span>                    <span class="k">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                    <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
                 <span class="o">}</span>
-    
-                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">classCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attrName</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">classCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">],</span>
                         <span class="nx">userCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span><span class="o">,</span>
                         <span class="nx">attrCfg</span><span class="o">;</span>
-    
+
                     <span class="k">if</span> <span class="o">(</span><span class="nx">classCfg</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">attrCfg</span> <span class="o">=</span> <span class="o">{};</span>
-                        <span class="nx">attrCfg</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">classCfg</span><span class="o">;</span>
+                        <span class="nx">attrCfg</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">=</span> <span class="nx">classCfg</span><span class="o">;</span>
                         <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">attrCfg</span><span class="o">,</span> <span class="nx">userCfg</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
