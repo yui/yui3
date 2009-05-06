@@ -703,7 +703,9 @@ so if you need to protect the original values, you will need to merge or clone t
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Configures attributes, and sets initial values
+                                            Configures attributes, and sets initial values. This method does not 
+isolate configuration object by merging/cloning. The caller is responsible for 
+merging/cloning the configuration object when required.
                                         </div>
 
                                         <div class="description">
@@ -800,7 +802,7 @@ so if you need to protect the original values, you will need to merge or clone t
                                            (
                                                 
                                                         
-                                                         key
+                                                         name
                                                     
                                                 
                                             )
@@ -819,7 +821,7 @@ as the only argument.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">key</span>
+                                                        <code><span property="yui:name">name</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The attribute whose value will be returned. If

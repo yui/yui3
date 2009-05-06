@@ -38,6 +38,10 @@
 
 * Attribute change events are no longer fired for initial set
 
+* Split up State add/get/remove into add/addAll, get/getAll, remove/removeAll
+  to avoid having to create object literals for critical path [ add/get single
+  key values ]
+
 3.0.0PR2
 
 * Added valueFn support, to allowing static 
