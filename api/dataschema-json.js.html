@@ -129,7 +129,13 @@
         <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
             <span class="nx">len</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
         <span class="k">for</span> <span class="o">(;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span><span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
+            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]]))</span> <span class="o">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
     <span class="o">},</span>
@@ -201,6 +207,7 @@
                     <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
                     <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Results retrieval failure&quot;</span><span class="o">);</span>
                 <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
                     <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">results</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_getFieldValues</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">,</span> <span class="nx">results</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
                     <span class="o">}</span>
@@ -208,6 +215,7 @@
                         <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
                         <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Fields retrieval failure&quot;</span><span class="o">);</span>
                     <span class="o">}</span>
+                <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Results locator failure&quot;</span><span class="o">);</span>
