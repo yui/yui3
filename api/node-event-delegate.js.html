@@ -57,14 +57,13 @@
 <span class="c">/**</span>
 <span class="c"> * Functionality to make the node a delegated event container</span>
 <span class="c"> * @event delegate</span>
-<span class="c"> * @param type {string} &#39;delegate&#39;</span>
 <span class="c"> * @param fn {string} the function to execute</span>
 <span class="c"> * @param delegateType {string} the event type to delegate</span>
 <span class="c"> * @param spec {string} a selector that must match the target of the event.</span>
 <span class="c"> * @return {Event.Handle} the detach handle</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
     <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
