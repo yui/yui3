@@ -258,6 +258,115 @@
             }
         });
 
+        var testScriptNode = new Y.Test.Case({
+            name: "DataSource.ScriptNode Tests",
+
+            testScriptNodeDefaults: function() {
+                var ds = new Y.DataSource.ScriptNode({
+                    source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+                });
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
+                        ASSERT.isObject(e.response, "Expected response object.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                    })]
+                });
+
+                ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("ScriptNode failure case.");
+                    }
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testScriptNodeEvents: function() {
+                var ds = new Y.DataSource.ScriptNode({
+                    source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+                });
+                ds.plug({fn: Y.plugin.DataSourceJSONSchema, cfg: {
+                    schema: {
+                        resultListLocator: "query.results.result",
+                        resultFields: ["title"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleRequest",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "request: Expected transaction ID.");
+                        ASSERT.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "request: Expected callback.");
+                    })]
+                });
+                ds.subscribe("request", handler.handleRequest);
+
+                Y.Mock.expect(handler,{
+                    method: "handleData",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "data: Expected transaction ID.");
+                        ASSERT.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "data: Expected callback.");
+                        ASSERT.isObject(e.data, "data: Expected raw data.");
+                    })]
+                });
+                ds.subscribe("data", handler.handleData);
+
+                Y.Mock.expect(handler,{
+                    method: "handleResponse",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "response: Expected transaction ID.");
+                        ASSERT.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "response: Expected callback.");
+                        ASSERT.isObject(e.data, "response: Expected raw data.");
+                        ASSERT.isObject(e.response, "response: Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "response: Expected parsed results.");
+                        ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
+                    })]
+                });
+                ds.subscribe("response", handler.handleResponse);
+
+                ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", "callback");
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testScriptNodeError: function() {
+                var ds = new Y.DataSource.ScriptNode({
+                    source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+                });
+                ds.plug({fn: Y.plugin.DataSourceJSONSchema, cfg: {
+                    schema: {
+                        resultListLocator: "query.results.result",
+                        resultFields: ["title"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleError",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "error: Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "error: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "error: Expected callback.");
+                        ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
+                    })]
+                });
+                ds.subscribe("error", handler.handleError);
+
+                ds.set("source", "foo");
+                ds.sendRequest("a", "callback");
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            }
+        });
+
         var testDataSchemaPlugin = new Y.Test.Case({
             name: "DataSource DataSchema Plugin Tests",
 
@@ -506,6 +615,7 @@
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
         Y.Test.Runner.add(testXHR);
+        Y.Test.Runner.add(testScriptNode);
         Y.Test.Runner.add(testDataSchemaPlugin);
         Y.Test.Runner.add(testCaching);
         Y.Test.Runner.add(testPolling);
