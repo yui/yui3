@@ -54,6 +54,37 @@
 
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
+<span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+    <span class="o">}</span> 
+<span class="o">},</span>
+
+<span class="nx">remove</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">},</span>
+
+<span class="nx">globalListener</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">windowLoaded</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;load&#39;</span><span class="o">,</span> <span class="nx">globalListener</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="c">// add a window load event at load time so we can capture</span>
+<span class="c">// the case where it fires before dynamic loading is</span>
+<span class="c">// complete.</span>
+<span class="c"></span><span class="nx">add</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;load&#39;</span><span class="o">,</span> <span class="nx">globalListener</span><span class="o">);</span>
+
+<span class="c">// these are temporary references that get removed when the</span>
+<span class="c">// rest of the module is finished using them.</span>
+<span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="o">;</span>
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="o">;</span>
+
 <span class="c">// Unlike most of the library, this code has to be executed as soon as it is</span>
 <span class="c">// introduced into the page -- and it should only be executed one time</span>
 <span class="c">// regardless of the number of instances that use it.</span>

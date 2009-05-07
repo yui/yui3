@@ -56,7 +56,7 @@
 
 <span class="k">var</span> <span class="nx">NodeFX</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
     <span class="nx">config</span> <span class="o">=</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">:</span> <span class="o">{};</span>
-    <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">;</span>
+    <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
     <span class="nx">NodeFX</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 <span class="o">};</span>
 

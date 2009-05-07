@@ -14,22 +14,9 @@
  */
 
 
-// @TODO move the native addEventListener code to DOM
-var add = function(el, type, fn, capture) {
-    if (el.addEventListener) {
-            el.addEventListener(type, fn, !!capture);
-    } else if (el.attachEvent) {
-            el.attachEvent("on" + type, fn);
-    } 
-},
+var add = YUI.Env.add,
 
-remove = function(el, type, fn, capture) {
-    if (el.removeEventListener) {
-            el.removeEventListener(type, fn, !!capture);
-    } else if (el.detachEvent) {
-            el.detachEvent("on" + type, fn);
-    }
-},
+remove = YUI.Env.remove,
 
 onLoad = function() {
     YUI.Env.windowLoaded = true;
@@ -113,7 +100,7 @@ Event = function() {
          * @static
          * @final
          */
-        POLL_RETRYS: 2000,
+        POLL_RETRYS: 1000,
 
         /**
          * The poll interval in milliseconds
@@ -122,7 +109,7 @@ Event = function() {
          * @static
          * @final
          */
-        POLL_INTERVAL: 20,
+        POLL_INTERVAL: 40,
 
         /**
          * addListener/removeListener can throw errors in unexpected scenarios.
@@ -280,7 +267,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
-                handles, oEl, size, ek, key, cewrapper, context;
+                handles, oEl, ek, key, cewrapper, context;
 
             if (type.indexOf(CAPTURE) > -1) {
                 type = type.substr(CAPTURE.length);
@@ -321,25 +308,27 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // ready
             } else if (Y.Lang.isString(el)) {
 
-                oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
-
                 // @TODO switch to using DOM directly here
+                // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
-                if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
-                    size = oEl.size();
-                    if (size > 1) {
-                        // Y.log('more than one: ' + size + ', ' + type);
-                        // args[0] = oEl;
+                // this should not be a node list ever at this point
+                // if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
+                //     size = oEl.size();
+                //     if (size > 1) {
+                //         args[2] = oEl;
+                //         return E.attach.apply(E, args);
+                //     } else {
+                //         el = oEl.item(0);
+                //     }
+                if (oEl && oEl.splice) {
+                    if (oEl.length == 1) {
+                        el = oEl[0];
+                    } else {
                         args[2] = oEl;
                         return E.attach.apply(E, args);
-                    } else {
-                        // Y.log('just one: ' + size + ', ' + type);
-                        el = oEl.item(0);
-                        // el = oEl;
                     }
-
                 // HTMLElement
-                // } else if (compat && oEl) {
                 } else if (oEl) {
                     // Y.log('no size: ' + oEl + ', ' + type);
                     el = oEl;
@@ -456,7 +445,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // The el argument can be a string
             if (typeof el == "string") {
 
-                el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                el = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+                return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
             } else if ( this._isValidCollection(el)) {
@@ -658,7 +649,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && !item.checkReady) {
 
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // Y.log('avail: ' + el);
@@ -676,7 +668,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && item.checkReady) {
 
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -720,7 +713,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         purgeElement: function(el, recurse, type) {
-            var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            // var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
@@ -834,5 +828,8 @@ Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
 Event._tryPreloadAttach();
+
+YUI.Env.add = null;
+YUI.Env.remove = null;
 
 })();

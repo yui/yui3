@@ -25,80 +25,100 @@ YUI.add('attribute', function(Y) {
     Y.State.prototype = {
 
         /**
-         * Add an item with all of the properties in the supplied object.
+         * Add an item with the property and value provided
+         *
          * @method add
+         * @param name {string} identifier for this attribute
+         * @param key {string} property identifier
+         * @param val {Any} property value
+         */
+        add : function(name, key, val) {
+            var d = this.data;
+            d[key] = d[key] || {};
+            d[key][name] = val;
+        },
+
+        /**
+         * Add an item with all of the properties in the supplied object.
+         * 
+         * @method addAll
          * @param name {string} identifier for this attribute
          * @param o hash of attributes
          */
-        add: function(name, o) {
-            var d = this.data,
-                key;
-
+        addAll: function(name, o) {
+            var key;
             for (key in o) {
                 if (o.hasOwnProperty(key)) {
-                    if (!d[key]) {
-                        d[key] = {};
-                    }
-                    d[key][name] = o[key];
+                    this.add(name, key, o[key]);
                 }
             }
         },
 
         /**
-         * Remove entire item, or optionally specified fields
+         * Remove the given key for a specific item
+         *
          * @method remove
          * @param name {string} name of attribute
-         * @param o {string|object|array} single key or collection of keys to delete
+         * @param o {string} The key to delete.
          */
-        remove: function(name, o) {
-            var d = this.data, 
-                del = function(key) {
-                    if (d[key] && (name in d[key])) {
-                        delete d[key][name];
-                    }
-                };
-
-            if (Y.Lang.isString(o)) {
-                del(o);
-            } else {
-                Y.each(o || d, function(v, k) {
-                    if(Y.Lang.isString(k)) {
-                        del(k);
-                    } else {
-                        del(v);
-                    }
-                }, this);
-
+        remove: function(name, key) {
+            var d = this.data;
+            if (d[key] && (name in d[key])) {
+                delete d[key][name];
             }
         },
 
         /**
-         * For a given item, gets an attribute.  If key is not
-         * supplied, a disposable object with all attributes is 
-         * returned.  Use of the latter option makes sense when
-         * working with single items, but not if object explosion
-         * might cause gc problems.
+         * Remove entire item, or optionally specified fields
+         * 
+         * @method removeAll
+         * @param name {string} name of attribute
+         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.
+         */
+        removeAll: function(name, o) {
+            var d = this.data;
+
+            Y.each(o || d, function(v, k) {
+                if(Y.Lang.isString(k)) {
+                    this.remove(name, k);
+                } else {
+                    this.remove(name, v);
+                }
+            }, this);
+        },
+
+        /**
+         * For a given item, returns the value of the attribute requested, or undefined if not found.
+         *
          * @method get
          * @param name {string} name of attribute
-         * @param key {string} optional attribute to get
-         * @return either the value of the supplied key or an object with
-         * all data.
+         * @param key {string} optional The attribute value to retrieve.
+         * @return The value of the supplied key.
          */
         get: function(name, key) {
             var d = this.data;
+            return (d[key] && name in d[key]) ?  d[key][name] : undefined;
+        },
 
-            if (key) {
-                return (d[key] && name in d[key]) ?  d[key][name] : undefined;
-            } else {
-                var o;
-                Y.each(d, function(v, k) {
-                    if (name in d[k]) {
-                        o = o || {};
-                        o[k] = v[name];
-                    }
-                }, this);
-                return o;
-            }
+        /**
+         * For a given item, returns a disposable object with all attribute 
+         * name/value pairs.
+         *
+         * @method getAll
+         * @param name {string} name of attribute
+         * @return An object withall data.
+         */
+        getAll : function(name) {
+            var d = this.data, o;
+
+            Y.each(d, function(v, k) {
+                if (name in d[k]) {
+                    o = o || {};
+                    o[k] = v[name];
+                }
+            }, this);
+
+            return o;
         }
     };
 
@@ -114,13 +134,13 @@ YUI.add('attribute', function(Y) {
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
-        INIT = "init",
+        ADDED = "added",
+        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
-        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -212,7 +232,8 @@ YUI.add('attribute', function(Y) {
                 config = config || {};
 
                 var value,
-                    hasValue = (VALUE in config);
+                    hasValue = (VALUE in config),
+                    conf = this._conf;
 
 
                 if(hasValue) {
@@ -220,13 +241,19 @@ YUI.add('attribute', function(Y) {
                     value = config.value;
                     delete config.value;
                 }
-                config[INIT] = true;
-                this._conf.add(name, config);
+
+                config[ADDED] = true;
+                config[INITIALIZING] = true;
+
+                conf.addAll(name, config);
 
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
                 }
+
+                conf.remove(name, INITIALIZING);
+
             } else {
             }
 
@@ -241,7 +268,7 @@ YUI.add('attribute', function(Y) {
          * @return boolean, true if an attribute with the given name has been added.
          */
         attrAdded: function(name) {
-            return !!(this._conf.get(name, INIT));
+            return !!(this._conf.get(name, ADDED));
         },
 
         /**
@@ -251,7 +278,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The attribute key
          */
         removeAttr: function(name) {
-            this._conf.remove(name);
+            this._conf.removeAll(name);
         },
 
         /**
@@ -263,7 +290,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method get
          *
-         * @param {String} key The attribute whose value will be returned. If
+         * @param {String} name The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          * 
@@ -273,7 +300,7 @@ YUI.add('attribute', function(Y) {
 
             var conf = this._conf,
                 path,
-                getFn,
+                getter,
                 val;
 
             if (name.indexOf(DOT) !== -1) {
@@ -282,9 +309,9 @@ YUI.add('attribute', function(Y) {
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GETTER);
+            getter = conf.get(name, GETTER);
 
-            val = (getFn) ? getFn.call(this, val) : val;
+            val = (getter) ? getter.call(this, val) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -368,10 +395,10 @@ YUI.add('attribute', function(Y) {
          * @return {Object} Reference to the host object
          */
         _setAttr : function(name, val, opts, force) {
-            var conf = this._conf,
+            var allowSet = true,
+                conf = this._conf,
                 data = conf.data,
-                allowSet = true,
-                initialSet = (!data.value || !(name in data.value)),
+                initialSet,
                 strPath,
                 path,
                 currVal;
@@ -382,13 +409,17 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
+            initialSet = (!data.value || !(name in data.value));
+
             if (!this.attrAdded(name)) {
             } else {
 
                 if (!initialSet && !force) {
+
                     if (conf.get(name, WRITE_ONCE)) {
                         allowSet = false;
                     }
+
                     if (conf.get(name, READ_ONLY)) {
                         allowSet = false;
                     }
@@ -396,6 +427,7 @@ YUI.add('attribute', function(Y) {
 
                 if (allowSet) {
                     currVal = this.get(name);
+
                     if (path) {
                        val = O.setValue(Y.clone(currVal), path, val);
 
@@ -405,7 +437,11 @@ YUI.add('attribute', function(Y) {
                     }
 
                     if (allowSet) {
-                        this._fireAttrChange(name, currVal, val, strPath, opts);
+                        if (conf.get(name, INITIALIZING)) {
+                            this._setAttrVal(name, strPath, currVal, val);
+                        } else {
+                            this._fireAttrChange(name, strPath, currVal, val, opts);
+                        }
                     }
                 }
             }
@@ -419,28 +455,28 @@ YUI.add('attribute', function(Y) {
          * 
          * @method _fireAttrChange
          * @private
-         * @param {String} name The name of the attribute
+         * @param {String} attrName The name of the attribute
+         * @param {String} subAttrName The full path of the property being changed, 
+         * if this is a sub-attribute value being change. Otherwise null.
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
-         * @param {String} strFullPath The full path of the property being changed, 
-         * if this is a sub-attribute value being change
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttrChange : function(name, currVal, newVal, strFullPath, opts) {
-            var eventName = name + CHANGE,
+        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
+            var eventName = attrName + CHANGE,
                 conf = this._conf,
                 facade;
 
-            if (!conf.get(name, PUBLISHED)) {
+            if (!conf.get(attrName, PUBLISHED)) {
                 this.publish(eventName, this._ATTR_E_CFG);
-                conf.add(name, SET_PUBLISHED);
+                conf.add(attrName, PUBLISHED, true);
             }
 
             facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
 
             facade.type = eventName;
-            facade.attrName = name;
-            facade.subAttrName = strFullPath;
+            facade.attrName = attrName;
+            facade.subAttrName = subAttrName;
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
@@ -455,47 +491,64 @@ YUI.add('attribute', function(Y) {
          * @param {Event.Facade} e The event object for the custom event
          */
         _defAttrChangeFn : function(e) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
+            } else {
+                e.newVal = this._conf.get(e.attrName, VALUE);
+            }
+        },
+
+        /**
+         * Updates the stored value of the attribute in the privately held State object,
+         * if validation and setter passes.
+         *
+         * @method _setAttrVal
+         * @private
+         * @param {String} attrName The attribute name.
+         * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
+         * @param {Any} prevVal The currently stored value of the attribute.
+         * @param {Any} newVal The value which is going to be stored.
+         * 
+         * @return {booolean} true if the new attribute value was stored, false if not.
+         */
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
 
             var allowSet = true,
                 conf = this._conf,
-                name = e.attrName,
-                val = e.newVal,
-                valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SETTER),
-                storedVal,
+                validator  = conf.get(attrName, VALIDATOR),
+                setter = conf.get(attrName, SETTER),
                 retVal;
 
-            if (!valFn || valFn.call(this, val)) {
-                if (setFn) {
-                    retVal = setFn.call(this, val);
+            if (!validator || validator.call(this, newVal)) {
+
+                if (setter) {
+                    retVal = setter.call(this, newVal);
+
                     if (retVal === INVALID_VALUE) {
                         allowSet = false;
                     } else if (retVal !== undefined){
-                        val = retVal;
+                        newVal = retVal;
                     }
                 }
-            } else {
-                allowSet = false;
-            }
 
-            if (!e.subAttrName && val === e.prevVal) {
-                allowSet = false;
-            }
-
-            if (allowSet) {
-                // Store value
-                storedVal = { value: val };
-                if (conf.get(name, INIT_VALUE) === undefined) {
-                    storedVal[INIT_VALUE] = val;
+                if (allowSet) {
+                    if(!subAttrName && newVal === prevVal) {
+                        allowSet = false;
+                    } else {
+                        // Store value
+                        if (conf.get(attrName, INIT_VALUE) === undefined) {
+                            conf.add(attrName, INIT_VALUE, newVal);
+                        }
+                        conf.add(attrName, VALUE, newVal);
+                    }
                 }
-                conf.add(name, storedVal);
-                e.newVal = val;
-            } else {
 
-                // Prevent "after" listeners from being 
-                // invoked since nothing changed.
-                e.stopImmediatePropagation();
+            } else {
+                allowSet = false;
             }
+
+            return allowSet;
         },
 
         /**
@@ -542,7 +595,9 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Configures attributes, and sets initial values
+         * Configures attributes, and sets initial values. This method does not 
+         * isolate configuration object by merging/cloning. The caller is responsible for 
+         * merging/cloning the configuration object when required.
          *
          * @method addAttrs
          * @chainable
@@ -661,7 +716,6 @@ YUI.add('attribute', function(Y) {
                     }
                 }
             }
-
             return val;
         }
     };

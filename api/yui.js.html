@@ -254,8 +254,8 @@
     <span class="nx">_setup</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="s2">&quot;yui-base&quot;</span><span class="o">);</span>
         <span class="c">// @TODO eval the need to copy the config</span>
-<span class="c"></span>        <span class="c">// this.config = this.merge(this.config);</span>
-<span class="c"></span>    <span class="o">},</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
+    <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Executes a method on a YUI instance with</span>
