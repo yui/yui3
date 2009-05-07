@@ -5,36 +5,6 @@
 
 (function() {
 
-var add = function(el, type, fn, capture) {
-    if (el.addEventListener) {
-            el.addEventListener(type, fn, !!capture);
-    } else if (el.attachEvent) {
-            el.attachEvent("on" + type, fn);
-    } 
-},
-
-remove = function(el, type, fn, capture) {
-    if (el.removeEventListener) {
-            el.removeEventListener(type, fn, !!capture);
-    } else if (el.detachEvent) {
-            el.detachEvent("on" + type, fn);
-    }
-},
-
-globalListener = function() {
-    YUI.Env.windowLoaded = true;
-    remove(window, 'load', globalListener);
-};
-
-// add a window load event at load time so we can capture
-// the case where it fires before dynamic loading is
-// complete.
-add(window, 'load', globalListener);
-
-// these are temporary references that get removed when the
-// rest of the module is finished using them.
-YUI.Env.add = add;
-YUI.Env.remove = remove;
 
 // Unlike most of the library, this code has to be executed as soon as it is
 // introduced into the page -- and it should only be executed one time
@@ -543,7 +513,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
 
 
 var add = YUI.Env.add,
-
 remove = YUI.Env.remove,
 
 onLoad = function() {
@@ -1339,7 +1308,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
 }();
 
-add(window, "load", onLoad);
+if (Y.config.injected) {
+    onLoad();
+} else {
+    add(window, "load", onLoad);
+}
+
 add(window, "unload", onUnload);
 
 Y.Event = Event;
@@ -1356,9 +1330,6 @@ Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
 Event._tryPreloadAttach();
-
-YUI.Env.add = null;
-YUI.Env.remove = null;
 
 })();
 /**

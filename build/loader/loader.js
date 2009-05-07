@@ -1458,7 +1458,7 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
@@ -1861,18 +1861,18 @@ Y.Loader.prototype = {
 
     },
 
-    /**
+    /*
      * In IE, the onAvailable/onDOMReady events need help when Event is
      * loaded dynamically
      * @method _pushEvents
      * @param {Function} optional function reference
      * @private
      */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
+    // _pushEvents: function() {
+    //     if (Y.Event) {
+    //         Y.Event._load();
+    //     }
+    // },
 
     /**
      * Apply filter defined for this instance to a url/path
