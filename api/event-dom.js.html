@@ -64,7 +64,6 @@
 
 
 <span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span><span class="o">,</span>
-
 <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span><span class="o">,</span>
 
 <span class="nx">onLoad</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -860,7 +859,12 @@
 
 <span class="o">}();</span>
 
-<span class="nx">add</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">onLoad</span><span class="o">);</span>
+<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">injected</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">onLoad</span><span class="o">();</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="nx">add</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">onLoad</span><span class="o">);</span>
+<span class="o">}</span>
+
 <span class="nx">add</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;unload&quot;</span><span class="o">,</span> <span class="nx">onUnload</span><span class="o">);</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">;</span>
@@ -877,9 +881,6 @@
 <span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">;</span>
 
 <span class="nx">Event</span><span class="o">.</span><span class="nx">_tryPreloadAttach</span><span class="o">();</span>
-
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 <span class="o">})();</span>
 </pre></div>
