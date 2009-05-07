@@ -11,6 +11,7 @@
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/cache/cache.js"></script>
 <script type="text/javascript" src="../../../build/dataschema/dataschema.js"></script>
+<script type="text/javascript" src="../../../build/datatype/datatype.js"></script>
 <script type="text/javascript" src="../../../build/datasource/datasource.js" id="src_ds"></script>
 <script type="text/javascript">
 
@@ -21,7 +22,7 @@
         //logInclude:{"datasource":true},
         useConsole: true,
         insertBefore: "src_ds"
-    }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "dataschema", "datasource", function(Y) {
+    }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
 
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
@@ -462,6 +463,46 @@
                         ASSERT.areSame("i", e.response.results[2].name, "Expected last name.");
                         ASSERT.isUndefined(e.response.results[0].age, "Expected no age on first result.");
                         ASSERT.isUndefined(e.response.results[2].age, "Expected no age on last result.");
+                    })]
+                });
+
+                ds.sendRequest(null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("Local failure case.");
+                    },
+                    scope: this
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testTextSchema: function() {
+                var ds = new Y.DataSource.Local({
+                    source: "foo\t0\tabc\nbar\t1\tdef\nbat\t-1\tghi"
+                });
+                ds.plug({fn: Y.plugin.DataSourceTextSchema, cfg: {
+                    schema: {
+                        resultDelimiter: "\n",
+                        fieldDelimiter: "\t",
+                        resultFields: [{key:"type"}, {key:"age", parser:"number"}, "name"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "Expected results array.");
+                        ASSERT.areSame(3, e.response.results.length, "Expected 3 results.")
+                        ASSERT.areSame("foo", e.response.results[0].type, "Expected first type.");
+                        ASSERT.areSame("bat", e.response.results[2].type, "Expected last type.");
+                        ASSERT.areSame(0, e.response.results[0].age, "Expected first age.");
+                        ASSERT.areSame(-1, e.response.results[2].age, "Expected last age.");
+                        ASSERT.areSame("abc", e.response.results[0].name, "Expected first name.");
+                        ASSERT.areSame("ghi", e.response.results[2].name, "Expected last name.");
                     })]
                 });
 

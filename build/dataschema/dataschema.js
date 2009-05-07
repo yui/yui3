@@ -51,6 +51,8 @@ var LANG = Y.Lang,
             if(parser) {
                 value = parser.call(this, value);
             }
+            else {
+            }
         }
         return value;
     }
