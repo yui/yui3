@@ -650,7 +650,7 @@ Event = function() {
             var E = Y.Event;
 
             if (!E._interval) {
-E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
+E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             }
         },
 
@@ -698,7 +698,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Y.Event._tryPreloadAttach, Y.Event), 0);
+            setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
             return new Y.EventHandle(); // @TODO by id needs a defered handle
         },
@@ -1052,7 +1052,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 // window load event fires. Try to find them now so that the
                 // the user is more likely to get the onAvailable notifications
                 // before the window load notification
-                Y.Event._tryPreloadAttach();
+                Y.Event._poll();
 
             }
         },
@@ -1061,11 +1061,11 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
          * Polling function that runs before the onload event fires, 
          * attempting to attach to DOM Nodes as soon as they are 
          * available
-         * @method _tryPreloadAttach
+         * @method _poll
          * @static
          * @private
          */
-        _tryPreloadAttach: function() {
+        _poll: function() {
 
             if (this.locked) {
                 return;
@@ -1291,24 +1291,22 @@ if (Y.config.injected) {
     onLoad();
 } else {
     add(window, "load", onLoad);
+    // Process onAvailable/onContentReady items when when the DOM is ready in IE
+    if (Y.UA.ie && Y.on) {
+        Y.on(EVENT_READY, Event._poll, Event, true);
+    }
 }
 
 add(window, "unload", onUnload);
 
 Y.Event = Event;
-
-// Process onAvailable/onContentReady items when when the DOM is ready in IE
-if (Y.UA.ie && Y.on) {
-    Y.on(EVENT_READY, Event._tryPreloadAttach, Event, true);
-}
-
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
 Event.Target = Y.EventTarget;
 Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
-Event._tryPreloadAttach();
+Event._poll();
 
 })();
 /**
