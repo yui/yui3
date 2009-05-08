@@ -1,4 +1,4 @@
-YUI.add('base', function(Y) {
+YUI.add('base-base', function(Y) {
 
 /**
  * Provides the base Widget class along with an augmentable PluginHost interface
@@ -189,6 +189,13 @@ Y.namespace("Plugin").Host = PluginHost;
      *
      * @module base
      */
+
+    /**
+     * The base-base sub-module provides the Base class, without Base.build functionality
+     *
+     * @module base
+     * @sub-module base-base
+     */
     var O = Y.Object,
         DOT = ".",
         DESTROY = "destroy",
@@ -213,7 +220,7 @@ Y.namespace("Plugin").Host = PluginHost;
      *
      * @constructor
      * @class Base
-     * @uses Attribute, PluginHost
+     * @uses Attribute, Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -325,6 +332,15 @@ Y.namespace("Plugin").Host = PluginHost;
 
             // TODO: Look at why this needs to be done after publish.
             Y.Plugin.Host.call(this);
+
+            if (config) {
+                if (config.on) {
+                    this.on(config.on);
+                }
+                if (config.after) {
+                    this.after(config.after);
+                }
+            }
 
             this.fire(INIT, {cfg: config});
             return this;
@@ -483,21 +499,21 @@ Y.namespace("Plugin").Host = PluginHost;
                     attrs = allAttrs[i];
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
-    
+
+                            // Protect
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
                             if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
                                 cfg.value = Y.clone(val);
                             }
-    
+
+                            path = null;
                             if (attr.indexOf(DOT) !== -1) {
                                 path = attr.split(DOT);
                                 attr = path.shift();
-                            } else {
-                                path = null;
                             }
-    
+
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
                                 O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
@@ -533,6 +549,7 @@ Y.namespace("Plugin").Host = PluginHost;
                 el,
                 classes = this._getClasses(),
                 mergedCfgs = this._getAttrCfgs();
+                this._userCfgs = userConf;
 
             for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
@@ -544,7 +561,9 @@ Y.namespace("Plugin").Host = PluginHost;
                     }
                 }
 
-                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
+                this.addAttrs(this._classCfgs, userConf);
+                this._classCfgs = null;
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
@@ -575,6 +594,45 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
+         * Wrapper for Attribute.get. Adds the ability to 
+         * initialize attributes on demand during initialization
+         * of the ATTRS definitions at each class level.
+         *
+         * @method get
+         *
+         * @param {String} name The attribute whose value will be returned. If 
+         * the attribute is not currently configured, but is part of the ATTRS 
+         * configuration for the class currently being configured, it will be
+         *
+         * @return {Any} The current value of the attribute
+         */
+        get: function(name) {
+
+            if (this._classCfgs) {
+                var attrName = name,
+                    iDot = name.indexOf(DOT);
+
+                if (iDot !== -1) {
+                    attrName = name.slice(0, iDot);
+                }
+
+                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
+                    var classCfg = this._classCfgs[attrName],
+                        userCfg = this._userCfgs,
+                        attrCfg;
+
+                    if (classCfg) {
+                        attrCfg = {};
+                        attrCfg[attrName] = classCfg;
+                        this.addAttrs(attrCfg, userCfg);
+                    }
+                }
+            }
+
+            return Y.Attribute.prototype.get.call(this, name);
+        },
+
+        /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
          * 
@@ -595,7 +653,22 @@ Y.namespace("Plugin").Host = PluginHost;
 
     Y.Base = Base;
 
-    var B = Y.Base;
+
+
+}, '@VERSION@' ,{requires:['attribute']});
+
+YUI.add('base-build', function(Y) {
+
+    /**
+     * The base-build sub-module provides the Base.build functionality
+     *
+     * @module base
+     * @sub-module base-build
+     */
+
+    var Base = Y.Base,
+        L = Y.Lang;
+
 
     /**
      * The build configuration for the Base class.
@@ -609,7 +682,7 @@ Y.namespace("Plugin").Host = PluginHost;
      * @final
      * @private
      */
-    B._buildCfg = {
+    Base._buildCfg = {
         aggregates : ["ATTRS", "PLUGINS"]
     };
 
@@ -648,9 +721,9 @@ Y.namespace("Plugin").Host = PluginHost;
      * @param {Object} cfg Optional. Configuration for the class.
      * @return {Function} A custom class, created from the provided main and extension classes
      */
-    B.build = function(name, main, extensions, cfg) {
+    Base.build = function(name, main, extensions, cfg) {
 
-        var build = B.build,
+        var build = Base.build,
             builtClass = build._getClass(main, cfg),
             aggregates = build._getAggregates(main, cfg),
             dynamic = builtClass._yuibuild.dynamic,
@@ -693,7 +766,7 @@ Y.namespace("Plugin").Host = PluginHost;
         return builtClass;
     };
 
-    Y.mix(B.build, {
+    Y.mix(Base.build, {
 
         _template: function(main) {
 
@@ -734,7 +807,7 @@ Y.namespace("Plugin").Host = PluginHost;
         _getClass : function(main, cfg) {
 
            var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? B.build._template(main) : main;
+                builtClass = (dynamic) ? Base.build._template(main) : main;
 
             builtClass._yuibuild = {
                 id: null,
@@ -769,4 +842,9 @@ Y.namespace("Plugin").Host = PluginHost;
 
 
 
-}, '@VERSION@' ,{requires:['attribute']});
+}, '@VERSION@' ,{requires:['base']});
+
+
+
+YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-build']});
+

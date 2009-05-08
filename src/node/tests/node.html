@@ -75,11 +75,12 @@ body {
     height:1000px;
     width:1000px;
 }
+
+button {
+    display:block;
+}
 </style>
 
-<style type="text/css">
-
-</style>
 </head>
 <body class="yui-skin-sam">
     <div id="test-append"></div>
@@ -91,10 +92,17 @@ body {
         <a href="http://www.yahoo.com" id="link-1">Yahoo!</a>
         <a href="http://www.yahoo.com" id="link-2" tabIndex="-1">Yahoo!</a>
         <form id="test-form" class="test-class" action="#">
-            <input name="test-data1" value="0">
-            <textarea name="test-data2" value="0"></textarea>
-            <button name="test-data3" value="0">button</button>
-            <button name="test-data4">button</button>
+            <input name="test-text-value" value="text value">
+            <input name="test-text-novalue">
+
+            <textarea name="test-textarea-value" value="textarea value"></textarea>
+            <textarea name="test-textarea-novalue"></textarea>
+            <textarea name="test-textarea-textvalue">textarea text</textarea>
+
+            <button name="test-button-value" value="button value">button</button>
+            <button name="test-button-novalue"></button>
+            <button name="test-button-textvalue">button text</button>
+
         </form><div id="test-class">test class</div>
         <div id="test-prop" tabindex="4">text<em id="test-contains">test<span></span></em><strong>node</strong></div>
         <div id="set-style"><div class="bar" id="bar">setStyle</div>foo<div>blah</div></div>
@@ -105,7 +113,7 @@ body {
         <div id="test-children">foo <span>bar</span> <strong>baz</strong> </div>
     </div>
     <div id="inline-style" style="color: green">inline style</div>
-    <div id="foo"></div>
+    <div id="foo" aria-checked="true"></div>
     <div id="test-computed">test computed style</div>
     <form id="form.foo@bar:baz">
         <select id="test-select" name="test-select">
@@ -128,6 +136,7 @@ body {
     </div>
 
 <iframe src="test-frame"></iframe>
+<div id="test-insert-html">foo</div>
 <script type="text/javascript">
 YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var tool = YAHOO.tool,
@@ -376,7 +385,10 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             }), 'ancestor');
             Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
+            Assert.isTrue(Y.get(document.body).inDoc(document));
             Assert.isTrue(node.inDoc(), 'node.inDoc()');
+            Assert.isTrue(node.inDoc(document), 'node.inDoc(document)');
+            Assert.isTrue(node.inDoc(Y.get(document)), 'node.inDoc(Y.get(document))');
 
             Assert.areEqual(byId('test-contains'), Y.Node.getDOMNode(node.getById('test-contains')), 'node.getById("test-contains")');
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
@@ -385,10 +397,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             
             Assert.isFalse(Y.get('body').hasAttribute('title'), 'body.hasAttribute("title")');
-            Assert.isTrue(Y.get('input[name=test-data1]').hasAttribute('value'), 'input.hasAttribute("value")');
-            Assert.isTrue(Y.get('textarea[name=test-data2]').hasAttribute('value'), 'textarea.hasAttribute("value")');
-            Assert.areEqual('0', Y.get('textarea[name=test-data2]').getAttribute('value'), 'textarea.getAttribute("value")');
-            Assert.areEqual('0', Y.get('button[name=test-data3]').getAttribute('value'), 'button.getAttribute("value")');
             Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
             Assert.areEqual('1', Y.get('select[name=test-select] option:nth-child(2)').getAttribute('value'), 'option2.getAttribute("value") (from innerText)');
             Assert.areEqual('', Y.get('select[name=test-select] option:nth-child(3)').getAttribute('value'), 'option3.getAttribute("value") (from innerText)');
@@ -595,12 +603,88 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             window.scrollTo(0, 0);
         },
 
+        test_inject: function() {
+            var html = '<strong>bar</strong>';
+            Y.get('#test-insert-html').insertHTML(html);
+            Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
+                'foo' + html,
+                "Y.get('#test-insert-html').insertHTML('<strong>bar</strong>')");
+
+            Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin');
+            Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
+                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin'));
+
+            Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>', 'afterBegin');
+            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>', 'afterBegin')");
+
+        },
+
+        test_getValue: function() {
+            // text
+            Assert.isTrue(Y.get('input[name=test-text-value]').hasAttribute('value'),
+                'input[name=test-text-value].hasAttribute("value")');
+            Assert.isFalse(Y.get('input[name=test-text-novalue]').hasAttribute('value'),
+                'input[name=test-text-novalue].hasAttribute("value")');
+
+            Assert.areEqual('text value',
+                Y.get('input[name=test-text-value]').get('value'),
+                "Y.get('input[name=test-text-value]').get('value')");
+
+            Assert.areEqual('', // TODO: normalize to null?
+                Y.get('input[name=test-text-novalue]').get('value'),
+                "Y.get('input[name=test-text-novalue]').get('value')");
+
+            // textarea
+            Assert.isTrue(Y.get('textarea[name=test-textarea-value]').hasAttribute('value'),
+                'textarea[name=test-textarea-value].hasAttribute("value")');
+
+            Assert.isFalse(Y.get('textarea[name=test-textarea-novalue]').hasAttribute('value'),
+                'textarea[name=test-textarea-value].hasAttribute("value")');
+
+            Assert.areEqual('textarea text',
+                Y.get('textarea[name=test-textarea-textvalue]').get('value'),
+                'textarea[name=test-textarea-textvalue].get("value")');
+
+            Assert.areEqual('',
+                Y.get('textarea[name=test-textarea-novalue]').get('value'),
+                'textarea[name=test-textarea-novalue].get("value")');
+
+            Assert.areEqual('',
+                Y.get('textarea[name=test-textarea-value]').get('value'),
+                'textarea[name=test-textarea-value].get("value")');
+
+            // button
+            Assert.isTrue(Y.get('button[name=test-button-value]').hasAttribute('value'),
+                'textarea[name=test-button-value].hasAttribute("value")');
+
+            Assert.isFalse(Y.get('button[name=test-button-novalue]').hasAttribute('value'),
+                'textarea[name=test-button-value].hasAttribute("value")');
+
+            Assert.areEqual('button value',
+                Y.get('button[name=test-button-value]').get('value'),
+                'button[name=test-button-value].get("value")');
+
+            Assert.areEqual('',
+                Y.get('button[name=test-button-novalue]').get('value'),
+                'button[name=test-button-novalue].get("value")');
+
+            Assert.areEqual('',
+                Y.get('button[name=test-button-textvalue]').get('value'),
+                'button[name=test-button-textvalue].get("value")');
+        },
+
         test_aria: function() {
             Y.get('body').set('role', 'menu');
             Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.get('body').set('role', 'menu')")
 
             Y.get('body').set('aria-checked', true);
-            Assert.isTrue(document.body.getAttribute('aria-checked') === 'true', "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', document.body.getAttribute('aria-checked', 2), "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.get('body').getAttribute('aria-checked'), "Y.get('body').set('aria-checked', true)")
+            Assert.areEqual('true', Y.get('#foo').get('aria-checked'), "Y.get('#foo').get('aria-checked')");
+
+            Y.get('body').set('aria-checked', false);
+            Assert.areEqual('false', Y.get('body').get('aria-checked'), "Y.get('body').set('aria-checked', false)");
         }
     }));
 
@@ -624,7 +708,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.isNull(doc.query('fake-id'), 'doc.query("#fake-id")');
             Assert.areEqual(document.documentElement.scrollHeight, mask.offsetHeight, 'get("height")');
             Assert.areEqual(document.documentElement.scrollWidth, mask.offsetWidth, 'get("width")');
-
+            mask.className = '';
         }
     })); 
 

@@ -18,7 +18,6 @@ var L = Y.Lang,
     HIDDEN = "hidden",
     DISABLED = "disabled",
     FOCUS = "focus",
-    BLUR = "blur",
     HAS_FOCUS = "hasFocus",
     WIDTH = "width",
     HEIGHT = "height",
@@ -30,7 +29,7 @@ var L = Y.Lang,
     FIRST_CHILD = "firstChild",
     OWNER_DOCUMENT = "ownerDocument",
     BODY = "body",
-    TAB_INDEX = "tabIndex",
+	TAB_INDEX = "tabIndex",
     LOCALE = "locale",
     INIT_VALUE = "initValue",
     ID = "id",
@@ -167,21 +166,35 @@ Widget.ATTRS = {
 
     /**
     * @attribute tabIndex
-    * @description The tabIndex, applied to the bounding box
+    * @description Number (between -32767 to 32767) indicating the widget's 
+	* position in the default tab flow.  The value is used to set the 
+	* "tabIndex" attribute on the widget's bounding box.  Negative values allow
+	* the widget to receive DOM focus programmatically (by calling the focus
+	* method), while being removed from the default tab flow.  A value of 
+	* null removes the "tabIndex" attribute from the widget's bounding box.
     * @type Number
+	* @default null
     */
     tabIndex: {
-        value: 0
+
+		value: null,
+		validator: function (val) {
+            return (L.isNumber(val) || L.isNull(val));
+        }
+
     },
 
     /**
     * @attribute hasFocus
-    * @description Boolean indicating if the Widget has focus.
+    * @description Boolean indicating if the Widget, or one of its descendants, 
+	* has focus.
+    * @readOnly
     * @default false
     * @type boolean
     */
     hasFocus: {
-        value: false
+        value: false,
+        readOnly:true
     },
 
     /**
@@ -580,7 +593,7 @@ Y.extend(Widget, Y.Base, {
     * attribute to "true".
     */
     focus: function () {
-        return this.set(HAS_FOCUS, true);
+        return this._set(HAS_FOCUS, true);
     },
 
     /**
@@ -589,7 +602,7 @@ Y.extend(Widget, Y.Base, {
     * to "false"
     */            
     blur: function () {
-        return this.set(HAS_FOCUS, false);
+        return this._set(HAS_FOCUS, false);
     },
 
     /**
@@ -860,8 +873,20 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindDOMListeners : function() {
-        this.get(BOUNDING_BOX).on(FOCUS, Y.bind(this._onFocus, this));
-        this.get(BOUNDING_BOX).on(BLUR, Y.bind(this._onBlur, this));
+
+		var oDocument = this.get(BOUNDING_BOX).get("ownerDocument");
+
+		Y.on(FOCUS, Y.bind(this._onFocus, this), oDocument);
+
+		//	Fix for Webkit:
+		//	Document doesn't receive focus in Webkit when the user mouses 
+		//	down on it, so the "hasFocus" attribute won't get set to the 
+		//	correct value.
+		
+		if (Y.UA.webkit) {
+			Y.on("mousedown", Y.bind(this._onDocMouseDown, this), oDocument);
+		}
+
     },
 
     /**
@@ -876,7 +901,7 @@ Y.extend(Widget, Y.Base, {
         this._uiSetHeight(this.get(HEIGHT));
         this._uiSetWidth(this.get(WIDTH));
         this._uiSetHasFocus(this.get(HAS_FOCUS));
-        this._uiSetTabIndex(this.get(TAB_INDEX));
+		this._uiSetTabIndex(this.get(TAB_INDEX));
     },
 
     /**
@@ -944,6 +969,28 @@ Y.extend(Widget, Y.Base, {
         }
     },
 
+
+    /**
+    * Set the tabIndex on the widget's rendered UI
+    *
+    * @method _uiSetTabIndex
+    * @protected
+    * @param Number
+    */
+    _uiSetTabIndex: function(index) {
+
+		var boundingBox = this.get(BOUNDING_BOX);
+
+		if (L.isNumber(index)) {
+			boundingBox.set(TAB_INDEX, index);
+		}
+		else {
+			boundingBox.removeAttribute(TAB_INDEX);
+		}
+
+    },
+
+
     /**
      * Sets the hasFocus state for the UI
      *
@@ -970,16 +1017,7 @@ Y.extend(Widget, Y.Base, {
         }
     },
 
-    /**
-    * Set the tabIndex on the widget's rendered UI
-    *
-    * @method _uiSetTabIndex
-    * @protected
-    * @param Number
-    */
-    _uiSetTabIndex: function(index) {
-        this.get(BOUNDING_BOX).set(TAB_INDEX, index);
-    },
+
 
     /**
      * Default visible attribute state change handler
@@ -1036,6 +1074,21 @@ Y.extend(Widget, Y.Base, {
         this._uiSetHasFocus(evt.newVal, evt.src);
     },
 
+	/**
+	* @method _onDocMouseDown
+	* @description "mousedown" event handler for the owner document of the 
+	* widget's bounding box.
+	* @protected
+    * @param {Event.Facade} evt The event facade for the DOM focus event
+	*/
+	_onDocMouseDown: function (evt) {
+
+		if (this._hasDOMFocus) {
+ 			this._onFocus(evt);
+		}
+		
+	},
+
     /**
      * DOM focus event handler, used to sync the state of the Widget with the DOM
      * 
@@ -1044,18 +1097,14 @@ Y.extend(Widget, Y.Base, {
      * @param {Event.Facade} evt The event facade for the DOM focus event
      */
     _onFocus: function (evt) {
-        this.set(HAS_FOCUS, true, { src: UI });
-    },
 
-    /**
-     * DOM blur event handler, used to sync the state of the Widget with the DOM
-     *
-     * @method _onBlur
-     * @protected
-     * @param {Event.Facade} evt The event facade for the DOM blur event
-     */			
-    _onBlur: function (evt) {
-        this.set(HAS_FOCUS, false, { src: UI });
+		var target = evt.target,
+			boundingBox = this.get(BOUNDING_BOX),
+			bHasFocus = (boundingBox.compareTo(target) || boundingBox.contains(target));
+
+		this._hasDOMFocus = bHasFocus;
+        this._set(HAS_FOCUS, bHasFocus, { src: UI });
+
     },
 
     /**
@@ -1277,7 +1326,6 @@ Y.extend(Widget, Y.Base, {
 Widget.PLUGINS = [];
 
 Y.Widget = Widget;
-
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'classnamemanager']});

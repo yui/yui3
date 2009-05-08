@@ -72,80 +72,100 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">State</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
         <span class="c">/**</span>
-<span class="c">         * Add an item with all of the properties in the supplied object.</span>
+<span class="c">         * Add an item with the property and value provided</span>
+<span class="c">         *</span>
 <span class="c">         * @method add</span>
+<span class="c">         * @param name {string} identifier for this attribute</span>
+<span class="c">         * @param key {string} property identifier</span>
+<span class="c">         * @param val {Any} property value</span>
+<span class="c">         */</span>
+        <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
+            <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
+            <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Add an item with all of the properties in the supplied object.</span>
+<span class="c">         * </span>
+<span class="c">         * @method addAll</span>
 <span class="c">         * @param name {string} identifier for this attribute</span>
 <span class="c">         * @param o hash of attributes</span>
 <span class="c">         */</span>
-        <span class="nx">add</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-                <span class="nx">key</span><span class="o">;</span>
-
+        <span class="nx">addAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">key</span><span class="o">;</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">key</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
-                    <span class="o">}</span>
-                    <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Remove entire item, or optionally specified fields</span>
+<span class="c">         * Remove the given key for a specific item</span>
+<span class="c">         *</span>
 <span class="c">         * @method remove</span>
 <span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @param o {string|object|array} single key or collection of keys to delete</span>
+<span class="c">         * @param o {string} The key to delete.</span>
 <span class="c">         */</span>
-        <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span> 
-                <span class="nx">del</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">{</span>
-                        <span class="nx">delete</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">];</span>
-                    <span class="o">}</span>
-                <span class="o">};</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">del</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span> <span class="o">||</span> <span class="nx">d</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">del</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">del</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
-
+        <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">{</span>
+                <span class="nx">delete</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">];</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * For a given item, gets an attribute.  If key is not</span>
-<span class="c">         * supplied, a disposable object with all attributes is </span>
-<span class="c">         * returned.  Use of the latter option makes sense when</span>
-<span class="c">         * working with single items, but not if object explosion</span>
-<span class="c">         * might cause gc problems.</span>
+<span class="c">         * Remove entire item, or optionally specified fields</span>
+<span class="c">         * </span>
+<span class="c">         * @method removeAll</span>
+<span class="c">         * @param name {string} name of attribute</span>
+<span class="c">         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.</span>
+<span class="c">         */</span>
+        <span class="nx">removeAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span> <span class="o">||</span> <span class="nx">d</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">k</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">v</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * For a given item, returns the value of the attribute requested, or undefined if not found.</span>
+<span class="c">         *</span>
 <span class="c">         * @method get</span>
 <span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @param key {string} optional attribute to get</span>
-<span class="c">         * @return either the value of the supplied key or an object with</span>
-<span class="c">         * all data.</span>
+<span class="c">         * @param key {string} optional The attribute value to retrieve.</span>
+<span class="c">         * @return The value of the supplied key.</span>
 <span class="c">         */</span>
         <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">?</span>  <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="o">;</span>
+        <span class="o">},</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="o">(</span><span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">?</span>  <span class="nx">d</span><span class="o">[</span><span class="nx">key</span><span class="o">][</span><span class="nx">name</span><span class="o">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">o</span><span class="o">;</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">d</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
-                        <span class="nx">o</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
-                    <span class="o">}</span>
-                <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
-                <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-            <span class="o">}</span>
+        <span class="c">/**</span>
+<span class="c">         * For a given item, returns a disposable object with all attribute </span>
+<span class="c">         * name/value pairs.</span>
+<span class="c">         *</span>
+<span class="c">         * @method getAll</span>
+<span class="c">         * @param name {string} name of attribute</span>
+<span class="c">         * @return An object withall data.</span>
+<span class="c">         */</span>
+        <span class="nx">getAll</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">d</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">d</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
+                    <span class="nx">o</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+                <span class="o">}</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
 </pre></div>
@@ -225,7 +245,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

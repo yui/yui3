@@ -314,7 +314,10 @@ var BASE = 'base',
                     requires: ['dd-drag']
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag', 'dd-proxy']
+                    requires: ['dd-drag']
+                }, 
+                'dd-scroll':{
+                    requires: ['dd-drag']
                 }, 
                 'dd-plugin':{
                     requires: ['dd-drag'],
@@ -1479,7 +1482,7 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
@@ -1894,18 +1897,18 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     },
 
-    /**
+    /*
      * In IE, the onAvailable/onDOMReady events need help when Event is
      * loaded dynamically
      * @method _pushEvents
      * @param {Function} optional function reference
      * @private
      */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
+    // _pushEvents: function() {
+    //     if (Y.Event) {
+    //         Y.Event._load();
+    //     }
+    // },
 
     /**
      * Apply filter defined for this instance to a url/path

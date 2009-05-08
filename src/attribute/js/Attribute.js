@@ -10,13 +10,13 @@
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
-        INIT = "init",
+        ADDED = "added",
+        INITIALIZING = "initializing",
         INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
-        SET_PUBLISHED = {published:true},
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -110,7 +110,8 @@
                 config = config || {};
 
                 var value,
-                    hasValue = (VALUE in config);
+                    hasValue = (VALUE in config),
+                    conf = this._conf;
 
                 if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
 
@@ -119,13 +120,19 @@
                     value = config.value;
                     delete config.value;
                 }
-                config[INIT] = true;
-                this._conf.add(name, config);
+
+                config[ADDED] = true;
+                config[INITIALIZING] = true;
+
+                conf.addAll(name, config);
 
                 if (hasValue) {
                     // Go through set, so that raw values get normalized/validated
                     this.set(name, value);
                 }
+
+                conf.remove(name, INITIALIZING);
+
             } else {
                 Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
@@ -141,7 +148,7 @@
          * @return boolean, true if an attribute with the given name has been added.
          */
         attrAdded: function(name) {
-            return !!(this._conf.get(name, INIT));
+            return !!(this._conf.get(name, ADDED));
         },
 
         /**
@@ -151,7 +158,7 @@
          * @param {String} name The attribute key
          */
         removeAttr: function(name) {
-            this._conf.remove(name);
+            this._conf.removeAll(name);
         },
 
         /**
@@ -163,7 +170,7 @@
          *
          * @method get
          *
-         * @param {String} key The attribute whose value will be returned. If
+         * @param {String} name The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          * 
@@ -173,7 +180,7 @@
 
             var conf = this._conf,
                 path,
-                getFn,
+                getter,
                 val;
 
             if (name.indexOf(DOT) !== -1) {
@@ -182,9 +189,9 @@
             }
 
             val = conf.get(name, VALUE);
-            getFn = conf.get(name, GETTER);
+            getter = conf.get(name, GETTER);
 
-            val = (getFn) ? getFn.call(this, val) : val;
+            val = (getter) ? getter.call(this, val) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -268,10 +275,10 @@
          * @return {Object} Reference to the host object
          */
         _setAttr : function(name, val, opts, force) {
-            var conf = this._conf,
+            var allowSet = true,
+                conf = this._conf,
                 data = conf.data,
-                allowSet = true,
-                initialSet = (!data.value || !(name in data.value)),
+                initialSet,
                 strPath,
                 path,
                 currVal;
@@ -282,15 +289,19 @@
                 name = path.shift();
             }
 
+            initialSet = (!data.value || !(name in data.value));
+
             if (!this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
                 if (!initialSet && !force) {
+
                     if (conf.get(name, WRITE_ONCE)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
+
                     if (conf.get(name, READ_ONLY)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
@@ -299,6 +310,7 @@
 
                 if (allowSet) {
                     currVal = this.get(name);
+
                     if (path) {
                        val = O.setValue(Y.clone(currVal), path, val);
 
@@ -309,7 +321,11 @@
                     }
 
                     if (allowSet) {
-                        this._fireAttrChange(name, currVal, val, strPath, opts);
+                        if (conf.get(name, INITIALIZING)) {
+                            this._setAttrVal(name, strPath, currVal, val);
+                        } else {
+                            this._fireAttrChange(name, strPath, currVal, val, opts);
+                        }
                     }
                 }
             }
@@ -323,28 +339,28 @@
          * 
          * @method _fireAttrChange
          * @private
-         * @param {String} name The name of the attribute
+         * @param {String} attrName The name of the attribute
+         * @param {String} subAttrName The full path of the property being changed, 
+         * if this is a sub-attribute value being change. Otherwise null.
          * @param {Any} currVal The current value of the attribute
          * @param {Any} newVal The new value of the attribute
-         * @param {String} strFullPath The full path of the property being changed, 
-         * if this is a sub-attribute value being change
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttrChange : function(name, currVal, newVal, strFullPath, opts) {
-            var eventName = name + CHANGE,
+        _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
+            var eventName = attrName + CHANGE,
                 conf = this._conf,
                 facade;
 
-            if (!conf.get(name, PUBLISHED)) {
+            if (!conf.get(attrName, PUBLISHED)) {
                 this.publish(eventName, this._ATTR_E_CFG);
-                conf.add(name, SET_PUBLISHED);
+                conf.add(attrName, PUBLISHED, true);
             }
 
             facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
 
             facade.type = eventName;
-            facade.attrName = name;
-            facade.subAttrName = strFullPath;
+            facade.attrName = attrName;
+            facade.subAttrName = subAttrName;
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
@@ -359,52 +375,69 @@
          * @param {Event.Facade} e The event object for the custom event
          */
         _defAttrChangeFn : function(e) {
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
+            } else {
+                e.newVal = this._conf.get(e.attrName, VALUE);
+            }
+        },
+
+        /**
+         * Updates the stored value of the attribute in the privately held State object,
+         * if validation and setter passes.
+         *
+         * @method _setAttrVal
+         * @private
+         * @param {String} attrName The attribute name.
+         * @param {String} subAttrName The sub-attribute name, if setting a sub-attribute property ("x.y.z").
+         * @param {Any} prevVal The currently stored value of the attribute.
+         * @param {Any} newVal The value which is going to be stored.
+         * 
+         * @return {booolean} true if the new attribute value was stored, false if not.
+         */
+        _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
 
             var allowSet = true,
                 conf = this._conf,
-                name = e.attrName,
-                val = e.newVal,
-                valFn  = conf.get(name, VALIDATOR),
-                setFn = conf.get(name, SETTER),
-                storedVal,
+                validator  = conf.get(attrName, VALIDATOR),
+                setter = conf.get(attrName, SETTER),
                 retVal;
 
-            if (!valFn || valFn.call(this, val)) {
-                if (setFn) {
-                    retVal = setFn.call(this, val);
+            if (!validator || validator.call(this, newVal)) {
+
+                if (setter) {
+                    retVal = setter.call(this, newVal);
+
                     if (retVal === INVALID_VALUE) {
+                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
                         allowSet = false;
-                        Y.log('Attribute: ' + name + ', setter returned Attribute.INVALID_VALUE for value:' + val, 'warn', 'attribute');
                     } else if (retVal !== undefined){
-                        Y.log('Attribute: ' + name + ', raw value: ' + val + ' modified by setter to:' + retVal, 'info', 'attribute');
-                        val = retVal;
+                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
+                        newVal = retVal;
                     }
                 }
-            } else {
-                Y.log('Attribute:' + name + ', Validation failed for value:' + val, 'warn', 'attribute');
-                allowSet = false;
-            }
 
-            if (!e.subAttrName && val === e.prevVal) {
-                Y.log('Attribute: ' + name + ', value unchanged:' + val, 'warn', 'attribute');
-                allowSet = false;
-            }
-
-            if (allowSet) {
-                // Store value
-                storedVal = { value: val };
-                if (conf.get(name, INIT_VALUE) === undefined) {
-                    storedVal[INIT_VALUE] = val;
+                if (allowSet) {
+                    if(!subAttrName && newVal === prevVal) {
+                        Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
+                        allowSet = false;
+                    } else {
+                        // Store value
+                        if (conf.get(attrName, INIT_VALUE) === undefined) {
+                            conf.add(attrName, INIT_VALUE, newVal);
+                        }
+                        conf.add(attrName, VALUE, newVal);
+                    }
                 }
-                conf.add(name, storedVal);
-                e.newVal = val;
-            } else {
-                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + name + ' , value:' + val, 'warn', 'attribute');
 
-                // Prevent "after" listeners from being 
-                // invoked since nothing changed.
-                e.stopImmediatePropagation();
+            } else {
+                Y.log('Attribute:' + attrName + ', Validation failed for value:' + newVal, 'warn', 'attribute');
+                allowSet = false;
             }
+
+            return allowSet;
         },
 
         /**
@@ -451,7 +484,9 @@
         },
 
         /**
-         * Configures attributes, and sets initial values
+         * Configures attributes, and sets initial values. This method does not 
+         * isolate configuration object by merging/cloning. The caller is responsible for 
+         * merging/cloning the configuration object when required.
          *
          * @method addAttrs
          * @chainable
@@ -570,7 +605,6 @@
                     }
                 }
             }
-
             return val;
         }
     };
