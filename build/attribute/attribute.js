@@ -298,7 +298,8 @@ YUI.add('attribute', function(Y) {
          */
         get : function(name) {
 
-            var conf = this._conf,
+            var fullName = name,
+                conf = this._conf,
                 path,
                 getter,
                 val;
@@ -311,7 +312,7 @@ YUI.add('attribute', function(Y) {
             val = conf.get(name, VALUE);
             getter = conf.get(name, GETTER);
 
-            val = (getter) ? getter.call(this, val) : val;
+            val = (getter) ? getter.call(this, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -518,12 +519,13 @@ YUI.add('attribute', function(Y) {
                 conf = this._conf,
                 validator  = conf.get(attrName, VALIDATOR),
                 setter = conf.get(attrName, SETTER),
+                name = subAttrName || attrName,
                 retVal;
 
-            if (!validator || validator.call(this, newVal)) {
+            if (!validator || validator.call(this, newVal, name)) {
 
                 if (setter) {
-                    retVal = setter.call(this, newVal);
+                    retVal = setter.call(this, newVal, name);
 
                     if (retVal === INVALID_VALUE) {
                         allowSet = false;
