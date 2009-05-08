@@ -368,6 +368,116 @@
             }
         });
 
+        var testFunction = new Y.Test.Case({
+            name: "DataSource.Function Tests",
+
+            testFunctionDefaults: function() {
+                var ds = new Y.DataSource.Function({
+                    source: function() {
+                        return [{type:"a",age:0,name:"c"},{type:"d",age:1,name:"f"},{type:"g",age:-1,name:"i"}];
+                    }
+                });
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.areSame("foo", e.request, "Expected same request.");
+                        ASSERT.isObject(e.response, "Expected response object.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                    })]
+                });
+
+                ds.sendRequest("foo", {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("Function failure case.");
+                    }
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testFunctionEvents: function() {
+                var ds = new Y.DataSource.Function({
+                    source: function() {
+                        return [{type:"a",age:0,name:"c"},{type:"d",age:1,name:"f"},{type:"g",age:-1,name:"i"}];
+                    }
+                });
+                ds.plug({fn: Y.plugin.DataSourceArraySchema, cfg: {
+                    schema: {
+                        resultFields: ["type", "name"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleRequest",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "request: Expected transaction ID.");
+                        ASSERT.areSame("foo", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "request: Expected callback.");
+                    })]
+                });
+                ds.subscribe("request", handler.handleRequest);
+
+                Y.Mock.expect(handler,{
+                    method: "handleData",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "data: Expected transaction ID.");
+                        ASSERT.areSame("foo", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "data: Expected callback.");
+                        ASSERT.isObject(e.data, "data: Expected raw data.");
+                    })]
+                });
+                ds.subscribe("data", handler.handleData);
+
+                Y.Mock.expect(handler,{
+                    method: "handleResponse",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "response: Expected transaction ID.");
+                        ASSERT.areSame("foo", e.request, "Expected same request.");
+                        ASSERT.areSame("callback", e.callback, "response: Expected callback.");
+                        ASSERT.isObject(e.data, "response: Expected raw data.");
+                        ASSERT.isObject(e.response, "response: Expected normalized response object.");
+                        ASSERT.isArray(e.response.results, "response: Expected parsed results.");
+                        ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
+                    })]
+                });
+                ds.subscribe("response", handler.handleResponse);
+
+                ds.sendRequest("foo", "callback");
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testFunctionError: function() {
+                var ds = new Y.DataSource.Function({
+                    source: "foo"
+                });
+                ds.plug({fn: Y.plugin.DataSourceArraySchema, cfg: {
+                    schema: {
+                        resultFields: ["type", "name"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleError",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "error: Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "error: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "error: Expected callback.");
+                        ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
+                    })]
+                });
+                ds.subscribe("error", handler.handleError);
+
+                ds.sendRequest("a", "callback");
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            }
+        });
+
         var testDataSchemaPlugin = new Y.Test.Case({
             name: "DataSource DataSchema Plugin Tests",
 
@@ -657,6 +767,7 @@
         Y.Test.Runner.add(testLocal);
         Y.Test.Runner.add(testXHR);
         Y.Test.Runner.add(testScriptNode);
+        Y.Test.Runner.add(testFunction);
         Y.Test.Runner.add(testDataSchemaPlugin);
         Y.Test.Runner.add(testCaching);
         Y.Test.Runner.add(testPolling);
