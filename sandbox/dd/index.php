@@ -440,7 +440,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         dd.addToGroup('two');
     });
     */
-    /*
+    
     Y.Node.get('document').on('keypress', function(e) {
         if ((e.keyCode === 27) || (e.charCode === 27)) {
             if (Y.DD.DDM.activeDrag) {
@@ -449,7 +449,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             }
         }
     });
-    */
+    
     /*
     dd.on('drag:enter', function() {
         //Y.log('drag:enter', arguments);
