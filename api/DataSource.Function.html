@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datasource  DataSourceJSONSchema   (YUI Library)</title>
+	<title>API: datasource  DataSource.Function   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>datasource&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
-                 &gt; DataSourceJSONSchema 
+                 &gt; DataSource.Function 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,9 +48,9 @@
 
                         
                         
-                            Class <b property="yui:name">DataSourceJSONSchema</b>
+                            Class <b property="yui:name">DataSource.Function</b>
                         <span class="extends">
-                           - extends <a href="Plugin.html" title="Plugin">Plugin</a>
+                           - extends <a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a>
                         </span>
 
                     </h2>
@@ -60,9 +60,25 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Adds schema-parsing to the YUI DataSource utility.
+                        Function subclass for the YUI DataSource utility.
                     </div>
 
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">DataSource.Function</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
@@ -83,18 +99,22 @@
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_NS">
-                                    <h4><a name="property_NS" property="yui:name">NS</a>
-                                        - <code>static final <span property="yui:type">String</span></code>
+                                    <div class="" rel="yui:property" resource="#property_scope">
+                                    <h4><a name="property_scope" property="yui:name">scope</a>
+                                        - <code><span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The namespace for the plugin. This will be the property on the host which
-references the plugin instance.
+                                            Context in which to execute the function. By default, is the DataSource
+instance itself. If set, the function will receive the DataSource instance
+as an additional argument.
                                         </div>
                                     </div>
      
                                         
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
 
 
                                     <hr />
@@ -115,8 +135,8 @@ references the plugin instance.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.html">
-                            <h4>Properties inherited from <a href="Plugin.html" property="yui:name" title="Plugin">Plugin</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
+                            <h4>Properties inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
@@ -130,52 +150,39 @@ references the plugin instance.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl>">
+                                    <div class="protected" rel="yui:method" resource="#method__defRequestFn">
                                     <h4>
-                                        <a name="method__beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl>">_beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl></a></h4>
+                                        <a name="method__defRequestFn">_defRequestFn</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_beforeDefDataFn
+                                            <strong property="yui:name">_defRequestFn</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Passes query string to IO. Fires <code>response</code> event when
+response is received asynchronously.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Event Facade with the following properties:
 <dl>
 <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
 <dt>request (Object)</dt> <dd>The request.</dd>
@@ -186,18 +193,9 @@ references the plugin instance.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl></strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Parses raw data into a normalized response.
-                                        </div>
-
-                                        <div class="description">
-
+</dl></span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -316,21 +314,30 @@ references the plugin instance.
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.html">
-                                <h4>Methods inherited from <a href="Plugin.html" property="yui:name" title="Plugin">Plugin</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
+                                <h4>Methods inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Plugin.html#method_destructor">                                        
-                                            <a class="" href="Plugin.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method__defDataFn">                                        
+                                            <a class="protected" href="DataSource.Local.html#method__defDataFn" property="yui:name" title="_defDataFn">_defDataFn</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.html#method_doAfter">                                        
-                                            <a class="" href="Plugin.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method__defRequestFn">                                        
+                                            <a class="protected" href="DataSource.Local.html#method__defRequestFn" property="yui:name" title="_defRequestFn">_defRequestFn</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.html#method_doBefore">                                        
-                                            <a class="" href="Plugin.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method__defResponseFn">                                        
+                                            <a class="protected" href="DataSource.Local.html#method__defResponseFn" property="yui:name" title="_defResponseFn">_defResponseFn</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.html#method_initializer">                                        
-                                            <a class="" href="Plugin.html#method_initializer" property="yui:name" title="initializer">initializer</a>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method__initEvents">                                        
+                                            <a class="private" href="DataSource.Local.html#method__initEvents" property="yui:name" title="_initEvents">_initEvents</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method_destructor">                                        
+                                            <a class="private" href="DataSource.Local.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method_initializer">                                        
+                                            <a class="private" href="DataSource.Local.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="DataSource.Local.html#method_sendRequest">                                        
+                                            <a class="" href="DataSource.Local.html#method_sendRequest" property="yui:name" title="sendRequest">sendRequest</a>
                                             </span>
                                     </code>
                                 </div>
@@ -339,6 +346,55 @@ references the plugin instance.
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_sourceChange">
+                                    <h4>
+                                        <a name="event_sourceChange">sourceChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">sourceChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'source' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
@@ -362,12 +418,24 @@ references the plugin instance.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.html">
-                            <h4>Events inherited from <a href="Plugin.html" property="yui:name" title="Plugin">Plugin</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
+                            <h4>Events inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
                             <div class="content" rel="yui:events">
                                 <code>
-                                        <span rel="yui:event" resource="Plugin.html#event_hostChange">
-                                        <a class="" href="Plugin.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
+                                        <span rel="yui:event" resource="DataSource.Local.html#event_data">
+                                        <a class="" href="DataSource.Local.html#event_data" property="yui:name" title="data">data</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_error">
+                                        <a class="" href="DataSource.Local.html#event_error" property="yui:name" title="error">error</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_request">
+                                        <a class="" href="DataSource.Local.html#event_request" property="yui:name" title="request">request</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_response">
+                                        <a class="" href="DataSource.Local.html#event_response" property="yui:name" title="response">response</a>
+                                        </span>
+                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_sourceChange">
+                                        <a class="" href="DataSource.Local.html#event_sourceChange" property="yui:name" title="sourceChange">sourceChange</a>
                                         </span>
                                     
                                 </code>
@@ -377,6 +445,29 @@ references the plugin instance.
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_source">
+                                    <h4><a name="config_source">source</a>
+                                        <code>- <span property="yui:type">MIXED</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Pointer to live data.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: null
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
                         <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
@@ -393,12 +484,12 @@ references the plugin instance.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.html">
-                            <h4>Configuration attributes inherited from <a href="Plugin.html" property="yui:name" title="Plugin">Plugin</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
+                            <h4>Configuration attributes inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
                             <div class="content" rel="yui:attributes">
                                 <code>
-                                        <span rel="yui:attribute" resource="Plugin.html#config_host">                                        
-                                        <a class="" href="Plugin.html#config_host" property="yui:name" title="host">host</a><span class="">,</span>
+                                        <span rel="yui:attribute" resource="DataSource.Local.html#config_source">                                        
+                                        <a class="" href="DataSource.Local.html#config_source" property="yui:name" title="source">source</a><span class="">,</span>
                                         </span>
                                         
                                 </code>
@@ -456,13 +547,13 @@ references the plugin instance.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DataSource.Function.html" title="DataSource.Function">DataSource.Function</a></li>
+                                <li class="selected"><a href="DataSource.Function.html" title="DataSource.Function">DataSource.Function</a></li>
                                 <li class=""><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
                                 <li class=""><a href="DataSource.ScriptNode.html" title="DataSource.ScriptNode">DataSource.ScriptNode</a></li>
                                 <li class=""><a href="DataSource.XHR.html" title="DataSource.XHR">DataSource.XHR</a></li>
                                 <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
                                 <li class=""><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
-                                <li class="selected"><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
+                                <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
                                 <li class=""><a href="DataSourceTextSchema.html" title="DataSourceTextSchema">DataSourceTextSchema</a></li>
                                 <li class=""><a href="DataSourceXMLSchema.html" title="DataSourceXMLSchema">DataSourceXMLSchema</a></li>
                                 <li class=""><a href="Pollable.html" title="Pollable">Pollable</a></li>
@@ -489,55 +580,31 @@ references the plugin instance.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
-                                <li class=""><a href="#property_NS" title="NS">NS</a></li>
+                                <li class=""><a href="#property_scope" title="scope">scope</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl>" title="_beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl>">_beforeDefDataFn
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
-</dl>
-</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl></a></li>
+                                <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
                                 <li class="private"><a href="#method_initializer" title="initializer">initializer</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_sourceChange" title="sourceChange">sourceChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_source" title="source">source</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -548,7 +615,7 @@ references the plugin instance.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataSource.ScriptNode", "name": "asyncMode", "url": "DataSource.ScriptNode.html#property_asyncMode", "type": "property"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceXMLSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceXMLSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceJSONSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceJSONSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<dt>scope (Object)<\/dt> <dd>Execution context.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "", "host": "DataSource.ScriptNode", "name": "callbacks", "url": "DataSource.ScriptNode.html#property_callbacks", "type": "property"}, {"access": "", "host": "Pollable", "name": "clearAllIntervals", "url": "Pollable.html#method_clearAllIntervals", "type": "method"}, {"access": "", "host": "Pollable", "name": "clearInterval", "url": "Pollable.html#method_clearInterval", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.ScriptNode", "name": "_defRequestFn", "url": "DataSource.ScriptNode.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.ScriptNode", "name": "generateRequestCallback", "url": "DataSource.ScriptNode.html#method_generateRequestCallback", "type": "method"}, {"access": "", "host": "DataSource.ScriptNode", "name": "get", "url": "DataSource.ScriptNode.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.ScriptNode", "name": "getChange", "url": "DataSource.ScriptNode.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSource.Function", "name": "initializer", "url": "DataSource.Function.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.ScriptNode", "name": "initializer", "url": "DataSource.ScriptNode.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceXMLSchema", "name": "initializer", "url": "DataSourceXMLSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceJSONSchema", "name": "initializer", "url": "DataSourceJSONSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "Pollable", "name": "_intervals", "url": "Pollable.html#property__intervals", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.ScriptNode", "name": "NAME", "url": "DataSource.ScriptNode.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NAME", "url": "DataSourceXMLSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NAME", "url": "DataSourceJSONSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NS", "url": "DataSourceXMLSchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NS", "url": "DataSourceJSONSchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "scope", "url": "DataSource.Function.html#property_scope", "type": "property"}, {"access": "", "host": "DataSource.ScriptNode", "name": "scriptCallbackParam", "url": "DataSource.ScriptNode.html#property_scriptCallbackParam", "type": "property"}, {"access": "", "host": "Pollable", "name": "setInterval", "url": "Pollable.html#method_setInterval", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "private", "host": "DataSource.ScriptNode", "name": "_tId", "url": "DataSource.ScriptNode.html#property__tId", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "private", "host": "DataSource.Function", "name": "initializer", "url": "DataSource.Function.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "scope", "url": "DataSource.Function.html#property_scope", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
 </script>
 </body>
 </html>

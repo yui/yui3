@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datasource   datasource-jsonschema.js  (YUI Library)</title>
+	<title>API: datasource   datasource-function.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
                 
-                 &gt; datasource-jsonschema.js (source view) 
+                 &gt; datasource-function.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -48,59 +48,76 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extends DataSource with schema-parsing on JSON data.</span>
+<span class="c"> * The DataSource utility provides a common configurable interface for widgets to</span>
+<span class="c"> * access a variety of data, from JavaScript arrays to online database servers.</span>
 <span class="c"> *</span>
 <span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-jsonschema</span>
 <span class="c"> */</span>
-
+<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
 <span class="c">/**</span>
-<span class="c"> * Adds schema-parsing to the YUI DataSource utility.</span>
-<span class="c"> * @class DataSourceJSONSchema</span>
-<span class="c"> * @extends Plugin</span>
+<span class="c"> * Function subclass for the YUI DataSource utility.</span>
+<span class="c"> * @class DataSource.Function</span>
+<span class="c"> * @extends DataSource.Local</span>
+<span class="c"> * @constructor</span>
 <span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DataSourceJSONSchema</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+    <span class="nx">DSFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">DSFn</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">};</span>
+    
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DataSourceJSONSchema</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * The namespace for the plugin. This will be the property on the host which</span>
-<span class="c">     * references the plugin instance.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NS</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;schema&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;schema&quot;</span><span class="o">,</span>
-
+    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">// DataSource.Function static properties</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSFn</span><span class="o">,</span> <span class="o">{</span>
     <span class="c">/**</span>
 <span class="c">     * Class name.</span>
 <span class="c">     *</span>
 <span class="c">     * @property NAME</span>
 <span class="c">     * @type String</span>
-<span class="c">     * @static</span>
+<span class="c">     * @static     </span>
 <span class="c">     * @final</span>
-<span class="c">     * @value &quot;DataSourceJSONSchema&quot;</span>
+<span class="c">     * @value &quot;DataSource.Function&quot;</span>
 <span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;DataSourceJSONSchema&quot;</span><span class="o">,</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;DataSource.Function&quot;</span><span class="o">,</span>
+
 
     <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
 <span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSourceJSONSchema Attributes</span>
+<span class="c"></span>    <span class="c">// DataSource.Function Attributes</span>
 <span class="c"></span>    <span class="c">//</span>
 <span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
 <span class="c"></span>
     <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">schema</span><span class="o">:</span> <span class="o">{</span>
-            <span class="c">//value: {}</span>
-<span class="c"></span>        <span class="o">}</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute source</span>
+<span class="c">        * @description Pointer to live data.</span>
+<span class="c">        * @type MIXED</span>
+<span class="c">        * @default null</span>
+<span class="c">        */</span>
+        <span class="nx">source</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isFunction</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Context in which to execute the function. By default, is the DataSource</span>
+<span class="c">         * instance itself. If set, the function will receive the DataSource instance</span>
+<span class="c">         * as an additional argument.</span>
+<span class="c">         *</span>
+<span class="c">         * @property scope</span>
+<span class="c">         * @type Object</span>
+<span class="c">         * @default null</span>
+<span class="c">         */</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+        <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">});</span>
+    
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSFn</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Local</span><span class="o">,</span> <span class="o">{</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DataSourceJSONSchema</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+
     <span class="c">/**</span>
 <span class="c">    * Internal init() handler.</span>
 <span class="c">    *</span>
@@ -109,13 +126,15 @@
 <span class="c">    * @private</span>
 <span class="c">    */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">doBefore</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_beforeDefDataFn</span><span class="o">);</span>
+        
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Parses raw data into a normalized response.</span>
+<span class="c">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
+<span class="c">     * response is received asynchronously.</span>
 <span class="c">     *</span>
-<span class="c">     * @method _beforeDefDataFn</span>
+<span class="c">     * @method _defRequestFn</span>
+<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
 <span class="c">     * &lt;dl&gt;</span>
 <span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
 <span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
@@ -126,28 +145,29 @@
 <span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
 <span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_beforeDefDataFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">)</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">XHR</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">responseText</span><span class="o">))</span> <span class="o">?</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">:</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-            <span class="nx">response</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;schema&quot;</span><span class="o">),</span> <span class="nx">data</span><span class="o">);</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">),</span>
+            <span class="nx">scope</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;scope&quot;</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span>
+            <span class="nx">response</span><span class="o">;</span>
             
-        <span class="c">// Default</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(!</span><span class="nx">response</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">response</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="nx">meta</span><span class="o">:</span> <span class="o">{},</span>
-                <span class="nx">results</span><span class="o">:</span> <span class="nx">data</span>
-            <span class="o">};</span>
-        <span class="o">}</span>
-        
-        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">).</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Halt</span><span class="o">(</span><span class="s2">&quot;DataSourceJSONSchema plugin halted _defDataFn&quot;</span><span class="o">);</span>
+            <span class="k">if</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">response</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">scope</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Data failure&quot;</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+            <span class="o">}</span>
+            
+        <span class="k">return</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">});</span>
+  
+<span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nb">Function</span> <span class="o">=</span> <span class="nx">DSFn</span><span class="o">;</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;plugin&#39;</span><span class="o">).</span><span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="nx">DataSourceJSONSchema</span><span class="o">;</span>
 </pre></div>
                     </div>
 			</div>
@@ -217,8 +237,8 @@
                         <ul class="content">        
                                 <li class=""><a href="datasource-arrayschema.js.html" title="datasource-arrayschema.js">datasource-arrayschema.js</a></li>
                                 <li class=""><a href="datasource-cache.js.html" title="datasource-cache.js">datasource-cache.js</a></li>
-                                <li class=""><a href="datasource-function.js.html" title="datasource-function.js">datasource-function.js</a></li>
-                                <li class="selected"><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
+                                <li class="selected"><a href="datasource-function.js.html" title="datasource-function.js">datasource-function.js</a></li>
+                                <li class=""><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
                                 <li class=""><a href="datasource-local.js.html" title="datasource-local.js">datasource-local.js</a></li>
                                 <li class=""><a href="datasource-polling.js.html" title="datasource-polling.js">datasource-polling.js</a></li>
                                 <li class=""><a href="datasource-scriptnode.js.html" title="datasource-scriptnode.js">datasource-scriptnode.js</a></li>
