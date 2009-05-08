@@ -345,7 +345,8 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Resets the given attribute or all attributes to the initial value.
+         * Resets the given attribute or all attributes to the initial value, if the attribute
+         * is not readOnly, or writeOnce.
          *
          * @method reset
          * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset.
@@ -353,11 +354,11 @@ YUI.add('attribute', function(Y) {
          */
         reset : function(name) {
             if (name) {
-                this._set(name, this._conf.get(name, INIT_VALUE));
+                this.set(name, this._conf.get(name, INIT_VALUE));
             } else {
                 var initVals = this._conf.data.initValue;
                 Y.each(initVals, function(v, n) {
-                    this._set(n, v);
+                    this.set(n, v);
                 }, this);
             }
             return this;
