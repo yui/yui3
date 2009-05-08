@@ -118,8 +118,8 @@ YUI.add('dd-ddm', function(Y) {
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
-    
-    Y.on('event:ready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
+
+    Y.on('domready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
 
 
 
