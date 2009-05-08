@@ -13,8 +13,16 @@
             background-color:green;
         }
 
+        #console .yui-console-entry-perf .yui-console-entry-cat {
+            background-color:blue;
+        }
+
         #console {
             position:static;
+        }
+        
+        html, body {
+            height:100%;
         }
     </style>
 
@@ -1076,11 +1084,155 @@
             };
 
             extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
+            
+            
+            var perfTemplate = {
+                testConstruction: function() {
+                    function Test() {
+                        Test.superclass.constructor.apply(this, arguments);
+                    };
+
+                    Test.NAME = 'test';
+
+                    Test.ATTRS = {
+
+                        attr1: {
+                            value: "Foo",
+                            setter: function(n) {
+                                return n;
+                            }
+                        },
+
+                        attr2: {
+                            value: "Bar",
+                            setter: function(n) {
+                                return n;
+                            }
+                        },
+                
+                        attr3: {
+                            value: true
+                        },
+                
+                        attr4: {
+                            value: 3
+                        },
+                
+                        attr5: {
+                            value: 3
+                        },
+                
+                        attr6: {
+                            value: false,
+                            setter: function(lock) {
+                                return lock;
+                            }
+                        },
+                
+                        attr7: {
+                            value: false
+                        },
+                
+                        attr8: {
+                            value: true
+                        },
+                
+                        attr9: {
+                            value: true
+                        },
+                
+                        attr10: {
+                            value: false
+                        },
+                
+                        attr11: {
+                            value: true
+                        },
+                
+                        attr12: {
+                            value: false
+                        },
+                
+                        attr13: {
+                            value: false
+                        },
+                
+                        attr14: {
+                            value: false,
+                            setter: function(val) {
+                                return val;
+                            }
+                        },
+                
+                        attr15: {
+                            value: null,
+                            setter: function(val) {
+                                return false;
+                            }
+                        },
+                
+                        attr16: {
+                            value: ['default'],
+                
+                            getter: function() {
+                                return false;
+                            },
+                
+                            setter: function(g) {
+                                return g;
+                            }
+                        },
+                        attr17: {
+                            value: null,
+                            setter: function(g) {
+                                return g;
+                            }
+                        },
+                        attr18: {
+                            writeOnce: true,
+                            value: null
+                        },
+                        attr19: {
+                            writeOnce: true,
+                            value: null
+                        },
+                        attr20: {
+                            writeOnce: true,
+                            value: null
+                        }
+                    };
+                
+                    Y.extend(Test, Y.Base, {
+                        foo: function() {}
+                    });
+
+                    var start, end;
+
+                    start = new Date().getTime();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    end = new Date().getTime();
+
+                    var time = (end-start)/10;
+                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 20 : 10;
+
+                    Y.log("Construction Time: " + time, "perf");
+                    Y.Assert.isTrue((time < expectedTime));
+                }
+            }
 
             //create the console
             new Y.Console({
                 width:"100%",
-                height:"50em",
+                height:"95%",
                 boundingBox:"#console",
                 verbose : false,
                 printTimeout: 0,
@@ -1099,6 +1251,8 @@
 
             Y.Test.Runner.add(new Y.Test.Case(basicTemplate));     // Running again, to make sure static attributes aren't modified
             Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));  // Running again, to make sure static attributes aren't modified
+
+            Y.Test.Runner.add(new Y.Test.Case(perfTemplate));
 
             Y.Test.Runner.run();
 
