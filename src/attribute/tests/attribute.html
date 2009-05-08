@@ -144,6 +144,35 @@
                     getter: function(val) {
                         return val*5;
                     }
+                },
+
+                I : {
+                    value:{
+                        a: 5
+                    },
+                    getter: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return val;
+                    },
+                    setter: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                    },
+                    validator: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return true;
+                    }
                 }
             };
 
@@ -799,7 +828,8 @@
                         "E": "MyNewEVal",
                         "F": "MyNewFVal",
                         "DE": "MyNewDEVal",
-                        complex: "MyNewComplexVal"
+                        complex: "MyNewComplexVal",
+                        "I" : "MyNewIVal"
                     });
 
                     var expectedVals = {
@@ -813,6 +843,7 @@
                         complex: "MyNewComplexVal",
                         G: 35,
                         H: 25,
+                        I: "MyNewIVal",
                         initialized:true,
                         destroyed:false
                     };
@@ -1035,6 +1066,12 @@
 
                     Y.Assert.areEqual(35, h.get("G"));
                     Y.Assert.areEqual(25, h.get("H"));
+                },
+
+                testGetterSetterValidatorNameArg : function() {
+                    var h = this.createHost();
+                    h.set("I.a", 6);
+                    h.set("I", {a:7, b:8});
                 }
             };
 
