@@ -227,7 +227,8 @@
 <span class="c">         */</span>
         <span class="nx">get</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">fullName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">,</span>
+                <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">path</span><span class="o">,</span>
                 <span class="nx">getter</span><span class="o">,</span>
                 <span class="nx">val</span><span class="o">;</span>
@@ -240,7 +241,7 @@
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
             <span class="nx">getter</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">);</span>
 
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getter</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getter</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">fullName</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
 
             <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
@@ -452,12 +453,13 @@
                 <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
                 <span class="nx">validator</span>  <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
                 <span class="nx">setter</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">SETTER</span><span class="o">),</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">subAttrName</span> <span class="o">||</span> <span class="nx">attrName</span><span class="o">,</span>
                 <span class="nx">retVal</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">validator</span> <span class="o">||</span> <span class="nx">validator</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">validator</span> <span class="o">||</span> <span class="nx">validator</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">setter</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">);</span>
+                    <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">retVal</span> <span class="o">===</span> <span class="nx">INVALID_VALUE</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, setter returned Attribute.INVALID_VALUE for value:&#39;</span> <span class="o">+</span> <span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
