@@ -158,7 +158,7 @@
          * @param {String} name The attribute key
          */
         removeAttr: function(name) {
-            this._conf.remove(name);
+            this._conf.removeAll(name);
         },
 
         /**
@@ -170,7 +170,7 @@
          *
          * @method get
          *
-         * @param {String} key The attribute whose value will be returned. If
+         * @param {String} name The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          * 

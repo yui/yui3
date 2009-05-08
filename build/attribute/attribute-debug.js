@@ -25,8 +25,23 @@ YUI.add('attribute', function(Y) {
     Y.State.prototype = {
 
         /**
-         * Add an item with all of the properties in the supplied object.
+         * Add an item with the property and value provided
+         *
          * @method add
+         * @param name {string} identifier for this attribute
+         * @param key {string} property identifier
+         * @param val {Any} property value
+         */
+        add : function(name, key, val) {
+            var d = this.data;
+            d[key] = d[key] || {};
+            d[key][name] = val;
+        },
+
+        /**
+         * Add an item with all of the properties in the supplied object.
+         * 
+         * @method addAll
          * @param name {string} identifier for this attribute
          * @param o hash of attributes
          */
@@ -40,63 +55,59 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Add an item with the property and value provided
-         * @method add
-         * @param name {string} identifier for this attribute
-         * @param key {string} property identifier
-         * @param val {Any} property value
-         */
-        add : function(name, key, val) {
-            var d = this.data;
-            d[key] = d[key] || {};
-            d[key][name] = val;
-        },
-
-        /**
-         * Remove entire item, or optionally specified fields
+         * Remove the given key for a specific item
+         *
          * @method remove
          * @param name {string} name of attribute
-         * @param o {string|object|array} single key or collection of keys to delete
+         * @param o {string} The key to delete.
          */
-        remove: function(name, o) {
-            var d = this.data, 
-                del = function(key) {
-                    if (d[key] && (name in d[key])) {
-                        delete d[key][name];
-                    }
-                };
-
-            if (Y.Lang.isString(o)) {
-                del(o);
-            } else {
-                Y.each(o || d, function(v, k) {
-                    if(Y.Lang.isString(k)) {
-                        del(k);
-                    } else {
-                        del(v);
-                    }
-                }, this);
-
+        remove: function(name, key) {
+            var d = this.data;
+            if (d[key] && (name in d[key])) {
+                delete d[key][name];
             }
         },
 
         /**
-         * For a given item, gets an attribute.  If key is not
-         * supplied, a disposable object with all attributes is 
-         * returned.  Use of the latter option makes sense when
-         * working with single items, but not if object explosion
-         * might cause gc problems.
+         * Remove entire item, or optionally specified fields
+         * 
+         * @method removeAll
+         * @param name {string} name of attribute
+         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.
+         */
+        removeAll: function(name, o) {
+            var d = this.data;
+
+            Y.each(o || d, function(v, k) {
+                if(Y.Lang.isString(k)) {
+                    this.remove(name, k);
+                } else {
+                    this.remove(name, v);
+                }
+            }, this);
+        },
+
+        /**
+         * For a given item, returns the value of the attribute requested, or undefined if not found.
+         *
          * @method get
          * @param name {string} name of attribute
-         * @param key {string} optional attribute to get
-         * @return either the value of the supplied key or an object with
-         * all data.
+         * @param key {string} optional The attribute value to retrieve.
+         * @return The value of the supplied key.
          */
         get: function(name, key) {
             var d = this.data;
             return (d[key] && name in d[key]) ?  d[key][name] : undefined;
         },
 
+        /**
+         * For a given item, returns a disposable object with all attribute 
+         * name/value pairs.
+         *
+         * @method getAll
+         * @param name {string} name of attribute
+         * @return An object withall data.
+         */
         getAll : function(name) {
             var d = this.data, o;
 
@@ -271,7 +282,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The attribute key
          */
         removeAttr: function(name) {
-            this._conf.remove(name);
+            this._conf.removeAll(name);
         },
 
         /**
@@ -283,7 +294,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method get
          *
-         * @param {String} key The attribute whose value will be returned. If
+         * @param {String} name The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          * 

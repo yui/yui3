@@ -28,6 +28,10 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
     Xpadding:0;
 }
 
+form {
+    width: 30em;
+}
+
 #doc {
     border:5px solid #000;
     margin:10px;
@@ -85,6 +89,37 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                     <div class="ft"><a href="http://www.developer.yahoo.com">more</a></div>
                 </div>
             </div>
+            <form id="test-form" class="test-class" action="#">
+                <input id="test-text-value" value="text value">
+                <input id="test-text-novalue">
+
+                <textarea id="test-textarea-value" value="textarea value"></textarea>
+                <textarea id="test-textarea-novalue"></textarea>
+                <textarea id="test-textarea-textvalue">textarea text</textarea>
+
+                <button id="test-button-value" value="button value">button</button>
+                <button id="test-button-novalue"></button>
+                <button id="test-button-textvalue">button text</button>
+
+                <select id="test-select-value">
+                    <option id="test-option-value" value="option value">option text</option>
+                    <option id="test-option-textvalue">option text</option>
+                    <option id="test-option-emptyvalue" value="">empty value</option>
+                    <option id="test-option-emptyvalue-notext" value=""></option>
+                    <option id="test-option-novalue"></option>
+                </select>
+
+                <select id="test-select-textvalue">
+                    <option>option text</option>
+                </select>
+
+                <select id="test-select-emptyvalue">
+                    <option value="">option text</option>
+                </select>
+                <select id="test-select-emptyvalue-notext">
+                    <option value=""></option>
+                </select>
+            </form>
         </div>
         <div id="ft">
             <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
@@ -439,6 +474,126 @@ h1, h2, h3, h4, h5, h6, p, ul, ol, li {
                 node = Y.DOM.byId('search-p-label');
                 Assert.areEqual('search-p', Y.DOM.getAttribute(node, 'for'), "Y.DOM.setAttribute(node, 'for', 'search-p')");
                 Assert.areEqual('search-p', Y.DOM.getAttribute(node, 'htmlFor'), "Y.DOM.setAttribute(node, 'htmlFor', 'search-p')");
+            },
+
+            test_getValue: function() {
+                // text
+                var id = 'test-text-value',
+                    val = 'text value';
+
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-text-novalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                // textarea
+                id = 'test-textarea-textvalue';
+                val = 'textarea text';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-textarea-value';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-textarea-novalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                // button
+                id = 'test-button-value';
+                val = 'button value';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-button-novalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-button-textvalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                // select
+                id = 'test-select-value';
+                val = 'option value';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-select-novalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-select-textvalue';
+                val = 'option text';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-select-emptyvalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-select-emptyvalue-notext';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                // option
+                id = 'test-option-value';
+                val = 'option value';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-option-emptyvalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-option-novalue';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-option-emptyvalue-notext';
+                val = '';
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-option-textvalue';
+                val = 'option text';
+
+                Assert.areEqual(val, Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                Y.DOM.setValue(Y.DOM.byId(id), 'new value');
+                Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
             }
         })); 
         tool.TestRunner.add(suite);

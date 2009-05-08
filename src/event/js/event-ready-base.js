@@ -5,6 +5,7 @@
 
 (function() {
 
+
 // Unlike most of the library, this code has to be executed as soon as it is
 // introduced into the page -- and it should only be executed one time
 // regardless of the number of instances that use it.

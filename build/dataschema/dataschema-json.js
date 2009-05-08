@@ -81,7 +81,13 @@ SchemaJSON = {
         var i = 0,
             len = path.length;
         for (;i<len;i++) {
-            data = data[path[i]];
+            if(!LANG.isUndefined(data[path[i]])) {
+                data = data[path[i]];
+            }
+            else {
+                data = undefined;
+                break;
+            }
         }
         return data;
     },
@@ -152,6 +158,7 @@ SchemaJSON = {
                     data_out.results = [];
                     error = new Error(this.toString() + " Results retrieval failure");
                 }
+                else {
                     if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
                         data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
                     }
@@ -159,6 +166,7 @@ SchemaJSON = {
                         data_out.results = [];
                         error = new Error(this.toString() + " Fields retrieval failure");
                     }
+                }
             }
             else {
                 error = new Error(this.toString() + " Results locator failure");
