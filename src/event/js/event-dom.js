@@ -15,7 +15,6 @@
 
 
 var add = YUI.Env.add,
-
 remove = YUI.Env.remove,
 
 onLoad = function() {
@@ -811,7 +810,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
 }();
 
-add(window, "load", onLoad);
+if (Y.config.injected) {
+    onLoad();
+} else {
+    add(window, "load", onLoad);
+}
+
 add(window, "unload", onUnload);
 
 Y.Event = Event;
@@ -828,8 +832,5 @@ Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
 Event._tryPreloadAttach();
-
-YUI.Env.add = null;
-YUI.Env.remove = null;
 
 })();
