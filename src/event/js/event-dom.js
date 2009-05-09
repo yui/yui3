@@ -34,6 +34,28 @@ COMPAT_ARG = '~yui|2|compat~',
 
 CAPTURE = "capture_",
 
+shouldIterate = function(o) {
+    try {
+         
+        // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
+        // if (o instanceof Y.Node) {
+            // o.tagName ="adsf";
+        // }
+
+        return ( o                     && // o is something
+                 typeof o !== "string" && // o is not a string
+                 // o.length  && // o is indexed
+                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 !o.tagName            && // o is not an HTML element
+                 !o.alert              && // o is not a window
+                 (o.item || typeof o[0] !== "undefined") );
+    } catch(ex) {
+        Y.log("collection check failure", "warn", "event");
+        return false;
+    }
+
+},
+
 Event = function() {
 
     /**
@@ -266,7 +288,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
-                handles, oEl, ek, key, cewrapper, context;
+                handles, oEl, ek, key, cewrapper, context, 
+                fireNow = false, ret;
 
             if (type.indexOf(CAPTURE) > -1) {
                 type = type.substr(CAPTURE.length);
@@ -286,7 +309,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             // The el argument can be an array of elements or element ids.
-            if (this._isValidCollection(el)) {
+            if (shouldIterate(el)) {
 
                 // Y.log('collection: ' + el);
                 // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
@@ -320,17 +343,21 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 //     } else {
                 //         el = oEl.item(0);
                 //     }
-                if (oEl && oEl.splice) {
-                    if (oEl.length == 1) {
-                        el = oEl[0];
+                if (oEl) {
+
+                    if (Y.Lang.isArray(oEl)) {
+                        if (oEl.length == 1) {
+                            el = oEl[0];
+                        } else {
+                            args[2] = oEl;
+                            return E.attach.apply(E, args);
+                        }
+
+                    // HTMLElement
                     } else {
-                        args[2] = oEl;
-                        return E.attach.apply(E, args);
+                        // Y.log('no size: ' + oEl + ', ' + type);
+                        el = oEl;
                     }
-                // HTMLElement
-                } else if (oEl) {
-                    // Y.log('no size: ' + oEl + ', ' + type);
-                    el = oEl;
 
                 // Not found = defer adding the event until the element is available
                 } else {
@@ -360,7 +387,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             if (!cewrapper) {
                 // create CE wrapper
                 cewrapper = Y.publish(key, {
-                    silent: true,
+                    //silent: true,
                     // host: this,
                     bubbles: false
                 });
@@ -381,7 +408,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     // all subscribers, including the current one
                     // will be notified.
                     if (YUI.Env.windowLoaded) {
-                        cewrapper.fire();
+                        fireNow = true;
                     }
                 }
 
@@ -406,7 +433,13 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             trimmedArgs.splice(2, 1);
 
             // set context to the Node if not specified
-            return cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+
+            if (fireNow) {
+                cewrapper.fire();
+            }
+
+            return ret;
 
         },
 
@@ -449,7 +482,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
-            } else if ( this._isValidCollection(el)) {
+            } else if (shouldIterate(el)) {
 
                 ok = true;
                 for (i=0, len=el.length; i<len; ++i) {
@@ -523,30 +556,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @method _isValidCollection
          * @param o the object to test
          * @return {boolean} true if the object is array-like and populated
+         * @deprecated was not meant to be used directly
          * @static
          * @private
          */
-        _isValidCollection: function(o) {
-            try {
-                 
-                // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
-                // if (o instanceof Y.Node) {
-                    // o.tagName ="adsf";
-                // }
-
-                return ( o                     && // o is something
-                         typeof o !== "string" && // o is not a string
-                         // o.length  && // o is indexed
-                         (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
-                         !o.tagName            && // o is not an HTML element
-                         !o.alert              && // o is not a window
-                         (o.item || typeof o[0] !== "undefined") );
-            } catch(ex) {
-                Y.log("collection check failure", "warn", "event");
-                return false;
-            }
-
-        },
+        _isValidCollection: shouldIterate,
 
         /**
          * hook up any deferred listeners
@@ -810,19 +824,22 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
 }();
 
-if (Y.config.injected) {
+Y.Event = Event;
+
+
+if (Y.config.injected || YUI.Env.windowLoaded) {
     onLoad();
 } else {
     add(window, "load", onLoad);
-    // Process onAvailable/onContentReady items when when the DOM is ready in IE
-    if (Y.UA.ie && Y.on) {
-        Y.on(EVENT_READY, Event._poll, Event, true);
-    }
+}
+
+// Process onAvailable/onContentReady items when when the DOM is ready in IE
+if (Y.UA.ie) {
+    Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
 add(window, "unload", onUnload);
 
-Y.Event = Event;
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
 Event.Target = Y.EventTarget;

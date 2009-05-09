@@ -131,6 +131,8 @@ var BASE = 'base',
 
     YUIBASE = 'yui-base',
 
+    DOM = 'dom',
+
     GET = 'get',
 
     EVENT = 'event',
@@ -165,11 +167,11 @@ var BASE = 'base',
     modules: {
 
        dom: {
-            requires: [EVENT],
+            requires: [OOP],
             submodules: {
 
                 'dom-base': {
-                    requires: [EVENT]
+                    requires: [OOP]
                 },
 
                 'dom-style': {
@@ -197,7 +199,8 @@ var BASE = 'base',
         },
 
         node: {
-            requires: ['dom', BASE],
+            requires: [DOM, BASE],
+            expound: EVENT,
 
             submodules: {
                 'node-base': {
@@ -334,8 +337,7 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM],
-            expound: NODE
+            requires: [EVENTCUSTOM, NODE]
         },
 
         'event-custom': { 

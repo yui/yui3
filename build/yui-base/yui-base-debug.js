@@ -24,6 +24,7 @@
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
             remove(window, 'load', globalListener);
         },
 

@@ -16,15 +16,13 @@ var GLOBAL_ENV = YUI.Env,
 
     D = C.doc, 
 
-    POLL_INTERVAL = C.pollInterval || 20,
+    POLL_INTERVAL = C.pollInterval || 40,
 
     _ready = function(e) {
         GLOBAL_ENV._ready();
     };
 
     if (!GLOBAL_ENV._ready) {
-
-        GLOBAL_ENV.windowLoaded = false;
 
         GLOBAL_ENV._ready = function() {
             if (!GLOBAL_ENV.DOMReady) {
@@ -148,8 +146,11 @@ Y.publish('domready', {
 });
 
 if (GLOBAL_ENV.DOMReady) {
+    // console.log('DOMReady already fired', 'info', 'event');
     yready();
 } else {
+    // console.log('setting up before listener', 'info', 'event');
+    // console.log('env: ' + YUI.Env.windowLoaded, 'info', 'event');
     Y.before(yready, GLOBAL_ENV, "_ready");
 }
 
@@ -530,6 +531,26 @@ COMPAT_ARG = '~yui|2|compat~',
 
 CAPTURE = "capture_",
 
+shouldIterate = function(o) {
+    try {
+         
+        // if (o instanceof Y.Node) {
+            // o.tagName ="adsf";
+        // }
+
+        return ( o                     && // o is something
+                 typeof o !== "string" && // o is not a string
+                 // o.length  && // o is indexed
+                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 !o.tagName            && // o is not an HTML element
+                 !o.alert              && // o is not a window
+                 (o.item || typeof o[0] !== "undefined") );
+    } catch(ex) {
+        return false;
+    }
+
+},
+
 Event = function() {
 
     /**
@@ -758,7 +779,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
-                handles, oEl, ek, key, cewrapper, context;
+                handles, oEl, ek, key, cewrapper, context, 
+                fireNow = false, ret;
 
             if (type.indexOf(CAPTURE) > -1) {
                 type = type.substr(CAPTURE.length);
@@ -776,7 +798,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             }
 
             // The el argument can be an array of elements or element ids.
-            if (this._isValidCollection(el)) {
+            if (shouldIterate(el)) {
 
 
                 handles=[];
@@ -808,16 +830,20 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 //     } else {
                 //         el = oEl.item(0);
                 //     }
-                if (oEl && oEl.splice) {
-                    if (oEl.length == 1) {
-                        el = oEl[0];
+                if (oEl) {
+
+                    if (Y.Lang.isArray(oEl)) {
+                        if (oEl.length == 1) {
+                            el = oEl[0];
+                        } else {
+                            args[2] = oEl;
+                            return E.attach.apply(E, args);
+                        }
+
+                    // HTMLElement
                     } else {
-                        args[2] = oEl;
-                        return E.attach.apply(E, args);
+                        el = oEl;
                     }
-                // HTMLElement
-                } else if (oEl) {
-                    el = oEl;
 
                 // Not found = defer adding the event until the element is available
                 } else {
@@ -844,7 +870,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             if (!cewrapper) {
                 // create CE wrapper
                 cewrapper = Y.publish(key, {
-                    silent: true,
+                    //silent: true,
                     // host: this,
                     bubbles: false
                 });
@@ -865,7 +891,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     // all subscribers, including the current one
                     // will be notified.
                     if (YUI.Env.windowLoaded) {
-                        cewrapper.fire();
+                        fireNow = true;
                     }
                 }
 
@@ -889,7 +915,13 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             trimmedArgs.splice(2, 1);
 
             // set context to the Node if not specified
-            return cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+
+            if (fireNow) {
+                cewrapper.fire();
+            }
+
+            return ret;
 
         },
 
@@ -932,7 +964,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
-            } else if ( this._isValidCollection(el)) {
+            } else if (shouldIterate(el)) {
 
                 ok = true;
                 for (i=0, len=el.length; i<len; ++i) {
@@ -1006,28 +1038,11 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @method _isValidCollection
          * @param o the object to test
          * @return {boolean} true if the object is array-like and populated
+         * @deprecated was not meant to be used directly
          * @static
          * @private
          */
-        _isValidCollection: function(o) {
-            try {
-                 
-                // if (o instanceof Y.Node) {
-                    // o.tagName ="adsf";
-                // }
-
-                return ( o                     && // o is something
-                         typeof o !== "string" && // o is not a string
-                         // o.length  && // o is indexed
-                         (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
-                         !o.tagName            && // o is not an HTML element
-                         !o.alert              && // o is not a window
-                         (o.item || typeof o[0] !== "undefined") );
-            } catch(ex) {
-                return false;
-            }
-
-        },
+        _isValidCollection: shouldIterate,
 
         /**
          * hook up any deferred listeners
@@ -1287,19 +1302,22 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
 }();
 
-if (Y.config.injected) {
+Y.Event = Event;
+
+
+if (Y.config.injected || YUI.Env.windowLoaded) {
     onLoad();
 } else {
     add(window, "load", onLoad);
-    // Process onAvailable/onContentReady items when when the DOM is ready in IE
-    if (Y.UA.ie && Y.on) {
-        Y.on(EVENT_READY, Event._poll, Event, true);
-    }
+}
+
+// Process onAvailable/onContentReady items when when the DOM is ready in IE
+if (Y.UA.ie) {
+    Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
 add(window, "unload", onUnload);
 
-Y.Event = Event;
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
 Event.Target = Y.EventTarget;
