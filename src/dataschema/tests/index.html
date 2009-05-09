@@ -133,6 +133,20 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                 //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected fields error.");
+
+                data_in = {"query":[
+                    {name: "alpha", number: "0", letter: "a"},
+                    {name: "beta", number: "1", letter: "b"},
+                    {name: "gamma", number: "2", letter: "c"}
+                ]};
+                schema.resultListLocator = "ResultSet.Result";
+                
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+                ASSERT.isObject(data_out.error, "Expected results error.");
             }
         });
             
