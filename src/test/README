@@ -16,6 +16,7 @@ Documentation: http://developer.yahoo.com/yui/3/test
     * Added unit tests for mock and object asserts.
     * Added Y.assert() and Y.fail().
     * Added Y.ObjectAssert.ownsNoKeys() (trac# 2527849).
+    * Added proper XML escaping to Y.Test.Format.XML.
     
 3.0.0PR2
 
