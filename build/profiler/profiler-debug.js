@@ -21,7 +21,7 @@ YUI.add('profiler', function(Y) {
         //shortcuts
         L   = Y.Lang;
 
-    /**
+    /* (intentionally not documented)
      * Creates a report object with the given name.
      * @param {String} name The name to store for the report object.
      * @return {Void}
@@ -38,7 +38,7 @@ YUI.add('profiler', function(Y) {
         };      
     }
     
-    /**
+    /* (intentionally not documented)
      * Called when a method ends execution. Marks the start and end time of the 
      * method so it can calculate how long the function took to execute. Also 
      * updates min/max/avg calculations for the function.
