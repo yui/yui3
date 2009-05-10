@@ -366,7 +366,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -489,7 +489,8 @@ Y.mix(Node.prototype, {
     },
 
     remove: function() {
-        g_nodes[this[UID]].parentNode.removeChild();
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
         return this;
     },
 
@@ -498,11 +499,11 @@ Y.mix(Node.prototype, {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -511,7 +512,7 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
+        g_nodes[this[UID]] = []; // TODO: null | delete?
         delete Node._instances[this[UID]];
     },
 
@@ -568,7 +569,7 @@ Y.mix(Node.prototype, {
         return Y.Event.nativeRemove.apply(Y.Event, arguments);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));
