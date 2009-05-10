@@ -72,16 +72,16 @@ for a variety of cases.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_has">
+                                    <div class="" rel="yui:method" resource="#method_hasKey">
                                     <h4>
-                                        <a name="method_has">has</a></h4>
+                                        <a name="method_hasKey">hasKey</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         void
-                                            <strong property="yui:name">has</strong>
+                                            <strong property="yui:name">hasKey</strong>
                                            (
                                                 
                                                         
@@ -143,20 +143,20 @@ for a variety of cases.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_hasAll">
+                                    <div class="" rel="yui:method" resource="#method_hasKeys">
                                     <h4>
-                                        <a name="method_hasAll">hasAll</a></h4>
+                                        <a name="method_hasKeys">hasKeys</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         void
-                                            <strong property="yui:name">hasAll</strong>
+                                            <strong property="yui:name">hasKeys</strong>
                                            (
                                                 
                                                         
-                                                         refObject
+                                                         properties
                                                     
                                                 
                                                         , 
@@ -179,81 +179,10 @@ for a variety of cases.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">refObject</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">properties</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object whose properties should be on the object to test.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">object</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The object to search.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">message</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_owns">
-                                    <h4>
-                                        <a name="method_owns">owns</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">owns</strong>
-                                           (
-                                                
-                                                        
-                                                         propertyName
-                                                    
-                                                
-                                                        , 
-                                                         object
-                                                    
-                                                
-                                                        , 
-                                                         message
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Asserts that a property with the given name exists on an object instance (not on its prototype).
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">propertyName</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The name of the property to test.</span>
+                                                        <span property="yui:description"> An array of property names that should be on the object.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">object</span>
@@ -298,7 +227,7 @@ for a variety of cases.
                                            (
                                                 
                                                         
-                                                         refObject
+                                                         properties
                                                     
                                                 
                                                         , 
@@ -313,7 +242,7 @@ for a variety of cases.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Asserts that all properties on a given object also exist on an object instance (not on its prototype).
+                                            Asserts that all properties exist on an object instance (not on its prototype).
                                         </div>
 
                                         <div class="description">
@@ -321,10 +250,81 @@ for a variety of cases.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">refObject</span>
+                                                        <code><span property="yui:name">properties</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of property names that should be on the object.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">object</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object whose properties should be owned by the object to test.</span>
+                                                        <span property="yui:description"> The object to search.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_ownsKey">
+                                    <h4>
+                                        <a name="method_ownsKey">ownsKey</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">ownsKey</strong>
+                                           (
+                                                
+                                                        
+                                                         propertyName
+                                                    
+                                                
+                                                        , 
+                                                         object
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a property with the given name exists on an object instance (not on its prototype).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">propertyName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the property to test.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">object</span>
@@ -461,10 +461,10 @@ for a variety of cases.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method_has" title="has">has</a></li>
-                                <li class=""><a href="#method_hasAll" title="hasAll">hasAll</a></li>
-                                <li class=""><a href="#method_owns" title="owns">owns</a></li>
+                                <li class=""><a href="#method_hasKey" title="hasKey">hasKey</a></li>
+                                <li class=""><a href="#method_hasKeys" title="hasKeys">hasKeys</a></li>
                                 <li class=""><a href="#method_ownsAll" title="ownsAll">ownsAll</a></li>
+                                <li class=""><a href="#method_ownsKey" title="ownsKey">ownsKey</a></li>
                         </ul>
                     </div>
 
@@ -479,7 +479,7 @@ for a variety of cases.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Assert.ComparisonFailure", "name": "actual", "url": "Assert.ComparisonFailure.html#property_actual", "type": "property"}, {"access": "", "host": "Assert", "name": "areEqual", "url": "Assert.html#method_areEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotEqual", "url": "Assert.html#method_areNotEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotSame", "url": "Assert.html#method_areNotSame", "type": "method"}, {"access": "", "host": "Assert", "name": "areSame", "url": "Assert.html#method_areSame", "type": "method"}, {"access": "private", "host": "Assert", "name": "_asserts", "url": "Assert.html#property__asserts", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "cause", "url": "Assert.UnexpectedError.html#property_cause", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "expected", "url": "Assert.ComparisonFailure.html#property_expected", "type": "property"}, {"access": "", "host": "Assert", "name": "fail", "url": "Assert.html#method_fail", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_formatMessage", "url": "Assert.html#method__formatMessage", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_getCount", "url": "Assert.html#method__getCount", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "getMessage", "url": "Assert.Error.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "getMessage", "url": "Assert.UnexpectedValue.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "has", "url": "Assert.ObjectAssert.html#method_has", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "hasAll", "url": "Assert.ObjectAssert.html#method_hasAll", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_increment", "url": "Assert.html#method__increment", "type": "method"}, {"access": "", "host": "Assert", "name": "isArray", "url": "Assert.html#method_isArray", "type": "method"}, {"access": "", "host": "Assert", "name": "isBoolean", "url": "Assert.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Assert", "name": "isFalse", "url": "Assert.html#method_isFalse", "type": "method"}, {"access": "", "host": "Assert", "name": "isFunction", "url": "Assert.html#method_isFunction", "type": "method"}, {"access": "", "host": "Assert", "name": "isInstanceOf", "url": "Assert.html#method_isInstanceOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isNaN", "url": "Assert.html#method_isNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNaN", "url": "Assert.html#method_isNotNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNull", "url": "Assert.html#method_isNotNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotUndefined", "url": "Assert.html#method_isNotUndefined", "type": "method"}, {"access": "", "host": "Assert", "name": "isNull", "url": "Assert.html#method_isNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNumber", "url": "Assert.html#method_isNumber", "type": "method"}, {"access": "", "host": "Assert", "name": "isObject", "url": "Assert.html#method_isObject", "type": "method"}, {"access": "", "host": "Assert", "name": "isString", "url": "Assert.html#method_isString", "type": "method"}, {"access": "", "host": "Assert", "name": "isTrue", "url": "Assert.html#method_isTrue", "type": "method"}, {"access": "", "host": "Assert", "name": "isTypeOf", "url": "Assert.html#method_isTypeOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isUndefined", "url": "Assert.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "name", "url": "Assert.Error.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "name", "url": "Assert.ComparisonFailure.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "name", "url": "Assert.UnexpectedValue.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldFail", "name": "name", "url": "Assert.ShouldFail.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldError", "name": "name", "url": "Assert.ShouldError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "name", "url": "Assert.UnexpectedError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ObjectAssert", "name": "owns", "url": "Assert.ObjectAssert.html#method_owns", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "ownsAll", "url": "Assert.ObjectAssert.html#method_ownsAll", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_reset", "url": "Assert.html#method__reset", "type": "method"}, {"access": "", "host": "Assert.UnexpectedError", "name": "stack", "url": "Assert.UnexpectedError.html#property_stack", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "toString", "url": "Assert.Error.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "toString", "url": "Assert.ComparisonFailure.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "unexpected", "url": "Assert.UnexpectedValue.html#property_unexpected", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "valueOf", "url": "Assert.Error.html#method_valueOf", "type": "method"}, {"access": "", "host": "Assert", "name": "Y.assert", "url": "Assert.html#method_Y.assert", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Assert.ComparisonFailure", "name": "actual", "url": "Assert.ComparisonFailure.html#property_actual", "type": "property"}, {"access": "", "host": "Assert", "name": "areEqual", "url": "Assert.html#method_areEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotEqual", "url": "Assert.html#method_areNotEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotSame", "url": "Assert.html#method_areNotSame", "type": "method"}, {"access": "", "host": "Assert", "name": "areSame", "url": "Assert.html#method_areSame", "type": "method"}, {"access": "private", "host": "Assert", "name": "_asserts", "url": "Assert.html#property__asserts", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "cause", "url": "Assert.UnexpectedError.html#property_cause", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "expected", "url": "Assert.ComparisonFailure.html#property_expected", "type": "property"}, {"access": "", "host": "Assert", "name": "fail", "url": "Assert.html#method_fail", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_formatMessage", "url": "Assert.html#method__formatMessage", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_getCount", "url": "Assert.html#method__getCount", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "getMessage", "url": "Assert.Error.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "getMessage", "url": "Assert.UnexpectedValue.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "hasKey", "url": "Assert.ObjectAssert.html#method_hasKey", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "hasKeys", "url": "Assert.ObjectAssert.html#method_hasKeys", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_increment", "url": "Assert.html#method__increment", "type": "method"}, {"access": "", "host": "Assert", "name": "isArray", "url": "Assert.html#method_isArray", "type": "method"}, {"access": "", "host": "Assert", "name": "isBoolean", "url": "Assert.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Assert", "name": "isFalse", "url": "Assert.html#method_isFalse", "type": "method"}, {"access": "", "host": "Assert", "name": "isFunction", "url": "Assert.html#method_isFunction", "type": "method"}, {"access": "", "host": "Assert", "name": "isInstanceOf", "url": "Assert.html#method_isInstanceOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isNaN", "url": "Assert.html#method_isNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNaN", "url": "Assert.html#method_isNotNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNull", "url": "Assert.html#method_isNotNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotUndefined", "url": "Assert.html#method_isNotUndefined", "type": "method"}, {"access": "", "host": "Assert", "name": "isNull", "url": "Assert.html#method_isNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNumber", "url": "Assert.html#method_isNumber", "type": "method"}, {"access": "", "host": "Assert", "name": "isObject", "url": "Assert.html#method_isObject", "type": "method"}, {"access": "", "host": "Assert", "name": "isString", "url": "Assert.html#method_isString", "type": "method"}, {"access": "", "host": "Assert", "name": "isTrue", "url": "Assert.html#method_isTrue", "type": "method"}, {"access": "", "host": "Assert", "name": "isTypeOf", "url": "Assert.html#method_isTypeOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isUndefined", "url": "Assert.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "name", "url": "Assert.Error.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "name", "url": "Assert.ComparisonFailure.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "name", "url": "Assert.UnexpectedValue.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldFail", "name": "name", "url": "Assert.ShouldFail.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldError", "name": "name", "url": "Assert.ShouldError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "name", "url": "Assert.UnexpectedError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ObjectAssert", "name": "ownsAll", "url": "Assert.ObjectAssert.html#method_ownsAll", "type": "method"}, {"access": "", "host": "Assert.ObjectAssert", "name": "ownsKey", "url": "Assert.ObjectAssert.html#method_ownsKey", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_reset", "url": "Assert.html#method__reset", "type": "method"}, {"access": "", "host": "Assert.UnexpectedError", "name": "stack", "url": "Assert.UnexpectedError.html#property_stack", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "toString", "url": "Assert.Error.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "toString", "url": "Assert.ComparisonFailure.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "unexpected", "url": "Assert.UnexpectedValue.html#property_unexpected", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "valueOf", "url": "Assert.Error.html#method_valueOf", "type": "method"}, {"access": "", "host": "Assert", "name": "Y.assert", "url": "Assert.html#method_Y.assert", "type": "method"}];
 </script>
 </body>
 </html>

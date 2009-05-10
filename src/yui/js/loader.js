@@ -131,6 +131,8 @@ var BASE = 'base',
 
     YUIBASE = 'yui-base',
 
+    DOM = 'dom',
+
     GET = 'get',
 
     EVENT = 'event',
@@ -165,11 +167,11 @@ var BASE = 'base',
     modules: {
 
        dom: {
-            requires: [EVENT],
+            requires: [OOP],
             submodules: {
 
                 'dom-base': {
-                    requires: [EVENT]
+                    requires: [OOP]
                 },
 
                 'dom-style': {
@@ -197,7 +199,8 @@ var BASE = 'base',
         },
 
         node: {
-            requires: ['dom', BASE],
+            requires: [DOM, BASE],
+            expound: EVENT,
 
             submodules: {
                 'node-base': {
@@ -314,7 +317,10 @@ var BASE = 'base',
                     requires: ['dd-drag']
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag', 'dd-proxy']
+                    requires: ['dd-drag']
+                }, 
+                'dd-scroll':{
+                    requires: ['dd-drag']
                 }, 
                 'dd-plugin':{
                     requires: ['dd-drag'],
@@ -331,8 +337,7 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM],
-            expound: NODE
+            requires: [EVENTCUSTOM, NODE]
         },
 
         'event-custom': { 
@@ -1479,7 +1484,7 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
@@ -1894,18 +1899,18 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     },
 
-    /**
+    /*
      * In IE, the onAvailable/onDOMReady events need help when Event is
      * loaded dynamically
      * @method _pushEvents
      * @param {Function} optional function reference
      * @private
      */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
+    // _pushEvents: function() {
+    //     if (Y.Event) {
+    //         Y.Event._load();
+    //     }
+    // },
 
     /**
      * Apply filter defined for this instance to a url/path

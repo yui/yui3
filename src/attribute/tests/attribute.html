@@ -13,8 +13,16 @@
             background-color:green;
         }
 
+        #console .yui-console-entry-perf .yui-console-entry-cat {
+            background-color:blue;
+        }
+
         #console {
             position:static;
+        }
+        
+        html, body {
+            height:100%;
         }
     </style>
 
@@ -129,6 +137,49 @@
                     value: 2222,
                     setter: function(val) { // Should be ignored. Can't set setters for complex sub vals
                         return val + 10000;
+                    }
+                },
+
+                G : {
+                    valueFn:function(val) {
+                        // Referring to H before it's set up
+                        return this.get("H") + 10;
+                    }
+                },
+
+                H: {
+                    value:5,
+                    getter: function(val) {
+                        return val*5;
+                    }
+                },
+
+                I : {
+                    value:{
+                        a: 5
+                    },
+                    getter: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return val;
+                    },
+                    setter: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                    },
+                    validator: function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return true;
                     }
                 }
             };
@@ -316,6 +367,37 @@
                     h.set("complex.Z.A", 3);                     // Change, even though value of complex is unchanged, we don't deep compare objects.
                     h.set("complex", Y.clone(h.get("complex"))); // Change, obj reference differs
                     h.set("complex", {A:1, B:2, C:3});           // Change, obj reference differs
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testEventRegistrationThroughConstructor : function() {
+                    // Initial Set does not fire events
+                    var expectedEvents = ["OnInit", "AfterInit", "OnAChange", "AfterAChange"];
+                    var actualEvents = [];
+                    var h = this.createHost({
+                        on: {
+                            "AChange" : function() {
+                                actualEvents.push("OnAChange");
+                            },
+
+                            "init" : function() {
+                                actualEvents.push("OnInit");
+                            }
+                        },
+
+                        after: {
+                            "AChange" : function() {
+                                actualEvents.push("AfterAChange");
+                            },
+
+                            "init" : function() {
+                                actualEvents.push("AfterInit");
+                            }
+                        }
+                    });
+
+                    h.set("A", "Foo");
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
@@ -754,7 +836,8 @@
                         "E": "MyNewEVal",
                         "F": "MyNewFVal",
                         "DE": "MyNewDEVal",
-                        complex: "MyNewComplexVal"
+                        complex: "MyNewComplexVal",
+                        "I" : "MyNewIVal"
                     });
 
                     var expectedVals = {
@@ -766,6 +849,9 @@
                         F: "MyNewFVal",
                         DE: "MyNewDEVal",
                         complex: "MyNewComplexVal",
+                        G: 35,
+                        H: 25,
+                        I: "MyNewIVal",
                         initialized:true,
                         destroyed:false
                     };
@@ -828,7 +914,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain" /* e.newVal is not "get" normalized */ ];
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain"  ]; // Last entry: e.newVal is not "get" normalized 
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -981,15 +1067,172 @@
                     h.set("complex.Y.A", 22222);
                     h.set("complex.Y", 22233);
                     h.set("complex.W.A", 33333);
+                },
+
+                testOnDemandInit : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(35, h.get("G"));
+                    Y.Assert.areEqual(25, h.get("H"));
+                },
+
+                testGetterSetterValidatorNameArg : function() {
+                    var h = this.createHost();
+                    h.set("I.a", 6);
+                    h.set("I", {a:7, b:8});
                 }
             };
 
             extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
+            
+            
+            var perfTemplate = {
+                testConstruction: function() {
+                    function Test() {
+                        Test.superclass.constructor.apply(this, arguments);
+                    };
+
+                    Test.NAME = 'test';
+
+                    Test.ATTRS = {
+
+                        attr1: {
+                            value: "Foo",
+                            setter: function(n) {
+                                return n;
+                            }
+                        },
+
+                        attr2: {
+                            value: "Bar",
+                            setter: function(n) {
+                                return n;
+                            }
+                        },
+                
+                        attr3: {
+                            value: true
+                        },
+                
+                        attr4: {
+                            value: 3
+                        },
+                
+                        attr5: {
+                            value: 3
+                        },
+                
+                        attr6: {
+                            value: false,
+                            setter: function(lock) {
+                                return lock;
+                            }
+                        },
+                
+                        attr7: {
+                            value: false
+                        },
+                
+                        attr8: {
+                            value: true
+                        },
+                
+                        attr9: {
+                            value: true
+                        },
+                
+                        attr10: {
+                            value: false
+                        },
+                
+                        attr11: {
+                            value: true
+                        },
+                
+                        attr12: {
+                            value: false
+                        },
+                
+                        attr13: {
+                            value: false
+                        },
+                
+                        attr14: {
+                            value: false,
+                            setter: function(val) {
+                                return val;
+                            }
+                        },
+                
+                        attr15: {
+                            value: null,
+                            setter: function(val) {
+                                return false;
+                            }
+                        },
+                
+                        attr16: {
+                            value: ['default'],
+                
+                            getter: function() {
+                                return false;
+                            },
+                
+                            setter: function(g) {
+                                return g;
+                            }
+                        },
+                        attr17: {
+                            value: null,
+                            setter: function(g) {
+                                return g;
+                            }
+                        },
+                        attr18: {
+                            writeOnce: true,
+                            value: null
+                        },
+                        attr19: {
+                            writeOnce: true,
+                            value: null
+                        },
+                        attr20: {
+                            writeOnce: true,
+                            value: null
+                        }
+                    };
+                
+                    Y.extend(Test, Y.Base, {
+                        foo: function() {}
+                    });
+
+                    var start, end;
+
+                    start = new Date().getTime();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    new Test();
+                    end = new Date().getTime();
+
+                    var time = (end-start)/10;
+                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 20 : 10;
+
+                    Y.log("Construction Time: " + time, "perf");
+                    Y.Assert.isTrue((time < expectedTime));
+                }
+            }
 
             //create the console
             new Y.Console({
                 width:"100%",
-                height:"50em",
+                height:"95%",
                 boundingBox:"#console",
                 verbose : false,
                 printTimeout: 0,
@@ -1008,6 +1251,8 @@
 
             Y.Test.Runner.add(new Y.Test.Case(basicTemplate));     // Running again, to make sure static attributes aren't modified
             Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));  // Running again, to make sure static attributes aren't modified
+
+            Y.Test.Runner.add(new Y.Test.Case(perfTemplate));
 
             Y.Test.Runner.run();
 

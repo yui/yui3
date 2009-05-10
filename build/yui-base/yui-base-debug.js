@@ -6,6 +6,28 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
+        add = function(el, type, fn, capture) {
+            if (el.addEventListener) {
+                    el.addEventListener(type, fn, !!capture);
+            } else if (el.attachEvent) {
+                    el.attachEvent("on" + type, fn);
+            } 
+        },
+
+        remove = function(el, type, fn, capture) {
+            if (el.removeEventListener) {
+                    el.removeEventListener(type, fn, !!capture);
+            } else if (el.detachEvent) {
+                    el.detachEvent("on" + type, fn);
+            }
+        },
+
+        globalListener = function() {
+            YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
+            remove(window, 'load', globalListener);
+        },
+
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
@@ -16,7 +38,6 @@
             'io.abort': 1
         };
         
-
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
@@ -34,8 +55,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>Global:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>debug:
-     *  Turn debug statements on or off</li>
+     *  <li>debug: Turn debug statements on or off</li>
      *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
@@ -44,6 +64,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  </li>
      *  <li>logExclude:
      *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  <li>injected: set to true if the yui seed file was dynamically loaded in
+     *  order to bootstrap components relying on the window load event and onDOMReady.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -205,7 +227,7 @@ YUI.prototype = {
     _setup: function(o) {
         this.use("yui-base");
         // @TODO eval the need to copy the config
-        // this.config = this.merge(this.config);
+        this.config = this.merge(this.config);
     },
 
     /**
@@ -614,6 +636,14 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
+
+    // add a window load event at load time so we can capture
+    // the case where it fires before dynamic loading is
+    // complete.
+    add(window, 'load', globalListener);
+
+    YUI.Env.add = add;
+    YUI.Env.remove = remove;
 
 })();
 YUI.add('yui-base', function(Y) {
@@ -1120,6 +1150,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -1286,7 +1317,7 @@ Y.cached = function(source, cache){
 
     return function() {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, arguments);
@@ -1320,6 +1351,8 @@ Y.Object = function(o) {
 }; 
 
 var O = Y.Object,
+
+UNDEFINED = undefined,
 
 /**
  * Extracts the keys, values, or size from an object
@@ -1451,7 +1484,6 @@ O.each = function (o, f, c, proto) {
     return Y;
 };
 
-
 /**
  * Retrieves the sub value at the provided path,
  * from the value object provided.
@@ -1466,7 +1498,7 @@ O.each = function (o, f, c, proto) {
 O.getValue = function (o, path) {
     var p=Y.Array(path), l=p.length, i;
 
-    for (i=0; o !== undefined && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
         o = o[p[i]];
     }
 
@@ -1491,14 +1523,14 @@ O.setValue = function(o, path, val) {
     var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== undefined && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
             ref = ref[p[i]];
         }
 
-        if (ref !== undefined) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return undefined;
+            return UNDEFINED;
         }
     }
 

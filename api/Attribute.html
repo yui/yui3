@@ -163,7 +163,11 @@ a specific configuration</p>
                                            (
                                                 
                                                         
-                                                         name
+                                                         attrName
+                                                    
+                                                
+                                                        , 
+                                                         subAttrName
                                                     
                                                 
                                                         , 
@@ -172,10 +176,6 @@ a specific configuration</p>
                                                 
                                                         , 
                                                          newVal
-                                                    
-                                                
-                                                        , 
-                                                         strFullPath
                                                     
                                                 
                                                         , 
@@ -195,10 +195,17 @@ fire the attribute change event.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">name</span>
+                                                        <code><span property="yui:name">attrName</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">subAttrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The full path of the property being changed, 
+if this is a sub-attribute value being change. Otherwise null.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">currVal</span>
@@ -211,13 +218,6 @@ fire the attribute change event.
                                                         &lt;<span property="yui:type">Any</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The new value of the attribute</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">strFullPath</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The full path of the property being changed, 
-if this is a sub-attribute value being change</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">opts</span>
@@ -447,6 +447,88 @@ readOnly or writeOnce attributes which have already been set.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:method" resource="#method__setAttrVal">
+                                    <h4>
+                                        <a name="method__setAttrVal">_setAttrVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        booolean
+                                            <strong property="yui:name">_setAttrVal</strong>
+                                           (
+                                                
+                                                        
+                                                         attrName
+                                                    
+                                                
+                                                        , 
+                                                         subAttrName
+                                                    
+                                                
+                                                        , 
+                                                         prevVal
+                                                    
+                                                
+                                                        , 
+                                                         newVal
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the stored value of the attribute in the privately held State object,
+if validation and setter passes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute name.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">subAttrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The sub-attribute name, if setting a sub-attribute property ("x.y.z").</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">prevVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The currently stored value of the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value which is going to be stored.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        booolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the new attribute value was stored, false if not.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__splitAttrValues">
                                     <h4>
                                         <a name="method__splitAttrValues">_splitAttrValues</a></h4>
@@ -621,7 +703,9 @@ so if you need to protect the original values, you will need to merge or clone t
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Configures attributes, and sets initial values
+                                            Configures attributes, and sets initial values. This method does not 
+isolate configuration object by merging/cloning. The caller is responsible for 
+merging/cloning the configuration object when required.
                                         </div>
 
                                         <div class="description">
@@ -718,7 +802,7 @@ so if you need to protect the original values, you will need to merge or clone t
                                            (
                                                 
                                                         
-                                                         key
+                                                         name
                                                     
                                                 
                                             )
@@ -737,7 +821,7 @@ as the only argument.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">key</span>
+                                                        <code><span property="yui:name">name</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The attribute whose value will be returned. If
@@ -885,7 +969,8 @@ returned. If set to true, all attributes modified from their original values are
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Resets the given attribute or all attributes to the initial value.
+                                            Resets the given attribute or all attributes to the initial value, if the attribute
+is not readOnly, or writeOnce.
                                         </div>
 
                                         <div class="description">
@@ -1151,6 +1236,7 @@ of attribute change events</span>
                                 <li class="private"><a href="#method__getAttrInitVal" title="_getAttrInitVal">_getAttrInitVal</a></li>
                                 <li class="protected"><a href="#method__set" title="_set">_set</a></li>
                                 <li class="protected"><a href="#method__setAttr" title="_setAttr">_setAttr</a></li>
+                                <li class="private"><a href="#method__setAttrVal" title="_setAttrVal">_setAttrVal</a></li>
                                 <li class="private"><a href="#method__splitAttrValues" title="_splitAttrValues">_splitAttrValues</a></li>
                                 <li class=""><a href="#method_addAttr" title="addAttr">addAttr</a></li>
                                 <li class=""><a href="#method_addAttrs" title="addAttrs">addAttrs</a></li>
@@ -1175,7 +1261,7 @@ of attribute change events</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrValues", "url": "Attribute.html#method__splitAttrValues", "type": "method"}];
 </script>
 </body>
 </html>

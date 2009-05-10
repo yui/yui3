@@ -49,6 +49,9 @@ var LANG = Y.Lang,
             if(parser) {
                 value = parser.call(this, value);
             }
+            else {
+                Y.log("Could not find parser for field " + Y.dump(field), "warn", SchemaBase.toString());
+            }
         }
         return value;
     }
