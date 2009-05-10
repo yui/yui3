@@ -6,6 +6,28 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
+        add = function(el, type, fn, capture) {
+            if (el.addEventListener) {
+                    el.addEventListener(type, fn, !!capture);
+            } else if (el.attachEvent) {
+                    el.attachEvent("on" + type, fn);
+            } 
+        },
+
+        remove = function(el, type, fn, capture) {
+            if (el.removeEventListener) {
+                    el.removeEventListener(type, fn, !!capture);
+            } else if (el.detachEvent) {
+                    el.detachEvent("on" + type, fn);
+            }
+        },
+
+        globalListener = function() {
+            YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
+            remove(window, 'load', globalListener);
+        },
+
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
@@ -16,7 +38,6 @@
             'io.abort': 1
         };
         
-
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
@@ -34,8 +55,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>Global:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>debug:
-     *  Turn debug statements on or off</li>
+     *  <li>debug: Turn debug statements on or off</li>
      *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
@@ -44,6 +64,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  </li>
      *  <li>logExclude:
      *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  <li>injected: set to true if the yui seed file was dynamically loaded in
+     *  order to bootstrap components relying on the window load event and onDOMReady.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -615,6 +637,14 @@ YUI.prototype = {
     YUI._init();
 
 
+    // add a window load event at load time so we can capture
+    // the case where it fires before dynamic loading is
+    // complete.
+    add(window, 'load', globalListener);
+
+    YUI.Env.add = add;
+    YUI.Env.remove = remove;
+
 })();
 YUI.add('yui-base', function(Y) {
 
@@ -1120,6 +1150,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -1286,7 +1317,7 @@ Y.cached = function(source, cache){
 
     return function() {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, arguments);
@@ -2625,6 +2656,8 @@ var BASE = 'base',
 
     YUIBASE = 'yui-base',
 
+    DOM = 'dom',
+
     GET = 'get',
 
     EVENT = 'event',
@@ -2659,11 +2692,11 @@ var BASE = 'base',
     modules: {
 
        dom: {
-            requires: [EVENT],
+            requires: [OOP],
             submodules: {
 
                 'dom-base': {
-                    requires: [EVENT]
+                    requires: [OOP]
                 },
 
                 'dom-style': {
@@ -2691,7 +2724,8 @@ var BASE = 'base',
         },
 
         node: {
-            requires: ['dom', BASE],
+            requires: [DOM, BASE],
+            expound: EVENT,
 
             submodules: {
                 'node-base': {
@@ -2828,8 +2862,7 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM],
-            expound: NODE
+            requires: [EVENTCUSTOM, NODE]
         },
 
         'event-custom': { 
@@ -3976,7 +4009,7 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
@@ -4391,18 +4424,18 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     },
 
-    /**
+    /*
      * In IE, the onAvailable/onDOMReady events need help when Event is
      * loaded dynamically
      * @method _pushEvents
      * @param {Function} optional function reference
      * @private
      */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
+    // _pushEvents: function() {
+    //     if (Y.Event) {
+    //         Y.Event._load();
+    //     }
+    // },
 
     /**
      * Apply filter defined for this instance to a url/path

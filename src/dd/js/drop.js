@@ -51,7 +51,7 @@
 
 
         //DD init speed up.
-        Y.on('event:ready', Y.bind(function() {
+        Y.on('domready', Y.bind(function() {
             Y.later(100, this, this._createShim);
         }, this));
         DDM._regTarget(this);

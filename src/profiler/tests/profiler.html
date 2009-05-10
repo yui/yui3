@@ -1,8 +1,8 @@
 <html>
 <head>
 <title>profiler tests</title>
-<link type="text/css" rel="stylesheet" href="../../build/logreader/assets/skins/sam/logreader.css" />
-<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css" />
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 <body class="yui-skin-sam">
     <h1>Profiler Tests</h1>
@@ -23,8 +23,10 @@ var myObject = {
     
     
 YUI({
-    base: '../build/'
-}).use('test', 'profiler', 'console', function (Y) {
+    base: '../../../build/',
+    filter: "debug",
+    logInclude: { TestRunner: true }
+}).use('test', 'console', 'profiler',  function (Y) {
 
     Y.namespace("Tests");
 
@@ -91,30 +93,42 @@ YUI({
         
             name : "Profiler Registration Tests",
             
+            tearDown: function(){
+                Profiler.clear();
+            },
+            
             //---------------------------------------------------------------------
             // Special assertions for profiler
             //---------------------------------------------------------------------
         
             assertFunctionIsRegistered : function (fullFuncName, shortFuncName, owner, originalFunction, newFunction){
-                var containerFunc = Profiler._container[fullFuncName];
+                var containerFunc = Profiler.getOriginal(fullFuncName);
                 Assert.areNotEqual(originalFunction, newFunction, fullFuncName + " function was not replaced.");
                 Assert.areEqual(originalFunction, containerFunc, "Original " + fullFuncName + " function was not stored.");
                 Assert.areEqual(originalFunction.prototype, containerFunc.prototype, fullFuncName + " prototype was not copied.");
                 Assert.areEqual(shortFuncName, containerFunc.__yuiFuncName, fullFuncName + " function name was not stored.");
                 Assert.areEqual(owner, containerFunc.__yuiOwner, "Owner for " + fullFuncName + "was not stored.");
-                Assert.isObject(Profiler._report[fullFuncName], "Report for " + fullFuncName + " function was not created.");
+                Assert.isObject(Profiler.getReport(fullFuncName), "Report for " + fullFuncName + " function was not created.");
             
             },
             
             assertFunctionIsNotRegistered : function(fullFuncName, shortFuncName, owner, originalFunction, newFunction){
                 Assert.areEqual(originalFunction, newFunction, "Original " + fullFuncName + " function was not placed back on owner.");
-                Assert.isUndefined(Profiler._report[fullFuncName], "Report for " + fullFuncName + " function was not destroyed.");
-                Assert.isUndefined(Profiler._container[fullFuncName], "Container for original " + fullFuncName + " function was not destroyed.");        
+                Assert.isUndefined(Profiler.getOriginal(fullFuncName), "Container for original " + fullFuncName + " function was not destroyed.");        
             },
             
             //---------------------------------------------------------------------
             // Tests
             //---------------------------------------------------------------------
+        
+            testInstrument: function(){
+                var original = function() { return "Hello"; };
+                var instrumented = Profiler.instrument("hello", original);
+                
+                this.assertFunctionIsRegistered("hello", "hello", null, original, instrumented);
+            
+            
+            },
         
             testRegisterFunction : function (){
             
@@ -176,7 +190,7 @@ YUI({
                 
                 Profiler.registerObject("testObject", testObject);
                 
-                Assert.isObject(Profiler._container["testObject"], "Object was not added to container.");
+                Assert.isObject(Profiler.getOriginal("testObject"), "Object was not added to container.");
                 
                 //check each method
                 for (var i=0; i < funcNames.length; i++){
@@ -194,7 +208,7 @@ YUI({
                     this.assertFunctionIsNotRegistered(fullFuncName, funcNames[i], testObject, originalFunction, testObject[funcNames[i]]);
                 }            
                 
-                Assert.isUndefined(Profiler._container["testObject"], "Object was not removed from container.");
+                Assert.isUndefined(Profiler.getOriginal("testObject"), "Object was not removed from container.");
             
             },
             
@@ -315,6 +329,88 @@ YUI({
             }    
         }));
     
+        //-------------------------------------------------------------------------
+        // Test Case for stopwatch functions
+        //-------------------------------------------------------------------------
+        
+        suite.add(new Y.Test.Case({
+        
+            name : "Profiler Stopwatch Tests",
+            
+            
+            tearDown: function(){
+                Profiler.clear();
+            },
+            
+            testStartStop: function (){
+            
+                Profiler.start("random.entry");
+                
+                for (var i=0; i < 10000; i++){}
+                
+                Profiler.stop("random.entry");
+    
+                var report = Profiler.getReport("random.entry");
+    
+                Assert.isObject(report, "Report should be an object.");
+                Assert.areEqual(1, report.calls, "Call count should be 1.");
+                Assert.isNumber(report.max, "Max should be a number.");
+                Assert.isNumber(report.min, "Min should be a number.");
+                Assert.isNumber(report.avg, "Average should be a number.");        
+            },
+            
+            testStartStopPause : function (){
+            
+                Profiler.start("random.entry");
+                
+                for (var i=0; i < 10000; i++){}
+                
+                Profiler.pause("random.entry");
+    
+                for (var i=0; i < 10000; i++){}
+    
+                Profiler.start("random.entry");
+    
+                for (var i=0; i < 10000; i++){}
+    
+                Profiler.stop("random.entry");
+    
+                var report = Profiler.getReport("random.entry");
+    
+                Assert.isObject(report, "Report should be an object.");
+                Assert.areEqual(1, report.calls, "Call count should be 1.");
+                Assert.isNumber(report.max, "Max should be a number.");
+                Assert.isNumber(report.min, "Min should be a number.");
+                Assert.isNumber(report.avg, "Average should be a number.");   
+          
+            },
+            
+            testStartTwice : function () {
+            
+                Profiler.start("random.entry");
+                
+                for (var i=0; i < 10000; i++){}
+                
+                Profiler.stop("random.entry");
+    
+                Profiler.start("random.entry");
+    
+                for (var i=0; i < 10000; i++){}
+    
+                Profiler.stop("random.entry");
+    
+                var report = Profiler.getReport("random.entry");
+    
+                Assert.isObject(report, "Report should be an object.");
+                Assert.areEqual(2, report.calls, "Call count should be 2.");
+                Assert.isNumber(report.max, "Max should be a number.");
+                Assert.isNumber(report.min, "Min should be a number.");
+                Assert.isNumber(report.avg, "Average should be a number."); 
+            }
+        
+            
+        
+        }));        
         
         //-------------------------------------------------------------------------
         // Test Case for report data
@@ -323,18 +419,14 @@ YUI({
         suite.add(new Y.Test.Case({
         
             name : "Profiler Report Data Tests",
-            
-            //---------------------------------------------------------------------
-            // Special assertions for profiler
-            //---------------------------------------------------------------------
-        
-            testGetFunctionReport : function (){
+    
+            testGetReport : function (){
             
                 Profiler.registerFunction("testObject.factorial", testObject);
                 
                 testObject.factorial(10);
                 
-                var report = Profiler.getFunctionReport("testObject.factorial");
+                var report = Profiler.getReport("testObject.factorial");
                 Profiler.unregisterFunction("testObject.factorial");
     
                 Assert.isObject(report, "Report should be an object.");
@@ -350,7 +442,7 @@ YUI({
                 
                 testObject.factorial(10);
                 
-                var report = Profiler.getFunctionReport("testObject.factorial");
+                var report = Profiler.getReport("testObject.factorial");
                 var callCount = Profiler.getCallCount("testObject.factorial");
                 Profiler.unregisterFunction("testObject.factorial");
     
