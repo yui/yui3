@@ -9,7 +9,7 @@
      * @method JSON
      * @static
      */
-    Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
+    Y.Test.Format.JSON = function(results) {
         return Y.JSON.stringify(results);
     };
     
@@ -21,10 +21,10 @@
      * @method XML
      * @static
      */
-    Y.Test.Format.XML = function(results /*:Object*/) /*:String*/ {
+    Y.Test.Format.XML = function(results) {
     
         var l = Y.Lang;
-        var xml /*:String*/ = "<" + results.type + " name=\"" + results.name.replace(/"/g, "&quot;").replace(/'/g, "&apos;") + "\"";
+        var xml = "<" + results.type + " name=\"" + results.name.replace(/"/g, "&quot;").replace(/'/g, "&apos;") + "\"";
         
         if (results.type == "test"){
             xml += " result=\"" + results.result + "\" message=\"" + results.message + "\">";
