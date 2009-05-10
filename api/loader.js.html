@@ -180,6 +180,8 @@
 
     <span class="nx">YUIBASE</span> <span class="o">=</span> <span class="s1">&#39;yui-base&#39;</span><span class="o">,</span>
 
+    <span class="nx">DOM</span> <span class="o">=</span> <span class="s1">&#39;dom&#39;</span><span class="o">,</span>
+
     <span class="nx">GET</span> <span class="o">=</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span>
 
     <span class="nx">EVENT</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="o">,</span>
@@ -214,11 +216,11 @@
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
 
        <span class="nx">dom</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">],</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;dom-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENT</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">OOP</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;dom-style&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -246,7 +248,8 @@
         <span class="o">},</span>
 
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
+            <span class="nx">expound</span><span class="o">:</span> <span class="nx">EVENT</span><span class="o">,</span>
 
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-base&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -383,8 +386,7 @@
         <span class="o">},</span>
 
         <span class="nx">event</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">],</span>
-            <span class="nx">expound</span><span class="o">:</span> <span class="nx">NODE</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;event-custom&#39;</span><span class="o">:</span> <span class="o">{</span> 
