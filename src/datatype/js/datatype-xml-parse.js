@@ -4,25 +4,17 @@
  *
  * @module datatype
  */
-var LANG = Y.Lang,
+var LANG = Y.Lang;
 
 /**
- * XML submodule.
+ * Parse XML submodule.
  *
  * @class DataType.XML
+ * @submodule datatype-xml-parse
  * @static
  */
-XML = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.XML";
-    },
-
+ 
+Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
      *
@@ -47,14 +39,14 @@ XML = {
                             xmlDoc.loadXML(data);
                     }
                 }
-                catch(e) {
-                    Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", Number.toString());
+                catch(ee) {
+                    Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", "DataType.XML");
                 }
             }
         }
         return xmlDoc;
     }
-};
+});
 
-Y.namespace("DataType").XML = XML;
-Y.namespace("Parsers").xml = XML.parse;
+// Add Parsers shortcut
+Y.namespace("Parsers").xml = Y.DataType.XML.parse;

@@ -17,6 +17,7 @@
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
+        BROADCAST = "broadcast",
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -50,7 +51,7 @@
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
 
-        this._ATTR_E_CFG = {queuable:false, defaultFn:this._defAttrChangeFn, silent:true};
+        // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
@@ -354,7 +355,17 @@
                 facade;
 
             if (!conf.get(attrName, PUBLISHED)) {
-                this.publish(eventName, this._ATTR_E_CFG);
+
+                var eventConfig = {
+                    queuable:false, 
+                    defaultFn:this._defAttrChangeFn, 
+                    silent:true
+                };
+
+                eventConfig.broadcast = conf.get(attrName, BROADCAST);
+
+                this.publish(eventName, eventConfig);
+
                 conf.add(attrName, PUBLISHED, true);
             }
 
