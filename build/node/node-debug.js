@@ -504,6 +504,13 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
     remove: function() {
         var node = g_nodes[this[UID]];
         node.parentNode.removeChild(node);
