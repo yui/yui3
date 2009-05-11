@@ -204,7 +204,7 @@
 
 <span class="k">if</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasAttribute</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="m">2</span><span class="o">)</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
     <span class="o">};</span>
 <span class="o">}</span>
 
