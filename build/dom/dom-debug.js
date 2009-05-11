@@ -2307,7 +2307,7 @@ var PARENT_NODE = 'parentNode',
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
+                    !(token.last && node._found) ) {
                 while ((attr = token.tests[i])) {
                     i++;
                     test = attr.test;
@@ -2325,7 +2325,7 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 result[result.length] = node;
-                if (token.deDupe) {
+                if (token.deDupe && token.last) {
                     node._found = true;
                     Selector._foundCache.push(node);
                 }
@@ -2507,6 +2507,8 @@ var PARENT_NODE = 'parentNode',
             if (!found || selector.length) { // not fully parsed
                 Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
+            } else if (tokens[LENGTH]) {
+                tokens[tokens[LENGTH] - 1].last = true;
             }
             return tokens;
         },

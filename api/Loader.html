@@ -130,7 +130,9 @@ A list of modules that should always be loaded when required, even if already pr
 <li>insertBefore:
 Node or id for a node that should be used as the insertion point for new nodes</li>
 <li>charset:
-charset for dynamic nodes</li>
+charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+<li>jsAttributes: object literal containing attributes to add to script nodes</li>
+<li>cssAttributes: object literal containing attributes to add to link nodes</li>
 <li>timeout:
 number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
 <li>context:

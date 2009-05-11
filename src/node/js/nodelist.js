@@ -250,7 +250,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        g_nodelists[this[UID]] = [];
         delete NodeList._instances[this[UID]];
     },
 
