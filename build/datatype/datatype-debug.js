@@ -1,136 +1,3 @@
-YUI.add('datatype-number', function(Y) {
-
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang,
-
-/**
- * Number submodule.
- *
- * @class DataType.Number
- * @static
- */
-Number = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.Number";
-    },
-
-    /**
-     * Converts data to type Number.
-     *
-     * @method parse
-     * @param data {String | Number | Boolean} Data to convert. The following
-     * values return as null: null, undefined, NaN, "".
-     * @return {Number} A number, or null.
-     * @static
-     */
-    parse: function(data) {
-        var number = (data === null) ? data : +data;
-        if(LANG.isNumber(number)) {
-            return number;
-        }
-        else {
-            Y.log("Could not parse data " + Y.dump(data) + " to type Number", "warn", Number.toString());
-            return null;
-        }
-    },
-
-     /**
-     * Takes a Number and formats to string for display to user.
-     *
-     * @method format
-     * @param data {Number} Number.
-     * @param config {Object} (Optional) Optional configuration values:
-     *  <dl>
-     *   <dt>prefix {String}</dd>
-     *   <dd>String prepended before each number, like a currency designator "$"</dd>
-     *   <dt>decimalPlaces {Number}</dd>
-     *   <dd>Number of decimal places to round.</dd>
-     *   <dt>decimalSeparator {String}</dd>
-     *   <dd>Decimal separator</dd>
-     *   <dt>thousandsSeparator {String}</dd>
-     *   <dd>Thousands separator</dd>
-     *   <dt>suffix {String}</dd>
-     *   <dd>String appended after each number, like " items" (note the space)</dd>
-     *  </dl>
-     * @return {String} Formatted number for display. Note, the following values
-     * return as "": null, undefined, NaN, "".
-     */
-    format: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
-        if(LANG.isNumber(data)) {
-            config = config || {};
-
-            var isNeg = (data < 0),
-                output = data + "",
-                decPlaces = config.decimalPlaces,
-                decSep = config.decimalSeparator || ".",
-                thouSep = config.thousandsSeparator,
-                decIndex,
-                newOutput, count, i;
-
-            // Decimal precision
-            if(LANG.isNumber(decPlaces)) {
-                // Round to the correct decimal place
-                output = data.toFixed(decPlaces);
-            }
-
-            // Decimal separator
-            if(decSep !== "."){
-                output = output.replace(".", decSep);
-            }
-
-            // Add the thousands separator
-            if(thouSep) {
-                // Find the dot or where it would be
-                decIndex = output.lastIndexOf(decSep);
-                decIndex = (decIndex > -1) ? decIndex : output.length;
-                // Start with the dot and everything to the right
-                newOutput = output.substring(decIndex);
-                // Working left, every third time add a separator, every time add a digit
-                for (count = 0, i=decIndex; i>0; i--) {
-                    if ((count%3 === 0) && (i !== decIndex) && (!isNeg || (i > 1))) {
-                        newOutput = thouSep + newOutput;
-                    }
-                    newOutput = output.charAt(i-1) + newOutput;
-                    count++;
-                }
-                output = newOutput;
-            }
-
-            // Prepend prefix
-            output = (config.prefix) ? config.prefix + output : output;
-
-            // Append suffix
-            output = (config.suffix) ? output + config.suffix : output;
-
-            return output;
-        }
-        // Still not a Number, just return unaltered
-        else {
-            return data;
-        }
-    }
-};
-
-Y.namespace("DataType").Number = Number;
-Y.namespace("Parsers").number = Number.parse;
-
-
-
-}, '@VERSION@' ,{requires:['??']});
-
 YUI.add('datatype-date', function(Y) {
 
 /**
@@ -299,7 +166,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {String} (Otional)</dt>
+	 *   <dt>format {String} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
@@ -363,7 +230,7 @@ var Dt = {
 	 *  <dt>locale {String} (Optional)</dt>
 	 *  <dd>
 	 *   The locale to use when displaying days of week, months of the year, and other locale specific
-	 *   strings. If not specified, this defaults to "en" which may be overridden by changing Y.config.locale.
+	 *   strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
 	 *   The following locales are built in:
 	 *   <dl>
 	 *    <dt>en</dt>
@@ -426,7 +293,7 @@ var Dt = {
 				case "array":					// built in function with padding
 					if(Y.Lang.type(f[0]) === "string") {
 						return xPad(oDate[f[0]](), f[1]);
-					} // else fall through to default:
+					} // no break; (fall through to default:)
 				default:
 					Y.log("unrecognised replacement type, please file a bug (format: " + oConfig.format || Y.config.dateFormat + ")", "WARN", "datatype-date");
 					return m1;
@@ -450,9 +317,9 @@ var Dt = {
 Y.namespace("DataType").Date=Dt;
 
 /**
- * The Date.Locale class is a container and base class for all
- * localised date strings used by Y.DataType.Date. It is used
- * internally, but may be extended to provide new date localisations.
+ * The Date.Locale class is a container for all localised date strings
+ * used by Y.DataType.Date. It is used internally, but may be extended
+ * to provide new date localisations.
  *
  * To create your own Locale, follow these steps:
  * <ol>
@@ -547,73 +414,6 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 }, '@VERSION@' );
-
-YUI.add('datatype-xml', function(Y) {
-
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang,
-
-/**
- * XML submodule.
- *
- * @class DataType.XML
- * @static
- */
-XML = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.XML";
-    },
-
-    /**
-     * Converts data to type XMLDocument.
-     *
-     * @method parse
-     * @param data {String} Data to convert.
-     * @return {XMLDoc} XML Document.
-     * @static
-     */
-    parse: function(data) {
-        var xmlDoc = null;
-        if(LANG.isString(data)) {
-            try {
-                if(!LANG.isUndefined(DOMParser)) {
-                    xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-                }
-            }
-            catch(e) {
-                try {
-                    if(!LANG.isUndefined(ActiveXObject)) {
-                            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-                            xmlDoc.async = false;
-                            xmlDoc.loadXML(data);
-                    }
-                }
-                catch(e) {
-                    Y.log("Could not parse data " + Y.dump(data) + " to type XML Document: " + e.message, "warn", Number.toString());
-                }
-            }
-        }
-        return xmlDoc;
-    }
-};
-
-Y.namespace("DataType").XML = XML;
-Y.namespace("Parsers").xml = XML.parse;
-
-
-
-}, '@VERSION@' ,{requires:['??']});
 
 
 
