@@ -1915,18 +1915,19 @@ Y.Get = function() {
      * @method _linkNode
      * @param url {string} the url for the css file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
         };
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
         return _node("link", o, win);
     },
@@ -1936,18 +1937,19 @@ Y.Get = function() {
      * @method _scriptNode
      * @param url {string} the url for the script file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_JS,
             src:  url
         };
 
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
 
         return _node("script", o, win);
@@ -2136,9 +2138,9 @@ Y.Get = function() {
         }
 
         if (q.type === "script") {
-            n = _scriptNode(url, w, q.charset);
+            n = _scriptNode(url, w, q.attributes);
         } else {
-            n = _linkNode(url, w, q.charset);
+            n = _linkNode(url, w, q.attributes);
         }
 
         // track this node's load progress
@@ -2229,6 +2231,11 @@ Y.Get = function() {
         q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
+
+        if (opts.charset) {
+            q.attributes = q.attributes || {};
+            q.attributes.charset = opts.charset;
+        }
 
         L.later(0, q, _next, id);
 
@@ -2425,7 +2432,9 @@ Y.Get = function() {
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * </dl>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * <dt>timeout</dt>
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
@@ -2497,7 +2506,9 @@ Y.Get = function() {
          * <dt>insertBefore</dt>
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * </dl>
          * <pre>
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");
@@ -2592,7 +2603,9 @@ YUI.add('loader', function(Y) {
  *  <li>insertBefore:
  *  Node or id for a node that should be used as the insertion point for new nodes</li>
  *  <li>charset:
- *  charset for dynamic nodes</li>
+ *  charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+ *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
+ *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
  *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
  *  <li>context:
@@ -3118,9 +3131,23 @@ Y.Loader = function(o) {
      * The charset attribute for inserted nodes
      * @property charset
      * @type string
-     * @default utf-8
+     * @deprecated, use cssAttributes or jsAttributes
      */
     this.charset = null;
+
+    /**
+     * An object literal containing attributes to add to link nodes
+     * @property cssAttributes
+     * @type object
+     */
+    this.cssAttributes = null;
+
+    /**
+     * An object literal containing attributes to add to script nodes
+     * @property jsAttributes
+     * @type object
+     */
+    this.jsAttributes = null;
 
     /**
      * The base directory.
@@ -4243,7 +4270,7 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg,
+        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
             callback=function(o) {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
                 this._combineComplete[type] = true;
@@ -4299,6 +4326,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: this.jsAttributes,
                     timeout: this.timeout,
                     context: self 
                 });
@@ -4384,7 +4412,13 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this._loading = s[i];
                 Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
-                fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
@@ -4393,6 +4427,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                     onSuccess: onsuccess,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: attr,
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,

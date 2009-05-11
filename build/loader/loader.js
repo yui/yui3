@@ -69,7 +69,9 @@ YUI.add('loader', function(Y) {
  *  <li>insertBefore:
  *  Node or id for a node that should be used as the insertion point for new nodes</li>
  *  <li>charset:
- *  charset for dynamic nodes</li>
+ *  charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+ *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
+ *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
  *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
  *  <li>context:
@@ -595,9 +597,23 @@ Y.Loader = function(o) {
      * The charset attribute for inserted nodes
      * @property charset
      * @type string
-     * @default utf-8
+     * @deprecated, use cssAttributes or jsAttributes
      */
     this.charset = null;
+
+    /**
+     * An object literal containing attributes to add to link nodes
+     * @property cssAttributes
+     * @type object
+     */
+    this.cssAttributes = null;
+
+    /**
+     * An object literal containing attributes to add to script nodes
+     * @property jsAttributes
+     * @type object
+     */
+    this.jsAttributes = null;
 
     /**
      * The base directory.
@@ -1692,7 +1708,7 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg,
+        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
             callback=function(o) {
                 this._combineComplete[type] = true;
 
@@ -1745,6 +1761,7 @@ Y.Loader.prototype = {
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: this.jsAttributes,
                     timeout: this.timeout,
                     context: self 
                 });
@@ -1825,7 +1842,13 @@ Y.Loader.prototype = {
             if (!type || type === m.type) {
                 this._loading = s[i];
 
-                fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
@@ -1834,6 +1857,7 @@ Y.Loader.prototype = {
                     onSuccess: onsuccess,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: attr,
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
