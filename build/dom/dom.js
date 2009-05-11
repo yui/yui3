@@ -929,8 +929,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val, style) {
-        style = node[STYLE],
+    setStyle: function(node, att, val) {
+        var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -2288,7 +2288,8 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&

@@ -397,7 +397,8 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
