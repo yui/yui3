@@ -51,7 +51,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            useRef: true
         }
     }
 });

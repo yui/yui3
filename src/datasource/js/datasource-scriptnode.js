@@ -49,7 +49,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            useRef: true
         },
 
 /**

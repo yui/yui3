@@ -398,7 +398,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            useRef: true
         }
     }
 });
@@ -540,7 +541,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            useRef: true
         },
 
 /**
