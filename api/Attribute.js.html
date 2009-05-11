@@ -66,6 +66,7 @@
         <span class="nx">WRITE_ONCE</span> <span class="o">=</span> <span class="s2">&quot;writeOnce&quot;</span><span class="o">,</span>
         <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="o">,</span>
         <span class="nx">PUBLISHED</span> <span class="o">=</span> <span class="s2">&quot;published&quot;</span><span class="o">,</span>
+        <span class="nx">BROADCAST</span> <span class="o">=</span> <span class="s2">&quot;broadcast&quot;</span><span class="o">,</span>
         <span class="nx">INVALID_VALUE</span><span class="o">,</span>
 
         <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
@@ -99,8 +100,8 @@
     <span class="k">function</span> <span class="nx">Attribute</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_CFG</span> <span class="o">=</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrChangeFn</span><span class="o">,</span> <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="o">};</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_FACADE</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="c">// Perf tweak - avoid creating event literals if not required.</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_FACADE</span> <span class="o">=</span> <span class="o">{};</span>
 
         <span class="nx">EventTarget</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="o">{</span><span class="nx">emitFacade</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">State</span><span class="o">();</span>
@@ -403,7 +404,17 @@
                 <span class="nx">facade</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ATTR_E_CFG</span><span class="o">);</span>
+
+                <span class="k">var</span> <span class="nx">eventConfig</span> <span class="o">=</span> <span class="o">{</span>
+                    <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> 
+                    <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrChangeFn</span><span class="o">,</span> 
+                    <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span>
+                <span class="o">};</span>
+
+                <span class="nx">eventConfig</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">BROADCAST</span><span class="o">);</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="nx">eventConfig</span><span class="o">);</span>
+
                 <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 

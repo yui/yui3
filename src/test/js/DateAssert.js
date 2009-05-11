@@ -18,7 +18,7 @@
          * @method datesAreEqual
          * @static
          */
-        datesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+        datesAreEqual : function (expected, actual, message){
             Y.Assert._increment();        
             if (expected instanceof Date && actual instanceof Date){
                 var msg = "";
@@ -54,7 +54,7 @@
          * @method timesAreEqual
          * @static
          */
-        timesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+        timesAreEqual : function (expected, actual, message){
             Y.Assert._increment();
             if (expected instanceof Date && actual instanceof Date){
                 var msg = "";

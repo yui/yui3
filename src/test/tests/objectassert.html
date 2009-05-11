@@ -242,6 +242,47 @@ YUI({
     
         }));        
     
+        //-------------------------------------------------------------------------
+        // Test Case for ownsNoKeys()
+        //-------------------------------------------------------------------------
+        
+        suite.add(new Y.Test.Case({
+        
+            name : "ownsNoKeys() Tests",
+            
+            _should: {
+                fail: {
+                    "ownsNoKeys() should fail for object with one key": "Object owns 1 properties but should own none.",
+                    "ownsNoKeys() should fail for object with two keys": "Object owns 2 properties but should own none."
+                }
+            },
+            
+            /*
+             * Tests that ownsNoKeys() fails when the object owns a single property.
+             */
+            "ownsNoKeys() should fail for object with one key": function(){            
+                var object = { msg: "hi" };
+                ObjectAssert.ownsNoKeys(object);
+            },
+            
+            /*
+             * Tests that ownsNoKeys() fails when the object owns two properties.
+             */
+            "ownsNoKeys() should fail for object with two keys": function(){            
+                var object = { msg: "hi", yui: true };
+                ObjectAssert.ownsNoKeys(object);
+            },
+            
+            /*
+             * Tests that ownsNoKeys() passes when the object owns no properties.
+             */
+            "ownsNoKeys() should pass for object with no keys": function(){            
+                var object = {};
+                ObjectAssert.ownsNoKeys(object);
+            }
+
+        }));         
+    
         //return it
         return suite;
     
