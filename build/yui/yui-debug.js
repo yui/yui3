@@ -773,7 +773,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -902,7 +905,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -937,7 +940,7 @@ L.isValue = function(o) {
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();
@@ -1320,7 +1323,7 @@ Y.cached = function(source, cache){
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
@@ -2653,7 +2656,9 @@ YUI.add('loader', function(Y) {
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
-var BASE = 'base', 
+var GLOBAL_ENV = YUI.Env,
+    GLOBAL_LOADED,
+    BASE = 'base', 
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
@@ -3053,6 +3058,9 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 
 Y.Env.meta = META;
 
+GLOBAL_ENV.loaded = GLOBAL_ENV.loaded || {};
+GLOBAL_LOADED = GLOBAL_ENV.loaded;
+
 Y.Loader = function(o) {
 
     /**
@@ -3330,14 +3338,17 @@ Y.Loader = function(o) {
      */
     this.sorted = [];
 
+    GLOBAL_LOADED[VERSION] = GLOBAL_LOADED[VERSION] || {};
+
     /**
      * Set when beginning to compute the dependency tree. 
      * Composed of what YUI reports to be loaded combined
-     * with what has been loaded by the tool
+     * with what has been loaded by any instance on the page
+     * with the version number specified in the metadata.
      * @propery loaded
      * @type {string: boolean}
      */
-    this.loaded = {};
+    this.loaded = GLOBAL_LOADED[VERSION];
 
     /**
      * A list of modules to attach to the YUI instance when complete.
@@ -3806,7 +3817,7 @@ Y.Loader.prototype = {
 
         // available modules
         if (!this.ignoreRegistered) {
-            Y.mix(l, YUI.Env.mods);
+            Y.mix(l, GLOBAL_ENV.mods);
         }
         
         // Y.log("Already loaded stuff: " + L.dump(l, 0));
