@@ -1,4 +1,4 @@
-YUI.add('datatype-number', function(Y) {
+YUI.add('datatype-number-parse', function(Y) {
 
 /**
  * The DataType utility provides a set of utility functions to operate on native
@@ -6,25 +6,16 @@ YUI.add('datatype-number', function(Y) {
  *
  * @module datatype
  */
-var LANG = Y.Lang,
+var LANG = Y.Lang;
 
 /**
- * Number submodule.
+ * Parse number submodule.
  *
  * @class DataType.Number
+ * @submodule datatype-number-format
  * @static
  */
-Number = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.Number";
-    },
-
+Y.mix(Y.namespace("DataType.Number"), {
     /**
      * Converts data to type Number.
      *
@@ -42,8 +33,34 @@ Number = {
         else {
             return null;
         }
-    },
+    }
+});
 
+// Add Parsers shortcut
+Y.namespace("Parsers").number = Y.DataType.Number.parse;
+
+
+
+}, '@VERSION@' );
+
+YUI.add('datatype-number-format', function(Y) {
+
+/**
+ * The DataType utility provides a set of utility functions to operate on native
+ * JavaScript data types.
+ *
+ * @module datatype
+ */
+var LANG = Y.Lang;
+
+/**
+ * Format number submodule.
+ *
+ * @class DataType.Number
+ * @submodule datatype-number-format
+ * @static
+ */
+Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.
      *
@@ -66,8 +83,6 @@ Number = {
      * return as "": null, undefined, NaN, "".
      */
     format: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
         if(LANG.isNumber(data)) {
             config = config || {};
 
@@ -116,16 +131,18 @@ Number = {
 
             return output;
         }
-        // Still not a Number, just return unaltered
+        // Not a Number, just return as string
         else {
-            return data;
+            return data.toString();
         }
     }
-};
-
-Y.namespace("DataType").Number = Number;
-Y.namespace("Parsers").number = Number.parse;
+});
 
 
 
-}, '@VERSION@' ,{requires:['??']});
+}, '@VERSION@' );
+
+
+
+YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
+
