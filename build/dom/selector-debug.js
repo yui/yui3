@@ -11,9 +11,7 @@ YUI.add('selector', function(Y) {
 var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^[\]]*\]|['"][^'"]*['"]|[^[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?/g,
 	done = 0,
 	toString = Object.prototype.toString,
-	arraySplice = Array.prototype.splice,
-	arrayPush = Array.prototype.push,
-	arraySort = Array.prototype.sort;
+	hasDuplicate = false;
 
 var Sizzle = function(selector, context, results, seed) {
 	results = results || [];
@@ -109,17 +107,17 @@ var Sizzle = function(selector, context, results, seed) {
 
 	if ( toString.call(checkSet) === "[object Array]" ) {
 		if ( !prune ) {
-			arrayPush.apply( results, checkSet );
+			results.push.apply( results, checkSet );
 		} else if ( context && context.nodeType === 1 ) {
 			for ( var i = 0; checkSet[i] != null; i++ ) {
 				if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && contains(context, checkSet[i])) ) {
-					arrayPush.call( results, set[i] );
+					results.push( set[i] );
 				}
 			}
 		} else {
 			for ( var i = 0; checkSet[i] != null; i++ ) {
 				if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
-					arrayPush.call( results, set[i] );
+					results.push( set[i] );
 				}
 			}
 		}
@@ -138,12 +136,12 @@ var Sizzle = function(selector, context, results, seed) {
 Sizzle.uniqueSort = function(results){
 	if ( sortOrder ) {
 		hasDuplicate = false;
-		arraySort.call(results, sortOrder);
+		results.sort(sortOrder);
 
 		if ( hasDuplicate ) {
 			for ( var i = 1; i < results.length; i++ ) {
 				if ( results[i] === results[i-1] ) {
-					arraySplice.call(results, i--, 1);
+					results.splice(i--, 1);
 				}
 			}
 		}
@@ -668,7 +666,7 @@ var makeArray = function(array, results) {
 	array = Array.prototype.slice.call( array );
 
 	if ( results ) {
-		arrayPush.apply( results, array );
+		results.push.apply( results, array );
 		return results;
 	}
 	
@@ -765,6 +763,7 @@ if ( document.documentElement.compareDocumentPosition ) {
 	}
 
 	root.removeChild( form );
+	root = form = null; // release memory in IE
 })();
 
 (function(){
@@ -805,6 +804,8 @@ if ( document.documentElement.compareDocumentPosition ) {
 			return elem.getAttribute("href", 2);
 		};
 	}
+
+	div = null; // release memory in IE
 })();
 
 if ( document.querySelectorAll ) (function(){
@@ -834,6 +835,8 @@ if ( document.querySelectorAll ) (function(){
 	for ( var prop in oldSizzle ) {
 		Sizzle[ prop ] = oldSizzle[ prop ];
 	}
+
+	div = null; // release memory in IE
 })();
 
 if ( document.getElementsByClassName && document.documentElement.getElementsByClassName ) (function(){
@@ -856,6 +859,8 @@ if ( document.getElementsByClassName && document.documentElement.getElementsByCl
 			return context.getElementsByClassName(match[1]);
 		}
 	};
+
+	div = null; // release memory in IE
 })();
 
 function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
@@ -872,8 +877,7 @@ function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
 
 			while ( elem ) {
 				if ( elem.sizcache === doneName ) {
-					//match = checkSet[elem.sizset];
-					match = checkSet[i];
+					match = checkSet[elem.sizset];
 					break;
 				}
 
