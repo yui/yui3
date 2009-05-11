@@ -74,10 +74,11 @@ Y.publish('domready', {
 });
 
 if (GLOBAL_ENV.DOMReady) {
-    // Y.log('DOMReady already fired', 'info', 'event');
+    // console.log('DOMReady already fired', 'info', 'event');
     yready();
 } else {
-    // Y.log('setting up before listener', 'info', 'event');
+    // console.log('setting up before listener', 'info', 'event');
+    // console.log('env: ' + YUI.Env.windowLoaded, 'info', 'event');
     Y.before(yready, GLOBAL_ENV, "_ready");
 }
 

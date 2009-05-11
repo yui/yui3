@@ -6,6 +6,28 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
+        add = function(el, type, fn, capture) {
+            if (el.addEventListener) {
+                    el.addEventListener(type, fn, !!capture);
+            } else if (el.attachEvent) {
+                    el.attachEvent("on" + type, fn);
+            } 
+        },
+
+        remove = function(el, type, fn, capture) {
+            if (el.removeEventListener) {
+                    el.removeEventListener(type, fn, !!capture);
+            } else if (el.detachEvent) {
+                    el.detachEvent("on" + type, fn);
+            }
+        },
+
+        globalListener = function() {
+            YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
+            remove(window, 'load', globalListener);
+        },
+
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
@@ -16,7 +38,6 @@
             'io.abort': 1
         };
         
-
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
@@ -605,26 +626,6 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
-    var add = function(el, type, fn, capture) {
-        if (el.addEventListener) {
-                el.addEventListener(type, fn, !!capture);
-        } else if (el.attachEvent) {
-                el.attachEvent("on" + type, fn);
-        } 
-    },
-
-    remove = function(el, type, fn, capture) {
-        if (el.removeEventListener) {
-                el.removeEventListener(type, fn, !!capture);
-        } else if (el.detachEvent) {
-                el.detachEvent("on" + type, fn);
-        }
-    },
-
-    globalListener = function() {
-        YUI.Env.windowLoaded = true;
-        remove(window, 'load', globalListener);
-    };
 
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
@@ -1139,6 +1140,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -1304,7 +1306,7 @@ Y.cached = function(source, cache){
 
     return function() {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, arguments);

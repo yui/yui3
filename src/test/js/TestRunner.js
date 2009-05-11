@@ -16,7 +16,7 @@
          * @constructor
          * @private
          */
-        function TestNode(testObject /*:Variant*/){
+        function TestNode(testObject){
         
             /**
              * The TestSuite, TestCase, or test function represented by this node.
@@ -30,7 +30,7 @@
              * @type TestNode
              * @property firstChild
              */        
-            this.firstChild /*:TestNode*/ = null;
+            this.firstChild = null;
             
             /**
              * Pointer to this node's last child.
@@ -58,7 +58,7 @@
              * @type object
              * @property results
              */                
-            this.results /*:Object*/ = {
+            this.results = {
                 passed : 0,
                 failed : 0,
                 total : 0,
@@ -84,7 +84,7 @@
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
              */
-            appendChild : function (testObject /*:Variant*/) /*:Void*/{
+            appendChild : function (testObject){
                 var node = new TestNode(testObject);
                 if (this.firstChild === null){
                     this.firstChild = this.lastChild = node;
@@ -185,14 +185,14 @@
              * @event testcasebegin
              * @static
              */         
-            TEST_CASE_BEGIN_EVENT /*:String*/ : "testcasebegin",
+            TEST_CASE_BEGIN_EVENT : "testcasebegin",
             
             /**
              * Fires when all tests in a test case have been executed.
              * @event testcasecomplete
              * @static
              */        
-            TEST_CASE_COMPLETE_EVENT /*:String*/ : "testcasecomplete",
+            TEST_CASE_COMPLETE_EVENT : "testcasecomplete",
             
             /**
              * Fires when a test suite is opened but before the first 
@@ -200,7 +200,7 @@
              * @event testsuitebegin
              * @static
              */        
-            TEST_SUITE_BEGIN_EVENT /*:String*/ : "testsuitebegin",
+            TEST_SUITE_BEGIN_EVENT : "testsuitebegin",
             
             /**
              * Fires when all test cases in a test suite have been
@@ -208,42 +208,42 @@
              * @event testsuitecomplete
              * @static
              */        
-            TEST_SUITE_COMPLETE_EVENT /*:String*/ : "testsuitecomplete",
+            TEST_SUITE_COMPLETE_EVENT : "testsuitecomplete",
             
             /**
              * Fires when a test has passed.
              * @event pass
              * @static
              */        
-            TEST_PASS_EVENT /*:String*/ : "pass",
+            TEST_PASS_EVENT : "pass",
             
             /**
              * Fires when a test has failed.
              * @event fail
              * @static
              */        
-            TEST_FAIL_EVENT /*:String*/ : "fail",
+            TEST_FAIL_EVENT : "fail",
             
             /**
              * Fires when a test has been ignored.
              * @event ignore
              * @static
              */        
-            TEST_IGNORE_EVENT /*:String*/ : "ignore",
+            TEST_IGNORE_EVENT : "ignore",
             
             /**
              * Fires when all test suites and test cases have been completed.
              * @event complete
              * @static
              */        
-            COMPLETE_EVENT /*:String*/ : "complete",
+            COMPLETE_EVENT : "complete",
             
             /**
              * Fires when the run() method is called.
              * @event begin
              * @static
              */        
-            BEGIN_EVENT /*:String*/ : "begin",    
+            BEGIN_EVENT : "begin",    
             
             //-------------------------------------------------------------------------
             // Logging-Related Methods
@@ -283,8 +283,8 @@
             _logEvent: function(event){
                 
                 //data variables
-                var message /*:String*/ = "";
-                var messageType /*:String*/ = "";
+                var message = "";
+                var messageType = "";
                 
                 switch(event.type){
                     case this.BEGIN_EVENT:
@@ -358,7 +358,7 @@
              * @private
              * @method _addTestCaseToTestTree
              */
-           _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
+           _addTestCaseToTestTree : function (parentNode, testCase /*:Y.Test.Case*/){
                 
                 //add the test suite
                 var node = parentNode.appendChild(testCase),
@@ -383,7 +383,7 @@
              * @private
              * @method _addTestSuiteToTestTree
              */
-            _addTestSuiteToTestTree : function (parentNode /*:TestNode*/, testSuite /*:Y.Test.Suite*/) /*:Void*/ {
+            _addTestSuiteToTestTree : function (parentNode, testSuite /*:Y.Test.Suite*/) {
                 
                 //add the test suite
                 var node = parentNode.appendChild(testSuite);
@@ -407,7 +407,7 @@
              * @private
              * @method _buildTestTree
              */
-            _buildTestTree : function () /*:Void*/ {
+            _buildTestTree : function () {
             
                 this._root = new TestNode(this.masterSuite);
                 this._cur = this._root;
@@ -435,7 +435,7 @@
              * @method _handleTestObjectComplete
              * @private
              */
-            _handleTestObjectComplete : function (node /*:TestNode*/) /*:Void*/ {
+            _handleTestObjectComplete : function (node) {
                 if (Y.Lang.isObject(node.testObject)){
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
@@ -463,7 +463,7 @@
              * @static
              * @method _next
              */
-            _next : function () /*:TestNode*/ {
+            _next : function () {
             
                 if (this._cur.firstChild) {
                     this._cur = this._cur.firstChild;
@@ -498,10 +498,10 @@
              * @method _run
              * @static
              */
-            _run : function () /*:Void*/ {
+            _run : function () {
             
                 //flag to indicate if the TestRunner should wait before continuing
-                var shouldWait /*:Boolean*/ = false;
+                var shouldWait = false;
                 
                 //get the next test node
                 var node = this._next();
@@ -533,10 +533,10 @@
                 }
             },
             
-            _resumeTest : function (segment /*:Function*/) /*:Void*/ {
+            _resumeTest : function (segment) {
             
                 //get relevant information
-                var node /*:TestNode*/ = this._cur;
+                var node = this._cur;
                 
                 //if there's no node, it probably means a wait() was called after resume()
                 if (!node){
@@ -546,7 +546,7 @@
                     return;
                 }
                 
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
             
                 //cancel other waits if available
@@ -556,12 +556,12 @@
                 }
 
                 //get the "should" test cases
-                var shouldFail /*:Object*/ = (testCase._should.fail || {})[testName];
-                var shouldError /*:Object*/ = (testCase._should.error || {})[testName];
+                var shouldFail = (testCase._should.fail || {})[testName];
+                var shouldError = (testCase._should.error || {})[testName];
                 
                 //variable to hold whether or not the test failed
-                var failed /*:Boolean*/ = false;
-                var error /*:Error*/ = null;
+                var failed = false;
+                var error = null;
                     
                 //try the test
                 try {
@@ -578,7 +578,7 @@
                         failed = true;
                     }
                                
-                } catch (thrown /*:Error*/){
+                } catch (thrown){
 
                     //cancel any pending waits, the test already failed
                     if (testCase.__yui_wait){
@@ -721,15 +721,15 @@
              * @private
              * @name _runTest
              */
-            _runTest : function (node /*:TestNode*/) /*:Void*/ {
+            _runTest : function (node) {
             
                 //get relevant information
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
-                var test /*:Function*/ = testCase[testName];
+                var test = testCase[testName];
                 
                 //get the "should" test cases
-                var shouldIgnore /*:Object*/ = (testCase._should.ignore || {})[testName];
+                var shouldIgnore = (testCase._should.ignore || {})[testName];
                 
                 //figure out if the test should be ignored or not
                 if (shouldIgnore){
@@ -781,7 +781,7 @@
              * @static
              * @protected
              */
-            fire : function (type /*:String*/, data /*:Object*/) /*:Void*/ {
+            fire : function (type, data) {
                 data = data || {};
                 data.type = type;
                 TestRunner.superclass.fire.call(this, type, data);
@@ -798,7 +798,7 @@
              * @method add
              * @static
              */
-            add : function (testObject /*:Object*/) /*:Void*/ {
+            add : function (testObject) {
                 this.masterSuite.add(testObject);
             },
             
@@ -808,7 +808,7 @@
              * @method clear
              * @static
              */
-            clear : function () /*:Void*/ {
+            clear : function () {
                 this.masterSuite.items = [];
             },
             
@@ -830,7 +830,7 @@
              * @method resume
              * @static
              */
-            resume : function (segment /*:Function*/) /*:Void*/ {
+            resume : function (segment) {
                 this._resumeTest(segment || function(){});
             },
         
@@ -840,7 +840,7 @@
              * @method run
              * @static
              */
-            run : function (testObject /*:Object*/) /*:Void*/ {
+            run : function (testObject) {
                 
                 //pointer to runner to avoid scope issues 
                 var runner = Y.Test.Runner;

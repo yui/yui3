@@ -1,48 +1,21 @@
+YUI.add('datatype-number-format', function(Y) {
+
 /**
  * The DataType utility provides a set of utility functions to operate on native
  * JavaScript data types.
  *
  * @module datatype
  */
-var LANG = Y.Lang,
+var LANG = Y.Lang;
 
 /**
- * Number submodule.
+ * Format number submodule.
  *
  * @class DataType.Number
+ * @submodule datatype-number-format
  * @static
  */
-Number = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.Number";
-    },
-
-    /**
-     * Converts data to type Number.
-     *
-     * @method parse
-     * @param data {String | Number | Boolean} Data to convert. The following
-     * values return as null: null, undefined, NaN, "".
-     * @return {Number} A number, or null.
-     * @static
-     */
-    parse: function(data) {
-        var number = (data === null) ? data : +data;
-        if(LANG.isNumber(number)) {
-            return number;
-        }
-        else {
-            Y.log("Could not parse data " + Y.dump(data) + " to type Number", "warn", Number.toString());
-            return null;
-        }
-    },
-
+Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.
      *
@@ -53,7 +26,7 @@ Number = {
      *   <dt>prefix {String}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
      *   <dt>decimalPlaces {Number}</dd>
-     *   <dd>Number of decimal places to round.</dd>
+     *   <dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
      *   <dt>decimalSeparator {String}</dd>
      *   <dd>Decimal separator</dd>
      *   <dt>thousandsSeparator {String}</dd>
@@ -65,8 +38,6 @@ Number = {
      * return as "": null, undefined, NaN, "".
      */
     format: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
         if(LANG.isNumber(data)) {
             config = config || {};
 
@@ -79,7 +50,7 @@ Number = {
                 newOutput, count, i;
 
             // Decimal precision
-            if(LANG.isNumber(decPlaces)) {
+            if(LANG.isNumber(decPlaces) && (decPlaces >= 0) && (decPlaces <= 20)) {
                 // Round to the correct decimal place
                 output = data.toFixed(decPlaces);
             }
@@ -115,12 +86,13 @@ Number = {
 
             return output;
         }
-        // Still not a Number, just return unaltered
+        // Not a Number, just return as string
         else {
-            return data;
+            return data.toString();
         }
     }
-};
+});
 
-Y.namespace("DataType").Number = Number;
-Y.namespace("Parsers").number = Number.parse;
+
+
+}, '@VERSION@' );
