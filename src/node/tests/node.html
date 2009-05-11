@@ -636,8 +636,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 "Y.get('input[name=test-text-novalue]').get('value')");
 
             // textarea
-            Assert.isTrue(Y.get('textarea[name=test-textarea-value]').hasAttribute('value'),
-                'textarea[name=test-textarea-value].hasAttribute("value")');
+            // textarea doesn't use value attribute
+            //Assert.isTrue(Y.get('textarea[name=test-textarea-value]').hasAttribute('value'),
+            //    'textarea[name=test-textarea-value].hasAttribute("value")');
 
             Assert.isFalse(Y.get('textarea[name=test-textarea-novalue]').hasAttribute('value'),
                 'textarea[name=test-textarea-value].hasAttribute("value")');

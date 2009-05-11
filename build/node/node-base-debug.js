@@ -1100,7 +1100,7 @@ Node.importMethod(Y.DOM, [
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return this.getAttribute(attr) !== '';
+        return Y.Node.getDOMNode(this).getAttribute(attr, 2) !== '';
     };
 }
 
