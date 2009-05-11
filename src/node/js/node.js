@@ -239,6 +239,16 @@ Node.ATTRS = {
         }
     },
 
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
     restricted: {
         writeOnce: true,
         value: false
