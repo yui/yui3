@@ -288,6 +288,16 @@
         <span class="o">}</span>
     <span class="o">},</span>
 
+    <span class="nx">value</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">getValue</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]);</span>
+        <span class="o">},</span>
+
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">val</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
     <span class="nx">restricted</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
