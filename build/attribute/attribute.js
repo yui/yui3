@@ -141,6 +141,7 @@ YUI.add('attribute', function(Y) {
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
+        BROADCAST = "broadcast",
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -173,7 +174,7 @@ YUI.add('attribute', function(Y) {
      */
     function Attribute() {
 
-        this._ATTR_E_CFG = {queuable:false, defaultFn:this._defAttrChangeFn, silent:true};
+        // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
@@ -470,7 +471,17 @@ YUI.add('attribute', function(Y) {
                 facade;
 
             if (!conf.get(attrName, PUBLISHED)) {
-                this.publish(eventName, this._ATTR_E_CFG);
+
+                var eventConfig = {
+                    queuable:false, 
+                    defaultFn:this._defAttrChangeFn, 
+                    silent:true
+                };
+
+                eventConfig.broadcast = conf.get(attrName, BROADCAST);
+
+                this.publish(eventName, eventConfig);
+
                 conf.add(attrName, PUBLISHED, true);
             }
 
