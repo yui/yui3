@@ -166,7 +166,9 @@
 <span class="c">// http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&amp;2.5.2/build/dom/dom-min.js&amp;2.5.2/build/event/event-min.js&amp;2.5.2/build/autocomplete/autocomplete-min.js&quot;</span>
 <span class="c"></span>
 
-<span class="k">var</span> <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> 
+<span class="k">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span>
+    <span class="nx">GLOBAL_LOADED</span><span class="o">,</span>
+    <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> 
     <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="o">,</span>
     <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="o">,</span>
     <span class="nx">CSSRESET</span> <span class="o">=</span> <span class="s1">&#39;cssreset&#39;</span><span class="o">,</span>
@@ -566,6 +568,9 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">META</span><span class="o">;</span>
 
+<span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">||</span> <span class="o">{};</span>
+<span class="nx">GLOBAL_LOADED</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span><span class="o">;</span>
+
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="c">/**</span>
@@ -843,14 +848,17 @@
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">sorted</span> <span class="o">=</span> <span class="o">[];</span>
 
+    <span class="nx">GLOBAL_LOADED</span><span class="o">[</span><span class="nx">VERSION</span><span class="o">]</span> <span class="o">=</span> <span class="nx">GLOBAL_LOADED</span><span class="o">[</span><span class="nx">VERSION</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
+
     <span class="c">/**</span>
 <span class="c">     * Set when beginning to compute the dependency tree. </span>
 <span class="c">     * Composed of what YUI reports to be loaded combined</span>
-<span class="c">     * with what has been loaded by the tool</span>
+<span class="c">     * with what has been loaded by any instance on the page</span>
+<span class="c">     * with the version number specified in the metadata.</span>
 <span class="c">     * @propery loaded</span>
 <span class="c">     * @type {string: boolean}</span>
 <span class="c">     */</span>
-    <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="o">{};</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="nx">GLOBAL_LOADED</span><span class="o">[</span><span class="nx">VERSION</span><span class="o">];</span>
 
     <span class="c">/**</span>
 <span class="c">     * A list of modules to attach to the YUI instance when complete.</span>
@@ -1319,7 +1327,7 @@
 <span class="c"></span>
         <span class="c">// available modules</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">ignoreRegistered</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">l</span><span class="o">,</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">l</span><span class="o">,</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">mods</span><span class="o">);</span>
         <span class="o">}</span>
         
         <span class="c">// Y.log(&quot;Already loaded stuff: &quot; + L.dump(l, 0));</span>

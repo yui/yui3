@@ -80,7 +80,10 @@
     <span class="s1">&#39;[object Array]&#39;</span>    <span class="o">:</span> <span class="nx">ARRAY</span><span class="o">,</span>
     <span class="s1">&#39;[object Date]&#39;</span>     <span class="o">:</span> <span class="nx">DATE</span><span class="o">,</span>
     <span class="s1">&#39;[object Error]&#39;</span>    <span class="o">:</span> <span class="nx">ERROR</span> 
-<span class="o">};</span>
+<span class="o">},</span>
+
+<span class="nx">TRIMREGEX</span> <span class="o">=</span> <span class="sr">/^\s+|\s+$/g</span><span class="o">,</span>
+<span class="nx">EMPTYSTRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Determines whether or not the provided item is an array.</span>
@@ -209,7 +212,7 @@
 <span class="c"> */</span>
 <span class="nx">L</span><span class="o">.</span><span class="nx">trim</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">s</span><span class="o">){</span>
     <span class="k">try</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/^\s+|\s+$/g</span><span class="o">,</span> <span class="s2">&quot;&quot;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">TRIMREGEX</span><span class="o">,</span> <span class="nx">EMPTYSTRING</span><span class="o">);</span>
     <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
     <span class="o">}</span>
@@ -244,7 +247,7 @@
 <span class="c"> * @return {string} the detected type</span>
 <span class="c"> */</span>
 <span class="nx">L</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span>  <span class="nx">TYPES</span><span class="o">[</span><span class="k">typeof</span> <span class="nx">o</span><span class="o">]</span> <span class="o">||</span> <span class="nx">TYPES</span><span class="o">[</span><span class="nx">TOSTRING</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">||</span> <span class="o">(</span><span class="nx">o</span> <span class="o">?</span> <span class="s1">&#39;object&#39;</span> <span class="o">:</span> <span class="s1">&#39;null&#39;</span><span class="o">);</span>
+    <span class="k">return</span>  <span class="nx">TYPES</span><span class="o">[</span><span class="k">typeof</span> <span class="nx">o</span><span class="o">]</span> <span class="o">||</span> <span class="nx">TYPES</span><span class="o">[</span><span class="nx">TOSTRING</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">||</span> <span class="o">(</span><span class="nx">o</span> <span class="o">?</span> <span class="nx">OBJECT</span> <span class="o">:</span> <span class="nx">NULL</span><span class="o">);</span>
 <span class="o">};</span>
 
 <span class="o">})();</span>
