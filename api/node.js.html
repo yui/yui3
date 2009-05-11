@@ -399,6 +399,10 @@
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="nx">detachAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+    <span class="o">},</span>
+
     <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// handling chained properties at Node level</span>
@@ -415,8 +419,8 @@
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// handling chained properties at Node level</span>
 <span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_addDOMAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// handle chained properties TODO: can Attribute do this? Not sure we want events</span>
-<span class="c"></span>                <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
@@ -538,7 +542,8 @@
     <span class="o">},</span>
 
     <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]].</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">();</span>
+        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -547,12 +552,12 @@
         <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span>
             <span class="nx">ret</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">&amp;&amp;</span> <span class="nx">a</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// first 2 may be Node instances</span>
-<span class="c"></span>            <span class="nx">a</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">&amp;&amp;</span> <span class="nx">a</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// first 2 may be Node instances</span>
-<span class="c"></span>            <span class="nx">b</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">b</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">b</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">b</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">b</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>    
@@ -560,8 +565,11 @@
     <span class="o">},</span>
 
     <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="nx">delete</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+        <span class="k">var</span> <span class="nx">uid</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">];</span>
+
+        <span class="nx">delete</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">uid</span><span class="o">];</span>
+        <span class="nx">delete</span> <span class="nx">g_restrict</span><span class="o">[</span><span class="nx">uid</span><span class="o">];</span>
+        <span class="nx">delete</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">uid</span><span class="o">];</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -617,7 +625,7 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">nativeRemove</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">},</span>
 
-    <span class="c">// TODO: need this?  check for fn; document this</span>
+    <span class="c">// TODO: need this?</span>
 <span class="c"></span>    <span class="nx">hasMethod</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
         <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">node</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">));</span>
