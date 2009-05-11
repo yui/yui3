@@ -125,7 +125,7 @@ var BASE = 'base',
     CSSRESET = 'cssreset',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
-    CSSBASE = 'cssbase',
+    CSSBASE  = 'cssbase',
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
@@ -133,19 +133,25 @@ var BASE = 'base',
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
-    YUIBASE = 'yui-base',
 
+    ANIMBASE = 'anim-base',
+    DDDRAG = 'dd-drag',
     DOM = 'dom',
-
+    DOMBASE = 'dom-base',
+    DOMSTYLE = 'dom-style',
+    DUMP = 'dump',
     GET = 'get',
-
     EVENT = 'event',
-
     EVENTCUSTOM = 'event-custom',
-
+    IOBASE = 'io-base',
     NODE = 'node',
-
+    NODEBASE = 'node-base',
     OOP = 'oop',
+    SELECTOR = 'selector',
+    SUBSTITUTE = 'substitute',
+    WIDGET = 'widget',
+    WIDGETPOSITION = 'widget-position',
+    YUIBASE = 'yui-base',
 
 	PLUGIN = 'plugin',
 
@@ -163,7 +169,6 @@ var BASE = 'base',
         defaultSkin: 'sam',
         base: 'assets/skins/',
         path: 'skin.css',
-        // after: ['reset', 'fonts', 'grids', 'base']
         after: CSS_AFTER
         //rollup: 3
     },
@@ -179,25 +184,25 @@ var BASE = 'base',
                 },
 
                 'dom-style': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'dom-screen': {
-                    requires: ['dom-base', 'dom-style']
+                    requires: [DOMBASE, DOMSTYLE]
                 },
 
                 selector: {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'selector-native': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 }
             },
 
             plugins: {
                 'selector-css3': {
-                    requires: ['selector']
+                    requires: [SELECTOR]
                 }
             }
         },
@@ -208,21 +213,21 @@ var BASE = 'base',
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', BASE, 'selector']
+                    requires: [DOMBASE, BASE, SELECTOR]
                 },
 
                 'node-style': {
-                    requires: ['dom-style', 'node-base']
+                    requires: [DOMSTYLE, NODEBASE]
                 },
 
                 'node-screen': {
-                    requires: ['dom-screen', 'node-base']
+                    requires: ['dom-screen', NODEBASE]
                 }
             },
 
             plugins: {
                 'node-event-simulate': {
-                    requires: ['node-base', 'event-simulate']
+                    requires: [NODEBASE, 'event-simulate']
                 }
             }
         },
@@ -236,7 +241,7 @@ var BASE = 'base',
                 },
 
                 'anim-color': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-curve': {
@@ -248,15 +253,15 @@ var BASE = 'base',
                 },
 
                 'anim-scroll': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-xy': {
-                    requires: ['anim-base', 'node-screen']
+                    requires: [ANIMBASE, 'node-screen']
                 },
 
                 'anim-node-plugin': {
-                     requires: [NODE, 'anim-base']
+                     requires: [NODE, ANIMBASE]
                 }
             }
         },
@@ -270,7 +275,7 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: [NODE, 'dump', 'substitute']
+            requires: [NODE, DUMP, SUBSTITUTE]
         },
 
         classnamemanager: { 
@@ -282,23 +287,13 @@ var BASE = 'base',
         },
 
         console: {
-            requires: ['widget', 'substitute'],
+            requires: [WIDGET, SUBSTITUTE],
             skinnable: true
         },
         
         cookie: { 
             requires: [YUIBASE]
         },
-
-        // Note: CSS attributes are modified programmatically to reduce metadata size
-        // cssbase: {
-        //     after: CSS_AFTER
-        // },
-
-        // cssgrids: {
-        //     requires: [CSSFONTS],
-        //     optional: [CSSRESET]
-        // },
 
         dd:{
             submodules: {
@@ -318,16 +313,16 @@ var BASE = 'base',
                     requires: ['dd-ddm-drop']
                 }, 
                 'dd-proxy':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-scroll':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-plugin':{
-                    requires: ['dd-drag'],
+                    requires: [DDDRAG],
                     optional: ['dd-constrain', 'dd-proxy']
                 },
                 'dd-drop-plugin':{
@@ -372,19 +367,19 @@ var BASE = 'base',
                 }, 
 
                 'io-xdr': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }, 
 
                 'io-form': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 },
 
                 'io-queue': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }
             }
         },
@@ -415,7 +410,7 @@ var BASE = 'base',
         },
 
         overlay: {
-            requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            requires: [WIDGET, WIDGETPOSITION, 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
             skinnable: true
         },
 
@@ -435,14 +430,14 @@ var BASE = 'base',
             },
             plugins: {
                 'queue-io': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }
             }, 
             requires: [EVENTCUSTOM]
         },
 
         slider: {
-            requires: ['widget', 'dd-constrain'],
+            requires: [WIDGET, 'dd-constrain'],
             skinnable: true
         },
 
@@ -451,7 +446,7 @@ var BASE = 'base',
         },
 
         substitute: {
-            optional: ['dump']
+            optional: [DUMP]
         },
 
         widget: {
@@ -459,7 +454,7 @@ var BASE = 'base',
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
-                    requires: ['widget-position']
+                    requires: [WIDGETPOSITION]
                 },
                 'widget-stack': {
                     skinnable: true
@@ -469,8 +464,6 @@ var BASE = 'base',
             skinnable: true
         },
 
-        // Since YUI is required for everything else, it should not be specified as
-        // a dependency.
         yui: {
             supersedes: [YUIBASE, GET, 'loader']
         },
@@ -478,7 +471,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['substitute', NODE, 'json']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json']                                                                                                                     
         }  
 
     }
@@ -1520,10 +1513,6 @@ Y.Loader.prototype = {
 
         this.skipped = {};
 
-        // this.fire('success', {
-        //     data: this.data
-        // });
-
         f = this.onSuccess;
 
         if (f) {
@@ -1538,10 +1527,6 @@ Y.Loader.prototype = {
 
     _onFailure: function(msg) {
         this._attach();
-        // this.fire('failure', {
-        //     msg: 'operation failed: ' + msg,
-        //     data: this.data
-        // });
 
         var f = this.onFailure;
         if (f) {
@@ -1555,10 +1540,6 @@ Y.Loader.prototype = {
 
     _onTimeout: function() {
         this._attach();
-
-        // this.fire('timeout', {
-        //     data: this.data
-        // });
 
         var f = this.onTimeout;
         if (f) {
@@ -1819,10 +1800,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
 
-            // this.fire('progress', {
-            //     name: mname,
-            //     data: this.data
-            // });
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
                         name: mname,
@@ -1865,10 +1842,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this.skipped[s[i]] = true;
                 continue;
 
-                // this.fire('failure', {
-                    // msg: msg,
-                    // data: this.data
-                // });
             }
 
 
@@ -1989,8 +1962,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
     }
 
 };
-
-// Y.augment(Y.Loader, Y.Event.Target);
 
 })();
 
