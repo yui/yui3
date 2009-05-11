@@ -146,12 +146,12 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var ArrayAssert = YAHOO.util.ArrayAssert;
     var logger = new tool.TestLogger(null, { height: '800px', fontSize: '100%' });
 
-    var handleClick = function(e) {
-        //alert('click');
-        e.currentTarget.detach('click', handleClick);
-    };
+    var handle = Y.get('html').on('click', function(e) {
+        alert('click');
+        Y.get('html').detach('click');
+        //handle.detach();
+    });
 
-    Y.Node.get('html').on('click', handleClick);
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -672,6 +672,21 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('',
                 Y.get('button[name=test-button-textvalue]').get('value'),
                 'button[name=test-button-textvalue].get("value")');
+        },
+
+        test_destroy: function() {
+            var node = Y.get('body');
+            node.destroy();
+            Assert.areEqual(undefined, Y.Node.getDOMNode(node), "Y.get('body').destroy()");
+
+            var node2 = Y.get('div');
+
+            var nodelist = Y.all('*');
+            nodelist.destroy();
+            Assert.areEqual(undefined, Y.NodeList.getDOMNodes(node), "Y.all('*').destroy()");
+
+            // node2 instance should still be intact
+            Assert.areEqual(document.getElementsByTagName('div')[0], Y.Node.getDOMNode(node2), "Y.get('div')");
         },
 
         test_aria: function() {

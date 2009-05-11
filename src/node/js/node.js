@@ -350,6 +350,10 @@ Y.mix(Node.prototype, {
         return ret;
     },
 
+    detachAll: function(type) {
+        return this.detach(type);
+    },
+
     get: function(attr) {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
@@ -512,8 +516,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = []; // TODO: null | delete?
-        delete Node._instances[this[UID]];
+        var uid = this[UID];
+
+        delete g_nodes[uid];
+        delete g_restrict[uid];
+        delete Node._instances[uid];
     },
 
     /**
