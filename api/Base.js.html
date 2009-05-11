@@ -54,6 +54,13 @@
 <span class="c">     *</span>
 <span class="c">     * @module base</span>
 <span class="c">     */</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The base-base sub-module provides the Base class, without Base.build functionality</span>
+<span class="c">     *</span>
+<span class="c">     * @module base</span>
+<span class="c">     * @sub-module base-base</span>
+<span class="c">     */</span>
     <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
@@ -78,7 +85,7 @@
 <span class="c">     *</span>
 <span class="c">     * @constructor</span>
 <span class="c">     * @class Base</span>
-<span class="c">     * @uses Attribute, PluginHost</span>
+<span class="c">     * @uses Attribute, Plugin.Host</span>
 <span class="c">     *</span>
 <span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
 <span class="c">     */</span>
@@ -192,6 +199,15 @@
 
             <span class="c">// TODO: Look at why this needs to be done after publish.</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">on</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">after</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">after</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -351,21 +367,21 @@
                     <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                     <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-    
-                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
+
+                            <span class="c">// Protect</span>
+<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
 
                             <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
                             <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">useRef</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">{</span>
                                 <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
                             <span class="o">}</span>
-    
+
+                            <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                             <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">path</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
                                 <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
-                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                             <span class="o">}</span>
-    
+
                             <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
                             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
@@ -401,6 +417,7 @@
                 <span class="nx">el</span><span class="o">,</span>
                 <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
                 <span class="nx">mergedCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span> <span class="o">=</span> <span class="nx">userConf</span><span class="o">;</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
@@ -412,7 +429,9 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">),</span> <span class="nx">userConf</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">constrProto</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
@@ -440,6 +459,45 @@
                     <span class="nx">constrProto</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Wrapper for Attribute.get. Adds the ability to </span>
+<span class="c">         * initialize attributes on demand during initialization</span>
+<span class="c">         * of the ATTRS definitions at each class level.</span>
+<span class="c">         *</span>
+<span class="c">         * @method get</span>
+<span class="c">         *</span>
+<span class="c">         * @param {String} name The attribute whose value will be returned. If </span>
+<span class="c">         * the attribute is not currently configured, but is part of the ATTRS </span>
+<span class="c">         * configuration for the class currently being configured, it will be</span>
+<span class="c">         *</span>
+<span class="c">         * @return {Any} The current value of the attribute</span>
+<span class="c">         */</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">,</span>
+                    <span class="nx">iDot</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">iDot</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">iDot</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attrName</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">classCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">],</span>
+                        <span class="nx">userCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span><span class="o">,</span>
+                        <span class="nx">attrCfg</span><span class="o">;</span>
+
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">classCfg</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">attrCfg</span> <span class="o">=</span> <span class="o">{};</span>
+                        <span class="nx">attrCfg</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">=</span> <span class="nx">classCfg</span><span class="o">;</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">attrCfg</span><span class="o">,</span> <span class="nx">userCfg</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>

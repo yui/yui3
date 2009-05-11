@@ -18,8 +18,8 @@
          * @method contains
          * @static
          */
-        contains : function (needle /*:Object*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        contains : function (needle, haystack, 
+                               message) {
             
             Y.Assert._increment();               
 
@@ -38,8 +38,8 @@
          * @method containsItems
          * @static
          */
-        containsItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        containsItems : function (needles, haystack, 
+                               message) {
             Y.Assert._increment();               
     
             //begin checking values
@@ -59,8 +59,8 @@
          * @method containsMatch
          * @static
          */
-        containsMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        containsMatch : function (matcher, haystack, 
+                               message) {
             
             Y.Assert._increment();               
             //check for valid matcher
@@ -83,8 +83,8 @@
          * @method doesNotContain
          * @static
          */
-        doesNotContain : function (needle /*:Object*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContain : function (needle, haystack, 
+                               message) {
             
             Y.Assert._increment();               
 
@@ -103,8 +103,8 @@
          * @method doesNotContainItems
          * @static
          */
-        doesNotContainItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContainItems : function (needles, haystack, 
+                               message) {
     
             Y.Assert._increment();               
     
@@ -125,8 +125,8 @@
          * @method doesNotContainMatch
          * @static
          */
-        doesNotContainMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContainMatch : function (matcher, haystack, 
+                               message) {
             
             Y.Assert._increment();     
           
@@ -150,7 +150,7 @@
          * @method indexOf
          * @static
          */
-        indexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
+        indexOf : function (needle, haystack, index, message) {
         
             Y.Assert._increment();     
 
@@ -179,8 +179,8 @@
          * @method itemsAreEqual
          * @static
          */
-        itemsAreEqual : function (expected /*:Array*/, actual /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        itemsAreEqual : function (expected, actual, 
+                               message) {
             
             Y.Assert._increment();     
             
@@ -211,8 +211,8 @@
          * @method itemsAreEquivalent
          * @static
          */
-        itemsAreEquivalent : function (expected /*:Array*/, actual /*:Array*/, 
-                               comparator /*:Function*/, message /*:String*/) /*:Void*/ {
+        itemsAreEquivalent : function (expected, actual, 
+                               comparator, message) {
             
             Y.Assert._increment();     
 
@@ -241,7 +241,7 @@
          * @method isEmpty
          * @static
          */
-        isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+        isEmpty : function (actual, message) {        
             Y.Assert._increment();     
             if (actual.length > 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should be empty."));
@@ -255,7 +255,7 @@
          * @method isNotEmpty
          * @static
          */
-        isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+        isNotEmpty : function (actual, message) {        
             Y.Assert._increment();     
             if (actual.length === 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should not be empty."));
@@ -273,8 +273,8 @@
          * @method itemsAreSame
          * @static
          */
-        itemsAreSame : function (expected /*:Array*/, actual /*:Array*/, 
-                              message /*:String*/) /*:Void*/ {
+        itemsAreSame : function (expected, actual, 
+                              message) {
             
             Y.Assert._increment();     
 
@@ -302,7 +302,7 @@
          * @method lastIndexOf
          * @static
          */
-        lastIndexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
+        lastIndexOf : function (needle, haystack, index, message) {
         
             //try to find the value in the array
             for (var i=haystack.length; i >= 0; i--){

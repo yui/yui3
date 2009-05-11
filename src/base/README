@@ -25,6 +25,22 @@
   will already have been configured based on the class hierarchy 
   initialization.
 
+* Added ability to subscribe to on/after events through the constructor
+  config object, e.g.:
+  
+      new MyBaseObject({ 
+         on: {
+            init: handlerFn,
+            myAttrChange: handlerFn
+	 },
+	 after: {
+	    init: handlerFn,
+	    myAttrChange: handlerFn
+	 },
+	 ...
+	 
+      });
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"

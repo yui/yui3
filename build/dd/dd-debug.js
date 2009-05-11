@@ -380,8 +380,8 @@ YUI.add('dd-ddm', function(Y) {
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
-    
-    Y.on('event:ready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
+
+    Y.on('domready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
 
 
 
@@ -1954,7 +1954,7 @@ YUI.add('dd-proxy', function(Y) {
         */
         _init: function() {
             if (!DDM._proxy) {
-                Y.on('event:ready', Y.bind(this._init, this));
+                Y.on('domready', Y.bind(this._init, this));
                 return;
             }
             if (!this._hands) {
@@ -2073,7 +2073,7 @@ YUI.add('dd-proxy', function(Y) {
     });
 
     //Create the frame when DOM is ready
-    Y.on('event:ready', Y.bind(DDM._createFrame, DDM));
+    Y.on('domready', Y.bind(DDM._createFrame, DDM));
 
 
 
@@ -2087,8 +2087,7 @@ YUI.add('dd-constrain', function(Y) {
      * @submodule dd-constrain
      */
     /**
-     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
-     * supports tick based moves and XY axis constraints.
+     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
      * @class DragConstrained
      * @extends Base
      * @constructor
@@ -2100,9 +2099,14 @@ YUI.add('dd-constrain', function(Y) {
         OFFSET_WIDTH = 'offsetWidth',
         HOST = 'host',
         CON_2_REGION = 'constrain2region',
+        CON_2_NODE = 'constrain2node',
         TICK_X_ARRAY = 'tickXArray',
         TICK_Y_ARRAY = 'tickYArray',
         DDM = Y.DD.DDM,
+        TOP = 'top',
+        RIGHT = 'right',
+        BOTTOM = 'bottom',
+        LEFT = 'left',
         proto = null;
 
     var C = function(config) {
@@ -2186,7 +2190,7 @@ YUI.add('dd-constrain', function(Y) {
             },
             setter: function (r) {
                 if (Y.Lang.isObject(r)) {
-                    if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
+                    if (Y.Lang.isNumber(r[TOP]) && Y.Lang.isNumber(r[RIGHT]) && Y.Lang.isNumber(r[LEFT]) && Y.Lang.isNumber(r[BOTTOM])) {
                         var o = {};
                         Y.mix(o, r);
                         return o;
@@ -2264,7 +2268,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            this._regionCache = this.get('constrain2node').get('region');
+            this._regionCache = this.get(CON_2_NODE).get('region');
         },
         /**
         * @method getRegion
@@ -2277,7 +2281,7 @@ YUI.add('dd-constrain', function(Y) {
                 g = this.get('gutter'),
                 host = this.get(HOST);
 
-            if (this.get('constrain2node')) {
+            if (this.get(CON_2_NODE)) {
                 if (!this._regionCache) {
                     Y.on('resize', Y.bind(this._cacheRegion, this), window);
                     this._cacheRegion();
@@ -2286,13 +2290,13 @@ YUI.add('dd-constrain', function(Y) {
             } else if (this.get(CON_2_REGION)) {
                 r = this.get(CON_2_REGION);
             } else if (this.get('constrain2view')) {
-                r = this.get('node').get('viewportRegion');
+                r = host.get(DRAG_NODE).get('viewportRegion');
             } else {
                 return false;
             }
 
             Y.each(g, function(i, n) {
-                if ((n == 'right') || (n == 'bottom')) {
+                if ((n == RIGHT) || (n == BOTTOM)) {
                     r[n] -= i;
                 } else {
                     r[n] += i;
@@ -2301,8 +2305,8 @@ YUI.add('dd-constrain', function(Y) {
             if (inc) {
                 oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT);
                 ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
-                r.right = r.right - ow;
-                r.bottom = r.bottom - oh;
+                r[RIGHT] = r[RIGHT] - ow;
+                r[BOTTOM] = r[BOTTOM] - oh;
             }
             return r;
         },
@@ -2320,18 +2324,18 @@ YUI.add('dd-constrain', function(Y) {
                 oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
             
-                if (oxy[1] > (r.bottom - oh)) {
-                    _xy[1] = (r.bottom - oh);
+                if (oxy[1] > (r[BOTTOM] - oh)) {
+                    _xy[1] = (r[BOTTOM] - oh);
                 }
-                if (r.top > oxy[1]) {
-                    _xy[1] = r.top;
+                if (r[TOP] > oxy[1]) {
+                    _xy[1] = r[TOP];
 
                 }
-                if (oxy[0] > (r.right - ow)) {
-                    _xy[0] = (r.right - ow);
+                if (oxy[0] > (r[RIGHT] - ow)) {
+                    _xy[0] = (r[RIGHT] - ow);
                 }
-                if (r.left > oxy[0]) {
-                    _xy[0] = r.left;
+                if (r[LEFT] > oxy[0]) {
+                    _xy[0] = r[LEFT];
                 }
 
             return _xy;
@@ -2390,16 +2394,16 @@ YUI.add('dd-constrain', function(Y) {
                 xt = this.get('tickX'),
                 yt = this.get('tickY');
                 if (xt && !this.get(TICK_X_ARRAY)) {
-                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r.left, r.right);
+                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r[LEFT], r[RIGHT]);
                 }
                 if (yt && !this.get(TICK_Y_ARRAY)) {
-                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r.top, r.bottom);
+                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r[TOP], r[BOTTOM]);
                 }
                 if (this.get(TICK_X_ARRAY)) {
-                    xy[0] = DDM._calcTickArray(xy[0], this.get(TICK_X_ARRAY), r.left, r.right);
+                    xy[0] = DDM._calcTickArray(xy[0], this.get(TICK_X_ARRAY), r[LEFT], r[RIGHT]);
                 }
                 if (this.get(TICK_Y_ARRAY)) {
-                    xy[1] = DDM._calcTickArray(xy[1], this.get(TICK_Y_ARRAY), r.top, r.bottom);
+                    xy[1] = DDM._calcTickArray(xy[1], this.get(TICK_Y_ARRAY), r[TOP], r[BOTTOM]);
                 }
 
             return xy;
@@ -2990,7 +2994,7 @@ YUI.add('dd-drop', function(Y) {
 
 
         //DD init speed up.
-        Y.on('event:ready', Y.bind(function() {
+        Y.on('domready', Y.bind(function() {
             Y.later(100, this, this._createShim);
         }, this));
         DDM._regTarget(this);

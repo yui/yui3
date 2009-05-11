@@ -42,6 +42,9 @@
   to avoid having to create object literals for critical path [ add/get single
   key values ]
 
+* Attribute getter, setter, validator now also receive name 
+  as the 2nd arg (val, name)
+
 3.0.0PR2
 
 * Added valueFn support, to allowing static 

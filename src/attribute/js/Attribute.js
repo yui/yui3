@@ -17,6 +17,7 @@
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
         PUBLISHED = "published",
+        BROADCAST = "broadcast",
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -50,7 +51,7 @@
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
 
-        this._ATTR_E_CFG = {queuable:false, defaultFn:this._defAttrChangeFn, silent:true};
+        // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
@@ -178,7 +179,8 @@
          */
         get : function(name) {
 
-            var conf = this._conf,
+            var fullName = name,
+                conf = this._conf,
                 path,
                 getter,
                 val;
@@ -191,7 +193,7 @@
             val = conf.get(name, VALUE);
             getter = conf.get(name, GETTER);
 
-            val = (getter) ? getter.call(this, val) : val;
+            val = (getter) ? getter.call(this, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
@@ -220,7 +222,8 @@
         },
 
         /**
-         * Resets the given attribute or all attributes to the initial value.
+         * Resets the given attribute or all attributes to the initial value, if the attribute
+         * is not readOnly, or writeOnce.
          *
          * @method reset
          * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset.
@@ -228,11 +231,11 @@
          */
         reset : function(name) {
             if (name) {
-                this._set(name, this._conf.get(name, INIT_VALUE));
+                this.set(name, this._conf.get(name, INIT_VALUE));
             } else {
                 var initVals = this._conf.data.initValue;
                 Y.each(initVals, function(v, n) {
-                    this._set(n, v);
+                    this.set(n, v);
                 }, this);
             }
             return this;
@@ -352,7 +355,17 @@
                 facade;
 
             if (!conf.get(attrName, PUBLISHED)) {
-                this.publish(eventName, this._ATTR_E_CFG);
+
+                var eventConfig = {
+                    queuable:false, 
+                    defaultFn:this._defAttrChangeFn, 
+                    silent:true
+                };
+
+                eventConfig.broadcast = conf.get(attrName, BROADCAST);
+
+                this.publish(eventName, eventConfig);
+
                 conf.add(attrName, PUBLISHED, true);
             }
 
@@ -403,12 +416,13 @@
                 conf = this._conf,
                 validator  = conf.get(attrName, VALIDATOR),
                 setter = conf.get(attrName, SETTER),
+                name = subAttrName || attrName,
                 retVal;
 
-            if (!validator || validator.call(this, newVal)) {
+            if (!validator || validator.call(this, newVal, name)) {
 
                 if (setter) {
-                    retVal = setter.call(this, newVal);
+                    retVal = setter.call(this, newVal, name);
 
                     if (retVal === INVALID_VALUE) {
                         Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');

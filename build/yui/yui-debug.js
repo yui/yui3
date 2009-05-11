@@ -6,6 +6,28 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
+        add = function(el, type, fn, capture) {
+            if (el.addEventListener) {
+                    el.addEventListener(type, fn, !!capture);
+            } else if (el.attachEvent) {
+                    el.attachEvent("on" + type, fn);
+            } 
+        },
+
+        remove = function(el, type, fn, capture) {
+            if (el.removeEventListener) {
+                    el.removeEventListener(type, fn, !!capture);
+            } else if (el.detachEvent) {
+                    el.detachEvent("on" + type, fn);
+            }
+        },
+
+        globalListener = function() {
+            YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
+            remove(window, 'load', globalListener);
+        },
+
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
@@ -16,7 +38,6 @@
             'io.abort': 1
         };
         
-
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
@@ -34,8 +55,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>Global:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>debug:
-     *  Turn debug statements on or off</li>
+     *  <li>debug: Turn debug statements on or off</li>
      *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
@@ -44,6 +64,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  </li>
      *  <li>logExclude:
      *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  <li>injected: set to true if the yui seed file was dynamically loaded in
+     *  order to bootstrap components relying on the window load event and onDOMReady.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -205,7 +227,7 @@ YUI.prototype = {
     _setup: function(o) {
         this.use("yui-base");
         // @TODO eval the need to copy the config
-        // this.config = this.merge(this.config);
+        this.config = this.merge(this.config);
     },
 
     /**
@@ -614,6 +636,14 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
+
+    // add a window load event at load time so we can capture
+    // the case where it fires before dynamic loading is
+    // complete.
+    add(window, 'load', globalListener);
+
+    YUI.Env.add = add;
+    YUI.Env.remove = remove;
 
 })();
 YUI.add('yui-base', function(Y) {
@@ -1120,6 +1150,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -1286,7 +1317,7 @@ Y.cached = function(source, cache){
 
     return function() {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, arguments);
@@ -1884,18 +1915,19 @@ Y.Get = function() {
      * @method _linkNode
      * @param url {string} the url for the css file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
         };
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
         return _node("link", o, win);
     },
@@ -1905,18 +1937,19 @@ Y.Get = function() {
      * @method _scriptNode
      * @param url {string} the url for the script file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_JS,
             src:  url
         };
 
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
 
         return _node("script", o, win);
@@ -2105,9 +2138,9 @@ Y.Get = function() {
         }
 
         if (q.type === "script") {
-            n = _scriptNode(url, w, q.charset);
+            n = _scriptNode(url, w, q.attributes);
         } else {
-            n = _linkNode(url, w, q.charset);
+            n = _linkNode(url, w, q.attributes);
         }
 
         // track this node's load progress
@@ -2198,6 +2231,11 @@ Y.Get = function() {
         q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
+
+        if (opts.charset) {
+            q.attributes = q.attributes || {};
+            q.attributes.charset = opts.charset;
+        }
 
         L.later(0, q, _next, id);
 
@@ -2394,7 +2432,9 @@ Y.Get = function() {
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * </dl>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * <dt>timeout</dt>
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
@@ -2466,7 +2506,9 @@ Y.Get = function() {
          * <dt>insertBefore</dt>
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * </dl>
          * <pre>
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");
@@ -2561,7 +2603,9 @@ YUI.add('loader', function(Y) {
  *  <li>insertBefore:
  *  Node or id for a node that should be used as the insertion point for new nodes</li>
  *  <li>charset:
- *  charset for dynamic nodes</li>
+ *  charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+ *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
+ *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
  *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
  *  <li>context:
@@ -2615,7 +2659,7 @@ var BASE = 'base',
     CSSRESET = 'cssreset',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
-    CSSBASE = 'cssbase',
+    CSSBASE  = 'cssbase',
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
@@ -2623,17 +2667,25 @@ var BASE = 'base',
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
-    YUIBASE = 'yui-base',
 
+    ANIMBASE = 'anim-base',
+    DDDRAG = 'dd-drag',
+    DOM = 'dom',
+    DOMBASE = 'dom-base',
+    DOMSTYLE = 'dom-style',
+    DUMP = 'dump',
     GET = 'get',
-
     EVENT = 'event',
-
     EVENTCUSTOM = 'event-custom',
-
+    IOBASE = 'io-base',
     NODE = 'node',
-
+    NODEBASE = 'node-base',
     OOP = 'oop',
+    SELECTOR = 'selector',
+    SUBSTITUTE = 'substitute',
+    WIDGET = 'widget',
+    WIDGETPOSITION = 'widget-position',
+    YUIBASE = 'yui-base',
 
 	PLUGIN = 'plugin',
 
@@ -2651,7 +2703,6 @@ var BASE = 'base',
         defaultSkin: 'sam',
         base: 'assets/skins/',
         path: 'skin.css',
-        // after: ['reset', 'fonts', 'grids', 'base']
         after: CSS_AFTER
         //rollup: 3
     },
@@ -2659,57 +2710,58 @@ var BASE = 'base',
     modules: {
 
        dom: {
-            requires: [EVENT],
+            requires: [OOP],
             submodules: {
 
                 'dom-base': {
-                    requires: [EVENT]
+                    requires: [OOP]
                 },
 
                 'dom-style': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'dom-screen': {
-                    requires: ['dom-base', 'dom-style']
+                    requires: [DOMBASE, DOMSTYLE]
                 },
 
                 selector: {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'selector-native': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 }
             },
 
             plugins: {
                 'selector-css3': {
-                    requires: ['selector']
+                    requires: [SELECTOR]
                 }
             }
         },
 
         node: {
-            requires: ['dom', BASE],
+            requires: [DOM, BASE],
+            expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', BASE, 'selector']
+                    requires: [DOMBASE, BASE, SELECTOR]
                 },
 
                 'node-style': {
-                    requires: ['dom-style', 'node-base']
+                    requires: [DOMSTYLE, NODEBASE]
                 },
 
                 'node-screen': {
-                    requires: ['dom-screen', 'node-base']
+                    requires: ['dom-screen', NODEBASE]
                 }
             },
 
             plugins: {
                 'node-event-simulate': {
-                    requires: ['node-base', 'event-simulate']
+                    requires: [NODEBASE, 'event-simulate']
                 }
             }
         },
@@ -2723,7 +2775,7 @@ var BASE = 'base',
                 },
 
                 'anim-color': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-curve': {
@@ -2735,15 +2787,15 @@ var BASE = 'base',
                 },
 
                 'anim-scroll': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-xy': {
-                    requires: ['anim-base', 'node-screen']
+                    requires: [ANIMBASE, 'node-screen']
                 },
 
                 'anim-node-plugin': {
-                     requires: [NODE, 'anim-base']
+                     requires: [NODE, ANIMBASE]
                 }
             }
         },
@@ -2757,7 +2809,7 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: [NODE, 'dump', 'substitute']
+            requires: [NODE, DUMP, SUBSTITUTE]
         },
 
         classnamemanager: { 
@@ -2769,23 +2821,13 @@ var BASE = 'base',
         },
 
         console: {
-            requires: ['widget', 'substitute'],
+            requires: [WIDGET, SUBSTITUTE],
             skinnable: true
         },
         
         cookie: { 
             requires: [YUIBASE]
         },
-
-        // Note: CSS attributes are modified programmatically to reduce metadata size
-        // cssbase: {
-        //     after: CSS_AFTER
-        // },
-
-        // cssgrids: {
-        //     requires: [CSSFONTS],
-        //     optional: [CSSRESET]
-        // },
 
         dd:{
             submodules: {
@@ -2805,16 +2847,16 @@ var BASE = 'base',
                     requires: ['dd-ddm-drop']
                 }, 
                 'dd-proxy':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-scroll':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-plugin':{
-                    requires: ['dd-drag'],
+                    requires: [DDDRAG],
                     optional: ['dd-constrain', 'dd-proxy']
                 },
                 'dd-drop-plugin':{
@@ -2828,8 +2870,7 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM],
-            expound: NODE
+            requires: [EVENTCUSTOM, NODE]
         },
 
         'event-custom': { 
@@ -2860,19 +2901,19 @@ var BASE = 'base',
                 }, 
 
                 'io-xdr': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }, 
 
                 'io-form': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 },
 
                 'io-queue': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }
             }
         },
@@ -2903,7 +2944,7 @@ var BASE = 'base',
         },
 
         overlay: {
-            requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            requires: [WIDGET, WIDGETPOSITION, 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
             skinnable: true
         },
 
@@ -2923,14 +2964,14 @@ var BASE = 'base',
             },
             plugins: {
                 'queue-io': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }
             }, 
             requires: [EVENTCUSTOM]
         },
 
         slider: {
-            requires: ['widget', 'dd-constrain'],
+            requires: [WIDGET, 'dd-constrain'],
             skinnable: true
         },
 
@@ -2939,7 +2980,7 @@ var BASE = 'base',
         },
 
         substitute: {
-            optional: ['dump']
+            optional: [DUMP]
         },
 
         widget: {
@@ -2947,7 +2988,7 @@ var BASE = 'base',
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
-                    requires: ['widget-position']
+                    requires: [WIDGETPOSITION]
                 },
                 'widget-stack': {
                     skinnable: true
@@ -2957,8 +2998,6 @@ var BASE = 'base',
             skinnable: true
         },
 
-        // Since YUI is required for everything else, it should not be specified as
-        // a dependency.
         yui: {
             supersedes: [YUIBASE, GET, 'loader']
         },
@@ -2966,7 +3005,7 @@ var BASE = 'base',
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['substitute', NODE, 'json']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json']                                                                                                                     
         }  
 
     }
@@ -3085,9 +3124,23 @@ Y.Loader = function(o) {
      * The charset attribute for inserted nodes
      * @property charset
      * @type string
-     * @default utf-8
+     * @deprecated, use cssAttributes or jsAttributes
      */
     this.charset = null;
+
+    /**
+     * An object literal containing attributes to add to link nodes
+     * @property cssAttributes
+     * @type object
+     */
+    this.cssAttributes = null;
+
+    /**
+     * An object literal containing attributes to add to script nodes
+     * @property jsAttributes
+     * @type object
+     */
+    this.jsAttributes = null;
 
     /**
      * The base directory.
@@ -3976,7 +4029,7 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
@@ -3994,10 +4047,6 @@ Y.Loader.prototype = {
 
         this.skipped = {};
 
-        // this.fire('success', {
-        //     data: this.data
-        // });
-
         f = this.onSuccess;
 
         if (f) {
@@ -4012,10 +4061,6 @@ Y.Loader.prototype = {
 
     _onFailure: function(msg) {
         this._attach();
-        // this.fire('failure', {
-        //     msg: 'operation failed: ' + msg,
-        //     data: this.data
-        // });
 
         var f = this.onFailure;
         if (f) {
@@ -4029,10 +4074,6 @@ Y.Loader.prototype = {
 
     _onTimeout: function() {
         this._attach();
-
-        // this.fire('timeout', {
-        //     data: this.data
-        // });
 
         var f = this.onTimeout;
         if (f) {
@@ -4210,7 +4251,7 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg,
+        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
             callback=function(o) {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
                 this._combineComplete[type] = true;
@@ -4266,6 +4307,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: this.jsAttributes,
                     timeout: this.timeout,
                     context: self 
                 });
@@ -4292,10 +4334,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
 
-            // this.fire('progress', {
-            //     name: mname,
-            //     data: this.data
-            // });
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
                         name: mname,
@@ -4338,10 +4376,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this.skipped[s[i]] = true;
                 continue;
 
-                // this.fire('failure', {
-                    // msg: msg,
-                    // data: this.data
-                // });
             }
 
 
@@ -4351,7 +4385,13 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this._loading = s[i];
                 Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
-                fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
@@ -4360,6 +4400,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                     onSuccess: onsuccess,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: attr,
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
@@ -4391,18 +4432,18 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
     },
 
-    /**
+    /*
      * In IE, the onAvailable/onDOMReady events need help when Event is
      * loaded dynamically
      * @method _pushEvents
      * @param {Function} optional function reference
      * @private
      */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
+    // _pushEvents: function() {
+    //     if (Y.Event) {
+    //         Y.Event._load();
+    //     }
+    // },
 
     /**
      * Apply filter defined for this instance to a url/path
@@ -4455,8 +4496,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
     }
 
 };
-
-// Y.augment(Y.Loader, Y.Event.Target);
 
 })();
 

@@ -333,6 +333,15 @@ Y.namespace("Plugin").Host = PluginHost;
             // TODO: Look at why this needs to be done after publish.
             Y.Plugin.Host.call(this);
 
+            if (config) {
+                if (config.on) {
+                    this.on(config.on);
+                }
+                if (config.after) {
+                    this.after(config.after);
+                }
+            }
+
             this.fire(INIT, {cfg: config});
             return this;
         },
@@ -600,12 +609,11 @@ Y.namespace("Plugin").Host = PluginHost;
         get: function(name) {
 
             if (this._classCfgs) {
-                var attrName = name;
+                var attrName = name,
+                    iDot = name.indexOf(DOT);
 
-                if (name.indexOf(DOT) !== -1) {
-                    // TODO: Faster way to get attrName?
-                    var path = name.split(DOT);
-                    attrName = path.shift();
+                if (iDot !== -1) {
+                    attrName = name.slice(0, iDot);
                 }
 
                 if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
