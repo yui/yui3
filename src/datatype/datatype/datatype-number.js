@@ -71,7 +71,7 @@ Y.mix(Y.namespace("DataType.Number"), {
      *   <dt>prefix {String}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
      *   <dt>decimalPlaces {Number}</dd>
-     *   <dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
+     *   <dd>Number of decimal places to round.</dd>
      *   <dt>decimalSeparator {String}</dd>
      *   <dd>Decimal separator</dd>
      *   <dt>thousandsSeparator {String}</dd>
@@ -95,7 +95,7 @@ Y.mix(Y.namespace("DataType.Number"), {
                 newOutput, count, i;
 
             // Decimal precision
-            if(LANG.isNumber(decPlaces) && (decPlaces >= 0) && (decPlaces <= 20)) {
+            if(LANG.isNumber(decPlaces)) {
                 // Round to the correct decimal place
                 output = data.toFixed(decPlaces);
             }
