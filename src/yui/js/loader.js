@@ -271,7 +271,16 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         base: {
-            requires: ['attribute']
+            submodules: {
+
+                'base-base': {
+                    requires: ['attribute']
+                },
+
+                'base-build': {
+                    requires: ['base-base']
+                }
+            }
         },
         
         compat: { 
