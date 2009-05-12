@@ -239,6 +239,34 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.isTrue(isNode, 'node instanceof Y.Node');
         },
 
+        test_some: function() {
+            var nodes = Y.all('#test-nodes *'),
+                index, instance, isNode;
+
+            Assert.isTrue(nodes.some(function(node, i, list) {
+                return true;
+            }), 'nodes.some(function() { return true; })');
+
+            Assert.isFalse(nodes.some(function(node, i, list) {
+            }), 'nodes.some(function() {})');
+
+        },
+
+        test_indexOf: function() {
+            Assert.areEqual(0, Y.all('div').indexOf(Y.get('#test-append')),
+                "Y.all('div').indexOf(Y.get('#test-append'))");
+
+            Assert.areEqual(1, Y.all('div').indexOf(Y.get('#test-xy')),
+                "Y.all('div').indexOf(Y.get('#test-xy'))");
+
+            Assert.areEqual(-1, Y.all('div').indexOf(Y.get('#test-')),
+                "Y.all('div').indexOf(Y.get('#test-'))");
+
+            Assert.areEqual(-1, Y.all('div').indexOf(Y.get('#test-form')),
+                "Y.all('div').indexOf(Y.get('#test-form'))");
+
+        },
+
         test_getters: function() {
             var id = 'test-nodes',
                 element = byId(id),

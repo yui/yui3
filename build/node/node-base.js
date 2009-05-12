@@ -792,19 +792,49 @@ Y.mix(NodeList.prototype, {
     /**
      * Applies the given function to each Node in the NodeList.
      * @method each
-     * @param {Function} fn The function to apply 
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
      * @param {Object} context optional An optional context to apply the function with
-     * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
+     * Default context is the current Node instance
      * @chainable
      */
     each: function(fn, context) {
         var instance = this;
-        context = context || this;
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
-            return fn.call(context, Y.get(node), index, instance);
+            node = Y.get(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
         });
         return instance;
+    },
+
+    /**
+     * Executes the function once for each node until a true value is returned.
+     * @method some
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
+     * @param {Object} context optional An optional context to execute the function from.
+     * Default context is the current Node instance
+     * @return {Boolean} Whether or not the function returned true for any node.
+     */
+    some: function(fn, context) {
+        var instance = this;
+        return Y.Array.some(g_nodelists[this[UID]], function(node, index) {
+            node = Y.get(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
+        });
+    },
+
+    /**
+     * Returns the index of the node in the NodeList instance
+     * or -1 if the node isn't found.
+     * @method indexOf
+     * @param {Y.Node || DOMNode} node the node to search for
+     * @return {Int} the index of the node value or -1 if not found
+     */
+    indexOf: function(node) {
+        return Y.Array.indexOf(g_nodelists[this[UID]], Y.Node.getDOMNode(node));
     },
 
     /**
