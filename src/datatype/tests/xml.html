@@ -63,8 +63,8 @@
                 var origString = "<myroot><item type=\"foo\"><name>Abc</name><rank>1</rank></item><item type=\"bar\"><name>Def</name><rank>2</rank></item><item type=\"bat\"><name>Ghhi</name><rank>3</rank></item></myroot>",
                     xmldoc = Y.DataType.XML.parse(origString),
                     newString = Y.DataType.XML.format(xmldoc);
-                
-                ASSERT.areSame(0, newString.indexOf(origString), "Expected string.");
+
+                ASSERT.isTrue((newString.indexOf(origString) > -1), "Expected original string within new string.");
             }
         });
 
