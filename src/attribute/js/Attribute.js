@@ -18,6 +18,7 @@
         VALIDATOR = "validator",
         PUBLISHED = "published",
         BROADCAST = "broadcast",
+        DEF_VALUE = "defaultValue",
         INVALID_VALUE,
 
         EventTarget = Y.EventTarget;
@@ -361,11 +362,9 @@
                     defaultFn:this._defAttrChangeFn, 
                     silent:true
                 };
-
                 eventConfig.broadcast = conf.get(attrName, BROADCAST);
 
                 this.publish(eventName, eventConfig);
-
                 conf.add(attrName, PUBLISHED, true);
             }
 
@@ -414,13 +413,24 @@
 
             var allowSet = true,
                 conf = this._conf,
+
                 validator  = conf.get(attrName, VALIDATOR),
                 setter = conf.get(attrName, SETTER),
+                initializing = conf.get(attrName, INITIALIZING),
+
                 name = subAttrName || attrName,
                 retVal;
 
-            if (!validator || validator.call(this, newVal, name)) {
+            if (validator) {
+                var valid = validator.call(this, newVal, name);
 
+                if (!valid && initializing) {
+                    newVal = conf.get(attrName, DEF_VALUE);
+                    valid = true; // Assume it's valid, for perf.
+                }
+            }
+
+            if (!validator || valid) {
                 if (setter) {
                     retVal = setter.call(this, newVal, name);
 
@@ -521,6 +531,7 @@
 
                         // Not Merging. Caller is responsible for isolating configs
                         attrCfg = cfgs[attr];
+                        attrCfg.defaultValue = attrCfg.value;
 
                         // Handle simple, complex and user values, accounting for read-only
                         value = this._getAttrInitVal(attr, attrCfg, values);

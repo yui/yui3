@@ -793,6 +793,11 @@
                     h.set("C", "NewC");
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testInitialValidation: function() {
+                    var h = this.createHost({A:5});
+                    Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
                 }
             };
 

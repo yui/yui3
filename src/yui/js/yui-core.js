@@ -175,7 +175,7 @@ Y.cached = function(source, cache){
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];

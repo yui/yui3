@@ -763,7 +763,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -892,7 +895,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -927,7 +930,7 @@ L.isValue = function(o) {
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();
@@ -1309,7 +1312,7 @@ Y.cached = function(source, cache){
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
