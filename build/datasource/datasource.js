@@ -394,7 +394,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            cloneDefaultValue: false
         }
     }
 });
@@ -479,7 +480,7 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-base', 'io']});
 
 YUI.add('datasource-scriptnode', function(Y) {
 
@@ -534,7 +535,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            cloneDefaultValue: false
         },
 
 /**
@@ -681,6 +683,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     //uri = this.doBeforeGetScriptNode(sUri);
     get.script(uri, {
         autopurge: true,
+        // Works in Firefox only....
         onFailure: Y.bind(function(e) {
             e.error = new Error(this.toString() + " Data failure");
             this.fire("error", e);
@@ -964,7 +967,7 @@ Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
+}, '@VERSION@' ,{requires:['datasource-base', 'cache']});
 
 YUI.add('datasource-jsonschema', function(Y) {
 

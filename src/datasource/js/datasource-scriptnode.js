@@ -49,7 +49,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            cloneDefaultValue: false
         },
 
 /**
@@ -198,6 +199,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     Y.log("DataSource is querying URL " + uri, "info", this.toString());
     get.script(uri, {
         autopurge: true,
+        // Works in Firefox only....
         onFailure: Y.bind(function(e) {
             e.error = new Error(this.toString() + " Data failure");
             this.fire("error", e);

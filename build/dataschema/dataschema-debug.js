@@ -413,7 +413,7 @@ SchemaXML = {
         var xmldoc = data,
             data_out = {results:[],meta:{}};
 
-        if(LANG.isObject(xmldoc) && schema) {
+        if(xmldoc && xmldoc.nodeType && xmldoc.nodeType === 9 && schema) {
             // Parse results data
             data_out = SchemaXML._parseResults(schema, xmldoc, data_out);
 

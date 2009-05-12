@@ -2,17 +2,17 @@
 <html>
 <head>
 <title>DataSource Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/cache/cache.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/dataschema/dataschema.js"></script>
+<script type="text/javascript" src="../../../build/datatype/datatype.js"></script>
+<script type="text/javascript" src="../../../build/datasource/datasource.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>DataSource Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/cache/cache.js"></script>
-<script type="text/javascript" src="../../../build/dataschema/dataschema.js"></script>
-<script type="text/javascript" src="../../../build/datatype/datatype.js"></script>
-<script type="text/javascript" src="../../../build/datasource/datasource.js" id="src_ds"></script>
 <script type="text/javascript">
 
 (function() {
@@ -21,7 +21,7 @@
         //filter: "debug",
         //logInclude:{"datasource":true},
         useConsole: true,
-        insertBefore: "src_ds"
+        insertBefore: "buildsrc"
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
 
         var ASSERT = Y.Assert,
@@ -338,7 +338,8 @@
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
-            testScriptNodeError: function() {
+            // Only FF can detect error state in Get Utility...
+            testScriptNodeError: (Y.UA.gecko) ? function() {
                 var ds = new Y.DataSource.ScriptNode({
                     source: "http://query.yahooapis.com/v1/public/yql?format=json&"
                 });
@@ -365,7 +366,7 @@
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
-            }
+            } : function(){}
         });
 
         var testFunction = new Y.Test.Case({
@@ -722,7 +723,7 @@
                     this.wait(function(){
                         Y.Mock.verify(handler);
                     }, 1000);
-                }, 2000);
+                }, 1950);
             },
 
             testClearAll: function() {
@@ -759,7 +760,7 @@
                     this.wait(function(){
                         Y.Mock.verify(handler);
                     }, 500);
-                }, 1000);
+                }, 950);
             }
         });
 

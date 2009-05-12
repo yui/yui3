@@ -45,6 +45,10 @@ Y.mix(Y.namespace("DataType.XML"), {
                 }
             }
         }
+        
+        if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
+        }
+        
         return xmlDoc;
     }
 });

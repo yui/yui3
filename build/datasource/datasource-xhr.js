@@ -51,7 +51,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            cloneDefaultValue: false
         }
     }
 });
@@ -136,4 +137,4 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-base', 'io']});
