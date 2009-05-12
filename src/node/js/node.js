@@ -78,7 +78,9 @@ Node.DOM_EVENTS = {
     'submit': true,
     'change': true,
     'error': true,
-    'load': true
+    'load': true,
+    'mouseenter': true,
+    'mouseleave': true
 };
 
 Node._instances = {};
@@ -96,7 +98,7 @@ Node.getDOMNode = function(node) {
     if (node) {
         if (node instanceof Node) {
             node = g_nodes[node[UID]];
-        } else if (!node[NODE_NAME] || !node.alert) { // must already be a DOMNode 
+        } else if (!node[NODE_NAME] || Y.DOM.isWindow(node)) { // must already be a DOMNode 
             node = null;
         }
     }
@@ -104,22 +106,18 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    if (val) { // only truthy values are risky
+    var isWindow = false;
+    if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
-            if (    NODE_TYPE in val || // dom node
-                    val.item || // dom collection or Node instance
-                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document ) // window TODO: restrict?
-                { 
-                if (node && g_restrict[node[UID]] && !node.contains(val)) {
+            if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
+                if (g_restrict[node[UID]] && !node.contains(val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
-                    if (val[NODE_TYPE] || val.document) { // node or window
-                        val = Node.get(val);
-                    } else { // assume nodeList
-                        val = Y.all(val);
-                    }
+                    val = Node.get(val);
                 }
+            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                    (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
+                val = Y.all(val);
             } else {
                 depth = (depth === undefined) ? 4 : depth;
                 if (depth > 0) {
@@ -129,7 +127,6 @@ Node.scrubVal = function(val, node, depth) {
                         }
                     }
                 }
-                
             }
         }
     } else if (val === undefined) {
@@ -242,6 +239,16 @@ Node.ATTRS = {
         }
     },
 
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
     restricted: {
         writeOnce: true,
         value: false
@@ -320,19 +327,18 @@ Y.mix(Node.prototype, {
         }
     },
 
-    addNode: function(content, where) {
-        return Y.DOM.insertNode(g_nodes[this[UID]], content, where);
-    },
-
     on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
+        var args;
+            ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            Y.Event.attach.apply(Y.Event, args);
+            args = g_slice.call(arguments, 0),
+            args.splice(2, 0, g_nodes[this[UID]]);
+            ret = Y.Event.attach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.on.apply(this, arguments);
         }
-
-        return SuperConstrProto.on.apply(this, arguments);
+        return ret;
     },
 
    /**
@@ -342,9 +348,20 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The handler to call when the event fires 
      */
     detach: function(type, fn) {
-        var args = g_slice.call(arguments, 0);
-        args.splice(2, 0, g_nodes[this[UID]]);
-        return Y.Event.detach.apply(Y.Event, args);
+        var args, ret = null;
+        if (Node.DOM_EVENTS[type]) {
+            args = g_slice.call(arguments, 0);
+            args.splice(2, 0, g_nodes[this[UID]]);
+
+            ret = Y.Event.detach.apply(Y.Event, args);
+        } else {
+            ret = SuperConstrProto.detach.apply(this, arguments);
+        }
+        return ret;
+    },
+
+    detachAll: function(type) {
+        return this.detach(type);
     },
 
     get: function(attr) {
@@ -363,7 +380,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -485,16 +502,29 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
+    remove: function() {
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
+        return this;
+    },
+
     // TODO: safe enough? 
     invoke: function(method, a, b, c, d, e) {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -503,8 +533,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
-        delete Node._instances[this[UID]];
+        var uid = this[UID];
+
+        delete g_nodes[uid];
+        delete g_restrict[uid];
+        delete Node._instances[uid];
     },
 
     /**
@@ -560,7 +593,7 @@ Y.mix(Node.prototype, {
         return Y.Event.nativeRemove.apply(Y.Event, arguments);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));

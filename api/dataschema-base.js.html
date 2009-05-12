@@ -98,6 +98,9 @@
             <span class="k">if</span><span class="o">(</span><span class="nx">parser</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">value</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
             <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not find parser for field &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">field</span><span class="o">),</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="nx">SchemaBase</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+            <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">value</span><span class="o">;</span>
     <span class="o">}</span>

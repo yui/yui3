@@ -98,8 +98,7 @@ namespaces are preserved.
 <li>------------------------------------------------------------------------</li>
 <li>Global:</li>
 <li>------------------------------------------------------------------------</li>
-<li>debug:
-Turn debug statements on or off</li>
+<li>debug: Turn debug statements on or off</li>
 <li>useBrowserConsole:
 Log to the browser console if debug is on and the console is available</li>
 <li>logInclude:
@@ -107,6 +106,8 @@ A hash of log sources that should be logged.  If specified, only log messages fr
 </li>
 <li>logExclude:
 A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+<li>injected: set to true if the yui seed file was dynamically loaded in
+order to bootstrap components relying on the window load event and onDOMReady.</li>
 <li>throwFail:
 If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
 <li>win:
@@ -1077,6 +1078,10 @@ This fails because "long" is a future reserved word in ECMAScript
                                            (
                                                 
                                                         
+                                                         target
+                                                    
+                                                
+                                                        , 
                                                          type
                                                     
                                                 
@@ -1088,13 +1093,19 @@ This fails because "long" is a future reserved word in ECMAScript
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Simulates an event on the node.
+                                            Simulates the event with the given name on a target.
                                         </div>
 
                                         <div class="description">
 
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">target</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The DOM element that's the target of the event.</span>
+                                                        </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">String</span>&gt;

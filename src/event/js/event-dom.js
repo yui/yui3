@@ -14,22 +14,8 @@
  */
 
 
-// @TODO move the native addEventListener code to DOM
-var add = function(el, type, fn, capture) {
-    if (el.addEventListener) {
-            el.addEventListener(type, fn, !!capture);
-    } else if (el.attachEvent) {
-            el.attachEvent("on" + type, fn);
-    } 
-},
-
-remove = function(el, type, fn, capture) {
-    if (el.removeEventListener) {
-            el.removeEventListener(type, fn, !!capture);
-    } else if (el.detachEvent) {
-            el.detachEvent("on" + type, fn);
-    }
-},
+var add = YUI.Env.add,
+remove = YUI.Env.remove,
 
 onLoad = function() {
     YUI.Env.windowLoaded = true;
@@ -47,6 +33,28 @@ EVENT_READY = 'domready',
 COMPAT_ARG = '~yui|2|compat~',
 
 CAPTURE = "capture_",
+
+shouldIterate = function(o) {
+    try {
+         
+        // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
+        // if (o instanceof Y.Node) {
+            // o.tagName ="adsf";
+        // }
+
+        return ( o                     && // o is something
+                 typeof o !== "string" && // o is not a string
+                 // o.length  && // o is indexed
+                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 !o.tagName            && // o is not an HTML element
+                 !o.alert              && // o is not a window
+                 (o.item || typeof o[0] !== "undefined") );
+    } catch(ex) {
+        Y.log("collection check failure", "warn", "event");
+        return false;
+    }
+
+},
 
 Event = function() {
 
@@ -113,7 +121,7 @@ Event = function() {
          * @static
          * @final
          */
-        POLL_RETRYS: 2000,
+        POLL_RETRYS: 1000,
 
         /**
          * The poll interval in milliseconds
@@ -122,7 +130,7 @@ Event = function() {
          * @static
          * @final
          */
-        POLL_INTERVAL: 20,
+        POLL_INTERVAL: 40,
 
         /**
          * addListener/removeListener can throw errors in unexpected scenarios.
@@ -168,7 +176,7 @@ Event = function() {
             var E = Y.Event;
 
             if (!E._interval) {
-E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
+E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             }
         },
 
@@ -217,7 +225,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Y.Event._tryPreloadAttach, Y.Event), 0);
+            setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
             return new Y.EventHandle(); // @TODO by id needs a defered handle
         },
@@ -280,7 +288,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
-                handles, oEl, size, ek, key, cewrapper, context;
+                handles, oEl, ek, key, cewrapper, context, 
+                fireNow = false, ret;
 
             if (type.indexOf(CAPTURE) > -1) {
                 type = type.substr(CAPTURE.length);
@@ -300,7 +309,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             // The el argument can be an array of elements or element ids.
-            if (this._isValidCollection(el)) {
+            if (shouldIterate(el)) {
 
                 // Y.log('collection: ' + el);
                 // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
@@ -321,28 +330,34 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // ready
             } else if (Y.Lang.isString(el)) {
 
-                oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
-
                 // @TODO switch to using DOM directly here
+                // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
-                if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
-                    size = oEl.size();
-                    if (size > 1) {
-                        // Y.log('more than one: ' + size + ', ' + type);
-                        // args[0] = oEl;
-                        args[2] = oEl;
-                        return E.attach.apply(E, args);
+                // this should not be a node list ever at this point
+                // if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
+                //     size = oEl.size();
+                //     if (size > 1) {
+                //         args[2] = oEl;
+                //         return E.attach.apply(E, args);
+                //     } else {
+                //         el = oEl.item(0);
+                //     }
+                if (oEl) {
+
+                    if (Y.Lang.isArray(oEl)) {
+                        if (oEl.length == 1) {
+                            el = oEl[0];
+                        } else {
+                            args[2] = oEl;
+                            return E.attach.apply(E, args);
+                        }
+
+                    // HTMLElement
                     } else {
-                        // Y.log('just one: ' + size + ', ' + type);
-                        el = oEl.item(0);
-                        // el = oEl;
+                        // Y.log('no size: ' + oEl + ', ' + type);
+                        el = oEl;
                     }
-
-                // HTMLElement
-                // } else if (compat && oEl) {
-                } else if (oEl) {
-                    // Y.log('no size: ' + oEl + ', ' + type);
-                    el = oEl;
 
                 // Not found = defer adding the event until the element is available
                 } else {
@@ -372,7 +387,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             if (!cewrapper) {
                 // create CE wrapper
                 cewrapper = Y.publish(key, {
-                    silent: true,
+                    //silent: true,
                     // host: this,
                     bubbles: false
                 });
@@ -393,7 +408,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     // all subscribers, including the current one
                     // will be notified.
                     if (YUI.Env.windowLoaded) {
-                        cewrapper.fire();
+                        fireNow = true;
                     }
                 }
 
@@ -418,7 +433,13 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             trimmedArgs.splice(2, 1);
 
             // set context to the Node if not specified
-            return cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+
+            if (fireNow) {
+                cewrapper.fire();
+            }
+
+            return ret;
 
         },
 
@@ -456,10 +477,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // The el argument can be a string
             if (typeof el == "string") {
 
-                el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                el = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+                return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
-            } else if ( this._isValidCollection(el)) {
+            } else if (shouldIterate(el)) {
 
                 ok = true;
                 for (i=0, len=el.length; i<len; ++i) {
@@ -533,30 +556,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @method _isValidCollection
          * @param o the object to test
          * @return {boolean} true if the object is array-like and populated
+         * @deprecated was not meant to be used directly
          * @static
          * @private
          */
-        _isValidCollection: function(o) {
-            try {
-                 
-                // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
-                // if (o instanceof Y.Node) {
-                    // o.tagName ="adsf";
-                // }
-
-                return ( o                     && // o is something
-                         typeof o !== "string" && // o is not a string
-                         // o.length  && // o is indexed
-                         (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
-                         !o.tagName            && // o is not an HTML element
-                         !o.alert              && // o is not a window
-                         (o.item || typeof o[0] !== "undefined") );
-            } catch(ex) {
-                Y.log("collection check failure", "warn", "event");
-                return false;
-            }
-
-        },
+        _isValidCollection: shouldIterate,
 
         /**
          * hook up any deferred listeners
@@ -582,7 +586,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // window load event fires. Try to find them now so that the
                 // the user is more likely to get the onAvailable notifications
                 // before the window load notification
-                Y.Event._tryPreloadAttach();
+                Y.Event._poll();
 
             }
         },
@@ -591,11 +595,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * Polling function that runs before the onload event fires, 
          * attempting to attach to DOM Nodes as soon as they are 
          * available
-         * @method _tryPreloadAttach
+         * @method _poll
          * @static
          * @private
          */
-        _tryPreloadAttach: function() {
+        _poll: function() {
 
             if (this.locked) {
                 return;
@@ -611,7 +615,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             this.locked = true;
 
-            // Y.log.debug("tryPreloadAttach");
+            // Y.log.debug("poll");
 
             // keep trying until after the page is loaded.  We need to 
             // check the page load state prior to trying to bind the 
@@ -658,7 +662,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && !item.checkReady) {
 
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // Y.log('avail: ' + el);
@@ -676,7 +681,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && item.checkReady) {
 
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -720,7 +726,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         purgeElement: function(el, recurse, type) {
-            var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            // var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
@@ -817,15 +824,21 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
 }();
 
-add(window, "load", onLoad);
-add(window, "unload", onUnload);
-
 Y.Event = Event;
 
-// Process onAvailable/onContentReady items when when the DOM is ready in IE
-if (Y.UA.ie && Y.on) {
-    Y.on(EVENT_READY, Event._tryPreloadAttach, Event, true);
+
+if (Y.config.injected || YUI.Env.windowLoaded) {
+    onLoad();
+} else {
+    add(window, "load", onLoad);
 }
+
+// Process onAvailable/onContentReady items when when the DOM is ready in IE
+if (Y.UA.ie) {
+    Y.on(EVENT_READY, Event._poll, Event, true);
+}
+
+add(window, "unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -833,6 +846,6 @@ Event.Target = Y.EventTarget;
 Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
-Event._tryPreloadAttach();
+Event._poll();
 
 })();

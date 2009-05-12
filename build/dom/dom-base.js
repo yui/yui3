@@ -440,12 +440,8 @@ Y.DOM = {
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
-                ret = el.getAttributeNode(attr);
-                ret = ret ? ret.value : '';
-            } else {
-                ret = el.getAttribute(attr, 2);
-            }
+            ret = el.getAttribute(attr, 2);
+
             if (ret === null) {
                 ret = ''; // per DOM spec
             }
@@ -463,6 +459,10 @@ Y.DOM = {
                             getElementsByTagName('*'), node) : null;
         },
 
+    isWindow: function(obj) {
+        return obj.alert && obj.document;
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
@@ -470,7 +470,7 @@ Y.DOM = {
         return frag.removeChild(frag[FIRST_CHILD]);
     },
 
-    insertNode: function(node, content, where, execScripts) {
+    insertHTML: function(node, content, where, execScripts) {
         var scripts,
             newNode = Y.DOM.create(content);
 
@@ -504,6 +504,41 @@ Y.DOM = {
         }
 
         return newNode;
+    },
+
+    VALUE_SETTERS: {},
+
+    VALUE_GETTERS: {},
+
+    getValue: function(node) {
+        var ret = '', // TODO: return null?
+            getter;
+
+        if (node && node[TAG_NAME]) {
+            getter = Y.DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (getter) {
+                ret = getter(node);
+            } else {
+                ret = node.value;
+            }
+        }
+
+        return (typeof ret === 'string') ? ret : '';
+    },
+
+    setValue: function(node, val) {
+        var setter;
+
+        if (node && node[TAG_NAME]) {
+            setter = Y.DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (setter) {
+                setter(node, val);
+            } else {
+                node.value = val;
+            }
+        }
     },
 
     _stripScripts: function(node) {
@@ -712,6 +747,24 @@ Y.DOM = {
 
         });
 
+        Y.mix(Y.DOM.VALUE_GETTERS, {
+            button: function(node) {
+                return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
+            }
+        });
+
+        Y.mix(Y.DOM.VALUE_SETTERS, {
+            // IE: node.value changes the button text, which should be handled via innerHTML
+            button: function(node, val) {
+                var attr = node.attributes['value'];
+                if (!attr) {
+                    attr = node[OWNER_DOCUMENT].createAttribute('value');
+                    node.setAttributeNode(attr);
+                }
+
+                attr.value = val;
+            }
+        });
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -725,6 +778,28 @@ Y.DOM = {
                 optgroup: creators.option
         });
     }
+
+    Y.mix(Y.DOM.VALUE_GETTERS, {
+        option: function(node) {
+            var attrs = node.attributes;
+            return (attrs.value && attrs.value.specified) ? node.value : node.text;
+        },
+
+        select: function(node) {
+            var val = node.value,
+                options = node.options,
+                i, opt;
+
+            if (options && val === '') {
+                if (node.multiple) {
+                } else {
+                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                }
+            }
+
+            return val;
+        }
+    });
 })();
 /** 
  * The DOM utility provides a cross-browser abtraction layer

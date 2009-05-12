@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        XML submodule.
+                        Parse XML submodule.
                     </div>
 
                     
@@ -71,6 +71,57 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_format">
+                                    <h4>
+                                        <a name="method_format">format</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">format</strong>
+                                           (
+                                                
+                                                        
+                                                         data
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts data to type XMLDocument.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">data</span>
+                                                        &lt;<span property="yui:type">XMLDoc</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Data to convert.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">String.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_parse">
                                     <h4>
                                         <a name="method_parse">parse</a></h4>
@@ -112,43 +163,6 @@
                                                         XMLDoc
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">XML Document.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_toString">
-                                    <h4>
-                                        <a name="method_toString">toString</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        String
-                                            <strong property="yui:name">toString</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns string name.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">String representation for this object.</dd>
                                                 </dl>
 
 
@@ -225,6 +239,8 @@
                                 <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class="selected"><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class="selected"><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
                     </div>
@@ -232,8 +248,10 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="datatype-number.js.html" title="datatype-number.js">datatype-number.js</a></li>
-                                <li class=""><a href="datatype-xml.js.html" title="datatype-xml.js">datatype-xml.js</a></li>
+                                <li class=""><a href="datatype-number-format.js.html" title="datatype-number-format.js">datatype-number-format.js</a></li>
+                                <li class=""><a href="datatype-number-parse.js.html" title="datatype-number-parse.js">datatype-number-parse.js</a></li>
+                                <li class=""><a href="datatype-xml-format.js.html" title="datatype-xml-format.js">datatype-xml-format.js</a></li>
+                                <li class=""><a href="datatype-xml-parse.js.html" title="datatype-xml-parse.js">datatype-xml-parse.js</a></li>
                                 <li class=""><a href="date-formatter.js.html" title="date-formatter.js">date-formatter.js</a></li>
                                 <li class=""><a href="date-locales.js.html" title="date-locales.js">date-locales.js</a></li>
                         </ul>
@@ -243,8 +261,8 @@
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><a href="#method_format" title="format">format</a></li>
                                 <li class=""><a href="#method_parse" title="parse">parse</a></li>
-                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
                         </ul>
                     </div>
 
@@ -259,7 +277,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "toString", "url": "DataType.Number.html#method_toString", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "toString", "url": "DataType.XML.html#method_toString", "type": "method"}, {"access": "private", "host": "DataType.Date.Locale", "name": "xPad", "url": "DataType.Date.Locale.html#method_xPad", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Number", "name": "xPad", "url": "DataType.Number.html#method_xPad", "type": "method"}];
 </script>
 </body>
 </html>

@@ -70,6 +70,8 @@
 
 <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
 
+<span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">,</span>
+
 <span class="c">/**</span>
 <span class="c"> * Extracts the keys, values, or size from an object</span>
 <span class="c"> * </span>
@@ -200,7 +202,6 @@
     <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
 <span class="o">};</span>
 
-
 <span class="c">/**</span>
 <span class="c"> * Retrieves the sub value at the provided path,</span>
 <span class="c"> * from the value object provided.</span>
@@ -215,7 +216,7 @@
 <span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">path</span><span class="o">),</span> <span class="nx">l</span><span class="o">=</span><span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
     <span class="o">}</span>
 
@@ -240,14 +241,14 @@
     <span class="k">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">path</span><span class="o">),</span> <span class="nx">leafIdx</span><span class="o">=</span><span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ref</span><span class="o">=</span><span class="nx">o</span><span class="o">;</span>
 
     <span class="k">if</span> <span class="o">(</span><span class="nx">leafIdx</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">ref</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ref</span> <span class="o">=</span> <span class="nx">ref</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ref</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ref</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">undefined</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
