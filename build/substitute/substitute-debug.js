@@ -122,61 +122,9 @@ YUI.add('substitute', function(Y) {
 
     };
 
-(function() {
-
-    // Static regex for matching {key} {key|input} patterns
-    var pattern = /\{\s*([^|{}]+?)\s*(?:\|([^\{}]*))?\s*\}/g,
-
-    // Recursion limit
-    MAX_RECURSION = 100,
-
-    // Replacer function factory
-    replacer = function (o, opts) {
-        return function (m, k, x) {
-            var v = o[k];
-            return v !== undefined ? v : (opts.preserve ? m : '');
-        };
-    },
-
-    // Wrapper to execute substitute until no more substitutions can be done
-    recurse = function (s, o, opts) {
-        var r = s, i = 0;
-
-        do {
-            s = r;
-            console.log('pass: ' + i);
-            console.log('s: ' + Y.dump(s));
-            console.log('o: ' + Y.dump(o));
-            r = substitute(s, o, opts);
-        } while (r !== s && ++i < MAX_RECURSION);
-
-        return r;
-    },
-
-    LDELIM = /\{/g,
-    RDELIM = /\}/g,
-    UNSPECIFIED = {},
-
-    substitute = function (s, o, opts) {
-        opts = opts || UNSPECIFIED;
-        if (false !== opts.recurse) {
-            opts.recurse = false;
-            return recurse.apply(this, arguments);
-        }
-        var ldelim = opts.ldelim, rdelim = opts.rdelim, 
-            p = opts.pattern || pattern, r = opts.replacer || replacer;
-
-        if (ldelim || rdelim && !opts.pattern) {
-            pattern = pattern.replace(LDELIM, ldelim).replace(RDELIM, rdelim);
-        }
-
-        return s && s.replace ? s.replace(p, r(o, opts)) : s;
-    };
-
     Y.substitute = substitute;
     L.substitute = substitute;
 
-})();
 
 
 }, '@VERSION@' ,{optional:['dump']});
