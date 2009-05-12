@@ -232,4 +232,4 @@ YUI.namespace("Env.DataSource.callbacks");
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base', 'get']});
+}, '@VERSION@' ,{requires:['datasource-local', 'get']});

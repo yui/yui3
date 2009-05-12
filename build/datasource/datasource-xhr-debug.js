@@ -139,4 +139,4 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base', 'io']});
+}, '@VERSION@' ,{requires:['datasource-local', 'io']});
