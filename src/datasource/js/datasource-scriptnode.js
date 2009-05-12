@@ -50,7 +50,7 @@ Y.mix(DSSN, {
          */
         get: {
             value: Y.Get,
-            useRef: true
+            cloneDefaultValue: false
         },
 
 /**

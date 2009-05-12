@@ -399,7 +399,7 @@ Y.mix(DSXHR, {
          */
         io: {
             value: Y.io,
-            useRef: true
+            cloneDefaultValue: false
         }
     }
 });
@@ -542,7 +542,7 @@ Y.mix(DSSN, {
          */
         get: {
             value: Y.Get,
-            useRef: true
+            cloneDefaultValue: false
         },
 
 /**

@@ -50,7 +50,7 @@ Y.mix(DSXHR, {
          */
         io: {
             value: Y.io,
-            useRef: true
+            cloneDefaultValue: false
         }
     }
 });
