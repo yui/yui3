@@ -20,6 +20,8 @@
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
+        DEEP = "deep",
+        SHALLOW = "shallow",
         DESTRUCTOR = "destructor";
 
     /**
@@ -310,7 +312,7 @@
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i,
+            var attr, attrs, cfg, val, path, i, clone,
                 aggAttrs = {};
 
             if (allAttrs) {
@@ -323,8 +325,18 @@
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
-                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
-                                cfg.value = Y.clone(val);
+                            clone = cfg.cloneDefaultValue;
+
+                            if (val) {
+                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
+                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.clone(val);
+                                } else if (clone === SHALLOW) {
+                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.merge(val);
+                                }
+                                // else if (clone === false), don't clone the static default value. 
+                                // It's intended to be used by reference.
                             }
 
                             path = null;
