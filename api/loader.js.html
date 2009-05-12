@@ -475,14 +475,14 @@
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;queue-base&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;queue-run&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;queue-base&#39;</span><span class="o">,</span> <span class="nx">EVENTCUSTOM</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">},</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
-                <span class="s1">&#39;queue-io&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">IOBASE</span><span class="o">]</span>
-                <span class="o">}</span>
-            <span class="o">},</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">]</span>
+                <span class="s1">&#39;queue-promote&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>

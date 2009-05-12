@@ -87,17 +87,21 @@
 <span class="c">     *                     process each match.  It receives the key,</span>
 <span class="c">     *                     value, and any extra metadata included with</span>
 <span class="c">     *                     the key inside of the braces.</span>
+<span class="c">     * @param ldelim {string} optional left delimiter for the replacement token (default: {)</span>
+<span class="c">     * @param rdelim {string} optional right delimiter for the replacement token (default: })</span>
 <span class="c">     * @return {string} the substituted string</span>
 <span class="c">     */</span>
-    <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">ldelim</span><span class="o">,</span> <span class="nx">rdelim</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">;</span>
+        <span class="nx">ldelim</span> <span class="o">=</span> <span class="nx">ldelim</span> <span class="o">||</span> <span class="nx">LBRACE</span><span class="o">;</span>
+        <span class="nx">rdelim</span> <span class="o">=</span> <span class="nx">rdelim</span> <span class="o">||</span> <span class="nx">RBRACE</span><span class="o">;</span>
 
         <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">LBRACE</span><span class="o">);</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">ldelim</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">break</span><span class="o">;</span>
             <span class="o">}</span>
-            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">RBRACE</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
+            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">rdelim</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span> <span class="o">&gt;=</span> <span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">break</span><span class="o">;</span>
             <span class="o">}</span>
@@ -154,12 +158,11 @@
 
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
 
-
         <span class="o">}</span>
 
         <span class="c">// restore saved {block}s</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">saved</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">),</span> <span class="s2">&quot;{&quot;</span>  <span class="o">+</span> <span class="nx">saved</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="o">,</span> <span class="s2">&quot;g&quot;</span><span class="o">);</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">),</span> <span class="nx">ldelim</span>  <span class="o">+</span> <span class="nx">saved</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="nx">rdelim</span><span class="o">,</span> <span class="s2">&quot;g&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
