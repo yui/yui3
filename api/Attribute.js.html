@@ -67,6 +67,7 @@
         <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="o">,</span>
         <span class="nx">PUBLISHED</span> <span class="o">=</span> <span class="s2">&quot;published&quot;</span><span class="o">,</span>
         <span class="nx">BROADCAST</span> <span class="o">=</span> <span class="s2">&quot;broadcast&quot;</span><span class="o">,</span>
+        <span class="nx">DEF_VALUE</span> <span class="o">=</span> <span class="s2">&quot;defaultValue&quot;</span><span class="o">,</span>
         <span class="nx">INVALID_VALUE</span><span class="o">,</span>
 
         <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
@@ -410,11 +411,9 @@
                     <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrChangeFn</span><span class="o">,</span> 
                     <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span>
                 <span class="o">};</span>
-
                 <span class="nx">eventConfig</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">BROADCAST</span><span class="o">);</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="nx">eventConfig</span><span class="o">);</span>
-
                 <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">PUBLISHED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -463,13 +462,24 @@
 
             <span class="k">var</span> <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
                 <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+
                 <span class="nx">validator</span>  <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
                 <span class="nx">setter</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">SETTER</span><span class="o">),</span>
+                <span class="nx">initializing</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">INITIALIZING</span><span class="o">),</span>
+
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">subAttrName</span> <span class="o">||</span> <span class="nx">attrName</span><span class="o">,</span>
                 <span class="nx">retVal</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">validator</span> <span class="o">||</span> <span class="nx">validator</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">validator</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">validator</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
 
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">valid</span> <span class="o">&amp;&amp;</span> <span class="nx">initializing</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">DEF_VALUE</span><span class="o">);</span>
+                    <span class="nx">valid</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c">// Assume it&#39;s valid, for perf.</span>
+<span class="c"></span>                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">validator</span> <span class="o">||</span> <span class="nx">valid</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">setter</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
 
@@ -570,6 +580,7 @@
 
                         <span class="c">// Not Merging. Caller is responsible for isolating configs</span>
 <span class="c"></span>                        <span class="nx">attrCfg</span> <span class="o">=</span> <span class="nx">cfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
+                        <span class="nx">attrCfg</span><span class="o">.</span><span class="nx">defaultValue</span> <span class="o">=</span> <span class="nx">attrCfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
 
                         <span class="c">// Handle simple, complex and user values, accounting for read-only</span>
 <span class="c"></span>                        <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrInitVal</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">attrCfg</span><span class="o">,</span> <span class="nx">values</span><span class="o">);</span>
