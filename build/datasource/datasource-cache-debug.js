@@ -121,4 +121,4 @@ Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base', 'cache']});
+}, '@VERSION@' ,{requires:['datasource-local', 'cache']});

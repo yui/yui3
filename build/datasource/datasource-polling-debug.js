@@ -85,4 +85,4 @@ Y.augment(Y.DataSource.Local, Pollable);
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});

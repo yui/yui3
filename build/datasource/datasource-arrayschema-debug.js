@@ -104,4 +104,4 @@ Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-array']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-array']});
