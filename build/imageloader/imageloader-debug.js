@@ -607,4 +607,4 @@ YUI.add('imageloader', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'event', 'oop']});
+}, '@VERSION@' ,{requires:['node']});
