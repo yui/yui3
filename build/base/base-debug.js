@@ -857,7 +857,7 @@ YUI.add('base-build', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@' ,{requires:['base-base']});
 
 
 
