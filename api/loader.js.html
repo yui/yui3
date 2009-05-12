@@ -320,7 +320,16 @@
         <span class="o">},</span>
 
         <span class="nx">base</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;attribute&#39;</span><span class="o">]</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+
+                <span class="s1">&#39;base-base&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;attribute&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+
+                <span class="s1">&#39;base-build&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base-base&#39;</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">},</span>
         
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> 
