@@ -480,7 +480,7 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-base', 'io']});
 
 YUI.add('datasource-scriptnode', function(Y) {
 
@@ -967,7 +967,7 @@ Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
+}, '@VERSION@' ,{requires:['datasource-base', 'cache']});
 
 YUI.add('datasource-jsonschema', function(Y) {
 
