@@ -186,6 +186,8 @@
     <span class="nx">ANIMBASE</span> <span class="o">=</span> <span class="s1">&#39;anim-base&#39;</span><span class="o">,</span>
     <span class="nx">DDDRAG</span> <span class="o">=</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">,</span>
     <span class="nx">DOM</span> <span class="o">=</span> <span class="s1">&#39;dom&#39;</span><span class="o">,</span>
+    <span class="nx">DATASCHEMABASE</span> <span class="o">=</span> <span class="s1">&#39;dataschema-base&#39;</span><span class="o">,</span>
+    <span class="nx">DATASOURCELOCAL</span> <span class="o">=</span> <span class="s1">&#39;datasource-local&#39;</span><span class="o">,</span>
     <span class="nx">DOMBASE</span> <span class="o">=</span> <span class="s1">&#39;dom-base&#39;</span><span class="o">,</span>
     <span class="nx">DOMSTYLE</span> <span class="o">=</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">,</span>
     <span class="nx">DUMP</span> <span class="o">=</span> <span class="s1">&#39;dump&#39;</span><span class="o">,</span>
@@ -331,6 +333,10 @@
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
+
+        <span class="nx">cache</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">PLUGIN</span><span class="o">]</span>
+        <span class="o">},</span>
         
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">DUMP</span><span class="o">,</span> <span class="nx">SUBSTITUTE</span><span class="o">]</span>
@@ -351,6 +357,75 @@
         
         <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+        <span class="o">},</span>
+
+        <span class="nx">dataschema</span><span class="o">:{</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;dataschema-base&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;dataschema-array&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASCHEMABASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;dataschema-json&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASCHEMABASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;dataschema-text&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASCHEMABASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;dataschema-xml&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASCHEMABASE</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">datasource</span><span class="o">:{</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;datasource-local&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-arrayschema&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;dataschema-array&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-cache&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="s1">&#39;cache&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-function&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-jsonschema&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;dataschema-json&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-polling&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-scriptnode&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">GET</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-textschema&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;dataschema-text&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-xhr&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">IOBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datasource-xmlschema&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;dataschema-xml&#39;</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">datatype</span><span class="o">:{</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;datatype-date&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datatype-number&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;datatype-xml&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">dd</span><span class="o">:{</span>
@@ -414,6 +489,10 @@
         <span class="o">},</span>
 
         <span class="nx">history</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
+        <span class="o">},</span>
+
+        <span class="nx">imageloader</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">]</span>
         <span class="o">},</span>
         
