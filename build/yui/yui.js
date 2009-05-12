@@ -2751,7 +2751,7 @@ var BASE = 'base',
                 },
 
                 'anim-easing': {
-                    requires: [YUIBASE]
+                    requires: [ANIMBASE]
                 },
 
                 'anim-scroll': {
