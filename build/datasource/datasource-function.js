@@ -124,4 +124,4 @@ Y.DataSource.Function = DSFn;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});
