@@ -41,6 +41,37 @@
 	 
       });
 
+* Developers can now over-ride the default clone behavior we use to
+  isolate default ATTRS config values, using cloneDefaultValue, e.g.:
+
+  ATTRS = {
+      myAttr : {
+      	value: AnObjectOrArrayReference
+	cloneDefaultValue: true|false|"deep"|"shallow"
+      }
+  }
+
+  If the cloneDefaultValue property is not defined, Base will clone
+  any Arrays or Object literals which are used as default values when
+  configuring attributes for an instance, so that updates to instance 
+  values do not modify the default value.
+
+  This behavior can be over-ridden using the cloneDefaultValue property:
+
+  true, deep: 
+
+     Use Y.clone to protect the default value.
+
+  shallow:
+
+     Use Y.merge, to protect the default value.
+
+  false:
+
+     Don't clone Arrays or Object literals. The value is intended
+     to be used by reference, for example, when it points to
+     a utility object.
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"
