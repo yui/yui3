@@ -6,6 +6,7 @@ The Slider widget
       logic of the default function and support methods.
     * renamed _defSyncUI to _defSyncFn for library nomenclature consistency
     * Added protected _convertValueToOffset to help position the thumb
+    * Set bubble: false on the DD.Drag instance
 
 3.0.0pr2
     Initial release

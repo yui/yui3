@@ -609,7 +609,10 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _bindThumbDD : function () {
-        var ddConf = { node : this.get(THUMB) };
+        var ddConf = {
+            node : this.get(THUMB),
+            bubble : false
+        };
 
         ddConf[this._key.ddStick] = true;
 
