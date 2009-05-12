@@ -91,7 +91,7 @@
         <span class="k">var</span> <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
             <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
 
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">xmldoc</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="nx">xmldoc</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// Parse results data</span>
 <span class="c"></span>            <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">xmldoc</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
 

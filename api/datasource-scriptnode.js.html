@@ -98,7 +98,8 @@
 <span class="c">         * @default Y.Get</span>
 <span class="c">         */</span>
         <span class="nx">get</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">,</span>
+            <span class="nx">cloneDefaultValue</span><span class="o">:</span> <span class="kc">false</span>
         <span class="o">},</span>
 
 <span class="c">/**</span>
@@ -247,7 +248,8 @@
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
     <span class="nx">get</span><span class="o">.</span><span class="nx">script</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="o">{</span>
         <span class="nx">autopurge</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-        <span class="nx">onFailure</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// Works in Firefox only....</span>
+<span class="c"></span>        <span class="nx">onFailure</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Data failure&quot;</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
         <span class="o">},</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
