@@ -352,7 +352,7 @@ Y.DOM = {
      */
     insertBefore: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
@@ -367,7 +367,7 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
 
@@ -2208,28 +2208,6 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
-        /**
-         * Executes the supplied function against each node until true is returned.
-         * @method some
-         *
-         * @param {Array} nodes The nodes to run the function against 
-         * @param {Function} fn  The function to run against each node
-         * @return {Boolean} whether or not any element passed
-         * @static
-         */
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -2283,7 +2261,7 @@ var PARENT_NODE = 'parentNode',
 
                     if (nodes[LENGTH]) {
                         if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
+                            Y.Array.some(nodes, Selector._testToken, token);
                         } else {
                             Y.Array.each(nodes, Selector._testToken, token);
                         }

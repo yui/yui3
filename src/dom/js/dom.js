@@ -350,7 +350,7 @@ Y.DOM = {
      */
     insertBefore: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
@@ -365,7 +365,7 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
 
