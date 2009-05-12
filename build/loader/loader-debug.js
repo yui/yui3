@@ -428,14 +428,14 @@ var GLOBAL_ENV = YUI.Env,
             submodules: {
                 'queue-base': {
                     requires: [YUIBASE]
+                },
+                'queue-run': {
+                    requires: ['queue-base', EVENTCUSTOM]
                 }
             },
             plugins: {
-                'queue-io': {
-                    requires: [IOBASE]
-                }
-            }, 
-            requires: [EVENTCUSTOM]
+                'queue-promote': { }
+            }
         },
 
         slider: {
