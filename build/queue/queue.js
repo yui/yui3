@@ -84,20 +84,12 @@ var Queue   = Y.Queue,
     isFunction = Y.Lang.isFunction;
 
 /**
- * Mechanism to execute a series of callbacks in sequence.
- * Callbacks can be function references or object literals with the following
- * keys:
- * <dl>
- *    <dt>fn</dt>
- *      <dd>{Function} REQUIRED the callback function.</dd>
- *    <dt>context</dt>
- *      <dd>{Object} the desired execution context of the callback function</dd>
- *    <dt>args</dt>
- *      <dd>{Array} list of arguments to pass to the callback function</dd>
- * </dl>
+ * Remaps functionality to preventable events, adds support for scheduling
+ * callbacks to execute asynchronously, as well as iterative callbacks.
  *
  * @module queue
- * @submodule queue-async
+ * @submodule queue-run
+ * @for Queue
  */
 
 /**

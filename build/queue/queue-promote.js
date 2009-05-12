@@ -5,6 +5,7 @@ YUI.add('queue-promote', function(Y) {
  *
  * @module queue
  * @submodule queue-promote
+ * @for Queue
  */
 
 Y.mix(Y.Queue.prototype, {
