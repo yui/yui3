@@ -52,6 +52,11 @@
 * reset() no longer resets readOnly or writeOnce attributes. Only publically
   settable values are reset.
 
+* Added modifyAttr method, to allow component developer to modify configuration
+  of an attribute which has already been added. The set of attribute configuration
+  properties which can be modified after is has been added are limited to getter,
+  readOnly, writeOnce and broadcast.
+
 3.0.0PR2
 
 * Added valueFn support, to allowing static 

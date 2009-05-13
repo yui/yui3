@@ -798,6 +798,50 @@
                 testInitialValidation: function() {
                     var h = this.createHost({A:5});
                     Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
                 }
             };
 
@@ -1229,6 +1273,49 @@
                     h.set("B", "NewB");
                     h.set("C", "NewC");
 
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
             };
