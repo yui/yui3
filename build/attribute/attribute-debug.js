@@ -131,6 +131,7 @@ YUI.add('attribute', function(Y) {
 
         DOT = ".",
         CHANGE = "Change",
+
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
@@ -143,7 +144,16 @@ YUI.add('attribute', function(Y) {
         PUBLISHED = "published",
         BROADCAST = "broadcast",
         DEF_VALUE = "defaultValue",
+
         INVALID_VALUE,
+
+        // Properties which can be changed after the attribute has been added.
+        MODIFIABLE = {
+            readOnly:1,
+            writeOne:1,
+            getter:1,
+            broadcast:1
+        },
 
         EventTarget = Y.EventTarget;
 
@@ -239,7 +249,7 @@ YUI.add('attribute', function(Y) {
                     hasValue = (VALUE in config),
                     conf = this._conf;
 
-                if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
+                if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                 if(hasValue) {
                     // We'll go through set, don't want to set value in _conf directory
@@ -258,10 +268,8 @@ YUI.add('attribute', function(Y) {
                 }
 
                 conf.remove(name, INITIALIZING);
-
-            } else {
-                Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute');
             }
+            if (this.attrAdded(name)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
             return this;
         },
@@ -275,6 +283,35 @@ YUI.add('attribute', function(Y) {
          */
         attrAdded: function(name) {
             return !!(this._conf.get(name, ADDED));
+        },
+
+        /**
+         * Updates the configuration of an attribute which has already been added. 
+         * <p>
+         * The properties which can be modified through this interface are limited
+         * to the following subset of attributes which can be safely modified 
+         * after a value has been set on the attribute: readOnly, writeOnce, broadcast and 
+         * getter.
+         * </p>
+         * @method modifyAttr
+         * @param {String} name The name of the attribute whose configuration is to be updated.
+         * @param {Object} config An object literal with the updated configuration properties.
+         */
+        modifyAttr: function(name, config) {
+            if (this.attrAdded(name)) {
+                var prop;
+                for (prop in config) {
+                    if (MODIFIABLE[prop] && config.hasOwnProperty(prop)) {
+                        this._conf.add(name, prop, config[prop]);
+
+                        // If we reconfigured broadcast, need to republish
+                        if (prop === BROADCAST) {
+                            this._conf.remove(name, PUBLISHED);
+                        }
+                    }
+                }
+            }
+            if (!this.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
         /**
@@ -480,15 +517,12 @@ YUI.add('attribute', function(Y) {
                 facade;
 
             if (!conf.get(attrName, PUBLISHED)) {
-
-                var eventConfig = {
+                this.publish(eventName, {
                     queuable:false, 
                     defaultFn:this._defAttrChangeFn, 
-                    silent:true
-                };
-                eventConfig.broadcast = conf.get(attrName, BROADCAST);
-
-                this.publish(eventName, eventConfig);
+                    silent:true,
+                    broadcast : conf.get(attrName, BROADCAST)
+                });
                 conf.add(attrName, PUBLISHED, true);
             }
 
@@ -633,8 +667,9 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Configures attributes, and sets initial values. This method does not 
-         * isolate configuration object by merging/cloning. The caller is responsible for 
-         * merging/cloning the configuration object when required.
+         * isolate the configuration object by merging/cloning.
+         *
+         * The caller is responsible for merging/cloning the configuration object if required.
          *
          * @method addAttrs
          * @chainable
