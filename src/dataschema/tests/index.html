@@ -2,15 +2,15 @@
 <html>
 <head>
 <title>DataSchema Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/dataschema/dataschema-debug.js" id="buildsrc"></script>
+<script type="text/javascript" src="../../../build/datatype/datatype-debug.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>DataSchema Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/dataschema/dataschema-debug.js" id="buildsrc"></script>
-<script type="text/javascript" src="../../../build/datatype/datatype-debug.js" id="buildsrc"></script>
 <script type="text/javascript">
 
 (function() {
@@ -24,6 +24,7 @@
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
+            OBJECTASSERT = Y.ObjectAssert,
             btnRun = Y.get("#btnRun"),
             myConsole = new Y.Console().render();
             
@@ -212,14 +213,24 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
             testXMLError: function() {
                 var schema = {
-                        resultListLocator: "item",
+                        resultListLocator: "none",
                         resultFields: ["type", {key:"rank", parser:Y.DataType.Number.parse}, "name"]
                     },
-                   data_in = Y.DataType.XML.parse("<mismatch><item type='foo'><name>Abc</name><rank>1</rank></item></mismatchedtags>"),
+                   data_in = Y.DataType.XML.parse("<root><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item></root>"),
                    data_out = Y.DataSchema.XML.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
+                ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
+                ASSERT.isObject(data_out.error, "Expected XML parse error.");
+                
+                data_out = null;
+                data_in = [1,2,3];
+                schema.resultsListLocator = "item";
+                data_out = Y.DataSchema.XML.apply(schema, data_in);
+
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+                OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected XML parse error.");
             }
@@ -305,7 +316,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                     data_out = Y.DataSchema.Array.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected array parse error.");
 
@@ -364,7 +375,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                     data_out = Y.DataSchema.Text.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected text parse error.");
                 
@@ -375,7 +386,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                 data_out = Y.DataSchema.Text.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
-                //OBJECTASSERT.isEmpty(data_out.meta, "Expected empty meta.");
+                OBJECTASSERT.ownsNoKeys(data_out.meta, "Expected empty meta.");
                 ARRAYASSERT.isEmpty(data_out.results, "Expected empty results.");
                 ASSERT.isObject(data_out.error, "Expected text parse error.");
             }

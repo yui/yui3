@@ -1,4 +1,4 @@
-YUI.add('anim', function(Y) {
+YUI.add('anim-base', function(Y) {
 
 /**
  * Y.Animation Utility.
@@ -581,6 +581,117 @@ YUI.add('anim', function(Y) {
     };
 
     Y.extend(Y.Anim, Y.Base, proto);
+
+
+}, '@VERSION@' ,{requires:['base', 'node']});
+YUI.add('anim-color', function(Y) {
+
+/**
+ * Adds support for color properties in <code>to</code>
+ * and <code>from</code> attributes.
+ * @module anim
+ * @submodule anim-color
+ * @for Anim
+ */
+
+var NUM = Number;
+
+Y.Anim.behaviors.color = {
+    set: function(anim, att, from, to, elapsed, duration, fn) {
+        from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
+        to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
+
+        if (!from || from.length < 3 || !to || to.length < 3) {
+            Y.error('invalid from or to passed to color behavior');
+        }
+
+        anim._node.setStyle(att, 'rgb(' + [
+            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
+            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
+            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
+        ].join(', ') + ')');
+    },
+    
+    // TODO: default bgcolor const
+    get: function(anim, att) {
+        var val = anim._node.getComputedStyle(att);
+        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+        return val;
+    }
+};
+
+Y.each(['backgroundColor',
+        'borderColor',
+        'borderTopColor',
+        'borderRightColor', 
+        'borderBottomColor', 
+        'borderLeftColor'],
+        function(v, i) {
+            Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
+        }
+);
+
+
+}, '@VERSION@' ,{requires:['anim-base', 'node-style']});
+YUI.add('anim-curve', function(Y) {
+
+/**
+ * Adds support for the <code>curve</code> property for the <code>to</code> 
+ * attribute.  A curve is zero or more control points and an end point.
+ * @module anim
+ * @submodule anim-curve
+ * @for Anim
+ */
+
+Y.Anim.behaviors.curve = {
+    set: function(anim, att, from, to, elapsed, duration, fn) {
+        from = from.slice.call(from);
+        to = to.slice.call(to);
+        var t = fn(elapsed, 0, 100, duration) / 100;
+        to.unshift(from);
+        anim._node.setXY(Y.Anim.getBezier(to, t));
+    },
+
+    get: function(anim, att) {
+        return anim._node.getXY();
+    }
+};
+
+/**
+ * Get the current position of the animated element based on t.
+ * Each point is an array of "x" and "y" values (0 = x, 1 = y)
+ * At least 2 points are required (start and end).
+ * First point is start. Last point is end.
+ * Additional control points are optional.     
+ * @method getBezier
+ * @static
+ * @param {Array} points An array containing Bezier points
+ * @param {Number} t A number between 0 and 1 which is the basis for determining current position
+ * @return {Array} An array containing int x and y member data
+ */
+Y.Anim.getBezier = function(points, t) {  
+    var n = points.length;
+    var tmp = [];
+
+    for (var i = 0; i < n; ++i){
+        tmp[i] = [points[i][0], points[i][1]]; // save input
+    }
+    
+    for (var j = 1; j < n; ++j) {
+        for (i = 0; i < n - j; ++i) {
+            tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+            tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+        }
+    }
+
+    return [ tmp[0][0], tmp[0][1] ]; 
+
+};
+
+
+}, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+YUI.add('anim-easing', function(Y) {
+
 /*
 TERMS OF USE - EASING EQUATIONS
 Open source under the BSD License.
@@ -923,78 +1034,44 @@ Y.Easing = {
         return Y.Easing.bounceOut(t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b;
     }
 };
-/**
- * Adds support for the <code>xy</code> property in <code>from</code> and 
- * <code>to</code> attributes.
- * @module anim
- * @submodule anim-xy
- * @for Anim
- */
 
-var NUM = Number;
 
-Y.Anim.behaviors.xy = {
-    set: function(anim, att, from, to, elapsed, duration, fn) {
-        anim._node.setXY([
-            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
-            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
-        ]);
-    },
-    get: function(anim) {
-        return anim._node.getXY();
-    }
-};
+}, '@VERSION@' ,{requires:['anim-base']});
+YUI.add('anim-node-plugin', function(Y) {
 
 /**
- * Adds support for color properties in <code>to</code>
- * and <code>from</code> attributes.
+ *  Binds an Anim instance to a Node instance
  * @module anim
- * @submodule anim-color
- * @for Anim
+ * @namespace plugin
+ * @submodule anim-node-plugin
  */
 
-var NUM = Number;
-
-Y.Anim.behaviors.color = {
-    set: function(anim, att, from, to, elapsed, duration, fn) {
-        from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
-        to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
-
-        if (!from || from.length < 3 || !to || to.length < 3) {
-            Y.error('invalid from or to passed to color behavior');
-        }
-
-        anim._node.setStyle(att, 'rgb(' + [
-            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
-            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
-            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
-        ].join(', ') + ')');
-    },
-    
-    // TODO: default bgcolor const
-    get: function(anim, att) {
-        var val = anim._node.getComputedStyle(att);
-        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
-        return val;
-    }
+var NodeFX = function(config) {
+    config = (config) ? Y.merge(config) : {};
+    config.node = config.host;
+    NodeFX.superclass.constructor.apply(this, arguments);
 };
 
-Y.each(['backgroundColor',
-        'borderColor',
-        'borderTopColor',
-        'borderRightColor', 
-        'borderBottomColor', 
-        'borderLeftColor'],
-        function(v, i) {
-            Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
-        }
-);
+NodeFX.NAME = "nodefx";
+NodeFX.NS = "fx";
+
+Y.extend(NodeFX, Y.Anim);
+
+Y.namespace('plugin');
+Y.plugin.NodeFX = NodeFX;
+
+
+}, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+YUI.add('anim-scroll', function(Y) {
+
 /**
  * Adds support for the <code>scroll</code> property in <code>to</code>
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
  * @for Anim
+
+ * TODO: deprecate for scrollTop/Left properties?
  */
 
 var NUM = Number;
@@ -1022,78 +1099,37 @@ Y.Anim.behaviors.scroll = {
     }
 };
 
+
+
+}, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+YUI.add('anim-xy', function(Y) {
+
 /**
- * Adds support for the <code>curve</code> property for the <code>to</code> 
- * attribute.  A curve is zero or more control points and an end point.
+ * Adds support for the <code>xy</code> property in <code>from</code> and 
+ * <code>to</code> attributes.
  * @module anim
- * @submodule anim-curve
+ * @submodule anim-xy
  * @for Anim
  */
 
-Y.Anim.behaviors.curve = {
-    set: function(anim, att, from, to, elapsed, duration, fn) {
-        from = from.slice.call(from);
-        to = to.slice.call(to);
-        var t = fn(elapsed, 0, 100, duration) / 100;
-        to.unshift(from);
-        anim._node.setXY(Y.Anim.getBezier(to, t));
-    },
+var NUM = Number;
 
-    get: function(anim, att) {
+Y.Anim.behaviors.xy = {
+    set: function(anim, att, from, to, elapsed, duration, fn) {
+        anim._node.setXY([
+            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
+            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+        ]);
+    },
+    get: function(anim) {
         return anim._node.getXY();
     }
 };
 
-/**
- * Get the current position of the animated element based on t.
- * Each point is an array of "x" and "y" values (0 = x, 1 = y)
- * At least 2 points are required (start and end).
- * First point is start. Last point is end.
- * Additional control points are optional.     
- * @method getBezier
- * @static
- * @param {Array} points An array containing Bezier points
- * @param {Number} t A number between 0 and 1 which is the basis for determining current position
- * @return {Array} An array containing int x and y member data
- */
-Y.Anim.getBezier = function(points, t) {  
-    var n = points.length;
-    var tmp = [];
-
-    for (var i = 0; i < n; ++i){
-        tmp[i] = [points[i][0], points[i][1]]; // save input
-    }
-    
-    for (var j = 1; j < n; ++j) {
-        for (i = 0; i < n - j; ++i) {
-            tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
-            tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
-        }
-    }
-
-    return [ tmp[0][0], tmp[0][1] ]; 
-
-};
-/**
- *  Binds an Anim instance to a Node instance
- * @module anim
- * @namespace plugin
- * @submodule anim-node-plugin
- */
-
-var NodeFX = function(config) {
-    config = (config) ? Y.merge(config) : {};
-    config.node = config.owner;
-    NodeFX.superclass.constructor.apply(this, arguments);
-};
-
-NodeFX.NAME = "nodefx";
-NodeFX.NS = "fx";
-
-Y.extend(NodeFX, Y.Anim);
-
-Y.namespace('plugin');
-Y.plugin.NodeFX = NodeFX;
 
 
-}, '@VERSION@' ,{requires:['base', 'node']});
+}, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+
+
+YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+

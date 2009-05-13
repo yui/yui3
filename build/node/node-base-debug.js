@@ -241,6 +241,16 @@ Node.ATTRS = {
         }
     },
 
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
     restricted: {
         writeOnce: true,
         value: false
@@ -352,6 +362,10 @@ Y.mix(Node.prototype, {
         return ret;
     },
 
+    detachAll: function(type) {
+        return this.detach(type);
+    },
+
     get: function(attr) {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
@@ -368,7 +382,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -490,8 +504,16 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
     remove: function() {
-        g_nodes[this[UID]].parentNode.removeChild();
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
         return this;
     },
 
@@ -500,11 +522,11 @@ Y.mix(Node.prototype, {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -513,8 +535,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
-        delete Node._instances[this[UID]];
+        var uid = this[UID];
+
+        delete g_nodes[uid];
+        delete g_restrict[uid];
+        delete Node._instances[uid];
     },
 
     /**
@@ -570,7 +595,7 @@ Y.mix(Node.prototype, {
         return Y.Event.nativeRemove.apply(Y.Event, arguments);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));
@@ -774,19 +799,49 @@ Y.mix(NodeList.prototype, {
     /**
      * Applies the given function to each Node in the NodeList.
      * @method each
-     * @param {Function} fn The function to apply 
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
      * @param {Object} context optional An optional context to apply the function with
-     * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
+     * Default context is the current Node instance
      * @chainable
      */
     each: function(fn, context) {
         var instance = this;
-        context = context || this;
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
-            return fn.call(context, Y.get(node), index, instance);
+            node = Y.get(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
         });
         return instance;
+    },
+
+    /**
+     * Executes the function once for each node until a true value is returned.
+     * @method some
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
+     * @param {Object} context optional An optional context to execute the function from.
+     * Default context is the current Node instance
+     * @return {Boolean} Whether or not the function returned true for any node.
+     */
+    some: function(fn, context) {
+        var instance = this;
+        return Y.Array.some(g_nodelists[this[UID]], function(node, index) {
+            node = Y.get(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
+        });
+    },
+
+    /**
+     * Returns the index of the node in the NodeList instance
+     * or -1 if the node isn't found.
+     * @method indexOf
+     * @param {Y.Node || DOMNode} node the node to search for
+     * @return {Int} the index of the node value or -1 if not found
+     */
+    indexOf: function(node) {
+        return Y.Array.indexOf(g_nodelists[this[UID]], Y.Node.getDOMNode(node));
     },
 
     /**
@@ -831,7 +886,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        g_nodelists[this[UID]] = [];
         delete NodeList._instances[this[UID]];
     },
 
@@ -1093,7 +1147,7 @@ Node.importMethod(Y.DOM, [
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return this.getAttribute(attr) !== '';
+        return Y.Node.getDOMNode(this).getAttribute(attr, 2) !== '';
     };
 }
 

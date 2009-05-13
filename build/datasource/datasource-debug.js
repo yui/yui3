@@ -398,7 +398,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            cloneDefaultValue: false
         }
     }
 });
@@ -485,7 +486,7 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local', 'io']});
 
 YUI.add('datasource-scriptnode', function(Y) {
 
@@ -540,7 +541,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            cloneDefaultValue: false
         },
 
 /**
@@ -689,6 +691,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     Y.log("DataSource is querying URL " + uri, "info", this.toString());
     get.script(uri, {
         autopurge: true,
+        // Works in Firefox only....
         onFailure: Y.bind(function(e) {
             e.error = new Error(this.toString() + " Data failure");
             this.fire("error", e);
@@ -719,7 +722,7 @@ YUI.namespace("Env.DataSource.callbacks");
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base', 'get']});
+}, '@VERSION@' ,{requires:['datasource-local', 'get']});
 
 YUI.add('datasource-function', function(Y) {
 
@@ -847,7 +850,7 @@ Y.DataSource.Function = DSFn;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});
 
 YUI.add('datasource-cache', function(Y) {
 
@@ -972,7 +975,7 @@ Y.namespace('plugin').DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
+}, '@VERSION@' ,{requires:['datasource-local', 'cache']});
 
 YUI.add('datasource-jsonschema', function(Y) {
 
@@ -1080,7 +1083,7 @@ Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-json']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});
 
 YUI.add('datasource-xmlschema', function(Y) {
 
@@ -1188,7 +1191,7 @@ Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-xml']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-xml']});
 
 YUI.add('datasource-arrayschema', function(Y) {
 
@@ -1296,7 +1299,7 @@ Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-array']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-array']});
 
 YUI.add('datasource-textschema', function(Y) {
 
@@ -1404,7 +1407,7 @@ Y.namespace('plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-text']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-text']});
 
 YUI.add('datasource-polling', function(Y) {
 
@@ -1493,7 +1496,7 @@ Y.augment(Y.DataSource.Local, Pollable);
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});
 
 
 

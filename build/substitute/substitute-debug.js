@@ -40,17 +40,21 @@ YUI.add('substitute', function(Y) {
      *                     process each match.  It receives the key,
      *                     value, and any extra metadata included with
      *                     the key inside of the braces.
+     * @param ldelim {string} optional left delimiter for the replacement token (default: {)
+     * @param rdelim {string} optional right delimiter for the replacement token (default: })
      * @return {string} the substituted string
      */
-    substitute = function (s, o, f) {
+    substitute = function (s, o, f, ldelim, rdelim) {
         var i, j, k, key, v, meta, saved=[], token, dump;
+        ldelim = ldelim || LBRACE;
+        rdelim = rdelim || RBRACE;
 
         for (;;) {
-            i = s.lastIndexOf(LBRACE);
+            i = s.lastIndexOf(ldelim);
             if (i < 0) {
                 break;
             }
-            j = s.indexOf(RBRACE, i);
+            j = s.indexOf(rdelim, i);
             if (i + 1 >= j) {
                 break;
             }
@@ -107,12 +111,11 @@ YUI.add('substitute', function(Y) {
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
-
         }
 
         // restore saved {block}s
         for (i=saved.length-1; i>=0; i=i-1) {
-            s = s.replace(new RegExp("~-" + i + "-~"), "{"  + saved[i] + "}", "g");
+            s = s.replace(new RegExp("~-" + i + "-~"), ldelim  + saved[i] + rdelim, "g");
         }
 
         return s;
