@@ -2676,6 +2676,8 @@ var GLOBAL_ENV = YUI.Env,
     ANIMBASE = 'anim-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
+    DATASCHEMABASE = 'dataschema-base',
+    DATASOURCELOCAL = 'datasource-local',
     DOMBASE = 'dom-base',
     DOMSTYLE = 'dom-style',
     DUMP = 'dump',
@@ -2821,6 +2823,10 @@ var GLOBAL_ENV = YUI.Env,
                 }
             }
         },
+
+        cache: { 
+            requires: [PLUGIN]
+        },
         
         compat: { 
             requires: [NODE, DUMP, SUBSTITUTE]
@@ -2841,6 +2847,75 @@ var GLOBAL_ENV = YUI.Env,
         
         cookie: { 
             requires: [YUIBASE]
+        },
+
+        dataschema:{
+            submodules: {
+                'dataschema-base': {
+                    requires: [BASE]
+                },
+                'dataschema-array': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-json': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-text': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-xml': {
+                    requires: [DATASCHEMABASE]
+                }
+            }
+        },
+
+        datasource:{
+            submodules: {
+                'datasource-local': {
+                    requires: [BASE]
+                },
+                'datasource-arrayschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-array']
+                },
+                'datasource-cache': {
+                    requires: [DATASOURCELOCAL, 'cache']
+                },
+                'datasource-function': {
+                    requires: [DATASOURCELOCAL]
+                },
+                'datasource-jsonschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-json']
+                },
+                'datasource-polling': {
+                    requires: [DATASOURCELOCAL]
+                },
+                'datasource-scriptnode': {
+                    requires: [DATASOURCELOCAL, GET]
+                },
+                'datasource-textschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
+                },
+                'datasource-xhr': {
+                    requires: [DATASOURCELOCAL, IOBASE]
+                },
+                'datasource-xmlschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-xml']
+                }
+            }
+        },
+
+        datatype:{
+            submodules: {
+                'datatype-date': {
+                    requires: [YUIBASE]
+                },
+                'datatype-number': {
+                    requires: [YUIBASE]
+                },
+                'datatype-xml': {
+                    requires: [YUIBASE]
+                }
+            }
         },
 
         dd:{
@@ -2904,6 +2979,10 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         history: { 
+            requires: [NODE]
+        },
+
+        imageloader: { 
             requires: [NODE]
         },
         
