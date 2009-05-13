@@ -1820,16 +1820,87 @@ Y.UA = function() {
 
     } else {
 
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
+        core = ['queue-base', 'get', 'loader'];
     }
 
     Y.use.apply(Y, core);
 
      
 })();
+
+
+}, '@VERSION@' );
+YUI.add('queue-base', function(Y) {
+
+/**
+ * A simple FIFO queue of function references.
+ *
+ * @module queue
+ * @submodule queue-base
+ * @class Queue
+ * @param callback* {Function} 0..n callback functions to seed the queue
+ */
+function Queue() {
+    this._init();
+    this.add.apply(this, arguments);
+}
+
+Queue.prototype = {
+    /**
+     * Initialize the queue
+     *
+     * @method _init
+     * @protected
+     */
+    _init : function () {
+        /**
+         * The collection of enqueued functions
+         *
+         * @property _q
+         * @type {Array}
+         * @protected
+         */
+        this._q = [];
+    },
+
+    /**
+     * Get the next callback in the queue.
+     *
+     * @method next
+     * @return {Function} the next callback in the queue
+     */
+    next : function () {
+        return this._q.shift();
+    },
+
+    /**
+     * Add 0..n callbacks to the end of the queue
+     *
+     * @method add
+     * @param callback* {Function} 0..n callback functions
+     */
+    add : function () {
+        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+            if (Y.Lang.isFunction(fn)) {
+                this._q.push(fn);
+            }
+        },this);
+
+        return this;
+    },
+
+    /**
+     * Returns the current number of queued callbacks
+     *
+     * @method size
+     * @return {Number}
+     */
+    size : function () {
+        return this._q.length;
+    }
+};
+
+Y.Queue = Queue;
 
 
 }, '@VERSION@' );
@@ -2656,7 +2727,17 @@ YUI.add('loader', function(Y) {
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
+/**
+ * Global loader queue
+ * @property loaderQueue
+ * @type Queue
+ * @private
+ * @for YUI.Env
+ */
+YUI.Env.loaderQueue = YUI.Env.loaderQueue || new Y.Queue();
+
 var GLOBAL_ENV = YUI.Env,
+    
     GLOBAL_LOADED,
     BASE = 'base', 
     CSS = 'css',
@@ -3107,6 +3188,8 @@ var GLOBAL_ENV = YUI.Env,
 _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
+
+_queue = YUI.Env.loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -4289,31 +4372,7 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    /**
-     * inserts the requested modules and their dependencies.  
-     * <code>type</code> can be "js" or "css".  Both script and 
-     * css are inserted if type is not provided.
-     * @method insert
-     * @param o optional options object
-     * @param type {string} the type of dependency to insert
-     */
-    insert: function(o, type) {
-
-        Y.log('Insert() ' + (type || ''), "info", "loader");
-
-        // build the dependency list
-        this.calculate(o);
-
-        if (!type) {
-            // Y.log("trying to load css first");
-            var self = this;
-            this._internalCallback = function() {
-                        self._internalCallback = null;
-                        self.insert(null, JS);
-                    };
-            this.insert(null, CSS);
-            return;
-        }
+    _insert: function(type) {
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -4328,6 +4387,41 @@ Y.Loader.prototype = {
 
         // start the load
         this.loadNext();
+
+    },
+
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
+
+        var self = this;
+
+        Y.log('Insert() ' + (type || ''), "info", "loader");
+
+        // build the dependency list
+        this.calculate(o);
+
+        if (!type) {
+            // Y.log("trying to load css first");
+            this._internalCallback = function() {
+                        self._internalCallback = null;
+                        self.insert(null, JS);
+                    };
+            this.insert(null, CSS);
+            return;
+        }
+
+        _queue.add(function() {
+            self._insert(type);
+        });
+
+        _queue.next()();
 
     },
 
@@ -4599,8 +4693,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 })();
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['queue-base.js']});
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader']});
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader','queue-base']});
 

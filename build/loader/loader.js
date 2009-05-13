@@ -119,7 +119,17 @@ YUI.add('loader', function(Y) {
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
+/**
+ * Global loader queue
+ * @property loaderQueue
+ * @type Queue
+ * @private
+ * @for YUI.Env
+ */
+YUI.Env.loaderQueue = YUI.Env.loaderQueue || new Y.Queue();
+
 var GLOBAL_ENV = YUI.Env,
+    
     GLOBAL_LOADED,
     BASE = 'base', 
     CSS = 'css',
@@ -570,6 +580,8 @@ var GLOBAL_ENV = YUI.Env,
 _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
+
+_queue = YUI.Env.loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -1726,29 +1738,7 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    /**
-     * inserts the requested modules and their dependencies.  
-     * <code>type</code> can be "js" or "css".  Both script and 
-     * css are inserted if type is not provided.
-     * @method insert
-     * @param o optional options object
-     * @param type {string} the type of dependency to insert
-     */
-    insert: function(o, type) {
-
-
-        // build the dependency list
-        this.calculate(o);
-
-        if (!type) {
-            var self = this;
-            this._internalCallback = function() {
-                        self._internalCallback = null;
-                        self.insert(null, JS);
-                    };
-            this.insert(null, CSS);
-            return;
-        }
+    _insert: function(type) {
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -1763,6 +1753,39 @@ Y.Loader.prototype = {
 
         // start the load
         this.loadNext();
+
+    },
+
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
+
+        var self = this;
+
+
+        // build the dependency list
+        this.calculate(o);
+
+        if (!type) {
+            this._internalCallback = function() {
+                        self._internalCallback = null;
+                        self.insert(null, JS);
+                    };
+            this.insert(null, CSS);
+            return;
+        }
+
+        _queue.add(function() {
+            self._insert(type);
+        });
+
+        _queue.next()();
 
     },
 
@@ -2023,4 +2046,5 @@ Y.Loader.prototype = {
 })();
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['queue-base.js']});

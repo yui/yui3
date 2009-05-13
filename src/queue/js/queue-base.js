@@ -47,9 +47,7 @@ Queue.prototype = {
      */
     add : function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
-            if (Y.Lang.isFunction(fn)) {
-                this._q.push(fn);
-            }
+            this._q.push(fn);
         },this);
 
         return this;
