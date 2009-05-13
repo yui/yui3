@@ -613,7 +613,7 @@ the up, down, left, or right key.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Removes the CSS class representing focus (as specified by 
+                                            Removes the class name representing focus (as specified by 
 the "focusClass" attribute) from the Node instance to which it is 
 currently applied.
                                         </div>
@@ -653,7 +653,7 @@ currently applied.
                                         
                                         <div class="description" property="yui:description">
                                             Blurs the current active descendant and sets the 
-<code>hasFocus</code> attribute to false.
+<code>focused</code> attribute to false.
                                         </div>
 
                                         <div class="description">
@@ -698,7 +698,7 @@ currently applied.
                                         
                                         <div class="description" property="yui:description">
                                             Focuses the active descendant and sets the  
-<code>hasFocus</code> attribute to true.
+<code>focused</code> attribute to true.
                                         </div>
 
                                         <div class="description">
@@ -1034,15 +1034,15 @@ CSS selector query specified by the <code>descendants</code> attribute.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_hasFocusChange">
+                                    <div class="" rel="yui:event" resource="#event_focusedChange">
                                     <h4>
-                                        <a name="event_hasFocusChange">hasFocusChange</a></h4>
+                                        <a name="event_focusedChange">focusedChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">hasFocusChange</strong>
+                                            <strong property="yui:name">focusedChange</strong>
 
                                             (
                                                 
@@ -1055,7 +1055,7 @@ CSS selector query specified by the <code>descendants</code> attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'hasFocus' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'focused' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -1190,12 +1190,17 @@ whose focus should be managed.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_focusClass">
                                     <h4><a name="config_focusClass">focusClass</a>
-                                        <code>- <span property="yui:type">String</span></code>
+                                        <code>- <span property="yui:type">String|Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            String representing the CSS class name used to indicate the Node instance 
-that currently has DOM focus.
+                                            String representing the name of class applied to the focused active  
+descendant Node.  Can also be an object literal used to define both the 
+class name, and the Node to which the class should be applied.  If using 
+an object literal, the format is:
+<code>{ className: "focus", fn: myFunction }</code>.  The function 
+referenced by the <code>fn</code> property in the object literal will be
+passed a reference to the currently focused active descendant Node.
                                         </div>
                                     </div>
  
@@ -1203,8 +1208,8 @@ that currently has DOM focus.
 
                                     <hr />
                                     </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_hasFocus">
-                                    <h4><a name="config_hasFocus">hasFocus</a>
+                                    <div class="" rel="yui:attribute" resource="#config_focused">
+                                    <h4><a name="config_focused">focused</a>
                                         <code>- <span property="yui:type">boolean</span></code>
                                     </h4>
                                     <div class="detail">
@@ -1338,7 +1343,7 @@ the Event documentation for more information on "key" event listeners.
                                 <li class=""><a href="#event_circularChange" title="circularChange">circularChange</a></li>
                                 <li class=""><a href="#event_descendantsChange" title="descendantsChange">descendantsChange</a></li>
                                 <li class=""><a href="#event_focusClassChange" title="focusClassChange">focusClassChange</a></li>
-                                <li class=""><a href="#event_hasFocusChange" title="hasFocusChange">hasFocusChange</a></li>
+                                <li class=""><a href="#event_focusedChange" title="focusedChange">focusedChange</a></li>
                                 <li class=""><a href="#event_keysChange" title="keysChange">keysChange</a></li>
                         </ul>
                     </div>
@@ -1350,7 +1355,7 @@ the Event documentation for more information on "key" event listeners.
                                 <li class=""><a href="#config_circular" title="circular">circular</a></li>
                                 <li class=""><a href="#config_descendants" title="descendants">descendants</a></li>
                                 <li class=""><a href="#config_focusClass" title="focusClass">focusClass</a></li>
-                                <li class=""><a href="#config_hasFocus" title="hasFocus">hasFocus</a></li>
+                                <li class=""><a href="#config_focused" title="focused">focused</a></li>
                                 <li class=""><a href="#config_keys" title="keys">keys</a></li>
                         </ul>
                     </div>
@@ -1364,7 +1369,7 @@ the Event documentation for more information on "key" event listeners.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocus", "url": "plugin.NodeFocusManager.html#config_hasFocus", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "hasFocusChange", "url": "plugin.NodeFocusManager.html#event_hasFocusChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendant", "url": "plugin.NodeFocusManager.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "activeDescendantChange", "url": "plugin.NodeFocusManager.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_afterActiveDescendantChange", "url": "plugin.NodeFocusManager.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_attachKeyHandler", "url": "plugin.NodeFocusManager.html#method__attachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "blur", "url": "plugin.NodeFocusManager.html#method_blur", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circular", "url": "plugin.NodeFocusManager.html#config_circular", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "circularChange", "url": "plugin.NodeFocusManager.html#event_circularChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendants", "url": "plugin.NodeFocusManager.html#config_descendants", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "descendantsChange", "url": "plugin.NodeFocusManager.html#event_descendantsChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachEventHandlers", "url": "plugin.NodeFocusManager.html#method__detachEventHandlers", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_detachKeyHandler", "url": "plugin.NodeFocusManager.html#method__detachKeyHandler", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focus", "url": "plugin.NodeFocusManager.html#method_focus", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClass", "url": "plugin.NodeFocusManager.html#config_focusClass", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusClassChange", "url": "plugin.NodeFocusManager.html#event_focusClassChange", "type": "event"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focused", "url": "plugin.NodeFocusManager.html#config_focused", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "focusedChange", "url": "plugin.NodeFocusManager.html#event_focusedChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusNext", "url": "plugin.NodeFocusManager.html#method__focusNext", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_focusPrevious", "url": "plugin.NodeFocusManager.html#method__focusPrevious", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_initDescendants", "url": "plugin.NodeFocusManager.html#method__initDescendants", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_isDescendant", "url": "plugin.NodeFocusManager.html#method__isDescendant", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keys", "url": "plugin.NodeFocusManager.html#config_keys", "type": "config"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "keysChange", "url": "plugin.NodeFocusManager.html#event_keysChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocFocus", "url": "plugin.NodeFocusManager.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_onDocMouseDown", "url": "plugin.NodeFocusManager.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_preventScroll", "url": "plugin.NodeFocusManager.html#method__preventScroll", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "refresh", "url": "plugin.NodeFocusManager.html#method_refresh", "type": "method"}, {"access": "protected", "host": "plugin.NodeFocusManager", "name": "_removeFocusClass", "url": "plugin.NodeFocusManager.html#method__removeFocusClass", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "start", "url": "plugin.NodeFocusManager.html#method_start", "type": "method"}, {"access": "", "host": "plugin.NodeFocusManager", "name": "stop", "url": "plugin.NodeFocusManager.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>
