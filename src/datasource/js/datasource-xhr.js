@@ -111,13 +111,13 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     }
                 },
                 context: this,

@@ -110,7 +110,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             

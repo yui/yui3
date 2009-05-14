@@ -232,16 +232,16 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");
+            e.error = new Error("Local source undefined");
         }
         if(e.error) {
             this.fire("error", e);
-            Y.log("Error in response", "error", this.toString());
+            Y.log("Error in response", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", "datasource-local");
     },
 
     /**
@@ -329,7 +329,7 @@ Y.extend(DSLocal, Y.Base, {
     sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
         this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
-        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
+        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", "datasource-local");
         return tId;
     }
 });
@@ -455,13 +455,13 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     }
                 },
                 context: this,
@@ -672,7 +672,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
             self.fire("data", Y.mix({data:response}, e));
         }
         else {
-            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", self.toString());
+            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-scriptnode");
         }
 
         delete DSSN.callbacks[id];
@@ -681,12 +681,12 @@ Y.extend(DSSN, Y.DataSource.Local, {
     // We are now creating a request
     uri += e.request + this.get("generateRequestCallback")(this, id);
     //uri = this.doBeforeGetScriptNode(sUri);
-    Y.log("DataSource is querying URL " + uri, "info", this.toString());
+    Y.log("DataSource is querying URL " + uri, "info", "datasource-scriptnode");
     get.script(uri, {
         autopurge: true,
         // Works in Firefox only....
         onFailure: Y.bind(function(e) {
-            e.error = new Error(this.toString() + " Data failure");
+            e.error = new Error("Script node data failure");
             this.fire("error", e);
         }, this, e)
     });
@@ -831,7 +831,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             

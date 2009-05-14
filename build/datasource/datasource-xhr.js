@@ -115,7 +115,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         this.fire("data", Y.mix({data:response}, e));
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                     }

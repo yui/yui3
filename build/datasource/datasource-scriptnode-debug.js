@@ -190,7 +190,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
             self.fire("data", Y.mix({data:response}, e));
         }
         else {
-            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", self.toString());
+            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-scriptnode");
         }
 
         delete DSSN.callbacks[id];
@@ -199,12 +199,12 @@ Y.extend(DSSN, Y.DataSource.Local, {
     // We are now creating a request
     uri += e.request + this.get("generateRequestCallback")(this, id);
     //uri = this.doBeforeGetScriptNode(sUri);
-    Y.log("DataSource is querying URL " + uri, "info", this.toString());
+    Y.log("DataSource is querying URL " + uri, "info", "datasource-scriptnode");
     get.script(uri, {
         autopurge: true,
         // Works in Firefox only....
         onFailure: Y.bind(function(e) {
-            e.error = new Error(this.toString() + " Data failure");
+            e.error = new Error("Script node data failure");
             this.fire("error", e);
         }, this, e)
     });

@@ -35,7 +35,7 @@ Y.mix(Y.namespace("DataType.XML"), {
                 return data.xml;
             }
             else {
-                Y.log("Could not format data " + Y.dump(data) + " from type XML", "warn", "DataType.XML");
+                Y.log("Could not format data " + Y.dump(data) + " from type XML", "warn", "datatype-xml");
                 return data.toString();
             }
         }

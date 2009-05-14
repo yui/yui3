@@ -232,7 +232,7 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");
+            e.error = new Error("Local source undefined");
         }
         if(e.error) {
             this.fire("error", e);
@@ -453,7 +453,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         this.fire("data", Y.mix({data:response}, e));
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                     }
@@ -678,7 +678,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
         autopurge: true,
         // Works in Firefox only....
         onFailure: Y.bind(function(e) {
-            e.error = new Error(this.toString() + " Data failure");
+            e.error = new Error("Script node data failure");
             this.fire("error", e);
         }, this, e)
     });
@@ -823,7 +823,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             

@@ -232,16 +232,16 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");
+            e.error = new Error("Local source undefined");
         }
         if(e.error) {
             this.fire("error", e);
-            Y.log("Error in response", "error", this.toString());
+            Y.log("Error in response", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", "datasource-local");
     },
 
     /**
@@ -329,7 +329,7 @@ Y.extend(DSLocal, Y.Base, {
     sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
         this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
-        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
+        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", "datasource-local");
         return tId;
     }
 });

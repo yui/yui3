@@ -202,7 +202,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
         autopurge: true,
         // Works in Firefox only....
         onFailure: Y.bind(function(e) {
-            e.error = new Error(this.toString() + " Data failure");
+            e.error = new Error("Script node data failure");
             this.fire("error", e);
         }, this, e)
     });

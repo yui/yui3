@@ -179,7 +179,7 @@ Y.extend(Cache, Y.Plugin.Base, {
 
         // Initialize internal values
         this._entries = [];
-        Y.log("Cache initialized", "info", this.toString());
+        Y.log("Cache initialized", "info", "cache");
     },
 
     /**
@@ -189,7 +189,7 @@ Y.extend(Cache, Y.Plugin.Base, {
     */
     destructor: function() {
         this._entries = null;
-        Y.log("Cache destroyed", "info", this.toString());
+        Y.log("Cache destroyed", "info", "cache");
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ Y.extend(Cache, Y.Plugin.Base, {
     
         // Add entry to cache in the newest position, at the end of the array
         entries[entries.length] = entry;
-        Y.log("Cached entry: " + Y.dump(entry), "info", this.toString());
+        Y.log("Cached entry: " + Y.dump(entry), "info", "cache");
     },
 
     /**
@@ -232,7 +232,7 @@ Y.extend(Cache, Y.Plugin.Base, {
      */
     _defFlushFn: function(e) {
         this._entries = [];
-        Y.log("Cache flushed", "info", this.toString());
+        Y.log("Cache flushed", "info", "cache");
     },
 
     /**
@@ -272,7 +272,7 @@ Y.extend(Cache, Y.Plugin.Base, {
             this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
-            Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", this.toString());
+            Y.log("Could not add " + Y.dump(response) + " to cache for " + Y.dump(request), "info", "cache");
         }
     },
 
@@ -318,13 +318,13 @@ Y.extend(Cache, Y.Plugin.Base, {
                         // Add as newest
                         entries[entries.length] = entry;
                         Y.log("Refreshed cache entry: " + Y.dump(entry) + 
-                                " for request: " +  Y.dump(request), "info", this.toString());
+                                " for request: " +  Y.dump(request), "info", "cache");
                         break;
                     } 
                 }
             }
             Y.log("Retrieved cached response: " + Y.dump(entry) +
-                    " for request: " + Y.dump(request), "info", this.toString());
+                    " for request: " + Y.dump(request), "info", "cache");
             return entry;
 
         }
