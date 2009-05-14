@@ -2246,7 +2246,11 @@ var PARENT_NODE = 'parentNode',
                         root.id = Y.guid();
                     }
                     selector = '#' + root.id + ' ' + selector;
-                    root = root.ownerDocument;
+
+                    // fast-path ID when possible
+                    if (root.ownerDocument.getElementById(root.id)) {
+                        root = root.ownerDocument;
+                    }
                 }
 
                 tokens = Selector._tokenize(selector);
@@ -2256,7 +2260,7 @@ var PARENT_NODE = 'parentNode',
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9) {
                         root = root.getElementById(tokens[0].id);
                     }
 
