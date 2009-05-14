@@ -38,18 +38,20 @@
             function AttrHost(config) {
                 AttrHost.superclass.constructor.apply(this, arguments);
             }
-            AttrHost.NAME = "attHost";
+            AttrHost.NAME = "attrHost";
 
             AttrHost.ATTRS = {
                 A: {
                     value:"AVal",
-                    validator: Y.Lang.isString
+                    validator: Y.Lang.isString,
+                    broadcast:1
                 },
 
                 B: {
                     validator: function(value) {
                         return (value === undefined || Y.Lang.isString(value) || Y.Lang.isNumber(value));
-                    }
+                    },
+                    broadcast:2
                 },
 
                 C: {
@@ -721,6 +723,125 @@
                     h.set("complex.Y.A", 2222);
                     h.set("complex.Y", 2223);
                     h.set("complex.W.A", 3333);
+                },
+
+                testBroadcast : function() {
+
+                    var h = this.createHost();
+
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast", "On BChange Y Broadcast", "After BChange Y Broadcast", "On BChange YUI Broadcast", "After BChange YUI Broadcast", "On CChange", "After CChange"];
+                    var actualEvents = [];
+
+                    Y.Global.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    Y.Global.on("attrHost:BChange", function() {
+                        actualEvents.push("On BChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:BChange", function() {
+                        actualEvents.push("After BChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:BChange", function() {
+                        actualEvents.push("On BChange Y Broadcast");
+                    });
+
+                    h.on("CChange", function() {
+                        actualEvents.push("On CChange");
+                    });
+
+                    h.after("CChange", function() {
+                        actualEvents.push("After CChange");
+                    });
+
+                    Y.after("attrHost:BChange", function() {
+                        actualEvents.push("After BChange Y Broadcast");
+                    });
+
+                    Y.Global.on("attrHost:CChange", function() {
+                        actualEvents.push("On CChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:CChange", function() {
+                        actualEvents.push("After CChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:CChange", function() {
+                        actualEvents.push("On CChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:CChange", function() {
+                        actualEvents.push("After CChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+                    h.set("B", "NewB");
+                    h.set("C", "NewC");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testInitialValidation: function() {
+                    var h = this.createHost({A:5});
+                    Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
                 }
             };
 
@@ -1080,6 +1201,122 @@
                     var h = this.createHost();
                     h.set("I.a", 6);
                     h.set("I", {a:7, b:8});
+                },
+
+                testBroadcast : function() {
+                    var h = this.createHost();
+
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast", "On BChange Y Broadcast", "After BChange Y Broadcast", "On BChange YUI Broadcast", "After BChange YUI Broadcast", "On CChange", "After CChange"];
+                    var actualEvents = [];
+
+                    Y.Global.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    // ---
+
+                    Y.Global.on("extendedAttrHost:BChange", function() {
+                        actualEvents.push("On BChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:BChange", function() {
+                        actualEvents.push("After BChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:BChange", function() {
+                        actualEvents.push("On BChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:BChange", function() {
+                        actualEvents.push("After BChange Y Broadcast");
+                    });
+
+                    // --
+
+                    h.on("CChange", function() {
+                        actualEvents.push("On CChange");
+                    });
+
+                    h.after("CChange", function() {
+                        actualEvents.push("After CChange");
+                    });
+
+                    Y.Global.on("extendedAttrHost:CChange", function() {
+                        actualEvents.push("On CChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:CChange", function() {
+                        actualEvents.push("After CChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:CChange", function() {
+                        actualEvents.push("On CChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:CChange", function() {
+                        actualEvents.push("After CChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+                    h.set("B", "NewB");
+                    h.set("C", "NewC");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
             };
 
@@ -1206,23 +1443,16 @@
                         foo: function() {}
                     });
 
-                    var start, end;
-
+                    var start, end, n = 20;
                     start = new Date().getTime();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
-                    new Test();
+                    for (var i = 0; i < n; i++) {
+                        var t = new Test();
+                        t = null;
+                    }
                     end = new Date().getTime();
 
-                    var time = (end-start)/10;
-                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 20 : 10;
+                    var time = (end-start)/n;
+                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 15 : 10;
 
                     Y.log("Construction Time: " + time, "perf");
                     Y.Assert.isTrue((time < expectedTime));

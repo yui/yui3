@@ -198,14 +198,18 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
         this.version = v;
+
+        this.Env._loaded[v] = {};
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
@@ -333,7 +337,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +376,7 @@ YUI.prototype = {
      */
     use: function() {
 
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,7 +385,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
@@ -391,12 +397,34 @@ YUI.prototype = {
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+
                     used[name] = true;
 
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        // While sorting out the packaged metadata in the modules,
+                        // let's look at the loader metadata as well
+                        // loaderMods = Y.Env.meta.modules; 
+                        // m = loaderMods && loaderMods[name];
+                        // if (m && m.parent && used[m.parent]) {
+                        //     used[name] = true;
+                        //     req = m.requires;
+                        //     use = m.supersedes;
+                        // }  else {
+                        //     missing.push(name);
+                        // }
+                         
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        used[name] = true;
+
+                    }
                 }
 
                 // make sure requirements are attached
@@ -452,6 +480,7 @@ YUI.prototype = {
                     a.push(k);
                 }
             }
+
 
             return Y.use.apply(Y, a);
 
@@ -763,7 +792,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -892,7 +924,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -927,7 +959,7 @@ L.isValue = function(o) {
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();
@@ -1309,7 +1341,7 @@ Y.cached = function(source, cache){
             key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
@@ -1805,10 +1837,7 @@ Y.UA = function() {
 
     } else {
 
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
+        core = ['queue-base', 'get', 'loader'];
     }
 
     Y.use.apply(Y, core);

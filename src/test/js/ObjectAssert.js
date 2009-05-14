@@ -8,7 +8,7 @@
      */
     Y.ObjectAssert = {
     
-        areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areEqual: function(expected, actual, message) {
             Y.Assert._increment();               
             Y.Object.each(expected, function(value, name){
                 if (expected[name] != actual[name]){
@@ -25,10 +25,10 @@
          * @method hasKey
          * @static
          */    
-        hasKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
             if (!Y.Object.hasKey(object, propertyName)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
@@ -40,11 +40,11 @@
          * @method hasKeys
          * @static
          */    
-        hasKeys : function (properties, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKeys: function (properties, object, message) {
             Y.Assert._increment();  
             for (var i=0; i < properties.length; i++){
                 if (!Y.Object.hasKey(object, properties[i])){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
                 }      
             }
         },
@@ -57,10 +57,10 @@
          * @method ownsKey
          * @static
          */    
-        ownsKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKey: function (propertyName, object, message) {
             Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
         },
         
@@ -69,15 +69,33 @@
          * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method ownsAll
+         * @method ownsKeys
          * @static
          */    
-        ownsKeys : function (properties /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKeys: function (properties, object, message) {
             Y.Assert._increment();        
             for (var i=0; i < properties.length; i++){
                 if (!object.hasOwnProperty(properties[i])){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
                 }      
             }
-        }
+        },
+        
+        /**
+         * Asserts that an object owns no properties.
+         * @param {Object} object The object to check.
+         * @param {String} message (Optional) The message to display if the assertion fails.
+         * @method ownsNoKeys
+         * @static
+         */    
+        ownsNoKeys : function (object, message) {
+            Y.Assert._increment();  
+
+            var keys = Y.Object.keys(object);
+            
+            if (keys.length > 0){
+                Y.fail(Y.Assert._formatMessage(message, "Object owns " + keys.length + " properties but should own none."));
+            }
+
+        }     
     };

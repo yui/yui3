@@ -83,18 +83,19 @@ Y.Get = function() {
      * @method _linkNode
      * @param url {string} the url for the css file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
         };
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
         return _node("link", o, win);
     },
@@ -104,18 +105,19 @@ Y.Get = function() {
      * @method _scriptNode
      * @param url {string} the url for the script file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, attributes) {
         var o = {
             id:   PREFIX + (nidx++),
             type: TYPE_JS,
             src:  url
         };
 
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
 
         return _node("script", o, win);
@@ -250,7 +252,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
+        Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
 
@@ -304,9 +306,9 @@ Y.Get = function() {
         }
 
         if (q.type === "script") {
-            n = _scriptNode(url, w, q.charset);
+            n = _scriptNode(url, w, q.attributes);
         } else {
-            n = _linkNode(url, w, q.charset);
+            n = _linkNode(url, w, q.attributes);
         }
 
         // track this node's load progress
@@ -397,6 +399,11 @@ Y.Get = function() {
         q.context   = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
+
+        if (opts.charset) {
+            q.attributes = q.attributes || {};
+            q.attributes.charset = opts.charset;
+        }
 
         L.later(0, q, _next, id);
 
@@ -593,7 +600,9 @@ Y.Get = function() {
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * </dl>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * <dt>timeout</dt>
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
@@ -665,7 +674,9 @@ Y.Get = function() {
          * <dt>insertBefore</dt>
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * </dl>
          * <pre>
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");

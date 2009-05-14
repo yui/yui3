@@ -298,28 +298,6 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
-        /**
-         * Executes the supplied function against each node until true is returned.
-         * @method some
-         *
-         * @param {Array} nodes The nodes to run the function against 
-         * @param {Function} fn  The function to run against each node
-         * @return {Boolean} whether or not any element passed
-         * @static
-         */
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -373,7 +351,7 @@ var PARENT_NODE = 'parentNode',
 
                     if (nodes[LENGTH]) {
                         if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
+                            Y.Array.some(nodes, Selector._testToken, token);
                         } else {
                             Y.Array.each(nodes, Selector._testToken, token);
                         }
@@ -393,11 +371,12 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
+                    !(token.last && node._found) ) {
                 while ((attr = token.tests[i])) {
                     i++;
                     test = attr.test;
@@ -415,7 +394,7 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 result[result.length] = node;
-                if (token.deDupe) {
+                if (token.deDupe && token.last) {
                     node._found = true;
                     Selector._foundCache.push(node);
                 }
@@ -596,6 +575,8 @@ var PARENT_NODE = 'parentNode',
 
             if (!found || selector.length) { // not fully parsed
                 tokens = [];
+            } else if (tokens[LENGTH]) {
+                tokens[tokens[LENGTH] - 1].last = true;
             }
             return tokens;
         },

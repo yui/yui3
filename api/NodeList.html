@@ -480,7 +480,7 @@ Node instances can be compared to each other and/or HTMLElements.
                                         
                                         
                                         
-                                        NodeList
+                                        
                                             <strong property="yui:name">each</strong>
                                            (
                                                 
@@ -507,24 +507,18 @@ Node instances can be compared to each other and/or HTMLElements.
                                                         <code><span property="yui:name">fn</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The function to apply</span>
+                                                        <span property="yui:description"> The function to apply. It receives 3 arguments:
+the current node instance, the node's index, and the NodeList instance</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> optional An optional context to apply the function with
-Default context is the NodeList instance</span>
+Default context is the current Node instance</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        NodeList
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">NodeList containing the updated collection</dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -917,6 +911,58 @@ as the node argument, it is simply returned.</dd>
                                                         Boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">Whether or not the node has any childNodes</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_indexOf">
+                                    <h4>
+                                        <a name="method_indexOf">indexOf</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Int
+                                            <strong property="yui:name">indexOf</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the index of the node in the NodeList instance
+or -1 if the node isn't found.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Y.Node || DOMNode</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the node to search for</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Int
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the index of the node value or -1 if not found</dd>
                                                 </dl>
 
 
@@ -1322,6 +1368,47 @@ If a function is used, it receives the current node being tested as the only arg
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_remove">
+                                    <h4>
+                                        <a name="method_remove">remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">remove</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the node from its parent.
+Shortcut for myNode.get('parentNode').removeChild(myNode);
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_removeAttribute">
                                     <h4>
                                         <a name="method_removeAttribute">removeAttribute</a></h4>
@@ -1713,6 +1800,69 @@ Only valid on FORM elements
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_some">
+                                    <h4>
+                                        <a name="method_some">some</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">some</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the function once for each node until a true value is returned.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The function to apply. It receives 3 arguments:
+the current node instance, the node's index, and the NodeList instance</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional An optional context to execute the function from.
+Default context is the current Node instance</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Whether or not the function returned true for any node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_submit">
                                     <h4>
                                         <a name="method_submit">submit</a></h4>
@@ -1843,6 +1993,7 @@ Only valid on FORM elements
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class="selected"><a href="module_node.html" title="node">node</a></li>
@@ -1915,6 +2066,7 @@ Only valid on FORM elements
                                 <li class=""><a href="#method_getElementsByTagName" title="getElementsByTagName">getElementsByTagName</a></li>
                                 <li class=""><a href="#method_hasAttribute" title="hasAttribute">hasAttribute</a></li>
                                 <li class=""><a href="#method_hasChildNodes" title="hasChildNodes">hasChildNodes</a></li>
+                                <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
                                 <li class=""><a href="#method_inDoc" title="inDoc">inDoc</a></li>
                                 <li class=""><a href="#method_insertBefore" title="insertBefore">insertBefore</a></li>
                                 <li class=" deprecated"><a href="#method_item" title="item">item</a></li>
@@ -1922,6 +2074,7 @@ Only valid on FORM elements
                                 <li class=""><a href="#method_previous" title="previous">previous</a></li>
                                 <li class=""><a href="#method_query" title="query">query</a></li>
                                 <li class=""><a href="#method_queryAll" title="queryAll">queryAll</a></li>
+                                <li class=""><a href="#method_remove" title="remove">remove</a></li>
                                 <li class=""><a href="#method_removeAttribute" title="removeAttribute">removeAttribute</a></li>
                                 <li class=""><a href="#method_removeChild" title="removeChild">removeChild</a></li>
                                 <li class=""><a href="#method_replaceChild" title="replaceChild">replaceChild</a></li>
@@ -1930,6 +2083,7 @@ Only valid on FORM elements
                                 <li class=""><a href="#method_select" title="select">select</a></li>
                                 <li class=""><a href="#method_setAttribute" title="setAttribute">setAttribute</a></li>
                                 <li class=" deprecated"><a href="#method_size" title="size">size</a></li>
+                                <li class=""><a href="#method_some" title="some">some</a></li>
                                 <li class=""><a href="#method_submit" title="submit">submit</a></li>
                                 <li class=""><a href="#method_test" title="test">test</a></li>
                         </ul>
@@ -1946,7 +2100,7 @@ Only valid on FORM elements
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
 </script>
 </body>
 </html>

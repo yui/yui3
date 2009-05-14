@@ -130,18 +130,19 @@
 <span class="c">     * @method _linkNode</span>
 <span class="c">     * @param url {string} the url for the css file</span>
 <span class="c">     * @param win {Window} optional window to create the node in</span>
+<span class="c">     * @param attributes optional attributes collection to apply to the new node</span>
 <span class="c">     * @return {HTMLElement} the generated node</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_linkNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_linkNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">id</span><span class="o">:</span>   <span class="nx">PREFIX</span> <span class="o">+</span> <span class="o">(</span><span class="nx">nidx</span><span class="o">++),</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_CSS</span><span class="o">,</span>
             <span class="nx">rel</span><span class="o">:</span>  <span class="nx">STYLESHEET</span><span class="o">,</span>
             <span class="nx">href</span><span class="o">:</span> <span class="nx">url</span>
         <span class="o">};</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">charset</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">);</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">_node</span><span class="o">(</span><span class="s2">&quot;link&quot;</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">win</span><span class="o">);</span>
     <span class="o">},</span>
@@ -151,18 +152,19 @@
 <span class="c">     * @method _scriptNode</span>
 <span class="c">     * @param url {string} the url for the script file</span>
 <span class="c">     * @param win {Window} optional window to create the node in</span>
+<span class="c">     * @param attributes optional attributes collection to apply to the new node</span>
 <span class="c">     * @return {HTMLElement} the generated node</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">id</span><span class="o">:</span>   <span class="nx">PREFIX</span> <span class="o">+</span> <span class="o">(</span><span class="nx">nidx</span><span class="o">++),</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_JS</span><span class="o">,</span>
             <span class="nx">src</span><span class="o">:</span>  <span class="nx">url</span>
         <span class="o">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">charset</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">_node</span><span class="o">(</span><span class="s2">&quot;script&quot;</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">win</span><span class="o">);</span>
@@ -297,7 +299,8 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_next</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">loaded</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="nx">loaded</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">loaded</span> <span class="o">||</span> <span class="s2">&quot;nothing&quot;</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">h</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">s</span><span class="o">;</span>
 
@@ -351,9 +354,9 @@
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">charset</span><span class="o">);</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_linkNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">charset</span><span class="o">);</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_linkNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// track this node&#39;s load progress</span>
@@ -444,6 +447,11 @@
         <span class="nx">q</span><span class="o">.</span><span class="nx">context</span>   <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="o">)</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
                       <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">.</span><span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="o">{};</span>
+            <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="o">.</span><span class="nx">charset</span><span class="o">;</span>
+        <span class="o">}</span>
 
         <span class="nx">L</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">_next</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
 
@@ -640,7 +648,9 @@
 <span class="c">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;Node charset, default utf-8&lt;/dd&gt;</span>
+<span class="c">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;timeout&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;Number of milliseconds to wait before aborting and firing the timeout event&lt;/dd&gt;</span>
 <span class="c">         * &lt;pre&gt;</span>
@@ -712,7 +722,9 @@
 <span class="c">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;Node charset, default utf-8&lt;/dd&gt;</span>
+<span class="c">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;pre&gt;</span>
 <span class="c">         *      Y.Get.css(&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;);</span>
@@ -759,6 +771,7 @@
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

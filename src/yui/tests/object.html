@@ -15,6 +15,15 @@
     YUI({
         base: "../../../build/",
         filter: "debug",
+        logExclude: {
+            attribute: true, 
+            dom: true, 
+            node: true, 
+            event: true, 
+            base: true, 
+            widget: true, 
+            selector: true
+        },
         useConsole: true
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
@@ -43,13 +52,13 @@
         var testObject = new Y.Test.Case({
             name: "Object tests",
         
-            testGetValue: function() {
+            'getValue deep path test': function() {
                 Y.Assert.areEqual('c', Y.Object.getValue(o, 'c1'));
                 Y.Assert.areEqual('a', Y.Object.getValue(o, ['a1', 'a2', 'a3']));
                 Y.Assert.areEqual(undefined, Y.Object.getValue(o, ['b1', 'b2', 'b3']));
             },
             
-            testSetValue: function() {
+            'setValue deep path test': function() {
 
                 Y.Object.setValue(o, 'c1', 'changed_c');
                 Y.Object.setValue(o, ['a1', 'a2', 'a3'], 'changed_a');

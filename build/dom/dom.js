@@ -352,7 +352,6 @@ Y.DOM = {
      */
     insertBefore: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
@@ -367,7 +366,6 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
 
@@ -383,15 +381,15 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * @param {Boolean} execScripts Whether or not any provided scripts should be executed.
      * If execScripts is false, all scripts are stripped.
      */
-    create: function(html, doc, execScripts) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
             custom = Y.DOM.creators,
-            tag, node;
+            ret = null,
+            tag, nodes;
 
         if (m && custom[m[1]]) {
             if (typeof custom[m[1]] === 'function') {
@@ -401,9 +399,18 @@ Y.DOM = {
             }
         }
 
-        node = create(html, doc, tag);
+        nodes = create(html, doc, tag).childNodes;
 
-        return node;
+        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+            ret = nodes[0].parentNode.removeChild(nodes[0]);
+        } else { // return multiple nodes as a fragment
+            ret = doc.createDocumentFragment();
+            while (nodes[LENGTH]) {
+                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            }
+        }
+
+        return ret;
     },
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
@@ -467,7 +474,7 @@ Y.DOM = {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
         frag.innerHTML = Y.Lang.trim(html);
-        return frag.removeChild(frag[FIRST_CHILD]);
+        return frag;
     },
 
     insertHTML: function(node, content, where, execScripts) {
@@ -698,23 +705,19 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
         Y.mix(creators, {
             option: function(html, doc) {
-                var frag = create('<select>' + html + '</select>');
-                return frag[FIRST_CHILD];
+                return create('<select>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {
-                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tbody>' + html + '</tbody>', doc);
             },
 
             td: function(html, doc) {
-                var frag = creators.tr('<tr>' + html + '</tr>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tr>' + html + '</tr>', doc);
             }, 
 
             tbody: function(html, doc) {
-                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-                return frag[FIRST_CHILD];
+                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
             },
 
             legend: 'fieldset'
@@ -724,16 +727,15 @@ Y.DOM = {
     }
 
     if (Y.UA.ie) {
-        creators.col = creators.link = Y.DOM._IESimpleCreate;
-
         Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
+            // IE adds TBODY when creating TABLE elements (which may share this impl)
             tbody: function(html, doc) {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
                 if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
-                    tb[PARENT_NODE].removeChild(tb);
+                    tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
             },
@@ -742,10 +744,11 @@ Y.DOM = {
                 var frag = doc.createElement('div');
 
                 frag.innerHTML = '-' + html;
-                return frag.removeChild(frag[FIRST_CHILD][NEXT_SIBLING]);
+                frag.removeChild(frag[FIRST_CHILD]);
+                return frag;
             }
 
-        });
+        }, true);
 
         Y.mix(Y.DOM.VALUE_GETTERS, {
             button: function(node) {
@@ -929,8 +932,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val, style) {
-        style = node[STYLE],
+    setStyle: function(node, att, val) {
+        var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -2193,28 +2196,6 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
-        /**
-         * Executes the supplied function against each node until true is returned.
-         * @method some
-         *
-         * @param {Array} nodes The nodes to run the function against 
-         * @param {Function} fn  The function to run against each node
-         * @return {Boolean} whether or not any element passed
-         * @static
-         */
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -2268,7 +2249,7 @@ var PARENT_NODE = 'parentNode',
 
                     if (nodes[LENGTH]) {
                         if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
+                            Y.Array.some(nodes, Selector._testToken, token);
                         } else {
                             Y.Array.each(nodes, Selector._testToken, token);
                         }
@@ -2288,11 +2269,12 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
+                    !(token.last && node._found) ) {
                 while ((attr = token.tests[i])) {
                     i++;
                     test = attr.test;
@@ -2310,7 +2292,7 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 result[result.length] = node;
-                if (token.deDupe) {
+                if (token.deDupe && token.last) {
                     node._found = true;
                     Selector._foundCache.push(node);
                 }
@@ -2491,6 +2473,8 @@ var PARENT_NODE = 'parentNode',
 
             if (!found || selector.length) { // not fully parsed
                 tokens = [];
+            } else if (tokens[LENGTH]) {
+                tokens[tokens[LENGTH] - 1].last = true;
             }
             return tokens;
         },

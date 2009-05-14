@@ -130,7 +130,9 @@ A list of modules that should always be loaded when required, even if already pr
 <li>insertBefore:
 Node or id for a node that should be used as the insertion point for new nodes</li>
 <li>charset:
-charset for dynamic nodes</li>
+charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+<li>jsAttributes: object literal containing attributes to add to script nodes</li>
+<li>cssAttributes: object literal containing attributes to add to link nodes</li>
 <li>timeout:
 number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
 <li>context:
@@ -196,6 +198,7 @@ A list of module definitions.  See Loader.addModule for the supported module met
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
