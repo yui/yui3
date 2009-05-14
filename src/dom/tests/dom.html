@@ -406,40 +406,49 @@ form {
                 el = Y.DOM.create(html);
                 Assert.isTrue(el.tagName === 'DIV', " + html + ");
 
+                html = '<option selected>foo</option>';
+                el = Y.DOM.create(html);
+                document.getElementById('test-select').appendChild(el);
+                Assert.isTrue(el.selected, 'el.selected');
+
+                html = '<li><a href=""></a></li>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('A', el.firstChild.tagName, html);
+
+                html = '<option>foo</option>';
+                el = Y.DOM.create(html);
+                document.getElementById('test-select').appendChild(el);
+                Assert.isFalse(el.selected, 'el.selected');
+
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('THEAD', el.tagName, html);
 
-                html = '<option selected>foo</option>';
-                el = Y.DOM.create(html);
-                document.getElementById('test-select').appendChild(el);
-                Assert.areEqual(true, el.selected, 'el.selected');
             },
 
             test_createNodes: function() {
                 var html = '<div>foo</div><div id="tmp-bar">bar</div><div>baz</div>';
                 var el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<option>foo</option><option id="tmp-bar">bar</option><option>baz</option>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<td>foo</td><td id="tmp-bar">bar</td><td>baz</td>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<tbody>foo</tbody><tbody id="tmp-bar">bar</tbody><tbody>baz</tbody>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
-
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
                 html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(2, el.length, html);
+                Assert.areEqual(2, el.childNodes.length, html);
             },
 
             test_ancestor: function() {

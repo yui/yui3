@@ -333,6 +333,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             node.appendChild(option);
             Assert.isTrue(Y.Node.getDOMNode(option).selected, "Y.Node.create('<option>test</option>').set('selected', 'selected'))");
 
+            var html = '<li><a href=""></a></li>';
+            node = Y.Node.create(html);
+            Assert.areEqual('A', node.get('firstChild.tagName'), html);
         },
 
         test_setter: function() {
