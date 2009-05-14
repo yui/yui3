@@ -2190,6 +2190,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
+
         Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
@@ -4427,14 +4428,12 @@ Y.Loader.prototype = {
         // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
         // restore the state at the time of the request
-        // if (source) {
+        if (source) {
             this._config(source);
-        // }
+        }
 
         // build the dependency list
-        // if (o) {
-            this.calculate(o);
-        // }
+        this.calculate(o);
 
         if (!type) {
 
@@ -4471,13 +4470,7 @@ Y.Loader.prototype = {
 
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
-
             _queue.running = true;
-
-            // var f = _queue.next();
-            // if (f) {
-            //     f();
-            // }
             _queue.next()();
         }
     },
@@ -4497,7 +4490,7 @@ Y.Loader.prototype = {
         Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
 
-        copy = Y.merge(this);
+        copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
 
@@ -4697,8 +4690,6 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
         // internal callback for loading css first
         if (fn) {
             // Y.log('loader internal');
-            // this._finish();
-            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -4738,7 +4729,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
 
         // Y.log('filter ' + u);
 
-        var f = this.filter, useFilter = true, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc, raw = this.FILTERS.RAW;
 
         if (u && f) {
 
@@ -4754,6 +4745,9 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                 }
 
             }
+
+            u = (useFilter) ? u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr) :
+                              u.replace(new RegExp(raw.searchExp, 'g'), raw.replaceStr);
             
             if (useFilter) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
