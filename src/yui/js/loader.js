@@ -119,15 +119,14 @@
 
 /**
  * Global loader queue
- * @property loaderQueue
+ * @property _loaderQueue
  * @type Queue
  * @private
  * @for YUI.Env
  */
-YUI.Env.loaderQueue = YUI.Env.loaderQueue || new Y.Queue();
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
 var GLOBAL_ENV = YUI.Env,
-    
     GLOBAL_LOADED,
     BASE = 'base', 
     CSS = 'css',
@@ -139,7 +138,7 @@ var GLOBAL_ENV = YUI.Env,
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
-    VERSION = '@VERSION@',
+    VERSION = Y.version,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
@@ -563,7 +562,7 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader']
+            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
         },
 
         'yui-base': { },
@@ -579,7 +578,7 @@ _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
 
-_queue = YUI.Env.loaderQueue,
+_queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -619,8 +618,7 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 
 Y.Env.meta = META;
 
-GLOBAL_ENV.loaded = GLOBAL_ENV.loaded || {};
-GLOBAL_LOADED = GLOBAL_ENV.loaded;
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -898,8 +896,6 @@ Y.Loader = function(o) {
      * @type string[]
      */
     this.sorted = [];
-
-    GLOBAL_LOADED[VERSION] = GLOBAL_LOADED[VERSION] || {};
 
     /**
      * Set when beginning to compute the dependency tree. 
@@ -1408,7 +1404,9 @@ Y.Loader.prototype = {
 
         // Y.log("loaded expanded: " + L.dump(l, 0));
 
-        this.loaded = l;
+        Y.mix(this.loaded, l);
+
+        // this.loaded = l;
 
     },
     
@@ -1568,7 +1566,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded) { 
+                if (i in this.loaded && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes
@@ -1605,7 +1603,14 @@ Y.Loader.prototype = {
 
     },
 
+    _finish: function() {
+        _queue.running = false;
+        this._continue();
+    },
+
     _onSuccess: function() {
+
+        Y.log('loader successful: ' + Y.id, "info", "loader");
 
         this._attach();
 
@@ -1629,9 +1634,14 @@ Y.Loader.prototype = {
             });
         }
 
+        this._finish();
+
     },
 
     _onFailure: function(msg) {
+
+        Y.log('loader failure: ' + Y.id, "info", "loader");
+
         this._attach();
 
         var f = this.onFailure;
@@ -1642,9 +1652,14 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
 
     _onTimeout: function() {
+
+        Y.log('loader timeout: ' + Y.id, "info", "loader");
+
         this._attach();
 
         var f = this.onTimeout;
@@ -1655,6 +1670,8 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
     
     /**
@@ -1762,7 +1779,37 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    _insert: function(type) {
+    _insert: function(source, o, type) {
+
+
+        // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+
+        // restore the state at the time of the request
+        // if (source) {
+            this._config(source);
+        // }
+
+        // build the dependency list
+        // if (o) {
+            this.calculate(o);
+        // }
+
+        if (!type) {
+
+            var self = this;
+
+            // Y.log("trying to load css first");
+            this._internalCallback = function() {
+                        self._internalCallback = null;
+                        self._insert(null, null, JS);
+                    };
+
+            // _queue.running = false;
+            this._insert(null, null, CSS);
+
+            return;
+        }
+
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -1780,6 +1827,19 @@ Y.Loader.prototype = {
 
     },
 
+    _continue: function() {
+        if (!(_queue.running) && _queue.size() > 0) {
+
+            _queue.running = true;
+
+            // var f = _queue.next();
+            // if (f) {
+            //     f();
+            // }
+            _queue.next()();
+        }
+    },
+
     /**
      * inserts the requested modules and their dependencies.  
      * <code>type</code> can be "js" or "css".  Both script and 
@@ -1790,28 +1850,20 @@ Y.Loader.prototype = {
      */
     insert: function(o, type) {
 
-        var self = this;
+        var self = this, copy;
 
-        Y.log('Insert() ' + (type || ''), "info", "loader");
+        Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
-        // build the dependency list
-        this.calculate(o);
 
-        if (!type) {
-            // Y.log("trying to load css first");
-            this._internalCallback = function() {
-                        self._internalCallback = null;
-                        self.insert(null, JS);
-                    };
-            this.insert(null, CSS);
-            return;
-        }
+        copy = Y.merge(this);
+        delete copy.require;
+        delete copy.dirty;
 
         _queue.add(function() {
-            self._insert(type);
+            self._insert(copy, o, type);
         });
 
-        _queue.next()();
+        this._continue();
 
     },
 
@@ -1878,7 +1930,7 @@ Y.Loader.prototype = {
 
             if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "loader");
+Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
@@ -1910,12 +1962,13 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                 return;
             }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
+Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
 
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
+            this.loaded[mname] = true;
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
@@ -2002,6 +2055,8 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
         // internal callback for loading css first
         if (fn) {
             // Y.log('loader internal');
+            // this._finish();
+            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 

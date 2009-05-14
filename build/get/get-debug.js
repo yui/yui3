@@ -252,7 +252,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
+        Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
 

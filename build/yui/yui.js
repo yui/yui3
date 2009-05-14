@@ -198,14 +198,18 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
         this.version = v;
+
+        this.Env._loaded[v] = {};
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
@@ -333,7 +337,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +376,7 @@ YUI.prototype = {
      */
     use: function() {
 
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,7 +385,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
@@ -391,12 +397,34 @@ YUI.prototype = {
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+
                     used[name] = true;
 
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        // While sorting out the packaged metadata in the modules,
+                        // let's look at the loader metadata as well
+                        // loaderMods = Y.Env.meta.modules; 
+                        // m = loaderMods && loaderMods[name];
+                        // if (m && m.parent && used[m.parent]) {
+                        //     used[name] = true;
+                        //     req = m.requires;
+                        //     use = m.supersedes;
+                        // }  else {
+                        //     missing.push(name);
+                        // }
+                         
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        used[name] = true;
+
+                    }
                 }
 
                 // make sure requirements are attached
@@ -452,6 +480,7 @@ YUI.prototype = {
                     a.push(k);
                 }
             }
+
 
             return Y.use.apply(Y, a);
 
@@ -1869,9 +1898,7 @@ Queue.prototype = {
      */
     add : function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
-            if (Y.Lang.isFunction(fn)) {
-                this._q.push(fn);
-            }
+            this._q.push(fn);
         },this);
 
         return this;
@@ -2697,15 +2724,14 @@ YUI.add('loader', function(Y) {
 
 /**
  * Global loader queue
- * @property loaderQueue
+ * @property _loaderQueue
  * @type Queue
  * @private
  * @for YUI.Env
  */
-YUI.Env.loaderQueue = YUI.Env.loaderQueue || new Y.Queue();
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
 var GLOBAL_ENV = YUI.Env,
-    
     GLOBAL_LOADED,
     BASE = 'base', 
     CSS = 'css',
@@ -2717,7 +2743,7 @@ var GLOBAL_ENV = YUI.Env,
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
-    VERSION = '@VERSION@',
+    VERSION = Y.version,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
@@ -3141,7 +3167,7 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader']
+            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
         },
 
         'yui-base': { },
@@ -3157,7 +3183,7 @@ _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
 
-_queue = YUI.Env.loaderQueue,
+_queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -3197,8 +3223,7 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 
 Y.Env.meta = META;
 
-GLOBAL_ENV.loaded = GLOBAL_ENV.loaded || {};
-GLOBAL_LOADED = GLOBAL_ENV.loaded;
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -3476,8 +3501,6 @@ Y.Loader = function(o) {
      * @type string[]
      */
     this.sorted = [];
-
-    GLOBAL_LOADED[VERSION] = GLOBAL_LOADED[VERSION] || {};
 
     /**
      * Set when beginning to compute the dependency tree. 
@@ -3967,7 +3990,9 @@ Y.Loader.prototype = {
         }
 
 
-        this.loaded = l;
+        Y.mix(this.loaded, l);
+
+        // this.loaded = l;
 
     },
     
@@ -4122,7 +4147,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded) { 
+                if (i in this.loaded && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes
@@ -4157,7 +4182,13 @@ Y.Loader.prototype = {
 
     },
 
+    _finish: function() {
+        _queue.running = false;
+        this._continue();
+    },
+
     _onSuccess: function() {
+
 
         this._attach();
 
@@ -4181,9 +4212,13 @@ Y.Loader.prototype = {
             });
         }
 
+        this._finish();
+
     },
 
     _onFailure: function(msg) {
+
+
         this._attach();
 
         var f = this.onFailure;
@@ -4194,9 +4229,13 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
 
     _onTimeout: function() {
+
+
         this._attach();
 
         var f = this.onTimeout;
@@ -4207,6 +4246,8 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
     
     /**
@@ -4314,7 +4355,35 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    _insert: function(type) {
+    _insert: function(source, o, type) {
+
+
+
+        // restore the state at the time of the request
+        // if (source) {
+            this._config(source);
+        // }
+
+        // build the dependency list
+        // if (o) {
+            this.calculate(o);
+        // }
+
+        if (!type) {
+
+            var self = this;
+
+            this._internalCallback = function() {
+                        self._internalCallback = null;
+                        self._insert(null, null, JS);
+                    };
+
+            // _queue.running = false;
+            this._insert(null, null, CSS);
+
+            return;
+        }
+
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -4332,6 +4401,19 @@ Y.Loader.prototype = {
 
     },
 
+    _continue: function() {
+        if (!(_queue.running) && _queue.size() > 0) {
+
+            _queue.running = true;
+
+            // var f = _queue.next();
+            // if (f) {
+            //     f();
+            // }
+            _queue.next()();
+        }
+    },
+
     /**
      * inserts the requested modules and their dependencies.  
      * <code>type</code> can be "js" or "css".  Both script and 
@@ -4342,26 +4424,19 @@ Y.Loader.prototype = {
      */
     insert: function(o, type) {
 
-        var self = this;
+        var self = this, copy;
 
 
-        // build the dependency list
-        this.calculate(o);
 
-        if (!type) {
-            this._internalCallback = function() {
-                        self._internalCallback = null;
-                        self.insert(null, JS);
-                    };
-            this.insert(null, CSS);
-            return;
-        }
+        copy = Y.merge(this);
+        delete copy.require;
+        delete copy.dirty;
 
         _queue.add(function() {
-            self._insert(type);
+            self._insert(copy, o, type);
         });
 
-        _queue.next()();
+        this._continue();
 
     },
 
@@ -4462,6 +4537,7 @@ Y.Loader.prototype = {
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
+            this.loaded[mname] = true;
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
@@ -4543,6 +4619,8 @@ Y.Loader.prototype = {
 
         // internal callback for loading css first
         if (fn) {
+            // this._finish();
+            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -4623,7 +4701,7 @@ Y.Loader.prototype = {
 
 
 
-}, '@VERSION@' ,{requires:['queue-base.js']});
+}, '@VERSION@' ,{requires:['queue-base']});
 
 
 YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader','queue-base']});

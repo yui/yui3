@@ -198,14 +198,18 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
         this.version = v;
+
+        this.Env._loaded[v] = {};
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
@@ -333,7 +337,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +376,7 @@ YUI.prototype = {
      */
     use: function() {
 
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,26 +385,52 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
                 if (used[name]) {
-                    // Y.log(name + ' already used');
+                    // Y.log(name + ' already used', 'info', 'yui');
                     return;
                 }
 
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+                    // Y.log('USING ' + name, 'info', 'yui');
+
                     used[name] = true;
 
-                    // Y.log('found ' + name);
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    Y.log('module not found: ' + name, 'info', 'yui');
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        // While sorting out the packaged metadata in the modules,
+                        // let's look at the loader metadata as well
+                        // loaderMods = Y.Env.meta.modules; 
+                        // m = loaderMods && loaderMods[name];
+                        // if (m && m.parent && used[m.parent]) {
+                        //     Y.log('USING FROM LOADER METADATA' + name, 'info', 'yui');
+                        //     used[name] = true;
+                        //     req = m.requires;
+                        //     use = m.supersedes;
+                        // }  else {
+                        //     Y.log('module not found: ' + name, 'info', 'yui');
+                        //     missing.push(name);
+                        // }
+                         
+                        Y.log('module not found: ' + name, 'info', 'yui');
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        // Y.log('module not found BUT HAS BEEN LOADED: ' + name, 'info', 'yui');
+                        used[name] = true;
+
+                    }
                 }
 
                 // make sure requirements are attached
@@ -408,13 +439,14 @@ YUI.prototype = {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
+                            // Y.log('using module\'s requirements: ' + name, 'info', 'yui');
                             f(req[j]);
                         }
                     }
                 }
 
                 // add this module to full list of things to attach
-                // Y.log('using ' + name);
+                // Y.log('adding to requires list: ' + name);
                 r.push(name);
 
             },
@@ -459,6 +491,8 @@ YUI.prototype = {
                 }
             }
 
+            // Y.log('Use *: ' + a);
+
             return Y.use.apply(Y, a);
 
         }
@@ -487,7 +521,7 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
 
         // dynamic load
         if (Y.Loader && missing.length) {
