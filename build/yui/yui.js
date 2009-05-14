@@ -2171,6 +2171,7 @@ Y.Get = function() {
      */
     _next = function(id, loaded) {
 
+
         var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
@@ -4360,14 +4361,12 @@ Y.Loader.prototype = {
 
 
         // restore the state at the time of the request
-        // if (source) {
+        if (source) {
             this._config(source);
-        // }
+        }
 
         // build the dependency list
-        // if (o) {
-            this.calculate(o);
-        // }
+        this.calculate(o);
 
         if (!type) {
 
@@ -4403,13 +4402,7 @@ Y.Loader.prototype = {
 
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
-
             _queue.running = true;
-
-            // var f = _queue.next();
-            // if (f) {
-            //     f();
-            // }
             _queue.next()();
         }
     },
@@ -4428,7 +4421,7 @@ Y.Loader.prototype = {
 
 
 
-        copy = Y.merge(this);
+        copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
 
@@ -4619,8 +4612,6 @@ Y.Loader.prototype = {
 
         // internal callback for loading css first
         if (fn) {
-            // this._finish();
-            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -4658,7 +4649,7 @@ Y.Loader.prototype = {
     _filter: function(u, name) {
 
 
-        var f = this.filter, useFilter = true, exc, inc;
+        var f = this.filter, useFilter = true, exc, inc, raw = this.FILTERS.RAW;
 
         if (u && f) {
 
@@ -4674,6 +4665,9 @@ Y.Loader.prototype = {
                 }
 
             }
+
+            u = (useFilter) ? u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr) :
+                              u.replace(new RegExp(raw.searchExp, 'g'), raw.replaceStr);
             
             if (useFilter) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
