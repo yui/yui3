@@ -96,7 +96,9 @@ suite.add(new Y.Test.Case({
                 q = new Y.Queue(inc, inc, "string", inc);
             
             while ((callback = q.next())) {
-                callback();
+                if (Y.Lang.isFunction(callback)) {
+                    callback();
+                }
             }
         });
 
