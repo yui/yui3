@@ -119,6 +119,15 @@ YUI.add('loader', function(Y) {
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
+/**
+ * Global loader queue
+ * @property _loaderQueue
+ * @type Queue
+ * @private
+ * @for YUI.Env
+ */
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
+
 var GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
@@ -131,7 +140,7 @@ var GLOBAL_ENV = YUI.Env,
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
-    VERSION = '@VERSION@',
+    VERSION = Y.version,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
@@ -555,7 +564,7 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader']
+            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
         },
 
         'yui-base': { },
@@ -570,6 +579,8 @@ var GLOBAL_ENV = YUI.Env,
 _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
+
+_queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -609,8 +620,7 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 
 Y.Env.meta = META;
 
-GLOBAL_ENV.loaded = GLOBAL_ENV.loaded || {};
-GLOBAL_LOADED = GLOBAL_ENV.loaded;
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -888,8 +898,6 @@ Y.Loader = function(o) {
      * @type string[]
      */
     this.sorted = [];
-
-    GLOBAL_LOADED[VERSION] = GLOBAL_LOADED[VERSION] || {};
 
     /**
      * Set when beginning to compute the dependency tree. 
@@ -1379,7 +1387,9 @@ Y.Loader.prototype = {
         }
 
 
-        this.loaded = l;
+        Y.mix(this.loaded, l);
+
+        // this.loaded = l;
 
     },
     
@@ -1534,7 +1544,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded) { 
+                if (i in this.loaded && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes
@@ -1569,7 +1579,13 @@ Y.Loader.prototype = {
 
     },
 
+    _finish: function() {
+        _queue.running = false;
+        this._continue();
+    },
+
     _onSuccess: function() {
+
 
         this._attach();
 
@@ -1593,9 +1609,13 @@ Y.Loader.prototype = {
             });
         }
 
+        this._finish();
+
     },
 
     _onFailure: function(msg) {
+
+
         this._attach();
 
         var f = this.onFailure;
@@ -1606,9 +1626,13 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
 
     _onTimeout: function() {
+
+
         this._attach();
 
         var f = this.onTimeout;
@@ -1619,6 +1643,8 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
     
     /**
@@ -1726,29 +1752,35 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    /**
-     * inserts the requested modules and their dependencies.  
-     * <code>type</code> can be "js" or "css".  Both script and 
-     * css are inserted if type is not provided.
-     * @method insert
-     * @param o optional options object
-     * @param type {string} the type of dependency to insert
-     */
-    insert: function(o, type) {
+    _insert: function(source, o, type) {
 
+
+
+        // restore the state at the time of the request
+        // if (source) {
+            this._config(source);
+        // }
 
         // build the dependency list
-        this.calculate(o);
+        // if (o) {
+            this.calculate(o);
+        // }
 
         if (!type) {
+
             var self = this;
+
             this._internalCallback = function() {
                         self._internalCallback = null;
-                        self.insert(null, JS);
+                        self._insert(null, null, JS);
                     };
-            this.insert(null, CSS);
+
+            // _queue.running = false;
+            this._insert(null, null, CSS);
+
             return;
         }
+
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -1763,6 +1795,45 @@ Y.Loader.prototype = {
 
         // start the load
         this.loadNext();
+
+    },
+
+    _continue: function() {
+        if (!(_queue.running) && _queue.size() > 0) {
+
+            _queue.running = true;
+
+            // var f = _queue.next();
+            // if (f) {
+            //     f();
+            // }
+            _queue.next()();
+        }
+    },
+
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
+
+        var self = this, copy;
+
+
+
+        copy = Y.merge(this);
+        delete copy.require;
+        delete copy.dirty;
+
+        _queue.add(function() {
+            self._insert(copy, o, type);
+        });
+
+        this._continue();
 
     },
 
@@ -1863,6 +1934,7 @@ Y.Loader.prototype = {
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
+            this.loaded[mname] = true;
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
@@ -1944,6 +2016,8 @@ Y.Loader.prototype = {
 
         // internal callback for loading css first
         if (fn) {
+            // this._finish();
+            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -2023,4 +2097,5 @@ Y.Loader.prototype = {
 })();
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['queue-base']});
