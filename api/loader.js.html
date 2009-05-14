@@ -1834,15 +1834,13 @@
         <span class="c">// Y.log(&#39;private _insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; + Y.id, &quot;info&quot;, &quot;loader&quot;);</span>
 <span class="c"></span>
         <span class="c">// restore the state at the time of the request</span>
-<span class="c"></span>        <span class="c">// if (source) {</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">source</span><span class="o">);</span>
-        <span class="c">// }</span>
-<span class="c"></span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">source</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">source</span><span class="o">);</span>
+        <span class="o">}</span>
+
         <span class="c">// build the dependency list</span>
-<span class="c"></span>        <span class="c">// if (o) {</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-        <span class="c">// }</span>
-<span class="c"></span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+
         <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
@@ -1878,14 +1876,8 @@
 
     <span class="nx">_continue</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!(</span><span class="nx">_queue</span><span class="o">.</span><span class="nx">running</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">_queue</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="nx">_queue</span><span class="o">.</span><span class="nx">running</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-            <span class="c">// var f = _queue.next();</span>
-<span class="c"></span>            <span class="c">// if (f) {</span>
-<span class="c"></span>            <span class="c">//     f();</span>
-<span class="c"></span>            <span class="c">// }</span>
-<span class="c"></span>            <span class="nx">_queue</span><span class="o">.</span><span class="nx">next</span><span class="o">()();</span>
+            <span class="nx">_queue</span><span class="o">.</span><span class="nx">next</span><span class="o">()();</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -1904,7 +1896,7 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;public insert() &#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
 
-        <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">delete</span> <span class="nx">copy</span><span class="o">.</span><span class="nx">require</span><span class="o">;</span>
         <span class="nx">delete</span> <span class="nx">copy</span><span class="o">.</span><span class="nx">dirty</span><span class="o">;</span>
 
@@ -2104,8 +2096,6 @@
         <span class="c">// internal callback for loading css first</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// Y.log(&#39;loader internal&#39;);</span>
-<span class="c"></span>            <span class="c">// this._finish();</span>
-<span class="c"></span>            <span class="c">// _queue.running = false;</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 
@@ -2145,7 +2135,7 @@
 
         <span class="c">// Y.log(&#39;filter &#39; + u);</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">exc</span><span class="o">,</span> <span class="nx">inc</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">exc</span><span class="o">,</span> <span class="nx">inc</span><span class="o">,</span> <span class="nx">raw</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">FILTERS</span><span class="o">.</span><span class="nx">RAW</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">u</span> <span class="o">&amp;&amp;</span> <span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
 
@@ -2161,6 +2151,9 @@
                 <span class="o">}</span>
 
             <span class="o">}</span>
+
+            <span class="nx">u</span> <span class="o">=</span> <span class="o">(</span><span class="nx">useFilter</span><span class="o">)</span> <span class="o">?</span> <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">f</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">)</span> <span class="o">:</span>
+                              <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">raw</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">raw</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">);</span>
             
             <span class="k">if</span> <span class="o">(</span><span class="nx">useFilter</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">u</span> <span class="o">=</span> <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">f</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">);</span>
