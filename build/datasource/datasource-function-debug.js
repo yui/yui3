@@ -31,9 +31,9 @@ Y.mix(DSFn, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Function"
+     * @value "dataSourceFunction"
      */
-    NAME: "DataSource.Function",
+    NAME: "dataSourceFunction",
 
 
     /////////////////////////////////////////////////////////////////////////////

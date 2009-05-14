@@ -36,9 +36,9 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "dataSourceCache"
      */
-    NAME: "DataSourceCache",
+    NAME: "dataSourceCache",
 
     /////////////////////////////////////////////////////////////////////////////
     //

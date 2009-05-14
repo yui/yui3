@@ -29,9 +29,9 @@ Y.mix(DSSN, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.ScriptNode"
+     * @value "dataSourceScriptNode"
      */
-    NAME: "DataSource.ScriptNode",
+    NAME: "dataSourceScriptNode",
 
 
     /////////////////////////////////////////////////////////////////////////////

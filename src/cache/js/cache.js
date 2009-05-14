@@ -42,9 +42,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "Cache'
+     * @value "cache"
      */
-    NAME: "Cache",
+    NAME: "cache",
 
 
     ATTRS: {

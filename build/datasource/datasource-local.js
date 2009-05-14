@@ -31,9 +31,9 @@ Y.mix(DSLocal, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Local"
+     * @value "dataSourceLocal"
      */
-    NAME: "DataSource.Local",
+    NAME: "dataSourceLocal",
 
     /////////////////////////////////////////////////////////////////////////////
     //

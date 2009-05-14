@@ -34,9 +34,9 @@ Y.mix(DataSourceTextSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceTextSchema"
+     * @value "dataSourceTextSchema"
      */
-    NAME: "DataSourceTextSchema",
+    NAME: "dataSourceTextSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //

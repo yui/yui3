@@ -29,9 +29,9 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.XHR"
+     * @value "dataSourceXHR"
      */
-    NAME: "DataSource.XHR",
+    NAME: "dataSourceXHR",
 
 
     /////////////////////////////////////////////////////////////////////////////

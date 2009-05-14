@@ -36,9 +36,9 @@ Y.mix(DataSourceXMLSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceXMLSchema"
+     * @value "dataSourceXMLSchema"
      */
-    NAME: "DataSourceXMLSchema",
+    NAME: "dataSourceXMLSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //

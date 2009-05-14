@@ -31,9 +31,9 @@ Y.mix(DSLocal, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Local"
+     * @value "dataSourceLocal"
      */
-    NAME: "DataSource.Local",
+    NAME: "dataSourceLocal",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -373,9 +373,9 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.XHR"
+     * @value "dataSourceXHR"
      */
-    NAME: "DataSource.XHR",
+    NAME: "dataSourceXHR",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -513,9 +513,9 @@ Y.mix(DSSN, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.ScriptNode"
+     * @value "dataSourceScriptNode"
      */
-    NAME: "DataSource.ScriptNode",
+    NAME: "dataSourceScriptNode",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -750,9 +750,9 @@ Y.mix(DSFn, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Function"
+     * @value "dataSourceFunction"
      */
-    NAME: "DataSource.Function",
+    NAME: "dataSourceFunction",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -884,9 +884,9 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "dataSourceCache"
      */
-    NAME: "DataSourceCache",
+    NAME: "dataSourceCache",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1011,9 +1011,9 @@ Y.mix(DataSourceJSONSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONSchema"
+     * @value "dataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONSchema",
+    NAME: "dataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1119,9 +1119,9 @@ Y.mix(DataSourceXMLSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceXMLSchema"
+     * @value "dataSourceXMLSchema"
      */
-    NAME: "DataSourceXMLSchema",
+    NAME: "dataSourceXMLSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1227,9 +1227,9 @@ Y.mix(DataSourceArraySchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceArraySchema"
+     * @value "dataSourceArraySchema"
      */
-    NAME: "DataSourceArraySchema",
+    NAME: "dataSourceArraySchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1335,9 +1335,9 @@ Y.mix(DataSourceTextSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceTextSchema"
+     * @value "dataSourceTextSchema"
      */
-    NAME: "DataSourceTextSchema",
+    NAME: "dataSourceTextSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
