@@ -58,16 +58,3 @@ YUI({
 
 });
 
-/*
-var myReadyTest = function() {
-
-	YUI().use('event', function(Y) {
-		Y.log('my log print.');
-		Y.on('domready', function() { alert('tested. dom ready.'); });
-
-	});
-
-};
-
-setTimeout(myReadyTest, 6000);
-*/

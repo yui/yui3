@@ -21,12 +21,17 @@
 
         /**
          * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
-         * through the <a href="Base.html#method_build">Base.build</a> method.
+         * through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
+         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same 
+         * extension list passed to Base.build).
          *
          * @class WidgetPositionExt
          * @param {Object} User configuration object
          */
         function PositionExt(config) {
+            if (!this.hasImpl(Y.WidgetPosition) || !this._posNode) {
+                Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added"); 
+            }
             Y.after(this._syncUIPosExtras, this, SYNCUI);
             Y.after(this._bindUIPosExtras, this, BINDUI);
         }
