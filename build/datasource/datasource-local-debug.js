@@ -115,19 +115,15 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when a data request is received.
          *
          * @event request
-         * @param e {Event.Facade} Event Facade.         
-         * @param o {Object} Object with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>                          
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * </dl>
          * @preventable _defRequestFn
          */
-        //this.publish("request", {defaultFn: this._defRequestFn});
-        //this.publish("request", {defaultFn:function(e){
-        //    this._defRequestFn(e);
-        //}});
         this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
          
         /**
@@ -145,14 +141,11 @@ Y.extend(DSLocal, Y.Base, {
          *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * </dl>
          * @preventable _defDataFn
          */
-         //this.publish("data", {defaultFn: this._defDataFn});
-         //this.publish("data", {defaultFn:function(e){
-         //   this._defDataFn(e);
-         //}});
         this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
 
         /**
@@ -170,6 +163,7 @@ Y.extend(DSLocal, Y.Base, {
          *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -181,10 +175,6 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         //this.publish("response", {defaultFn: this._defResponseFn});
-         //this.publish("response", {defaultFn:function(e){
-         //   this._defResponseFn(e);
-         //}});
          this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
 
         /**
@@ -202,6 +192,7 @@ Y.extend(DSLocal, Y.Base, {
          *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -232,6 +223,7 @@ Y.extend(DSLocal, Y.Base, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -267,6 +259,7 @@ Y.extend(DSLocal, Y.Base, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * </dl>
      * @protected
@@ -297,6 +290,7 @@ Y.extend(DSLocal, Y.Base, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
@@ -329,11 +323,12 @@ Y.extend(DSLocal, Y.Base, {
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
      *     </dl>
+     * @param cfg {Object} Configuration object
      * @return {Number} Transaction ID.
      */
-    sendRequest: function(request, callback) {
+    sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
-        this.fire("request", {tId:tId, request:request,callback:callback});
+        this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
         Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
         return tId;
     }

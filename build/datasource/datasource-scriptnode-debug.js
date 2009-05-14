@@ -145,7 +145,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     },
 
     /**
-     * Passes query string to IO. Fires <code>response</code> event when
+     * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
      *
      * @method _defRequestFn
@@ -160,6 +160,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */

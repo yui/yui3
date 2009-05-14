@@ -103,31 +103,28 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
     _defRequestFn: function(e) {
         var uri = this.get("source"),
-            cfg = {
+            cfg = Y.mix(e.cfg, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
                     },
                     failure: function (id, response, e) {
                         e.error = new Error(this.toString() + " Data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                         Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
                     }
                 },
                 context: this,
                 arguments: e
-            };
+            });
         
         this.get("io")(uri, cfg);
         return e.tId;

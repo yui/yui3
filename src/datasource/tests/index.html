@@ -15,8 +15,8 @@
     YUI({
         base: "../../../build/",
         filter: "debug",
-        logInclude:{"TestRunner":true},
-        useConsole: true,
+        logInclude:{"TestRunner":true,"datasource":true},
+        useConsole: true
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
 
         var ASSERT = Y.Assert,
@@ -152,7 +152,7 @@
                 var ds = new Y.DataSource.XHR({
                     source: "./php/ysearch_json_madonna.php"
                 });
-                
+
                 var handler = Y.Mock();
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
@@ -168,7 +168,35 @@
                     failure: function(e) {
                         ASSERT.fail("XHR failure case.");
                     }
-                });                
+                });
+
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+
+            testXHRPost: function() {
+                var ds = new Y.DataSource.XHR({
+                    source: "./php/ysearch_json_madonna.php"
+                });
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleSuccess",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isObject(e.response, "Expected response object.");
+                        OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
+                    })]
+                });
+
+                ds.sendRequest(null, {
+                    success: handler.handleSuccess,
+                    failure: function(e) {
+                        ASSERT.fail("XHR failure case.");
+                    }
+                },{
+                    method: "POST",
+                    data: "foo=bar"
+                });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
