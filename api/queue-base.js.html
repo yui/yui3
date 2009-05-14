@@ -96,9 +96,7 @@
 <span class="c">     */</span>
     <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">),</span><span class="k">function</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">fn</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">fn</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">fn</span><span class="o">);</span>
         <span class="o">},</span><span class="k">this</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
