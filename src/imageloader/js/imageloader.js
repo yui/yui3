@@ -293,9 +293,9 @@
 		_foldCheck: function() {
 			Y.log('Checking for images above the fold in group: "' + this.get('name') + '"', 'info', 'imageloader');
 
-			var allFetched = true;
-			var viewReg = Y.DOM.viewportRegion();
-			var hLimit = viewReg.bottom + this.get('foldDistance');
+			var allFetched = true,
+			    viewReg = Y.DOM.viewportRegion(),
+			    hLimit = viewReg.bottom + this.get('foldDistance');
 
 			for (var id in this._imgObjs) {
 				if (this._imgObjs.hasOwnProperty(id)) {
