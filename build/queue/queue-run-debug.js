@@ -54,7 +54,7 @@ Y.mix(Queue.prototype, {
      * @protected
      */
     _init : function () {
-        Y.Event.Target.call(this, { emitFacade: true });
+        Y.EventTarget.call(this, { emitFacade: true });
 
         this._q = [];
 
@@ -465,7 +465,7 @@ Y.mix(Queue.prototype, {
     }
 },true);
 
-Y.augment(Queue, Y.Event.Target);
+Y.augment(Queue, Y.EventTarget);
 
 
 }, '@VERSION@' ,{requires:['queue-base','oop','event-custom']});
