@@ -242,7 +242,7 @@ Y.mix(Console, {
      *   <li>str_clear - pulled from attribute strings.clear</li>
      * </ul>
      *
-     * @property Console.HEADER_TEMPLATE
+     * @property Console.FOOTER_TEMPLATE
      * @type String
      * @static
      */
