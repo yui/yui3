@@ -1,3 +1,7 @@
+**** version 3.0.0 Beta 1 ***
+
+* Now lives on the "Plugin" namespace, as opposed to the "plugin" namespace
+
 **** version 3.0.0 PR2 ***
 
 * Initial 3.0 revision
