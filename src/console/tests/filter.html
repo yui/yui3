@@ -46,7 +46,7 @@ YUI({
     filter : 'raw',
     useBrowserConsole : false,
     logExclude : {event:true,attribute:true,base:true,widget:true,Selector:true}
-}).use('test','console','console-filters',function (Y) {
+}).use('test','console','plugin','console-filters',function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
 
@@ -85,7 +85,8 @@ suite.add(new Y.Test.Case({
 var yconsole = new Y.Console({
     contentBox:"log",
     newestOnTop: false
-}).render();
+}).plug(Y.Plugin.ConsoleFilters).render();
+
 
 //yconsole.hideCategory('info');
 yconsole.printLogEntry = function (m) {
