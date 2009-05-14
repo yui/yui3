@@ -166,6 +166,15 @@
 <span class="c">// http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&amp;2.5.2/build/dom/dom-min.js&amp;2.5.2/build/event/event-min.js&amp;2.5.2/build/autocomplete/autocomplete-min.js&quot;</span>
 <span class="c"></span>
 
+<span class="c">/**</span>
+<span class="c"> * Global loader queue</span>
+<span class="c"> * @property _loaderQueue</span>
+<span class="c"> * @type Queue</span>
+<span class="c"> * @private</span>
+<span class="c"> * @for YUI.Env</span>
+<span class="c"> */</span>
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaderQueue</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaderQueue</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">();</span>
+
 <span class="k">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span>
     <span class="nx">GLOBAL_LOADED</span><span class="o">,</span>
     <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> 
@@ -178,7 +187,7 @@
     <span class="nx">CSS_AFTER</span> <span class="o">=</span> <span class="o">[</span><span class="nx">CSSRESET</span><span class="o">,</span> <span class="nx">CSSFONTS</span><span class="o">,</span> <span class="nx">CSSGRIDS</span><span class="o">,</span> 
                  <span class="s1">&#39;cssreset-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="o">,</span> <span class="s1">&#39;cssgrids-context&#39;</span><span class="o">],</span>
     <span class="nx">YUI_CSS</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;reset&#39;</span><span class="o">,</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">],</span>
-    <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span>
+    <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">version</span><span class="o">,</span>
     <span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="o">,</span>
     <span class="nx">CONTEXT</span> <span class="o">=</span> <span class="s1">&#39;-context&#39;</span><span class="o">,</span>
 
@@ -602,7 +611,7 @@
         <span class="o">},</span>
 
         <span class="nx">yui</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">,</span> <span class="nx">GET</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
+            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">,</span> <span class="nx">GET</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">,</span> <span class="s1">&#39;queue-base&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="s1">&#39;yui-base&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
@@ -617,6 +626,8 @@
 <span class="nx">_path</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">dir</span><span class="o">,</span> <span class="nx">file</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span> <span class="o">+</span> <span class="s1">&#39;-min.&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="o">);</span>
 <span class="o">},</span>
+
+<span class="nx">_queue</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaderQueue</span><span class="o">,</span>
 
 <span class="nx">mods</span>  <span class="o">=</span> <span class="nx">META</span><span class="o">.</span><span class="nx">modules</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">bname</span><span class="o">,</span> <span class="nx">mname</span><span class="o">,</span> <span class="nx">contextname</span><span class="o">,</span>
 <span class="nx">L</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
@@ -656,8 +667,7 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">META</span><span class="o">;</span>
 
-<span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">||</span> <span class="o">{};</span>
-<span class="nx">GLOBAL_LOADED</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">loaded</span><span class="o">;</span>
+<span class="nx">GLOBAL_LOADED</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
@@ -935,8 +945,6 @@
 <span class="c">     * @type string[]</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">sorted</span> <span class="o">=</span> <span class="o">[];</span>
-
-    <span class="nx">GLOBAL_LOADED</span><span class="o">[</span><span class="nx">VERSION</span><span class="o">]</span> <span class="o">=</span> <span class="nx">GLOBAL_LOADED</span><span class="o">[</span><span class="nx">VERSION</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
 
     <span class="c">/**</span>
 <span class="c">     * Set when beginning to compute the dependency tree. </span>
@@ -1445,8 +1453,10 @@
 
         <span class="c">// Y.log(&quot;loaded expanded: &quot; + L.dump(l, 0));</span>
 <span class="c"></span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="nx">l</span><span class="o">;</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">,</span> <span class="nx">l</span><span class="o">);</span>
 
+        <span class="c">// this.loaded = l;</span>
+<span class="c"></span>
     <span class="o">},</span>
     
 
@@ -1605,7 +1615,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
                 <span class="c">// remove if already loaded</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">)</span> <span class="o">{</span> 
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">ignoreRegistered</span><span class="o">)</span> <span class="o">{</span> 
                     <span class="nx">delete</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
 
                 <span class="c">// remove anything this module supersedes</span>
@@ -1642,7 +1652,14 @@
 <span class="c"></span>
     <span class="o">},</span>
 
+    <span class="nx">_finish</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_queue</span><span class="o">.</span><span class="nx">running</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_continue</span><span class="o">();</span>
+    <span class="o">},</span>
+
     <span class="nx">_onSuccess</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader successful: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
@@ -1666,9 +1683,14 @@
             <span class="o">});</span>
         <span class="o">}</span>
 
+        <span class="k">this</span><span class="o">.</span><span class="nx">_finish</span><span class="o">();</span>
+
     <span class="o">},</span>
 
     <span class="nx">_onFailure</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader failure: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+
         <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
         <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">;</span>
@@ -1679,9 +1701,14 @@
                 <span class="nx">success</span><span class="o">:</span> <span class="kc">false</span>
             <span class="o">});</span>
         <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_finish</span><span class="o">();</span>
     <span class="o">},</span>
 
     <span class="nx">_onTimeout</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader timeout: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+
         <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
         <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">;</span>
@@ -1692,6 +1719,8 @@
                 <span class="nx">success</span><span class="o">:</span> <span class="kc">false</span>
             <span class="o">});</span>
         <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_finish</span><span class="o">();</span>
     <span class="o">},</span>
     
     <span class="c">/**</span>
@@ -1799,31 +1828,37 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">sorted</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * inserts the requested modules and their dependencies.  </span>
-<span class="c">     * &lt;code&gt;type&lt;/code&gt; can be &quot;js&quot; or &quot;css&quot;.  Both script and </span>
-<span class="c">     * css are inserted if type is not provided.</span>
-<span class="c">     * @method insert</span>
-<span class="c">     * @param o optional options object</span>
-<span class="c">     * @param type {string} the type of dependency to insert</span>
-<span class="c">     */</span>
-    <span class="nx">insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Insert() &#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
+        <span class="c">// Y.log(&#39;private _insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; + Y.id, &quot;info&quot;, &quot;loader&quot;);</span>
+<span class="c"></span>
+        <span class="c">// restore the state at the time of the request</span>
+<span class="c"></span>        <span class="c">// if (source) {</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">source</span><span class="o">);</span>
+        <span class="c">// }</span>
+<span class="c"></span>
         <span class="c">// build the dependency list</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-
+<span class="c"></span>        <span class="c">// if (o) {</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+        <span class="c">// }</span>
+<span class="c"></span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+
             <span class="c">// Y.log(&quot;trying to load css first&quot;);</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                         <span class="nx">self</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                        <span class="nx">self</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">JS</span><span class="o">);</span>
+                        <span class="nx">self</span><span class="o">.</span><span class="nx">_insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">JS</span><span class="o">);</span>
                     <span class="o">};</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">CSS</span><span class="o">);</span>
+
+            <span class="c">// _queue.running = false;</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">CSS</span><span class="o">);</span>
+
             <span class="k">return</span><span class="o">;</span>
         <span class="o">}</span>
+
 
         <span class="c">// set a flag to indicate the load has started</span>
 <span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -1838,6 +1873,46 @@
 
         <span class="c">// start the load</span>
 <span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">loadNext</span><span class="o">();</span>
+
+    <span class="o">},</span>
+
+    <span class="nx">_continue</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="nx">_queue</span><span class="o">.</span><span class="nx">running</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">_queue</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">_queue</span><span class="o">.</span><span class="nx">running</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+            <span class="c">// var f = _queue.next();</span>
+<span class="c"></span>            <span class="c">// if (f) {</span>
+<span class="c"></span>            <span class="c">//     f();</span>
+<span class="c"></span>            <span class="c">// }</span>
+<span class="c"></span>            <span class="nx">_queue</span><span class="o">.</span><span class="nx">next</span><span class="o">()();</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * inserts the requested modules and their dependencies.  </span>
+<span class="c">     * &lt;code&gt;type&lt;/code&gt; can be &quot;js&quot; or &quot;css&quot;.  Both script and </span>
+<span class="c">     * css are inserted if type is not provided.</span>
+<span class="c">     * @method insert</span>
+<span class="c">     * @param o optional options object</span>
+<span class="c">     * @param type {string} the type of dependency to insert</span>
+<span class="c">     */</span>
+    <span class="nx">insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">copy</span><span class="o">;</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;public insert() &#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+
+
+        <span class="nx">copy</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">delete</span> <span class="nx">copy</span><span class="o">.</span><span class="nx">require</span><span class="o">;</span>
+        <span class="nx">delete</span> <span class="nx">copy</span><span class="o">.</span><span class="nx">dirty</span><span class="o">;</span>
+
+        <span class="nx">_queue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">self</span><span class="o">.</span><span class="nx">_insert</span><span class="o">(</span><span class="nx">copy</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="o">});</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_continue</span><span class="o">();</span>
 
     <span class="o">},</span>
 
@@ -1904,7 +1979,7 @@
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_combining</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to combine: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_combining</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to use combo: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_combining</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
                 <span class="nx">fn</span> <span class="o">=(</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">CSS</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">css</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">script</span><span class="o">;</span>
 
@@ -1936,12 +2011,13 @@
                 <span class="k">return</span><span class="o">;</span>
             <span class="o">}</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;loadNext executing, just loaded &quot;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;loadNext executing, just loaded &quot;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
             <span class="c">// The global handler that is called when each module is loaded</span>
 <span class="c"></span>            <span class="c">// will pass that module name to this function.  Storing this</span>
 <span class="c"></span>            <span class="c">// data to avoid loading the same module multiple times</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span><span class="o">[</span><span class="nx">mname</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">mname</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">onProgress</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">onProgress</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
@@ -2028,6 +2104,8 @@
         <span class="c">// internal callback for loading css first</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// Y.log(&#39;loader internal&#39;);</span>
+<span class="c"></span>            <span class="c">// this._finish();</span>
+<span class="c"></span>            <span class="c">// _queue.running = false;</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 

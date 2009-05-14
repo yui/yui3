@@ -53,13 +53,13 @@
 <span class="c"> * and a more responsive UI.</span>
 <span class="c"> *</span>
 <span class="c"> * @module imageloader</span>
+<span class="c"> * @requires node</span>
 <span class="c"> */</span>
 
 
 	<span class="c">/**</span>
 <span class="c">	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints</span>
 <span class="c">	 * @class ImgLoadGroup</span>
-<span class="c">	 * @requires  // TODO</span>
 <span class="c">	 * @extends Base</span>
 <span class="c">	 * @constructor</span>
 <span class="c">	 */</span>
@@ -93,7 +93,7 @@
 
 		<span class="c">/**</span>
 <span class="c">		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold</span>
-<span class="c">		 * This check is performed at page load and after any window scroll or window resize event (until all images are loaded)</span>
+<span class="c">		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded)</span>
 <span class="c">		 * @attribute foldDistance</span>
 <span class="c">		 * @type Number</span>
 <span class="c">		 */</span>
@@ -172,9 +172,7 @@
 <span class="c">			 */</span>
 			<span class="k">this</span><span class="o">.</span><span class="nx">_areFoldTriggersSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
-			<span class="c">// TODO  can&#39;t get this to work. &#39;load&#39; for window doesn&#39;t even fire, and &#39;domready&#39; won&#39;t fire anything if the dom is already ready</span>
-<span class="c"></span>			<span class="c">// add a listener to the onload that will start the time limit</span>
-<span class="c"></span>			<span class="c">//Y.on(&#39;load&#39;, this._onloadTasks, window, this);</span>
+			<span class="c">// add a listener to domready that will start the time limit</span>
 <span class="c"></span>			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onloadTasks</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 		<span class="o">},</span>
 
@@ -182,11 +180,11 @@
 <span class="c">		 * Adds a trigger to the group. Arguments are passed through to Y.on()</span>
 <span class="c">		 * @method addTrigger</span>
 <span class="c">		 * @chainable</span>
-<span class="c">		 * @param {String|HTMLElement} context  The HTML element id or reference to assign the trigger event to  // TODO  type</span>
-<span class="c">		 * @param {String} type  The type of event to assign to context</span>
+<span class="c">		 * @param {Object} obj  The DOM object to attach the trigger event to</span>
+<span class="c">		 * @param {String} type  The event type</span>
 <span class="c">		 */</span>
-		<span class="nx">addTrigger</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">if</span> <span class="o">(!</span> <span class="nx">context</span> <span class="o">||</span> <span class="o">!</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">addTrigger</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(!</span> <span class="nx">obj</span> <span class="o">||</span> <span class="o">!</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 				<span class="k">return</span> <span class="k">this</span><span class="o">;</span>
 			<span class="o">}</span>
 
@@ -200,7 +198,7 @@
 			<span class="k">var</span> <span class="nx">wrappedFetch</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 				<span class="k">this</span><span class="o">.</span><span class="nx">fetch</span><span class="o">();</span>
 			<span class="o">};</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_triggers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">wrappedFetch</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span> <span class="o">);</span>
+			<span class="k">this</span><span class="o">.</span><span class="nx">_triggers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">wrappedFetch</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span> <span class="o">);</span>
 
 			<span class="k">return</span> <span class="k">this</span><span class="o">;</span>
 		<span class="o">},</span>
@@ -254,7 +252,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Performs necessary setup after the window&#39;s onload  // TODO  onload? or domready?</span>
+<span class="c">		 * Performs necessary setup at domready time</span>
 <span class="c">		 * Initiates time limit for group; executes the fold check for the images</span>
 <span class="c">		 * @method _onloadTasks</span>
 <span class="c">		 * @private</span>
@@ -284,8 +282,9 @@
 
 		<span class="c">/**</span>
 <span class="c">		 * Registers an image with the group</span>
+<span class="c">		 * Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribute documentation for this class for detailed information; &quot;domId&quot; is required</span>
 <span class="c">		 * @method registerImage</span>
-<span class="c">		 * // TODO  how to label params</span>
+<span class="c">		 * @param  A configuration object literal with attribute name/value pairs</span>
 <span class="c">		 * @return {Object} Y.ImgLoadImgObj that was registered</span>
 <span class="c">		 */</span>
 		<span class="nx">registerImage</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -518,8 +517,6 @@
 			<span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;true&#39;</span>
 		<span class="o">}</span>
 
-		<span class="c">// TODO  could have a noYPosCache if we wanted...</span>
-<span class="c"></span>
 	<span class="o">};</span>
 
 	<span class="k">var</span> <span class="nx">imgProto</span> <span class="o">=</span> <span class="o">{</span>
@@ -548,7 +545,7 @@
 
 			<span class="c">/**</span>
 <span class="c">			 * The vertical position returned from getY(), to avoid repeat calls to access the DOM</span>
-<span class="c">			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load</span>
+<span class="c">			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)</span>
 <span class="c">			 *   and this caching enhancement assumes that the image&#39;s vertical position won&#39;t change after that first check</span>
 <span class="c">			 * @property _yPos</span>
 <span class="c">			 * @private</span>
@@ -726,7 +723,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage\n\/\/ TODO  how to label params", "url": "ImgLoadGroup.html#method_registerImage\n\/\/ TODO  how to label params", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
 </script>
 </body>
 </html>

@@ -89,9 +89,7 @@
         <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="o">,</span>
 
         <span class="c">// CSS</span>
-<span class="c"></span>        <span class="nx">STACKED</span> <span class="o">=</span> <span class="s2">&quot;stacked&quot;</span><span class="o">,</span>
-        <span class="nx">SHOW_SCROLLBARS</span> <span class="o">=</span> <span class="s2">&quot;show-scrollbars&quot;</span><span class="o">,</span>
-        <span class="nx">HIDE_SCROLLBARS</span> <span class="o">=</span> <span class="s2">&quot;hide-scrollbars&quot;</span><span class="o">;</span>
+<span class="c"></span>        <span class="nx">STACKED</span> <span class="o">=</span> <span class="s2">&quot;stacked&quot;</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * Widget extension, which can be used to add stackable (z-index) support to the </span>
@@ -230,12 +228,6 @@
 <span class="c">         */</span>
         <span class="nx">_renderUIStack</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">Stack</span><span class="o">.</span><span class="nx">STACKED_CLASS_NAME</span><span class="o">);</span>
-
-            <span class="c">// TODO:DEPENDENCY Env.os</span>
-<span class="c"></span>            <span class="k">var</span> <span class="nx">isMac</span> <span class="o">=</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;macintosh&quot;</span><span class="o">)</span> <span class="o">!=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">isMac</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&lt;=</span> <span class="m">1</span><span class="o">.</span><span class="m">9</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_fixMacGeckoScrollbars</span><span class="o">();</span>
-            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -415,51 +407,6 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Applies the CSS classes required to fix scrollbar bleedthrough, for FF2/Mac</span>
-<span class="c">         * </span>
-<span class="c">         * @method _fixMacGeckoScrollbars</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_fixMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_toggleMacGeckoScrollbars</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">VisibleChange</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_toggleMacGeckoScrollbars</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Flip the hide/show scrollbar classes applied to the Widget based on visibility, </span>
-<span class="c">         * to prevent scrollbar bleedthrough on FF2/Mac,</span>
-<span class="c">         *</span>
-<span class="c">         * @method _toggleMacGeckoScrollbars</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_toggleMacGeckoScrollbars</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_showMacGeckoScrollbars</span><span class="o">();</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_hideMacGeckoScrollbars</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is hidden.</span>
-<span class="c">         *</span>
-<span class="c">         * @method _hideMacGeckoScrollbars</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_hideMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">SHOW_SCROLLBARS</span><span class="o">),</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDE_SCROLLBARS</span><span class="o">));</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is visible.</span>
-<span class="c">         *</span>
-<span class="c">         * @method _hideMacGeckoScrollbars</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_showMacGeckoScrollbars</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_stackNode</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDE_SCROLLBARS</span><span class="o">),</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">SHOW_SCROLLBARS</span><span class="o">));</span>
-        <span class="o">},</span>
 
         <span class="c">/**</span>
 <span class="c">         * For IE6, synchronizes the size and position of iframe shim to that of </span>
@@ -570,7 +517,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStack", "name": "_addShimResizeHandlers", "url": "WidgetStack.html#method__addShimResizeHandlers", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterShimChange", "url": "WidgetStack.html#method__afterShimChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterZIndexChange", "url": "WidgetStack.html#method__afterZIndexChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_bindUIStack", "url": "WidgetStack.html#method__bindUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_destroyShim", "url": "WidgetStack.html#method__destroyShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_detachStackHandles", "url": "WidgetStack.html#method__detachStackHandles", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_fixMacGeckoScrollbars", "url": "WidgetStack.html#method__fixMacGeckoScrollbars", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_getShimTemplate", "url": "WidgetStack.html#method__getShimTemplate", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_hideMacGeckoScrollbars", "url": "WidgetStack.html#method__hideMacGeckoScrollbars", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShim", "url": "WidgetStack.html#method__renderShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShimDeferred", "url": "WidgetStack.html#method__renderShimDeferred", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_renderUIStack", "url": "WidgetStack.html#method__renderUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_setZIndex", "url": "WidgetStack.html#method__setZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "shim", "url": "WidgetStack.html#config_shim", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "shimChange", "url": "WidgetStack.html#event_shimChange", "type": "event"}, {"access": "", "host": "WidgetStack", "name": "sizeShim", "url": "WidgetStack.html#method_sizeShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_syncUIStack", "url": "WidgetStack.html#method__syncUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_toggleMacGeckoScrollbars", "url": "WidgetStack.html#method__toggleMacGeckoScrollbars", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetShim", "url": "WidgetStack.html#method__uiSetShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetZIndex", "url": "WidgetStack.html#method__uiSetZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.ATTRS", "url": "WidgetStack.html#property_WidgetStack.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.HTML_PARSER", "url": "WidgetStack.html#property_WidgetStack.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.SHIM_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_TEMPLATE", "url": "WidgetStack.html#property_WidgetStack.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.STACKED_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.STACKED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "zIndex", "url": "WidgetStack.html#config_zIndex", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "zIndexChange", "url": "WidgetStack.html#event_zIndexChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStack", "name": "_addShimResizeHandlers", "url": "WidgetStack.html#method__addShimResizeHandlers", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterShimChange", "url": "WidgetStack.html#method__afterShimChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterZIndexChange", "url": "WidgetStack.html#method__afterZIndexChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_bindUIStack", "url": "WidgetStack.html#method__bindUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_destroyShim", "url": "WidgetStack.html#method__destroyShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_detachStackHandles", "url": "WidgetStack.html#method__detachStackHandles", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_getShimTemplate", "url": "WidgetStack.html#method__getShimTemplate", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShim", "url": "WidgetStack.html#method__renderShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShimDeferred", "url": "WidgetStack.html#method__renderShimDeferred", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_renderUIStack", "url": "WidgetStack.html#method__renderUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_setZIndex", "url": "WidgetStack.html#method__setZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "shim", "url": "WidgetStack.html#config_shim", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "shimChange", "url": "WidgetStack.html#event_shimChange", "type": "event"}, {"access": "", "host": "WidgetStack", "name": "sizeShim", "url": "WidgetStack.html#method_sizeShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_syncUIStack", "url": "WidgetStack.html#method__syncUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetShim", "url": "WidgetStack.html#method__uiSetShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetZIndex", "url": "WidgetStack.html#method__uiSetZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.ATTRS", "url": "WidgetStack.html#property_WidgetStack.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.HTML_PARSER", "url": "WidgetStack.html#property_WidgetStack.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.SHIM_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_TEMPLATE", "url": "WidgetStack.html#property_WidgetStack.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.STACKED_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.STACKED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "zIndex", "url": "WidgetStack.html#config_zIndex", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "zIndexChange", "url": "WidgetStack.html#event_zIndexChange", "type": "event"}];
 </script>
 </body>
 </html>

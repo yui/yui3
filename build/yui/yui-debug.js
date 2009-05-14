@@ -198,14 +198,18 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
         this.version = v;
+
+        this.Env._loaded[v] = {};
 
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
@@ -333,7 +337,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +376,7 @@ YUI.prototype = {
      */
     use: function() {
 
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,26 +385,52 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
                 if (used[name]) {
-                    // Y.log(name + ' already used');
+                    // Y.log(name + ' already used', 'info', 'yui');
                     return;
                 }
 
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+                    // Y.log('USING ' + name, 'info', 'yui');
+
                     used[name] = true;
 
-                    // Y.log('found ' + name);
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    Y.log('module not found: ' + name, 'info', 'yui');
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        // While sorting out the packaged metadata in the modules,
+                        // let's look at the loader metadata as well
+                        // loaderMods = Y.Env.meta.modules; 
+                        // m = loaderMods && loaderMods[name];
+                        // if (m && m.parent && used[m.parent]) {
+                        //     Y.log('USING FROM LOADER METADATA' + name, 'info', 'yui');
+                        //     used[name] = true;
+                        //     req = m.requires;
+                        //     use = m.supersedes;
+                        // }  else {
+                        //     Y.log('module not found: ' + name, 'info', 'yui');
+                        //     missing.push(name);
+                        // }
+                         
+                        Y.log('module not found: ' + name, 'info', 'yui');
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        // Y.log('module not found BUT HAS BEEN LOADED: ' + name, 'info', 'yui');
+                        used[name] = true;
+
+                    }
                 }
 
                 // make sure requirements are attached
@@ -408,13 +439,14 @@ YUI.prototype = {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
+                            // Y.log('using module\'s requirements: ' + name, 'info', 'yui');
                             f(req[j]);
                         }
                     }
                 }
 
                 // add this module to full list of things to attach
-                // Y.log('using ' + name);
+                // Y.log('adding to requires list: ' + name);
                 r.push(name);
 
             },
@@ -459,6 +491,8 @@ YUI.prototype = {
                 }
             }
 
+            // Y.log('Use *: ' + a);
+
             return Y.use.apply(Y, a);
 
         }
@@ -487,7 +521,7 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
 
         // dynamic load
         if (Y.Loader && missing.length) {
@@ -1820,16 +1854,85 @@ Y.UA = function() {
 
     } else {
 
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
+        core = ['queue-base', 'get', 'loader'];
     }
 
     Y.use.apply(Y, core);
 
      
 })();
+
+
+}, '@VERSION@' );
+YUI.add('queue-base', function(Y) {
+
+/**
+ * A simple FIFO queue of function references.
+ *
+ * @module queue
+ * @submodule queue-base
+ * @class Queue
+ * @param callback* {Function} 0..n callback functions to seed the queue
+ */
+function Queue() {
+    this._init();
+    this.add.apply(this, arguments);
+}
+
+Queue.prototype = {
+    /**
+     * Initialize the queue
+     *
+     * @method _init
+     * @protected
+     */
+    _init : function () {
+        /**
+         * The collection of enqueued functions
+         *
+         * @property _q
+         * @type {Array}
+         * @protected
+         */
+        this._q = [];
+    },
+
+    /**
+     * Get the next callback in the queue.
+     *
+     * @method next
+     * @return {Function} the next callback in the queue
+     */
+    next : function () {
+        return this._q.shift();
+    },
+
+    /**
+     * Add 0..n callbacks to the end of the queue
+     *
+     * @method add
+     * @param callback* {Function} 0..n callback functions
+     */
+    add : function () {
+        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+            this._q.push(fn);
+        },this);
+
+        return this;
+    },
+
+    /**
+     * Returns the current number of queued callbacks
+     *
+     * @method size
+     * @return {Number}
+     */
+    size : function () {
+        return this._q.length;
+    }
+};
+
+Y.Queue = Queue;
 
 
 }, '@VERSION@' );
@@ -2087,7 +2190,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
+        Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
 
@@ -2656,6 +2759,15 @@ YUI.add('loader', function(Y) {
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
+/**
+ * Global loader queue
+ * @property _loaderQueue
+ * @type Queue
+ * @private
+ * @for YUI.Env
+ */
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
+
 var GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
@@ -2668,7 +2780,7 @@ var GLOBAL_ENV = YUI.Env,
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
-    VERSION = '@VERSION@',
+    VERSION = Y.version,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
@@ -3092,7 +3204,7 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader']
+            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
         },
 
         'yui-base': { },
@@ -3107,6 +3219,8 @@ var GLOBAL_ENV = YUI.Env,
 _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
+
+_queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -3146,8 +3260,7 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 
 Y.Env.meta = META;
 
-GLOBAL_ENV.loaded = GLOBAL_ENV.loaded || {};
-GLOBAL_LOADED = GLOBAL_ENV.loaded;
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -3425,8 +3538,6 @@ Y.Loader = function(o) {
      * @type string[]
      */
     this.sorted = [];
-
-    GLOBAL_LOADED[VERSION] = GLOBAL_LOADED[VERSION] || {};
 
     /**
      * Set when beginning to compute the dependency tree. 
@@ -3935,7 +4046,9 @@ Y.Loader.prototype = {
 
         // Y.log("loaded expanded: " + L.dump(l, 0));
 
-        this.loaded = l;
+        Y.mix(this.loaded, l);
+
+        // this.loaded = l;
 
     },
     
@@ -4095,7 +4208,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded) { 
+                if (i in this.loaded && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes
@@ -4132,7 +4245,14 @@ Y.Loader.prototype = {
 
     },
 
+    _finish: function() {
+        _queue.running = false;
+        this._continue();
+    },
+
     _onSuccess: function() {
+
+        Y.log('loader successful: ' + Y.id, "info", "loader");
 
         this._attach();
 
@@ -4156,9 +4276,14 @@ Y.Loader.prototype = {
             });
         }
 
+        this._finish();
+
     },
 
     _onFailure: function(msg) {
+
+        Y.log('loader failure: ' + Y.id, "info", "loader");
+
         this._attach();
 
         var f = this.onFailure;
@@ -4169,9 +4294,14 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
 
     _onTimeout: function() {
+
+        Y.log('loader timeout: ' + Y.id, "info", "loader");
+
         this._attach();
 
         var f = this.onTimeout;
@@ -4182,6 +4312,8 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
     
     /**
@@ -4289,31 +4421,37 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    /**
-     * inserts the requested modules and their dependencies.  
-     * <code>type</code> can be "js" or "css".  Both script and 
-     * css are inserted if type is not provided.
-     * @method insert
-     * @param o optional options object
-     * @param type {string} the type of dependency to insert
-     */
-    insert: function(o, type) {
+    _insert: function(source, o, type) {
 
-        Y.log('Insert() ' + (type || ''), "info", "loader");
+
+        // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+
+        // restore the state at the time of the request
+        // if (source) {
+            this._config(source);
+        // }
 
         // build the dependency list
-        this.calculate(o);
+        // if (o) {
+            this.calculate(o);
+        // }
 
         if (!type) {
-            // Y.log("trying to load css first");
+
             var self = this;
+
+            // Y.log("trying to load css first");
             this._internalCallback = function() {
                         self._internalCallback = null;
-                        self.insert(null, JS);
+                        self._insert(null, null, JS);
                     };
-            this.insert(null, CSS);
+
+            // _queue.running = false;
+            this._insert(null, null, CSS);
+
             return;
         }
+
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -4328,6 +4466,46 @@ Y.Loader.prototype = {
 
         // start the load
         this.loadNext();
+
+    },
+
+    _continue: function() {
+        if (!(_queue.running) && _queue.size() > 0) {
+
+            _queue.running = true;
+
+            // var f = _queue.next();
+            // if (f) {
+            //     f();
+            // }
+            _queue.next()();
+        }
+    },
+
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
+
+        var self = this, copy;
+
+        Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+
+
+        copy = Y.merge(this);
+        delete copy.require;
+        delete copy.dirty;
+
+        _queue.add(function() {
+            self._insert(copy, o, type);
+        });
+
+        this._continue();
 
     },
 
@@ -4394,7 +4572,7 @@ Y.Loader.prototype = {
 
             if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "loader");
+Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
@@ -4426,12 +4604,13 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                 return;
             }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
+Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
 
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
+            this.loaded[mname] = true;
 
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
@@ -4518,6 +4697,8 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
         // internal callback for loading css first
         if (fn) {
             // Y.log('loader internal');
+            // this._finish();
+            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -4599,8 +4780,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 })();
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['queue-base']});
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader']});
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader','queue-base']});
 

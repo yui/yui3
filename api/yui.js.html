@@ -247,14 +247,18 @@
             <span class="nx">_used</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_attached</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_yidx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">_uidx</span><span class="o">:</span> <span class="m">0</span>
+            <span class="nx">_uidx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">_loaded</span><span class="o">:</span> <span class="o">{}</span>
         <span class="o">};</span>
+
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">;</span>
@@ -382,7 +386,7 @@
                     <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">req</span><span class="o">));</span>
                 <span class="o">}</span>
 
-                <span class="c">// this.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;YUI&#39;);</span>
+                <span class="c">// this.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
 <span class="c"></span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
@@ -421,6 +425,7 @@
 <span class="c">     */</span>
     <span class="nx">use</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
+
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> 
             <span class="nx">a</span><span class="o">=</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">),</span> 
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
@@ -429,26 +434,52 @@
             <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">],</span>
-            <span class="nx">k</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> 
+            <span class="nx">k</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> 
+            <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> 
             <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// only attach a module once</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="c">// Y.log(name + &#39; already used&#39;);</span>
+                    <span class="c">// Y.log(name + &#39; already used&#39;, &#39;info&#39;, &#39;yui&#39;);</span>
 <span class="c"></span>                    <span class="k">return</span><span class="o">;</span>
                 <span class="o">}</span>
 
                 <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">req</span><span class="o">,</span> <span class="nx">use</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="c">// Y.log(&#39;USING &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
+<span class="c"></span>
                     <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                    <span class="c">// Y.log(&#39;found &#39; + name);</span>
-<span class="c"></span>                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
+                    <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
                     <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
-                    <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+                    <span class="c">// CSS files don&#39;t register themselves, see if it has been loaded</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">version</span><span class="o">][</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="c">// While sorting out the packaged metadata in the modules,</span>
+<span class="c"></span>                        <span class="c">// let&#39;s look at the loader metadata as well</span>
+<span class="c"></span>                        <span class="c">// loaderMods = Y.Env.meta.modules; </span>
+<span class="c"></span>                        <span class="c">// m = loaderMods &amp;&amp; loaderMods[name];</span>
+<span class="c"></span>                        <span class="c">// if (m &amp;&amp; m.parent &amp;&amp; used[m.parent]) {</span>
+<span class="c"></span>                        <span class="c">//     Y.log(&#39;USING FROM LOADER METADATA&#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
+<span class="c"></span>                        <span class="c">//     used[name] = true;</span>
+<span class="c"></span>                        <span class="c">//     req = m.requires;</span>
+<span class="c"></span>                        <span class="c">//     use = m.supersedes;</span>
+<span class="c"></span>                        <span class="c">// }  else {</span>
+<span class="c"></span>                        <span class="c">//     Y.log(&#39;module not found: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
+<span class="c"></span>                        <span class="c">//     missing.push(name);</span>
+<span class="c"></span>                        <span class="c">// }</span>
+<span class="c"></span>                         
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+                        <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="c">// probably css</span>
+<span class="c"></span>                        <span class="c">// Y.log(&#39;module not found BUT HAS BEEN LOADED: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
+<span class="c"></span>                        <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+                    <span class="o">}</span>
                 <span class="o">}</span>
 
                 <span class="c">// make sure requirements are attached</span>
@@ -457,13 +488,14 @@
                         <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">);</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                         <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">req</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
+                            <span class="c">// Y.log(&#39;using module\&#39;s requirements: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
+<span class="c"></span>                            <span class="nx">f</span><span class="o">(</span><span class="nx">req</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
                         <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
 
                 <span class="c">// add this module to full list of things to attach</span>
-<span class="c"></span>                <span class="c">// Y.log(&#39;using &#39; + name);</span>
+<span class="c"></span>                <span class="c">// Y.log(&#39;adding to requires list: &#39; + name);</span>
 <span class="c"></span>                <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
 
             <span class="o">},</span>
@@ -508,6 +540,8 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
+            <span class="c">// Y.log(&#39;Use *: &#39; + a);</span>
+<span class="c"></span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
         <span class="o">}</span>
@@ -536,7 +570,7 @@
             <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
         <span class="o">}</span>
 
-        <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing);</span>
+        <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing + &#39;, l: &#39; + l + &#39;, &#39; + r[0]);</span>
 <span class="c"></span>
         <span class="c">// dynamic load</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>

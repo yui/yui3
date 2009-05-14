@@ -94,12 +94,16 @@ YUI({
 
 
     Y.on('focus', function() {
-        Y.log("focus fired");
+        Y.log("FORM focus fired");
     }, '#form1');
 
     Y.on('blur', function() {
         Y.log("blur fired");
     }, '#form1');
+
+    Y.on('focus', function() {
+        Y.log("TEXT focus fired");
+    }, '#text1');
 
     /*
 

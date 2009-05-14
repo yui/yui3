@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>YUI Event Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 </head>
 
 <body class="yui-skin-sam">
@@ -13,13 +13,20 @@
 <script type="text/javascript">
 
 (function() {
+    //YUI.add("selector-native", function(){});
     YUI({
         base: "../../../build/",
         filter: "debug",
         combine: false,
         useConsole: true,
         // logInclude: ['event', 'test']
-        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+        logExclude: {
+            Dom: true, 
+            Selector: true, 
+            Node: true, 
+            yui: true,
+            get: true,
+            attribute: true, base: true, event: true, widget: true}
     }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun');
@@ -258,7 +265,9 @@
                 };
 
                 // configure chaining via global default or on the event target
-                YUI({ /* chain: true */ }).use('*', function(Y2) {
+                YUI({ /* chain: true */ 
+                    base:'../../build/'
+                }).use('*', function(Y2) {
 
                     var o = new Y2.EventTarget({
                         prefix: 'foo',
@@ -280,6 +289,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     Y.Assert.isTrue(fired5);  // verifies custom prefix
                     
                 });
+
             },
 
             
@@ -424,6 +434,18 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });
+
+    YUI({
+        base: "../../../build/",
+        filter: "debug",
+        combine: false,
+        useConsole: true,
+        // logInclude: ['event', 'test']
+        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+    }).use("datasource", function(Y) {
+        Y.log('loaded datasource: ' + Y.DataSource);
+    });
+
 })();
 </script>
 </body>
