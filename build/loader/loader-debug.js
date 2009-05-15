@@ -571,7 +571,7 @@ var GLOBAL_ENV = YUI.Env,
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
         }  
 
     }
