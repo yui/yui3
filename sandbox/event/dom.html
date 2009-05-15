@@ -124,19 +124,26 @@ YUI({
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
         e.stopPropagation();
         // e.stopImmediatePropagation();
-    }
+    },
+    f2 = function(e) {
 
-    var h =Y.on('click', f, el);
-
-    Y.on('click', function(e) {
         Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
         // h.detach();
         // Y.detach('click', f, el);
         // console.log(Y.Event.getListeners(this, 'click'));
         // console.log(Y.Event.getListeners(this));
         // Y.Event.purgeElement(this, true, 'click');
-        Y.Event.detach('click', null, this);
-    }, el);
+        // Y.Event.detach('click', null, this);
+        Y.detach('blah|*');
+    };
+
+    // var h = Y.on('blah|click', f, el);
+    // Y.on('blah|click',f2, el);
+
+    Y.on({
+        'blah|click':     f2,
+        'blah|mouseover': f
+    }, null, el);
 
 
 
@@ -278,7 +285,7 @@ Y.on("click", interceptLink, "#secondA");
 //     Y.log('#secondA is READY');
 // });
 
-Y.on('available', function() {
+Y.on('blah|available', function() {
     Y.log('#secondA is READY');
     Y.log(arguments);
 }, '#secondA', Y, 1, 2);

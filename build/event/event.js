@@ -976,7 +976,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             }
 
-            if (!fn || !fn.call) {
+            if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
             }
 
