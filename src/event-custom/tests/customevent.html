@@ -19,6 +19,9 @@
         filter: "debug",
         // combine: false,
         useConsole: true,
+        onCSS: function(Y) {
+            Y.log('CSS is done loading');
+        },
         // logInclude: ['event', 'test']
         logExclude: {
             Dom: true, 
