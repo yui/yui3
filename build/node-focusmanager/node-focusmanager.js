@@ -98,7 +98,7 @@ NodeFocusManager.ATTRS = {
 	* whose focus should be managed.
 	*
 	* @attribute descendants
-	* @type string
+	* @type Y.NodeList
 	*/
 	descendants: {
 
@@ -190,7 +190,7 @@ NodeFocusManager.ATTRS = {
 
 	/**
 	* Object literal representing the keys to be used to navigate between the 
-	* next/previous decendant.  The format for the attribute's value is 
+	* next/previous descendant.  The format for the attribute's value is 
 	* <code>{ next: "down:40", previous: "down:38" }</code>.  The value for the 
 	* "next" and "previous" properties are used to attach 
 	* <a href="event/#keylistener"><code>key</code></a> event listeners. See 
@@ -978,7 +978,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 });
 
 
-NodeFocusManager.NAME = "NodeFocusManager";
+NodeFocusManager.NAME = "nodeFocusManager";
 NodeFocusManager.NS = "focusManager";
 
 Y.namespace("Plugin");
