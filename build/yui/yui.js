@@ -82,14 +82,10 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
-     *  <li>base:
-     *  The base dir</li>
-     *  <li>secureBase:
-     *  The secure base dir (not implemented)</li>
-     *  <li>comboBase:
-     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-     *  <li>root:
-     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+     *  <li>base: The base dir</li>
+     *  <li>secureBase: The secure base dir (not implemented)</li>
+     *  <li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+     *  <li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
      *  <li>filter:
      *  
      * A filter to apply to result urls.  This filter will modify the default
@@ -172,14 +168,14 @@ YUI.prototype = {
      * @private
      */
     _init: function(o) {
-        
+
         o = o || {};
 
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
         var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@';
+            v = '@VERSION@', Y = this;
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
@@ -188,9 +184,9 @@ YUI.prototype = {
     
         // add a reference to o for anything that needs it
         // before _setup is called.
-        this.config = o;
+        Y.config = o;
 
-        this.Env = {
+        Y.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -207,17 +203,18 @@ YUI.prototype = {
             v = 'test';
         }
 
-        this.version = v;
+        Y.version = v;
 
-        this.Env._loaded[v] = {};
+        Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            this.Env._yidx = ++YUI.Env._idx;
-            this.id = this.stamp(this);
-            _instances[this.id] = this;
+            Y.Env._yidx = ++YUI.Env._idx;
+            Y.id = Y.stamp(Y);
+            _instances[Y.id] = Y;
         }
 
-        this.constructor = YUI;
+        Y.constructor = YUI;
+
 
         // this.log(this.id + ') init ');
     },
@@ -376,6 +373,10 @@ YUI.prototype = {
      */
     use: function() {
 
+        if (this._loading) {
+            this._useQueue.add(Array.prototype.slice.call(arguments));
+            return this;
+        }
 
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
@@ -461,6 +462,13 @@ YUI.prototype = {
                 if (Y.fire) {
                     Y.fire('yui:load', Y, fromLoader);
                 }
+
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                this._loading = false;
+                while (this._useQueue && this._useQueue.size() && !this._loading) {
+                    Y.use.apply(Y, this._useQueue.next());
+                }
             };
 
 
@@ -491,6 +499,7 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
+            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -511,6 +520,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
+            this._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -757,6 +767,28 @@ instance.log = function(msg, cat, src, silent) {
 instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
+
+/*
+ * @TODO I'm not convinced the current log statement scrubbing routine can
+ * be made safe with all the variations that could be supplied for
+ * the condition.
+ *
+ * logIf statements are stripped from the raw and min files.
+ * @method logIf
+ * @for YUI
+ * @param  {boolean} condition Logging only occurs if a truthy value is provided
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+// instance.logIf = function(condition, msg, cat, src, silent) {
+//     if (condition) {
+//     }
+// };
 
 })();
 (function() {
@@ -4624,19 +4656,6 @@ Y.Loader.prototype = {
 
     },
 
-    /*
-     * In IE, the onAvailable/onDOMReady events need help when Event is
-     * loaded dynamically
-     * @method _pushEvents
-     * @param {Function} optional function reference
-     * @private
-     */
-    // _pushEvents: function() {
-    //     if (Y.Event) {
-    //         Y.Event._load();
-    //     }
-    // },
-
     /**
      * Apply filter defined for this instance to a url/path
      * method _filter
@@ -4698,5 +4717,5 @@ Y.Loader.prototype = {
 }, '@VERSION@' ,{requires:['queue-base']});
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','loader','queue-base']});
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','queue-base','get','loader']});
 

@@ -84,4 +84,29 @@ instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
 
+/*
+ * @TODO I'm not convinced the current log statement scrubbing routine can
+ * be made safe with all the variations that could be supplied for
+ * the condition.
+ *
+ * Logs a message with Y.log() if the first parameter is true
+ * Y.logIf((life == 'good'), 'yay'); 
+ * logIf statements are stripped from the raw and min files.
+ * @method logIf
+ * @for YUI
+ * @param  {boolean} condition Logging only occurs if a truthy value is provided
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+// instance.logIf = function(condition, msg, cat, src, silent) {
+//     if (condition) {
+//         return Y.log.apply(Y, arguments);
+//     }
+// };
+
 })();
