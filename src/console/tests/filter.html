@@ -6,6 +6,9 @@
     <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
     <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
+        #log {
+            position: static;
+        }
         h1 {
             font: normal 125%/1.4 Arial, sans-serif;
         }
@@ -36,7 +39,7 @@
 </head>
 <body class="yui-skin-sam">
 <h1>Console filter plugin tests</h1>
-<div id="testbed"></div>
+<div id="log"></div>
 
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 <script type="text/javascript" src="../../../build/console/console-filters.js"></script>
@@ -60,6 +63,8 @@ suite.add(new Y.Test.Case({
         });
         
         c.plug(Y.Plugin.ConsoleFilters);
+
+        c.destroy();
     },
 
     test_render : function () {
@@ -71,6 +76,8 @@ suite.add(new Y.Test.Case({
         c.plug(Y.Plugin.ConsoleFilters);
 
         c.render();
+
+        c.destroy();
     }
 }));
 
@@ -82,10 +89,9 @@ suite.add(new Y.Test.Case({
 }));
 
 
-var yconsole = new Y.Console({
-    contentBox:"log",
-    newestOnTop: false
-}).plug(Y.Plugin.ConsoleFilters).render();
+var yconsole = new Y.Console({ boundingBox:"#log", newestOnTop: false }).
+                plug(Y.Plugin.ConsoleFilters).
+                render();
 
 
 //yconsole.hideCategory('info');
