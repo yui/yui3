@@ -1295,8 +1295,6 @@ Y.extend(Console,Y.Widget,{
      */
     _onLogEvent : function (e) {
 
-        console.log("LOGEVENT: " + e.msg);
-
         if (!this.get(DISABLED) && this._isInLogLevel(e)) {
 
             var debug = Y.config.debug;
