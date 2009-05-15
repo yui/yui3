@@ -110,6 +110,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * </pre>
      *
      *  </li>
+     *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
      *  <li>combine:
      *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
      *  <li>ignore:
@@ -1387,9 +1388,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
+            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, a);
@@ -2736,6 +2737,7 @@ YUI.add('loader', function(Y) {
  * </pre>
  *
  *  </li>
+ *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
  *  <li>ignore:
@@ -3488,6 +3490,14 @@ Y.Loader = function(o) {
     this.filter = null;
 
     /**
+     * per-component filter specification.  If specified for a given component, this 
+     * overrides the filter config.
+     * @property filters
+     * @type object
+     */
+    this.filters = {};
+
+    /**
      * The list of requested modules
      * @property required
      * @type {string: boolean}
@@ -3624,7 +3634,7 @@ Y.Loader = function(o) {
 
 Y.Loader.prototype = {
 
-    FILTERS: {
+    FILTER_DEFS: {
         RAW: { 
             'searchExp': "-min\\.js", 
             'replaceStr': ".js"
@@ -3670,7 +3680,7 @@ Y.Loader.prototype = {
         if (L.isString(f)) {
             f = f.toUpperCase();
             this.filterName = f;
-            this.filter = this.FILTERS[f];
+            this.filter = this.FILTER_DEFS[f];
         }
 
     },
@@ -4749,29 +4759,17 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
      */
     _filter: function(u, name) {
 
-        // Y.log('filter ' + u);
+        var f = this.filter, 
+            hasFilter = name && (name in this.filters),
+            modFilter = hasFilter && this.filters[name];
 
-        var f = this.filter, useFilter = true, exc, inc, raw = this.FILTERS.RAW;
+        if (u) {
 
-        if (u && f) {
-
-            if (name && this.filterName == "DEBUG") {
-            
-                exc = this.logExclude;
-                inc = this.logInclude;
-
-                if (inc && !(name in inc)) {
-                    useFilter = false;
-                } else if (exc && (name in exc)) {
-                    useFilter = false;
-                }
-
+            if (hasFilter) {
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
 
-            u = (useFilter) ? u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr) :
-                              u.replace(new RegExp(raw.searchExp, 'g'), raw.replaceStr);
-            
-            if (useFilter) {
+            if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }

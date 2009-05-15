@@ -26,7 +26,13 @@
             Node: true, 
             yui: true,
             get: true,
-            attribute: true, base: true, event: true, widget: true}
+            attribute: true, base: true, event: true, widget: true},
+
+        filters: {
+            base: 'raw',
+            dom: null,
+            attribute: 'min'
+        }
     }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun');
