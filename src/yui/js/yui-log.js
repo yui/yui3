@@ -1,6 +1,8 @@
 (function() {
 
-var instance = Y;
+var instance = Y,
+    LOGEVENT = 'yui:log',
+    _published;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -59,7 +61,23 @@ instance.log = function(msg, cat, src, silent) {
             }
 
             if (Y.fire && !bail && !silent) {
-                Y.fire('yui:log', msg, cat, src);
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: true
+                    });
+
+                    _published = true;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+                
+
+                // Y.fire('yui:log', msg, cat, src);
             }
         }
     }
@@ -83,5 +101,30 @@ instance.log = function(msg, cat, src, silent) {
 instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
+
+/*
+ * @TODO I'm not convinced the current log statement scrubbing routine can
+ * be made safe with all the variations that could be supplied for
+ * the condition.
+ *
+ * Logs a message with Y.log() if the first parameter is true
+ * Y.logIf((life == 'good'), 'yay'); 
+ * logIf statements are stripped from the raw and min files.
+ * @method logIf
+ * @for YUI
+ * @param  {boolean} condition Logging only occurs if a truthy value is provided
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+// instance.logIf = function(condition, msg, cat, src, silent) {
+//     if (condition) {
+//         return Y.log.apply(Y, arguments);
+//     }
+// };
 
 })();

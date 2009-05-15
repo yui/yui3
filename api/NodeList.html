@@ -163,6 +163,71 @@ If a function is used, it receives the current node being tested as the only arg
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_append">
+                                    <h4>
+                                        <a name="method_append">append</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">append</strong>
+                                           (
+                                                
+                                                        
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         execScripts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Inserts the content as the lastChild of the node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Y.Node | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to insert</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">execScripts</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to execute any scripts found in
+the content.  If false, all scripts will be stripped out.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_appendChild">
                                     <h4>
                                         <a name="method_appendChild">appendChild</a></h4>
@@ -1025,6 +1090,81 @@ Defaults to current document.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_insert">
+                                    <h4>
+                                        <a name="method_insert">insert</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">insert</strong>
+                                           (
+                                                
+                                                        
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         refNode
+                                                    
+                                                
+                                                        , 
+                                                         execScripts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Inserts the content before the reference node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Y.Node | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to insert</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">refNode</span>
+                                                        &lt;<span property="yui:type">Int | Y.Node | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The index or node to insert before</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">execScripts</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to execute any scripts found in
+the content.  If false, all scripts will be stripped out.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_insertBefore">
                                     <h4>
                                         <a name="method_insertBefore">insertBefore</a></h4>
@@ -1195,6 +1335,71 @@ If a function is used, it receives the current node being tested as the only arg
                                                     <dd property="yui:returnInfo">Node instance or null if not found</dd>
                                                 </dl>
 
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_prepend">
+                                    <h4>
+                                        <a name="method_prepend">prepend</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">prepend</strong>
+                                           (
+                                                
+                                                        
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         execScripts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Inserts the content as the firstChild of the node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Y.Node | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to insert</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">execScripts</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to execute any scripts found in
+the content.  If false, all scripts will be stripped out.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
 
              
 
@@ -1760,6 +1965,71 @@ Only valid on FORM elements
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_setContent">
+                                    <h4>
+                                        <a name="method_setContent">setContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setContent</strong>
+                                           (
+                                                
+                                                        
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         execScripts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Replaces the node's current content with the content.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Y.Node | HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to insert</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">execScripts</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to execute any scripts found in
+the content.  If false, all scripts will be stripped out.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class=" deprecated" rel="yui:method" resource="#method_size">
                                     <h4>
                                         <a name="method_size">size</a></h4>
@@ -2051,6 +2321,7 @@ Only valid on FORM elements
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class=""><a href="#method_ancestor" title="ancestor">ancestor</a></li>
+                                <li class=""><a href="#method_append" title="append">append</a></li>
                                 <li class=""><a href="#method_appendChild" title="appendChild">appendChild</a></li>
                                 <li class=""><a href="#method_blur" title="blur">blur</a></li>
                                 <li class=""><a href="#method_cloneNode" title="cloneNode">cloneNode</a></li>
@@ -2068,9 +2339,11 @@ Only valid on FORM elements
                                 <li class=""><a href="#method_hasChildNodes" title="hasChildNodes">hasChildNodes</a></li>
                                 <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
                                 <li class=""><a href="#method_inDoc" title="inDoc">inDoc</a></li>
+                                <li class=""><a href="#method_insert" title="insert">insert</a></li>
                                 <li class=""><a href="#method_insertBefore" title="insertBefore">insertBefore</a></li>
                                 <li class=" deprecated"><a href="#method_item" title="item">item</a></li>
                                 <li class=""><a href="#method_next" title="next">next</a></li>
+                                <li class=""><a href="#method_prepend" title="prepend">prepend</a></li>
                                 <li class=""><a href="#method_previous" title="previous">previous</a></li>
                                 <li class=""><a href="#method_query" title="query">query</a></li>
                                 <li class=""><a href="#method_queryAll" title="queryAll">queryAll</a></li>
@@ -2082,6 +2355,7 @@ Only valid on FORM elements
                                 <li class=""><a href="#method_scrollIntoView" title="scrollIntoView">scrollIntoView</a></li>
                                 <li class=""><a href="#method_select" title="select">select</a></li>
                                 <li class=""><a href="#method_setAttribute" title="setAttribute">setAttribute</a></li>
+                                <li class=""><a href="#method_setContent" title="setContent">setContent</a></li>
                                 <li class=" deprecated"><a href="#method_size" title="size">size</a></li>
                                 <li class=""><a href="#method_some" title="some">some</a></li>
                                 <li class=""><a href="#method_submit" title="submit">submit</a></li>
@@ -2100,7 +2374,7 @@ Only valid on FORM elements
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "ancestor", "url": "NodeList.html#method_ancestor", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "children", "url": "NodeList.html#property_children", "type": "property"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "compareTo", "url": "NodeList.html#method_compareTo", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNode", "url": "NodeList.html#method_getDOMNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "inDoc", "url": "NodeList.html#method_inDoc", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "next", "url": "NodeList.html#method_next", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "previous", "url": "NodeList.html#method_previous", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "query", "url": "NodeList.html#method_query", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "queryAll", "url": "NodeList.html#method_queryAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}, {"access": "", "host": "NodeList", "name": "test", "url": "NodeList.html#method_test", "type": "method"}];
 </script>
 </body>
 </html>

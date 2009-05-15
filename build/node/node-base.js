@@ -85,6 +85,8 @@ Node.DOM_EVENTS = {
     'mouseleave': true
 };
 
+Node.EXEC_SCRIPTS = true;
+
 Node._instances = {};
 
 /**
@@ -328,11 +330,11 @@ Y.mix(Node.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args;
+        var args,
             ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0),
+            args = g_slice.call(arguments, 0);
             args.splice(2, 0, g_nodes[this[UID]]);
             ret = Y.Event.attach.apply(Y.Event, args);
         } else {
@@ -349,9 +351,18 @@ Y.mix(Node.prototype, {
      */
     detach: function(type, fn) {
         var args, ret = null;
-        if (Node.DOM_EVENTS[type]) {
+
+        // Added by apm: if this is a DOM event, dispatch to the event 
+        // system.  If the type is not supplied, do the same since 
+        // this is how detachAll works.  This means that Node may not 
+        // be able to support detachAll for both DOM events and custom events
+        // as implemented.  Detaching DOM events this way is a blocking
+        // issue for DD, so I changed it so that will work.  It is probably
+        // less important for custom events to work this way through this
+        // interface, but we need to review this.
+        if (!type || Node.DOM_EVENTS[type]) {
             args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
+            args[2] = g_nodes[this[UID]];
 
             ret = Y.Event.detach.apply(Y.Event, args);
         } else {
@@ -573,9 +584,71 @@ Y.mix(Node.prototype, {
      * @deprecated Use NodeList
      * @return {Int} The number of items in the Node. 
      */
-
     size: function() {
         return g_nodes[this[UID]] ? 1 : 0;
+    },
+
+    /**
+     * Inserts the content before the reference node. 
+     * @method insert
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Int | Y.Node | HTMLElement} refNode The index or node to insert before 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    insert: function(content, refNode) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        if (typeof refNode === 'number') { // allow index
+            refNode = g_nodes[this[UID]].childNodes[refNode];
+        }
+        if (this.contains(refNode)) { // only allow inserting into this Node's subtree
+            Y.DOM.addHTML(g_nodes[this[UID]], Y.Node.create(content), refNode, execScripts);
+        }
+        return this;
+    },
+
+    /**
+     * Inserts the content as the firstChild of the node. 
+     * @method prepend
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    prepend: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        var node = g_nodes[this[UID]];
+        Y.DOM.addHTML(node, content, node.firstChild, execScripts);
+        return this;
+    },
+
+    /**
+     * Inserts the content as the lastChild of the node. 
+     * @method append
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    append: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.addHTML(g_nodes[this[UID]], content, null, execScripts);
+        return this;
+    },
+
+    /**
+     * Replaces the node's current content with the content.
+     * @method setContent
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    setContent: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
+        return this;
     },
 
     addEventListener: function() {
@@ -587,7 +660,7 @@ Y.mix(Node.prototype, {
     removeEventListener: function() {
         var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
     // TODO: need this?
@@ -1133,9 +1206,7 @@ Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute',
-
-    'insertHTML'
+    'getAttribute'
 ]);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
@@ -1144,7 +1215,7 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'insertHTML']);
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
     var node = document.createElement('div');

@@ -426,7 +426,7 @@
 
         /**
          * Wrapper for Attribute.get. Adds the ability to 
-         * initialize attributes on demand during initialization
+         * initialize attributes on-demand during initialization
          * of the ATTRS definitions at each class level.
          *
          * @method get
@@ -477,7 +477,10 @@
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.Plugin.Host, false, null, 1);
+    Y.mix(Base, PluginHost, false, null, 1);
+
+    Base.plug = PluginHost.plug;
+    Base.unplug = PluginHost.unplug;
 
     // Fix constructor
     Base.prototype.constructor = Base;

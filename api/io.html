@@ -71,6 +71,21 @@ Flash, if specified as a transport, for cross-domain requests.
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__e">
+                                    <h4><a name="property__e" property="yui:name">_e</a>
+                                        - <code>private static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:property" resource="#property__fn">
                                     <h4><a name="property__fn" property="yui:name">_fn</a>
                                         - <code>private static <span property="yui:type">object</span></code>
@@ -95,39 +110,6 @@ when using Flash as the transport.
                                         <div class="description" property="yui:description">
                                             Object of default HTTP headers to be initialized and sent
 for all transactions.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:property" resource="#property__q">
-                                    <h4><a name="property__q" property="yui:name">_q</a>
-                                        - <code>private static <span property="yui:type">array</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Array of transactions queued for processing
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:property" resource="#property__qMaxSize">
-                                    <h4><a name="property__qMaxSize" property="yui:name">_qMaxSize</a>
-                                        - <code>private static <span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Queue property to set a maximum queue storage size.  When
-this property is set, the queue will not store any more transactions
-until the queue size os reduced below this threshold. There is no
-maximum queue size until it is explicitly set.
                                         </div>
                                     </div>
      
@@ -176,6 +158,21 @@ a defined "timeout" configuration property.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Map of IO transports.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__yQ">
+                                    <h4><a name="property__yQ" property="yui:name">_yQ</a>
+                                        - <code>private static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of transactions queued for processing
                                         </div>
                                     </div>
      
@@ -967,37 +964,6 @@ defined.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__purge">
-                                    <h4>
-                                        <a name="method__purge">_purge</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                         static 
-                                        
-                                        
-                                            <strong property="yui:name">_purge</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Method for removing a specific, pending transaction from
-the queue.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__queue">
                                     <h4>
                                         <a name="method__queue">_queue</a></h4>
@@ -1073,6 +1039,37 @@ request before it is sent to the resource.
                                                         <span property="yui:description"> - Configuration object passed to YUI.io().</span>
                                                         </dd>
                                                 </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__remove">
+                                    <h4>
+                                        <a name="method__remove">_remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        
+                                            <strong property="yui:name">_remove</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Method for removing a specific, pending transaction from
+the queue.
+                                        </div>
+
+                                        <div class="description">
+
 
 
 
@@ -1253,8 +1250,8 @@ in the configuration object passed to YUI.io().</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Method for removing a transaction from the top of the
-queue, and sending the transaction to _io().
+                                            Method Process the first transaction from the
+queue in FIFO order.
                                         </div>
 
                                         <div class="description">
@@ -1284,40 +1281,7 @@ queue, and sending the transaction to _io().
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Method to query the current size of the queue, or to
-set a maximum queue size.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__start">
-                                    <h4>
-                                        <a name="method__start">_start</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                         static 
-                                        
-                                        
-                                            <strong property="yui:name">_start</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Method for setting the queue to active. If there are
-transactions pending in the queue, they will be processed from the
-queue in FIFO order.
+                                            Method to query the current size of the queue.
                                         </div>
 
                                         <div class="description">
@@ -1900,7 +1864,7 @@ is the interface for _io().
                                            (
                                                 
                                                         
-                                                         i
+                                                         o
                                                     
                                                 
                                             )
@@ -1916,10 +1880,10 @@ This is the interface for _unshift().
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">i</span>
-                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> - ID of queued transaction.</span>
+                                                        <span property="yui:description"> - Reference to queued transaction.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1945,7 +1909,7 @@ This is the interface for _unshift().
                                            (
                                                 
                                                         
-                                                         i
+                                                         o
                                                     
                                                 
                                             )
@@ -1961,10 +1925,10 @@ the queue. This is the interface for _purge().
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">i</span>
-                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> - ID of queued transaction.</span>
+                                                        <span property="yui:description"> - Reference to queued transaction.</span>
                                                         </dd>
                                                 </dl>
 
@@ -2037,7 +2001,7 @@ set a maximum queue size.  This is the interface for _size().
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Method for setting the queue to "active". If there are
+                                            Method for setting the queue to active. If there are
 transactions pending in the queue, they will be processed from the
 queue in FIFO order. This is the interface for _start().
                                         </div>
@@ -2071,7 +2035,7 @@ queue in FIFO order. This is the interface for _start().
                                         <div class="description" property="yui:description">
                                             Method for setting queue processing to inactive.
 Transaction requests to YUI.io.queue() will be stored in the queue, but
-not processed until the queue is set to "active". This is the
+not processed until the queue is restarted. This is the
 interface for _stop().
                                         </div>
 
@@ -2451,13 +2415,13 @@ ready for use.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class="private"><a href="#property__e" title="_e">_e</a></li>
                                 <li class="private"><a href="#property__fn" title="_fn">_fn</a></li>
                                 <li class="private"><a href="#property__headers" title="_headers">_headers</a></li>
-                                <li class="private"><a href="#property__q" title="_q">_q</a></li>
-                                <li class="private"><a href="#property__qMaxSize" title="_qMaxSize">_qMaxSize</a></li>
                                 <li class="private"><a href="#property__qState" title="_qState">_qState</a></li>
                                 <li class="private"><a href="#property__timeOut" title="_timeOut">_timeOut</a></li>
                                 <li class="private"><a href="#property__transport" title="_transport">_transport</a></li>
+                                <li class="private"><a href="#property__yQ" title="_yQ">_yQ</a></li>
                                 <li class="private"><a href="#property_transactionId" title="transactionId">transactionId</a></li>
                         </ul>
                     </div>
@@ -2478,15 +2442,14 @@ ready for use.
                                 <li class="private"><a href="#method__ioFailure" title="_ioFailure">_ioFailure</a></li>
                                 <li class="private"><a href="#method__ioStart" title="_ioStart">_ioStart</a></li>
                                 <li class="private"><a href="#method__ioSuccess" title="_ioSuccess">_ioSuccess</a></li>
-                                <li class="private"><a href="#method__purge" title="_purge">_purge</a></li>
                                 <li class="private"><a href="#method__queue" title="_queue">_queue</a></li>
                                 <li class="private"><a href="#method__readyState" title="_readyState">_readyState</a></li>
+                                <li class="private"><a href="#method__remove" title="_remove">_remove</a></li>
                                 <li class="private"><a href="#method__serialize" title="_serialize">_serialize</a></li>
                                 <li class="private"><a href="#method__setHeader" title="_setHeader">_setHeader</a></li>
                                 <li class="private"><a href="#method__setHeaders" title="_setHeaders">_setHeaders</a></li>
                                 <li class="private"><a href="#method__shift" title="_shift">_shift</a></li>
                                 <li class="private"><a href="#method__size" title="_size">_size</a></li>
-                                <li class="private"><a href="#method__start" title="_start">_start</a></li>
                                 <li class="private"><a href="#method__startTimeout" title="_startTimeout">_startTimeout</a></li>
                                 <li class="private"><a href="#method__stop" title="_stop">_stop</a></li>
                                 <li class="private"><a href="#method__swf" title="_swf">_swf</a></li>
@@ -2530,7 +2493,7 @@ ready for use.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
 </script>
 </body>
 </html>

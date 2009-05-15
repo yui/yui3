@@ -80,6 +80,11 @@ onload = function() {
                     $('a span, a', Y.DOM.byId('mod1')),
                     "$('a, a span') === $('a span, a')"); 
 
+                var node = document.createElement('div');
+                node.innerHTML = '<li><em>foo</em></li>';
+                Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
+                Assert.isNull($('div li em', node, true), 'off-dom: div li em');
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 
