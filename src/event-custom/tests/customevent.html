@@ -35,6 +35,10 @@
         }
     }).use("dump", "test", "console", function(Y) {
 
+        Y.Global.on('yui:log', function(e) {
+            console.log('GLOBAL LOG: ' + e.msg);
+        });
+
         var button = Y.get('#btnRun');
 
         // Set up the page
@@ -46,7 +50,7 @@
         var myConsole = new Y.Console().render();
  
         var testEventTarget = new Y.Test.Case({
-            name: "Event.Target tests",
+            name: "EventTarget tests",
         
             testAugment: function() {
 
@@ -63,9 +67,9 @@
                     }
                 }
 
-                // pass configuration info into Event.Target with the following
+                // pass configuration info into EventTarget with the following
                 // construct
-                Y.augment(O, Y.Event.Target, null, null, {
+                Y.augment(O, Y.EventTarget, null, null, {
                     emitFacade: true
                 });
 
@@ -107,7 +111,7 @@
                     arguments.callee.superclass.constructor.apply(this, arguments);
                 }
 
-                Y.extend(Base, Y.Event.Target, {
+                Y.extend(Base, Y.EventTarget, {
                     base: function() {
                         Y.log('all your base...');
                     }
@@ -142,9 +146,9 @@
                     }
                 }
 
-                // pass configuration info into Event.Target with the following
+                // pass configuration info into EventTarget with the following
                 // construct
-                Y.augment(O, Y.Event.Target, null, null, {
+                Y.augment(O, Y.EventTarget, null, null, {
                     emitFacade: true,
                     prefix: 'prefix'
                 });
@@ -451,6 +455,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
     }).use("datasource", function(Y) {
         Y.log('loaded datasource: ' + Y.DataSource);
     });
+
 
 })();
 </script>
