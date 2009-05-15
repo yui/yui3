@@ -257,7 +257,7 @@
 	* @return void
    	*/
    	function _tPubSub(e, c){
-   			var event = new Y.Event.Target().publish('transaction:' + e);
+   			var event = new Y.EventTarget().publish('transaction:' + e);
    			event.subscribe(c.on[e], (c.context || this), c.arguments);
 
    			return event;
@@ -718,7 +718,6 @@
    	};
 
    	_io.start = _ioStart;
-   	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io._id = _id;
