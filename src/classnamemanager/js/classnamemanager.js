@@ -64,6 +64,7 @@ Y.ClassNameManager = function () {
 			return sPrefix + sDelimiter + 
                    ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
 		})
+
 	};
 
 }();
