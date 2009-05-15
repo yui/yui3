@@ -6,13 +6,13 @@ YUI.add('imageloader', function(Y) {
  * and a more responsive UI.
  *
  * @module imageloader
+ * @requires node
  */
 
 
 	/**
 	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints
 	 * @class ImgLoadGroup
-	 * @requires  // TODO
 	 * @extends Base
 	 * @constructor
 	 */
@@ -46,7 +46,7 @@ YUI.add('imageloader', function(Y) {
 
 		/**
 		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold
-		 * This check is performed at page load and after any window scroll or window resize event (until all images are loaded)
+		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded)
 		 * @attribute foldDistance
 		 * @type Number
 		 */
@@ -125,9 +125,7 @@ YUI.add('imageloader', function(Y) {
 			 */
 			this._areFoldTriggersSet = false;
 
-			// TODO  can't get this to work. 'load' for window doesn't even fire, and 'domready' won't fire anything if the dom is already ready
-			// add a listener to the onload that will start the time limit
-			//Y.on('load', this._onloadTasks, window, this);
+			// add a listener to domready that will start the time limit
 			Y.on('domready', this._onloadTasks, this);
 		},
 
@@ -135,11 +133,11 @@ YUI.add('imageloader', function(Y) {
 		 * Adds a trigger to the group. Arguments are passed through to Y.on()
 		 * @method addTrigger
 		 * @chainable
-		 * @param {String|HTMLElement} context  The HTML element id or reference to assign the trigger event to  // TODO  type
-		 * @param {String} type  The type of event to assign to context
+		 * @param {Object} obj  The DOM object to attach the trigger event to
+		 * @param {String} type  The event type
 		 */
-		addTrigger: function(context, type) {
-			if (! context || ! type) {
+		addTrigger: function(obj, type) {
+			if (! obj || ! type) {
 				return this;
 			}
 
@@ -153,7 +151,7 @@ YUI.add('imageloader', function(Y) {
 			var wrappedFetch = function() {
 				this.fetch();
 			};
-			this._triggers.push( Y.on(type, wrappedFetch, context, this) );
+			this._triggers.push( Y.on(type, wrappedFetch, obj, this) );
 
 			return this;
 		},
@@ -207,7 +205,7 @@ YUI.add('imageloader', function(Y) {
 		},
 
 		/**
-		 * Performs necessary setup after the window's onload  // TODO  onload? or domready?
+		 * Performs necessary setup at domready time
 		 * Initiates time limit for group; executes the fold check for the images
 		 * @method _onloadTasks
 		 * @private
@@ -237,8 +235,9 @@ YUI.add('imageloader', function(Y) {
 
 		/**
 		 * Registers an image with the group
+		 * Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribute documentation for this class for detailed information; "domId" is required
 		 * @method registerImage
-		 * // TODO  how to label params
+		 * @param  A configuration object literal with attribute name/value pairs
 		 * @return {Object} Y.ImgLoadImgObj that was registered
 		 */
 		registerImage: function() {
@@ -296,9 +295,9 @@ YUI.add('imageloader', function(Y) {
 		_foldCheck: function() {
 			Y.log('Checking for images above the fold in group: "' + this.get('name') + '"', 'info', 'imageloader');
 
-			var allFetched = true;
-			var viewReg = Y.DOM.viewportRegion();
-			var hLimit = viewReg.bottom + this.get('foldDistance');
+			var allFetched = true,
+			    viewReg = Y.DOM.viewportRegion(),
+			    hLimit = viewReg.bottom + this.get('foldDistance');
 
 			for (var id in this._imgObjs) {
 				if (this._imgObjs.hasOwnProperty(id)) {
@@ -471,8 +470,6 @@ YUI.add('imageloader', function(Y) {
 			value: 'true'
 		}
 
-		// TODO  could have a noYPosCache if we wanted...
-
 	};
 
 	var imgProto = {
@@ -501,7 +498,7 @@ YUI.add('imageloader', function(Y) {
 
 			/**
 			 * The vertical position returned from getY(), to avoid repeat calls to access the DOM
-			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load
+			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)
 			 *   and this caching enhancement assumes that the image's vertical position won't change after that first check
 			 * @property _yPos
 			 * @private
@@ -602,7 +599,6 @@ YUI.add('imageloader', function(Y) {
 
 
 	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
-
 
 
 
