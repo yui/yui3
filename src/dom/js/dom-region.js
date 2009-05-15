@@ -36,20 +36,16 @@ Y.mix(DOM, {
      @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
-        var x = DOM.getXY(node),
+        var xy = DOM.getXY(node),
             ret = false;
         
-        if (x) {
-            ret = {
-                '0': x[0],
-                '1': x[1],
-                top: x[1],
-                right: x[0] + node[OFFSET_WIDTH],
-                bottom: x[1] + node[OFFSET_HEIGHT],
-                left: x[0],
-                height: node[OFFSET_HEIGHT],
-                width: node[OFFSET_WIDTH]
-            };
+        if (node && xy) {
+            ret = DOM._getRegion(
+                xy[1], // top
+                xy[0] + node[OFFSET_WIDTH], // right
+                xy[1] + node[OFFSET_HEIGHT], // bottom
+                xy[0] // left
+            );
         }
 
         return ret;
@@ -139,6 +135,19 @@ Y.mix(DOM, {
             
     },
 
+    _getRegion: function(t, r, b, l) {
+        var region = {};
+
+        region[TOP] = region[1] = t;
+        region[LEFT] = region[0] = l;
+        region[BOTTOM] = b;
+        region[RIGHT] = r;
+        region.width = region[RIGHT] - region[LEFT];
+        region.height = region[BOTTOM] - region[TOP];
+
+        return region;
+    },
+
     /**
      * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
      * @method viewportRegion
@@ -146,12 +155,21 @@ Y.mix(DOM, {
      */
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
-        var r = {};
-        r[TOP] = DOM.docScrollY(node);
-        r[RIGHT] = DOM.winWidth(node) + DOM.docScrollX(node);
-        r[BOTTOM] = (DOM.docScrollY(node) + DOM.winHeight(node));
-        r[LEFT] = DOM.docScrollX(node);
+        var ret = false,
+            scrollX, scrollY;
 
-        return r;
+        if (node) {
+            scrollX = DOM.docScrollX(node);
+            scrollY = DOM.docScrollY(node);
+
+            ret = DOM._getRegion(
+                scrollY, // top
+                DOM.winWidth(node) + scrollX, // right
+                scrollY + DOM.winHeight(node), // bottom
+                scrollX // left
+            );
+        }
+
+        return ret;
     }
 });
