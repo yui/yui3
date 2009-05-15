@@ -1607,10 +1607,12 @@ ET.prototype = {
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
+            args  = Y.Array(arguments, 0, true);
+            args[0] = type;
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
                 Y.log('Using adaptor for ' + type, 'info', 'event');
-                return adapt.on.apply(Y, arguments);
+                handle = adapt.on.apply(Y, args);
             // check to see if the target is an Event.Target.  If so,
             // delegate to it (the Event.Target should handle whether
             // or not the prefix was included);
@@ -1618,19 +1620,19 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.attach.apply(Y.Event, arguments);
+            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+                handle = Y.Event.attach.apply(Y.Event, args);
             }
+        } else {
+
+            // Y.log('parts: ' + parts);
+            ce     = this._yuievt.events[type] || this.publish(type);
+            args   = Y.Array(arguments, 1, true);
+
+            f = (parts[2]) ? ce.after : ce.on;
+
+            handle = f.apply(ce, args);
         }
-
-        // Y.log('parts: ' + parts);
-
-        ce     = this._yuievt.events[type] || this.publish(type);
-        args   = Y.Array(arguments, 1, true);
-
-        f = (parts[2]) ? ce.after : ce.on;
-
-        handle = f.apply(ce, args);
 
         if (detachcategory) {
 
@@ -1674,7 +1676,7 @@ ET.prototype = {
 
         var parts = _parseType(this._yuievt.config.prefix, type), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
-        handle, adapt, store = Y.Env.evt.handles, cat,
+        handle, adapt, store = Y.Env.evt.handles, cat, args,
 
         evts = this._yuievt.events, ce, i, ret = true,
 
@@ -1718,12 +1720,14 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
+            args = Y.Array(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
-                return adapt.detach.apply(Y, arguments);
+                return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.detach.apply(Y.Event, arguments);
+            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+                args[0] = type;
+                return Y.Event.detach.apply(Y.Event, args);
             }
         }
 
