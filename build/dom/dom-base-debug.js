@@ -339,8 +339,13 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        doc = doc || Y.config.doc;
-        return Y.DOM.contains(doc.documentElement, element);
+        doc = doc || element[OWNER_DOCUMENT];
+        var id = element.id;
+        if (!id) { // TODO: remove when done?
+            id = element.id = Y.guid();
+        }
+
+        return !! (doc.getElementById(id));
     },
 
     /**
@@ -354,6 +359,9 @@ Y.DOM = {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
             Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
+        }
+        if (typeof newNode === 'string') {
+            newNode = DOM.create(newNode);
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
     },
