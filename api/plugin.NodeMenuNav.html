@@ -324,6 +324,68 @@ from poking through menus in IE 6.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterActiveDescendantChange">
+                                    <h4>
+                                        <a name="method__afterActiveDescendantChange">_afterActiveDescendantChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterActiveDescendantChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         menuNav
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "activeDescendantChange" event handler for menu's 
+Focus Manager.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the Attribute change event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuNav</span>
+                                                        &lt;<span property="yui:type">NodeMenuNav</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the NodeMenuNav instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__cancelHideSubmenuTimer">
                                     <h4>
                                         <a name="method__cancelHideSubmenuTimer">_cancelHideSubmenuTimer</a></h4>
@@ -689,6 +751,44 @@ menu should be focused and set as active.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__initFocusManager">
+                                    <h4>
+                                        <a name="method__initFocusManager">_initFocusManager</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_initFocusManager</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Initializes and updates the Focus Manager so that is is 
+always managing descendants of the active menu.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__isRoot">
                                     <h4>
                                         <a name="method__isRoot">_isRoot</a></h4>
@@ -732,6 +832,119 @@ root menu in the menu.
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">Boolean indicating if the specified menu is the root 
 menu in the menu.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onActiveDescendantChange">
+                                    <h4>
+                                        <a name="method__onActiveDescendantChange">_onActiveDescendantChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onActiveDescendantChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         menuNav
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "activeDescendantChange" event handler for menu's 
+Focus Manager.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the Attribute change event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuNav</span>
+                                                        &lt;<span property="yui:type">NodeMenuNav</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the NodeMenuNav instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onDocFocus">
+                                    <h4>
+                                        <a name="method__onDocFocus">_onDocFocus</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onDocFocus</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "focus" event handler for the owner document of the MenuNav.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -2032,6 +2245,7 @@ enabled for the menu.
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -2090,6 +2304,7 @@ enabled for the menu.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#method__afterActiveDescendantChange" title="_afterActiveDescendantChange">_afterActiveDescendantChange</a></li>
                                 <li class="protected"><a href="#method__cancelHideSubmenuTimer" title="_cancelHideSubmenuTimer">_cancelHideSubmenuTimer</a></li>
                                 <li class="protected"><a href="#method__cancelShowSubmenuTimer" title="_cancelShowSubmenuTimer">_cancelShowSubmenuTimer</a></li>
                                 <li class="protected"><a href="#method__clearActiveItem" title="_clearActiveItem">_clearActiveItem</a></li>
@@ -2098,7 +2313,10 @@ enabled for the menu.
                                 <li class="protected"><a href="#method__hideAllSubmenus" title="_hideAllSubmenus">_hideAllSubmenus</a></li>
                                 <li class="protected"><a href="#method__hideAndFocusLabel" title="_hideAndFocusLabel">_hideAndFocusLabel</a></li>
                                 <li class="protected"><a href="#method__hideMenu" title="_hideMenu">_hideMenu</a></li>
+                                <li class="protected"><a href="#method__initFocusManager" title="_initFocusManager">_initFocusManager</a></li>
                                 <li class="protected"><a href="#method__isRoot" title="_isRoot">_isRoot</a></li>
+                                <li class="protected"><a href="#method__onActiveDescendantChange" title="_onActiveDescendantChange">_onActiveDescendantChange</a></li>
+                                <li class="protected"><a href="#method__onDocFocus" title="_onDocFocus">_onDocFocus</a></li>
                                 <li class="protected"><a href="#method__onDocMouseDown" title="_onDocMouseDown">_onDocMouseDown</a></li>
                                 <li class="protected"><a href="#method__onHorizontalMenuKeyDown" title="_onHorizontalMenuKeyDown">_onHorizontalMenuKeyDown</a></li>
                                 <li class="protected"><a href="#method__onKeyDown" title="_onKeyDown">_onKeyDown</a></li>
@@ -2150,7 +2368,7 @@ enabled for the menu.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#config_autoSubmenuDisplay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplayChange", "url": "plugin.NodeMenuNav.html#event_autoSubmenuDisplayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAndFocusLabel", "url": "plugin.NodeMenuNav.html#method__hideAndFocusLabel", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelay", "url": "plugin.NodeMenuNav.html#config_mouseOutHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelayChange", "url": "plugin.NodeMenuNav.html#event_mouseOutHideDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelay", "url": "plugin.NodeMenuNav.html#config_submenuHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuHideDelayChange", "type": "event"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelay", "url": "plugin.NodeMenuNav.html#config_submenuShowDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuShowDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIA", "url": "plugin.NodeMenuNav.html#config_useARIA", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIAChange", "url": "plugin.NodeMenuNav.html#event_useARIAChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_afterActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#config_autoSubmenuDisplay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplayChange", "url": "plugin.NodeMenuNav.html#event_autoSubmenuDisplayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAndFocusLabel", "url": "plugin.NodeMenuNav.html#method__hideAndFocusLabel", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_initFocusManager", "url": "plugin.NodeMenuNav.html#method__initFocusManager", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelay", "url": "plugin.NodeMenuNav.html#config_mouseOutHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelayChange", "url": "plugin.NodeMenuNav.html#event_mouseOutHideDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__onActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocFocus", "url": "plugin.NodeMenuNav.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelay", "url": "plugin.NodeMenuNav.html#config_submenuHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuHideDelayChange", "type": "event"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelay", "url": "plugin.NodeMenuNav.html#config_submenuShowDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuShowDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIA", "url": "plugin.NodeMenuNav.html#config_useARIA", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIAChange", "url": "plugin.NodeMenuNav.html#event_useARIAChange", "type": "event"}];
 </script>
 </body>
 </html>

@@ -241,6 +241,16 @@ Node.ATTRS = {
         }
     },
 
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
     restricted: {
         writeOnce: true,
         value: false
@@ -320,11 +330,11 @@ Y.mix(Node.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args;
+        var args,
             ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0),
+            args = g_slice.call(arguments, 0);
             args.splice(2, 0, g_nodes[this[UID]]);
             ret = Y.Event.attach.apply(Y.Event, args);
         } else {
@@ -341,15 +351,28 @@ Y.mix(Node.prototype, {
      */
     detach: function(type, fn) {
         var args, ret = null;
-        if (Node.DOM_EVENTS[type]) {
+
+        // Added by apm: if this is a DOM event, dispatch to the event 
+        // system.  If the type is not supplied, do the same since 
+        // this is how detachAll works.  This means that Node may not 
+        // be able to support detachAll for both DOM events and custom events
+        // as implemented.  Detaching DOM events this way is a blocking
+        // issue for DD, so I changed it so that will work.  It is probably
+        // less important for custom events to work this way through this
+        // interface, but we need to review this.
+        if (!type || Node.DOM_EVENTS[type]) {
             args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
+            args[2] = g_nodes[this[UID]];
 
             ret = Y.Event.detach.apply(Y.Event, args);
         } else {
             ret = SuperConstrProto.detach.apply(this, arguments);
         }
         return ret;
+    },
+
+    detachAll: function(type) {
+        return this.detach(type);
     },
 
     get: function(attr) {
@@ -368,7 +391,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -490,8 +513,16 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
     remove: function() {
-        g_nodes[this[UID]].parentNode.removeChild();
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
         return this;
     },
 
@@ -500,11 +531,11 @@ Y.mix(Node.prototype, {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -513,8 +544,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
-        delete Node._instances[this[UID]];
+        var uid = this[UID];
+
+        delete g_nodes[uid];
+        delete g_restrict[uid];
+        delete Node._instances[uid];
     },
 
     /**
@@ -587,10 +621,10 @@ Y.mix(Node.prototype, {
     removeEventListener: function() {
         var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));

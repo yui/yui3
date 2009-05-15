@@ -13,6 +13,69 @@
 
 * Split base module up into base-base and base-build.
 
+* Added "Initialize on Demand" feature for ATTRS processing, which
+  removes order dependency when processing ATTRS for a particular class.
+
+  If a get call is made for an uninitialized attribute A, in the 
+  getter/setter/validator or valueFns of another attribute B, A will 
+  be intiailized on the fly and it's value returned. 
+
+  NOTE: This functionality only applies to attributes which are part of 
+  the same class' ATTRS configuration, since attributes from superclasses
+  will already have been configured based on the class hierarchy 
+  initialization.
+
+* Added ability to subscribe to on/after events through the constructor
+  config object, e.g.:
+  
+      new MyBaseObject({ 
+         on: {
+            init: handlerFn,
+            myAttrChange: handlerFn
+	 },
+	 after: {
+	    init: handlerFn,
+	    myAttrChange: handlerFn
+	 },
+	 ...
+	 
+      });
+
+* Developers can now over-ride the default clone behavior we use to
+  isolate default ATTRS config values, using cloneDefaultValue, e.g.:
+
+  ATTRS = {
+      myAttr : {
+      	value: AnObjectOrArrayReference
+	cloneDefaultValue: true|false|"deep"|"shallow"
+      }
+  }
+
+  If the cloneDefaultValue property is not defined, Base will clone
+  any Arrays or Object literals which are used as default values when
+  configuring attributes for an instance, so that updates to instance 
+  values do not modify the default value.
+
+  This behavior can be over-ridden using the cloneDefaultValue property:
+
+  true, deep: 
+
+     Use Y.clone to protect the default value.
+
+  shallow:
+
+     Use Y.merge, to protect the default value.
+
+  false:
+
+     Don't clone Arrays or Object literals. The value is intended
+     to be used by reference, for example, when it points to
+     a utility object.
+
+* Base.plug and Base.unplug used to add static Plugins (default plugins
+  for a class). Replaces static PLUGINS array, allowing subclasses to 
+  easily unplug static plugins added higher up in the hierarchy.
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"

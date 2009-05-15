@@ -1,4 +1,4 @@
-YUI.add('datatype-number', function(Y) {
+YUI.add('datatype-number-parse', function(Y) {
 
 /**
  * The DataType utility provides a set of utility functions to operate on native
@@ -6,25 +6,16 @@ YUI.add('datatype-number', function(Y) {
  *
  * @module datatype
  */
-var LANG = Y.Lang,
+var LANG = Y.Lang;
 
 /**
- * Number submodule.
+ * Parse number submodule.
  *
  * @class DataType.Number
+ * @submodule datatype-number-format
  * @static
  */
-Number = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.Number";
-    },
-
+Y.mix(Y.namespace("DataType.Number"), {
     /**
      * Converts data to type Number.
      *
@@ -42,8 +33,34 @@ Number = {
         else {
             return null;
         }
-    },
+    }
+});
 
+// Add Parsers shortcut
+Y.namespace("Parsers").number = Y.DataType.Number.parse;
+
+
+
+}, '@VERSION@' );
+
+YUI.add('datatype-number-format', function(Y) {
+
+/**
+ * The DataType utility provides a set of utility functions to operate on native
+ * JavaScript data types.
+ *
+ * @module datatype
+ */
+var LANG = Y.Lang;
+
+/**
+ * Format number submodule.
+ *
+ * @class DataType.Number
+ * @submodule datatype-number-format
+ * @static
+ */
+Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.
      *
@@ -54,7 +71,7 @@ Number = {
      *   <dt>prefix {String}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
      *   <dt>decimalPlaces {Number}</dd>
-     *   <dd>Number of decimal places to round.</dd>
+     *   <dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
      *   <dt>decimalSeparator {String}</dd>
      *   <dd>Decimal separator</dd>
      *   <dt>thousandsSeparator {String}</dd>
@@ -66,8 +83,6 @@ Number = {
      * return as "": null, undefined, NaN, "".
      */
     format: function(data, config) {
-        data = LANG.isNumber(data) ? data : Number.parse(data);
-
         if(LANG.isNumber(data)) {
             config = config || {};
 
@@ -80,7 +95,7 @@ Number = {
                 newOutput, count, i;
 
             // Decimal precision
-            if(LANG.isNumber(decPlaces)) {
+            if(LANG.isNumber(decPlaces) && (decPlaces >= 0) && (decPlaces <= 20)) {
                 // Round to the correct decimal place
                 output = data.toFixed(decPlaces);
             }
@@ -116,19 +131,21 @@ Number = {
 
             return output;
         }
-        // Still not a Number, just return unaltered
+        // Not a Number, just return as string
         else {
-            return data;
+            return data.toString();
         }
     }
-};
-
-Y.namespace("DataType").Number = Number;
-Y.namespace("Parsers").number = Number.parse;
+});
 
 
 
-}, '@VERSION@' ,{requires:['??']});
+}, '@VERSION@' );
+
+
+
+YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
+
 
 YUI.add('datatype-date', function(Y) {
 
@@ -298,7 +315,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {String} (Otional)</dt>
+	 *   <dt>format {String} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
@@ -362,7 +379,7 @@ var Dt = {
 	 *  <dt>locale {String} (Optional)</dt>
 	 *  <dd>
 	 *   The locale to use when displaying days of week, months of the year, and other locale specific
-	 *   strings. If not specified, this defaults to "en" which may be overridden by changing Y.config.locale.
+	 *   strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
 	 *   The following locales are built in:
 	 *   <dl>
 	 *    <dt>en</dt>
@@ -422,7 +439,7 @@ var Dt = {
 				case "array":					// built in function with padding
 					if(Y.Lang.type(f[0]) === "string") {
 						return xPad(oDate[f[0]](), f[1]);
-					} // else fall through to default:
+					} // no break; (fall through to default:)
 				default:
 					return m1;
 			}
@@ -445,9 +462,9 @@ var Dt = {
 Y.namespace("DataType").Date=Dt;
 
 /**
- * The Date.Locale class is a container and base class for all
- * localised date strings used by Y.DataType.Date. It is used
- * internally, but may be extended to provide new date localisations.
+ * The Date.Locale class is a container for all localised date strings
+ * used by Y.DataType.Date. It is used internally, but may be extended
+ * to provide new date localisations.
  *
  * To create your own Locale, follow these steps:
  * <ol>
@@ -543,7 +560,7 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 }, '@VERSION@' );
 
-YUI.add('datatype-xml', function(Y) {
+YUI.add('datatype-xml-parse', function(Y) {
 
 /**
  * The DataType utility provides a set of utility functions to operate on native
@@ -551,25 +568,17 @@ YUI.add('datatype-xml', function(Y) {
  *
  * @module datatype
  */
-var LANG = Y.Lang,
+var LANG = Y.Lang;
 
 /**
- * XML submodule.
+ * Parse XML submodule.
  *
  * @class DataType.XML
+ * @submodule datatype-xml-parse
  * @static
  */
-XML = {
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataType.XML";
-    },
-
+ 
+Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
      *
@@ -594,20 +603,77 @@ XML = {
                             xmlDoc.loadXML(data);
                     }
                 }
-                catch(e) {
+                catch(ee) {
                 }
             }
         }
+        
+        if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
+        }
+        
         return xmlDoc;
     }
-};
+});
 
-Y.namespace("DataType").XML = XML;
-Y.namespace("Parsers").xml = XML.parse;
+// Add Parsers shortcut
+Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
-}, '@VERSION@' ,{requires:['??']});
+}, '@VERSION@' );
+
+YUI.add('datatype-xml-format', function(Y) {
+
+/**
+ * The DataType utility provides a set of utility functions to operate on native
+ * JavaScript data types.
+ *
+ * @module datatype
+ */
+var LANG = Y.Lang;
+
+/**
+ * Format XML submodule.
+ *
+ * @class DataType.XML
+ * @submodule datatype-xml-format
+ * @static
+ */
+Y.mix(Y.namespace("DataType.XML"), {
+    /**
+     * Converts data to type XMLDocument.
+     *
+     * @method format
+     * @param data {XMLDoc} Data to convert.
+     * @return {String} String.
+     * @static
+     */
+    format: function(data) {
+        try {
+            if(!LANG.isUndefined(XMLSerializer)) {
+                return (new XMLSerializer()).serializeToString(data);
+            }
+        }
+        catch(e) {
+            if(data.xml) {
+                return data.xml;
+            }
+            else {
+                return data.toString();
+            }
+        }
+    }
+});
+
+
+
+
+}, '@VERSION@' );
+
+
+
+YUI.add('datatype-xml', function(Y){}, '@VERSION@' ,{use:['datatype-xml-parse', 'datatype-xml-format']});
+
 
 
 

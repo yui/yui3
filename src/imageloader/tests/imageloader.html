@@ -19,6 +19,7 @@
 .fold-bottom { position:absolute; top:500px; left:420px; height:75px; width:100px; }
 .customTrigger { position:absolute; top:250px; left:420px; height:67px; width:100px; }
 .customTrigger2 { position:absolute; top:250px; left:550px; height:67px; width:100px; }
+.time { position:absolute; top:130px; left:550px; height:75px; width:100px; }
 
 .yui-imgload { background:none !important; }
 </style>
@@ -53,6 +54,9 @@
 	</div>
 	<div class='customTrigger' id='customTrigger'></div>
 	<div class='customTrigger2' id='customTrigger2'></div>
+	<div class='time'>
+		<img id='timeImg' />
+	</div>
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
@@ -329,6 +333,37 @@ var foldConditionalTestCase = new Y.Test.Case({
 
 });
 
+var timeLimitTestCase = new Y.Test.Case({
+	/*
+	 * Test case for checking the time limit functionality of a group
+	 */
+	
+	name: 'time limit test',
+
+	setUp: function() {
+		this.timeLimit = .5;
+		this.imageUrl = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg';
+		this.timeGroup = new Y.ImgLoadGroup({ name: 'timeLimitGroup', timeLimit: this.timeLimit });
+		this.timeGroup.registerImage({ domId: 'timeImg', srcUrl: this.imageUrl });
+		this.timeGroupImg = document.getElementById('timeImg');
+	},
+
+	testTimeLimit: function() {
+		/* Note on timing:
+		 *   The TestRunner is started at domready
+		 *   During this test case, the timeGroup is created, which attaches the timer-starting JS to domready
+		 *   Meaning the following wait() call is executed before the group timer starts
+		 *   It's hard to guarantee how long after the wait() call the timer actually starts,
+		 *   but hopefully a half second is plenty of time
+		 * Y.log('About to start wait()ing in test case');
+		 */
+		this.wait(function() {
+			Y.Assert.areEqual(this.timeGroupImg.src, this.imageUrl);
+		}, (this.timeLimit + .5) * 1000);  // check starting, at minimum, a half second after timeLimit
+	}
+
+});
+
 
 var imageLoaderTestSuite = new Y.Test.Suite('YUI ImageLoader Utility');
 imageLoaderTestSuite.add(bgImgUrlTestCase);
@@ -340,9 +375,11 @@ imageLoaderTestSuite.add(localInstanceCustomTriggerTestCase);
 imageLoaderTestSuite.add(imgSizingTestCase);
 imageLoaderTestSuite.add(triggerRemovalTestCase);
 imageLoaderTestSuite.add(foldConditionalTestCase);
+imageLoaderTestSuite.add(timeLimitTestCase);
 
 Y.Test.Runner.add(imageLoaderTestSuite);
 
+// note, image group onload tasks, such as starting the time limit timer, are set up at domready time, meaning the timeLimit test can be affected by when the TestRunner starts
 Y.on('domready', function() {
 	Y.Test.Runner.run();
 });

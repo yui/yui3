@@ -5,6 +5,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -169,12 +170,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];

@@ -76,15 +76,18 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(all, $('#root-test li'), 'document');
                 ArrayAssert.itemsAreEqual([], $('#root-tes li', Y.DOM.byId('demo')), 'false id document');
 
+                ArrayAssert.itemsAreEqual($('a, a span', Y.DOM.byId('mod1')),
+                    $('a span, a', Y.DOM.byId('mod1')),
+                    "$('a, a span') === $('a span, a')"); 
+
+                var node = document.createElement('div');
+                node.innerHTML = '<li><em>foo</em></li>';
+                Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
+                Assert.isNull($('div li em', node, true), 'off-dom: div li em');
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 
-                /* no longer supporting string input for element
-                ArrayAssert.itemsAreEqual([], $('li', 'nth-tes'), 'id as root false pos');
-                ArrayAssert.itemsAreEqual(all, $('li', Y.Dom.get('nth-test')), 'node as root');
-                ArrayAssert.itemsAreEqual(all, $('#nth-test li', Y.Dom.get('root-test')), 'id selector w/root node ref');
-                Assert.areEqual(all[0], $('#nth-test li', 'root-test', true), 'id selector w/root string, firstOnly');
-                */
                 // based on non-standard behavior
                 ArrayAssert.itemsAreEqual([], $('body p', document.body), "$('body p', document.body)");
                 ArrayAssert.itemsAreEqual([], $('#root-test li', Y.Dom.get('nth-test')), 'id selector w/root false pos');
@@ -178,7 +181,9 @@ onload = function() {
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $('div[rel^=foo2]', null, true), "($('[rel^=foo2]), null, true)");
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $("div[rel^='foo2']", null, true), "($('[rel^=\'foo2\']), null, true)");
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
+
             }
+
         });
 
         var simpleTest = new YAHOO.tool.TestCase({
@@ -348,6 +353,12 @@ onload = function() {
         <input type="button" value="foo">
         <input id="foo-bar" name="foo.bar" class="not-button">
     </form>
+
+    <div id="mod1">
+            <div><h3>H3 - Title</h3></div>
+            <div><p>lorem ipsum dolor sit <a href="#"><span>link</span></a></p></div>
+    </div>
+
     <div class="Bar" id="class-bar"></div>
     <div id="contains-special">contains "' & ]</div>
     <div id="test-rel-div" rel="foo2"></div>

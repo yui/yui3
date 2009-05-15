@@ -10,21 +10,21 @@
      * @namespace Test
      * @class Reporter
      */
-    Y.Test.Reporter = function(url /*:String*/, format /*:Function*/) {
+    Y.Test.Reporter = function(url, format) {
     
         /**
          * The URL to submit the data to.
          * @type String
          * @property url
          */
-        this.url /*:String*/ = url;
+        this.url = url;
     
         /**
          * The formatting function to call when submitting the data.
          * @type Function
          * @property format
          */
-        this.format /*:Function*/ = format || Y.Test.Format.XML;
+        this.format = format || Y.Test.Format.XML;
     
         /**
          * Extra fields to submit with the request.
@@ -32,7 +32,7 @@
          * @property _fields
          * @private
          */
-        this._fields /*:Object*/ = new Object();
+        this._fields = new Object();
         
         /**
          * The form element used to submit the results.
@@ -40,7 +40,7 @@
          * @property _form
          * @private
          */
-        this._form /*:HTMLElement*/ = null;
+        this._form = null;
     
         /**
          * Iframe used as a target for form submission.
@@ -48,7 +48,7 @@
          * @property _iframe
          * @private
          */
-        this._iframe /*:HTMLElement*/ = null;
+        this._iframe = null;
     };
     
     Y.Test.Reporter.prototype = {
@@ -63,7 +63,7 @@
          * @return {Void}
          * @method addField
          */
-        addField : function (name /*:String*/, value /*:Variant*/) /*:Void*/{
+        addField : function (name, value){
             this._fields[name] = value;    
         },
         
@@ -72,7 +72,7 @@
          * @return {Void}
          * @method addField
          */
-        clearFields : function() /*:Void*/{
+        clearFields : function(){
             this._fields = new Object();
         },
     
@@ -82,7 +82,7 @@
          * @return {Void}
          * @method destroy
          */
-        destroy : function() /*:Void*/ {
+        destroy : function() {
             if (this._form){
                 this._form.parentNode.removeChild(this._form);
                 this._form = null;
@@ -100,7 +100,7 @@
          * @return {Void}
          * @method report
          */
-        report : function(results /*:Object*/) /*:Void*/{
+        report : function(results){
         
             //if the form hasn't been created yet, create it
             if (!this._form){

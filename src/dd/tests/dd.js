@@ -13,6 +13,7 @@ moveCount = 728;
 
 YUI({
     base: '../../../build/',
+    //filter: 'DEBUG',
     logExclude: {
         'YUI': true,
         Event: true,
@@ -26,8 +27,7 @@ YUI({
             height: Y.get(window).get('winHeight') + 'px'
         }).render();    
             
-
-        _fakeMove = function(node, max) {
+        _fakeStart = function(node) {
             _resetCount();
             Y.DD.DDM._noShim = true;
             node._dragThreshMet = true;
@@ -36,13 +36,30 @@ YUI({
             Y.DD.DDM.activeDrag = node;
             Y.DD.DDM._start();
             node.start();
-            for (var i = 0; i < max; i++) {
-                Y.DD.DDM._move({ pageX: i, pageY: 110 });
-            }
+        }
+        _fakeEnd = function(node) {
             Y.DD.DDM._end();
             node.end();
             node._handleMouseUp();
             Y.DD.DDM._noShim = false;
+        }
+
+        _fakeMove = function(node, max, flip) {
+            _fakeStart(node);
+            _moveNodeAll(node, max, flip);
+            _fakeEnd(node);
+        }
+        _moveNode = function(node, num, flip) {
+            if (flip) {
+                Y.DD.DDM._move({ pageX: 110, pageY: num });
+            } else {
+                Y.DD.DDM._move({ pageX: num, pageY: 110 });
+            }
+        }
+        _moveNodeAll = function(node, max, flip) {
+            for (var i = 0; i < max; i++) {
+                _moveNode(node, i, flip);
+            }
         };
 
         _count = {};
@@ -70,7 +87,7 @@ YUI({
         
         tearDown : function() {
         },
-        
+        /*
         test_shim: function() {
             var s = Y.DD.DDM._pg;
             Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
@@ -171,7 +188,7 @@ YUI({
             Y.Assert.isFalse(drop.get('node').hasClass('yui-dd-drop'), 'Drop: Drop Instance NO ClassName');
             Y.Assert.isTrue(drop.get('destroyed'), 'Drop: Destroyed Attribute');
         },
-        /*
+        
         test_constrain_node_setup: function() {
             Y.Node.get('#drag').setStyles({ top: '10px', left: '950px' });
             dd = new Y.DD.Drag({
@@ -197,10 +214,12 @@ YUI({
         test_constrain_view_setup: function() {
             Y.Node.get('#drag').setStyles({ top: '-150px', left: '200px' });
             dd = new Y.DD.Drag({
-                node: '#drag',
+                node: '#drag'
+            }).plug(Y.plugin.DDConstrained, {
                 constrain2view: true
             });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_view_move: function() {
@@ -212,8 +231,65 @@ YUI({
             Y.Assert.isFalse(inRegion_before, 'Drag Node is in the viewport');
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
             dd.destroy();
-        }
+        },
         */
+        test_window_scroll: function() {
+            Y.get('body').setStyle('height', '3000px');
+            Y.Node.get('#drag').setStyles({ top: '', left: '' });
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.plugin.DDWinScroll);
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
+
+            Y.get(window).set('scrollTop', 0);
+            Y.get(window).set('scrollLeft', 0);
+            _fakeStart(dd);
+            var self = this,
+            winHeight = Y.get(window).get('winHeight'),
+            i = (winHeight - dd.get('node').get('offsetHeight') - 100),
+            wait = function() {
+                if (i < (Y.get(window).get('winHeight') - 30)) {
+                    _moveNode(dd, i, true);
+                    i++;
+                    self.wait.call(self, wait, 0);
+                } else {
+                    self.wait.call(self, function() {
+                        _fakeEnd(dd);
+                        Y.Assert.isTrue((Y.get(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
+                        dd.destroy();
+                    }, 1500);
+                }
+            };
+            this.wait(wait, 0);
+        },
+
+
+
+
+
+
+        test_node_scroll: function() {
+            Y.get('body').setStyle('height', '');
+            Y.get('#drag').setStyles({ top: '', left: '' });
+            Y.get('#drop').setStyle('height', '900px');
+            Y.get('#wrap').setStyle('overflow', 'auto');
+
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.plugin.DDNodeScroll, {
+                node: '#wrap'
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
+
+
+
+
+            //After
+            //Y.get('#drop').setStyle('height', '');
+            //Y.get('#wrap').setStyle('overflow', '');
+        }
     };
     
     Y.Test.Runner.clear();

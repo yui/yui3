@@ -339,8 +339,13 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        doc = doc || Y.config.doc;
-        return Y.DOM.contains(doc.documentElement, element);
+        doc = doc || element[OWNER_DOCUMENT];
+        var id = element.id;
+        if (!id) { // TODO: remove when done?
+            id = element.id = Y.guid();
+        }
+
+        return !! (doc.getElementById(id));
     },
 
     /**
@@ -352,8 +357,11 @@ Y.DOM = {
      */
     insertBefore: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
+        }
+        if (typeof newNode === 'string') {
+            newNode = DOM.create(newNode);
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
     },
@@ -367,7 +375,7 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
 
@@ -383,15 +391,15 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * @param {Boolean} execScripts Whether or not any provided scripts should be executed.
      * If execScripts is false, all scripts are stripped.
      */
-    create: function(html, doc, execScripts) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
             custom = Y.DOM.creators,
-            tag, node;
+            ret = null,
+            tag, nodes;
 
         if (m && custom[m[1]]) {
             if (typeof custom[m[1]] === 'function') {
@@ -401,9 +409,18 @@ Y.DOM = {
             }
         }
 
-        node = create(html, doc, tag);
+        nodes = create(html, doc, tag).childNodes;
 
-        return node;
+        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+            ret = nodes[0].parentNode.removeChild(nodes[0]);
+        } else { // return multiple nodes as a fragment
+            ret = doc.createDocumentFragment();
+            while (nodes[LENGTH]) {
+                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            }
+        }
+
+        return ret;
     },
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
@@ -440,12 +457,8 @@ Y.DOM = {
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
-                ret = el.getAttributeNode(attr);
-                ret = ret ? ret.value : '';
-            } else {
-                ret = el.getAttribute(attr, 2);
-            }
+            ret = el.getAttribute(attr, 2);
+
             if (ret === null) {
                 ret = ''; // per DOM spec
             }
@@ -471,7 +484,7 @@ Y.DOM = {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
         frag.innerHTML = Y.Lang.trim(html);
-        return frag.removeChild(frag[FIRST_CHILD]);
+        return frag;
     },
 
     insertHTML: function(node, content, where, execScripts) {
@@ -508,6 +521,41 @@ Y.DOM = {
         }
 
         return newNode;
+    },
+
+    VALUE_SETTERS: {},
+
+    VALUE_GETTERS: {},
+
+    getValue: function(node) {
+        var ret = '', // TODO: return null?
+            getter;
+
+        if (node && node[TAG_NAME]) {
+            getter = Y.DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (getter) {
+                ret = getter(node);
+            } else {
+                ret = node.value;
+            }
+        }
+
+        return (typeof ret === 'string') ? ret : '';
+    },
+
+    setValue: function(node, val) {
+        var setter;
+
+        if (node && node[TAG_NAME]) {
+            setter = Y.DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (setter) {
+                setter(node, val);
+            } else {
+                node.value = val;
+            }
+        }
     },
 
     _stripScripts: function(node) {
@@ -667,23 +715,19 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
         Y.mix(creators, {
             option: function(html, doc) {
-                var frag = create('<select>' + html + '</select>');
-                return frag[FIRST_CHILD];
+                return create('<select>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {
-                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tbody>' + html + '</tbody>', doc);
             },
 
             td: function(html, doc) {
-                var frag = creators.tr('<tr>' + html + '</tr>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tr>' + html + '</tr>', doc);
             }, 
 
             tbody: function(html, doc) {
-                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-                return frag[FIRST_CHILD];
+                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
             },
 
             legend: 'fieldset'
@@ -693,16 +737,15 @@ Y.DOM = {
     }
 
     if (Y.UA.ie) {
-        creators.col = creators.link = Y.DOM._IESimpleCreate;
-
         Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
+            // IE adds TBODY when creating TABLE elements (which may share this impl)
             tbody: function(html, doc) {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
                 if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
-                    tb[PARENT_NODE].removeChild(tb);
+                    tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
             },
@@ -711,11 +754,30 @@ Y.DOM = {
                 var frag = doc.createElement('div');
 
                 frag.innerHTML = '-' + html;
-                return frag.removeChild(frag[FIRST_CHILD][NEXT_SIBLING]);
+                frag.removeChild(frag[FIRST_CHILD]);
+                return frag;
             }
 
+        }, true);
+
+        Y.mix(Y.DOM.VALUE_GETTERS, {
+            button: function(node) {
+                return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
+            }
         });
 
+        Y.mix(Y.DOM.VALUE_SETTERS, {
+            // IE: node.value changes the button text, which should be handled via innerHTML
+            button: function(node, val) {
+                var attr = node.attributes['value'];
+                if (!attr) {
+                    attr = node[OWNER_DOCUMENT].createAttribute('value');
+                    node.setAttributeNode(attr);
+                }
+
+                attr.value = val;
+            }
+        });
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -729,6 +791,29 @@ Y.DOM = {
                 optgroup: creators.option
         });
     }
+
+    Y.mix(Y.DOM.VALUE_GETTERS, {
+        option: function(node) {
+            var attrs = node.attributes;
+            return (attrs.value && attrs.value.specified) ? node.value : node.text;
+        },
+
+        select: function(node) {
+            var val = node.value,
+                options = node.options,
+                i, opt;
+
+            if (options && val === '') {
+                if (node.multiple) {
+                    Y.log('multiple select normalization not implemented', 'warn', 'DOM');
+                } else {
+                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                }
+            }
+
+            return val;
+        }
+    });
 })();
 /** 
  * The DOM utility provides a cross-browser abtraction layer

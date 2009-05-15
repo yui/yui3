@@ -50,13 +50,8 @@
 
                     </h3>
                     <div class="description summary">
-                        Mechanism for executing a series of callbacks in sequential order.  Supports
-simple synchronous queueing as well as queuing callbacks across setTimeout.
-Callback iteration, specifying context and callback arguments, retrieval,
-removal, and promotion of queued callbacks.
-Pass in a configuration object with the same keys as a callback object (see
-the add method) to set the default values for those keys on all callbacks
-added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
+                        Remaps functionality to preventable events, adds support for scheduling
+callbacks to execute asynchronously, as well as iterative callbacks.
                     </div>
 
 
@@ -66,7 +61,7 @@ added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Mechanism to execute a series of callbacks in sequence.\nCallbacks can be function references or object literals with the following\nkeys:\n<dl>\n<dt>fn<\/dt>\n<dd>{Function} REQUIRED the callback function.<\/dd>\n<dt>context<\/dt>\n<dd>{Object} the desired execution context of the callback function<\/dd>\n<dt>args<\/dt>\n<dd>{Array} list of arguments to pass to the callback function<\/dd>\n<\/dl>", "guessedname": "Queue", "name": "Queue"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "A simple FIFO queue of function references.", "guessedname": "Queue", "name": "Queue"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -78,30 +73,13 @@ added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code>
                                     <div class="submodules">
                                         <h4>Submodules:</h4> 
                                         <dl>
-                                            <dt><code><a href="Queue.html" title="queue-full">queue-full</a></code></dt>
-                                            <dd>Mechanism for executing a series of callbacks in sequential order.  Supports
-simple synchronous queueing as well as queuing callbacks across setTimeout.
-Callback iteration, specifying context and callback arguments, retrieval,
-removal, and promotion of queued callbacks.
-Pass in a configuration object with the same keys as a callback object (see
-the add method) to set the default values for those keys on all callbacks
-added to this Queue. E.g. <code>Y.Queue({ timeout : 50 });</code></dd>
-                                            <dt><code><a href="Queue.html" title="queue-io">queue-io</a></code></dt>
-                                            <dd>Adds support for callback configuration key <code>pauseForIOResponse</code>.
-This will trigger the Queue to pause until all Y.io requests issued from
-inside the callback have received a response.</dd>
+                                            <dt><code><a href="Queue.html" title="queue-run">queue-run</a></code></dt>
+                                            <dd>Remaps functionality to preventable events, adds support for scheduling
+callbacks to execute asynchronously, as well as iterative callbacks.</dd>
+                                            <dt><code><a href="Queue.html" title="queue-promote">queue-promote</a></code></dt>
+                                            <dd>Adds methods promote and remove to Queue instances</dd>
                                             <dt><code><a href="Queue.html" title="queue-base">queue-base</a></code></dt>
-                                            <dd>Mechanism to execute a series of callbacks in sequence.
-Callbacks can be function references or object literals with the following
-keys:
-<dl>
-<dt>fn</dt>
-<dd>{Function} REQUIRED the callback function.</dd>
-<dt>context</dt>
-<dd>{Object} the desired execution context of the callback function</dd>
-<dt>args</dt>
-<dd>{Array} list of arguments to pass to the callback function</dd>
-</dl></dd>
+                                            <dd>A simple FIFO queue of function references.</dd>
                                         </dl>
                                     </div>
 
@@ -132,6 +110,7 @@ keys:
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -165,8 +144,8 @@ keys:
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
-                                <li class=""><a href="queue-full.js.html" title="queue-full.js">queue-full.js</a></li>
-                                <li class=""><a href="queue-io.js.html" title="queue-io.js">queue-io.js</a></li>
+                                <li class=""><a href="queue-promote.js.html" title="queue-promote.js">queue-promote.js</a></li>
+                                <li class=""><a href="queue-run.js.html" title="queue-run.js">queue-run.js</a></li>
                         </ul>
                     </div>
 
@@ -183,7 +162,7 @@ keys:
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "active", "url": "Queue.html#property_active", "type": "property"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "addCallback", "url": "Queue.html#event_addCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_bindIOListeners", "url": "Queue.html#method__bindIOListeners", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "protected", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOListeners", "url": "Queue.html#method__detachIOListeners", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_detachIOStartListener", "url": "Queue.html#method__detachIOStartListener", "type": "method"}, {"access": "", "host": "Queue", "name": "executeCallback", "url": "Queue.html#event_executeCallback", "type": "event"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioAbortSub", "url": "Queue.html#property__ioAbortSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioEndHandler", "url": "Queue.html#method__ioEndHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioFailureSub", "url": "Queue.html#property__ioFailureSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioStartHandler", "url": "Queue.html#method__ioStartHandler", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_ioStartSub", "url": "Queue.html#property__ioStartSub", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_ioSuccessSub", "url": "Queue.html#property__ioSuccessSub", "type": "property"}, {"access": "", "host": "Queue", "name": "isReady", "url": "Queue.html#method_isReady", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#event_pause", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_prepareCallback", "url": "Queue.html#method__prepareCallback", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processAsync", "url": "Queue.html#method__processAsync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_processSync", "url": "Queue.html#method__processSync", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_promote", "url": "Queue.html#method__promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "", "host": "Queue", "name": "shiftCallback", "url": "Queue.html#event_shiftCallback", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_shiftSub", "url": "Queue.html#property__shiftSub", "type": "property"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#event_stop", "type": "event"}, {"access": "protected", "host": "Queue", "name": "_tId", "url": "Queue.html#property__tId", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_waiting", "url": "Queue.html#property__waiting", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "", "host": "Queue", "name": "_defAddFn", "url": "Queue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defPromoteFn", "url": "Queue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defRemoveFn", "url": "Queue.html#method__defRemoveFn", "type": "method"}, {"access": "", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_execute", "url": "Queue.html#method__execute", "type": "method"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_initEvents", "url": "Queue.html#method__initEvents", "type": "method"}, {"access": "", "host": "Queue", "name": "isRunning", "url": "Queue.html#method_isRunning", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_prepare", "url": "Queue.html#method__prepare", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_running", "url": "Queue.html#property__running", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_schedule", "url": "Queue.html#method__schedule", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>

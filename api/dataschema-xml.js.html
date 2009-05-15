@@ -91,7 +91,7 @@
         <span class="k">var</span> <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
             <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
 
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">xmldoc</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="nx">xmldoc</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// Parse results data</span>
 <span class="c"></span>            <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">xmldoc</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
 
@@ -235,6 +235,7 @@
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

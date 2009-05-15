@@ -58,6 +58,7 @@
  * </pre>
  *
  *  </li>
+ *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
  *  <li>ignore:
@@ -67,7 +68,9 @@
  *  <li>insertBefore:
  *  Node or id for a node that should be used as the insertion point for new nodes</li>
  *  <li>charset:
- *  charset for dynamic nodes</li>
+ *  charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)</li>
+ *  <li>jsAttributes: object literal containing attributes to add to script nodes</li>
+ *  <li>cssAttributes: object literal containing attributes to add to link nodes</li>
  *  <li>timeout:
  *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
  *  <li>context:
@@ -115,31 +118,52 @@
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 
-var BASE = 'base', 
+/**
+ * Global loader queue
+ * @property _loaderQueue
+ * @type Queue
+ * @private
+ * @for YUI.Env
+ */
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
+
+var GLOBAL_ENV = YUI.Env,
+    GLOBAL_LOADED,
+    BASE = 'base', 
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
     CSSFONTS = 'cssfonts',
     CSSGRIDS = 'cssgrids',
-    CSSBASE = 'cssbase',
+    CSSBASE  = 'cssbase',
     CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
-    VERSION = '@VERSION@',
+    VERSION = Y.version,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
-    YUIBASE = 'yui-base',
 
+    ANIMBASE = 'anim-base',
+    DDDRAG = 'dd-drag',
+    DOM = 'dom',
+    DATASCHEMABASE = 'dataschema-base',
+    DATASOURCELOCAL = 'datasource-local',
+    DOMBASE = 'dom-base',
+    DOMSTYLE = 'dom-style',
+    DUMP = 'dump',
     GET = 'get',
-
     EVENT = 'event',
-
     EVENTCUSTOM = 'event-custom',
-
+    IOBASE = 'io-base',
     NODE = 'node',
-
+    NODEBASE = 'node-base',
     OOP = 'oop',
+    SELECTOR = 'selector',
+    SUBSTITUTE = 'substitute',
+    WIDGET = 'widget',
+    WIDGETPOSITION = 'widget-position',
+    YUIBASE = 'yui-base',
 
 	PLUGIN = 'plugin',
 
@@ -157,7 +181,6 @@ var BASE = 'base',
         defaultSkin: 'sam',
         base: 'assets/skins/',
         path: 'skin.css',
-        // after: ['reset', 'fonts', 'grids', 'base']
         after: CSS_AFTER
         //rollup: 3
     },
@@ -165,57 +188,58 @@ var BASE = 'base',
     modules: {
 
        dom: {
-            requires: [EVENT],
+            requires: [OOP],
             submodules: {
 
                 'dom-base': {
-                    requires: [EVENT]
+                    requires: [OOP]
                 },
 
                 'dom-style': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'dom-screen': {
-                    requires: ['dom-base', 'dom-style']
+                    requires: [DOMBASE, DOMSTYLE]
                 },
 
                 selector: {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 },
 
                 'selector-native': {
-                    requires: ['dom-base']
+                    requires: [DOMBASE]
                 }
             },
 
             plugins: {
                 'selector-css3': {
-                    requires: ['selector']
+                    requires: [SELECTOR]
                 }
             }
         },
 
         node: {
-            requires: ['dom', BASE],
+            requires: [DOM, BASE],
+            expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: ['dom-base', BASE, 'selector']
+                    requires: [DOMBASE, BASE, SELECTOR]
                 },
 
                 'node-style': {
-                    requires: ['dom-style', 'node-base']
+                    requires: [DOMSTYLE, NODEBASE]
                 },
 
                 'node-screen': {
-                    requires: ['dom-screen', 'node-base']
+                    requires: ['dom-screen', NODEBASE]
                 }
             },
 
             plugins: {
                 'node-event-simulate': {
-                    requires: ['node-base', 'event-simulate']
+                    requires: [NODEBASE, 'event-simulate']
                 }
             }
         },
@@ -229,7 +253,7 @@ var BASE = 'base',
                 },
 
                 'anim-color': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-curve': {
@@ -237,19 +261,19 @@ var BASE = 'base',
                 },
 
                 'anim-easing': {
-                    requires: [YUIBASE]
+                    requires: [ANIMBASE]
                 },
 
                 'anim-scroll': {
-                    requires: ['anim-base']
+                    requires: [ANIMBASE]
                 },
 
                 'anim-xy': {
-                    requires: ['anim-base', 'node-screen']
+                    requires: [ANIMBASE, 'node-screen']
                 },
 
                 'anim-node-plugin': {
-                     requires: [NODE, 'anim-base']
+                     requires: [NODE, ANIMBASE]
                 }
             }
         },
@@ -259,11 +283,24 @@ var BASE = 'base',
         },
 
         base: {
-            requires: ['attribute']
+            submodules: {
+
+                'base-base': {
+                    requires: ['attribute']
+                },
+
+                'base-build': {
+                    requires: ['base-base']
+                }
+            }
+        },
+
+        cache: { 
+            requires: [PLUGIN]
         },
         
         compat: { 
-            requires: [NODE, 'dump', 'substitute']
+            requires: [NODE, DUMP, SUBSTITUTE]
         },
 
         classnamemanager: { 
@@ -275,7 +312,7 @@ var BASE = 'base',
         },
 
         console: {
-            requires: ['widget', 'substitute'],
+            requires: [WIDGET, SUBSTITUTE],
             skinnable: true
         },
         
@@ -283,15 +320,74 @@ var BASE = 'base',
             requires: [YUIBASE]
         },
 
-        // Note: CSS attributes are modified programmatically to reduce metadata size
-        // cssbase: {
-        //     after: CSS_AFTER
-        // },
+        dataschema:{
+            submodules: {
+                'dataschema-base': {
+                    requires: [BASE]
+                },
+                'dataschema-array': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-json': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-text': {
+                    requires: [DATASCHEMABASE]
+                },
+                'dataschema-xml': {
+                    requires: [DATASCHEMABASE]
+                }
+            }
+        },
 
-        // cssgrids: {
-        //     requires: [CSSFONTS],
-        //     optional: [CSSRESET]
-        // },
+        datasource:{
+            submodules: {
+                'datasource-local': {
+                    requires: [BASE]
+                },
+                'datasource-arrayschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-array']
+                },
+                'datasource-cache': {
+                    requires: [DATASOURCELOCAL, 'cache']
+                },
+                'datasource-function': {
+                    requires: [DATASOURCELOCAL]
+                },
+                'datasource-jsonschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-json']
+                },
+                'datasource-polling': {
+                    requires: [DATASOURCELOCAL]
+                },
+                'datasource-scriptnode': {
+                    requires: [DATASOURCELOCAL, GET]
+                },
+                'datasource-textschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
+                },
+                'datasource-xhr': {
+                    requires: [DATASOURCELOCAL, IOBASE]
+                },
+                'datasource-xmlschema': {
+                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-xml']
+                }
+            }
+        },
+
+        datatype:{
+            submodules: {
+                'datatype-date': {
+                    requires: [YUIBASE]
+                },
+                'datatype-number': {
+                    requires: [YUIBASE]
+                },
+                'datatype-xml': {
+                    requires: [YUIBASE]
+                }
+            }
+        },
 
         dd:{
             submodules: {
@@ -311,16 +407,16 @@ var BASE = 'base',
                     requires: ['dd-ddm-drop']
                 }, 
                 'dd-proxy':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-constrain':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-scroll':{
-                    requires: ['dd-drag']
+                    requires: [DDDRAG]
                 }, 
                 'dd-plugin':{
-                    requires: ['dd-drag'],
+                    requires: [DDDRAG],
                     optional: ['dd-constrain', 'dd-proxy']
                 },
                 'dd-drop-plugin':{
@@ -334,8 +430,7 @@ var BASE = 'base',
         },
 
         event: { 
-            requires: [EVENTCUSTOM],
-            expound: NODE
+            requires: [EVENTCUSTOM, NODE]
         },
 
         'event-custom': { 
@@ -357,6 +452,10 @@ var BASE = 'base',
         history: { 
             requires: [NODE]
         },
+
+        imageloader: { 
+            requires: [NODE]
+        },
         
         io:{
             submodules: {
@@ -366,19 +465,19 @@ var BASE = 'base',
                 }, 
 
                 'io-xdr': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }, 
 
                 'io-form': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: ['io-base', NODE]
+                    requires: [IOBASE, NODE]
                 },
 
                 'io-queue': {
-                    requires: ['io-base']
+                    requires: [IOBASE]
                 }
             }
         },
@@ -409,7 +508,7 @@ var BASE = 'base',
         },
 
         overlay: {
-            requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            requires: [WIDGET, WIDGETPOSITION, 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
             skinnable: true
         },
 
@@ -425,18 +524,18 @@ var BASE = 'base',
             submodules: {
                 'queue-base': {
                     requires: [YUIBASE]
+                },
+                'queue-run': {
+                    requires: ['queue-base', EVENTCUSTOM]
                 }
             },
             plugins: {
-                'queue-io': {
-                    requires: ['io-base']
-                }
-            }, 
-            requires: [EVENTCUSTOM]
+                'queue-promote': { }
+            }
         },
 
         slider: {
-            requires: ['widget', 'dd-constrain'],
+            requires: [WIDGET, 'dd-constrain'],
             skinnable: true
         },
 
@@ -445,7 +544,7 @@ var BASE = 'base',
         },
 
         substitute: {
-            optional: ['dump']
+            optional: [DUMP]
         },
 
         widget: {
@@ -453,7 +552,7 @@ var BASE = 'base',
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
-                    requires: ['widget-position']
+                    requires: [WIDGETPOSITION]
                 },
                 'widget-stack': {
                     skinnable: true
@@ -463,16 +562,14 @@ var BASE = 'base',
             skinnable: true
         },
 
-        // Since YUI is required for everything else, it should not be specified as
-        // a dependency.
         yui: {
-            supersedes: [YUIBASE, GET, 'loader']
+            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
         },
 
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: ['substitute', NODE, 'json']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
         }  
 
     }
@@ -481,6 +578,8 @@ var BASE = 'base',
 _path = function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
 },
+
+_queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
 L     = Y.Lang, 
@@ -519,6 +618,8 @@ for (i=0; i<YUI_CSS.length; i=i+1) {
 }
 
 Y.Env.meta = META;
+
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -591,9 +692,23 @@ Y.Loader = function(o) {
      * The charset attribute for inserted nodes
      * @property charset
      * @type string
-     * @default utf-8
+     * @deprecated, use cssAttributes or jsAttributes
      */
     this.charset = null;
+
+    /**
+     * An object literal containing attributes to add to link nodes
+     * @property cssAttributes
+     * @type object
+     */
+    this.cssAttributes = null;
+
+    /**
+     * An object literal containing attributes to add to script nodes
+     * @property jsAttributes
+     * @type object
+     */
+    this.jsAttributes = null;
 
     /**
      * The base directory.
@@ -696,6 +811,14 @@ Y.Loader = function(o) {
     this.filter = null;
 
     /**
+     * per-component filter specification.  If specified for a given component, this 
+     * overrides the filter config.
+     * @property filters
+     * @type object
+     */
+    this.filters = {};
+
+    /**
      * The list of requested modules
      * @property required
      * @type {string: boolean}
@@ -786,11 +909,12 @@ Y.Loader = function(o) {
     /**
      * Set when beginning to compute the dependency tree. 
      * Composed of what YUI reports to be loaded combined
-     * with what has been loaded by the tool
+     * with what has been loaded by any instance on the page
+     * with the version number specified in the metadata.
      * @propery loaded
      * @type {string: boolean}
      */
-    this.loaded = {};
+    this.loaded = GLOBAL_LOADED[VERSION];
 
     /**
      * A list of modules to attach to the YUI instance when complete.
@@ -831,7 +955,7 @@ Y.Loader = function(o) {
 
 Y.Loader.prototype = {
 
-    FILTERS: {
+    FILTER_DEFS: {
         RAW: { 
             'searchExp': "-min\\.js", 
             'replaceStr': ".js"
@@ -877,7 +1001,7 @@ Y.Loader.prototype = {
         if (L.isString(f)) {
             f = f.toUpperCase();
             this.filterName = f;
-            this.filter = this.FILTERS[f];
+            this.filter = this.FILTER_DEFS[f];
         }
 
     },
@@ -1212,7 +1336,7 @@ Y.Loader.prototype = {
             this._config(o);
             this._setup();
             this._explode();
-            if (this.allowRollup) {
+            if (this.allowRollup && !this.combine) {
                 this._rollup();
             }
             this._reduce();
@@ -1259,7 +1383,7 @@ Y.Loader.prototype = {
 
         // available modules
         if (!this.ignoreRegistered) {
-            Y.mix(l, YUI.Env.mods);
+            Y.mix(l, GLOBAL_ENV.mods);
         }
         
         // Y.log("Already loaded stuff: " + L.dump(l, 0));
@@ -1289,7 +1413,9 @@ Y.Loader.prototype = {
 
         // Y.log("loaded expanded: " + L.dump(l, 0));
 
-        this.loaded = l;
+        Y.mix(this.loaded, l);
+
+        // this.loaded = l;
 
     },
     
@@ -1449,7 +1575,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded) { 
+                if (i in this.loaded && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes
@@ -1482,11 +1608,18 @@ Y.Loader.prototype = {
             Y._attach(this.sorted);
         }
 
-        this._pushEvents();
+        // this._pushEvents();
 
     },
 
+    _finish: function() {
+        _queue.running = false;
+        this._continue();
+    },
+
     _onSuccess: function() {
+
+        Y.log('loader successful: ' + Y.id, "info", "loader");
 
         this._attach();
 
@@ -1500,10 +1633,6 @@ Y.Loader.prototype = {
 
         this.skipped = {};
 
-        // this.fire('success', {
-        //     data: this.data
-        // });
-
         f = this.onSuccess;
 
         if (f) {
@@ -1514,31 +1643,33 @@ Y.Loader.prototype = {
             });
         }
 
+        this._finish();
+
     },
 
-    _onFailure: function(msg) {
+    _onFailure: function(o) {
+
+        Y.log('load error: ' + o.msg + ', ' + Y.id, "error", "loader");
+
         this._attach();
-        // this.fire('failure', {
-        //     msg: 'operation failed: ' + msg,
-        //     data: this.data
-        // });
 
         var f = this.onFailure;
         if (f) {
             f.call(this.context, {
-                msg: 'failure: ' + msg,
+                msg: 'failure: ' + o.msg,
                 data: this.data,
                 success: false
             });
         }
+
+        this._finish();
     },
 
     _onTimeout: function() {
-        this._attach();
 
-        // this.fire('timeout', {
-        //     data: this.data
-        // });
+        Y.log('loader timeout: ' + Y.id, "error", "loader");
+
+        this._attach();
 
         var f = this.onTimeout;
         if (f) {
@@ -1548,6 +1679,8 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+
+        this._finish();
     },
     
     /**
@@ -1655,31 +1788,35 @@ Y.Loader.prototype = {
         this.sorted = s;
     },
 
-    /**
-     * inserts the requested modules and their dependencies.  
-     * <code>type</code> can be "js" or "css".  Both script and 
-     * css are inserted if type is not provided.
-     * @method insert
-     * @param o optional options object
-     * @param type {string} the type of dependency to insert
-     */
-    insert: function(o, type) {
+    _insert: function(source, o, type) {
 
-        Y.log('Insert() ' + (type || ''), "info", "loader");
+
+        // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+
+        // restore the state at the time of the request
+        if (source) {
+            this._config(source);
+        }
 
         // build the dependency list
         this.calculate(o);
 
         if (!type) {
-            // Y.log("trying to load css first");
+
             var self = this;
+
+            // Y.log("trying to load css first");
             this._internalCallback = function() {
                         self._internalCallback = null;
-                        self.insert(null, JS);
+                        self._insert(null, null, JS);
                     };
-            this.insert(null, CSS);
+
+            // _queue.running = false;
+            this._insert(null, null, CSS);
+
             return;
         }
+
 
         // set a flag to indicate the load has started
         this._loading = true;
@@ -1694,6 +1831,40 @@ Y.Loader.prototype = {
 
         // start the load
         this.loadNext();
+
+    },
+
+    _continue: function() {
+        if (!(_queue.running) && _queue.size() > 0) {
+            _queue.running = true;
+            _queue.next()();
+        }
+    },
+
+    /**
+     * inserts the requested modules and their dependencies.  
+     * <code>type</code> can be "js" or "css".  Both script and 
+     * css are inserted if type is not provided.
+     * @method insert
+     * @param o optional options object
+     * @param type {string} the type of dependency to insert
+     */
+    insert: function(o, type) {
+
+        var self = this, copy;
+
+        Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+
+
+        copy = Y.merge(this, true);
+        delete copy.require;
+        delete copy.dirty;
+
+        _queue.add(function() {
+            self._insert(copy, o, type);
+        });
+
+        this._continue();
 
     },
 
@@ -1716,7 +1887,7 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg,
+        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
             callback=function(o) {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
                 this._combineComplete[type] = true;
@@ -1760,7 +1931,7 @@ Y.Loader.prototype = {
 
             if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "loader");
+Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
                 fn =(type === CSS) ? Y.Get.css : Y.Get.script;
 
@@ -1772,6 +1943,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: this.jsAttributes,
                     timeout: this.timeout,
                     context: self 
                 });
@@ -1791,17 +1963,14 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                 return;
             }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
+Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
 
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             this.inserted[mname] = true;
+            this.loaded[mname] = true;
 
-            // this.fire('progress', {
-            //     name: mname,
-            //     data: this.data
-            // });
             if (this.onProgress) {
                 this.onProgress.call(this.context, {
                         name: mname,
@@ -1844,10 +2013,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this.skipped[s[i]] = true;
                 continue;
 
-                // this.fire('failure', {
-                    // msg: msg,
-                    // data: this.data
-                // });
             }
 
 
@@ -1857,7 +2022,13 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                 this._loading = s[i];
                 Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
-                fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
 
@@ -1866,6 +2037,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                     onSuccess: onsuccess,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
+                    attributes: attr,
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
@@ -1898,19 +2070,6 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
     },
 
     /**
-     * In IE, the onAvailable/onDOMReady events need help when Event is
-     * loaded dynamically
-     * @method _pushEvents
-     * @param {Function} optional function reference
-     * @private
-     */
-    _pushEvents: function() {
-        if (Y.Event) {
-            Y.Event._load();
-        }
-    },
-
-    /**
      * Apply filter defined for this instance to a url/path
      * method _filter
      * @param u {string} the string to filter
@@ -1921,26 +2080,17 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
      */
     _filter: function(u, name) {
 
-        // Y.log('filter ' + u);
+        var f = this.filter, 
+            hasFilter = name && (name in this.filters),
+            modFilter = hasFilter && this.filters[name];
 
-        var f = this.filter, useFilter = true, exc, inc;
+        if (u) {
 
-        if (u && f) {
-
-            if (name && this.filterName == "DEBUG") {
-            
-                exc = this.logExclude;
-                inc = this.logInclude;
-
-                if (inc && !(name in inc)) {
-                    useFilter = false;
-                } else if (exc && (name in exc)) {
-                    useFilter = false;
-                }
-
+            if (hasFilter) {
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
-            
-            if (useFilter) {
+
+            if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
@@ -1962,6 +2112,5 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
 };
 
-// Y.augment(Y.Loader, Y.Event.Target);
-
 })();
+

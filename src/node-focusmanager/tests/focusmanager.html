@@ -156,7 +156,7 @@
 					//	Calling "focus" with no arguments should result in none 
 					//	of the descendants being focused
 					oList1.focusManager.focus();
-	                Y.Assert.isFalse(oList1.focusManager.get("hasFocus"));
+	                Y.Assert.isFalse(oList1.focusManager.get("focused"));
 
 					
 					//	TEST #5:
@@ -164,7 +164,7 @@
 					//	the user can still focus a descendant by mousing 
 					//	down on it
 					oList1.focusManager.get("descendants").item(0).simulate("mousedown");
-	                Y.Assert.isTrue(oList1.focusManager.get("hasFocus"));
+	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
 
 
 					//	TEST #6:
@@ -180,7 +180,7 @@
 					//	of the descendant to be focused
 					oList1.focusManager.set("activeDescendant", -1);
 					oList1.focusManager.focus(1);
-	                Y.Assert.isTrue(oList1.focusManager.get("hasFocus"));
+	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
 	
 					//	The "activeDescendant" attribute should return the 
 					//	index of the currently focused descendant	
@@ -191,7 +191,7 @@
 					//	The "activeDescendant" attribute can also be set to a 
 					//	Node reference
 					oList1.focusManager.focus(oList1.focusManager.get("descendants").item(2));
-	                Y.Assert.isTrue(oList1.focusManager.get("hasFocus"));
+	                Y.Assert.isTrue(oList1.focusManager.get("focused"));
 
 					//	The "activeDescendant" attribute should return the 
 					//	index of the currently focused descendant
@@ -267,10 +267,10 @@
 
 				},
 				
-				testHasFocusAttribute: function() {
+				testFocusedAttribute: function() {
 
 					//	TEST #1:
-					//	The "hasFocus" attribute should be false by default
+					//	The "focused" attribute should be false by default
 					var oList2 = Y.Node.get("#list-2");
 
 					oList2.plug(Y.Plugin.NodeFocusManager, { 
@@ -280,38 +280,38 @@
 						rollThrough: true
 					});
 
-					Y.Assert.isFalse(oList2.focusManager.get("hasFocus"));
+					Y.Assert.isFalse(oList2.focusManager.get("focused"));
 					
 					
 					//	TEST #2:
 					//	Calling the "focus" method with no arguments should
-					//	result in the "hasFocus" attribute being set to true 
+					//	result in the "focused" attribute being set to true 
 					//	and the "activeDescendant" attribute being 0
 					oList2.focusManager.focus();
-	                Y.Assert.isTrue(oList2.focusManager.get("hasFocus"));
+	                Y.Assert.isTrue(oList2.focusManager.get("focused"));
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
 
 
 					//	TEST #3:
 					//	Calling the "blur" method should result in the 
-					//	"hasFocus" attribute being set to false, the 
+					//	"focused" attribute being set to false, the 
 					//	removal of the the "focused" CSS class,
 					//	and the "activeDescendant" attribute being still 0				
 					oList2.focusManager.blur();
 					Y.Assert.isTrue((Y.all(".focused").size() === 0));					
-	                Y.Assert.isFalse(oList2.focusManager.get("hasFocus"));
+	                Y.Assert.isFalse(oList2.focusManager.get("focused"));
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
 
 
 					//	TEST #4:
 					//	Focusing another element in the DOM will result in the 
-					//	"hasFocus" attribute being set to false, the 
+					//	"focused" attribute being set to false, the 
 					//	removal of the "focused" CSS class, 
 					//	and the "activeDescendant" attribute being still 0
 					oList2.focusManager.focus();
 					Y.Node.get("#anchor-1").focus();
 					Y.Assert.isTrue((Y.all(".focused").size() === 0));					
-	                Y.Assert.isFalse(oList2.focusManager.get("hasFocus"));
+	                Y.Assert.isFalse(oList2.focusManager.get("focused"));
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
 	
 					//	Clean up for next set of tests

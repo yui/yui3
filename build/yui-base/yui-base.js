@@ -6,6 +6,40 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
+        add = function () {
+            if (window.addEventListener) {
+                return function(el, type, fn, capture) {
+                    el.addEventListener(type, fn, (!!capture));
+                };
+            } else if (window.attachEvent) {
+                return function(el, type, fn) {
+                    el.attachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
+            }
+        }(),
+
+        remove = function() {
+            if (window.removeEventListener) {
+                return function (el, type, fn, capture) {
+                    el.removeEventListener(type, fn, !!capture);
+                };
+            } else if (window.detachEvent) {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
+            }
+        }(),
+
+        globalListener = function() {
+            YUI.Env.windowLoaded = true;
+            YUI.Env.DOMReady = true;
+            remove(window, 'load', globalListener);
+        },
+
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
@@ -16,7 +50,6 @@
             'io.abort': 1
         };
         
-
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
@@ -34,8 +67,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>------------------------------------------------------------------------</li>
      *  <li>Global:</li>
      *  <li>------------------------------------------------------------------------</li>
-     *  <li>debug:
-     *  Turn debug statements on or off</li>
+     *  <li>debug: Turn debug statements on or off</li>
      *  <li>useBrowserConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
@@ -44,6 +76,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  </li>
      *  <li>logExclude:
      *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  <li>injected: set to true if the yui seed file was dynamically loaded in
+     *  order to bootstrap components relying on the window load event and onDOMReady.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -60,14 +94,10 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
-     *  <li>base:
-     *  The base dir</li>
-     *  <li>secureBase:
-     *  The secure base dir (not implemented)</li>
-     *  <li>comboBase:
-     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-     *  <li>root:
-     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+     *  <li>base: The base dir</li>
+     *  <li>secureBase: The secure base dir (not implemented)</li>
+     *  <li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+     *  <li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
      *  <li>filter:
      *  
      * A filter to apply to result urls.  This filter will modify the default
@@ -92,6 +122,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * </pre>
      *
      *  </li>
+     *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
      *  <li>combine:
      *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
      *  <li>ignore:
@@ -150,14 +181,14 @@ YUI.prototype = {
      * @private
      */
     _init: function(o) {
-        
+
         o = o || {};
 
         // find targeted window
         // @TODO create facades
         // @TODO resolve windowless environments
         var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@';
+            v = '@VERSION@', Y = this;
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
@@ -166,9 +197,9 @@ YUI.prototype = {
     
         // add a reference to o for anything that needs it
         // before _setup is called.
-        this.config = o;
+        Y.config = o;
 
-        this.Env = {
+        Y.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -176,22 +207,27 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
-        this.version = v;
+        Y.version = v;
+
+        Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            this.Env._yidx = ++YUI.Env._idx;
-            this.id = this.stamp(this);
-            _instances[this.id] = this;
+            Y.Env._yidx = ++YUI.Env._idx;
+            Y.id = Y.stamp(Y);
+            _instances[Y.id] = Y;
         }
 
-        this.constructor = YUI;
+        Y.constructor = YUI;
+
 
         // this.log(this.id + ') init ');
     },
@@ -205,7 +241,7 @@ YUI.prototype = {
     _setup: function(o) {
         this.use("yui-base");
         // @TODO eval the need to copy the config
-        // this.config = this.merge(this.config);
+        this.config = this.merge(this.config);
     },
 
     /**
@@ -311,7 +347,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -350,6 +386,11 @@ YUI.prototype = {
      */
     use: function() {
 
+        if (this._loading) {
+            this._useQueue.add(Array.prototype.slice.call(arguments));
+            return this;
+        }
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -358,7 +399,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
@@ -369,12 +411,34 @@ YUI.prototype = {
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+
                     used[name] = true;
 
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        // While sorting out the packaged metadata in the modules,
+                        // let's look at the loader metadata as well
+                        // loaderMods = Y.Env.meta.modules; 
+                        // m = loaderMods && loaderMods[name];
+                        // if (m && m.parent && used[m.parent]) {
+                        //     used[name] = true;
+                        //     req = m.requires;
+                        //     use = m.supersedes;
+                        // }  else {
+                        //     missing.push(name);
+                        // }
+                         
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        used[name] = true;
+
+                    }
                 }
 
                 // make sure requirements are attached
@@ -411,6 +475,13 @@ YUI.prototype = {
                 if (Y.fire) {
                     Y.fire('yui:load', Y, fromLoader);
                 }
+
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                this._loading = false;
+                while (this._useQueue && this._useQueue.size() && !this._loading) {
+                    Y.use.apply(Y, this._useQueue.next());
+                }
             };
 
 
@@ -431,6 +502,7 @@ YUI.prototype = {
                 }
             }
 
+
             return Y.use.apply(Y, a);
 
         }
@@ -440,6 +512,7 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
+            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -460,6 +533,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
+            this._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -605,6 +679,14 @@ YUI.prototype = {
     YUI._init();
 
 
+    // add a window load event at load time so we can capture
+    // the case where it fires before dynamic loading is
+    // complete.
+    add(window, 'load', globalListener);
+
+    YUI.Env.add = add;
+    YUI.Env.remove = remove;
+
 })();
 YUI.add('yui-base', function(Y) {
 
@@ -615,7 +697,9 @@ YUI.add('yui-base', function(Y) {
  */
 (function() {
 
-var instance = Y;
+var instance = Y,
+    LOGEVENT = 'yui:log',
+    _published;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -674,7 +758,23 @@ instance.log = function(msg, cat, src, silent) {
             }
 
             if (Y.fire && !bail && !silent) {
-                Y.fire('yui:log', msg, cat, src);
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: true
+                    });
+
+                    _published = true;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+                
+
+                // Y.fire('yui:log', msg, cat, src);
             }
         }
     }
@@ -698,6 +798,28 @@ instance.log = function(msg, cat, src, silent) {
 instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
+
+/*
+ * @TODO I'm not convinced the current log statement scrubbing routine can
+ * be made safe with all the variations that could be supplied for
+ * the condition.
+ *
+ * logIf statements are stripped from the raw and min files.
+ * @method logIf
+ * @for YUI
+ * @param  {boolean} condition Logging only occurs if a truthy value is provided
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+// instance.logIf = function(condition, msg, cat, src, silent) {
+//     if (condition) {
+//     }
+// };
 
 })();
 (function() {
@@ -733,7 +855,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -862,7 +987,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -897,7 +1022,7 @@ L.isValue = function(o) {
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();
@@ -1110,6 +1235,7 @@ A = Y.Array,
 OP = Object.prototype, 
 IEF = ["toString", "valueOf"], 
 PROTO = 'prototype',
+DELIMITER = '`~',
 
 /**
  * IE will not enumerate native functions in a derived object even if the
@@ -1273,12 +1399,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join('`');
+            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
@@ -1774,10 +1900,7 @@ Y.UA = function() {
 
     } else {
 
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
+        core = ['queue-base', 'get', 'loader'];
     }
 
     Y.use.apply(Y, core);

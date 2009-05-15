@@ -70,12 +70,17 @@
 
         <span class="c">/**</span>
 <span class="c">         * Widget extension, which can be used to add extended XY positioning support to the base Widget class,</span>
-<span class="c">         * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="c">         * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method. This extension requires that </span>
+<span class="c">         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same </span>
+<span class="c">         * extension list passed to Base.build).</span>
 <span class="c">         *</span>
 <span class="c">         * @class WidgetPositionExt</span>
 <span class="c">         * @param {Object} User configuration object</span>
 <span class="c">         */</span>
         <span class="k">function</span> <span class="nx">PositionExt</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">hasImpl</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetPosition</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added&quot;</span><span class="o">);</span> 
+            <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_syncUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">SYNCUI</span><span class="o">);</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_bindUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">BINDUI</span><span class="o">);</span>
         <span class="o">}</span>
@@ -464,6 +469,7 @@
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

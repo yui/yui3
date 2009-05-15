@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FIXME</title>
+
+<style type="text/css">
+
+</style>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+var filter = function(nodes, selector) {
+        var ret = [],
+            clone;
+
+        tmp.innerHTML = '<div>foo</div><style>' + selector + '{ display:none }</style>';
+        for (var i = 0, node; node = nodes[i++];) {
+            clone = node.cloneNode(true);
+            tmp.appendChild(clone);
+            if (clone.currentStyle.display === 'none') {
+                ret[ret.length] = node;
+            }
+        }
+        return ret;
+    },
+
+    tmp = document.createElement('div');
+
+var nodes = filter(document.documentElement.childNodes, 'body');
+alert(nodes.length);
+</script>
+</html>
+<!--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FIXME</title>
+
+<style type="text/css" id="yui-filter-tmp-css">
+</style>
+</head>
+<body>
+<div id="yui-filter-tmp"></div>
+</body>
+<script type="text/javascript">
+onload = function() {
+    var filter = function(nodes, selector) {
+            var ret = [],
+                clone;
+
+            document.getElementById('yui-filter-tmp-css').innerHTML = selector + '{ display:none }';
+            for (var i = 0, node; node = nodes[i++];) {
+                clone = node.cloneNode(true);
+                tmp.appendChild(clone);
+                if (clone.currentStyle.display === 'none') {
+                    ret[ret.length] = node;
+                }
+            }
+            return ret;
+        },
+
+        tmp = document.getElementById('yui-filter-tmp');
+
+    var nodes = filter(document.documentElement.childNodes, 'body');
+};
+</script>
+</html>
+-->

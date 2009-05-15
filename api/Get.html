@@ -315,6 +315,10 @@ processes
                                                          win
                                                     
                                                 
+                                                        , 
+                                                         attributes
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -337,6 +341,12 @@ processes
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  optional window to create the node in</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attributes</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional attributes collection to apply to the new node</span>
                                                         </dd>
                                                 </dl>
 
@@ -582,6 +592,10 @@ processes
                                                          win
                                                     
                                                 
+                                                        , 
+                                                         attributes
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -604,6 +618,12 @@ processes
                                                         &lt;<span property="yui:type">Window</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  optional window to create the node in</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attributes</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional attributes collection to apply to the new node</span>
                                                         </dd>
                                                 </dl>
 
@@ -916,7 +936,9 @@ loaded.
 <dt>insertBefore</dt>
 <dd>node or node id that will become the new node's nextSibling</dd>
 <dt>charset</dt>
-<dd>Node charset, default utf-8</dd>
+<dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+<dt>attributes</dt>
+<dd>An object literal containing additional attributes to add to the link tags</dd>
 </dl>
 <pre>
 Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");
@@ -1142,7 +1164,9 @@ loaded.
 <dd>node or node id that will become the new node's nextSibling</dd>
 </dl>
 <dt>charset</dt>
-<dd>Node charset, default utf-8</dd>
+<dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+<dt>attributes</dt>
+<dd>An object literal containing additional attributes to add to the link tags</dd>
 <dt>timeout</dt>
 <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
 <pre>
@@ -1226,6 +1250,7 @@ loaded.
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>

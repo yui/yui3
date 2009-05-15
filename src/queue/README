@@ -2,25 +2,40 @@ Queue
     The Queue module allows you create a chain of function callbacks executed in order via setTimeout.  Also supports timeout chained iterations for each item in the Queue.
 
 3.0.0 beta1
-Queue overhaul.  Breaking into submodules queue-base, queue-full, and queue-io.
+Queue overhaul.  Breaking into submodules queue-base, queue-promote, and queue-run.
 queue-base
+    * tiny
     * basic synchronous queuing
-    * constructor takes callback defaults as first param, 0..n callbacks after that
-    * static configurable defaults Y.Queue.defaults, merged with instance defaults and individual callback configurations
-    * callback config supports fn, context, and args
-    * API includes add, run, pause, stop, size
+    * Constructor takes 0..n callbacks
+    * supported callbacks are functions only
+    * API includes add, next, and size
 
-queue-full
-    * more full featured queue
-    * default operation is now synchronous.  Set { timeout : 10 } in class or isntance defaults to return to async default behavior.
+queue-promote
+    * adds to queue-base API methods promote, remove, and indexOf
+
+queue-run
+    * emits events add, remove, promote, execute, shift, and complete, all but
+      complete are preventable
+    * callbacks can be functions or config objects
+    * supported config object properties include:
+        - fn: the function to execute
+        - context: the callback context (default is the Queue instance)
+        - args: args to pass into the callback
+        - iterations: fixed number of times to execute the fn
+        - until: (alt to iterations) true/false function to trigger looping
+        - timeout: ms timeout to schedule each execution of the fn. Negative
+          numbers trigger synchronous execution.  Default -1.
+        - autoContinue: whether to run the next callback in the queue after the
+          current one completes (in run mode)
+        - name: string used to retrieve, promote, or remove a callback
+    * cascading defaults support (in increasing priority):
+        - static Y.Queue.defaults object to set defaults for all callbacks in
+          all instances for this YUI instance
+        - instance.defaults object to set instance level defaults
+    * default operation is now synchronous.  Set { timeout : 10 } in class or
+      instance defaults to return to async default behavior.
     * iterations now handled by default until function
-    * emits events; callback execution can be prevented via subscriber
-    * callback config supports timeout, iterations, until, name
-    * API includes getCallback, promote, remove
-
-queue-io
-    * callbacks can trigger a stall in Queue execution for Y.io transaction responses issued from within until all responses are received
-    * callback config supports waitForIOResponse
+    * API includes run, pause, stop, isRunning, and getCallback
 
 3.0.0pr2
     No changes

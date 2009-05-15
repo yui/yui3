@@ -20,6 +20,8 @@
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
+        DEEP = "deep",
+        SHALLOW = "shallow",
         DESTRUCTOR = "destructor";
 
     /**
@@ -150,6 +152,15 @@
 
             // TODO: Look at why this needs to be done after publish.
             Y.Plugin.Host.call(this);
+
+            if (config) {
+                if (config.on) {
+                    this.on(config.on);
+                }
+                if (config.after) {
+                    this.after(config.after);
+                }
+            }
 
             this.fire(INIT, {cfg: config});
             return this;
@@ -301,7 +312,7 @@
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i,
+            var attr, attrs, cfg, val, path, i, clone,
                 aggAttrs = {};
 
             if (allAttrs) {
@@ -314,8 +325,18 @@
                             cfg = Y.merge(attrs[attr]);
 
                             val = cfg.value;
-                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
-                                cfg.value = Y.clone(val);
+                            clone = cfg.cloneDefaultValue;
+
+                            if (val) {
+                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
+                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.clone(val);
+                                } else if (clone === SHALLOW) {
+                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.merge(val);
+                                }
+                                // else if (clone === false), don't clone the static default value. 
+                                // It's intended to be used by reference.
                             }
 
                             path = null;
@@ -323,7 +344,7 @@
                                 path = attr.split(DOT);
                                 attr = path.shift();
                             }
-    
+
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
                                 O.setValue(aggAttrs[attr].value, path, val);
                             } else if (!path){
@@ -359,6 +380,7 @@
                 el,
                 classes = this._getClasses(),
                 mergedCfgs = this._getAttrCfgs();
+                this._userCfgs = userConf;
 
             for (ci = classes.length-1; ci >= 0; ci--) {
                 constr = classes[ci];
@@ -370,7 +392,9 @@
                     }
                 }
 
-                this.addAttrs(this._filterAttrCfgs(constr, mergedCfgs), userConf);
+                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
+                this.addAttrs(this._classCfgs, userConf);
+                this._classCfgs = null;
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto[INITIALIZER].apply(this, arguments);
@@ -401,6 +425,45 @@
         },
 
         /**
+         * Wrapper for Attribute.get. Adds the ability to 
+         * initialize attributes on-demand during initialization
+         * of the ATTRS definitions at each class level.
+         *
+         * @method get
+         *
+         * @param {String} name The attribute whose value will be returned. If 
+         * the attribute is not currently configured, but is part of the ATTRS 
+         * configuration for the class currently being configured, it will be
+         *
+         * @return {Any} The current value of the attribute
+         */
+        get: function(name) {
+
+            if (this._classCfgs) {
+                var attrName = name,
+                    iDot = name.indexOf(DOT);
+
+                if (iDot !== -1) {
+                    attrName = name.slice(0, iDot);
+                }
+
+                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
+                    var classCfg = this._classCfgs[attrName],
+                        userCfg = this._userCfgs,
+                        attrCfg;
+
+                    if (classCfg) {
+                        attrCfg = {};
+                        attrCfg[attrName] = classCfg;
+                        this.addAttrs(attrCfg, userCfg);
+                    }
+                }
+            }
+
+            return Y.Attribute.prototype.get.call(this, name);
+        },
+
+        /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
          * 
@@ -414,7 +477,10 @@
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.Plugin.Host, false, null, 1);
+    Y.mix(Base, PluginHost, false, null, 1);
+
+    Base.plug = PluginHost.plug;
+    Base.unplug = PluginHost.unplug;
 
     // Fix constructor
     Base.prototype.constructor = Base;

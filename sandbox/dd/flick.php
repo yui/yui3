@@ -284,6 +284,9 @@ var Y = new YUI(yConfig).use('dd-drag', 'dd-ddm', 'anim', function(Y) {
                 console.info('DD is dragging, stop it..');
                 Y.DD.DDM.activeDrag.stopDrag();
             }
+            if (anim && anim.stop) {
+                anim.stop();
+            }
         }
     });
     

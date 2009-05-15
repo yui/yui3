@@ -339,8 +339,13 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        doc = doc || Y.config.doc;
-        return Y.DOM.contains(doc.documentElement, element);
+        doc = doc || element[OWNER_DOCUMENT];
+        var id = element.id;
+        if (!id) { // TODO: remove when done?
+            id = element.id = Y.guid();
+        }
+
+        return !! (doc.getElementById(id));
     },
 
     /**
@@ -352,8 +357,11 @@ Y.DOM = {
      */
     insertBefore: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
+        }
+        if (typeof newNode === 'string') {
+            newNode = DOM.create(newNode);
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
     },
@@ -367,7 +375,7 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
 
@@ -383,15 +391,15 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * @param {Boolean} execScripts Whether or not any provided scripts should be executed.
      * If execScripts is false, all scripts are stripped.
      */
-    create: function(html, doc, execScripts) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
             custom = Y.DOM.creators,
-            tag, node;
+            ret = null,
+            tag, nodes;
 
         if (m && custom[m[1]]) {
             if (typeof custom[m[1]] === 'function') {
@@ -401,9 +409,18 @@ Y.DOM = {
             }
         }
 
-        node = create(html, doc, tag);
+        nodes = create(html, doc, tag).childNodes;
 
-        return node;
+        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+            ret = nodes[0].parentNode.removeChild(nodes[0]);
+        } else { // return multiple nodes as a fragment
+            ret = doc.createDocumentFragment();
+            while (nodes[LENGTH]) {
+                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            }
+        }
+
+        return ret;
     },
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
@@ -440,12 +457,8 @@ Y.DOM = {
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            if (attr === 'value' && !document.documentElement.hasAttribute) { // fix value for IE < 8
-                ret = el.getAttributeNode(attr);
-                ret = ret ? ret.value : '';
-            } else {
-                ret = el.getAttribute(attr, 2);
-            }
+            ret = el.getAttribute(attr, 2);
+
             if (ret === null) {
                 ret = ''; // per DOM spec
             }
@@ -471,7 +484,7 @@ Y.DOM = {
         tag = tag || 'div';
         var frag = doc.createElement(tag);
         frag.innerHTML = Y.Lang.trim(html);
-        return frag.removeChild(frag[FIRST_CHILD]);
+        return frag;
     },
 
     insertHTML: function(node, content, where, execScripts) {
@@ -508,6 +521,41 @@ Y.DOM = {
         }
 
         return newNode;
+    },
+
+    VALUE_SETTERS: {},
+
+    VALUE_GETTERS: {},
+
+    getValue: function(node) {
+        var ret = '', // TODO: return null?
+            getter;
+
+        if (node && node[TAG_NAME]) {
+            getter = Y.DOM.VALUE_GETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (getter) {
+                ret = getter(node);
+            } else {
+                ret = node.value;
+            }
+        }
+
+        return (typeof ret === 'string') ? ret : '';
+    },
+
+    setValue: function(node, val) {
+        var setter;
+
+        if (node && node[TAG_NAME]) {
+            setter = Y.DOM.VALUE_SETTERS[node[TAG_NAME].toLowerCase()];
+
+            if (setter) {
+                setter(node, val);
+            } else {
+                node.value = val;
+            }
+        }
     },
 
     _stripScripts: function(node) {
@@ -667,23 +715,19 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
         Y.mix(creators, {
             option: function(html, doc) {
-                var frag = create('<select>' + html + '</select>');
-                return frag[FIRST_CHILD];
+                return create('<select>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {
-                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tbody>' + html + '</tbody>', doc);
             },
 
             td: function(html, doc) {
-                var frag = creators.tr('<tr>' + html + '</tr>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tr>' + html + '</tr>', doc);
             }, 
 
             tbody: function(html, doc) {
-                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-                return frag[FIRST_CHILD];
+                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
             },
 
             legend: 'fieldset'
@@ -693,16 +737,15 @@ Y.DOM = {
     }
 
     if (Y.UA.ie) {
-        creators.col = creators.link = Y.DOM._IESimpleCreate;
-
         Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
+            // IE adds TBODY when creating TABLE elements (which may share this impl)
             tbody: function(html, doc) {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
                 if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
-                    tb[PARENT_NODE].removeChild(tb);
+                    tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
             },
@@ -711,11 +754,30 @@ Y.DOM = {
                 var frag = doc.createElement('div');
 
                 frag.innerHTML = '-' + html;
-                return frag.removeChild(frag[FIRST_CHILD][NEXT_SIBLING]);
+                frag.removeChild(frag[FIRST_CHILD]);
+                return frag;
             }
 
+        }, true);
+
+        Y.mix(Y.DOM.VALUE_GETTERS, {
+            button: function(node) {
+                return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
+            }
         });
 
+        Y.mix(Y.DOM.VALUE_SETTERS, {
+            // IE: node.value changes the button text, which should be handled via innerHTML
+            button: function(node, val) {
+                var attr = node.attributes['value'];
+                if (!attr) {
+                    attr = node[OWNER_DOCUMENT].createAttribute('value');
+                    node.setAttributeNode(attr);
+                }
+
+                attr.value = val;
+            }
+        });
     }
 
     if (Y.UA.gecko || Y.UA.ie) {
@@ -729,6 +791,29 @@ Y.DOM = {
                 optgroup: creators.option
         });
     }
+
+    Y.mix(Y.DOM.VALUE_GETTERS, {
+        option: function(node) {
+            var attrs = node.attributes;
+            return (attrs.value && attrs.value.specified) ? node.value : node.text;
+        },
+
+        select: function(node) {
+            var val = node.value,
+                options = node.options,
+                i, opt;
+
+            if (options && val === '') {
+                if (node.multiple) {
+                    Y.log('multiple select normalization not implemented', 'warn', 'DOM');
+                } else {
+                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                }
+            }
+
+            return val;
+        }
+    });
 })();
 /** 
  * The DOM utility provides a cross-browser abtraction layer
@@ -859,8 +944,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val, style) {
-        style = node[STYLE],
+    setStyle: function(node, att, val) {
+        var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -1067,7 +1152,11 @@ var CLIENT_TOP = 'clientTop',
     FILTERS = 'filters',
     OPACITY = 'opacity',
     AUTO = 'auto',
-    CURRENT_STYLE = 'currentStyle';
+    CURRENT_STYLE = 'currentStyle',
+
+    _getStyleObj = function(node) {
+        return node[CURRENT_STYLE] || node[STYLE];
+    };
 
 // use alpha filter for IE opacity
 if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
@@ -1082,21 +1171,22 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
                 try { // make sure its in the document
                     val = node[FILTERS]('alpha')[OPACITY];
                 } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
+                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
                 }
             }
             return val / 100;
         },
 
         set: function(node, val, style) {
-            var current;
+            var current,
+                styleObj;
+
             if (val === '') { // normalize inline style behavior
-                current = node.currentStyle.opacity; // revert to original opacity
+                styleObj = _getStyleObj(node);
+                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
                 val = current;
-                if (val === undefined) {
-                    val = 1;
-                }
             }
+
             if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 
@@ -1116,7 +1206,7 @@ try {
             if (parseInt(val, 10) >= 0) {
                 style['height'] = val;
             } else {
-                Y.log('invalid style value for height: ' + val, 'warn', 'DOM');
+                Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -1126,7 +1216,7 @@ try {
             if (parseInt(val, 10) >= 0) {
                 style['width'] = val;
             } else {
-                Y.log('invalid style value for width: ' + val, 'warn', 'DOM');
+                Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -1135,39 +1225,44 @@ try {
 // IE getComputedStyle
 // TODO: unit-less lineHeight (e.g. 1.22)
 var re_size = /^width|height$/,
-    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
+    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
 
-var ComputedStyle = {
+ComputedStyle = {
     CUSTOM_STYLES: {},
 
     get: function(el, property) {
         var value = '',
-            current = el[CURRENT_STYLE][property];
+            current;
 
-        if (property === OPACITY) {
-            value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
-            value = current;
-        } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
-            value = Y.DOM.IE.COMPUTED[property](el, property);
-        } else if (re_unit.test(current)) { // convert to pixel
-            value = ComputedStyle.getPixel(el, property) + PX;
-        } else {
-            value = current;
+        if (el) {
+                current = _getStyleObj(el)[property];
+
+            if (property === OPACITY) {
+                value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
+            } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
+                value = current;
+            } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
+                value = Y.DOM.IE.COMPUTED[property](el, property);
+            } else if (re_unit.test(current)) { // convert to pixel
+                value = ComputedStyle.getPixel(el, property) + PX;
+            } else {
+                value = current;
+            }
         }
 
         return value;
     },
 
     getOffset: function(el, prop) {
-        var current = el[CURRENT_STYLE][prop],                        // value of "width", "top", etc.
+        var current = _getStyleObj(node)[prop],                     // value of "width", "top", etc.
             capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
             offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
+            actual,
             value = '';
 
         if (current === AUTO) {
-            var actual = el[offset]; // offsetHeight/Top etc.
+            actual = el[offset]; // offsetHeight/Top etc.
             if (actual === UNDEFINED) { // likely "right" or "bottom"
                 value = 0;
             }
@@ -1199,7 +1294,7 @@ var ComputedStyle = {
         // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
         // clientTop/Left = borderWidth
         var value = null;
-        if (!el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
+        if (!el[CURRENT_STYLE] || !el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
             el[STYLE].zoom = 1; // need layout to measure client
         }
 
@@ -1223,8 +1318,9 @@ var ComputedStyle = {
     getPixel: function(node, att) {
         // use pixelRight to convert to px
         var val = null,
-            styleRight = node[CURRENT_STYLE][RIGHT],
-            current = node[CURRENT_STYLE][att];
+            style = _getStyleObj(node),
+            styleRight = style[RIGHT],
+            current = style[att];
 
         node[STYLE][RIGHT] = current;
         val = node[STYLE].pixelRight;
@@ -1234,8 +1330,10 @@ var ComputedStyle = {
     },
 
     getMargin: function(node, att) {
-        var val;
-        if (node[CURRENT_STYLE][att] == AUTO) {
+        var val,
+            style = _getStyleObj(node);
+
+        if (style[att] == AUTO) {
             val = 0;
         } else {
             val = ComputedStyle.getPixel(node, att);
@@ -1252,11 +1350,11 @@ var ComputedStyle = {
     },
 
     getColor: function(node, att) {
-        var current = node[CURRENT_STYLE][att];
+        var current = _getStyleObj(node)[att];
 
         if (!current || current === TRANSPARENT) {
             Y.DOM.elementByAxis(node, PARENT_NODE, null, function(parent) {
-                current = parent[CURRENT_STYLE][att];
+                current = _getStyleObj(parent)[att];
                 if (current && current !== TRANSPARENT) {
                     node = parent;
                     return true;
@@ -1268,15 +1366,14 @@ var ComputedStyle = {
     },
 
     getBorderColor: function(node, att) {
-        var current = node[CURRENT_STYLE];
-        var val = current[att] || current.color;
+        var current = _getStyleObj(node),
+            val = current[att] || current.color;
         return Y.Color.toRGB(Y.Color.toHex(val));
     }
-
-};
+},
 
 //fontSize: getPixelFont,
-var IEComputed = {};
+IEComputed = {};
 
 // TODO: top, right, bottom, left
 IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
@@ -1350,7 +1447,7 @@ Y.mix(Y.DOM, {
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node)[HEIGHT];
-        Y.log('winHeight returning ' + h, 'info', 'DOM');
+        Y.log('winHeight returning ' + h, 'info', 'dom-screen');
         return h;
     },
 
@@ -1361,7 +1458,7 @@ Y.mix(Y.DOM, {
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node)[WIDTH];
-        Y.log('winWidth returning ' + w, 'info', 'DOM');
+        Y.log('winWidth returning ' + w, 'info', 'dom-screen');
         return w;
     },
 
@@ -1372,7 +1469,7 @@ Y.mix(Y.DOM, {
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node)[HEIGHT];
-        Y.log('docHeight returning ' + h, 'info', 'DOM');
+        Y.log('docHeight returning ' + h, 'info', 'dom-screen');
         return Math.max(h, Y.DOM._getWinSize(node)[HEIGHT]);
     },
 
@@ -1382,7 +1479,7 @@ Y.mix(Y.DOM, {
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node)[WIDTH];
-        Y.log('docWidth returning ' + w, 'info', 'DOM');
+        Y.log('docWidth returning ' + w, 'info', 'dom-screen');
         return Math.max(w, Y.DOM._getWinSize(node)[WIDTH]);
     },
 
@@ -1417,112 +1514,149 @@ Y.mix(Y.DOM, {
     getXY: function() {
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
-                if (!node) {
-                    return false;
-                }
-                var scrollLeft = Y.DOM.docScrollX(node),
-                    scrollTop = Y.DOM.docScrollY(node),
-                    box = node[GET_BOUNDING_CLIENT_RECT](),
-                    doc = Y.DOM._getDoc(node),
-                    //Round the numbers so we get sane data back
-                    xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
+                var xy = null,
+                    scrollLeft,
+                    scrollTop,
+                    pos,
+                    box,
+                    doc;
 
-                    if (Y.UA.ie) {
-                        var off1 = 2, off2 = 2,
-                        mode = doc[COMPAT_MODE],
-                        bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH),
-                        bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+                if (node) {
+                    if (Y.DOM.inDoc(node)) {
+                        scrollLeft = Y.DOM.docScrollX(node);
+                        scrollTop = Y.DOM.docScrollY(node);
+                        box = node[GET_BOUNDING_CLIENT_RECT]();
+                        doc = Y.DOM._getDoc(node);
+                        xy = [box[LEFT], box[TOP]];
 
-                        if (Y.UA.ie === 6) {
-                            if (mode !== _BACK_COMPAT) {
-                                off1 = 0;
-                                off2 = 0;
+                            if (Y.UA.ie) {
+                                var off1 = 2, off2 = 2,
+                                mode = doc[COMPAT_MODE],
+                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH),
+                                bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+
+                                if (Y.UA.ie === 6) {
+                                    if (mode !== _BACK_COMPAT) {
+                                        off1 = 0;
+                                        off2 = 0;
+                                    }
+                                }
+                                
+                                if ((mode == _BACK_COMPAT)) {
+                                    if (bLeft !== MEDIUM) {
+                                        off1 = parseInt(bLeft, 10);
+                                    }
+                                    if (bTop !== MEDIUM) {
+                                        off2 = parseInt(bTop, 10);
+                                    }
+                                }
+                                
+                                xy[0] -= off1;
+                                xy[1] -= off2;
+
                             }
+
+                        if ((scrollTop || scrollLeft)) {
+                            xy[0] += scrollLeft;
+                            xy[1] += scrollTop;
                         }
-                        
-                        if ((mode == _BACK_COMPAT)) {
-                            if (bLeft !== MEDIUM) {
-                                off1 = parseInt(bLeft, 10);
-                            }
-                            if (bTop !== MEDIUM) {
-                                off2 = parseInt(bTop, 10);
-                            }
-                        }
-                        
-                        xy[0] -= off1;
-                        xy[1] -= off2;
-
+                    } else { // default to current offsets
+                        xy = Y.DOM._getOffset(node);
                     }
-
-                if ((scrollTop || scrollLeft)) {
-                    xy[0] += scrollLeft;
-                    xy[1] += scrollTop;
                 }
-
-                // gecko may return sub-pixel (non-int) values
-                xy[0] = Math.floor(xy[0]);
-                xy[1] = Math.floor(xy[1]);
-
                 return xy;                   
             };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
-                var xy = [node[OFFSET_LEFT], node[OFFSET_TOP]],
-                    parentNode = node,
-                    // TODO: refactor with !! or just falsey
-                    bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
+                var xy = null,
+                    parentNode,
+                    bCheck,
+                    scrollTop,
+                    scrolLLeft;
 
-                // TODO: worth refactoring for TOP/LEFT only?
-                while ((parentNode = parentNode[OFFSET_PARENT])) {
-                    xy[0] += parentNode[OFFSET_LEFT];
-                    xy[1] += parentNode[OFFSET_TOP];
-                    if (bCheck) {
-                        xy = Y.DOM._calcBorders(parentNode, xy);
-                    }
-                }
+                if (node) {
+                    if (Y.DOM.inDoc(node)) {
+                        xy = [node[OFFSET_LEFT], node[OFFSET_TOP]];
+                        parentNode = node;
+                        // TODO: refactor with !! or just falsey
+                        bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
 
-                // account for any scrolled ancestors
-                if (Y.DOM.getStyle(node, POSITION) != FIXED) {
-                    parentNode = node;
-                    var scrollTop, scrollLeft;
-
-                    while ((parentNode = parentNode.parentNode)) {
-                        scrollTop = parentNode[SCROLL_TOP];
-                        scrollLeft = parentNode[SCROLL_LEFT];
-
-                        //Firefox does something funky with borders when overflow is not visible.
-                        if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
+                        // TODO: worth refactoring for TOP/LEFT only?
+                        while ((parentNode = parentNode[OFFSET_PARENT])) {
+                            xy[0] += parentNode[OFFSET_LEFT];
+                            xy[1] += parentNode[OFFSET_TOP];
+                            if (bCheck) {
                                 xy = Y.DOM._calcBorders(parentNode, xy);
+                            }
                         }
-                        
 
-                        if (scrollTop || scrollLeft) {
-                            xy[0] -= scrollLeft;
-                            xy[1] -= scrollTop;
+                        // account for any scrolled ancestors
+                        if (Y.DOM.getStyle(node, POSITION) != FIXED) {
+                            parentNode = node;
+
+                            while ((parentNode = parentNode.parentNode)) {
+                                scrollTop = parentNode[SCROLL_TOP];
+                                scrollLeft = parentNode[SCROLL_LEFT];
+
+                                //Firefox does something funky with borders when overflow is not visible.
+                                if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
+                                        xy = Y.DOM._calcBorders(parentNode, xy);
+                                }
+                                
+
+                                if (scrollTop || scrollLeft) {
+                                    xy[0] -= scrollLeft;
+                                    xy[1] -= scrollTop;
+                                }
+                            }
+                            xy[0] += Y.DOM.docScrollX(node);
+                            xy[1] += Y.DOM.docScrollY(node);
+
+                        } else {
+                            //Fix FIXED position -- add scrollbars
+                            xy[0] += Y.DOM.docScrollX(node);
+                            xy[1] += Y.DOM.docScrollY(node);
                         }
-                    }
-                    xy[0] += Y.DOM.docScrollX(node);
-                    xy[1] += Y.DOM.docScrollY(node);
-
-                } else {
-                    //Fix FIXED position -- add scrollbars
-                    if (Y.UA.opera) {
-                        xy[0] -= Y.DOM.docScrollX(node);
-                        xy[1] -= Y.DOM.docScrollY(node);
-                    } else if (Y.UA.webkit || Y.UA.gecko) {
-                        xy[0] += Y.DOM.docScrollX(node);
-                        xy[1] += Y.DOM.docScrollY(node);
+                    } else {
+                        xy = Y.DOM._getOffset(node);
                     }
                 }
-                //Round the numbers so we get sane data back
-                xy[0] = Math.floor(xy[0]);
-                xy[1] = Math.floor(xy[1]);
 
                 return xy;                
             };
         }
     }(),// NOTE: Executing for loadtime branching
+
+    _getOffset: function(node) {
+        var pos,
+            xy = null;
+
+        if (node) {
+            pos = Y.DOM.getStyle(node, POSITION);
+            xy = [
+                parseInt(Y.DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
+                parseInt(Y.DOM[GET_COMPUTED_STYLE](node, TOP), 10)
+            ];
+
+            if ( isNaN(xy[0]) ) { // in case of 'auto'
+                xy[0] = parseInt(Y.DOM.getStyle(node, LEFT), 10); // try inline
+                if ( isNaN(xy[0]) ) { // default to offset value
+                    xy[0] = (pos === RELATIVE) ? 0 : node[OFFSET_LEFT] || 0;
+                }
+            } 
+
+            if ( isNaN(xy[1]) ) { // in case of 'auto'
+                xy[1] = parseInt(Y.DOM.getStyle(node, TOP), 10); // try inline
+                if ( isNaN(xy[1]) ) { // default to offset value
+                    xy[1] = (pos === RELATIVE) ? 0 : node[OFFSET_TOP] || 0;
+                }
+            } 
+        }
+
+        return xy;
+
+    },
 
     /**
      * Gets the current X position of an element based on page coordinates. 
@@ -1559,52 +1693,43 @@ Y.mix(Y.DOM, {
      * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
      */
     setXY: function(node, xy, noRetry) {
-        var pos = Y.DOM.getStyle(node, POSITION),
-            setStyle = Y.DOM.setStyle,
+        var setStyle = Y.DOM.setStyle,
+            pos,
+            delta,
+            newXY,
+            currentXY;
 
-            delta = [ // assuming pixels; if not we will have to retry
-                parseInt( Y.DOM[GET_COMPUTED_STYLE](node, LEFT), 10 ),
-                parseInt( Y.DOM[GET_COMPUTED_STYLE](node, TOP), 10 )
-            ];
-    
-        if (pos == 'static') { // default to relative
-            pos = RELATIVE;
-            setStyle(node, POSITION, pos);
+        if (node && xy) {
+            pos = Y.DOM.getStyle(node, POSITION);
+
+            delta = Y.DOM._getOffset(node);       
+
+            if (pos == 'static') { // default to relative
+                pos = RELATIVE;
+                setStyle(node, POSITION, pos);
+            }
+
+            currentXY = Y.DOM.getXY(node);
+
+            if (xy[0] !== null) {
+                setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
+            }
+
+            if (xy[1] !== null) {
+                setStyle(node, TOP, xy[1] - currentXY[1] + delta[1] + 'px');
+            }
+
+            if (!noRetry) {
+                newXY = Y.DOM.getXY(node);
+                if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
+                    Y.DOM.setXY(node, xy, true); 
+                }
+            }
+          
+            Y.log('setXY setting position to ' + xy, 'info', 'dom-screen');
+        } else {
+            Y.log('setXY failed to set ' + node + ' to ' + xy, 'info', 'dom-screen');
         }
-
-        var currentXY = Y.DOM.getXY(node);
-
-        if (currentXY === false) { // has to be part of doc to have xy
-            Y.log('xy failed: node not available', 'error', 'Node');
-            return false; 
-        }
-        
-        if ( isNaN(delta[0]) ) {// in case of 'auto'
-            delta[0] = (pos == RELATIVE) ? 0 : node[OFFSET_LEFT];
-        } 
-        if ( isNaN(delta[1]) ) { // in case of 'auto'
-            delta[1] = (pos == RELATIVE) ? 0 : node[OFFSET_TOP];
-        } 
-
-        if (xy[0] !== null) {
-            setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
-        }
-
-        if (xy[1] !== null) {
-            setStyle(node, TOP, xy[1] - currentXY[1] + delta[1] + 'px');
-        }
-      
-        if (!noRetry) {
-            var newXY = Y.DOM.getXY(node);
-
-            // if retry is true, try one more time if we miss 
-           if ( (xy[0] !== null && newXY[0] != xy[0]) || 
-                (xy[1] !== null && newXY[1] != xy[1]) ) {
-               Y.DOM.setXY(node, xy, true);
-           }
-        }        
-
-        Y.log('setXY setting position to ' + xy, 'info', 'Node');
     },
 
     /**
@@ -1710,20 +1835,16 @@ Y.mix(DOM, {
      @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
-        var x = DOM.getXY(node),
+        var xy = DOM.getXY(node),
             ret = false;
         
-        if (x) {
-            ret = {
-                '0': x[0],
-                '1': x[1],
-                top: x[1],
-                right: x[0] + node[OFFSET_WIDTH],
-                bottom: x[1] + node[OFFSET_HEIGHT],
-                left: x[0],
-                height: node[OFFSET_HEIGHT],
-                width: node[OFFSET_WIDTH]
-            };
+        if (node && xy) {
+            ret = DOM._getRegion(
+                xy[1], // top
+                xy[0] + node[OFFSET_WIDTH], // right
+                xy[1] + node[OFFSET_HEIGHT], // bottom
+                xy[0] // left
+            );
         }
 
         return ret;
@@ -1813,6 +1934,19 @@ Y.mix(DOM, {
             
     },
 
+    _getRegion: function(t, r, b, l) {
+        var region = {};
+
+        region[TOP] = region[1] = t;
+        region[LEFT] = region[0] = l;
+        region[BOTTOM] = b;
+        region[RIGHT] = r;
+        region.width = region[RIGHT] - region[LEFT];
+        region.height = region[BOTTOM] - region[TOP];
+
+        return region;
+    },
+
     /**
      * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
      * @method viewportRegion
@@ -1820,13 +1954,22 @@ Y.mix(DOM, {
      */
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
-        var r = {};
-        r[TOP] = DOM.docScrollY(node);
-        r[RIGHT] = DOM.winWidth(node) + DOM.docScrollX(node);
-        r[BOTTOM] = (DOM.docScrollY(node) + DOM.winHeight(node));
-        r[LEFT] = DOM.docScrollX(node);
+        var ret = false,
+            scrollX, scrollY;
 
-        return r;
+        if (node) {
+            scrollX = DOM.docScrollX(node);
+            scrollY = DOM.docScrollY(node);
+
+            ret = DOM._getRegion(
+                scrollY, // top
+                DOM.winWidth(node) + scrollX, // right
+                scrollY + DOM.winHeight(node), // bottom
+                scrollX // left
+            );
+        }
+
+        return ret;
     }
 });
 
@@ -2136,28 +2279,6 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
-        /**
-         * Executes the supplied function against each node until true is returned.
-         * @method some
-         *
-         * @param {Array} nodes The nodes to run the function against 
-         * @param {Function} fn  The function to run against each node
-         * @return {Boolean} whether or not any element passed
-         * @static
-         */
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -2191,7 +2312,11 @@ var PARENT_NODE = 'parentNode',
                         root.id = Y.guid();
                     }
                     selector = '#' + root.id + ' ' + selector;
-                    root = root.ownerDocument;
+
+                    // fast-path ID when possible
+                    if (root.ownerDocument.getElementById(root.id)) {
+                        root = root.ownerDocument;
+                    }
                 }
 
                 tokens = Selector._tokenize(selector);
@@ -2201,7 +2326,7 @@ var PARENT_NODE = 'parentNode',
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9) {
                         root = root.getElementById(tokens[0].id);
                     }
 
@@ -2211,7 +2336,7 @@ var PARENT_NODE = 'parentNode',
 
                     if (nodes[LENGTH]) {
                         if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
+                            Y.Array.some(nodes, Selector._testToken, token);
                         } else {
                             Y.Array.each(nodes, Selector._testToken, token);
                         }
@@ -2231,11 +2356,12 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
+                    !(token.last && node._found) ) {
                 while ((attr = token.tests[i])) {
                     i++;
                     test = attr.test;
@@ -2253,7 +2379,7 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 result[result.length] = node;
-                if (token.deDupe) {
+                if (token.deDupe && token.last) {
                     node._found = true;
                     Selector._foundCache.push(node);
                 }
@@ -2435,6 +2561,8 @@ var PARENT_NODE = 'parentNode',
             if (!found || selector.length) { // not fully parsed
                 Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
+            } else if (tokens[LENGTH]) {
+                tokens[tokens[LENGTH] - 1].last = true;
             }
             return tokens;
         },
