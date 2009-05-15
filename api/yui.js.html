@@ -55,21 +55,33 @@
 
     <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
 
-        <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">(!!</span><span class="nx">capture</span><span class="o">));</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-            <span class="o">}</span> 
-        <span class="o">},</span>
-
-        <span class="nx">remove</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(){};</span>
             <span class="o">}</span>
-        <span class="o">},</span>
+        <span class="o">}(),</span>
+
+        <span class="nx">remove</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span> <span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span> <span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(){};</span>
+            <span class="o">}</span>
+        <span class="o">}(),</span>
 
         <span class="nx">globalListener</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">windowLoaded</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
