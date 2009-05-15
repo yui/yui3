@@ -902,8 +902,8 @@
 <span class="c">     * @method _isInLogLevel</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_isInLogLevel</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">msg</span><span class="o">,</span><span class="nx">cat</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">lvl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;logLevel&#39;</span><span class="o">);</span>
+    <span class="nx">_isInLogLevel</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">lvl</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;logLevel&#39;</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">lvl</span> <span class="o">!==</span> <span class="nx">INFO</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">cat</span> <span class="o">=</span> <span class="nx">cat</span> <span class="o">||</span> <span class="nx">INFO</span><span class="o">;</span>
@@ -942,8 +942,11 @@
 <span class="c">     * @return Object the message object</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">msg</span><span class="o">,</span><span class="nx">cat</span><span class="o">,</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span>
+
+        <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(),</span>
             <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
             <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="o">),</span>
@@ -1337,16 +1340,19 @@
 <span class="c">     * @param src {String} OPTIONAL the source of the message (e.g. widget name)</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_onLogEvent</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">msg</span><span class="o">,</span><span class="nx">cat</span><span class="o">,</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_onLogEvent</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isInLogLevel</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span><span class="nx">cat</span><span class="o">,</span><span class="nx">src</span><span class="o">))</span> <span class="o">{</span>
+        <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;LOGEVENT: &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isInLogLevel</span><span class="o">(</span><span class="nx">e</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">;</span>
 
             <span class="c">/* TODO: needed? */</span>
-            <span class="k">var</span> <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">;</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ENTRY</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span><span class="nx">arguments</span><span class="o">)</span>
+                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
             <span class="o">});</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="o">;</span>
