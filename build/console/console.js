@@ -322,6 +322,23 @@ Y.mix(Console, {
         },
 
         /**
+         * Object that will emit the log events.  By default the YUI instance.
+         * To have a single Console capture events from all YUI instances, set
+         * this to the Y.Global object.
+         *
+         * @attribute logSource
+         * @type EventTarget
+         * @default Y
+         */
+        logSource : {
+            value : Y,
+            writeOnce : true,
+            validator : function (v) {
+                return v && Y.Lang.isFunction(v.on);
+            }
+        },
+
+        /**
          * Collection of strings used to label elements in the Console UI.
          * Default collection contains the following name:value pairs:
          *
@@ -539,6 +556,16 @@ Y.mix(Console, {
 Y.extend(Console,Y.Widget,{
 
     /**
+     * Category to prefix all event subscriptions to allow for ease of detach
+     * during destroy.
+     *
+     * @property _evtCat
+     * @type string
+     * @protected
+     */
+    _evtCat : null,
+
+    /**
      * Reference to the Node instance containing the head contents.
      *
      * @property _head
@@ -718,13 +745,16 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     initializer : function () {
+        this._evtCat = Y.stamp(this) + '|';
+
         this.buffer    = [];
 
         if (!this.get(ENTRY_TEMPLATE)) {
             this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
         }
 
-        Y.on(this.get('logEvent'),Y.bind(this._onLogEvent,this));
+        this.get('logSource').on(this._evtCat +
+            this.get('logEvent'),Y.bind(this._onLogEvent,this));
 
         /**
          * Triggers the processing of an incoming message via the default logic
@@ -748,6 +778,16 @@ Y.extend(Console,Y.Widget,{
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });
+    },
+
+    destructor : function () {
+        var bb = this.get('boundingBox');
+
+        this.get('logSource').detach(this._evtCat);
+        
+        Y.Event.purgeElement(bb, true);
+
+        bb.set('innerHTML','');
     },
 
     /**
@@ -790,10 +830,14 @@ Y.extend(Console,Y.Widget,{
             on(CLICK,this._onClearClick,this);
         
         // Attribute changes
-        this.after('stringsChange',       this._afterStringsChange);
-        this.after('pausedChange',        this._afterPausedChange);
-        this.after('consoleLimitChange',  this._afterConsoleLimitChange);
-        this.after('collapsedChange',     this._afterCollapsedChange);
+        this.after(this._evtCat + 'stringsChange',
+            this._afterStringsChange);
+        this.after(this._evtCat + 'pausedChange',
+            this._afterPausedChange);
+        this.after(this._evtCat + 'consoleLimitChange',
+            this._afterConsoleLimitChange);
+        this.after(this._evtCat + 'collapsedChange',
+            this._afterCollapsedChange);
     },
 
     
