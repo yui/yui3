@@ -67,8 +67,8 @@
 
 <span class="c">// String constants</span>
 <span class="c"></span><span class="k">var</span> <span class="nx">CLASS_NAME_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;classNamePrefix&#39;</span><span class="o">,</span>
-	<span class="nx">CLASS_NAME_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;classNameDelimiter&#39;</span><span class="o">;</span>
-
+	<span class="nx">CLASS_NAME_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;classNameDelimiter&#39;</span><span class="o">,</span>
+    <span class="nx">CONFIG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">;</span>
 
 <span class="c">// Global config</span>
 <span class="c"></span>
@@ -80,8 +80,7 @@
 <span class="c"> * @default &quot;yui&quot;</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;yui&#39;</span><span class="o">;</span>
-
+<span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;yui&#39;</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Configuration property indicating the delimiter used to compose all CSS class names in</span>
@@ -92,14 +91,12 @@
 <span class="c"> * @default &quot;-&quot;</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;-&#39;</span><span class="o">;</span>
-
+<span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;-&#39;</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
-	<span class="k">var</span> <span class="nx">sPrefix</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">],</span>
-		<span class="nx">sDelimiter</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">],</span>
-		<span class="nx">classNames</span> <span class="o">=</span> <span class="o">{};</span>
+	<span class="k">var</span> <span class="nx">sPrefix</span>    <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">],</span>
+		<span class="nx">sDelimiter</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">];</span>
 
 	<span class="k">return</span> <span class="o">{</span>
 
@@ -109,22 +106,18 @@
 <span class="c">		 * Uses the &lt;code&gt;Y.config.classNameDelimiter&lt;/code&gt; attribute to delimit the </span>
 <span class="c">		 * provided strings. E.g. Y.ClassNameManager.getClassName(&#39;foo&#39;,&#39;bar&#39;); // yui-foo-bar</span>
 <span class="c">		 * </span>
-<span class="c">		 * </span>
 <span class="c">		 * @method getClassName</span>
 <span class="c">		 * @param {String}+ one or more classname bits to be joined and prefixed</span>
 <span class="c">		 */</span>
-		<span class="nx">getClassName</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">c</span><span class="o">,</span><span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
-	
-			<span class="c">// Test for multiple classname bits</span>
-<span class="c"></span>			<span class="k">if</span> <span class="o">(</span><span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="nx">sDelimiter</span><span class="o">);</span>
-			<span class="o">}</span>
-		
-			<span class="c">// memoize in classNames map</span>
-<span class="c"></span>			<span class="k">return</span> <span class="nx">classNames</span><span class="o">[</span><span class="nx">c</span><span class="o">]</span> <span class="o">||</span> <span class="o">(</span><span class="nx">classNames</span><span class="o">[</span><span class="nx">c</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sPrefix</span> <span class="o">+</span> <span class="nx">sDelimiter</span> <span class="o">+</span> <span class="nx">c</span><span class="o">);</span>
-	
-		<span class="o">}</span>
-	
+		<span class="nx">getClassName</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">c</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="k">var</span> <span class="nx">sClass</span> <span class="o">=</span> <span class="nx">sPrefix</span> <span class="o">+</span> <span class="nx">sDelimiter</span> <span class="o">+</span> 
+                   <span class="o">((</span><span class="nx">x</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">join</span><span class="o">(</span><span class="nx">sDelimiter</span><span class="o">)</span> <span class="o">:</span> <span class="nx">c</span><span class="o">);</span>
+
+			<span class="k">return</span> <span class="nx">sClass</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\s/g</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">);</span>
+
+		<span class="o">})</span>
+
 	<span class="o">};</span>
 
 <span class="o">}();</span>

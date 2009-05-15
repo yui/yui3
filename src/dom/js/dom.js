@@ -337,8 +337,13 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        doc = doc || Y.config.doc;
-        return Y.DOM.contains(doc.documentElement, element);
+        doc = doc || element[OWNER_DOCUMENT];
+        var id = element.id;
+        if (!id) { // TODO: remove when done?
+            id = element.id = Y.guid();
+        }
+
+        return !! (doc.getElementById(id));
     },
 
     /**
@@ -352,6 +357,9 @@ Y.DOM = {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
             Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
+        }
+        if (typeof newNode === 'string') {
+            newNode = DOM.create(newNode);
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
     },
@@ -381,7 +389,6 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * If execScripts is false, all scripts are stripped.
      */
     create: function(html, doc) {
         doc = doc || Y.config.doc;
@@ -477,26 +484,23 @@ Y.DOM = {
         return frag;
     },
 
-    insertHTML: function(node, content, where, execScripts) {
-        var scripts,
-            newNode = Y.DOM.create(content);
+    _removeChildNodes: function(node) {
+        while (node.firstChild) {
+            node.removeChild(node.firstChild);
+        }
+    },
 
-        switch(where) {
-            case 'innerHTML': 
-                node.innerHTML = content; // TODO: purge?
-                newNode = node;
-                break;
-            case 'beforeBegin':
-                Y.DOM.insertBefore(newNode, node);
-                break;
-            case 'afterBegin':
-                Y.DOM.insertBefore(newNode, node[FIRST_CHILD]);
-                break;
-            case 'afterEnd':
-                Y.DOM.insertAfter(newNode, node);
-                break;
-            default: // and 'beforeEnd'
-                node.appendChild(newNode);
+    addHTML: function(node, content, where, execScripts) {
+        var scripts,
+            newNode = (content[NODE_TYPE]) ? content : Y.DOM.create(content);
+
+        if (!where) {
+            node.appendChild(newNode);
+        } else if (where[NODE_TYPE]) {
+            Y.DOM.insertBefore(newNode, where);
+        } else if (where === 'replace') {
+            Y.DOM._removeChildNodes(node);
+            newNode = node;
         }
 
         if (execScripts) {

@@ -148,9 +148,7 @@ Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute',
-
-    'insertHTML'
+    'getAttribute'
 ]);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
@@ -159,7 +157,7 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'insertHTML']);
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
     var node = document.createElement('div');

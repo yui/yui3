@@ -15,7 +15,11 @@ var CLIENT_TOP = 'clientTop',
     FILTERS = 'filters',
     OPACITY = 'opacity',
     AUTO = 'auto',
-    CURRENT_STYLE = 'currentStyle';
+    CURRENT_STYLE = 'currentStyle',
+
+    _getStyleObj = function(node) {
+        return node[CURRENT_STYLE] || node[STYLE];
+    };
 
 // use alpha filter for IE opacity
 if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
@@ -30,21 +34,22 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
                 try { // make sure its in the document
                     val = node[FILTERS]('alpha')[OPACITY];
                 } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
+                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
                 }
             }
             return val / 100;
         },
 
         set: function(node, val, style) {
-            var current;
+            var current,
+                styleObj;
+
             if (val === '') { // normalize inline style behavior
-                current = node.currentStyle.opacity; // revert to original opacity
+                styleObj = _getStyleObj(node);
+                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
                 val = current;
-                if (val === undefined) {
-                    val = 1;
-                }
             }
+
             if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 
@@ -64,7 +69,7 @@ try {
             if (parseInt(val, 10) >= 0) {
                 style['height'] = val;
             } else {
-                Y.log('invalid style value for height: ' + val, 'warn', 'DOM');
+                Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -74,7 +79,7 @@ try {
             if (parseInt(val, 10) >= 0) {
                 style['width'] = val;
             } else {
-                Y.log('invalid style value for width: ' + val, 'warn', 'DOM');
+                Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
             }
         }
     };
@@ -83,39 +88,44 @@ try {
 // IE getComputedStyle
 // TODO: unit-less lineHeight (e.g. 1.22)
 var re_size = /^width|height$/,
-    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
+    re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
 
-var ComputedStyle = {
+ComputedStyle = {
     CUSTOM_STYLES: {},
 
     get: function(el, property) {
         var value = '',
-            current = el[CURRENT_STYLE][property];
+            current;
 
-        if (property === OPACITY) {
-            value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
-            value = current;
-        } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
-            value = Y.DOM.IE.COMPUTED[property](el, property);
-        } else if (re_unit.test(current)) { // convert to pixel
-            value = ComputedStyle.getPixel(el, property) + PX;
-        } else {
-            value = current;
+        if (el) {
+                current = _getStyleObj(el)[property];
+
+            if (property === OPACITY) {
+                value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
+            } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
+                value = current;
+            } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
+                value = Y.DOM.IE.COMPUTED[property](el, property);
+            } else if (re_unit.test(current)) { // convert to pixel
+                value = ComputedStyle.getPixel(el, property) + PX;
+            } else {
+                value = current;
+            }
         }
 
         return value;
     },
 
     getOffset: function(el, prop) {
-        var current = el[CURRENT_STYLE][prop],                        // value of "width", "top", etc.
+        var current = _getStyleObj(node)[prop],                     // value of "width", "top", etc.
             capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
             offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
+            actual,
             value = '';
 
         if (current === AUTO) {
-            var actual = el[offset]; // offsetHeight/Top etc.
+            actual = el[offset]; // offsetHeight/Top etc.
             if (actual === UNDEFINED) { // likely "right" or "bottom"
                 value = 0;
             }
@@ -147,7 +157,7 @@ var ComputedStyle = {
         // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
         // clientTop/Left = borderWidth
         var value = null;
-        if (!el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
+        if (!el[CURRENT_STYLE] || !el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
             el[STYLE].zoom = 1; // need layout to measure client
         }
 
@@ -171,8 +181,9 @@ var ComputedStyle = {
     getPixel: function(node, att) {
         // use pixelRight to convert to px
         var val = null,
-            styleRight = node[CURRENT_STYLE][RIGHT],
-            current = node[CURRENT_STYLE][att];
+            style = _getStyleObj(node),
+            styleRight = style[RIGHT],
+            current = style[att];
 
         node[STYLE][RIGHT] = current;
         val = node[STYLE].pixelRight;
@@ -182,8 +193,10 @@ var ComputedStyle = {
     },
 
     getMargin: function(node, att) {
-        var val;
-        if (node[CURRENT_STYLE][att] == AUTO) {
+        var val,
+            style = _getStyleObj(node);
+
+        if (style[att] == AUTO) {
             val = 0;
         } else {
             val = ComputedStyle.getPixel(node, att);
@@ -200,11 +213,11 @@ var ComputedStyle = {
     },
 
     getColor: function(node, att) {
-        var current = node[CURRENT_STYLE][att];
+        var current = _getStyleObj(node)[att];
 
         if (!current || current === TRANSPARENT) {
             Y.DOM.elementByAxis(node, PARENT_NODE, null, function(parent) {
-                current = parent[CURRENT_STYLE][att];
+                current = _getStyleObj(parent)[att];
                 if (current && current !== TRANSPARENT) {
                     node = parent;
                     return true;
@@ -216,15 +229,14 @@ var ComputedStyle = {
     },
 
     getBorderColor: function(node, att) {
-        var current = node[CURRENT_STYLE];
-        var val = current[att] || current.color;
+        var current = _getStyleObj(node),
+            val = current[att] || current.color;
         return Y.Color.toRGB(Y.Color.toHex(val));
     }
-
-};
+},
 
 //fontSize: getPixelFont,
-var IEComputed = {};
+IEComputed = {};
 
 // TODO: top, right, bottom, left
 IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
