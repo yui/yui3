@@ -1699,7 +1699,6 @@ ET.prototype = {
                 return (this._yuievt.chain) ? this : true;
             }
 
-
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();

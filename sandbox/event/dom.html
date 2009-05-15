@@ -124,11 +124,9 @@ YUI({
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
         e.stopPropagation();
         // e.stopImmediatePropagation();
-    }
+    },
+    f2 = function(e) {
 
-    var h =Y.on('blah|click', f, el);
-
-    Y.on('blah|click', function(e) {
         Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
         // h.detach();
         // Y.detach('click', f, el);
@@ -137,7 +135,17 @@ YUI({
         // Y.Event.purgeElement(this, true, 'click');
         // Y.Event.detach('click', null, this);
         Y.detach('blah|*');
-    }, el);
+    };
+
+    // var h = Y.on('blah|click', f, el);
+    // Y.on('blah|click',f2, el);
+
+    Y.on({
+        'blah|click':     f2,
+        'blah|mouseover': f
+    }, null, el);
+
+
 
 
     var ret = Y.on('click', function(e) {
