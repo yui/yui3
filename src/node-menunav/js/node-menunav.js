@@ -351,7 +351,7 @@ var NodeMenuNav = function () {
 
 };
 
-NodeMenuNav.NAME = "NodeMenuNav";
+NodeMenuNav.NAME = "nodeMenuNav";
 NodeMenuNav.NS = "menuNav";
 
 
