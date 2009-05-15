@@ -72,6 +72,10 @@
      to be used by reference, for example, when it points to
      a utility object.
 
+* Base.plug and Base.unplug used to add static Plugins (default plugins
+  for a class). Replaces static PLUGINS array, allowing subclasses to 
+  easily unplug static plugins added higher up in the hierarchy.
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"

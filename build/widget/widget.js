@@ -1317,15 +1317,8 @@ Y.extend(Widget, Y.Base, {
     }
 });
 
-/**
- * Static registration of default plugins for the class.
- * 
- * @property Widget.PLUGINS
- * @static
- */
-Widget.PLUGINS = [];
-
 Y.Widget = Widget;
+
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'classnamemanager']});
