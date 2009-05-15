@@ -107,6 +107,7 @@
 <span class="c"> * &lt;/pre&gt;</span>
 <span class="c"> *</span>
 <span class="c"> *  &lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;filters: per-component filter specification.  If specified for a given component, this overrides the filter config&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;combine:</span>
 <span class="c"> *  Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;ignore:</span>
@@ -859,6 +860,14 @@
     <span class="k">this</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
     <span class="c">/**</span>
+<span class="c">     * per-component filter specification.  If specified for a given component, this </span>
+<span class="c">     * overrides the filter config.</span>
+<span class="c">     * @property filters</span>
+<span class="c">     * @type object</span>
+<span class="c">     */</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">filters</span> <span class="o">=</span> <span class="o">{};</span>
+
+    <span class="c">/**</span>
 <span class="c">     * The list of requested modules</span>
 <span class="c">     * @property required</span>
 <span class="c">     * @type {string: boolean}</span>
@@ -995,7 +1004,7 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="nx">FILTERS</span><span class="o">:</span> <span class="o">{</span>
+    <span class="nx">FILTER_DEFS</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">RAW</span><span class="o">:</span> <span class="o">{</span> 
             <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="s2">&quot;-min\\.js&quot;</span><span class="o">,</span> 
             <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="s2">&quot;.js&quot;</span>
@@ -1041,7 +1050,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">f</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">f</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">filterName</span> <span class="o">=</span> <span class="nx">f</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">FILTERS</span><span class="o">[</span><span class="nx">f</span><span class="o">];</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">FILTER_DEFS</span><span class="o">[</span><span class="nx">f</span><span class="o">];</span>
         <span class="o">}</span>
 
     <span class="o">},</span>
@@ -2120,29 +2129,17 @@
 <span class="c">     */</span>
     <span class="nx">_filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">u</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="c">// Y.log(&#39;filter &#39; + u);</span>
-<span class="c"></span>
-        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">exc</span><span class="o">,</span> <span class="nx">inc</span><span class="o">,</span> <span class="nx">raw</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">FILTERS</span><span class="o">.</span><span class="nx">RAW</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">filter</span><span class="o">,</span> 
+            <span class="nx">hasFilter</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">filters</span><span class="o">),</span>
+            <span class="nx">modFilter</span> <span class="o">=</span> <span class="nx">hasFilter</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">filters</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">u</span> <span class="o">&amp;&amp;</span> <span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">u</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">filterName</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="o">)</span> <span class="o">{</span>
-            
-                <span class="nx">exc</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logExclude</span><span class="o">;</span>
-                <span class="nx">inc</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logInclude</span><span class="o">;</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">inc</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">exc</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">exc</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">useFilter</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-                <span class="o">}</span>
-
+            <span class="k">if</span> <span class="o">(</span><span class="nx">hasFilter</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">modFilter</span><span class="o">))</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">FILTER_DEFS</span><span class="o">[</span><span class="nx">modFilter</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()]</span> <span class="o">||</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">modFilter</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="nx">u</span> <span class="o">=</span> <span class="o">(</span><span class="nx">useFilter</span><span class="o">)</span> <span class="o">?</span> <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">f</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">)</span> <span class="o">:</span>
-                              <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">raw</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">raw</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">);</span>
-            
-            <span class="k">if</span> <span class="o">(</span><span class="nx">useFilter</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">u</span> <span class="o">=</span> <span class="nx">u</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">searchExp</span><span class="o">,</span> <span class="s1">&#39;g&#39;</span><span class="o">),</span> <span class="nx">f</span><span class="o">.</span><span class="nx">replaceStr</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
