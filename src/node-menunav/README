@@ -1,6 +1,8 @@
 **** version 3.0.0 Beta 1 ***
 
 * Now lives on the "Plugin" namespace, as opposed to the "plugin" namespace
+* Now requires the Focus Manager Node Plugin (Y.Plugin.NodeFocusManager)
+* Now extends Y.Base
 
 **** version 3.0.0 PR2 ***
 

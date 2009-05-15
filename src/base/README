@@ -1,4 +1,4 @@
-3.0.0 beta1
+3.0.0 beta 1
 
 * Config argument for init event now merged into the event facade, 
   instead of being passed separately (available as e.cfg).

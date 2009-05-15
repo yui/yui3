@@ -1,6 +1,8 @@
 ImageLoader - Release Notes
 
 Development Master
+
+Release 3.0.0 beta 1
  - 3.0 conversion
  - New features:
    - Fold groups indicated by a distance from the fold, and images are loaded in cascading fashion as each reaches that distance

@@ -637,18 +637,18 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
         test_inject: function() {
             var html = '<strong>bar</strong>';
-            Y.get('#test-insert-html').insertHTML(html);
+            Y.get('#test-insert-html').append(html);
             Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
                 'foo' + html,
-                "Y.get('#test-insert-html').insertHTML('<strong>bar</strong>')");
+                "Y.get('#test-insert-html').append('<strong>bar</strong>')");
 
-            Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin');
+            Y.get('#test-insert-html').prepend('<em>baz</em>');
             Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
                 Y.DOM.byId('test-insert-html').innerHTML,
-                Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin'));
+                "Y.get('#test-insert-html').prepend('<em>baz</em>')");
 
-            Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>', 'afterBegin');
-            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>', 'afterBegin')");
+            Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>');
+            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>'");
 
         },
 

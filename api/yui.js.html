@@ -55,21 +55,33 @@
 
     <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
 
-        <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">(!!</span><span class="nx">capture</span><span class="o">));</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-            <span class="o">}</span> 
-        <span class="o">},</span>
-
-        <span class="nx">remove</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(){};</span>
             <span class="o">}</span>
-        <span class="o">},</span>
+        <span class="o">}(),</span>
+
+        <span class="nx">remove</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span> <span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="o">!!</span><span class="nx">capture</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span> <span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">detachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">function</span><span class="o">(){};</span>
+            <span class="o">}</span>
+        <span class="o">}(),</span>
 
         <span class="nx">globalListener</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">windowLoaded</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -131,14 +143,10 @@
 <span class="c">     *  &lt;li&gt;-------------------------------------------------------------------------&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;For loader:&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;-------------------------------------------------------------------------&lt;/li&gt;</span>
-<span class="c">     *  &lt;li&gt;base:</span>
-<span class="c">     *  The base dir&lt;/li&gt;</span>
-<span class="c">     *  &lt;li&gt;secureBase:</span>
-<span class="c">     *  The secure base dir (not implemented)&lt;/li&gt;</span>
-<span class="c">     *  &lt;li&gt;comboBase:</span>
-<span class="c">     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
-<span class="c">     *  &lt;li&gt;root:</span>
-<span class="c">     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;base: The base dir&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;secureBase: The secure base dir (not implemented)&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;filter:</span>
 <span class="c">     *  </span>
 <span class="c">     * A filter to apply to result urls.  This filter will modify the default</span>
@@ -163,6 +171,7 @@
 <span class="c">     * &lt;/pre&gt;</span>
 <span class="c">     *</span>
 <span class="c">     *  &lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;filters: per-component filter specification.  If specified for a given component, this overrides the filter config&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;combine:</span>
 <span class="c">     *  Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;ignore:</span>
@@ -221,14 +230,14 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        
+
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
 
         <span class="c">// find targeted window</span>
 <span class="c"></span>        <span class="c">// @TODO create facades</span>
 <span class="c"></span>        <span class="c">// @TODO resolve windowless environments</span>
 <span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nb">window</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
-            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">;</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">w</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;debug&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
@@ -237,9 +246,9 @@
     
         <span class="c">// add a reference to o for anything that needs it</span>
 <span class="c"></span>        <span class="c">// before _setup is called.</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="o">{</span>
             <span class="c">// @todo expand the new module metadata</span>
 <span class="c"></span>            <span class="nx">mods</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_idx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
@@ -256,17 +265,18 @@
             <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-            <span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
+            <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span>
+
 
         <span class="c">// this.log(this.id + &#39;) init &#39;);</span>
 <span class="c"></span>    <span class="o">},</span>
@@ -425,6 +435,10 @@
 <span class="c">     */</span>
     <span class="nx">use</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">));</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> 
             <span class="nx">a</span><span class="o">=</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">),</span> 
@@ -519,6 +533,13 @@
                 <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
                 <span class="o">}</span>
+
+                <span class="c">// process queued use requests as long until done </span>
+<span class="c"></span>                <span class="c">// or dynamic load happens again.</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="k">while</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">next</span><span class="o">());</span>
+                <span class="o">}</span>
             <span class="o">};</span>
 
         <span class="c">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback);</span>
@@ -552,6 +573,7 @@
 <span class="c"></span>        <span class="c">// requirements if it is available.</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">();</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -575,6 +597,7 @@
         <span class="c">// dynamic load</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to dynamically load the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>

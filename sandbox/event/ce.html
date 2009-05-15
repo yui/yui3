@@ -28,10 +28,10 @@
         Y.log('instanceof: ' + (Y instanceof YUI));
         Y.log('constructor: ' + (Y.constructor == YUI));
 
-        Y.on('yui:log', function(msg) {
+        Y.on('yui:log', function(e) {
             var d=document, b=d.body, n=d.createElement("div");
             if (b) {
-                n.appendChild(d.createTextNode(msg));
+                n.appendChild(d.createTextNode(e.msg));
                 b.appendChild(n);
             }
         });
@@ -225,9 +225,24 @@ property names rather than e.details[1]
 
     Y.fire('test:test');
 
+    //-------------------
 
+
+    Y.after('handle|test:event2', function() {
+        Y.log('this after listener for string detach should not have fired');
     });
 
+    Y.on('handle|test:event2', function() {
+        Y.log('this on listener for string detach should not have fired');
+    });
+
+    // detachAll
+    Y.detach('handle|*');
+
+    Y.fire('test:event2');
+
+
+});
 
 </script>
 
