@@ -6,21 +6,33 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
-        add = function(el, type, fn, capture) {
-            if (el.addEventListener) {
-                    el.addEventListener(type, fn, !!capture);
-            } else if (el.attachEvent) {
+        add = function () {
+            if (window.addEventListener) {
+                return function(el, type, fn, capture) {
+                    el.addEventListener(type, fn, (!!capture));
+                };
+            } else if (window.attachEvent) {
+                return function(el, type, fn) {
                     el.attachEvent("on" + type, fn);
-            } 
-        },
-
-        remove = function(el, type, fn, capture) {
-            if (el.removeEventListener) {
-                    el.removeEventListener(type, fn, !!capture);
-            } else if (el.detachEvent) {
-                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
             }
-        },
+        }(),
+
+        remove = function() {
+            if (window.removeEventListener) {
+                return function (el, type, fn, capture) {
+                    el.removeEventListener(type, fn, !!capture);
+                };
+            } else if (window.detachEvent) {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
+            }
+        }(),
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
