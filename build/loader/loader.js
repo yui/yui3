@@ -1324,7 +1324,7 @@ Y.Loader.prototype = {
             this._config(o);
             this._setup();
             this._explode();
-            if (this.allowRollup) {
+            if (this.allowRollup && !this.combine) {
                 this._rollup();
             }
             this._reduce();
@@ -1622,7 +1622,7 @@ Y.Loader.prototype = {
 
     },
 
-    _onFailure: function(msg) {
+    _onFailure: function(o) {
 
 
         this._attach();
@@ -1630,7 +1630,7 @@ Y.Loader.prototype = {
         var f = this.onFailure;
         if (f) {
             f.call(this.context, {
-                msg: 'failure: ' + msg,
+                msg: 'failure: ' + o.msg,
                 data: this.data,
                 success: false
             });
