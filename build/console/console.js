@@ -242,7 +242,7 @@ Y.mix(Console, {
      *   <li>str_clear - pulled from attribute strings.clear</li>
      * </ul>
      *
-     * @property Console.FOOTER_TEMPLATE
+     * @property Console.HEADER_TEMPLATE
      * @type String
      * @static
      */
@@ -855,8 +855,8 @@ Y.extend(Console,Y.Widget,{
      * @method _isInLogLevel
      * @protected
      */
-    _isInLogLevel : function (msg,cat) {
-        var lvl = this.get('logLevel');
+    _isInLogLevel : function (e) {
+        var cat = e.cat, lvl = this.get('logLevel');
 
         if (lvl !== INFO) {
             cat = cat || INFO;
@@ -895,8 +895,11 @@ Y.extend(Console,Y.Widget,{
      * @return Object the message object
      * @protected
      */
-    _normalizeMessage : function (msg,cat,src) {
-        var m = {
+    _normalizeMessage : function (e) {
+
+        var msg = e.msg, cat = e.cat, src = e.src,
+
+        m = {
             time            : new Date(),
             message         : msg,
             category        : cat || this.get('defaultCategory'),
@@ -1290,16 +1293,19 @@ Y.extend(Console,Y.Widget,{
      * @param src {String} OPTIONAL the source of the message (e.g. widget name)
      * @protected
      */
-    _onLogEvent : function (msg,cat,src) {
+    _onLogEvent : function (e) {
 
-        if (!this.get(DISABLED) && this._isInLogLevel(msg,cat,src)) {
+        console.log("LOGEVENT: " + e.msg);
+
+        if (!this.get(DISABLED) && this._isInLogLevel(e)) {
+
+            var debug = Y.config.debug;
 
             /* TODO: needed? */
-            var debug = Y.config.debug;
             Y.config.debug = false;
 
             this.fire(ENTRY, {
-                message : this._normalizeMessage.apply(this,arguments)
+                message : this._normalizeMessage.call(this, e)
             });
 
             Y.config.debug = debug;

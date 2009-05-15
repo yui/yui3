@@ -712,7 +712,9 @@ YUI.add('yui-base', function(Y) {
  */
 (function() {
 
-var instance = Y;
+var instance = Y,
+    LOGEVENT = 'yui:log',
+    _published;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -771,7 +773,23 @@ instance.log = function(msg, cat, src, silent) {
             }
 
             if (Y.fire && !bail && !silent) {
-                Y.fire('yui:log', msg, cat, src);
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: true
+                    });
+
+                    _published = true;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+                
+
+                // Y.fire('yui:log', msg, cat, src);
             }
         }
     }
