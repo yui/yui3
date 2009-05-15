@@ -60,6 +60,7 @@ YUI.add('loader', function(Y) {
  * </pre>
  *
  *  </li>
+ *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
  *  <li>ignore:
@@ -570,7 +571,7 @@ var GLOBAL_ENV = YUI.Env,
         'yui-base': { },
 
         test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
         }  
 
     }
@@ -812,6 +813,14 @@ Y.Loader = function(o) {
     this.filter = null;
 
     /**
+     * per-component filter specification.  If specified for a given component, this 
+     * overrides the filter config.
+     * @property filters
+     * @type object
+     */
+    this.filters = {};
+
+    /**
      * The list of requested modules
      * @property required
      * @type {string: boolean}
@@ -948,7 +957,7 @@ Y.Loader = function(o) {
 
 Y.Loader.prototype = {
 
-    FILTERS: {
+    FILTER_DEFS: {
         RAW: { 
             'searchExp': "-min\\.js", 
             'replaceStr': ".js"
@@ -994,7 +1003,7 @@ Y.Loader.prototype = {
         if (L.isString(f)) {
             f = f.toUpperCase();
             this.filterName = f;
-            this.filter = this.FILTERS[f];
+            this.filter = this.FILTER_DEFS[f];
         }
 
     },
@@ -1315,7 +1324,7 @@ Y.Loader.prototype = {
             this._config(o);
             this._setup();
             this._explode();
-            if (this.allowRollup) {
+            if (this.allowRollup && !this.combine) {
                 this._rollup();
             }
             this._reduce();
@@ -1613,7 +1622,7 @@ Y.Loader.prototype = {
 
     },
 
-    _onFailure: function(msg) {
+    _onFailure: function(o) {
 
 
         this._attach();
@@ -1621,7 +1630,7 @@ Y.Loader.prototype = {
         var f = this.onFailure;
         if (f) {
             f.call(this.context, {
-                msg: 'failure: ' + msg,
+                msg: 'failure: ' + o.msg,
                 data: this.data,
                 success: false
             });
@@ -1757,14 +1766,12 @@ Y.Loader.prototype = {
 
 
         // restore the state at the time of the request
-        // if (source) {
+        if (source) {
             this._config(source);
-        // }
+        }
 
         // build the dependency list
-        // if (o) {
-            this.calculate(o);
-        // }
+        this.calculate(o);
 
         if (!type) {
 
@@ -1800,13 +1807,7 @@ Y.Loader.prototype = {
 
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
-
             _queue.running = true;
-
-            // var f = _queue.next();
-            // if (f) {
-            //     f();
-            // }
             _queue.next()();
         }
     },
@@ -1825,7 +1826,7 @@ Y.Loader.prototype = {
 
 
 
-        copy = Y.merge(this);
+        copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
 
@@ -2016,8 +2017,6 @@ Y.Loader.prototype = {
 
         // internal callback for loading css first
         if (fn) {
-            // this._finish();
-            // _queue.running = false;
             this._internalCallback = null;
             fn.call(this);
 
@@ -2030,19 +2029,6 @@ Y.Loader.prototype = {
 
     },
 
-    /*
-     * In IE, the onAvailable/onDOMReady events need help when Event is
-     * loaded dynamically
-     * @method _pushEvents
-     * @param {Function} optional function reference
-     * @private
-     */
-    // _pushEvents: function() {
-    //     if (Y.Event) {
-    //         Y.Event._load();
-    //     }
-    // },
-
     /**
      * Apply filter defined for this instance to a url/path
      * method _filter
@@ -2054,25 +2040,17 @@ Y.Loader.prototype = {
      */
     _filter: function(u, name) {
 
+        var f = this.filter, 
+            hasFilter = name && (name in this.filters),
+            modFilter = hasFilter && this.filters[name];
 
-        var f = this.filter, useFilter = true, exc, inc;
+        if (u) {
 
-        if (u && f) {
-
-            if (name && this.filterName == "DEBUG") {
-            
-                exc = this.logExclude;
-                inc = this.logInclude;
-
-                if (inc && !(name in inc)) {
-                    useFilter = false;
-                } else if (exc && (name in exc)) {
-                    useFilter = false;
-                }
-
+            if (hasFilter) {
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
-            
-            if (useFilter) {
+
+            if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }

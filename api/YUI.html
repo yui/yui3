@@ -124,14 +124,10 @@ A list of modules that defines the YUI core (overrides the default)</li>
 <li>-------------------------------------------------------------------------</li>
 <li>For loader:</li>
 <li>-------------------------------------------------------------------------</li>
-<li>base:
-The base dir</li>
-<li>secureBase:
-The secure base dir (not implemented)</li>
-<li>comboBase:
-The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-<li>root:
-The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+<li>base: The base dir</li>
+<li>secureBase: The secure base dir (not implemented)</li>
+<li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
 <li>filter:
 A filter to apply to result urls.  This filter will modify the default
 path for all modules.  The default path for the YUI library is the
@@ -154,6 +150,7 @@ myFilter: &#123;
 &#125;
 </pre>
 </li>
+<li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
 <li>combine:
 Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
 <li>ignore:

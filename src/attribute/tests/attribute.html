@@ -20,7 +20,7 @@
         #console {
             position:static;
         }
-        
+
         html, body {
             height:100%;
         }
@@ -1443,10 +1443,11 @@
                         foo: function() {}
                     });
 
-                    var start, end, n = 20;
+                    var start, end, n = 20, t, i;
+
                     start = new Date().getTime();
-                    for (var i = 0; i < n; i++) {
-                        var t = new Test();
+                    for (i = 0; i < n; i++) {
+                        t = new Test();
                         t = null;
                     }
                     end = new Date().getTime();

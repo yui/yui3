@@ -22,7 +22,7 @@
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS", "PLUGINS"]
+        aggregates : ["ATTRS", "_PLUG", "_UNPLUG"]
     };
 
     /**

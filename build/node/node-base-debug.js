@@ -330,11 +330,11 @@ Y.mix(Node.prototype, {
     },
 
     on: function(type, fn, context, arg) {
-        var args;
+        var args,
             ret = null;
 
         if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0),
+            args = g_slice.call(arguments, 0);
             args.splice(2, 0, g_nodes[this[UID]]);
             ret = Y.Event.attach.apply(Y.Event, args);
         } else {
@@ -351,9 +351,18 @@ Y.mix(Node.prototype, {
      */
     detach: function(type, fn) {
         var args, ret = null;
-        if (Node.DOM_EVENTS[type]) {
+
+        // Added by apm: if this is a DOM event, dispatch to the event 
+        // system.  If the type is not supplied, do the same since 
+        // this is how detachAll works.  This means that Node may not 
+        // be able to support detachAll for both DOM events and custom events
+        // as implemented.  Detaching DOM events this way is a blocking
+        // issue for DD, so I changed it so that will work.  It is probably
+        // less important for custom events to work this way through this
+        // interface, but we need to review this.
+        if (!type || Node.DOM_EVENTS[type]) {
             args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
+            args[2] = g_nodes[this[UID]];
 
             ret = Y.Event.detach.apply(Y.Event, args);
         } else {
@@ -592,7 +601,7 @@ Y.mix(Node.prototype, {
     removeEventListener: function() {
         var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
     // TODO: need this?
