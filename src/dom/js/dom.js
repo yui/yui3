@@ -389,7 +389,6 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * If execScripts is false, all scripts are stripped.
      */
     create: function(html, doc) {
         doc = doc || Y.config.doc;
@@ -485,22 +484,23 @@ Y.DOM = {
         return frag;
     },
 
-    addHTML: function(node, content, how, execScripts) {
-        var scripts,
-            newNode = Y.DOM.create(content);
+    _removeChildNodes: function(node) {
+        while (node.firstChild) {
+            node.removeChild(node.firstChild);
+        }
+    },
 
-        if (typeof where === 'string') {
-            switch(how) {
-                case 'replace': 
-                    node.innerHTML = content; // TODO: purge?
-                    newNode = node;
-                    break;
-                case 'insert':
-                    Y.DOM.insertBefore(newNode, node);
-                    break;
-                default:
-                    node.appendChild(newNode);
-            }
+    addHTML: function(node, content, where, execScripts) {
+        var scripts,
+            newNode = (content[NODE_TYPE]) ? content : Y.DOM.create(content);
+
+        if (!where) {
+            node.appendChild(newNode);
+        } else if (where[NODE_TYPE]) {
+            Y.DOM.insertBefore(newNode, where);
+        } else if (where === 'replace') {
+            Y.DOM._removeChildNodes(node);
+            newNode = node;
         }
 
         if (execScripts) {
