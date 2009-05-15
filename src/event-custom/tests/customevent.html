@@ -38,9 +38,9 @@
         }
     }).use("dump", "test", "console", function(Y) {
 
-        Y.Global.on('yui:log', function(e) {
-            console.log('GLOBAL LOG: ' + e.msg);
-        });
+        // Y.Global.on('yui:log', function(e) {
+        //     console.log('GLOBAL LOG: ' + e.msg);
+        // });
 
         var button = Y.get('#btnRun');
 
@@ -238,6 +238,29 @@
                 Y.fire('test:event');
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isFalse(fired2);
+
+            },
+
+            testDetachAllByKey: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                Y.after('handle|test:event2', function() {
+                    fired2 = true;
+                });
+
+                Y.on('handle|test:event2', function() {
+                    fired1 = true;
+                });
+
+                // detachAll
+                Y.detach('handle|*');
+
+                Y.fire('test:event2');
+
+                Y.Assert.isFalse(fired1, 'fired1, the after listener should not have fired.');
+                Y.Assert.isFalse(fired2, 'fired2, the on listener should not have fired.');
 
             },
 
