@@ -7,8 +7,9 @@ The YUI Global
         yui-base
         get
         loader
+        queue-base
 
-3.0.0b1
+3.0.0 beta 1
 
     Core:
     - Y.fail has been renamed to Y.error so that Y.fail can be used for the assertion
@@ -16,19 +17,28 @@ The YUI Global
     - Y.stamp now accepts a readOnly parameter to be used when you are only interested
       in reading an existing guid rather than creating a new one.
     - Y.stamp defends against stamping items that can't be stamped.
-    - Added to Object: values(), hasKey(), hasValue(), size()
+    - Added to Object: values(), hasKey(), hasValue(), size(), getValue, setValue
+      (the latter are for manipulating nested values)
+    - Y.use calls are queued during dynamic loading.
+    - Added Y.cached for function memoizing
+    - added numericSort to Array
+    - The yui:log event broadcasts globally.
 
     Lang: 
     - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
 
     Get:
+    - Accepts an attribute collection config to apply to inserted nodes.
     - id attributes are globally unique
     - Now accepts purgethreshold as a config option.  This will set the number of transactions
       required before auto removing nodes from previous transactions (default is 20)
 
     Loader:
     - yuitest renamed to test, now requires collection
-    - added collection
+    - lots of new module metadata
+    - added onCSS
+    - Loader requests are queued globally
+    - Accepts jsAttributes and cssAttributes configs for adding attributes to inserted nodes
 
     UA:
     - Added 'secure' property for SSL detection

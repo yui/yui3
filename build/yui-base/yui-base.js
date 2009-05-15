@@ -141,6 +141,9 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  callback for the 'success' event</li>
      *  <li>onFailure:
      *  callback for the 'failure' event</li>
+     *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
+     *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+     *  the presentation of the page while the script is loading.</li>
      *  <li>onTimeout:
      *  callback for the 'timeout' event</li>
      *  <li>onProgress:
