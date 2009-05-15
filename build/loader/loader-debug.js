@@ -1338,7 +1338,7 @@ Y.Loader.prototype = {
             this._config(o);
             this._setup();
             this._explode();
-            if (this.allowRollup) {
+            if (this.allowRollup && !this.combine) {
                 this._rollup();
             }
             this._reduce();
@@ -1649,16 +1649,16 @@ Y.Loader.prototype = {
 
     },
 
-    _onFailure: function(msg) {
+    _onFailure: function(o) {
 
-        Y.log('loader failure: ' + Y.id, "info", "loader");
+        Y.log('load error: ' + o.msg + ', ' + Y.id, "error", "loader");
 
         this._attach();
 
         var f = this.onFailure;
         if (f) {
             f.call(this.context, {
-                msg: 'failure: ' + msg,
+                msg: 'failure: ' + o.msg,
                 data: this.data,
                 success: false
             });
@@ -1669,7 +1669,7 @@ Y.Loader.prototype = {
 
     _onTimeout: function() {
 
-        Y.log('loader timeout: ' + Y.id, "info", "loader");
+        Y.log('loader timeout: ' + Y.id, "error", "loader");
 
         this._attach();
 
