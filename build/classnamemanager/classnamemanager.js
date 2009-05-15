@@ -63,8 +63,12 @@ Y.ClassNameManager = function () {
 		 * @param {String}+ one or more classname bits to be joined and prefixed
 		 */
 		getClassName: Y.cached(function (c, x) {
-			return sPrefix + sDelimiter + 
+
+			var sClass = sPrefix + sDelimiter + 
                    ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
+
+			return sClass.replace(/\s/g, '');
+
 		})
 
 	};
