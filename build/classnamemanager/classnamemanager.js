@@ -20,8 +20,8 @@ YUI.add('classnamemanager', function(Y) {
 
 // String constants
 var CLASS_NAME_PREFIX = 'classNamePrefix',
-	CLASS_NAME_DELIMITER = 'classNameDelimiter';
-
+	CLASS_NAME_DELIMITER = 'classNameDelimiter',
+    CONFIG = Y.config;
 
 // Global config
 
@@ -33,8 +33,7 @@ var CLASS_NAME_PREFIX = 'classNamePrefix',
  * @default "yui"
  * @static
  */
-Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui';
-
+CONFIG[CLASS_NAME_PREFIX] = CONFIG[CLASS_NAME_PREFIX] || 'yui';
 
 /**
  * Configuration property indicating the delimiter used to compose all CSS class names in
@@ -45,14 +44,12 @@ Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui';
  * @default "-"
  * @static
  */
-Y.config[CLASS_NAME_DELIMITER] = Y.config[CLASS_NAME_DELIMITER] || '-';
-
+CONFIG[CLASS_NAME_DELIMITER] = CONFIG[CLASS_NAME_DELIMITER] || '-';
 
 Y.ClassNameManager = function () {
 
-	var sPrefix = Y.config[CLASS_NAME_PREFIX],
-		sDelimiter = Y.config[CLASS_NAME_DELIMITER],
-		classNames = {};
+	var sPrefix    = CONFIG[CLASS_NAME_PREFIX],
+		sDelimiter = CONFIG[CLASS_NAME_DELIMITER];
 
 	return {
 
@@ -62,22 +59,13 @@ Y.ClassNameManager = function () {
 		 * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the 
 		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
 		 * 
-		 * 
 		 * @method getClassName
 		 * @param {String}+ one or more classname bits to be joined and prefixed
 		 */
-		getClassName: function (c,x) {
-	
-			// Test for multiple classname bits
-			if (x) {
-				c = Y.Array(arguments,0,true).join(sDelimiter);
-			}
-		
-			// memoize in classNames map
-			return classNames[c] || (classNames[c] = sPrefix + sDelimiter + c);
-	
-		}
-	
+		getClassName: Y.cached(function (c, x) {
+			return sPrefix + sDelimiter + 
+                   ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
+		})
 	};
 
 }();

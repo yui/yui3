@@ -1368,9 +1368,9 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
+            key = arg2 ? arg1 : Y.Array(a, 0, true).join(DELIMITER);
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, a);
