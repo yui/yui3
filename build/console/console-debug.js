@@ -449,6 +449,20 @@ Y.mix(Console, {
         },
 
         /**
+         * Maximum number of entries printed in each printBuffer iteration.
+         * This is used to prevent excessive logging bogging down runtime
+         * performance.
+         *
+         * @attribute printLimit
+         * @type Number
+         * @default 00
+         */
+        printLimit : {
+            value : 50,
+            validator : isNumber
+        },
+
+        /**
          * Maximum number of Console entries allowed in the Console body at one
          * time.  This is used to keep acquired messages from exploding the
          * DOM tree and impacting page performance.
@@ -678,25 +692,30 @@ Y.extend(Console,Y.Widget,{
      * Outputs all buffered messages to the console UI.
      * 
      * @method printBuffer
+     * @param limit {Number} (optional) max number of buffered entries to write
      * @chainable
      */
-    printBuffer: function () {
+    printBuffer: function (limit) {
         var messages = this.buffer,
             debug = Y.config.debug,
-            i,len;
+            i;
+
+        limit = Math.min(messages.length, (limit || messages.length));
 
         // turn off logging system
         Y.config.debug = false;
 
         if (!this.get(PAUSED) && this.get('rendered')) {
 
-            this._clearTimeout();
-
-            this.buffer = [];
-
             // TODO: use doc frag
-            for (i = 0, len = messages.length; i < len; ++i) {
-                this.printLogEntry(messages[i]);
+            this._body.setStyle('diplay','none');
+            for (i = 0; i < limit && messages.length; ++i) {
+                this.printLogEntry(messages.shift());
+            }
+            this._body.setStyle('diplay','');
+
+            if (!messages.length) {
+                this._clearTimeout();
             }
 
             if (this.get('scrollIntoView')) {
@@ -783,7 +802,7 @@ Y.extend(Console,Y.Widget,{
     destructor : function () {
         var bb = this.get('boundingBox');
 
-        this.get('logSource').detach(this._evtCat);
+        this.get('logSource').detach(this._evtCat + '*');
         
         Y.Event.purgeElement(bb, true);
 
@@ -979,7 +998,8 @@ Y.extend(Console,Y.Widget,{
         if (!this.get(PAUSED) && !this._timeout) {
             this._timeout = Y.later(
                                 this.get('printTimeout'),
-                                this,this.printBuffer);
+                                this, this.printBuffer,
+                                this.get('printLimit'), true);
         }
     },
 
@@ -1059,12 +1079,16 @@ Y.extend(Console,Y.Widget,{
                     i = 0;
                 }
 
+                this._body.setStyle('display','none');
+
                 for (;i < l; ++i) {
                     e = entries.item(i);
                     if (e) {
                         e.get('parentNode').removeChild(e);
                     }
                 }
+
+                this._body.setStyle('display','');
             }
 
             Y.config.debug = debug;
