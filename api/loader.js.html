@@ -1385,7 +1385,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_explode</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">combine</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_rollup</span><span class="o">();</span>
             <span class="o">}</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_reduce</span><span class="o">();</span>
@@ -1696,16 +1696,16 @@
 
     <span class="o">},</span>
 
-    <span class="nx">_onFailure</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_onFailure</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader failure: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;load error: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">msg</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
         <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;failure: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span>
+                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;failure: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span>
                 <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
                 <span class="nx">success</span><span class="o">:</span> <span class="kc">false</span>
             <span class="o">});</span>
@@ -1716,7 +1716,7 @@
 
     <span class="nx">_onTimeout</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader timeout: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;loader timeout: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
