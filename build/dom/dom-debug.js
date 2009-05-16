@@ -502,6 +502,7 @@ Y.DOM = {
             Y.DOM.insertBefore(newNode, where);
         } else if (where === 'replace') {
             Y.DOM._removeChildNodes(node);
+            node.appendChild(newNode);
             newNode = node;
         }
 

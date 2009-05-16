@@ -26,6 +26,8 @@
     <button type="button" id="show">Show</button>
     <button type="button" id="collapse">Collapse</button>
     <button type="button" id="expand">Expand</button>
+    <button type="button" id="destroy">Destroy</button>
+    <button type="button" id="throttle">Throttle</button>
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -34,7 +36,8 @@ YUI({
     base: '../../../build/',
     useBrowserConsole:false,
     //logLevel: 'warn',
-    filter: 'debug'
+    filter: 'debug',
+    logInclude : { global: true }
 }).use('console',function (Y) {
 
 var x = {
@@ -52,6 +55,12 @@ Y.get('#hide').on('click', function () { yconsole.hide(); });
 Y.get('#show').on('click', function () { yconsole.show(); });
 Y.get('#collapse').on('click', function () { yconsole.collapse(); });
 Y.get('#expand').on('click', function () { yconsole.expand(); });
+Y.get('#destroy').on('click', function () { yconsole.destroy(); });
+Y.get('#throttle').on('click', function () {
+    for (var i = 0; i < 500; ++i) {
+        Y.log('Throttle message ' + i);
+    }
+});
 
 var yconsole = new Y.Console({
     //verbose : true,

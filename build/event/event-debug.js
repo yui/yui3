@@ -991,7 +991,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             }
 
-            if (!fn || !fn.call) {
+            if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
             }
 
