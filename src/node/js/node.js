@@ -87,6 +87,20 @@ Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
 
+Node.plug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.plug.apply(Y.Base, args);
+    return Node;
+};
+
+Node.unplug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.unplug.apply(Y.Base, args);
+    return Node;
+};
+
 /**
  * Retrieves the DOM node bound to a Node instance
  * @method getDOMNode
