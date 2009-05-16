@@ -23,7 +23,7 @@
 //        throwFail: false,
         combine: false
 
-    }).use('dump', 'substitute', 'node', function(Y) {
+    }).use('dump', 'substitute', 'event-custom', function(Y) {
 
         Y.log('instanceof: ' + (Y instanceof YUI));
         Y.log('constructor: ' + (Y.constructor == YUI));
@@ -38,7 +38,7 @@
 
 /*
 
-Event.Target hasEvent replaced with getEvent
+EventTarget hasEvent replaced with getEvent
 
 Event.Custom constructor signature is now type and options --- 
 removed context and silent as arguments in the constructor, now these
@@ -47,7 +47,7 @@ must be passed into the config.
 Added 'defaultFn' custom event property
 
 Added 'emitFacade' config that publish() can use to use the Event.Facade signature.
-This is in place until we can configure Event.Target to always produce events
+This is in place until we can configure EventTarget to always produce events
 with the Event.Facade signature.
 
 When the facade in place, if the first argument is an object, these properties are
@@ -64,7 +64,7 @@ property names rather than e.details[1]
         arguments.callee.superclass.constructor.apply(this, arguments);
     }
 
-    Y.extend(Base, Y.Event.Target, {
+    Y.extend(Base, Y.EventTarget, {
         base: function() {
             Y.log('all your base...');
         }
@@ -83,7 +83,7 @@ property names rather than e.details[1]
 
 
     Y.augment(O, Base, null, null, {
-    // Y.augment(O, Y.Event.Target, null, null, {
+    // Y.augment(O, Y.EventTarget, null, null, {
         emitFacade: true
     });
 
@@ -91,12 +91,12 @@ property names rather than e.details[1]
     var o1 = new O('1');
 
     // event target instance or subclass
-    // var o2 = new Y.Event.Target();
+    // var o2 = new Y.EventTarget();
     var o2 = new O('2');
 
     // augmented object
     var o3 = new Object();
-    Y.augment(o3, Y.Event.Target, null, null, {
+    Y.augment(o3, Y.EventTarget, null, null, {
         emitFacade: true
     });
 
@@ -226,7 +226,6 @@ property names rather than e.details[1]
     Y.fire('test:test');
 
     //-------------------
-
 
     Y.after('handle|test:event2', function() {
         Y.log('this after listener for string detach should not have fired');
