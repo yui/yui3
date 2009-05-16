@@ -1561,8 +1561,7 @@ ET.prototype = {
         // this._yuievt.config.prefix
 
         var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachcategory, handle, store = Y.Env.evt.handles,
-            after, adapt;
+            detachcategory, handle, store = Y.Env.evt.handles, after, adapt;
 
         if (L.isObject(type, true)) {
 
@@ -1612,15 +1611,18 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+            } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
                 handle = Y.Event.attach.apply(Y.Event, args);
             }
-        } else {
+
+        } 
+
+        if (!handle) {
 
             ce     = this._yuievt.events[type] || this.publish(type);
             args   = Y.Array(arguments, 1, true);
 
-            f = (parts[2]) ? ce.after : ce.on;
+            f = (after) ? ce.after : ce.on;
 
             handle = f.apply(ce, args);
         }
@@ -1630,6 +1632,7 @@ ET.prototype = {
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
+
 
         }
 
