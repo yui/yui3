@@ -1447,6 +1447,7 @@ Y.Subscriber.prototype = {
 
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
+    DETACH_PREFIX_SPLITTER = /[,|]\s*/,
     AFTER_PREFIX = '~AFTER~',
 
     /**
@@ -1501,7 +1502,7 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        parts = t.split(/[,|]\s*/);
+        parts = t.split(DETACH_PREFIX_SPLITTER);
 
         if (parts.length > 1) {
             detachcategory = parts[0];
