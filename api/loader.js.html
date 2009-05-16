@@ -126,8 +126,10 @@
 <span class="c"> *  execution context for all callbacks&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;onSuccess:</span>
 <span class="c"> *  callback for the &#39;success&#39; event&lt;/li&gt;</span>
-<span class="c"> *  &lt;li&gt;onFailure:</span>
-<span class="c"> *  callback for the &#39;failure&#39; event&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onFailure: callback for the &#39;failure&#39; event&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onCSS: callback for the &#39;CSSComplete&#39; event.  When loading YUI components with CSS</span>
+<span class="c"> *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve</span>
+<span class="c"> *  the presentation of the page while the script is loading.&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;onTimeout:</span>
 <span class="c"> *  callback for the &#39;timeout&#39; event&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;onProgress:</span>
@@ -702,6 +704,15 @@
 <span class="c">     * @type function</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Callback for the &#39;CSSComplete&#39; event.  When loading YUI components with CSS</span>
+<span class="c">     * the CSS is loaded first, then the script.  This provides a moment you can tie into to improve</span>
+<span class="c">     * the presentation of the page while the script is loading.</span>
+<span class="c">     * @method onCSS</span>
+<span class="c">     * @type function</span>
+<span class="c">     */</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">onCSS</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * Callback executed each time a script or css file is loaded</span>
@@ -1839,7 +1850,6 @@
 
     <span class="nx">_insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
-
         <span class="c">// Y.log(&#39;private _insert() &#39; + (type || &#39;&#39;) + &#39;, &#39; + Y.id, &quot;info&quot;, &quot;loader&quot;);</span>
 <span class="c"></span>
         <span class="c">// restore the state at the time of the request</span>
@@ -1856,6 +1866,10 @@
 
             <span class="c">// Y.log(&quot;trying to load css first&quot;);</span>
 <span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">self</span><span class="o">.</span><span class="nx">onCSS</span><span class="o">;</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">self</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
+                        <span class="o">}</span>
                         <span class="nx">self</span><span class="o">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                         <span class="nx">self</span><span class="o">.</span><span class="nx">_insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">JS</span><span class="o">);</span>
                     <span class="o">};</span>

@@ -322,6 +322,23 @@ Y.mix(Console, {
         },
 
         /**
+         * Object that will emit the log events.  By default the YUI instance.
+         * To have a single Console capture events from all YUI instances, set
+         * this to the Y.Global object.
+         *
+         * @attribute logSource
+         * @type EventTarget
+         * @default Y
+         */
+        logSource : {
+            value : Y,
+            writeOnce : true,
+            validator : function (v) {
+                return v && Y.Lang.isFunction(v.on);
+            }
+        },
+
+        /**
          * Collection of strings used to label elements in the Console UI.
          * Default collection contains the following name:value pairs:
          *
@@ -432,6 +449,20 @@ Y.mix(Console, {
         },
 
         /**
+         * Maximum number of entries printed in each printBuffer iteration.
+         * This is used to prevent excessive logging bogging down runtime
+         * performance.
+         *
+         * @attribute printLimit
+         * @type Number
+         * @default 00
+         */
+        printLimit : {
+            value : 50,
+            validator : isNumber
+        },
+
+        /**
          * Maximum number of Console entries allowed in the Console body at one
          * time.  This is used to keep acquired messages from exploding the
          * DOM tree and impacting page performance.
@@ -537,6 +568,16 @@ Y.mix(Console, {
 });
 
 Y.extend(Console,Y.Widget,{
+
+    /**
+     * Category to prefix all event subscriptions to allow for ease of detach
+     * during destroy.
+     *
+     * @property _evtCat
+     * @type string
+     * @protected
+     */
+    _evtCat : null,
 
     /**
      * Reference to the Node instance containing the head contents.
@@ -651,25 +692,30 @@ Y.extend(Console,Y.Widget,{
      * Outputs all buffered messages to the console UI.
      * 
      * @method printBuffer
+     * @param limit {Number} (optional) max number of buffered entries to write
      * @chainable
      */
-    printBuffer: function () {
+    printBuffer: function (limit) {
         var messages = this.buffer,
             debug = Y.config.debug,
-            i,len;
+            i;
+
+        limit = Math.min(messages.length, (limit || messages.length));
 
         // turn off logging system
         Y.config.debug = false;
 
         if (!this.get(PAUSED) && this.get('rendered')) {
 
-            this._clearTimeout();
-
-            this.buffer = [];
-
             // TODO: use doc frag
-            for (i = 0, len = messages.length; i < len; ++i) {
-                this.printLogEntry(messages[i]);
+            this._body.setStyle('diplay','none');
+            for (i = 0; i < limit && messages.length; ++i) {
+                this.printLogEntry(messages.shift());
+            }
+            this._body.setStyle('diplay','');
+
+            if (!messages.length) {
+                this._clearTimeout();
             }
 
             if (this.get('scrollIntoView')) {
@@ -718,13 +764,16 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     initializer : function () {
+        this._evtCat = Y.stamp(this) + '|';
+
         this.buffer    = [];
 
         if (!this.get(ENTRY_TEMPLATE)) {
             this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
         }
 
-        Y.on(this.get('logEvent'),Y.bind(this._onLogEvent,this));
+        this.get('logSource').on(this._evtCat +
+            this.get('logEvent'),Y.bind(this._onLogEvent,this));
 
         /**
          * Triggers the processing of an incoming message via the default logic
@@ -748,6 +797,16 @@ Y.extend(Console,Y.Widget,{
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });
+    },
+
+    destructor : function () {
+        var bb = this.get('boundingBox');
+
+        this.get('logSource').detach(this._evtCat + '*');
+        
+        Y.Event.purgeElement(bb, true);
+
+        bb.set('innerHTML','');
     },
 
     /**
@@ -790,10 +849,14 @@ Y.extend(Console,Y.Widget,{
             on(CLICK,this._onClearClick,this);
         
         // Attribute changes
-        this.after('stringsChange',       this._afterStringsChange);
-        this.after('pausedChange',        this._afterPausedChange);
-        this.after('consoleLimitChange',  this._afterConsoleLimitChange);
-        this.after('collapsedChange',     this._afterCollapsedChange);
+        this.after(this._evtCat + 'stringsChange',
+            this._afterStringsChange);
+        this.after(this._evtCat + 'pausedChange',
+            this._afterPausedChange);
+        this.after(this._evtCat + 'consoleLimitChange',
+            this._afterConsoleLimitChange);
+        this.after(this._evtCat + 'collapsedChange',
+            this._afterCollapsedChange);
     },
 
     
@@ -935,7 +998,8 @@ Y.extend(Console,Y.Widget,{
         if (!this.get(PAUSED) && !this._timeout) {
             this._timeout = Y.later(
                                 this.get('printTimeout'),
-                                this,this.printBuffer);
+                                this, this.printBuffer,
+                                this.get('printLimit'), true);
         }
     },
 
@@ -1015,12 +1079,16 @@ Y.extend(Console,Y.Widget,{
                     i = 0;
                 }
 
+                this._body.setStyle('display','none');
+
                 for (;i < l; ++i) {
                     e = entries.item(i);
                     if (e) {
                         e.get('parentNode').removeChild(e);
                     }
                 }
+
+                this._body.setStyle('display','');
             }
 
             Y.config.debug = debug;

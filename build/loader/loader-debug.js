@@ -79,8 +79,10 @@ YUI.add('loader', function(Y) {
  *  execution context for all callbacks</li>
  *  <li>onSuccess:
  *  callback for the 'success' event</li>
- *  <li>onFailure:
- *  callback for the 'failure' event</li>
+ *  <li>onFailure: callback for the 'failure' event</li>
+ *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
+ *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+ *  the presentation of the page while the script is loading.</li>
  *  <li>onTimeout:
  *  callback for the 'timeout' event</li>
  *  <li>onProgress:
@@ -655,6 +657,15 @@ Y.Loader = function(o) {
      * @type function
      */
     this.onFailure = null;
+
+    /**
+     * Callback for the 'CSSComplete' event.  When loading YUI components with CSS
+     * the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+     * the presentation of the page while the script is loading.
+     * @method onCSS
+     * @type function
+     */
+    this.onCSS = null;
 
     /**
      * Callback executed each time a script or css file is loaded
@@ -1792,7 +1803,6 @@ Y.Loader.prototype = {
 
     _insert: function(source, o, type) {
 
-
         // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
         // restore the state at the time of the request
@@ -1809,6 +1819,10 @@ Y.Loader.prototype = {
 
             // Y.log("trying to load css first");
             this._internalCallback = function() {
+                        var f = self.onCSS;
+                        if (f) {
+                            f.call(self.context, Y);
+                        }
                         self._internalCallback = null;
                         self._insert(null, null, JS);
                     };

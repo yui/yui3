@@ -19,15 +19,25 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     AFTER_PREFIX = '~AFTER~',
 
-    __getType = function(pre, type) {
+    /**
+     * If the instance has a prefix attribute and the
+     * event type is not prefixed, the instance prefix is
+     * applied to the supplied type.
+     * @method _getType
+     */
+    _getType = Y.cached(function(pre, type) {
 
         // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
 
         var t = type;
 
-        if (!L.isString(type)) {
-            return type;
+        if (!L.isString(t)) {
+            return t;
         } 
+
+        if (t == '*') {
+            return null;
+        }
         
         if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
             t = pre + PREFIX_DELIMITER + t;
@@ -36,23 +46,21 @@ var L = Y.Lang,
         // Y.log("type: " + t, 'info', 'event');
 
         return t;
-    },
+    }),
 
     /**
-     * If the instance has a prefix attribute and the
-     * event type is not prefixed, the instance prefix is
-     * applied to the supplied type.
-     * @method _getType
+     * Returns an array with the detach key (if provided),
+     * and the prefixed event name from _getType
+     * Y.on('detachcategory, menu:click', fn)
+     * @method _parseType
+     * @private
      */
-    _getType = Y.cached(__getType),
+    _parseType = Y.cached(function(pre, type) {
 
-    __parseType = function(pre, type) {
+        var t = type, parts, detachcategory, after, i;
 
-        var t = type, 
-            parts, detachkey, after, i;
-
-        if (!L.isString(type)) {
-            return type;
+        if (!L.isString(t)) {
+            return t;
         } 
         
         i = t.indexOf(AFTER_PREFIX);
@@ -66,23 +74,14 @@ var L = Y.Lang,
         parts = t.split(/[,|]\s*/);
 
         if (parts.length > 1) {
-            detachkey = parts[0];
+            detachcategory = parts[0];
             t = parts[1];
         }
 
         t = _getType(pre, t);
 
-        return [detachkey, t, after];
-    },
-
-    /**
-     * Returns an array with the detach key (if provided),
-     * and the prefixed event name from _getType
-     * Y.on('detachkey, menu:click', fn)
-     * @method _parseType
-     * @private
-     */
-    _parseType = Y.cached(__parseType),
+        return [detachcategory, t, after];
+    }),
 
     /**
      * An event target can fire events and be targeted by events.
@@ -126,7 +125,6 @@ var L = Y.Lang,
     };
 
 
-
 ET.prototype = {
 
     /**
@@ -140,8 +138,8 @@ ET.prototype = {
         // this._yuievt.config.prefix
 
         var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachkey, handle, store = Y.Env.evt.handles,
-            key, after, adapt;
+            detachcategory, handle, store = Y.Env.evt.handles,
+            after, adapt;
 
         if (L.isObject(type, true)) {
 
@@ -173,16 +171,18 @@ ET.prototype = {
             return Y.Do.before.apply(Y.Do, arguments);
         }
 
-        detachkey = parts[0];
+        detachcategory = parts[0];
         type = parts[1];
         after = parts[2];
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
+            args  = Y.Array(arguments, 0, true);
+            args[0] = type;
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
                 Y.log('Using adaptor for ' + type, 'info', 'event');
-                return adapt.on.apply(Y, arguments);
+                handle = adapt.on.apply(Y, args);
             // check to see if the target is an Event.Target.  If so,
             // delegate to it (the Event.Target should handle whether
             // or not the prefix was included);
@@ -190,27 +190,25 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.attach.apply(Y.Event, arguments);
+            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+                handle = Y.Event.attach.apply(Y.Event, args);
             }
+        } else {
+
+            // Y.log('parts: ' + parts);
+            ce     = this._yuievt.events[type] || this.publish(type);
+            args   = Y.Array(arguments, 1, true);
+
+            f = (parts[2]) ? ce.after : ce.on;
+
+            handle = f.apply(ce, args);
         }
 
-        // Y.log('parts: ' + parts);
+        if (detachcategory) {
 
-        ce     = this._yuievt.events[type] || this.publish(type);
-        args   = Y.Array(arguments, 1, true);
-
-        f = (parts[2]) ? ce.after : ce.on;
-
-        handle = f.apply(ce, args);
-
-        if (detachkey) {
-
-            key = parts[0] + parts[1];
-            if (!store[key]) {
-                store[key] = [];
-            }
-            store[key].push(handle);
+            store[detachcategory] = store[detachcategory] || {};
+            store[detachcategory][type] = store[detachcategory][type] || [];
+            store[detachcategory][type].push(handle);
 
             // Y.log('storing: ' + key);
         }
@@ -247,24 +245,39 @@ ET.prototype = {
     detach: function(type, fn, context) {
 
         var parts = _parseType(this._yuievt.config.prefix, type), 
-        detachkey = L.isArray(parts) ? parts[0] : null, key,
-        details, handle, adapt,
+        detachcategory = L.isArray(parts) ? parts[0] : null,
+        handle, adapt, store = Y.Env.evt.handles, cat, args,
 
-        evts = this._yuievt.events, ce, i, ret = true;
+        evts = this._yuievt.events, ce, i, ret = true,
 
-        if (detachkey) {
-            key = parts[0] + parts[1]; 
-            details = Y.Env.evt.handles[key];
-            if (details) {
-                while (details.length) {
-                    handle = details.pop();
+        keyDetacher = function(lcat, ltype) {
+            var handles = lcat[ltype];
+            if (handles) {
+                while (handles.length) {
+                    handle = handles.pop();
                     handle.detach();
+                }
+            }
+        };
+
+        if (detachcategory) {
+
+            cat = store[detachcategory];
+            type = parts[1];
+
+            if (cat) {
+                if (type) {
+                    keyDetacher(cat, type);
+                } else {
+                    for (i in cat) {
+                        if (cat.hasOwnProperty(i)) {
+                            keyDetacher(cat, i);
+                        }
+                    }
                 }
 
                 return (this._yuievt.chain) ? this : true;
             }
-
-            type = parts[1];
 
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
@@ -276,12 +289,14 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
+            args = Y.Array(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
-                return adapt.detach.apply(Y, arguments);
+                return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.detach.apply(Y.Event, arguments);
+            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+                args[0] = type;
+                return Y.Event.detach.apply(Y.Event, args);
             }
         }
 
