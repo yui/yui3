@@ -12,9 +12,6 @@ var getCN = Y.ClassNameManager.getClassName,
 
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
-    C_ENTRY      = DOT + Y.Console.ENTRY_CLASSES.entry_class,
-    C_CATEGORIES = ' .' + getCN(CONSOLE,CATEGORY,FILTERS),
-    C_SOURCES    = ' .' + getCN(CONSOLE,SOURCE,FILTERS),
 
     SEL_CHECK    = 'input[type=checkbox].';
 
@@ -184,7 +181,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
             this._uiSetCheckbox(SOURCE, k, v);
         }, this);
 
-        this._updateConsole();
+        this.refreshConsole();
     },
 
     _onEntry : function (e) {
@@ -218,41 +215,96 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     },
 
     _afterCategoryChange : function (e) {
-        var cat     = e.subAttrName.replace(/category\./, EMPTY),
-            visible = e.newVal;
+        var cat    = e.subAttrName.replace(/category\./, EMPTY),
+            before = e.prevVal,
+            after  = e.newVal;
 
-        this._updateConsole();
+        // Don't update the console for new categories
+        if (!cat || before[cat] !== undefined) {
+            this.refreshConsole();
+
+            this._filterBuffer();
+        }
 
         if (cat && !e.fromUI) {
-            this._uiSetCheckbox(CATEGORY, cat, visible);
+            this._uiSetCheckbox(CATEGORY, cat, after);
         }
     },
 
     _afterSourceChange : function (e) {
         var src     = e.subAttrName.replace(/source\./, EMPTY),
-            visible = e.newVal;
+            before = e.prevVal,
+            after  = e.newVal;
 
-        this._updateConsole();
+        // Don't update the console for new sources
+        if (!src || before[src] !== undefined) {
+            this.refreshConsole();
+
+            this._filterBuffer();
+        }
 
         if (src && !e.fromUI) {
-            this._uiSetCheckbox(SOURCE, src, visible);
+            this._uiSetCheckbox(SOURCE, src, after);
         }
     },
 
-    _updateConsole : function () {
-        var body = this.get('host').get('contentBox').query(C_BODY);
+    _filterBuffer : function () {
+        var cats = this.get(CATEGORY),
+            srcs = this.get(SOURCE),
+            buffer = this.get('host').buffer,
+            start = null,
+            i;
+
+        for (i = buffer.length - 1; i >= 0; --i) {
+            if (!cats[buffer[i].category] || !srcs[buffer[i].source]) {
+                start = start || i;
+            } else if (start) {
+                buffer.splice(i,(start - i));
+                start = null;
+            }
+        }
+        if (start) {
+            buffer.splice(0,start + 1);
+        }
+    },
+
+    refreshConsole : function () {
+        var debug = Y.config.debug,
+            entries = this._entries,
+            print   = [],
+            p_i     = 0,
+            host, body, limit, cats, srcs, i, e;
+
+        Y.config.debug = false;
+
+        host  = this.get('host');
+        body  = host.get('contentBox').query(C_BODY);
+        limit = host.get('consoleLimit');
+        cats  = this.get(CATEGORY);
+        srcs  = this.get(SOURCE);
 
         if (body) {
+            // Capture from bottom up.  Entry order reversed.
+            for (i = entries.length - 1; i >= 0 && p_i < limit; --i) {
+                e = entries[i];
+                if (cats[e.category] && srcs[e.source]) {
+                    print[p_i++] = e;
+                }
+            }
+
             body.setStyle(DISPLAY,NONE);
 
             body.set('innerHTML','');
 
-            // create array of displayed entries by walking from the end of
-            // _entries and calling host.printLogEntry for all matching entries
-            // until consoleLimit or i < 0
+            // Print in reverse order from reverse ordered array (top down)
+            for (i = print.length - 1; i >= 0; --i) {
+                host.printLogEntry(print[i]);
+            }
 
             body.setStyle(DISPLAY,EMPTY);
         }
+
+        Y.config.debug = debug;
     },
 
     _uiSetCheckbox : function (type, item, checked) {
