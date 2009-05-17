@@ -110,45 +110,40 @@ Y.mix(ConsoleFilters,{
 
 Y.extend(ConsoleFilters, Y.Plugin.Base, {
 
+    _entries : null,
+
     _categories : null,
 
     _sources : null,
 
     initializer : function () {
-        this.doAfter("printLogEntry", this._afterPrintLogEntry);
+        this._entries = [];
+
+        this.get('host').on("entry", this._onEntry, this);
 
         this.doAfter("renderUI", this.renderUI);
         this.doAfter("syncUI", this.syncUI);
         this.doAfter("bindUI", this.bindUI);
+
+        this.doAfter("clearConsole", this._afterClearConsole);
+
+        if (this.get('host').get('rendered')) {
+            this.renderUI();
+            this.syncUI();
+            this.bindUI();
+        }
     },
 
     destructor : function () {
+        //TODO: grab last {consoleLimit} entries and update the console with
+        //them (no filtering)
+        this._entries = [];
+
         if (this._categories) {
             this._categories.get('parentNode').removeChild(this._categories);
         }
         if (this._sources) {
             this._sources.get('parentNode').removeChild(this._sources);
-        }
-
-        var update = [];
-
-        Y.Object.each(this.get(CATEGORY), function (v, k) {
-            if (!v) {
-                update.push(k.replace(/category\./,EMPTY));
-            }
-        });
-
-        Y.Object.each(this.get(SOURCE), function (v, k) {
-            if (!v) {
-                update.push(k.replace(/source\./,EMPTY));
-            }
-        });
-
-        // Make everything visible again
-        if (update.length) {
-            Y.Array.each(update, function (item) {
-               this._updateConsole(item,true);
-            });
         }
     },
 
@@ -192,29 +187,44 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         this._updateConsole();
     },
 
-    _afterPrintLogEntry : function (m) {
-        var visible = this.get('defaultVisibility');
+    _onEntry : function (e) {
+        this._entries.push(e.message);
 
-        if (!(m.category in this.get(CATEGORY))) {
-            this.set("category." + m.category, visible);
+        var cat = 'category.' + e.message.category,
+            src = 'source.' + e.message.source,
+            cat_filter = this.get(cat),
+            src_filter = this.get(src),
+            visible;
+
+        if (cat_filter === undefined) {
+            visible = this.get('defaultVisibility');
+            this.set(cat, visible);
+            cat_filter = visible;
         }
-        if (!(m.source in this.get(SOURCE))) {
-            this.set("source." + m.source, visible);
+
+        if (src_filter === undefined) {
+            visible = this.get('defaultVisibility');
+            this.set(src, visible);
+            src_filter = visible;
         }
+        
+        if (!cat_filter || !src_filter) {
+            e.preventDefault();
+        }
+    },
+
+    _afterClearConsole : function () {
+        this._entries = [];
     },
 
     _afterCategoryChange : function (e) {
         var cat     = e.subAttrName.replace(/category\./, EMPTY),
             visible = e.newVal;
 
-        if (cat) {
-            this._updateConsole(cat, visible[cat]);
+        this._updateConsole();
 
-            if (!e.fromUI) {
-                this._uiSetCheckbox(CATEGORY, cat, visible);
-            }
-        } else {
-            this.syncUI();
+        if (cat && !e.fromUI) {
+            this._uiSetCheckbox(CATEGORY, cat, visible);
         }
     },
 
@@ -222,40 +232,27 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         var src     = e.subAttrName.replace(/source\./, EMPTY),
             visible = e.newVal;
 
-        if (src) {
-            this._updateConsole(src, visible[src]);
+        this._updateConsole();
 
-            if (e && !e.fromUI) {
-                this._uiSetCheckbox(SOURCE, src, visible);
-            }
-        } else {
-            this.syncUI();
+        if (src && !e.fromUI) {
+            this._uiSetCheckbox(SOURCE, src, visible);
         }
     },
 
-    _updateConsole : function (item, visible) {
+    _updateConsole : function () {
         var body = this.get('host').get('contentBox').query(C_BODY);
 
         if (body) {
             body.setStyle(DISPLAY,NONE);
-            if (item) {
-                this._updateEntryType(body, item, visible);
-            } else {
-                Y.each(this.get(CATEGORY), function (v, k) {
-                    this._updateEntryType(body, k, v);
-                }, this);
 
-                Y.each(this.get(SOURCE), function (v, k) {
-                    this._updateEntryType(body, k, v);
-                }, this);
-            }
+            body.set('innerHTML','');
+
+            // create array of displayed entries by walking from the end of
+            // _entries and calling host.printLogEntry for all matching entries
+            // until consoleLimit or i < 0
+
             body.setStyle(DISPLAY,EMPTY);
         }
-    },
-
-    _updateEntryType : function (body, item, visible) {
-        body.queryAll(C_ENTRY + DOT + getCN(CONSOLE,'entry',item)).
-            setStyle(DISPLAY, (visible ? EMPTY : NONE));
     },
 
     _uiSetCheckbox : function (type, item, checked) {
