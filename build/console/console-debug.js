@@ -242,7 +242,7 @@ Y.mix(Console, {
      *   <li>str_clear - pulled from attribute strings.clear</li>
      * </ul>
      *
-     * @property Console.HEADER_TEMPLATE
+     * @property Console.FOOTER_TEMPLATE
      * @type String
      * @static
      */
@@ -469,10 +469,10 @@ Y.mix(Console, {
          *
          * @attribute consoleLimit
          * @type Number
-         * @default 500
+         * @default 300
          */
         consoleLimit : {
-            value : 500,
+            value : 300,
             validator : isNumber
         },
 
@@ -611,14 +611,14 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Object API returned from <code>Y.later</code>. Holds the timer id
-     * returned by <code>setTimout</code> for scheduling of buffered messages.
+     * returned by <code>setInterval</code> for scheduling of buffered messages.
      *
-     * @property _timeout
+     * @property _printLoop
      * @type Object
      * @default null
      * @protected
      */
-    _timeout : null,
+    _printLoop : null,
 
     /**
      * Array of normalized message objects awaiting printing.
@@ -649,7 +649,7 @@ Y.extend(Console,Y.Widget,{
         // TODO: clear event listeners from console contents
         this._body.set(INNER_HTML,'');
 
-        this._clearTimeout();
+        this._cancelPrintLoop();
 
         this.buffer = [];
 
@@ -715,7 +715,7 @@ Y.extend(Console,Y.Widget,{
             this._body.setStyle('diplay','');
 
             if (!messages.length) {
-                this._clearTimeout();
+                this._cancelPrintLoop();
             }
 
             if (this.get('scrollIntoView')) {
@@ -735,22 +735,17 @@ Y.extend(Console,Y.Widget,{
     /**
      * Prints the provided message to the console UI.
      *
+     * Inserts the Node into the console body at the top or bottom depending on
+     * the configuration value of newestOnTop.
+     *
      * @method printLogEntry
      * @param m {Object} Normalized message object
      * @chainable
      */
     printLogEntry : function (m) {
-        m = merge(
-                this._htmlEscapeMessage(m),
-                Console.ENTRY_CLASSES,
-                {
-                    cat_class : this.getClassName(ENTRY,m.category),
-                    src_class : this.getClassName(ENTRY,m.source)
-                });
+        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
 
-        var n = create(substitute(this.get('entryTemplate'),m));
-
-        this._addToConsole(n);
+        this._body.insertBefore(this._createEntry(m), sib);
 
         return this;
     },
@@ -773,7 +768,7 @@ Y.extend(Console,Y.Widget,{
         }
 
         this.get('logSource').on(this._evtCat +
-            this.get('logEvent'),Y.bind(this._onLogEvent,this));
+            this.get('logEvent'),Y.bind("_onLogEvent",this));
 
         /**
          * Triggers the processing of an incoming message via the default logic
@@ -797,10 +792,14 @@ Y.extend(Console,Y.Widget,{
          * @preventable _defResetFn
          */
         this.publish(RESET, { defaultFn: this._defResetFn });
+
+        this.after('rendered', this._schedulePrint);
     },
 
     destructor : function () {
         var bb = this.get('boundingBox');
+
+        this._cancelPrintLoop();
 
         this.get('logSource').detach(this._evtCat + '*');
         
@@ -995,8 +994,8 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _schedulePrint : function () {
-        if (!this.get(PAUSED) && !this._timeout) {
-            this._timeout = Y.later(
+        if (!this.get(PAUSED) && !this._printLoop && this.get('rendered')) {
+            this._printLoop = Y.later(
                                 this.get('printTimeout'),
                                 this, this.printBuffer,
                                 this.get('printLimit'), true);
@@ -1004,17 +1003,23 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Inserts a Node into the console body at the top or bottom depending on
-     * the configuration value of newestOnTop.
+     * Creates an entry node from the message meta provided.
      *
-     * @method _addToConsole
-     * @param node {Node} the node to insert into the console body
+     * @method _createEntry
+     * @param m {Object} object literal containing normalized message metadata
+     * @return Node
      * @protected
      */
-    _addToConsole : function (node) {
-        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
+    _createEntry : function (m) {
+        m = merge(
+                this._htmlEscapeMessage(m),
+                Console.ENTRY_CLASSES,
+                {
+                    cat_class : this.getClassName(ENTRY,m.category),
+                    src_class : this.getClassName(ENTRY,m.source)
+                });
 
-        this._body.insertBefore(node, sib);
+        return create(substitute(this.get('entryTemplate'),m));
     },
 
     /**
@@ -1058,20 +1063,20 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _trimOldEntries : function () {
+        // Turn off the logging system for the duration of this operation
+        // to prevent an infinite loop
+        Y.config.debug = false;
+
         var bd = this._body,
             limit = this.get('consoleLimit'),
             debug = Y.config.debug,
             entries,e,i,l;
 
         if (bd) {
-            // Turn off the logging system for the duration of this operation
-            // to prevent an infinite loop
-            Y.config.debug = false;
-
             entries = bd.queryAll(DOT+C_ENTRY);
-            l = entries ? entries.size() - limit : 0;
+            l = entries.size() - limit;
 
-            if (l) {
+            if (l > 0) {
                 if (this.get('newestOnTop')) {
                     i = limit;
                     l = entries.size();
@@ -1091,8 +1096,9 @@ Y.extend(Console,Y.Widget,{
                 this._body.setStyle('display','');
             }
 
-            Y.config.debug = debug;
         }
+
+        Y.config.debug = debug;
     },
 
     /**
@@ -1115,13 +1121,13 @@ Y.extend(Console,Y.Widget,{
     /**
      * Clears the timeout for printing buffered messages.
      *
-     * @method _clearTimeout
+     * @method _cancelPrintLoop
      * @protected
      */
-    _clearTimeout : function () {
-        if (this._timeout) {
-            this._timeout.cancel();
-            this._timeout = null;
+    _cancelPrintLoop : function () {
+        if (this._printLoop) {
+            this._printLoop.cancel();
+            this._printLoop = null;
         }
     },
 
@@ -1256,8 +1262,8 @@ Y.extend(Console,Y.Widget,{
 
         if (!paused) {
             this._schedulePrint();
-        } else if (this._timeout) {
-            this._clearTimeout();
+        } else if (this._printLoop) {
+            this._cancelPrintLoop();
         }
     },
 
