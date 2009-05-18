@@ -98,7 +98,7 @@
                                 <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">selectedIndex</span><span class="o">,</span> <span class="nx">jlen</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">options</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">jlen</span><span class="o">;</span> <span class="o">++</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
                                     <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">options</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
                                     <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">selected</span><span class="o">)</span> <span class="o">{</span>
-                                      <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">opt</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">specified</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">text</span><span class="o">);</span>
+                                      <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">specified</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">text</span><span class="o">);</span>
                                     <span class="o">}</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
@@ -119,7 +119,6 @@
                             <span class="c">// stub case for input type button elements.</span>
 <span class="c"></span>                            <span class="k">break</span><span class="o">;</span>
                         <span class="nx">case</span> <span class="s1">&#39;submit&#39;</span><span class="o">:</span>
-                            <span class="k">break</span><span class="o">;</span>
                         <span class="nx">default</span><span class="o">:</span>
                             <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
                     <span class="o">}</span>
@@ -145,11 +144,13 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -164,7 +165,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
