@@ -72,6 +72,8 @@ YUI.add('imageloader', function(Y) {
 
 		/**
 		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
 		 */
 		_init: function() {
 
@@ -235,7 +237,7 @@ YUI.add('imageloader', function(Y) {
 
 		/**
 		 * Registers an image with the group.
-		 * Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is required.
+		 * Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is a required attribute.
 		 * @method registerImage
 		 * @param {Object} *  A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)
 		 * @return {Object}  <code>Y.ImgLoadImgObj</code> that was registered
@@ -475,7 +477,9 @@ YUI.add('imageloader', function(Y) {
 	var imgProto = {
 
 		/**
-		 * Initialize all private members needed for the group
+		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
 		 */
 		_init: function() {
 

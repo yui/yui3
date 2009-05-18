@@ -58,7 +58,7 @@
 
 
 	<span class="c">/**</span>
-<span class="c">	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints</span>
+<span class="c">	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints.</span>
 <span class="c">	 * @class ImgLoadGroup</span>
 <span class="c">	 * @extends Base</span>
 <span class="c">	 * @constructor</span>
@@ -74,7 +74,7 @@
 	<span class="nx">Y</span><span class="o">.</span><span class="nx">ImgLoadGroup</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
 		
 		<span class="c">/**</span>
-<span class="c">		 * Name for the group. Only used to identify the group in logging statements</span>
+<span class="c">		 * Name for the group. Only used to identify the group in logging statements.</span>
 <span class="c">		 * @attribute name</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -83,7 +83,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Time limit, in seconds, after which images are fetched regardless of trigger events</span>
+<span class="c">		 * Time limit, in seconds, after which images are fetched regardless of trigger events.</span>
 <span class="c">		 * @attribute timeLimit</span>
 <span class="c">		 * @type Number</span>
 <span class="c">		 */</span>
@@ -92,8 +92,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold</span>
-<span class="c">		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded)</span>
+<span class="c">		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold.</span>
+<span class="c">		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded).</span>
 <span class="c">		 * @attribute foldDistance</span>
 <span class="c">		 * @type Number</span>
 <span class="c">		 */</span>
@@ -103,8 +103,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images</span>
-<span class="c">		 * This class should have, in its CSS style definition, &quot;background:none !important;&quot;</span>
+<span class="c">		 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images.</span>
+<span class="c">		 * This class should have, in its CSS style definition, &quot;&lt;code&gt;background:none !important;&lt;/code&gt;&quot;.</span>
 <span class="c">		 * @attribute className</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -118,13 +118,15 @@
 	<span class="k">var</span> <span class="nx">groupProto</span> <span class="o">=</span> <span class="o">{</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Initialize all private members needed for the group</span>
+<span class="c">		 * Initialize all private members needed for the group.</span>
+<span class="c">		 * @method _init</span>
+<span class="c">		 * @private</span>
 <span class="c">		 */</span>
 		<span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Collection of triggers for this group</span>
-<span class="c">			 * Keeps track of each trigger&#39;s event handle, as returned from Y.on()</span>
+<span class="c">			 * Collection of triggers for this group.</span>
+<span class="c">			 * Keeps track of each trigger&#39;s event handle, as returned from &lt;code&gt;Y.on&lt;/code&gt;.</span>
 <span class="c">			 * @property _triggers</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Array</span>
@@ -132,7 +134,7 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_triggers</span> <span class="o">=</span> <span class="o">[];</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Collection of images registered with this group</span>
+<span class="c">			 * Collection of images (&lt;code&gt;Y.ImgLoadImgObj&lt;/code&gt; objects) registered with this group, keyed by DOM id.</span>
 <span class="c">			 * @property _imgObjs</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Object</span>
@@ -140,7 +142,7 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span> <span class="o">=</span> <span class="o">{};</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Timeout object to keep a handle on the time limit</span>
+<span class="c">			 * Timeout object to keep a handle on the time limit.</span>
 <span class="c">			 * @property _timeout</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Object</span>
@@ -148,8 +150,8 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_timeout</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * HTML elements having the class name that is associated with this group</span>
-<span class="c">			 * Elements are stored during the _foldCheck function and reused later during any subsequent _foldCheck calls - gives a slight performance improvement when the page fold is repeatedly checked</span>
+<span class="c">			 * DOM elements having the class name that is associated with this group.</span>
+<span class="c">			 * Elements are stored during the &lt;code&gt;_foldCheck&lt;/code&gt; function and reused later during any subsequent &lt;code&gt;_foldCheck&lt;/code&gt; calls - gives a slight performance improvement when the page fold is repeatedly checked.</span>
 <span class="c">			 * @property _classImageEls</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Array</span>
@@ -157,7 +159,7 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Keep the css class name in a member variable for ease and speed</span>
+<span class="c">			 * Keep the CSS class name in a member variable for ease and speed.</span>
 <span class="c">			 * @property _className</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type String</span>
@@ -165,7 +167,7 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_className</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Boolean tracking whether the window scroll and window resize triggers have been set for fold groups</span>
+<span class="c">			 * Boolean tracking whether the window scroll and window resize triggers have been set if this is a fold group.</span>
 <span class="c">			 * @property _areFoldTriggersSet</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Boolean</span>
@@ -177,7 +179,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Adds a trigger to the group. Arguments are passed through to Y.on()</span>
+<span class="c">		 * Adds a trigger to the group. Arguments are passed to &lt;code&gt;Y.on&lt;/code&gt;.</span>
 <span class="c">		 * @method addTrigger</span>
 <span class="c">		 * @chainable</span>
 <span class="c">		 * @param {Object} obj  The DOM object to attach the trigger event to</span>
@@ -190,10 +192,10 @@
 
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;adding trigger to group: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;name&#39;</span><span class="o">),</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;imageloader&#39;</span><span class="o">);</span>
 
-			<span class="c">/* Need to wrap the fetch function. Event Util can&#39;t distinguish prototyped functions of different instantiations</span>
+			<span class="c">/* Need to wrap the fetch function. Event Util can&#39;t distinguish prototyped functions of different instantiations.</span>
 <span class="c">			 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).</span>
 <span class="c">			 *   groupZ&#39;s timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA&#39;s. </span>
-<span class="c">			 *   groupA&#39;s trigger is removed and never fires, leaving images unfetched</span>
+<span class="c">			 *   groupA&#39;s trigger is removed and never fires, leaving images unfetched.</span>
 <span class="c">			 */</span>
 			<span class="k">var</span> <span class="nx">wrappedFetch</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 				<span class="k">this</span><span class="o">.</span><span class="nx">fetch</span><span class="o">();</span>
@@ -204,11 +206,11 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Adds a custom event trigger to the group</span>
+<span class="c">		 * Adds a custom event trigger to the group.</span>
 <span class="c">		 * @method addCustomTrigger</span>
 <span class="c">		 * @chainable</span>
 <span class="c">		 * @param {String} name  The name of the event</span>
-<span class="c">		 * @param {Object} obj  The object on which to attach the event. obj is optional - by default the event is attached to the Y instance</span>
+<span class="c">		 * @param {Object} obj  The object on which to attach the event. &lt;code&gt;obj&lt;/code&gt; is optional - by default the event is attached to the &lt;code&gt;Y&lt;/code&gt; instance</span>
 <span class="c">		 */</span>
 		<span class="nx">addCustomTrigger</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(!</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -232,7 +234,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set)</span>
+<span class="c">		 * Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set).</span>
 <span class="c">		 * @method _setFoldTriggers</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
@@ -252,8 +254,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Performs necessary setup at domready time</span>
-<span class="c">		 * Initiates time limit for group; executes the fold check for the images</span>
+<span class="c">		 * Performs necessary setup at domready time.</span>
+<span class="c">		 * Initiates time limit for group; executes the fold check for the images.</span>
 <span class="c">		 * @method _onloadTasks</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
@@ -270,9 +272,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Returns the group&#39;s fetch method, with the proper closure, for use with setTimeout</span>
+<span class="c">		 * Returns the group&#39;s &lt;code&gt;fetch&lt;/code&gt; method, with the proper closure, for use with &lt;code&gt;setTimeout&lt;/code&gt;.</span>
 <span class="c">		 * @method _getFetchTimeout</span>
-<span class="c">		 * @return {Function}  group&#39;s fetch method</span>
+<span class="c">		 * @return {Function}  group&#39;s &lt;code&gt;fetch&lt;/code&gt; method</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
 		<span class="nx">_getFetchTimeout</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -281,11 +283,11 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Registers an image with the group</span>
-<span class="c">		 * Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribute documentation for this class for detailed information; &quot;domId&quot; is required</span>
+<span class="c">		 * Registers an image with the group.</span>
+<span class="c">		 * Arguments are passed through to a &lt;code&gt;Y.ImgLoadImgObj&lt;/code&gt; constructor; see that class&#39; attribute documentation for detailed information. &quot;&lt;code&gt;domId&lt;/code&gt;&quot; is a required attribute.</span>
 <span class="c">		 * @method registerImage</span>
-<span class="c">		 * @param  A configuration object literal with attribute name/value pairs</span>
-<span class="c">		 * @return {Object} Y.ImgLoadImgObj that was registered</span>
+<span class="c">		 * @param {Object} *  A configuration object literal with attribute name/value pairs  (passed through to a &lt;code&gt;Y.ImgLoadImgObj&lt;/code&gt; constructor)</span>
+<span class="c">		 * @return {Object}  &lt;code&gt;Y.ImgLoadImgObj&lt;/code&gt; that was registered</span>
 <span class="c">		 */</span>
 		<span class="nx">registerImage</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 			<span class="k">var</span> <span class="nx">domId</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">domId</span><span class="o">;</span>
@@ -300,8 +302,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Displays the images in the group</span>
-<span class="c">		 * This method is called when a trigger fires or the time limit expires; it shouldn&#39;t be called externally, but is not private in the event that it needs to be called immediately</span>
+<span class="c">		 * Displays the images in the group.</span>
+<span class="c">		 * This method is called when a trigger fires or the time limit expires; it shouldn&#39;t be called externally, but is not private in the rare event that it needs to be called immediately.</span>
 <span class="c">		 * @method fetch</span>
 <span class="c">		 */</span>
 		<span class="nx">fetch</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -322,7 +324,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Clears the timeout and all triggers associated with the group</span>
+<span class="c">		 * Clears the timeout and all triggers associated with the group.</span>
 <span class="c">		 * @method _clearTriggers</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
@@ -335,7 +337,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Checks the position of each image in the group. If any part of the image is within the specified distance of the client viewport, the image is fetched immediately</span>
+<span class="c">		 * Checks the position of each image in the group. If any part of the image is within the specified distance (&lt;code&gt;foldDistance&lt;/code&gt;) of the client viewport, the image is fetched immediately.</span>
 <span class="c">		 * @method _foldCheck</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
@@ -385,7 +387,7 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Finds all elements in the Dom with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching</span>
+<span class="c">		 * Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.</span>
 <span class="c">		 * @method _fetchByClass</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
@@ -423,7 +425,7 @@
 
 	<span class="nx">Y</span><span class="o">.</span><span class="nx">ImgLoadImgObj</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
 		<span class="c">/**</span>
-<span class="c">		 * HTML DOM id of the image element</span>
+<span class="c">		 * HTML DOM id of the image element.</span>
 <span class="c">		 * @attribute domId</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -433,8 +435,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Background URL for the image</span>
-<span class="c">		 * For an image whose URL is specified by &quot;background-image&quot; in the element&#39;s style</span>
+<span class="c">		 * Background URL for the image.</span>
+<span class="c">		 * For an image whose URL is specified by &quot;&lt;code&gt;background-image&lt;/code&gt;&quot; in the element&#39;s style.</span>
 <span class="c">		 * @attribute bgUrl</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -443,8 +445,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Source URL for the image</span>
-<span class="c">		 * For an image whose URL is specified by a &quot;src&quot; attribute in the DOM element</span>
+<span class="c">		 * Source URL for the image.</span>
+<span class="c">		 * For an image whose URL is specified by a &quot;&lt;code&gt;src&lt;/code&gt;&quot; attribute in the DOM element.</span>
 <span class="c">		 * @attribute srcUrl</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -453,9 +455,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Pixel width of the image. Will be set as a &quot;width&quot; attribute on the DOM element after the image is fetched</span>
-<span class="c">		 * Detaults to the natural width of the image (no &quot;width&quot; attribute will be set)</span>
-<span class="c">		 * Usually only used with src images</span>
+<span class="c">		 * Pixel width of the image. Will be set as a &lt;code&gt;width&lt;/code&gt; attribute on the DOM element after the image is fetched.</span>
+<span class="c">		 * Defaults to the natural width of the image (no &lt;code&gt;width&lt;/code&gt; attribute will be set).</span>
+<span class="c">		 * Usually only used with src images.</span>
 <span class="c">		 * @attribute width</span>
 <span class="c">		 * @type Int</span>
 <span class="c">		 */</span>
@@ -464,9 +466,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Pixel height of the image. Will be set as a &quot;height&quot; attribute on the DOM element after the image is fetched</span>
-<span class="c">		 * Detaults to the natural height of the image (no &quot;height&quot; attribute will be set)</span>
-<span class="c">		 * Usually only used with src images</span>
+<span class="c">		 * Pixel height of the image. Will be set as a &lt;code&gt;height&lt;/code&gt; attribute on the DOM element after the image is fetched.</span>
+<span class="c">		 * Defaults to the natural height of the image (no &lt;code&gt;height&lt;/code&gt; attribute will be set).</span>
+<span class="c">		 * Usually only used with src images.</span>
 <span class="c">		 * @attribute height</span>
 <span class="c">		 * @type Int</span>
 <span class="c">		 */</span>
@@ -475,8 +477,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Whether the style.visibility should be set to &quot;visible&quot; after the image is fetched</span>
-<span class="c">		 * Used when setting images as visibility:hidden prior to image fetching</span>
+<span class="c">		 * Whether the image&#39;s &lt;code&gt;style.visibility&lt;/code&gt; should be set to &lt;code&gt;visible&lt;/code&gt; after the image is fetched.</span>
+<span class="c">		 * Used when setting images as &lt;code&gt;visibility:hidden&lt;/code&gt; prior to image fetching.</span>
 <span class="c">		 * @attribute setVisible</span>
 <span class="c">		 * @type Boolean</span>
 <span class="c">		 */</span>
@@ -485,9 +487,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Whether the image is a PNG</span>
-<span class="c">		 * PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier</span>
-<span class="c">		 * Only used with background images</span>
+<span class="c">		 * Whether the image is a PNG.</span>
+<span class="c">		 * PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier.</span>
+<span class="c">		 * Only used with background images.</span>
 <span class="c">		 * @attribute isPng</span>
 <span class="c">		 * @type Boolean</span>
 <span class="c">		 */</span>
@@ -496,9 +498,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * AlphaImageLoader &quot;sizingMethod&quot; property to be set for the image</span>
-<span class="c">		 * Only set if isPng value for this image is set to true</span>
-<span class="c">		 * Defaults to &quot;scale&quot;</span>
+<span class="c">		 * AlphaImageLoader &lt;code&gt;sizingMethod&lt;/code&gt; property to be set for the image.</span>
+<span class="c">		 * Only set if &lt;code&gt;isPng&lt;/code&gt; value for this image is set to &lt;code&gt;true&lt;/code&gt;.</span>
+<span class="c">		 * Defaults to &lt;code&gt;scale&lt;/code&gt;.</span>
 <span class="c">		 * @attribute sizingMethod</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -507,9 +509,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * AlphaImageLoader &quot;enabled&quot; property to be set for the image</span>
-<span class="c">		 * Only set if isPng value for this image is set to true</span>
-<span class="c">		 * Defaults to &quot;true&quot;</span>
+<span class="c">		 * AlphaImageLoader &lt;code&gt;enabled&lt;/code&gt; property to be set for the image.</span>
+<span class="c">		 * Only set if &lt;code&gt;isPng&lt;/code&gt; value for this image is set to &lt;code&gt;true&lt;/code&gt;.</span>
+<span class="c">		 * Defaults to &lt;code&gt;true&lt;/code&gt;.</span>
 <span class="c">		 * @attribute enabled</span>
 <span class="c">		 * @type String</span>
 <span class="c">		 */</span>
@@ -522,13 +524,15 @@
 	<span class="k">var</span> <span class="nx">imgProto</span> <span class="o">=</span> <span class="o">{</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Initialize all private members needed for the group</span>
+<span class="c">		 * Initialize all private members needed for the group.</span>
+<span class="c">		 * @method _init</span>
+<span class="c">		 * @private</span>
 <span class="c">		 */</span>
 		<span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * Whether this image has already been fetched</span>
-<span class="c">			 * In the case of fold-conditional groups, images won&#39;t be fetched twice</span>
+<span class="c">			 * Whether this image has already been fetched.</span>
+<span class="c">			 * In the case of fold-conditional groups, images won&#39;t be fetched twice.</span>
 <span class="c">			 * @property _fetched</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Boolean</span>
@@ -536,7 +540,7 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_fetched</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * The Node object returned from Y.get(), to avoid repeat calls to access the DOM</span>
+<span class="c">			 * The Node object returned from &lt;code&gt;Y.get&lt;/code&gt;, to avoid repeat calls to access the DOM.</span>
 <span class="c">			 * @property _imgEl</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Object</span>
@@ -544,9 +548,9 @@
 			<span class="k">this</span><span class="o">.</span><span class="nx">_imgEl</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 			<span class="c">/**</span>
-<span class="c">			 * The vertical position returned from getY(), to avoid repeat calls to access the DOM</span>
+<span class="c">			 * The vertical position returned from &lt;code&gt;getY&lt;/code&gt;, to avoid repeat calls to access the DOM.</span>
 <span class="c">			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)</span>
-<span class="c">			 *   and this caching enhancement assumes that the image&#39;s vertical position won&#39;t change after that first check</span>
+<span class="c">			 *   and this caching enhancement assumes that the image&#39;s vertical position won&#39;t change after that first check.</span>
 <span class="c">			 * @property _yPos</span>
 <span class="c">			 * @private</span>
 <span class="c">			 * @type Int</span>
@@ -555,10 +559,10 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Displays the image; puts the URL into the DOM</span>
-<span class="c">		 * This method shouldn&#39;t be called externally, but is not private in the event that it needs to be called immediately</span>
+<span class="c">		 * Displays the image; puts the URL into the DOM.</span>
+<span class="c">		 * This method shouldn&#39;t be called externally, but is not private in the rare event that it needs to be called immediately.</span>
 <span class="c">		 * @method fetch</span>
-<span class="c">		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within this distance, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
+<span class="c">		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
 <span class="c">		 * @return {Boolean}  Whether the image has been fetched (either during this execution or previously)</span>
 <span class="c">		 */</span>
 		<span class="nx">fetch</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">withinY</span><span class="o">)</span> <span class="o">{</span>
@@ -616,9 +620,9 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Gets the object (as a Y.Node) of the DOM element indicated by &quot;domId&quot;</span>
+<span class="c">		 * Gets the object (as a &lt;code&gt;Y.Node&lt;/code&gt;) of the DOM element indicated by &quot;&lt;code&gt;domId&lt;/code&gt;&quot;.</span>
 <span class="c">		 * @method _getImgEl</span>
-<span class="c">		 * @returns {Object} DOM element of the image as a Y.Node object</span>
+<span class="c">		 * @returns {Object} DOM element of the image as a &lt;code&gt;Y.Node&lt;/code&gt; object</span>
 <span class="c">		 * @private</span>
 <span class="c">		 */</span>
 		<span class="nx">_getImgEl</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -629,8 +633,8 @@
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
-<span class="c">		 * Gets the Y position of the node in page coordinates</span>
-<span class="c">		 * Expects that the page-coordinate position of the image won&#39;t change</span>
+<span class="c">		 * Gets the Y position of the node in page coordinates.</span>
+<span class="c">		 * Expects that the page-coordinate position of the image won&#39;t change.</span>
 <span class="c">		 * @method _getYPos</span>
 <span class="c">		 * @returns {Object} The Y position of the image</span>
 <span class="c">		 * @private</span>
@@ -662,11 +666,13 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -681,7 +687,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -723,7 +732,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
 </script>
 </body>
 </html>

@@ -78,9 +78,9 @@
 <span class="c">     * @type String</span>
 <span class="c">     * @static     </span>
 <span class="c">     * @final</span>
-<span class="c">     * @value &quot;DataSource.ScriptNode&quot;</span>
+<span class="c">     * @value &quot;dataSourceScriptNode&quot;</span>
 <span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;DataSource.ScriptNode&quot;</span><span class="o">,</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceScriptNode&quot;</span><span class="o">,</span>
 
 
     <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
@@ -192,7 +192,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
+<span class="c">     * Passes query string to Get Utility. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
 <span class="c">     * response is received asynchronously.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _defRequestFn</span>
@@ -207,6 +207,7 @@
 <span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
 <span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
@@ -236,7 +237,7 @@
             <span class="nx">self</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
         <span class="o">}</span>
         <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource ignored stale response for id &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="nx">self</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource ignored stale response for id &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-scriptnode&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">delete</span> <span class="nx">DSSN</span><span class="o">.</span><span class="nx">callbacks</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
@@ -245,12 +246,12 @@
     <span class="c">// We are now creating a request</span>
 <span class="c"></span>    <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;generateRequestCallback&quot;</span><span class="o">)(</span><span class="k">this</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
     <span class="c">//uri = this.doBeforeGetScriptNode(sUri);</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-scriptnode&quot;</span><span class="o">);</span>
     <span class="nx">get</span><span class="o">.</span><span class="nx">script</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="o">{</span>
         <span class="nx">autopurge</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         <span class="c">// Works in Firefox only....</span>
 <span class="c"></span>        <span class="nx">onFailure</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Data failure&quot;</span><span class="o">);</span>
+            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Script node data failure&quot;</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
         <span class="o">},</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
     <span class="o">});</span>
@@ -292,11 +293,13 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -311,7 +314,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
