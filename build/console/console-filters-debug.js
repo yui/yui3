@@ -1,3 +1,5 @@
+YUI.add('console-filters', function(Y) {
+
 /**
  * Adds the ability to filter log entries on their category/logLevel or their
  * source (global, event, attribute, etc).
@@ -649,3 +651,6 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
 });
 
 Y.namespace('Plugin').ConsoleFilters = ConsoleFilters;
+
+
+}, '@VERSION@' ,{requires:['substitute','node','plugin']});
