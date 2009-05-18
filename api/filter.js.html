@@ -137,9 +137,9 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">FILTER_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;wbr&gt;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; value=&quot;{filter_name}&quot; &#39;</span><span class="o">+</span>
-                <span class="s1">&#39;class=&quot;{filter} {filter_type}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;class=&quot;{filter} {filter_class}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
         <span class="s1">&#39;&lt;/label&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/** </span>
@@ -533,12 +533,18 @@
             <span class="k">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">===</span> <span class="nx">CATEGORY</span> <span class="o">?</span>
                                 <span class="k">this</span><span class="o">.</span><span class="nx">_categories</span> <span class="o">:</span>
                                 <span class="k">this</span><span class="o">.</span><span class="nx">_sources</span><span class="o">,</span>
-                <span class="nx">checkbox</span> <span class="o">=</span> <span class="nx">container</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">SEL_CHECK</span> <span class="o">+</span>
-                                <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span><span class="nx">FILTER</span><span class="o">,</span><span class="nx">item</span><span class="o">));</span>
+                <span class="nx">sel</span>      <span class="o">=</span> <span class="nx">SEL_CHECK</span> <span class="o">+</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span><span class="nx">FILTER</span><span class="o">,</span><span class="nx">item</span><span class="o">),</span>
+                <span class="nx">checkbox</span> <span class="o">=</span> <span class="nx">container</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">sel</span><span class="o">),</span>
+                <span class="nx">host</span><span class="o">;</span>
                 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">checkbox</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">checkbox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createCheckbox</span><span class="o">(</span><span class="nx">container</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">item</span><span class="o">).</span>
-                            <span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">);</span>
+                <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">);</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">_createCheckbox</span><span class="o">(</span><span class="nx">container</span><span class="o">,</span> <span class="nx">item</span><span class="o">);</span>
+
+                <span class="nx">checkbox</span> <span class="o">=</span> <span class="nx">container</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">sel</span><span class="o">);</span>
+
+                <span class="nx">host</span><span class="o">.</span><span class="nx">_uiSetHeight</span><span class="o">(</span><span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;height&#39;</span><span class="o">));</span>
             <span class="o">}</span>
             
             <span class="nx">checkbox</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CHECKED</span><span class="o">,</span> <span class="nx">checked</span><span class="o">);</span>
@@ -650,19 +656,17 @@
 <span class="c">     *</span>
 <span class="c">     * @method _createCheckbox</span>
 <span class="c">     * @param container {Node} the parentNode of the new checkbox and label</span>
-<span class="c">     * @param type {String} &#39;category&#39; or &#39;source&#39;</span>
 <span class="c">     * @param name {String} the identifier of the filter</span>
-<span class="c">     * @return Node the label Node that wraps the checkbox Node</span>
 <span class="c">     */</span>
-    <span class="nx">_createCheckbox</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">container</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">container</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">substitute</span><span class="o">(</span>
-                    <span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">FILTER_TEMPLATE</span><span class="o">,</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">_createCheckbox</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">container</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">,</span> <span class="o">{</span>
                         <span class="nx">filter_name</span>  <span class="o">:</span> <span class="nx">name</span><span class="o">,</span>
-                        <span class="nx">filter_type</span>  <span class="o">:</span> <span class="nx">type</span>
-                    <span class="o">}))));</span>
+                        <span class="nx">filter_class</span> <span class="o">:</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span> <span class="nx">FILTER</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span>
+                   <span class="o">}),</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">substitute</span><span class="o">(</span><span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">FILTER_TEMPLATE</span><span class="o">,</span> <span class="nx">info</span><span class="o">));</span>
+
+        <span class="nx">container</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
