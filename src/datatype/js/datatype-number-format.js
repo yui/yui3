@@ -86,7 +86,7 @@ Y.mix(Y.namespace("DataType.Number"), {
         }
         // Not a Number, just return as string
         else {
-            Y.log("Could not format data " + Y.dump(data) + " from type Number", "warn", "DataType.Number");
+            Y.log("Could not format data " + Y.dump(data) + " from type Number", "warn", "datatype-number");
             return data.toString();
         }
     }

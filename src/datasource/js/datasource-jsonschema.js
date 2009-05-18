@@ -34,9 +34,9 @@ Y.mix(DataSourceJSONSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONSchema"
+     * @value "dataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONSchema",
+    NAME: "dataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
