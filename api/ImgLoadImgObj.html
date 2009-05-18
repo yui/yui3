@@ -90,8 +90,8 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether this image has already been fetched
-In the case of fold-conditional groups, images won't be fetched twice
+                                            Whether this image has already been fetched.
+In the case of fold-conditional groups, images won't be fetched twice.
                                         </div>
                                     </div>
      
@@ -106,7 +106,7 @@ In the case of fold-conditional groups, images won't be fetched twice
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The Node object returned from Y.get(), to avoid repeat calls to access the DOM
+                                            The Node object returned from <code>Y.get</code>, to avoid repeat calls to access the DOM.
                                         </div>
                                     </div>
      
@@ -121,9 +121,9 @@ In the case of fold-conditional groups, images won't be fetched twice
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The vertical position returned from getY(), to avoid repeat calls to access the DOM
+                                            The vertical position returned from <code>getY</code>, to avoid repeat calls to access the DOM.
 The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)
-and this caching enhancement assumes that the image's vertical position won't change after that first check
+and this caching enhancement assumes that the image's vertical position won't change after that first check.
                                         </div>
                                     </div>
      
@@ -170,7 +170,7 @@ and this caching enhancement assumes that the image's vertical position won't ch
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Gets the object (as a Y.Node) of the DOM element indicated by "domId"
+                                            Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
                                         </div>
 
                                         <div class="description">
@@ -207,8 +207,8 @@ and this caching enhancement assumes that the image's vertical position won't ch
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Gets the Y position of the node in page coordinates
-Expects that the page-coordinate position of the image won't change
+                                            Gets the Y position of the node in page coordinates.
+Expects that the page-coordinate position of the image won't change.
                                         </div>
 
                                         <div class="description">
@@ -287,8 +287,8 @@ Expects that the page-coordinate position of the image won't change
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Displays the image; puts the URL into the DOM
-This method shouldn't be called externally, but is not private in the event that it needs to be called immediately
+                                            Displays the image; puts the URL into the DOM.
+This method shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
                                         </div>
 
                                         <div class="description">
@@ -299,7 +299,7 @@ This method shouldn't be called externally, but is not private in the event that
                                                         <code><span property="yui:name">withinY</span>
                                                         &lt;<span property="yui:type">Int</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The pixel distance from the top of the page, for which if the image lies within this distance, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
+                                                        <span property="yui:description">  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
                                                         </dd>
                                                 </dl>
 
@@ -810,8 +810,8 @@ This method shouldn't be called externally, but is not private in the event that
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Background URL for the image
-For an image whose URL is specified by "background-image" in the element's style
+                                            Background URL for the image.
+For an image whose URL is specified by "<code>background-image</code>" in the element's style.
                                         </div>
                                     </div>
  
@@ -825,7 +825,7 @@ For an image whose URL is specified by "background-image" in the element's style
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            HTML DOM id of the image element
+                                            HTML DOM id of the image element.
                                         </div>
                                     </div>
  
@@ -839,9 +839,9 @@ For an image whose URL is specified by "background-image" in the element's style
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            AlphaImageLoader "enabled" property to be set for the image
-Only set if isPng value for this image is set to true
-Defaults to "true"
+                                            AlphaImageLoader <code>enabled</code> property to be set for the image.
+Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+Defaults to <code>true</code>.
                                         </div>
                                     </div>
  
@@ -855,9 +855,9 @@ Defaults to "true"
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Pixel height of the image. Will be set as a "height" attribute on the DOM element after the image is fetched
-Detaults to the natural height of the image (no "height" attribute will be set)
-Usually only used with src images
+                                            Pixel height of the image. Will be set as a <code>height</code> attribute on the DOM element after the image is fetched.
+Defaults to the natural height of the image (no <code>height</code> attribute will be set).
+Usually only used with src images.
                                         </div>
                                     </div>
  
@@ -871,9 +871,9 @@ Usually only used with src images
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether the image is a PNG
-PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier
-Only used with background images
+                                            Whether the image is a PNG.
+PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier.
+Only used with background images.
                                         </div>
                                     </div>
  
@@ -887,8 +887,8 @@ Only used with background images
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether the style.visibility should be set to "visible" after the image is fetched
-Used when setting images as visibility:hidden prior to image fetching
+                                            Whether the image's <code>style.visibility</code> should be set to <code>visible</code> after the image is fetched.
+Used when setting images as <code>visibility:hidden</code> prior to image fetching.
                                         </div>
                                     </div>
  
@@ -902,9 +902,9 @@ Used when setting images as visibility:hidden prior to image fetching
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            AlphaImageLoader "sizingMethod" property to be set for the image
-Only set if isPng value for this image is set to true
-Defaults to "scale"
+                                            AlphaImageLoader <code>sizingMethod</code> property to be set for the image.
+Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+Defaults to <code>scale</code>.
                                         </div>
                                     </div>
  
@@ -918,8 +918,8 @@ Defaults to "scale"
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Source URL for the image
-For an image whose URL is specified by a "src" attribute in the DOM element
+                                            Source URL for the image.
+For an image whose URL is specified by a "<code>src</code>" attribute in the DOM element.
                                         </div>
                                     </div>
  
@@ -933,9 +933,9 @@ For an image whose URL is specified by a "src" attribute in the DOM element
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Pixel width of the image. Will be set as a "width" attribute on the DOM element after the image is fetched
-Detaults to the natural width of the image (no "width" attribute will be set)
-Usually only used with src images
+                                            Pixel width of the image. Will be set as a <code>width</code> attribute on the DOM element after the image is fetched.
+Defaults to the natural width of the image (no <code>width</code> attribute will be set).
+Usually only used with src images.
                                         </div>
                                     </div>
  
