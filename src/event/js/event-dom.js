@@ -379,6 +379,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             // the custom event key is the uid for the element + type
 
+            // lifeline support for
+            if (Y.Node && el instanceof Y.Node) {
+                return el.on.apply(el, args);
+            }
+
             ek = Y.stamp(el); 
             key = 'event:' + ek + type;
             cewrapper = _wrappers[key];

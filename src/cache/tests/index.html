@@ -3,7 +3,6 @@
 <head>
 <title>Cache Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/cache/cache-debug.js" id="buildsrc"></script>
 </head>
 
 <body class="yui-skin-sam">
@@ -11,13 +10,12 @@
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
 <script type="text/javascript">
-
 (function() {
     YUI({
         base: "../../../build/",
-        //filter: "debug",
-        useConsole: true,
-        insertBefore: "buildsrc"
+        filter: "debug",
+        logInclude:{"TestRunner":true},
+        useConsole: true
     }).use("console", "test", "dump", "cache", function(Y) {
         
         // Set up the page
@@ -244,8 +242,7 @@
                 //TODO
             }
         });
-    
-        
+
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testBasic);
         Y.Test.Runner.add(testEvents);

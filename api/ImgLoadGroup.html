@@ -60,7 +60,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints
+                        A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -90,7 +90,7 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Boolean tracking whether the window scroll and window resize triggers have been set for fold groups
+                                            Boolean tracking whether the window scroll and window resize triggers have been set if this is a fold group.
                                         </div>
                                     </div>
      
@@ -105,8 +105,8 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            HTML elements having the class name that is associated with this group
-Elements are stored during the _foldCheck function and reused later during any subsequent _foldCheck calls - gives a slight performance improvement when the page fold is repeatedly checked
+                                            DOM elements having the class name that is associated with this group.
+Elements are stored during the <code>_foldCheck</code> function and reused later during any subsequent <code>_foldCheck</code> calls - gives a slight performance improvement when the page fold is repeatedly checked.
                                         </div>
                                     </div>
      
@@ -121,7 +121,7 @@ Elements are stored during the _foldCheck function and reused later during any s
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Keep the css class name in a member variable for ease and speed
+                                            Keep the CSS class name in a member variable for ease and speed.
                                         </div>
                                     </div>
      
@@ -136,7 +136,7 @@ Elements are stored during the _foldCheck function and reused later during any s
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Collection of images registered with this group
+                                            Collection of images (<code>Y.ImgLoadImgObj</code> objects) registered with this group, keyed by DOM id.
                                         </div>
                                     </div>
      
@@ -151,7 +151,7 @@ Elements are stored during the _foldCheck function and reused later during any s
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Timeout object to keep a handle on the time limit
+                                            Timeout object to keep a handle on the time limit.
                                         </div>
                                     </div>
      
@@ -166,8 +166,8 @@ Elements are stored during the _foldCheck function and reused later during any s
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Collection of triggers for this group
-Keeps track of each trigger's event handle, as returned from Y.on()
+                                            Collection of triggers for this group.
+Keeps track of each trigger's event handle, as returned from <code>Y.on</code>.
                                         </div>
                                     </div>
      
@@ -214,7 +214,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Clears the timeout and all triggers associated with the group
+                                            Clears the timeout and all triggers associated with the group.
                                         </div>
 
                                         <div class="description">
@@ -251,7 +251,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Finds all elements in the Dom with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching
+                                            Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.
                                         </div>
 
                                         <div class="description">
@@ -288,7 +288,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Checks the position of each image in the group. If any part of the image is within the specified distance of the client viewport, the image is fetched immediately
+                                            Checks the position of each image in the group. If any part of the image is within the specified distance (<code>foldDistance</code>) of the client viewport, the image is fetched immediately.
                                         </div>
 
                                         <div class="description">
@@ -325,7 +325,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the group's fetch method, with the proper closure, for use with setTimeout
+                                            Returns the group's <code>fetch</code> method, with the proper closure, for use with <code>setTimeout</code>.
                                         </div>
 
                                         <div class="description">
@@ -336,7 +336,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                                     <code property="yui:return">
                                                         Function
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">group's fetch method</dd>
+                                                    <dd property="yui:returnInfo">group's <code>fetch</code> method</dd>
                                                 </dl>
 
 
@@ -347,12 +347,12 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__init">
+                                    <div class="private" rel="yui:method" resource="#method__init">
                                     <h4>
                                         <a name="method__init">_init</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         private 
                                         
                                         
                                         void
@@ -362,7 +362,7 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Initialize all private members needed for the group
+                                            Initialize all private members needed for the group.
                                         </div>
 
                                         <div class="description">
@@ -399,8 +399,8 @@ Keeps track of each trigger's event handle, as returned from Y.on()
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Performs necessary setup at domready time
-Initiates time limit for group; executes the fold check for the images
+                                            Performs necessary setup at domready time.
+Initiates time limit for group; executes the fold check for the images.
                                         </div>
 
                                         <div class="description">
@@ -437,7 +437,7 @@ Initiates time limit for group; executes the fold check for the images
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set)
+                                            Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set).
                                         </div>
 
                                         <div class="description">
@@ -483,7 +483,7 @@ Initiates time limit for group; executes the fold check for the images
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds a custom event trigger to the group
+                                            Adds a custom event trigger to the group.
                                         </div>
 
                                         <div class="description">
@@ -500,7 +500,7 @@ Initiates time limit for group; executes the fold check for the images
                                                         <code><span property="yui:name">obj</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The object on which to attach the event. obj is optional - by default the event is attached to the Y instance</span>
+                                                        <span property="yui:description">  The object on which to attach the event. <code>obj</code> is optional - by default the event is attached to the <code>Y</code> instance</span>
                                                         </dd>
                                                 </dl>
 
@@ -547,7 +547,7 @@ Initiates time limit for group; executes the fold check for the images
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds a trigger to the group. Arguments are passed through to Y.on()
+                                            Adds a trigger to the group. Arguments are passed to <code>Y.on</code>.
                                         </div>
 
                                         <div class="description">
@@ -602,8 +602,8 @@ Initiates time limit for group; executes the fold check for the images
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Displays the images in the group
-This method is called when a trigger fires or the time limit expires; it shouldn't be called externally, but is not private in the event that it needs to be called immediately
+                                            Displays the images in the group.
+This method is called when a trigger fires or the time limit expires; it shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
                                         </div>
 
                                         <div class="description">
@@ -638,15 +638,15 @@ This method is called when a trigger fires or the time limit expires; it shouldn
                                            (
                                                 
                                                         
-                                                         A
+                                                         *
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Registers an image with the group
-Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribute documentation for this class for detailed information; "domId" is required
+                                            Registers an image with the group.
+Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is a required attribute.
                                         </div>
 
                                         <div class="description">
@@ -654,10 +654,10 @@ Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribu
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">A</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        <code><span property="yui:name">*</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> configuration object literal with attribute name/value pairs</span>
+                                                        <span property="yui:description">  A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)</span>
                                                         </dd>
                                                 </dl>
 
@@ -666,7 +666,7 @@ Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribu
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Y.ImgLoadImgObj that was registered</dd>
+                                                    <dd property="yui:returnInfo"><code>Y.ImgLoadImgObj</code> that was registered</dd>
                                                 </dl>
 
 
@@ -948,8 +948,8 @@ Arguments are passed through to the Y.ImgLoadImgObj constructor; see the attribu
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images
-This class should have, in its CSS style definition, "background:none !important;"
+                                            Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images.
+This class should have, in its CSS style definition, "<code>background:none !important;</code>".
                                         </div>
                                     </div>
  
@@ -963,8 +963,8 @@ This class should have, in its CSS style definition, "background:none !important
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold
-This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded)
+                                            Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold.
+This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded).
                                         </div>
                                     </div>
  
@@ -978,7 +978,7 @@ This check is performed at page load (domready) and after any window scroll or w
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Name for the group. Only used to identify the group in logging statements
+                                            Name for the group. Only used to identify the group in logging statements.
                                         </div>
                                     </div>
  
@@ -992,7 +992,7 @@ This check is performed at page load (domready) and after any window scroll or w
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Time limit, in seconds, after which images are fetched regardless of trigger events
+                                            Time limit, in seconds, after which images are fetched regardless of trigger events.
                                         </div>
                                     </div>
  
@@ -1042,6 +1042,7 @@ This check is performed at page load (domready) and after any window scroll or w
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -1056,7 +1057,10 @@ This check is performed at page load (domready) and after any window scroll or w
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1104,7 +1108,7 @@ This check is performed at page load (domready) and after any window scroll or w
                                 <li class="private"><a href="#method__fetchByClass" title="_fetchByClass">_fetchByClass</a></li>
                                 <li class="private"><a href="#method__foldCheck" title="_foldCheck">_foldCheck</a></li>
                                 <li class="private"><a href="#method__getFetchTimeout" title="_getFetchTimeout">_getFetchTimeout</a></li>
-                                <li class=""><a href="#method__init" title="_init">_init</a></li>
+                                <li class="private"><a href="#method__init" title="_init">_init</a></li>
                                 <li class="private"><a href="#method__onloadTasks" title="_onloadTasks">_onloadTasks</a></li>
                                 <li class="private"><a href="#method__setFoldTriggers" title="_setFoldTriggers">_setFoldTriggers</a></li>
                                 <li class=""><a href="#method_addCustomTrigger" title="addCustomTrigger">addCustomTrigger</a></li>
@@ -1143,7 +1147,7 @@ This check is performed at page load (domready) and after any window scroll or w
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}];
 </script>
 </body>
 </html>

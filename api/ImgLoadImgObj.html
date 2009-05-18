@@ -90,8 +90,8 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether this image has already been fetched
-In the case of fold-conditional groups, images won't be fetched twice
+                                            Whether this image has already been fetched.
+In the case of fold-conditional groups, images won't be fetched twice.
                                         </div>
                                     </div>
      
@@ -106,7 +106,7 @@ In the case of fold-conditional groups, images won't be fetched twice
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The Node object returned from Y.get(), to avoid repeat calls to access the DOM
+                                            The Node object returned from <code>Y.get</code>, to avoid repeat calls to access the DOM.
                                         </div>
                                     </div>
      
@@ -121,9 +121,9 @@ In the case of fold-conditional groups, images won't be fetched twice
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The vertical position returned from getY(), to avoid repeat calls to access the DOM
+                                            The vertical position returned from <code>getY</code>, to avoid repeat calls to access the DOM.
 The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)
-and this caching enhancement assumes that the image's vertical position won't change after that first check
+and this caching enhancement assumes that the image's vertical position won't change after that first check.
                                         </div>
                                     </div>
      
@@ -170,7 +170,7 @@ and this caching enhancement assumes that the image's vertical position won't ch
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Gets the object (as a Y.Node) of the DOM element indicated by "domId"
+                                            Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
                                         </div>
 
                                         <div class="description">
@@ -207,8 +207,8 @@ and this caching enhancement assumes that the image's vertical position won't ch
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Gets the Y position of the node in page coordinates
-Expects that the page-coordinate position of the image won't change
+                                            Gets the Y position of the node in page coordinates.
+Expects that the page-coordinate position of the image won't change.
                                         </div>
 
                                         <div class="description">
@@ -230,12 +230,12 @@ Expects that the page-coordinate position of the image won't change
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__init">
+                                    <div class="private" rel="yui:method" resource="#method__init">
                                     <h4>
                                         <a name="method__init">_init</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         private 
                                         
                                         
                                         void
@@ -245,7 +245,7 @@ Expects that the page-coordinate position of the image won't change
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Initialize all private members needed for the group
+                                            Initialize all private members needed for the group.
                                         </div>
 
                                         <div class="description">
@@ -287,8 +287,8 @@ Expects that the page-coordinate position of the image won't change
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Displays the image; puts the URL into the DOM
-This method shouldn't be called externally, but is not private in the event that it needs to be called immediately
+                                            Displays the image; puts the URL into the DOM.
+This method shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
                                         </div>
 
                                         <div class="description">
@@ -299,7 +299,7 @@ This method shouldn't be called externally, but is not private in the event that
                                                         <code><span property="yui:name">withinY</span>
                                                         &lt;<span property="yui:type">Int</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The pixel distance from the top of the page, for which if the image lies within this distance, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
+                                                        <span property="yui:description">  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched</span>
                                                         </dd>
                                                 </dl>
 
@@ -810,8 +810,8 @@ This method shouldn't be called externally, but is not private in the event that
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Background URL for the image
-For an image whose URL is specified by "background-image" in the element's style
+                                            Background URL for the image.
+For an image whose URL is specified by "<code>background-image</code>" in the element's style.
                                         </div>
                                     </div>
  
@@ -825,7 +825,7 @@ For an image whose URL is specified by "background-image" in the element's style
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            HTML DOM id of the image element
+                                            HTML DOM id of the image element.
                                         </div>
                                     </div>
  
@@ -839,9 +839,9 @@ For an image whose URL is specified by "background-image" in the element's style
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            AlphaImageLoader "enabled" property to be set for the image
-Only set if isPng value for this image is set to true
-Defaults to "true"
+                                            AlphaImageLoader <code>enabled</code> property to be set for the image.
+Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+Defaults to <code>true</code>.
                                         </div>
                                     </div>
  
@@ -855,9 +855,9 @@ Defaults to "true"
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Pixel height of the image. Will be set as a "height" attribute on the DOM element after the image is fetched
-Detaults to the natural height of the image (no "height" attribute will be set)
-Usually only used with src images
+                                            Pixel height of the image. Will be set as a <code>height</code> attribute on the DOM element after the image is fetched.
+Defaults to the natural height of the image (no <code>height</code> attribute will be set).
+Usually only used with src images.
                                         </div>
                                     </div>
  
@@ -871,9 +871,9 @@ Usually only used with src images
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether the image is a PNG
-PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier
-Only used with background images
+                                            Whether the image is a PNG.
+PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier.
+Only used with background images.
                                         </div>
                                     </div>
  
@@ -887,8 +887,8 @@ Only used with background images
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Whether the style.visibility should be set to "visible" after the image is fetched
-Used when setting images as visibility:hidden prior to image fetching
+                                            Whether the image's <code>style.visibility</code> should be set to <code>visible</code> after the image is fetched.
+Used when setting images as <code>visibility:hidden</code> prior to image fetching.
                                         </div>
                                     </div>
  
@@ -902,9 +902,9 @@ Used when setting images as visibility:hidden prior to image fetching
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            AlphaImageLoader "sizingMethod" property to be set for the image
-Only set if isPng value for this image is set to true
-Defaults to "scale"
+                                            AlphaImageLoader <code>sizingMethod</code> property to be set for the image.
+Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+Defaults to <code>scale</code>.
                                         </div>
                                     </div>
  
@@ -918,8 +918,8 @@ Defaults to "scale"
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Source URL for the image
-For an image whose URL is specified by a "src" attribute in the DOM element
+                                            Source URL for the image.
+For an image whose URL is specified by a "<code>src</code>" attribute in the DOM element.
                                         </div>
                                     </div>
  
@@ -933,9 +933,9 @@ For an image whose URL is specified by a "src" attribute in the DOM element
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Pixel width of the image. Will be set as a "width" attribute on the DOM element after the image is fetched
-Detaults to the natural width of the image (no "width" attribute will be set)
-Usually only used with src images
+                                            Pixel width of the image. Will be set as a <code>width</code> attribute on the DOM element after the image is fetched.
+Defaults to the natural width of the image (no <code>width</code> attribute will be set).
+Usually only used with src images.
                                         </div>
                                     </div>
  
@@ -985,6 +985,7 @@ Usually only used with src images
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -999,7 +1000,10 @@ Usually only used with src images
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1042,7 +1046,7 @@ Usually only used with src images
                         <ul class="content">        
                                 <li class="private"><a href="#method__getImgEl" title="_getImgEl">_getImgEl</a></li>
                                 <li class="private"><a href="#method__getYPos" title="_getYPos">_getYPos</a></li>
-                                <li class=""><a href="#method__init" title="_init">_init</a></li>
+                                <li class="private"><a href="#method__init" title="_init">_init</a></li>
                                 <li class=""><a href="#method_fetch" title="fetch">fetch</a></li>
                         </ul>
                     </div>
@@ -1086,7 +1090,7 @@ Usually only used with src images
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "ImgLoadGroup", "name": "addCustomTrigger", "url": "ImgLoadGroup.html#method_addCustomTrigger", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "addTrigger", "url": "ImgLoadGroup.html#method_addTrigger", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_areFoldTriggersSet", "url": "ImgLoadGroup.html#property__areFoldTriggersSet", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrl", "url": "ImgLoadImgObj.html#config_bgUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "bgUrlChange", "url": "ImgLoadImgObj.html#event_bgUrlChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_classImageEls", "url": "ImgLoadGroup.html#property__classImageEls", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_className", "url": "ImgLoadGroup.html#property__className", "type": "property"}, {"access": "", "host": "ImgLoadGroup", "name": "className", "url": "ImgLoadGroup.html#config_className", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "classNameChange", "url": "ImgLoadGroup.html#event_classNameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_clearTriggers", "url": "ImgLoadGroup.html#method__clearTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "domId", "url": "ImgLoadImgObj.html#config_domId", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "domIdChange", "url": "ImgLoadImgObj.html#event_domIdChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabled", "url": "ImgLoadImgObj.html#config_enabled", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "enabledChange", "url": "ImgLoadImgObj.html#event_enabledChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "fetch", "url": "ImgLoadGroup.html#method_fetch", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "fetch", "url": "ImgLoadImgObj.html#method_fetch", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_fetchByClass", "url": "ImgLoadGroup.html#method__fetchByClass", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_fetched", "url": "ImgLoadImgObj.html#property__fetched", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_foldCheck", "url": "ImgLoadGroup.html#method__foldCheck", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistance", "url": "ImgLoadGroup.html#config_foldDistance", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "foldDistanceChange", "url": "ImgLoadGroup.html#event_foldDistanceChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_getFetchTimeout", "url": "ImgLoadGroup.html#method__getFetchTimeout", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getImgEl", "url": "ImgLoadImgObj.html#method__getImgEl", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_getYPos", "url": "ImgLoadImgObj.html#method__getYPos", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "height", "url": "ImgLoadImgObj.html#config_height", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "heightChange", "url": "ImgLoadImgObj.html#event_heightChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_imgEl", "url": "ImgLoadImgObj.html#property__imgEl", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_imgObjs", "url": "ImgLoadGroup.html#property__imgObjs", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_init", "url": "ImgLoadGroup.html#method__init", "type": "method"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_init", "url": "ImgLoadImgObj.html#method__init", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPng", "url": "ImgLoadImgObj.html#config_isPng", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "isPngChange", "url": "ImgLoadImgObj.html#event_isPngChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "name", "url": "ImgLoadGroup.html#config_name", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "nameChange", "url": "ImgLoadGroup.html#event_nameChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_onloadTasks", "url": "ImgLoadGroup.html#method__onloadTasks", "type": "method"}, {"access": "", "host": "ImgLoadGroup", "name": "registerImage", "url": "ImgLoadGroup.html#method_registerImage", "type": "method"}, {"access": "private", "host": "ImgLoadGroup", "name": "_setFoldTriggers", "url": "ImgLoadGroup.html#method__setFoldTriggers", "type": "method"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisible", "url": "ImgLoadImgObj.html#config_setVisible", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "setVisibleChange", "url": "ImgLoadImgObj.html#event_setVisibleChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethod", "url": "ImgLoadImgObj.html#config_sizingMethod", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "sizingMethodChange", "url": "ImgLoadImgObj.html#event_sizingMethodChange", "type": "event"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrl", "url": "ImgLoadImgObj.html#config_srcUrl", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "srcUrlChange", "url": "ImgLoadImgObj.html#event_srcUrlChange", "type": "event"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimit", "url": "ImgLoadGroup.html#config_timeLimit", "type": "config"}, {"access": "", "host": "ImgLoadGroup", "name": "timeLimitChange", "url": "ImgLoadGroup.html#event_timeLimitChange", "type": "event"}, {"access": "private", "host": "ImgLoadGroup", "name": "_timeout", "url": "ImgLoadGroup.html#property__timeout", "type": "property"}, {"access": "private", "host": "ImgLoadGroup", "name": "_triggers", "url": "ImgLoadGroup.html#property__triggers", "type": "property"}, {"access": "", "host": "ImgLoadImgObj", "name": "width", "url": "ImgLoadImgObj.html#config_width", "type": "config"}, {"access": "", "host": "ImgLoadImgObj", "name": "widthChange", "url": "ImgLoadImgObj.html#event_widthChange", "type": "event"}, {"access": "private", "host": "ImgLoadImgObj", "name": "_yPos", "url": "ImgLoadImgObj.html#property__yPos", "type": "property"}];
 </script>
 </body>
 </html>

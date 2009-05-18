@@ -29,9 +29,9 @@ Y.mix(DSFn, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Function"
+     * @value "dataSourceFunction"
      */
-    NAME: "DataSource.Function",
+    NAME: "dataSourceFunction",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -96,6 +96,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
      *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -109,7 +110,7 @@ Y.extend(DSFn, Y.DataSource.Local, {
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             
