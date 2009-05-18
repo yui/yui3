@@ -55,22 +55,17 @@
 
         <span class="k">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
             <span class="nx">tests</span>  <span class="o">=</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">],</span> 
-            <span class="nx">passed</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
+            <span class="nx">spec</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
 
         <span class="k">for</span> <span class="o">(</span><span class="nx">spec</span> <span class="k">in</span> <span class="nx">tests</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">if</span> <span class="o">(</span><span class="nx">tests</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">spec</span><span class="o">))</span> <span class="o">{</span>
-            
-                <span class="nx">passed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                 <span class="nx">ename</span>  <span class="o">=</span> <span class="nx">tests</span><span class="o">[</span><span class="nx">spec</span><span class="o">];</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">).</span><span class="nx">some</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="c">// @TODO we need Node.some </span>
-<span class="c"></span>                <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">spec</span><span class="o">).</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-
-                    <span class="k">if</span> <span class="o">((!</span><span class="nx">passed</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">target</span><span class="o">)</span> <span class="o">||</span> <span class="nx">v</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">target</span><span class="o">)))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">target</span><span class="o">)</span> <span class="o">||</span> <span class="nx">v</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-
+                        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">});</span>
             <span class="o">}</span>
@@ -135,7 +130,6 @@
 <span class="c"></span>        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
     <span class="o">}</span>
-
 <span class="o">};</span>
 
 <span class="o">})();</span>
