@@ -59,17 +59,17 @@
                         <dl class="subclasses" rel="yui:subclasses">
                             <dt>Known Subclasses:</dt>
                             <dd>
-                                    <span rel="yui:subclass" resource="Pollable.html">
-                                    <a href="Pollable.html" property="yui:name" title="Pollable">Pollable</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSource.ScriptNode.html">
-                                    <a href="DataSource.ScriptNode.html" property="yui:name" title="DataSource.ScriptNode">DataSource.ScriptNode</a>
-                                    </span>
                                     <span rel="yui:subclass" resource="DataSource.Function.html">
                                     <a href="DataSource.Function.html" property="yui:name" title="DataSource.Function">DataSource.Function</a>
                                     </span>
+                                    <span rel="yui:subclass" resource="Pollable.html">
+                                    <a href="Pollable.html" property="yui:name" title="Pollable">Pollable</a>
+                                    </span>
                                     <span rel="yui:subclass" resource="DataSource.XHR.html">
                                     <a href="DataSource.XHR.html" property="yui:name" title="DataSource.XHR">DataSource.XHR</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="DataSource.ScriptNode.html">
+                                    <a href="DataSource.ScriptNode.html" property="yui:name" title="DataSource.ScriptNode">DataSource.ScriptNode</a>
                                     </span>
                             </dd>
                        </dl>
@@ -199,6 +199,7 @@
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 <dt>data (Object)</dt> <dd>Raw data.</dd>
 </dl></span>
                                                         </dd>
@@ -264,6 +265,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 </dl></span>
                                                         </dd>
                                                 </dl>
@@ -326,6 +328,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 <dt>data (Object)</dt> <dd>Raw data.</dd>
 <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
 <dl>
@@ -570,6 +573,10 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                          callback
                                                     
                                                 
+                                                        , 
+                                                         cfg
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -602,6 +609,12 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt><code>argument</code></dt>
 <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
 </dl></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Configuration object</span>
                                                         </dd>
                                                 </dl>
 
@@ -722,6 +735,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 <dt>data (Object)</dt> <dd>Raw data.</dd>
 </dl></span>
                                                         </dd>
@@ -781,6 +795,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 <dt>data (Object)</dt> <dd>Raw data.</dd>
 <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
 <dl>
@@ -816,10 +831,6 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                          e
                                                     
                                                 
-                                                        , 
-                                                         o
-                                                    
-                                                
                                             )
 
                                         </code>
@@ -837,18 +848,12 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                             <code><span property="yui:name">e</span>
                                                                 &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  Event Facade.</span>
-                                                        </dd>
-                                                        
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">o</span>
-                                                                &lt;<span property="yui:type">Object</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  Object with the following properties:
+                                                            <span property="yui:description">  Event Facade with the following properties:
 <dl>                          
 <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
 <dt>request (Object)</dt> <dd>The request.</dd>
 <dt>callback (Object)</dt> <dd>The callback object.</dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 </dl></span>
                                                         </dd>
                                                         
@@ -907,6 +912,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 <dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
+<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 <dt>data (Object)</dt> <dd>Raw data.</dd>
 <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
 <dl>
@@ -1064,6 +1070,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                 <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -1078,7 +1085,10 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
