@@ -46,8 +46,7 @@
             'io.xdrReady': 1,
             'io.start': 1,
             'io.success': 1,
-            'io.failure': 1,
-            'io.abort': 1
+            'io.failure': 1
         };
         
 // reduce to one or the other
@@ -3151,7 +3150,7 @@ var GLOBAL_ENV = YUI.Env,
                 },
 
                 'io-queue': {
-                    requires: [IOBASE]
+                    requires: [IOBASE, 'queue-promote']
                 }
             }
         },
