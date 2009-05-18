@@ -1529,22 +1529,17 @@ var delegates = {},
 
         var target = e.target, 
             tests  = delegates[delegateKey], 
-            passed, spec, ename;
+            spec, ename;
 
         for (spec in tests) {
-
             if (tests.hasOwnProperty(spec)) {
-            
-                passed = false;
                 ename  = tests[spec];
+                e.currentTarget.queryAll(spec).some(function (v, k) {
 
-                // @TODO we need Node.some 
-                e.currentTarget.queryAll(spec).each(function (v, k) {
-
-                    if ((!passed) && (v.compareTo(target) || v.contains(target))) {
+                    if (v.compareTo(target) || v.contains(target)) {
                         e.target = v;
                         Y.fire(ename, e);
-
+                        return true;
                     }
                 });
             }
@@ -1609,7 +1604,6 @@ Y.Env.evt.plugins.delegate = {
         return Y.on.apply(Y, a);
 
     }
-
 };
 
 })();

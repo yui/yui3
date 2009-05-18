@@ -417,7 +417,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             },
 
-            testBroadcast: function() {
+            'broadcast = 1 should be consumable by Y.on, 2 by Y.Global on': function() {
                 var o = new Y.EventTarget(), s1, s2, s3, s4;
 
                 o.publish('y:foo2', {
@@ -466,7 +466,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
         });
         
-
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });
