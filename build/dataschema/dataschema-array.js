@@ -22,16 +22,6 @@ SchemaArray = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Array";
-    },
-
-    /**
      * Applies a given schema to given Array data.
      *
      * @method apply
@@ -54,7 +44,7 @@ SchemaArray = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("Array schema parse failure");
         }
 
         return data_out;
