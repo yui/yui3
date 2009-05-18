@@ -136,6 +136,7 @@ YUI.add('dd-ddm-base', function(Y) {
         initializer: function() {
             var doc = Y.Node.get('document');
             doc.on('mousemove', Y.bind(this._move, this));
+            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
@@ -203,7 +204,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _move: function(ev) {
             if (this.activeDrag) {
-                this.activeDrag._move.apply(this.activeDrag, arguments);
+                this.activeDrag._move.call(this.activeDrag, ev);
                 this._dropMove();
             }
         },
