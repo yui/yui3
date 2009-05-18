@@ -42,13 +42,13 @@ Y.mix(Y.namespace("DataType.XML"), {
                     }
                 }
                 catch(ee) {
-                    Y.log(ee.message + " (Could not parse data " + Y.dump(data) + " to type XML Document)", "warn", "DataType.XML");
+                    Y.log(ee.message + " (Could not parse data " + Y.dump(data) + " to type XML Document)", "warn", "datatype-xml");
                 }
             }
         }
         
         if( (LANG.isNull(xmlDoc)) || (LANG.isNull(xmlDoc.documentElement)) || (xmlDoc.documentElement.nodeName === "parsererror") ) {
-            Y.log("Could not parse data " + Y.dump(data) + " to type XML Document", "warn", "DataType.XML");
+            Y.log("Could not parse data " + Y.dump(data) + " to type XML Document", "warn", "datatype-xml");
         }
         
         return xmlDoc;
@@ -99,7 +99,7 @@ Y.mix(Y.namespace("DataType.XML"), {
                 return data.xml;
             }
             else {
-                Y.log("Could not format data " + Y.dump(data) + " from type XML", "warn", "DataType.XML");
+                Y.log("Could not format data " + Y.dump(data) + " from type XML", "warn", "datatype-xml");
                 return data.toString();
             }
         }

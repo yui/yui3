@@ -14,16 +14,6 @@ var LANG = Y.Lang,
  */
     SchemaBase = {
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Base";
-    },
-
-    /**
      * Overridable method returns data as-is.
      *
      * @method apply
@@ -88,16 +78,6 @@ SchemaJSON = {
     // DataSchema.JSON static methods
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.JSON";
-    },
-
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
@@ -195,7 +175,7 @@ SchemaJSON = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("JSON schema parse failure");
         }
 
         return data_out;
@@ -223,7 +203,7 @@ SchemaJSON = {
                 results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
-                    error = new Error(this.toString() + " Results retrieval failure");
+                    error = new Error("JSON results retrieval failure");
                 }
                 else {
                     if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
@@ -231,12 +211,12 @@ SchemaJSON = {
                     }
                     else {
                         data_out.results = [];
-                        error = new Error(this.toString() + " Fields retrieval failure");
+                        error = new Error("JSON Schema fields retrieval failure");
                     }
                 }
             }
             else {
-                error = new Error(this.toString() + " Results locator failure");
+                error = new Error("JSON Schema results locator failure");
             }
 
             if (error) {
@@ -350,7 +330,7 @@ SchemaJSON = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Meta retrieval failure");
+            data_out.error = new Error("JSON meta data retrieval failure");
         }
         return data_out;
     }
@@ -386,16 +366,6 @@ SchemaXML = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.XML";
-    },
-
-    /**
      * Applies a given schema to given XML data.
      *
      * @method apply
@@ -416,7 +386,7 @@ SchemaXML = {
             data_out = SchemaXML._parseMeta(schema.metaFields, xmldoc, data_out);
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("XML schema parse failure");
         }
 
         return data_out;
@@ -517,7 +487,7 @@ SchemaXML = {
                 data_out.results = results;
             }
             else {
-                data_out.error = new Error(this.toString() + " Result nodes retrieval failure");
+                data_out.error = new Error("XML schema result nodes retrieval failure");
             }
         }
         return data_out;
@@ -554,16 +524,6 @@ SchemaArray = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Array";
-    },
-
-    /**
      * Applies a given schema to given Array data.
      *
      * @method apply
@@ -586,7 +546,7 @@ SchemaArray = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("Array schema parse failure");
         }
 
         return data_out;
@@ -664,16 +624,6 @@ SchemaText = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Text";
-    },
-
-    /**
      * Applies a given schema to given delimited text data.
      *
      * @method apply
@@ -691,7 +641,7 @@ SchemaText = {
             data_out = SchemaText._parseResults(schema, data_in, data_out);
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("Text schema parse failure");
         }
 
         return data_out;

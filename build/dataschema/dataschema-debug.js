@@ -14,16 +14,6 @@ var LANG = Y.Lang,
  */
     SchemaBase = {
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Base";
-    },
-
-    /**
      * Overridable method returns data as-is.
      *
      * @method apply
@@ -52,7 +42,7 @@ var LANG = Y.Lang,
                 value = parser.call(this, value);
             }
             else {
-                Y.log("Could not find parser for field " + Y.dump(field), "warn", SchemaBase.toString());
+                Y.log("Could not find parser for field " + Y.dump(field), "warn", "dataschema-json");
             }
         }
         return value;
@@ -90,16 +80,6 @@ SchemaJSON = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.JSON";
-    },
-
-    /**
      * Utility function converts JSON locator strings into walkable paths
      *
      * @method DataSchema.JSON.getPath
@@ -131,7 +111,7 @@ SchemaJSON = {
                 }
             }
             else {
-                Y.log("Invalid locator: " + locator, "error", SchemaJSON.toString());
+                Y.log("Invalid locator: " + locator, "error", "dataschema-json");
             }
         }
         return path;
@@ -197,8 +177,8 @@ SchemaJSON = {
             }
         }
         else {
-            Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaJSON.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("JSON data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-json");
+            data_out.error = new Error("JSON schema parse failure");
         }
 
         return data_out;
@@ -226,7 +206,7 @@ SchemaJSON = {
                 results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
-                    error = new Error(this.toString() + " Results retrieval failure");
+                    error = new Error("JSON results retrieval failure");
                 }
                 else {
                     if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
@@ -234,16 +214,16 @@ SchemaJSON = {
                     }
                     else {
                         data_out.results = [];
-                        error = new Error(this.toString() + " Fields retrieval failure");
+                        error = new Error("JSON Schema fields retrieval failure");
                     }
                 }
             }
             else {
-                error = new Error(this.toString() + " Results locator failure");
+                error = new Error("JSON Schema results locator failure");
             }
 
             if (error) {
-                Y.log("JSON data could not be parsed: " + Y.dump(json_in), "error", SchemaJSON.toString());
+                Y.log("JSON data could not be parsed: " + Y.dump(json_in), "error", "dataschema-json");
                 data_out.error = error;
             }
             
@@ -284,7 +264,7 @@ SchemaJSON = {
                     complexPaths[complexPaths.length] = {key:key, path:path};
                 }
             } else {
-                Y.log("Invalid key syntax: " + key, "warn", SchemaJSON.toString());
+                Y.log("Invalid key syntax: " + key, "warn", "dataschema-json");
             }
 
             // Validate and store parsers for later
@@ -355,7 +335,7 @@ SchemaJSON = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Meta retrieval failure");
+            data_out.error = new Error("JSON meta data retrieval failure");
         }
         return data_out;
     }
@@ -391,16 +371,6 @@ SchemaXML = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.XML";
-    },
-
-    /**
      * Applies a given schema to given XML data.
      *
      * @method apply
@@ -421,8 +391,8 @@ SchemaXML = {
             data_out = SchemaXML._parseMeta(schema.metaFields, xmldoc, data_out);
         }
         else {
-            Y.log("XML data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaXML.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("XML data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-xml");
+            data_out.error = new Error("XML schema parse failure");
         }
 
         return data_out;
@@ -523,7 +493,7 @@ SchemaXML = {
                 data_out.results = results;
             }
             else {
-                data_out.error = new Error(this.toString() + " Result nodes retrieval failure");
+                data_out.error = new Error("XML schema result nodes retrieval failure");
             }
         }
         return data_out;
@@ -560,16 +530,6 @@ SchemaArray = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Array";
-    },
-
-    /**
      * Applies a given schema to given Array data.
      *
      * @method apply
@@ -589,12 +549,12 @@ SchemaArray = {
             }
             else {
                 data_out.results = data_in;
-                Y.log("Schema resultFields property not found: " + Y.dump(schema), "warn", SchemaArray.toString());
+                Y.log("Schema resultFields property not found: " + Y.dump(schema), "warn", "dataschema-array");
             }
         }
         else {
-            Y.log("Array data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaArray.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("Array data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-array");
+            data_out.error = new Error("Array schema parse failure");
         }
 
         return data_out;
@@ -633,7 +593,7 @@ SchemaArray = {
             else {
                 //TODO: null or {}?
                 result = null;
-                Y.log("Unexpected type while parsing array: " + Y.dump(item), "warn", SchemaArray.toString());
+                Y.log("Unexpected type while parsing array: " + Y.dump(item), "warn", "dataschema-array");
             }
             results[i] = result;
         }
@@ -673,16 +633,6 @@ SchemaText = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Text";
-    },
-
-    /**
      * Applies a given schema to given delimited text data.
      *
      * @method apply
@@ -700,8 +650,8 @@ SchemaText = {
             data_out = SchemaText._parseResults(schema, data_in, data_out);
         }
         else {
-            Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaText.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-text");
+            data_out.error = new Error("Text schema parse failure");
         }
 
         return data_out;
