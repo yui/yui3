@@ -51,7 +51,7 @@
 
 <span class="k">var</span> <span class="nx">delegates</span> <span class="o">=</span> <span class="o">{},</span>
 
-    <span class="nx">worker</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_worker</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> 
             <span class="nx">tests</span>  <span class="o">=</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">],</span> 
@@ -75,8 +75,11 @@
                 <span class="o">});</span>
             <span class="o">}</span>
         <span class="o">}</span>
+    <span class="o">},</span>
 
-    <span class="o">};</span>
+    <span class="nx">_sanitize</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">str</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">str</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/[|,:]/g</span><span class="o">,</span> <span class="s1">&#39;~&#39;</span><span class="o">);</span>
+    <span class="o">});</span>
 
 <span class="c">/**</span>
 <span class="c"> * Sets up a delegated listener container.</span>
@@ -92,13 +95,18 @@
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;delegate: no spec, nothing to do&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
 
         <span class="c">// identifier to target the container</span>
 <span class="c"></span>        <span class="k">var</span> <span class="nx">guid</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">)),</span> 
                 
             <span class="c">// the custom event for the delegation spec</span>
-<span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="nx">guid</span> <span class="o">+</span> <span class="nx">delegateType</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">,</span>
+<span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="nx">guid</span> <span class="o">+</span> <span class="nx">delegateType</span> <span class="o">+</span> <span class="nx">_sanitize</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
 
             <span class="c">// the key to the listener for the event type and container</span>
 <span class="c"></span>            <span class="nx">delegateKey</span> <span class="o">=</span> <span class="nx">delegateType</span> <span class="o">+</span> <span class="nx">guid</span><span class="o">,</span>
@@ -111,7 +119,7 @@
 
             <span class="c">// set up the listener on the container</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">delegateType</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">worker</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                <span class="nx">_worker</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
             <span class="o">},</span> <span class="nx">el</span><span class="o">);</span>
 
         <span class="o">}</span>
@@ -147,6 +155,7 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
