@@ -1525,7 +1525,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 
 var delegates = {},
 
-    worker = function(delegateKey, e) {
+    _worker = function(delegateKey, e) {
 
         var target = e.target, 
             tests  = delegates[delegateKey], 
@@ -1549,8 +1549,11 @@ var delegates = {},
                 });
             }
         }
+    },
 
-    };
+    _sanitize = Y.cached(function(str) {
+        return str.replace(/[|,:]/g, '~');
+    });
 
 /**
  * Sets up a delegated listener container.
@@ -1566,13 +1569,18 @@ var delegates = {},
  */
 Y.Env.evt.plugins.delegate = {
 
-    on: function(type, fn, el, delegateType, spec, o) {
+    on: function(type, fn, el, delegateType, spec) {
+
+        if (!spec) {
+            Y.log('delegate: no spec, nothing to do', 'warn', 'event');
+            return false;
+        }
 
         // identifier to target the container
         var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
-            ename = 'delegate:' + guid + delegateType + spec,
+            ename = 'delegate:' + guid + delegateType + _sanitize(spec),
 
             // the key to the listener for the event type and container
             delegateKey = delegateType + guid,
@@ -1585,7 +1593,7 @@ Y.Env.evt.plugins.delegate = {
 
             // set up the listener on the container
             Y.on(delegateType, function(e) {
-                worker(delegateKey, e);
+                _worker(delegateKey, e);
             }, el);
 
         }

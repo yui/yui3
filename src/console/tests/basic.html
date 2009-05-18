@@ -31,6 +31,7 @@
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/console/console-filters.js"></script>
 <script type="text/javascript">
 YUI({
     base: '../../../build/',
@@ -38,7 +39,7 @@ YUI({
     //logLevel: 'warn',
     filter: 'debug',
     logInclude : { global: true }
-}).use('console',function (Y) {
+}).use('console','console-filters', function (Y) {
 
 var x = {
     foo : 0,
@@ -68,6 +69,8 @@ var yconsole = new Y.Console({
     logLevel : "Garbage",
     newestOnTop : false
 });
+
+yconsole.plug(Y.Plugin.ConsoleFilters);
 
 yconsole.render('#c');
 
