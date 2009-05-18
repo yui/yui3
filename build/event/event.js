@@ -976,7 +976,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             }
 
-            if (!fn || !fn.call) {
+            if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
             }
 
@@ -1501,32 +1501,30 @@ Y.Env.evt.plugins.key = {
 
 var delegates = {},
 
-    worker = function(delegateKey, e) {
+    _worker = function(delegateKey, e) {
 
         var target = e.target, 
             tests  = delegates[delegateKey], 
-            passed, spec, ename;
+            spec, ename;
 
         for (spec in tests) {
-
             if (tests.hasOwnProperty(spec)) {
-            
-                passed = false;
                 ename  = tests[spec];
+                e.currentTarget.queryAll(spec).some(function (v, k) {
 
-                // @TODO we need Node.some 
-                e.currentTarget.queryAll(spec).each(function (v, k) {
-
-                    if ((!passed) && (v.compareTo(target) || v.contains(target))) {
+                    if (v.compareTo(target) || v.contains(target)) {
                         e.target = v;
                         Y.fire(ename, e);
-
+                        return true;
                     }
                 });
             }
         }
+    },
 
-    };
+    _sanitize = Y.cached(function(str) {
+        return str.replace(/[|,:]/g, '~');
+    });
 
 /**
  * Sets up a delegated listener container.
@@ -1542,13 +1540,17 @@ var delegates = {},
  */
 Y.Env.evt.plugins.delegate = {
 
-    on: function(type, fn, el, delegateType, spec, o) {
+    on: function(type, fn, el, delegateType, spec) {
+
+        if (!spec) {
+            return false;
+        }
 
         // identifier to target the container
         var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
-            ename = 'delegate:' + guid + delegateType + spec,
+            ename = 'delegate:' + guid + delegateType + _sanitize(spec),
 
             // the key to the listener for the event type and container
             delegateKey = delegateType + guid,
@@ -1561,7 +1563,7 @@ Y.Env.evt.plugins.delegate = {
 
             // set up the listener on the container
             Y.on(delegateType, function(e) {
-                worker(delegateKey, e);
+                _worker(delegateKey, e);
             }, el);
 
         }
@@ -1577,7 +1579,6 @@ Y.Env.evt.plugins.delegate = {
         return Y.on.apply(Y, a);
 
     }
-
 };
 
 })();

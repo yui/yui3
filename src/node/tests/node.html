@@ -16,6 +16,7 @@
 <script type="text/javascript" src="../../../build/base/base.js"></script>
 <script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
+<script type="text/javascript" src="../../../build/anim/anim.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
@@ -412,6 +413,8 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 return el.get('id') === 'doc';
             }).get('id'), 'ancestor');
 
+            Assert.areEqual(node.ancestor(), node.get('parentNode'), "node.ancestor()");
+
             Assert.isNull(node.ancestor(function(el) {
                 return el.hasAttribute('foo');
             }), 'ancestor');
@@ -637,19 +640,26 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
         test_inject: function() {
             var html = '<strong>bar</strong>';
-            Y.get('#test-insert-html').insertHTML(html);
+            Y.get('#test-insert-html').append(html);
             Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
                 'foo' + html,
-                "Y.get('#test-insert-html').insertHTML('<strong>bar</strong>')");
+                "Y.get('#test-insert-html').append('<strong>bar</strong>')");
 
-            Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin');
+            Y.get('#test-insert-html').prepend('<em>baz</em>');
             Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
                 Y.DOM.byId('test-insert-html').innerHTML,
-                Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin'));
+                "Y.get('#test-insert-html').prepend('<em>baz</em>')");
 
-            Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>', 'afterBegin');
-            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>', 'afterBegin')");
+            Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>');
+            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>'");
 
+
+            
+            var html = '<strong>baz</strong>';
+            Y.get('#test-insert-html').setContent(html);
+            Assert.areEqual(html,
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent('<strong>baz</strong>')");
         },
 
         test_getValue: function() {
@@ -742,6 +752,13 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Y.get('body').set('aria-checked', false);
             Assert.areEqual('false', Y.get('body').get('aria-checked'), "Y.get('body').set('aria-checked', false)");
+        },
+
+        test_plugin: function() {
+            Y.Node.plug(Y.Plugin.NodeFX);
+            Assert.isTrue(!!Y.Node.create('<div></div>').fx, 'Node.plug()');
+            Y.Node.unplug(Y.Plugin.NodeFX);
+            Assert.isFalse(!!Y.Node.create('<div></div>').fx, 'Node.unplug()');
         }
     }));
 

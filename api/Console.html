@@ -93,6 +93,22 @@ filtered against the configured logLevel.
 
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:property" resource="#property__evtCat">
+                                    <h4><a name="property__evtCat" property="yui:name">_evtCat</a>
+                                        - <code>protected <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Category to prefix all event subscriptions to allow for ease of detach
+during destroy.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:property" resource="#property__head">
                                     <h4><a name="property__head" property="yui:name">_head</a>
                                         - <code>protected <span property="yui:type">Node</span></code>
@@ -1878,6 +1894,11 @@ internal events, and subscribe to the configured logEvent.
                                         void
                                             <strong property="yui:name">printBuffer</strong>
                                            (
+                                                
+                                                        
+                                                         limit
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -1887,6 +1908,15 @@ internal events, and subscribe to the configured logEvent.
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">limit</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (optional) max number of buffered entries to write</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -2765,6 +2795,50 @@ in _defEntryFn.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_logSourceChange">
+                                    <h4>
+                                        <a name="event_logSourceChange">logSourceChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">logSourceChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'logSource' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_newestOnTopChange">
                                     <h4>
                                         <a name="event_newestOnTopChange">newestOnTopChange</a></h4>
@@ -2831,6 +2905,50 @@ in _defEntryFn.
                                         
                                         <div class="description" property="yui:description">
                                             Fires when the value for the configuration attribute 'paused' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_printLimitChange">
+                                    <h4>
+                                        <a name="event_printLimitChange">printLimitChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">printLimitChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'printLimit' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3233,7 +3351,7 @@ DOM tree and impacting page performance.
  
      
                                     <div class="default">
-                                        Default Value: 500
+                                        Default Value: 300
                                     </div>        
 
                                     <hr />
@@ -3368,6 +3486,25 @@ Console.LOG_LEVEL_INFO and so on.
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_logSource">
+                                    <h4><a name="config_logSource">logSource</a>
+                                        <code>- <span property="yui:type">EventTarget</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Object that will emit the log events.  By default the YUI instance.
+To have a single Console capture events from all YUI instances, set
+this to the Y.Global object.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: Y
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_newestOnTop">
                                     <h4><a name="config_newestOnTop">newestOnTop</a>
                                         <code>- <span property="yui:type">Boolean</span></code>
@@ -3399,6 +3536,25 @@ When paused, messages will accumulate in the buffer.
      
                                     <div class="default">
                                         Default Value: false
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_printLimit">
+                                    <h4><a name="config_printLimit">printLimit</a>
+                                        <code>- <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Maximum number of entries printed in each printBuffer iteration.
+This is used to prevent excessive logging bogging down runtime
+performance.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 00
                                     </div>        
 
                                     <hr />
@@ -3631,6 +3787,7 @@ DEF_UNIT, property is used.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#property__body" title="_body">_body</a></li>
+                                <li class="protected"><a href="#property__evtCat" title="_evtCat">_evtCat</a></li>
                                 <li class="protected"><a href="#property__head" title="_head">_head</a></li>
                                 <li class="protected"><a href="#property__timeout" title="_timeout">_timeout</a></li>
                                 <li class=""><a href="#property_buffer" title="buffer">buffer</a></li>
@@ -3703,8 +3860,10 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="#event_lastTimeChange" title="lastTimeChange">lastTimeChange</a></li>
                                 <li class=""><a href="#event_logEventChange" title="logEventChange">logEventChange</a></li>
                                 <li class=""><a href="#event_logLevelChange" title="logLevelChange">logLevelChange</a></li>
+                                <li class=""><a href="#event_logSourceChange" title="logSourceChange">logSourceChange</a></li>
                                 <li class=""><a href="#event_newestOnTopChange" title="newestOnTopChange">newestOnTopChange</a></li>
                                 <li class=""><a href="#event_pausedChange" title="pausedChange">pausedChange</a></li>
+                                <li class=""><a href="#event_printLimitChange" title="printLimitChange">printLimitChange</a></li>
                                 <li class=""><a href="#event_printTimeoutChange" title="printTimeoutChange">printTimeoutChange</a></li>
                                 <li class=""><a href="#event_reset" title="reset">reset</a></li>
                                 <li class=""><a href="#event_scrollIntoViewChange" title="scrollIntoViewChange">scrollIntoViewChange</a></li>
@@ -3726,8 +3885,10 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="#config_lastTime" title="lastTime">lastTime</a></li>
                                 <li class=""><a href="#config_logEvent" title="logEvent">logEvent</a></li>
                                 <li class=""><a href="#config_logLevel" title="logLevel">logLevel</a></li>
+                                <li class=""><a href="#config_logSource" title="logSource">logSource</a></li>
                                 <li class=""><a href="#config_newestOnTop" title="newestOnTop">newestOnTop</a></li>
                                 <li class=""><a href="#config_paused" title="paused">paused</a></li>
+                                <li class=""><a href="#config_printLimit" title="printLimit">printLimit</a></li>
                                 <li class=""><a href="#config_printTimeout" title="printTimeout">printTimeout</a></li>
                                 <li class=""><a href="#config_scrollIntoView" title="scrollIntoView">scrollIntoView</a></li>
                                 <li class=""><a href="#config_startTime" title="startTime">startTime</a></li>
@@ -3745,7 +3906,7 @@ DEF_UNIT, property is used.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_addToConsole", "url": "Console.html#method__addToConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_clearTimeout", "url": "Console.html#method__clearTimeout", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLogEntry", "url": "Console.html#method_printLogEntry", "type": "method"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_timeout", "url": "Console.html#property__timeout", "type": "property"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_addToConsole", "url": "Console.html#method__addToConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_clearTimeout", "url": "Console.html#method__clearTimeout", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_evtCat", "url": "Console.html#property__evtCat", "type": "property"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "logSource", "url": "Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Console", "name": "logSourceChange", "url": "Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLimit", "url": "Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Console", "name": "printLimitChange", "url": "Console.html#event_printLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "printLogEntry", "url": "Console.html#method_printLogEntry", "type": "method"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_timeout", "url": "Console.html#property__timeout", "type": "property"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
 </script>
 </body>
 </html>

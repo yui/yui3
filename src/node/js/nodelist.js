@@ -368,7 +368,10 @@ Y.mix(NodeList.prototype, {
 NodeList.importMethod(Y.Node.prototype, [
     'addEventListener',
     'removeEventListener',
-    'remove'
+    'remove',
+    'append',
+    'setContent',
+    'prepend'
 ]);
 
 Y.NodeList = NodeList;

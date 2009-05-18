@@ -19,6 +19,9 @@
         filter: "debug",
         // combine: false,
         useConsole: true,
+        onCSS: function(Y) {
+            Y.log('CSS is done loading');
+        },
         // logInclude: ['event', 'test']
         logExclude: {
             Dom: true, 
@@ -35,9 +38,9 @@
         }
     }).use("dump", "test", "console", function(Y) {
 
-        Y.Global.on('yui:log', function(e) {
-            console.log('GLOBAL LOG: ' + e.msg);
-        });
+        // Y.Global.on('yui:log', function(e) {
+        //     console.log('GLOBAL LOG: ' + e.msg);
+        // });
 
         var button = Y.get('#btnRun');
 
@@ -238,6 +241,29 @@
 
             },
 
+            testDetachAllByKey: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                Y.after('handle|test:event2', function() {
+                    fired2 = true;
+                });
+
+                Y.on('handle|test:event2', function() {
+                    fired1 = true;
+                });
+
+                // detachAll
+                Y.detach('handle|*');
+
+                Y.fire('test:event2');
+
+                Y.Assert.isFalse(fired1, 'fired1, the after listener should not have fired.');
+                Y.Assert.isFalse(fired2, 'fired2, the on listener should not have fired.');
+
+            },
+
             testChain: function() {
 
                 var fired1 = false,
@@ -391,7 +417,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             },
 
-            testBroadcast: function() {
+            'broadcast = 1 should be consumable by Y.on, 2 by Y.Global on': function() {
                 var o = new Y.EventTarget(), s1, s2, s3, s4;
 
                 o.publish('y:foo2', {
@@ -440,7 +466,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
         });
         
-
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });

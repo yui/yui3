@@ -16,5 +16,5 @@ NodeFX.NS = "fx";
 
 Y.extend(NodeFX, Y.Anim);
 
-Y.namespace('plugin');
-Y.plugin.NodeFX = NodeFX;
+Y.namespace('Plugin');
+Y.Plugin.NodeFX = NodeFX;
