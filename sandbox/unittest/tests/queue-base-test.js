@@ -1,3 +1,5 @@
+YUI.add('queue-base-test', function(Y) {
+
 function f() {}
 
 Y.namespace("UnitTests")["queue-base"] = {
@@ -94,3 +96,6 @@ Y.namespace("UnitTests")["queue-base"] = {
         }
     }
 };
+
+
+}, '@VERSION@' ,{requires:['queue-base']});

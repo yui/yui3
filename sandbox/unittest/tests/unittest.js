@@ -1,3 +1,5 @@
+YUI.add('unittest', function(Y) {
+
 Y.namespace('UnitTests');
 
 function UnitTest() {
@@ -52,3 +54,6 @@ UnitTest.prototype = {
 };
 
 Y.UnitTest = new UnitTest();
+
+
+}, '@VERSION@' ,{requires:['test']});
