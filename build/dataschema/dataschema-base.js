@@ -14,16 +14,6 @@ var LANG = Y.Lang,
  */
     SchemaBase = {
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Base";
-    },
-
-    /**
      * Overridable method returns data as-is.
      *
      * @method apply

@@ -21,6 +21,8 @@ The Console tool
     * Entry removal checks that the target node is present before removing it
     * Y.config.debug explicitly set to false during print cycle to avoid
       infinite loops
+    * Created Y.Plugin.ConsoleFilters to add per category/source filtering (ala
+      yui2 LogReader)
 
 3.0.0pr2
     Initial release

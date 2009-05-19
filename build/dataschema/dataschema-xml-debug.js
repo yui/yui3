@@ -22,16 +22,6 @@ SchemaXML = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.XML";
-    },
-
-    /**
      * Applies a given schema to given XML data.
      *
      * @method apply
@@ -52,8 +42,8 @@ SchemaXML = {
             data_out = SchemaXML._parseMeta(schema.metaFields, xmldoc, data_out);
         }
         else {
-            Y.log("XML data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaXML.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("XML data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-xml");
+            data_out.error = new Error("XML schema parse failure");
         }
 
         return data_out;
@@ -154,7 +144,7 @@ SchemaXML = {
                 data_out.results = results;
             }
             else {
-                data_out.error = new Error(this.toString() + " Result nodes retrieval failure");
+                data_out.error = new Error("XML schema result nodes retrieval failure");
             }
         }
         return data_out;

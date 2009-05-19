@@ -242,6 +242,8 @@ YUI.add('attribute', function(Y) {
         addAttr: function(name, config) {
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
+            if (this.attrAdded(name)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+
             if (!this.attrAdded(name)) {
                 config = config || {};
 
@@ -269,7 +271,6 @@ YUI.add('attribute', function(Y) {
 
                 conf.remove(name, INITIALIZING);
             }
-            if (this.attrAdded(name)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
             return this;
         },

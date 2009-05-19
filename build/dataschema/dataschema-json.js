@@ -22,16 +22,6 @@ SchemaJSON = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.JSON";
-    },
-
-    /**
      * Utility function converts JSON locator strings into walkable paths
      *
      * @method DataSchema.JSON.getPath
@@ -128,7 +118,7 @@ SchemaJSON = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            data_out.error = new Error("JSON schema parse failure");
         }
 
         return data_out;
@@ -156,7 +146,7 @@ SchemaJSON = {
                 results = SchemaJSON.getLocationValue(path, json_in);
                 if (results === undefined) {
                     data_out.results = [];
-                    error = new Error(this.toString() + " Results retrieval failure");
+                    error = new Error("JSON results retrieval failure");
                 }
                 else {
                     if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
@@ -164,12 +154,12 @@ SchemaJSON = {
                     }
                     else {
                         data_out.results = [];
-                        error = new Error(this.toString() + " Fields retrieval failure");
+                        error = new Error("JSON Schema fields retrieval failure");
                     }
                 }
             }
             else {
-                error = new Error(this.toString() + " Results locator failure");
+                error = new Error("JSON Schema results locator failure");
             }
 
             if (error) {
@@ -283,7 +273,7 @@ SchemaJSON = {
             }
         }
         else {
-            data_out.error = new Error(this.toString() + " Meta retrieval failure");
+            data_out.error = new Error("JSON meta data retrieval failure");
         }
         return data_out;
     }

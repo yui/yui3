@@ -20,16 +20,6 @@ SchemaText = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Text";
-    },
-
-    /**
      * Applies a given schema to given delimited text data.
      *
      * @method apply
@@ -47,8 +37,8 @@ SchemaText = {
             data_out = SchemaText._parseResults(schema, data_in, data_out);
         }
         else {
-            Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaText.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("Text data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-text");
+            data_out.error = new Error("Text schema parse failure");
         }
 
         return data_out;

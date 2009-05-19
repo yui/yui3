@@ -12,16 +12,6 @@ var LANG = Y.Lang,
  */
     SchemaBase = {
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Base";
-    },
-
-    /**
      * Overridable method returns data as-is.
      *
      * @method apply
@@ -50,7 +40,7 @@ var LANG = Y.Lang,
                 value = parser.call(this, value);
             }
             else {
-                Y.log("Could not find parser for field " + Y.dump(field), "warn", SchemaBase.toString());
+                Y.log("Could not find parser for field " + Y.dump(field), "warn", "dataschema-json");
             }
         }
         return value;

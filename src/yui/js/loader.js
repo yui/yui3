@@ -479,7 +479,7 @@ var GLOBAL_ENV = YUI.Env,
                 },
 
                 'io-queue': {
-                    requires: [IOBASE]
+                    requires: [IOBASE, 'queue-promote']
                 }
             }
         },

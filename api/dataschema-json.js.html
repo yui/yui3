@@ -69,16 +69,6 @@
 <span class="c"></span>    <span class="c">//</span>
 <span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
 <span class="c"></span>    <span class="c">/**</span>
-<span class="c">     * Returns string name.</span>
-<span class="c">     *</span>
-<span class="c">     * @method toString</span>
-<span class="c">     * @return {String} String representation for this object.</span>
-<span class="c">     */</span>
-    <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="s2">&quot;DataSchema.JSON&quot;</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
 <span class="c">     * Utility function converts JSON locator strings into walkable paths</span>
 <span class="c">     *</span>
 <span class="c">     * @method DataSchema.JSON.getPath</span>
@@ -110,7 +100,7 @@
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid locator: &quot;</span> <span class="o">+</span> <span class="nx">locator</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid locator: &quot;</span> <span class="o">+</span> <span class="nx">locator</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">path</span><span class="o">;</span>
@@ -176,8 +166,8 @@
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
-            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Schema parse failure&quot;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
+            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON schema parse failure&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
@@ -205,7 +195,7 @@
                 <span class="nx">results</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">results</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-                    <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Results retrieval failure&quot;</span><span class="o">);</span>
+                    <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON results retrieval failure&quot;</span><span class="o">);</span>
                 <span class="o">}</span>
                 <span class="k">else</span> <span class="o">{</span>
                     <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">results</span><span class="o">))</span> <span class="o">{</span>
@@ -213,16 +203,16 @@
                     <span class="o">}</span>
                     <span class="k">else</span> <span class="o">{</span>
                         <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-                        <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Fields retrieval failure&quot;</span><span class="o">);</span>
+                        <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema fields retrieval failure&quot;</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Results locator failure&quot;</span><span class="o">);</span>
+                <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema results locator failure&quot;</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">json_in</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">json_in</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
                 <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="o">;</span>
             <span class="o">}</span>
             
@@ -263,7 +253,7 @@
                     <span class="nx">complexPaths</span><span class="o">[</span><span class="nx">complexPaths</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="o">};</span>
                 <span class="o">}</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid key syntax: &quot;</span> <span class="o">+</span> <span class="nx">key</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid key syntax: &quot;</span> <span class="o">+</span> <span class="nx">key</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// Validate and store parsers for later</span>
@@ -334,7 +324,7 @@
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Meta retrieval failure&quot;</span><span class="o">);</span>
+            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON meta data retrieval failure&quot;</span><span class="o">);</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
     <span class="o">}</span>
@@ -357,11 +347,13 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class="selected"><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -376,7 +368,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -425,7 +420,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "toString", "url": "DataSchema.Text.html#method_toString", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "toString", "url": "DataSchema.XML.html#method_toString", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "toString", "url": "DataSchema.JSON.html#method_toString", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "toString", "url": "DataSchema.Base.html#method_toString", "type": "method"}, {"access": "", "host": "DataSchema.Array", "name": "toString", "url": "DataSchema.Array.html#method_toString", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}];
 </script>
 </body>
 </html>

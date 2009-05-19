@@ -14,7 +14,7 @@ YUI.add('node-base', function(Y) {
  * <strong>NOTE:</strong> NodeList properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
- * @class NodeList
+ * @class Node
  * @constructor
  */
 
