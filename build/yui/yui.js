@@ -186,13 +186,12 @@ YUI.prototype = {
 
         o = o || {};
 
-        // find targeted window
+        // find targeted window/frame
         // @TODO create facades
-        // @TODO resolve windowless environments
-        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@', Y = this;
-        o.win = w;
-        o.doc = w.document;
+        var v = '@VERSION@', Y = this;
+        o.win = o.win || window || {};
+        o.win = o.win.contentWindow || o.win;
+        o.doc = o.win.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
@@ -423,23 +422,10 @@ YUI.prototype = {
 
                     // CSS files don't register themselves, see if it has been loaded
                     if (!YUI.Env._loaded[Y.version][name]) {
-                        // While sorting out the packaged metadata in the modules,
-                        // let's look at the loader metadata as well
-                        // loaderMods = Y.Env.meta.modules; 
-                        // m = loaderMods && loaderMods[name];
-                        // if (m && m.parent && used[m.parent]) {
-                        //     used[name] = true;
-                        //     req = m.requires;
-                        //     use = m.supersedes;
-                        // }  else {
-                        //     missing.push(name);
-                        // }
-                         
                         missing.push(name);
                     } else {
                         // probably css
                         used[name] = true;
-
                     }
                 }
 
@@ -508,7 +494,7 @@ YUI.prototype = {
             return Y.use.apply(Y, a);
 
         }
-       
+        
 
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -679,7 +665,6 @@ YUI.prototype = {
 
     // set up the environment
     YUI._init();
-
 
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
