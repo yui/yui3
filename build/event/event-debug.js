@@ -224,22 +224,7 @@ var whitelist = {
 
 */
 
-var whitelist = {
-    altKey          : 1,
-    cancelBubble    : 1,
-    ctrlKey         : 1,
-    clientX         : 1, // needed?
-    clientY         : 1, // needed?
-    detail          : 1, // not fully implemented
-    keyCode         : 1,
-    metaKey         : 1,
-    shiftKey        : 1,
-    type            : 1,
-    x               : 1,
-    y               : 1
-},
-
-    ua = Y.UA,
+    var ua = Y.UA,
 
     /**
      * webkit key remapping required for Safari < 3.1
@@ -286,20 +271,15 @@ var whitelist = {
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
-
-    // @TODO the document should be the target's owner document
+Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
+        x = e.pageX, y = e.pageY, i, c, t;
 
-    // copy all primitives ... this is slow in FF
-    for (i in whitelist) {
-        // if (!Y.Lang.isObject(e[i])) {
-        if (whitelist.hasOwnProperty(i)) {
-            this[i] = e[i];
-        }
-    }
+    this.altKey   = e.altKey;
+    this.ctrlKey  = e.ctrlKey;
+    this.metaKey  = e.metaKey;
+    this.shiftKey = e.shiftKey;
 
     //////////////////////////////////////////////////////
 
@@ -372,39 +352,21 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
      */
     this.which = this.button;
 
-    /**
-     * The event details.  Currently supported for Custom
-     * Events only, where it contains the arguments that
-     * were passed to fire().
-     * @property details
-     * @type Array
-     */
-    this.details = details;
-
     //////////////////////////////////////////////////////
 
-    /**
-     * Timestamp for the event
-     * @property time
-     * @type Date
-     */
-    this.time = e.time || new Date().getTime();
-
-    //////////////////////////////////////////////////////
-    
     /**
      * Node reference for the targeted element
      * @propery target
      * @type Node
      */
-    this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
+    this.target = resolve(e.target || e.srcElement);
 
     /**
      * Node reference for the element that the listener was attached to.
      * @propery currentTarget
      * @type Node
      */
-    this.currentTarget = (isCE) ? ot :  resolve(ot);
+    this.currentTarget = resolve(ot);
 
     t = e.relatedTarget;
 
@@ -421,7 +383,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
      * @propery relatedTarget
      * @type Node
      */
-    this.relatedTarget = (isCE) ? t : resolve(t);
+    this.relatedTarget = resolve(t);
     
     //////////////////////////////////////////////////////
     // methods
@@ -436,9 +398,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
         } else {
             e.cancelBubble = true;
         }
-        if (wrapper) {
-            wrapper.stopPropagation();
-        }
+        wrapper.stopPropagation();
     };
 
     /**
@@ -455,10 +415,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
             this.stopPropagation();
         }
 
-        if (wrapper) {
-            wrapper.stopImmediatePropagation();
-        }
-
+        wrapper.stopImmediatePropagation();
     };
 
     /**
@@ -471,9 +428,8 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
         } else {
             e.returnValue = false;
         }
-        if (wrapper) {
-            wrapper.preventDefault();
-        }
+
+        wrapper.preventDefault();
     };
 
     /**
@@ -489,6 +445,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
         } else {
             this.stopPropagation();
         }
+
         this.preventDefault();
     };
 
@@ -777,11 +734,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             el = el || Y.config.win;
 
-            // Y.log('attach: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
-            // Y.log('attach:');
-            // Y.log(Y.Array(arguments, 0, true), 1);
-            // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
-
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
@@ -831,15 +783,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
-                // this should not be a node list ever at this point
-                // if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
-                //     size = oEl.size();
-                //     if (size > 1) {
-                //         args[2] = oEl;
-                //         return E.attach.apply(E, args);
-                //     } else {
-                //         el = oEl.item(0);
-                //     }
                 if (oEl) {
 
                     if (Y.Lang.isArray(oEl)) {
@@ -876,7 +819,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             // the custom event key is the uid for the element + type
 
-            // lifeline support for
+            // allow a node reference to Y.on to work with load time addEventListener check
+            // (Node currently only has the addEventListener interface and that may be
+            // removed).
             if (Y.Node && el instanceof Y.Node) {
                 return el.on.apply(el, args);
             }
@@ -884,7 +829,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             ek = Y.stamp(el); 
             key = 'event:' + ek + type;
             cewrapper = _wrappers[key];
-
 
             if (!cewrapper) {
                 // create CE wrapper
