@@ -1,22 +1,33 @@
 YUI.add('io-queue', function(Y) {
 
-   /*
-    * Extends the IO base class to include basic queue interfaces for transaction
-    * queuing.
-	* @module io-base
+   /**
+    * Extends the IO base class to implement Queue for synchronous
+    * transaction processing.
+	* @module io
 	* @submodule io-queue
 	*/
 
    /**
 	* @description Array of transactions queued for processing
 	*
-	* @property _q
+	* @property _yQ
 	* @private
 	* @static
-	* @type array
+	* @type Object
 	*/
-	var _q = [],
+	var _q = new Y.Queue(),
 
+   /**
+	* @description
+	*
+	* @property _e
+	* @private
+	* @static
+	* @type Object
+	*/
+	_e,
+
+	_activeId,
    /**
 	* @description Property to determine whether the queue is set to
 	* 1 (active) or 0 (inactive).  When inactive, transactions
@@ -27,20 +38,7 @@ YUI.add('io-queue', function(Y) {
 	* @static
 	* @type int
 	*/
-	_qState = 1,
-
-   /**
-	* @description Queue property to set a maximum queue storage size.  When
-	* this property is set, the queue will not store any more transactions
-	* until the queue size os reduced below this threshold. There is no
-	* maximum queue size until it is explicitly set.
-	*
-	* @property _qMaxSize
-	* @private
-	* @static
-	* @type int
-	*/
-	_qMaxSize = false;
+	_qState = 1;
 
    /**
 	* @description Method for requesting a transaction, and queueing the
@@ -49,23 +47,34 @@ YUI.add('io-queue', function(Y) {
 	* @method _queue
 	* @private
 	* @static
-	* @return int
+	* @return Object
 	*/
 	function _queue(uri, c) {
+		var o = { uri: uri, id: Y.io._id(), cfg:c };
 
-		if (_qMaxSize === false || _q.length < _qMaxSize) {
-			var id = Y.io._id();
-			_q.push({ uri: uri, id: id, cfg:c });
-		}
-		else {
-			return false;
-		}
-
+		_q.add(o);
 		if (_qState === 1) {
 			_shift();
 		}
 
-		return id;
+		return o;
+	};
+
+   /**
+	* @description Method Process the first transaction from the
+	* queue in FIFO order.
+	*
+	* @method _shift
+	* @private
+	* @static
+	* @return void
+	*/
+	function _shift() {
+		var o = _q.next();
+
+		_activeId = o.id;
+		_qState = 0;
+		Y.io(o.uri, o.cfg, o.id);
 	};
 
    /**
@@ -76,74 +85,37 @@ YUI.add('io-queue', function(Y) {
 	* @static
 	* @return void
 	*/
-	function _unshift(id) {
-		var r;
-
-		for (var i = 0; i < _q.length; i++) {
-			if (_q[i].id === id) {
-				r = _q.splice(i, 1);
-				var p = _q.unshift(r[0]);
-				break;
-			}
-		}
+	function _unshift(o) {
+		_q.promote(o);
 	};
 
-   /**
-	* @description Method for removing a transaction from the top of the
-	* queue, and sending the transaction to _io().
-	*
-	* @method _shift
-	* @private
-	* @static
-	* @return void
-	*/
-	function _shift() {
-		var c = _q.shift();
-		Y.io(c.uri, c.cfg, c.id);
-	};
-
-   /**
-	* @description Method to query the current size of the queue, or to
-	* set a maximum queue size.
-	*
-	* @method _size
-	* @private
-	* @static
-	* @return int
-	*/
-	function _size(i) {
-		if (i) {
-			_qMaxSize = i;
-			return i;
-		}
-		else {
-			return _q.length;
-		}
-	};
-
-   /**
-	* @description Method for setting the queue to active. If there are
-	* transactions pending in the queue, they will be processed from the
-	* queue in FIFO order.
-	*
-	* @method _start
-	* @private
-	* @static
-	* @return void
-	*/
-	function _start() {
-		var len = (_q.length > _qMaxSize > 0) ? _qMaxSize : _q.length;
-
-		if (len > 1) {
-			for (var i=0; i < len; i++) {
-				_shift();
-			}
-		}
-		else {
+	function _next(id) {
+		_qState = 1;
+		if (_activeId === id && _q.size() > 0) {
 			_shift();
 		}
-
 	};
+
+   /**
+	* @description Method for removing a specific, pending transaction from
+	* the queue.
+	*
+	* @method _remove
+	* @private
+	* @static
+	* @return void
+	*/
+	function _remove(o) {
+		_q.remove(o);
+	};
+
+	function _start() {
+		_qState = 1;
+
+		if (_q.size() > 0) {
+			_shift();
+		}
+	}
 
    /**
 	* @description Method for setting queue processing to inactive.
@@ -160,24 +132,18 @@ YUI.add('io-queue', function(Y) {
 	};
 
    /**
-	* @description Method for removing a specific, pending transaction from
-	* the queue.
+	* @description Method to query the current size of the queue.
 	*
-	* @method _purge
+	* @method _size
 	* @private
 	* @static
-	* @return void
+	* @return int
 	*/
-	function _purge(id) {
-		if (Y.Lang.isNumber(id)) {
-			for (var i = 0; i < _q.length; i++) {
-				if (_q[i].id === id) {
-					_q.splice(i, 1);
-					break;
-				}
-			}
-		}
+	function _size() {
+		return _q.size();
 	};
+
+	_e = Y.on('io:complete', function(id) { _next(id); }, Y.io);
 
    /**
 	* @description Method to query the current size of the queue, or to
@@ -192,7 +158,7 @@ YUI.add('io-queue', function(Y) {
 	_queue.size = _size;
 
    /**
-	* @description Method for setting the queue to "active". If there are
+	* @description Method for setting the queue to active. If there are
 	* transactions pending in the queue, they will be processed from the
 	* queue in FIFO order. This is the interface for _start().
 	*
@@ -206,7 +172,7 @@ YUI.add('io-queue', function(Y) {
    /**
 	* @description Method for setting queue processing to inactive.
 	* Transaction requests to YUI.io.queue() will be stored in the queue, but
-	* not processed until the queue is set to "active". This is the
+	* not processed until the queue is restarted. This is the
 	* interface for _stop().
 	*
 	* @method stop
@@ -223,7 +189,7 @@ YUI.add('io-queue', function(Y) {
 	* @method promote
 	* @public
 	* @static
-	* @param {number} i - ID of queued transaction.
+	* @param {Object} o - Reference to queued transaction.
     * @return void
 	*/
 	_queue.promote = _unshift;
@@ -235,10 +201,10 @@ YUI.add('io-queue', function(Y) {
 	* @method purge
 	* @public
 	* @static
-	* @param {number} i - ID of queued transaction.
+	* @param {Object} o - Reference to queued transaction.
     * @return void
 	*/
-	_queue.purge = _purge;
+	_queue.remove = _remove;
 
     Y.mix(Y.io, {
 		queue: _queue

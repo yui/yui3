@@ -3,7 +3,7 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <!--link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css"-->
+    <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css">
     <style type="text/css">
 .yui-skin-sam #c .yui-console {
     position: relative;
@@ -35,10 +35,10 @@
 <script type="text/javascript">
 YUI({
     base: '../../../build/',
-    useBrowserConsole:false,
     //logLevel: 'warn',
     filter: 'debug',
-    logInclude : { global: true }
+    logInclude : { global: true },
+    useBrowserConsole:false
 }).use('console','console-filters', function (Y) {
 
 var x = {

@@ -95,8 +95,7 @@
             <span class="s1">&#39;io.xdrReady&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
             <span class="s1">&#39;io.start&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
             <span class="s1">&#39;io.success&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
-            <span class="s1">&#39;io.failure&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
-            <span class="s1">&#39;io.abort&#39;</span><span class="o">:</span> <span class="m">1</span>
+            <span class="s1">&#39;io.failure&#39;</span><span class="o">:</span> <span class="m">1</span>
         <span class="o">};</span>
         
 <span class="c">// reduce to one or the other</span>
@@ -236,13 +235,12 @@
 
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
 
-        <span class="c">// find targeted window</span>
+        <span class="c">// find targeted window/frame</span>
 <span class="c"></span>        <span class="c">// @TODO create facades</span>
-<span class="c"></span>        <span class="c">// @TODO resolve windowless environments</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nb">window</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
-            <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">w</span><span class="o">;</span>
-        <span class="nx">o</span><span class="o">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+        <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nb">window</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="nx">o</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+        <span class="nx">o</span><span class="o">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;debug&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">debug</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">useBrowserConsole</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;useBrowserConsole&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">useBrowserConsole</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
         <span class="nx">o</span><span class="o">.</span><span class="nx">throwFail</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;throwFail&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">throwFail</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
@@ -475,27 +473,12 @@
 
                     <span class="c">// CSS files don&#39;t register themselves, see if it has been loaded</span>
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_loaded</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">version</span><span class="o">][</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="c">// While sorting out the packaged metadata in the modules,</span>
-<span class="c"></span>                        <span class="c">// let&#39;s look at the loader metadata as well</span>
-<span class="c"></span>                        <span class="c">// loaderMods = Y.Env.meta.modules; </span>
-<span class="c"></span>                        <span class="c">// m = loaderMods &amp;&amp; loaderMods[name];</span>
-<span class="c"></span>                        <span class="c">// if (m &amp;&amp; m.parent &amp;&amp; used[m.parent]) {</span>
-<span class="c"></span>                        <span class="c">//     Y.log(&#39;USING FROM LOADER METADATA&#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
-<span class="c"></span>                        <span class="c">//     used[name] = true;</span>
-<span class="c"></span>                        <span class="c">//     req = m.requires;</span>
-<span class="c"></span>                        <span class="c">//     use = m.supersedes;</span>
-<span class="c"></span>                        <span class="c">// }  else {</span>
-<span class="c"></span>                        <span class="c">//     Y.log(&#39;module not found: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
-<span class="c"></span>                        <span class="c">//     missing.push(name);</span>
-<span class="c"></span>                        <span class="c">// }</span>
-<span class="c"></span>                         
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
                         <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                         <span class="c">// probably css</span>
 <span class="c"></span>                        <span class="c">// Y.log(&#39;module not found BUT HAS BEEN LOADED: &#39; + name, &#39;info&#39;, &#39;yui&#39;);</span>
 <span class="c"></span>                        <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
                     <span class="o">}</span>
                 <span class="o">}</span>
 
@@ -569,9 +552,9 @@
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
         <span class="o">}</span>
+        
         <span class="c">// Y.log(&#39;loader before: &#39; + a.join(&#39;,&#39;));</span>
-<span class="c"></span>       
-
+<span class="c"></span>
         <span class="c">// use loader to expand dependencies and sort the </span>
 <span class="c"></span>        <span class="c">// requirements if it is available.</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">)</span> <span class="o">{</span>
@@ -744,7 +727,6 @@
 
     <span class="c">// set up the environment</span>
 <span class="c"></span>    <span class="nx">YUI</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
-
 
     <span class="c">// add a window load event at load time so we can capture</span>
 <span class="c"></span>    <span class="c">// the case where it fires before dynamic loading is</span>

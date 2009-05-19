@@ -88,9 +88,9 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
-        '<label class="{filter_label}">'+
+        '<wbr><label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
-                'class="{filter} {filter_type}"> {filter_name}'+
+                'class="{filter} {filter_class}"> {filter_name}'+
         '</label>',
 
     /** 
@@ -484,12 +484,18 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
             var container = type === CATEGORY ?
                                 this._categories :
                                 this._sources,
-                checkbox = container.query(SEL_CHECK +
-                                getCN(CONSOLE,FILTER,item));
+                sel      = SEL_CHECK + getCN(CONSOLE,FILTER,item),
+                checkbox = container.query(sel),
+                host;
                 
             if (!checkbox) {
-                checkbox = this._createCheckbox(container, type, item).
-                            get('firstChild');
+                host = this.get(HOST);
+
+                this._createCheckbox(container, item);
+
+                checkbox = container.query(sel);
+
+                host._uiSetHeight(host.get('height'));
             }
             
             checkbox.set(CHECKED, checked);
@@ -601,19 +607,17 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      *
      * @method _createCheckbox
      * @param container {Node} the parentNode of the new checkbox and label
-     * @param type {String} 'category' or 'source'
      * @param name {String} the identifier of the filter
-     * @return Node the label Node that wraps the checkbox Node
      */
-    _createCheckbox : function (container, type, name) {
-        return container.appendChild(
-            Y.Node.create(
-                Y.substitute(
-                    ConsoleFilters.FILTER_TEMPLATE,
-                    Y.merge(ConsoleFilters.CHROME_CLASSES, {
+    _createCheckbox : function (container, name) {
+        var info = Y.merge(ConsoleFilters.CHROME_CLASSES, {
                         filter_name  : name,
-                        filter_type  : type
-                    }))));
+                        filter_class : getCN(CONSOLE, FILTER, name)
+                   }),
+            node = Y.Node.create(
+                        Y.substitute(ConsoleFilters.FILTER_TEMPLATE, info));
+
+        container.appendChild(node);
     },
 
     /**
