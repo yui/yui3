@@ -2144,17 +2144,32 @@ Y.Get = function() {
      * @method _returnData
      * @private
      */
-    _returnData = function(q, msg) {
+    _returnData = function(q, msg, result) {
         return {
                 tId: q.tId,
                 win: q.win,
                 data: q.data,
                 nodes: q.nodes,
                 msg: msg,
+                statusText: result,
                 purge: function() {
                     _purge(this.tId);
                 }
             };
+    },
+
+    /**
+     * The transaction is finished
+     * @method _end
+     * @param id {string} the id of the request
+     * @private
+     */
+    _end = function(id, msg, result) {
+        var q = queues[id], sc;
+        if (q && q.onEnd) {
+            sc = q.context || q;
+            q.onEnd.call(sc, _returnData(q, msg, result));
+        }
     },
 
     /*
@@ -2179,6 +2194,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
+
+        _end(id, msg, 'failure');
     },
 
     _get = function(nId, tId) {
@@ -2216,6 +2233,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
+
+        _end(id, msg, 'OK');
     },
 
     /**
@@ -2231,7 +2250,10 @@ Y.Get = function() {
             sc = q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
+
+        _end(id, 'timeout', 'timeout');
     },
+    
 
     /**
      * Loads the next item for a given request
@@ -2549,6 +2571,8 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
+         * <dt>onEnd</dt>
+         * <dd>a function that executes when the transaction finishes, regardless of the exit path</dd>
          * <dt>onFailure</dt>
          * <dd>
          * callback to execute when the script load operation fails
@@ -4641,7 +4665,13 @@ Y.Loader.prototype = {
 
 Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
-                fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 // @TODO get rid of the redundant Get code
                 fn(this._filter(url), {
@@ -4651,7 +4681,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
-                    attributes: this.jsAttributes,
+                    attributes: attr,
                     timeout: this.timeout,
                     context: self 
                 });

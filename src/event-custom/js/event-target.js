@@ -431,11 +431,10 @@ ET.prototype = {
 
         //if (ce && !ce.configured) {
         if (ce) {
-// ce.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
-
-            // This event could have been published
-            ce.applyConfig(opts, true);
-            // ce.configured = true;
+// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
+            if (opts) {
+                ce.applyConfig(opts, true);
+            }
 
         } else {
             // apply defaults
@@ -445,9 +444,9 @@ ET.prototype = {
 
             events[type] = ce;
 
-            if (o.onSubscribeCallback) {
-                ce.subscribeEvent.on(o.onSubscribeCallback);
-            }
+            // if (o.onSubscribeCallback) {
+            //     ce.subscribeEvent.on(o.onSubscribeCallback);
+            // }
         }
 
         // make sure we turn the broadcast flag off if this
