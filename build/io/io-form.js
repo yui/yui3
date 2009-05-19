@@ -51,7 +51,7 @@ YUI.add('io-form', function(Y) {
                                 for (j = e.selectedIndex, jlen = e.options.length; j < jlen; ++j) {
                                     o = e.options[j];
                                     if (o.selected) {
-                                      data[item++] = n + eUC((o.attributes.value && opt.attributes.value.specified) ? o.value : o.text);
+                                      data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
                                     }
                                 }
                             }
@@ -72,7 +72,6 @@ YUI.add('io-form', function(Y) {
                             // stub case for input type button elements.
                             break;
                         case 'submit':
-                            break;
                         default:
                             data[item++] = n + v;
                     }
