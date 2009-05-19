@@ -177,6 +177,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Y.Node && (this instanceof Y.Node) && (shorttype in Y.Node.DOM_EVENTS)) {
+            args = Y.Array(arguments, 0, true);
             args[2] = Y.Node.getDOMNode(this);
             return Y.on.apply(Y, args);
         }
@@ -258,7 +259,7 @@ ET.prototype = {
         var parts = _parseType(this._yuievt.config.prefix, type), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
-
+        shorttype = parts[3],
         evts = this._yuievt.events, ce, i, ret = true,
 
         keyDetacher = function(lcat, ltype) {
@@ -294,9 +295,14 @@ ET.prototype = {
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
+            args = Y.Array(arguments, 0, true);
+            args[2] = Y.Node.getDOMNode(this);
+            return Y.detach.apply(Y, args);
         }
 
-        adapt = Y.Env.evt.plugins[type];
+        adapt = Y.Env.evt.plugins[shorttype];
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {

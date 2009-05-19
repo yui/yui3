@@ -1620,5 +1620,5 @@ Y.Node.prototype._addDOMAttr = function(name) {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-aria']});
 
