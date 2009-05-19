@@ -47,30 +47,13 @@ YUI({
     filter : 'debug',
     useBrowserConsole : false,
     logInclude : { TestRunner: true }
-}).use('unittest','console',function (Y) {
+}).use('event','unittest','queue-base-test','console',function (Y) {
 
 var yconsole = new Y.Console({
     logSource: Y.Global,
     contentBox:"log",
     newestOnTop: false
 }).render();
-
-//yconsole.hideCategory('info');
-yconsole.printLogEntry = function (m) {
-    if (m.category === 'section') {
-        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
-        return this;
-    } else if (m.category === "break") {
-        this._addToConsole(Y.Node.create("<br>"));
-        return this;
-    } else if (m.category === "info") {
-        return this;
-    } else {
-        return Y.Console.prototype.printLogEntry.call(this,m);
-    }
-};
-
-Y.log("Tests","section","TestRunner");
 
 Y.UnitTest.run();
 

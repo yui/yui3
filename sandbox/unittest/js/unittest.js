@@ -23,17 +23,20 @@ UnitTest.prototype = {
             t = Y.UnitTests[name];
 
             if (t) {
-                var T   = YUI(t.YUI_CONFIG || Y.config),
+                // The Y.merge thing is a workaround for a YUI _init bug
+                // w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {}
+                // which fails o.win, since window.contentWindow is undefined.
+                var T   = YUI(t.YUI_CONFIG || Y.merge(Y.config,{win:false})),
                     use = t.USE || [];
 
-                use.push(Y.rbind(Y.UnitTest._runTest, T, t));
+                use.push(Y.bind(Y.UnitTest._runTest, T, t));
 
                 T.use.apply(T, use);
             }
         });
     },
 
-    _runTest : function (T, config) {
+    _runTest : function (config, T) {
         Y.Test.Runner.clear();
 
         var suite = new Y.Test.Suite(config.NAME);
