@@ -1471,7 +1471,7 @@ var L = Y.Lang,
         return t;
     }),
 
-    /**
+    /**lt
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
      * Y.on('detachcategory, menu:click', fn)
@@ -1480,7 +1480,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(pre, type) {
 
-        var t = type, parts, detachcategory, after, i;
+        var t = type, parts, detachcategory, after, i, full_t;
 
         if (!L.isString(t)) {
             return t;
@@ -1500,9 +1500,9 @@ var L = Y.Lang,
             t = parts[1];
         }
 
-        t = _getType(pre, t);
+        full_t = _getType(pre, t);
 
-        return [detachcategory, t, after];
+        return [detachcategory, full_t, after, t];
     }),
 
     /**
@@ -1557,10 +1557,9 @@ ET.prototype = {
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
-        // this._yuievt.config.prefix
 
         var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachcategory, handle, store = Y.Env.evt.handles, after, adapt;
+            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype;
 
         if (L.isObject(type, true)) {
 
@@ -1595,6 +1594,13 @@ ET.prototype = {
         detachcategory = parts[0];
         type = parts[1];
         after = parts[2];
+        shorttype = parts[3];
+
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        if (Y.Node && (this instanceof Y.Node) && (shorttype in Y.Node.DOM_EVENTS)) {
+            args[2] = Y.Node.getDOMNode(this);
+            return Y.on.apply(Y, args);
+        }
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
@@ -1610,7 +1616,8 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
+            // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
+            } else if ((!type) || (!adapt && Y.Node && (shorttype in Y.Node.DOM_EVENTS))) {
                 handle = Y.Event.attach.apply(Y.Event, args);
             }
 
