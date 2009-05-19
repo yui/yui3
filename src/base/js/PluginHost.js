@@ -1,13 +1,18 @@
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
- *
- * @module widget
- */
+* Base class support for objects requiring managed attributes and acting as event targets. 
+*
+* The base module also provides an augmentable PluginHost interface.
+*
+* @module base
+*/
 
 /**
  * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods and performing
- * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ * the class to support Plugins, providing plug and unplug methods.
+ * 
+ * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
+ * host class at the appropriate point in the classes lifecyle. This is done
+ * by default for Base class.
  *
  * @class PluginHost
  */
@@ -16,9 +21,6 @@ var L = Y.Lang;
 
 function PluginHost(config) {
     this._plugins = {};
-
-    this.after("init", function(e) {this._initPlugins(e.cfg);});
-    this.after("destroy", this._destroyPlugins);
 }
 
 PluginHost.prototype = {
