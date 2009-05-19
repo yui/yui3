@@ -1477,7 +1477,7 @@ var L = Y.Lang,
         return t;
     }),
 
-    /**
+    /**lt
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
      * Y.on('detachcategory, menu:click', fn)
@@ -1486,7 +1486,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(pre, type) {
 
-        var t = type, parts, detachcategory, after, i;
+        var t = type, parts, detachcategory, after, i, full_t;
 
         if (!L.isString(t)) {
             return t;
@@ -1507,9 +1507,9 @@ var L = Y.Lang,
             t = parts[1];
         }
 
-        t = _getType(pre, t);
+        full_t = _getType(pre, t);
 
-        return [detachcategory, t, after];
+        return [detachcategory, full_t, after, t];
     }),
 
     /**
@@ -1564,10 +1564,9 @@ ET.prototype = {
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
-        // this._yuievt.config.prefix
 
         var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachcategory, handle, store = Y.Env.evt.handles, after, adapt;
+            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype;
 
         if (L.isObject(type, true)) {
 
@@ -1602,6 +1601,14 @@ ET.prototype = {
         detachcategory = parts[0];
         type = parts[1];
         after = parts[2];
+        shorttype = parts[3];
+
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        if (Y.Node && (this instanceof Y.Node) && (shorttype in Y.Node.DOM_EVENTS)) {
+            args = Y.Array(arguments, 0, true);
+            args[2] = Y.Node.getDOMNode(this);
+            return Y.on.apply(Y, args);
+        }
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
@@ -1618,7 +1625,8 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
+            // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
+            } else if ((!type) || (!adapt && Y.Node && (shorttype in Y.Node.DOM_EVENTS))) {
                 handle = Y.Event.attach.apply(Y.Event, args);
             }
 
@@ -1679,7 +1687,7 @@ ET.prototype = {
         var parts = _parseType(this._yuievt.config.prefix, type), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
-
+        shorttype = parts[3],
         evts = this._yuievt.events, ce, i, ret = true,
 
         keyDetacher = function(lcat, ltype) {
@@ -1715,9 +1723,14 @@ ET.prototype = {
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
+            args = Y.Array(arguments, 0, true);
+            args[2] = Y.Node.getDOMNode(this);
+            return Y.detach.apply(Y, args);
         }
 
-        adapt = Y.Env.evt.plugins[type];
+        adapt = Y.Env.evt.plugins[shorttype];
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
