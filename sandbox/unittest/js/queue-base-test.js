@@ -1,6 +1,6 @@
 function f() {}
 
-Y.namespace("UnitTest")["queue-base"] = {
+Y.namespace("UnitTests")["queue-base"] = {
 
     NAME : "queue-base-test",
 
