@@ -53,9 +53,7 @@
 
 		<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">))</span> <span class="o">{</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">spec</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">))</span> <span class="o">{</span>
-				<span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
-			<span class="o">}</span>
+			<span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
 
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
 			
@@ -143,30 +141,34 @@
 	<span class="o">};</span>
 
 <span class="c">/**</span>
-<span class="c"> * Sets up a &quot;mouseenter&quot; listener--a listener that is called the first time </span>
-<span class="c"> * the user&quot;s mouse enters the specified element(s).  Can be used to listen for </span>
-<span class="c"> * the &quot;mouseenter&quot; event on a single element, or a collection of elements as</span>
-<span class="c"> * specified via a CSS sSelector passed as the fourth argument when subscribing </span>
-<span class="c"> * to the event. </span>
+<span class="c"> * Sets up a &quot;mouseenter&quot; listener&amp;#151;a listener that is called the first time </span>
+<span class="c"> * the user&#39;s mouse enters the specified element(s).  By passing a CSS selector </span>
+<span class="c"> * as the fourth argument, can also be used to delegate a &quot;mouseenter&quot; </span>
+<span class="c"> * event listener.</span>
+<span class="c"> * </span>
 <span class="c"> * @event mouseenter</span>
 <span class="c"> * @param type {string} &quot;mouseenter&quot;</span>
 <span class="c"> * @param fn {string} The method the event invokes.</span>
-<span class="c"> * @param el {string|node} The element to assign the listener to.</span>
+<span class="c"> * @param el {string|node} The element(s) to assign the listener to.</span>
+<span class="c"> * @param spec {string} Optional.  String representing a selector that must </span>
+<span class="c"> * match the target of the event in order for the listener to be called.</span>
 <span class="c"> * @return {Event.Handle} the detach handle</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">mouseenter</span> <span class="o">=</span> <span class="nx">eventConfig</span><span class="o">;</span>
 
 <span class="c">/**</span>
-<span class="c">* Sets up a &quot;mouseleave&quot; listener--a listener that is called the first time </span>
-<span class="c">* the user&quot;s mouse enters the specified element(s).  Can be used to listen for </span>
-<span class="c">* the &quot;mouseleave&quot; event on a single element, or a collection of elements as</span>
-<span class="c">* specified via a CSS sSelector passed as the fourth argument when subscribing </span>
-<span class="c">* to the event.</span>
+<span class="c">* Sets up a &quot;mouseleave&quot; listener&amp;#151;a listener that is called the first time </span>
+<span class="c">* the user&#39;s mouse leaves the specified element(s).  By passing a CSS selector </span>
+<span class="c">* as the fourth argument, can also be used to delegate a &quot;mouseleave&quot; </span>
+<span class="c">* event listener.</span>
+<span class="c">* </span>
 <span class="c">* @event mouseleave</span>
 <span class="c">* @param type {string} &quot;mouseleave&quot;</span>
 <span class="c">* @param fn {string} The method the event invokes.</span>
-<span class="c">* @param el {string|node} The element to assign the listener to.</span>
+<span class="c">* @param el {string|node} The element(s) to assign the listener to.</span>
+<span class="c">* @param spec {string} Optional.  String representing a selector that must </span>
+<span class="c">* match the target of the event in order for the listener to be called.</span>
 <span class="c">* @return {Event.Handle} the detach handle</span>
 <span class="c">* @for YUI</span>
 <span class="c"> */</span>
