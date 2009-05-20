@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>MouseEnter and MouseLeave Event Tests</title>
+	
+	<style type="text/css">
+
+		ul {
+			padding: 0;
+			margin: 0;
+			list-style: none;
+			clear: both;
+		}
+		
+		ul li {
+
+			float: left;
+			height: 100px;
+			width: 100px;
+			background-color: #ccc;
+			border: solid 1px #333;
+			margin: 10px;
+			
+		}
+		
+		ul li em {
+			display: block;
+			height: 90px;
+			width: 90px;
+			margin: 5px;
+			background-color: #999;
+			text-align: center;
+			line-height: 90px;
+		}		
+	
+		ul li.hover {
+			border-color: yellow;
+		}
+	
+	</style>
+	
+</head>
+<body>
+
+	<ul id="container-1">
+		<li id="item-1"><em>one</em></li>
+		<li id="item-2"><em>two</em></li>
+		<li id="item-3"><em>three</em></li>
+		<li id="item-4"><em>four</em></li>
+	</ul>
+
+	<ul id="container-2">
+		<li id="container-2-item-1"><em>one</em></li>
+		<li id="container-2-item-2"><em>two</em></li>
+		<li id="container-2-item-3"><em>three</em></li>
+		<li id="container-2-item-4"><em>four</em></li>
+	</ul>
+
+	<ul id="container-3">
+		<li id="container-3-item-1"><em>one</em></li>
+		<li id="container-3-item-2"><em>two</em></li>
+		<li id="container-3-item-3"><em>three</em></li>
+		<li id="container-3-item-4"><em>four</em></li>
+	</ul>
+
+	<script src="/yui3/build/yui/yui.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+		YUI({base:"../../build/", timeout: 10000 }).use("event", function(Y) {
+	
+			//	Test #1: 
+			//	Bind a mouseenter and mouseleave event listener to each <LI>
+			//	of the first <UL>
+	 
+			Y.on('mouseenter', function (e) {
+
+				e.target.addClass("hover");
+			
+			}, "#container-1>li");
+						
+			Y.on('mouseleave', function (e) {
+			
+				e.target.removeClass("hover");
+
+			}, "#container-1>li");
+
+
+	
+			//	Test #2: 
+			//	Bind a mouseenter and mouseleave event listener to each <LI>
+			//	in the second <UL>
+
+			Y.on('mouseenter', function (e) {
+			
+				e.target.addClass("hover");
+			
+			}, "#container-2-item-1");
+						
+			Y.on('mouseleave', function (e) {
+			
+				e.target.removeClass("hover");
+			
+			}, "#container-2-item-1");
+			
+			Y.on('mouseenter', function (e) {
+			
+				e.target.addClass("hover");
+			
+			}, "#container-2-item-2");
+						
+			Y.on('mouseleave', function (e) {
+			
+				e.target.removeClass("hover");
+			
+			}, "#container-2-item-2");	
+			
+			Y.on('mouseenter', function (e) {
+			
+				e.target.addClass("hover");
+			
+			}, "#container-2-item-3");
+						
+			Y.on('mouseleave', function (e) {
+			
+				e.target.removeClass("hover");
+			
+			}, "#container-2-item-3");	
+			
+			Y.on('mouseenter', function (e) {
+			
+				e.target.addClass("hover");
+			
+			}, "#container-2-item-4");
+						
+			Y.on('mouseleave', function (e) {
+			
+				e.target.removeClass("hover");
+			
+			}, "#container-2-item-4");
+
+
+			//	Test #3: 
+			//	Bind a mouseenter and mouseleave event listener to each LI
+			//	in the third UL using delegation: one handler will be bound
+			//	to the specified root Node (<UL id="container-3">) but will 
+			//	only be called the first time the user enters or leaves each
+			//	<LI> Node.
+
+			Y.on('mouseenter', function (e) {
+			
+				e.target.addClass("hover");
+			
+			}, "#container-3", ">li");
+
+						
+			Y.on('mouseleave', function (e) {
+
+				e.target.removeClass("hover");
+			
+			}, "#container-3", ">li");
+	
+		});
+
+	</script>
+
+</body>
+</html>

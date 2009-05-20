@@ -1,15 +1,20 @@
 YUI.add('base-base', function(Y) {
 
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
- *
- * @module widget
- */
+* Base class support for objects requiring managed attributes and acting as event targets. 
+*
+* The base module also provides an augmentable PluginHost interface.
+*
+* @module base
+*/
 
 /**
  * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods and performing
- * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ * the class to support Plugins, providing plug and unplug methods.
+ * 
+ * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
+ * host class at the appropriate point in the classes lifecyle. This is done
+ * by default for Base class.
  *
  * @class PluginHost
  */
@@ -18,9 +23,6 @@ var L = Y.Lang;
 
 function PluginHost(config) {
     this._plugins = {};
-
-    this.after("init", function(e) {this._initPlugins(e.cfg);});
-    this.after("destroy", this._destroyPlugins);
 }
 
 PluginHost.prototype = {
@@ -315,7 +317,10 @@ Y.namespace("Plugin").Host = PluginHost;
      * @param {Object} config Object literal of configuration property name/value pairs
      */
     function Base() {
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
         this.init.apply(this, arguments);
     }
 
@@ -420,9 +425,6 @@ Y.namespace("Plugin").Host = PluginHost;
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
-
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -431,7 +433,6 @@ Y.namespace("Plugin").Host = PluginHost;
                     this.after(config.after);
                 }
             }
-
             this.fire(INIT, {cfg: config});
             return this;
         },
@@ -487,6 +488,7 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
+            this._initPlugins(e.cfg);
             this._set(INITIALIZED, true);
         },
 
@@ -499,6 +501,7 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 

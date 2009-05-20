@@ -1949,7 +1949,13 @@ Y.Loader.prototype = {
 
 Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
-                fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 // @TODO get rid of the redundant Get code
                 fn(this._filter(url), {
@@ -1959,7 +1965,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
-                    attributes: this.jsAttributes,
+                    attributes: attr,
                     timeout: this.timeout,
                     context: self 
                 });
