@@ -1828,16 +1828,19 @@ to the listener.</span>
                                                          el
                                                     
                                                 
+                                                        , 
+                                                         spec
+                                                    
+                                                
                                             )
 
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a "mouseenter" listener--a listener that is called the first time 
-the user"s mouse enters the specified element(s).  Can be used to listen for 
-the "mouseenter" event on a single element, or a collection of elements as
-specified via a CSS sSelector passed as the fourth argument when subscribing 
-to the event.
+                                            Sets up a "mouseenter" listener&#151;a listener that is called the first time 
+the user's mouse enters the specified element(s).  By passing a CSS selector 
+as the fourth argument, can also be used to delegate a "mouseenter" 
+event listener.
                                         </div>
 
                                         <div class="description">
@@ -1863,7 +1866,15 @@ to the event.
                                                             <code><span property="yui:name">el</span>
                                                                 &lt;<span property="yui:type">string|node</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  The element to assign the listener to.</span>
+                                                            <span property="yui:description">  The element(s) to assign the listener to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">spec</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Optional.  String representing a selector that must 
+match the target of the event in order for the listener to be called.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1898,16 +1909,19 @@ to the event.
                                                          el
                                                     
                                                 
+                                                        , 
+                                                         spec
+                                                    
+                                                
                                             )
 
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a "mouseleave" listener--a listener that is called the first time 
-the user"s mouse enters the specified element(s).  Can be used to listen for 
-the "mouseleave" event on a single element, or a collection of elements as
-specified via a CSS sSelector passed as the fourth argument when subscribing 
-to the event.
+                                            Sets up a "mouseleave" listener&#151;a listener that is called the first time 
+the user's mouse leaves the specified element(s).  By passing a CSS selector 
+as the fourth argument, can also be used to delegate a "mouseleave" 
+event listener.
                                         </div>
 
                                         <div class="description">
@@ -1933,7 +1947,15 @@ to the event.
                                                             <code><span property="yui:name">el</span>
                                                                 &lt;<span property="yui:type">string|node</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  The element to assign the listener to.</span>
+                                                            <span property="yui:description">  The element(s) to assign the listener to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">spec</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Optional.  String representing a selector that must 
+match the target of the event in order for the listener to be called.</span>
                                                         </dd>
                                                         
                                                 </dl>

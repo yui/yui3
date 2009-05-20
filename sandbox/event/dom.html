@@ -82,7 +82,6 @@ YUI({
     });
     */
 
-
 /*
 
     document.getElementById('form1').addEventListener('focus', 
@@ -101,9 +100,18 @@ YUI({
         Y.log("blur fired");
     }, '#form1');
 
-    Y.on('focus', function() {
+    // Y.on('focus', function() {
+    //     Y.log("TEXT focus fired");
+    // }, '#text1');
+
+    var node = Y.get('#text1');
+
+    node.on('blahblah|focus', function() {
         Y.log("TEXT focus fired");
-    }, '#text1');
+        //node.detach();
+        node.detach('blahblah|*');
+    });
+
 
     /*
 
@@ -113,8 +121,6 @@ YUI({
             e.stopPropagation();
         }, true);
     */
-
-
 
     var el = Y.get('#button1');
     Y.log("get got " + el);

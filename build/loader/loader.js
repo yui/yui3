@@ -1914,7 +1914,13 @@ Y.Loader.prototype = {
             if (this._combining.length) {
 
 
-                fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 // @TODO get rid of the redundant Get code
                 fn(this._filter(url), {
@@ -1924,7 +1930,7 @@ Y.Loader.prototype = {
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
-                    attributes: this.jsAttributes,
+                    attributes: attr,
                     timeout: this.timeout,
                     context: self 
                 });
