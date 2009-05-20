@@ -167,6 +167,8 @@
         <span class="nx">addAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Adding attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
 
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; already exists. Cannot add it again without removing it first&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span> <span class="o">}</span>
+
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -194,7 +196,6 @@
 
                 <span class="nx">conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">INITIALIZING</span><span class="o">);</span>
             <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; already exists. Cannot add it again without removing it first&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span> <span class="o">}</span>
 
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
