@@ -85,6 +85,11 @@ Node.DOM_EVENTS = {
     'mouseleave': true
 };
 
+// Add custom event adaptors to this list.  This will make it so
+// that delegate, key, available, contentready, etc all will
+// be available through Node.on
+Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
+
 Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
@@ -343,51 +348,51 @@ Y.mix(Node.prototype, {
         }
     },
 
-    on: function(type, fn, context, arg) {
-        var args,
-            ret = null;
+    // on: function(type, fn, context, arg) {
+    //     var args,
+    //         ret = null;
 
-        if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
-            ret = Y.Event.attach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.on.apply(this, arguments);
-        }
-        return ret;
-    },
+    //     if (Node.DOM_EVENTS[type]) {
+    //         args = g_slice.call(arguments, 0);
+    //         args.splice(2, 0, g_nodes[this[UID]]);
+    //         ret = Y.Event.attach.apply(Y.Event, args);
+    //     } else {
+    //         ret = SuperConstrProto.on.apply(this, arguments);
+    //     }
+    //     return ret;
+    // },
 
-   /**
-     * Detaches a DOM event handler. 
-     * @method detach
-     * @param {String} type The type of DOM Event
-     * @param {Function} fn The handler to call when the event fires 
-     */
-    detach: function(type, fn) {
-        var args, ret = null;
+   /// **
+    //  * Detaches a DOM event handler. 
+    //  * @method detach
+    //  * @param {String} type The type of DOM Event
+    //  * @param {Function} fn The handler to call when the event fires 
+    //  */
+    // detach: function(type, fn) {
+    //     var args, ret = null;
 
-        // Added by apm: if this is a DOM event, dispatch to the event 
-        // system.  If the type is not supplied, do the same since 
-        // this is how detachAll works.  This means that Node may not 
-        // be able to support detachAll for both DOM events and custom events
-        // as implemented.  Detaching DOM events this way is a blocking
-        // issue for DD, so I changed it so that will work.  It is probably
-        // less important for custom events to work this way through this
-        // interface, but we need to review this.
-        if (!type || Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0);
-            args[2] = g_nodes[this[UID]];
+    //     // Added by apm: if this is a DOM event, dispatch to the event 
+    //     // system.  If the type is not supplied, do the same since 
+    //     // this is how detachAll works.  This means that Node may not 
+    //     // be able to support detachAll for both DOM events and custom events
+    //     // as implemented.  Detaching DOM events this way is a blocking
+    //     // issue for DD, so I changed it so that will work.  It is probably
+    //     // less important for custom events to work this way through this
+    //     // interface, but we need to review this.
+    //     if (!type || Node.DOM_EVENTS[type]) {
+    //         args = g_slice.call(arguments, 0);
+    //         args[2] = g_nodes[this[UID]];
 
-            ret = Y.Event.detach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.detach.apply(this, arguments);
-        }
-        return ret;
-    },
+    //         ret = Y.Event.detach.apply(Y.Event, args);
+    //     } else {
+    //         ret = SuperConstrProto.detach.apply(this, arguments);
+    //     }
+    //     return ret;
+    // },
 
-    detachAll: function(type) {
-        return this.detach(type);
-    },
+    // detachAll: function(type) {
+    //     return this.detach(type);
+    // },
 
     get: function(attr) {
         if (!this.attrAdded(attr)) {
