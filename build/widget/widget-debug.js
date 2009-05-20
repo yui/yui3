@@ -879,7 +879,7 @@ Y.extend(Widget, Y.Base, {
 
 		var oDocument = this.get(BOUNDING_BOX).get("ownerDocument");
 
-		Y.on("focus", Y.bind(this._onFocus, this), oDocument);
+		Y.on("focus", Y.bind(this._onFocus, this), Y.Node.getDOMNode(oDocument));
 
 		//	Fix for Webkit:
 		//	Document doesn't receive focus in Webkit when the user mouses 
