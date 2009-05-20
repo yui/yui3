@@ -212,6 +212,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
@@ -465,11 +466,11 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     */
 
     Y.DD.DDM.on('drag:drophit', function(e) {
-        console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
+        //console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
     });
     
     Y.DD.DDM.on('drag:dropmiss', function() {
-        console.log('drag:dropmiss', arguments);
+        //console.log('drag:dropmiss', arguments);
     });
 
     //dd.destroy();
