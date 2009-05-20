@@ -1615,9 +1615,7 @@ var isString = Y.Lang.isString,
 
 		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
 
-			if (spec && !node.compareTo(e.currentTarget)) {
-				e.target = node;
-			}
+			e.target = node;
 
 			Y.fire(eventName, e);
 			
@@ -1705,30 +1703,34 @@ var isString = Y.Lang.isString,
 	};
 
 /**
- * Sets up a "mouseenter" listener--a listener that is called the first time 
- * the user"s mouse enters the specified element(s).  Can be used to listen for 
- * the "mouseenter" event on a single element, or a collection of elements as
- * specified via a CSS sSelector passed as the fourth argument when subscribing 
- * to the event. 
+ * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
+ * the user's mouse enters the specified element(s).  By passing a CSS selector 
+ * as the fourth argument, can also be used to delegate a "mouseenter" 
+ * event listener.
+ * 
  * @event mouseenter
  * @param type {string} "mouseenter"
  * @param fn {string} The method the event invokes.
- * @param el {string|node} The element to assign the listener to.
+ * @param el {string|node} The element(s) to assign the listener to.
+ * @param spec {string} Optional.  String representing a selector that must 
+ * match the target of the event in order for the listener to be called.
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
 
 /**
-* Sets up a "mouseleave" listener--a listener that is called the first time 
-* the user"s mouse enters the specified element(s).  Can be used to listen for 
-* the "mouseleave" event on a single element, or a collection of elements as
-* specified via a CSS sSelector passed as the fourth argument when subscribing 
-* to the event.
+* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
+* the user's mouse leaves the specified element(s).  By passing a CSS selector 
+* as the fourth argument, can also be used to delegate a "mouseleave" 
+* event listener.
+* 
 * @event mouseleave
 * @param type {string} "mouseleave"
 * @param fn {string} The method the event invokes.
-* @param el {string|node} The element to assign the listener to.
+* @param el {string|node} The element(s) to assign the listener to.
+* @param spec {string} Optional.  String representing a selector that must 
+* match the target of the event in order for the listener to be called.
 * @return {Event.Handle} the detach handle
 * @for YUI
  */
