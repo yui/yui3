@@ -171,7 +171,6 @@ ET.prototype = {
         }
 
         detachcategory = parts[0];
-        type = parts[1];
         after = parts[2];
         shorttype = parts[3];
 
@@ -179,10 +178,11 @@ ET.prototype = {
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Y.Node && (this instanceof Y.Node) && (shorttype in Y.Node.DOM_EVENTS)) {
             args = Y.Array(arguments, 0, true);
-            args[0] = shorttype;
             args.splice(2, 0, Y.Node.getDOMNode(this));
             return Y.on.apply(Y, args);
         }
+
+        type = parts[1];
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
@@ -300,7 +300,6 @@ ET.prototype = {
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
-            args[0] = shorttype;
             args[2] = Y.Node.getDOMNode(this);
             return Y.detach.apply(Y, args);
         }

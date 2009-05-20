@@ -106,9 +106,10 @@ YUI({
 
     var node = Y.get('#text1');
 
-    node.on('focus', function() {
+    node.on('blahblah|focus', function() {
         Y.log("TEXT focus fired");
-        node.detachAll();
+        //node.detach();
+        node.detach('blahblah|*');
     });
 
 
