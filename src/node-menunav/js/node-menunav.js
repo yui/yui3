@@ -685,7 +685,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
     initializer: function (config) {
 
 		var menuNav = this,
-			oRootMenu = this.get("host");
+			oRootMenu = this.get("host"),
+			oDoc;
 
 
 		if (oRootMenu) {
@@ -710,9 +711,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
 			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
 
-		    oRootMenu.get("ownerDocument").on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+			oDoc = oRootMenu.get("ownerDocument");
 
-			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oRootMenu.get("ownerDocument"));
+		    oDoc.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+
+			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), Y.Node.getDOMNode(oDoc));
 
 			menuNav._initFocusManager();
 
@@ -2056,10 +2059,6 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				menuNav._setActiveItem(getItem(oTarget, true));
 				
 			}
-
-			// menuNav._initFocusManager();
-			// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
-			// menuNav._setActiveItem(getItem(oTarget, true));
 
 		}
 		else {

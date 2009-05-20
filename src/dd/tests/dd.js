@@ -87,7 +87,6 @@ YUI({
         
         tearDown : function() {
         },
-        /*
         test_shim: function() {
             var s = Y.DD.DDM._pg;
             Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
@@ -232,7 +231,6 @@ YUI({
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
             dd.destroy();
         },
-        */
         test_window_scroll: function() {
             Y.get('body').setStyle('height', '3000px');
             Y.Node.get('#drag').setStyles({ top: '', left: '' });
@@ -262,33 +260,6 @@ YUI({
                 }
             };
             this.wait(wait, 0);
-        },
-
-
-
-
-
-
-        test_node_scroll: function() {
-            Y.get('body').setStyle('height', '');
-            Y.get('#drag').setStyles({ top: '', left: '' });
-            Y.get('#drop').setStyle('height', '900px');
-            Y.get('#wrap').setStyle('overflow', 'auto');
-
-            dd = new Y.DD.Drag({
-                node: '#drag'
-            }).plug(Y.plugin.DDNodeScroll, {
-                node: '#wrap'
-            });
-            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
-
-
-
-
-            //After
-            //Y.get('#drop').setStyle('height', '');
-            //Y.get('#wrap').setStyle('overflow', '');
         }
     };
     

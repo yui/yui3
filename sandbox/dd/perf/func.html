@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI: Function Tests</title>
+    <style>
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+<div id="results"></div>
+
+<script>
+var foo = function foo() {
+    var a=1, b=2, c=3, d=4, e=5,
+    bar = function bar() {
+        return 'Bar :: ' + (a + b + c + d + e);
+    };
+    return bar();
+};
+
+var bar2 = function(a, b, c, d, e) {
+    return 'Bar2 :: ' + (a + b + c + d + e);
+}
+
+var foo2 = function() {
+    var a=1, b=2, c=3, d=4, e=5;
+    return bar2(a, b, c, d, e);
+}
+
+document.onclick = function() {
+    var top = 30000;
+    //console.profile('func');
+    for (var i = 0; i < top; i++) {
+        foo();
+    }
+
+    for (var i = 0; i < top; i++) {
+        foo2();
+    }
+
+    for (var i = 0; i < top; i++) {
+        var f=1, g=2, h=3, j=4;
+        (function barwrap() {
+            var bar3 = function(a, b, c, d, e) {
+                return 'Bar3 :: ' + (a + b + c + d + e);
+            }
+            bar3(f, g, h, j);
+        })();
+    }
+    //console.profileEnd('func');
+};
+</script>
+</body>
+</html>
