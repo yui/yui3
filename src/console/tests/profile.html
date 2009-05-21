@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css">
+    <style type="text/css">
+.yui-table {
+    display: inline;
+    float: left;
+    font-family: arial, sans-serif;
+    margin: 2em;
+}
+.yui-table caption {
+    font-weight: bold;
+    color: #c60;
+}
+.yui-table table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+.yui-table thead {
+    background: #684;
+    color: #fff;
+}
+.yui-table thead th {
+    padding: 3px 4px;
+}
+.yui-table tfoot {
+    background: #ac8;
+}
+.yui-table tfoot td {
+    padding: 3px 6px;
+    font-weight: bold;
+}
+.yui-table tbody td {
+    border: 1px solid #ccc;
+    padding: 3px 6px;
+}
+.yui-table td+td {
+    text-align: right;
+}
+.markup { 
+    clear: both;
+}
+.yui-skin-sam #c .yui-console {
+    position: relative;
+    top: auto;
+    right: auto;
+}
+#c {
+    margin-bottom: 1em;
+}
+    </style>
+</head>
+<body class="yui-skin-sam">
+<div class="markup">
+    <div id="c"></div>
+    <input type="button" id="foo" value="Log foo msg">
+    <input type="button" id="info" value="Log info msg">
+    <input type="button" id="warn" value="Log warn msg">
+    <input type="button" id="error" value="Log error msg">
+    <button type="button" id="hide">Hide</button>
+    <button type="button" id="show">Show</button>
+    <button type="button" id="collapse">Collapse</button>
+    <button type="button" id="expand">Expand</button>
+    <button type="button" id="destroy">Destroy</button>
+    <button type="button" id="throttle">Throttle</button>
+    <button type="button" id="report">Report</button>
+</div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<!--script type="text/javascript" src="../../../build/console/console-filters.js"></script-->
+<script type="text/javascript">
+YUI.add('table',function (Y) {
+
+    function Table() {
+        Table.superclass.constructor.apply(this,arguments);
+    }
+
+    Table.NAME = 'table';
+
+    Table.ATTRS = {
+        columns : {
+            value : [],
+            validator : Y.Lang.isArray
+        },
+
+        caption : {
+            value : null,
+            validator : function (v) {
+                return Y.Lang.isString(v) || Y.Lang.isNull(v);
+            }
+        },
+
+        data : {
+            value : [],
+            validator : Y.Lang.isArray
+        },
+
+        totals : {
+            value : null,
+            validator : function (v) {
+                return Y.Lang.isArray(v) || Y.Lang.isNull(v);
+            }
+        }
+    };
+
+    Y.extend(Table, Y.Widget, {
+        renderUI : function () {
+            this._table = Y.Node.create(
+                '<table>' +
+                    this._captionHTML() +
+                    this._theadHTML() +
+                    this._tfootHTML() +
+                    this._tbodyHTML() +
+                '<table>');
+
+            this.get('contentBox').appendChild(this._table);
+        },
+
+        _captionHTML : function () {
+            var cap = this.get('caption');
+            return cap ? '<caption>' + cap + '</caption>' : '';
+        },
+
+        _theadHTML : function () {
+            return '<thead><tr><th>' +
+                this.get('columns').join('</th><th>') +
+                '</th></tr></thead>';
+        },
+
+        _tfootHTML : function () {
+            var totals = this.get('totals'),
+                cols = this.get('columns'),
+                data = this.get('data'),
+                html,total,i,len;
+
+            if (totals) {
+                html = '<tfoot><tr>';
+
+                for (i = 0, len = cols.length; i < len; ++i) {
+                    if (totals[i]) {
+                        total = 0;
+                        Y.Array.each(data, function (rec) {
+                            total += +(rec[cols[i]]) || 0;
+                        });
+                        html += '<td>' + total + '</td>';
+                    } else {
+                        html += '<td></td>';
+                    }
+                }
+
+                return html + '</tr></tfoot>';
+            }
+
+            return '';
+        },
+
+        _tbodyHTML : function () {
+            var cols = this.get('columns'),
+                data = this.get('data'),
+                rows = [], r,
+                i, len,
+                j, jlen;
+
+            for (i = 0, len = data.length; i < len; ++i) {
+                r = '';
+                for (j = 0, jlen = cols.length; j < jlen; ++j) {
+                    r += '<td>' + data[i][cols[j]] + '</td>';
+                }
+                if (r) {
+                    rows.push('<tr>' + r + '</tr>');
+                }
+            }
+
+            return '<tbody>' + rows.join('') + '</tbody>';
+        }
+    });
+
+    Y.Table = Table;
+
+},'@VERSION@',{requires:['widget']});
+
+YUI({
+    base: '../../../build/',
+    //logLevel: 'warn',
+    filter: 'debug',
+    logInclude : { global: true },
+    useBrowserConsole:false
+}).use('table','console','profiler', function (Y) {
+
+var P = Y.Profiler;
+
+function normalizeProfilerData() {
+    var raw = P.getFullReport(function (x) { return x.calls > 0; }),
+        data = [], name, rpt, i, total;
+
+    for (name in raw) {
+        rpt = raw[name];
+
+        total = 0;
+        for (i = rpt.points.length - 1; i >=0 ; --i) {
+            total += rpt.points[i];
+        }
+
+        data.push({
+            fn : name.replace(/.*\./,''),
+            min : rpt.min.toFixed(2),
+            max : rpt.max.toFixed(2),
+            avg : rpt.avg.toFixed(2),
+            calls : rpt.calls,
+            total : total.toFixed(2)
+        });
+    }
+
+    return data;
+}
+
+function report(caption) {
+    new Y.Table({
+        caption : caption,
+        columns : ['fn','calls','min','max','avg','total'],
+        data : normalizeProfilerData(),
+        totals : [false, true, false, false, false, true]
+    }).render();
+
+    P.clear();
+}
+
+/****************************************************************************/
+/***********************  Testing area begins here **************************/
+/****************************************************************************/
+P.registerConstructor('Console',Y);
+
+var yconsole = new Y.Console({
+    //verbose : true,
+    //consoleLimit : 10,
+    logLevel : "Garbage",
+    newestOnTop : false
+});
+
+report("Construction");
+//yconsole.plug(Y.Plugin.ConsoleFilters);
+
+P.unregisterConstructor('Console',Y);
+
+P.registerObject(yconsole);
+yconsole.render('#c');
+
+report("Render");
+
+/*
+Y.log('testing');
+
+report("<code>Y.log('testing')</code>");
+
+Y.log('testing known category','info');
+report("<code>Y.log('testing known category','info')</code>");
+
+Y.log('testing new category','foo');
+report("<code>Y.log('testing new category','foo')</code>");
+
+Y.log('testing known source','info','global');
+report("<code>Y.log('testing known source','info','global')</code>");
+
+Y.log('testing new source','info','bar');
+report("<code>Y.log('testing new source','info','bar')</code>");
+
+yconsole.log("Test from the console object",'info','Console');
+report("<code>yconsole.log('Test from Console object',..)</code>");
+*/
+var x = {
+    foo : 0,
+    info : 0,
+    warn : 0,
+    error : 0
+};
+
+Y.on('click',function (e) { Y.log('FOO message '+(++x.foo),'foo'); },'#foo');
+Y.on('click',function (e) { Y.log('INFO message '+(++x.info)); },'#info');
+Y.on('click',function (e) { Y.log('WARN message '+(++x.warn),'warn'); },'#warn');
+Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#error');
+Y.get('#hide').on('click', function () { yconsole.hide(); });
+Y.get('#show').on('click', function () { yconsole.show(); });
+Y.get('#collapse').on('click', function () { yconsole.collapse(); });
+Y.get('#expand').on('click', function () { yconsole.expand(); });
+Y.get('#destroy').on('click', function () { yconsole.destroy(); });
+Y.get('#throttle').on('click', function () {
+    for (var i = 0; i < 500; ++i) {
+        Y.log('Throttle message ' + i);
+    }
+});
+Y.get('#report').on('click', function () { report("Activity since last report"); });
+
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>
