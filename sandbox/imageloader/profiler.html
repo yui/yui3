@@ -1,13 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>ImageLoader... (?)</title>
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
-<!--<script type="text/javascript" src="../../build/yui/yui-min.js"></script>-->
-<script type="text/javascript" src="tester.js"></script>
+<title>ImageLoader Profiling 3.x</title>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="profiler.js"></script>
 
 <style type="text/css">
 .intro { text-align:center; width:100%; color:#555; font:bold 11pt arial; margin-top:20px; }
+.stopBtnActive { background-color:#555; color:#fff; font-weight:bold; cursor:pointer; margin:0 3px; padding:2px; }
 .everything { position:relative; height:2000px; }
 .topmain { position:absolute; top:70px; left:180px; height:156px; width:240px; background:#ddd no-repeat; }
 .hoverme { position:absolute; top:340px; left:80px; background-color:#bbb; height:90px; width:325px; }
@@ -24,8 +24,6 @@
 .customevent { position:absolute; height:120px; width:120px; top:510px; left:500px; background-color:#ccc; }
 .customevent2 { position:absolute; height:120px; width:120px; top:510px; left:650px; background-color:#ccc; }
 .classloadingtest { position:absolute; top:700px; left:130px; height:72px; width:100px; background:url('http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg'); }
-.srcfrombg { background:url('http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg'); width:100px; height:72px; display:block; position:absolute; top:800px; left:550px; }
-#srcfrombg2 { left:650px; }
 
 .yui-imgload { background:none !important; }
 .yui-imgloadwithload { background:#ddd url('http://l.yimg.com/a/i/us/tr/b/destrec_loader_2.gif') no-repeat 50% 50% !important; }
@@ -33,7 +31,7 @@
 </head>
 <body>
 
-<div class='intro'>Image Loader -|- hover over images to see explanation of triggers/limits</div>
+<div class='intro'>Image Loader -|- <span id='profilerstop' class='stopBtnActive'>c l i c k</span> to stop profiler</div>
 <div class='everything' id='everything'>
 	<div class='topmain' id='topmain' title='group 1; mouseover anywhere on page; 2 sec limit'></div>
 	<div class='hoverme' id='hoverme' title='group 2; mouseover left FIFA, or click on right FIFA; 4 sec limit'></div>
@@ -51,8 +49,6 @@
 	<div class='customevent' id='customevent' title='using custom event to load; double click this to fire the custom event'></div>
 	<div class='customevent2' id='customevent2' title='using custom event to load; double click this to fire the custom event'></div>
 	<div class='classloadingtest yui-imgloadwithload' id='classloadingtest'></div>
-	<img class='srcfrombg' id='srcfrombg1' />
-	<img class='srcfrombg' id='srcfrombg2' />
 
 </div>
 
