@@ -17,7 +17,6 @@ var L = Y.Lang,
     VISIBLE = "visible",
     HIDDEN = "hidden",
     DISABLED = "disabled",
-    FOCUS = "focus",
     FOCUSED = "focused",
     WIDTH = "width",
     HEIGHT = "height",
@@ -880,7 +879,7 @@ Y.extend(Widget, Y.Base, {
 
 		var oDocument = this.get(BOUNDING_BOX).get("ownerDocument");
 
-		Y.on(FOCUS, Y.bind(this._onFocus, this), oDocument);
+		Y.on("focus", Y.bind(this._onFocus, this), Y.Node.getDOMNode(oDocument));
 
 		//	Fix for Webkit:
 		//	Document doesn't receive focus in Webkit when the user mouses 
@@ -1006,7 +1005,7 @@ Y.extend(Widget, Y.Base, {
     _uiSetFocused: function(val, src) {
 
         var box = this.get(BOUNDING_BOX),
-            sClassName = this.getClassName(FOCUS);
+            sClassName = this.getClassName(FOCUSED);
 
         if (val === true) {
             box.addClass(sClassName);
@@ -1326,7 +1325,6 @@ Y.extend(Widget, Y.Base, {
 });
 
 Y.Widget = Widget;
-
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'classnamemanager']});

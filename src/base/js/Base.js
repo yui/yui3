@@ -44,7 +44,10 @@
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
         this.init.apply(this, arguments);
     }
 
@@ -150,9 +153,6 @@
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
-
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -161,7 +161,6 @@
                     this.after(config.after);
                 }
             }
-
             this.fire(INIT, {cfg: config});
             return this;
         },
@@ -218,6 +217,7 @@
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
+            this._initPlugins(e.cfg);
             this._set(INITIALIZED, true);
         },
 
@@ -230,6 +230,7 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 

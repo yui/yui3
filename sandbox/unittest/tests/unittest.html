@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
+    <style type="text/css" id="styleblock" class="highlight-ignore">
+        h1 {
+            font: normal 125%/1.4 Arial, sans-serif;
+        }
+        .yui-skin-sam .yui-console .yui-console-content {
+            font-size: 10px;
+            width: 32em;
+        }
+        .yui-skin-sam .yui-console .yui-console-bd {
+            height: 50em;
+        }
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background: #070;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background: #700;
+            color: #fff;
+        }
+        .highlight-example {
+            display: inline;
+            float: left;
+            width: 650px;
+        }
+        .highlight-example h2 {
+            display: none;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h1>Tests</h1>
+<div id="testbed"></div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<!--script type="text/javascript" src="../../../t/queue/queue-base-test.js"></script>
+<script type="text/javascript" src="../../../build/unittest/unittest-debug.js"></script-->
+<script type="text/javascript" src="queue-base-test.js"></script>
+<script type="text/javascript" src="unittest.js"></script>
+<script type="text/javascript">
+YUI({
+    base : '../../../build/',
+    filter : 'debug',
+    useBrowserConsole : false,
+    logInclude : { TestRunner: true }
+}).use('event','unittest','queue-base-test','console',function (Y) {
+
+var yconsole = new Y.Console({
+    logSource: Y.Global,
+    contentBox:"log",
+    newestOnTop: false
+}).render();
+
+Y.UnitTest.run();
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>

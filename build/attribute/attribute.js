@@ -240,6 +240,7 @@ YUI.add('attribute', function(Y) {
          */
         addAttr: function(name, config) {
 
+
             if (!this.attrAdded(name)) {
                 config = config || {};
 

@@ -1,107 +1,125 @@
-var fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
+var isString = Y.Lang.isString,
 
-	var bReturnVal = false;
+	fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
 
-	if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
+		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
 
-		if (spec && !node.compareTo(e.currentTarget)) {
 			e.target = node;
+
+			Y.fire(eventName, e);
+			
 		}
 
-		Y.fire(eventName, e);
+	},
+
+
+	handleMouseEvent = function (e, eventName, spec) {
+
+		var relatedTarget = e.relatedTarget,
+			currentTarget = e.currentTarget,
+			target = e.target;
+
+		if (spec) {
+
+			currentTarget.queryAll(spec).some(function (v) {
+
+				var bReturnVal;
+
+				if (v.compareTo(target) || v.contains(target)) {
+					fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
+					bReturnVal = true;
+				}
+				
+				return bReturnVal; 
 			
-		bReturnVal = true;
-			
-	}
-	
-	return bReturnVal;
-
-};
-
-
-var handleMouseEvent = function(e, eventName, spec) {
-
-	var relatedTarget = e.relatedTarget,
-		target = e.target,
-		bStop = false;
-
-	if (spec) {
-
-		this.queryAll(spec).each(function (v) {
-
-			if ((!bStop) && (v.compareTo(target) || v.contains(target))) {
-				bStop = fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
-			}
-			
-		});
+			});
 		
-	}
-	else {
-		fireMouseEventForNode(this, relatedTarget, eventName, e);
-	}
-
-};
-
-var eventConfig = {
-
-    on: function(type, fn, el, spec) {
-
-        var sDOMEvent = (type === 'mouseenter') ? 'mouseover' : 'mouseout',
-			ename = type + ':' + (Y.Lang.isString(el) ? el : Y.stamp(el)) + sDOMEvent + spec,
-            a     = Y.Array(arguments, 0, true),
-			selector = Y.Lang.isString(spec) ? spec : null;
-
-        if (!Y.getEvent(ename)) {
-
-            // Set up the listener on the container
-            Y.on(sDOMEvent, Y.rbind(handleMouseEvent, Y.Node.get(el), ename, selector), el);
-        }
-
-        a[0] = ename;
-
-
-        // Remove the element (and the spec--if defined) from the args
-		
-		if (selector) {
-        	a.splice(2, 2);
 		}
 		else {
-			a.splice(2, 1);
+			fireMouseEventForNode(currentTarget, relatedTarget, eventName, e);
 		}
+
+	},
+
+	sanitize = Y.cached(function (str) {
+
+    	return str.replace(/[|,:]/g, "~");
+
+	}),
+
+	eventConfig = {
+
+    	on: function(type, fn, el, spec) {
+
+	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
+				sEventName = type + ":" + (isString(el) ? el : Y.stamp(el)) + sDOMEvent,
+	            args = Y.Array(arguments, 0, true),
+				sSelector;
+
+			if (isString(spec)) {
+				sSelector = spec;
+				sEventName = sEventName + sanitize(sSelector);
+			}
+
+	        if (!Y.getEvent(sEventName)) {
+
+	            // Set up the listener on the container
+	            Y.on(sDOMEvent, function (e) {
+	
+					handleMouseEvent(e, sEventName, sSelector);
+
+				}, el);
+	        }
+
+	        args[0] = sEventName;
+
+
+	        // Remove the element (and the spec--if defined) from the args
+		
+			if (sSelector) {
+	        	args.splice(2, 2);
+			}
+			else {
+				args.splice(2, 1);
+			}
             
 
-        // Subscribe to the custom event for the delegation spec
-        return Y.on.apply(Y, a);
+	        // Subscribe to the custom event for the delegation spec
+	        return Y.on.apply(Y, args);
 
-    }
+	    }
 
-};
+	};
 
 /**
- * Sets up a "mouseenter" listener--a listener that is called the first time 
- * the user's mouse enters the specified element(s).  Can be used to listen for 
- * the "mouseenter" event on a single element, or a collection of elements as
- * specified via a CSS selector passed as the fourth argument when subscribing 
- * to the event. 
+ * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
+ * the user's mouse enters the specified element(s).  By passing a CSS selector 
+ * as the fourth argument, can also be used to delegate a "mouseenter" 
+ * event listener.
+ * 
  * @event mouseenter
- * @param type {string} 'mouseenter'
+ * @param type {string} "mouseenter"
  * @param fn {string} The method the event invokes.
- * @param el {string|node} The element to assign the listener to.
+ * @param el {string|node} The element(s) to assign the listener to.
+ * @param spec {string} Optional.  String representing a selector that must 
+ * match the target of the event in order for the listener to be called.
  * @return {Event.Handle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
 
 /**
-* Sets up a "mouseleave" listener--a listener that is called the first time 
-* the user's mouse enters the specified element(s).  Can be used to listen for 
-* the "mouseleave" event on a single element, or a collection of elements as
-* specified via a CSS selector passed as the fourth argument when subscribing 
-* to the event.
+* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
+* the user's mouse leaves the specified element(s).  By passing a CSS selector 
+* as the fourth argument, can also be used to delegate a "mouseleave" 
+* event listener.
+* 
 * @event mouseleave
-* @param type {string} 'mouseleave'
+* @param type {string} "mouseleave"
 * @param fn {string} The method the event invokes.
-* @param el {string|node} The element to assign the listener to.
+* @param el {string|node} The element(s) to assign the listener to.
+* @param spec {string} Optional.  String representing a selector that must 
+* match the target of the event in order for the listener to be called.
 * @return {Event.Handle} the detach handle
 * @for YUI
  */

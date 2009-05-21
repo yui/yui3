@@ -46,8 +46,7 @@
             'io.xdrReady': 1,
             'io.start': 1,
             'io.success': 1,
-            'io.failure': 1,
-            'io.abort': 1
+            'io.failure': 1
         };
         
 // reduce to one or the other
@@ -187,13 +186,12 @@ YUI.prototype = {
 
         o = o || {};
 
-        // find targeted window
+        // find targeted window/frame
         // @TODO create facades
-        // @TODO resolve windowless environments
-        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@', Y = this;
-        o.win = w;
-        o.doc = w.document;
+        var v = '@VERSION@', Y = this;
+        o.win = o.win || window || {};
+        o.win = o.win.contentWindow || o.win;
+        o.doc = o.win.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
@@ -424,23 +422,10 @@ YUI.prototype = {
 
                     // CSS files don't register themselves, see if it has been loaded
                     if (!YUI.Env._loaded[Y.version][name]) {
-                        // While sorting out the packaged metadata in the modules,
-                        // let's look at the loader metadata as well
-                        // loaderMods = Y.Env.meta.modules; 
-                        // m = loaderMods && loaderMods[name];
-                        // if (m && m.parent && used[m.parent]) {
-                        //     used[name] = true;
-                        //     req = m.requires;
-                        //     use = m.supersedes;
-                        // }  else {
-                        //     missing.push(name);
-                        // }
-                         
                         missing.push(name);
                     } else {
                         // probably css
                         used[name] = true;
-
                     }
                 }
 
@@ -509,7 +494,7 @@ YUI.prototype = {
             return Y.use.apply(Y, a);
 
         }
-       
+        
 
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
@@ -680,7 +665,6 @@ YUI.prototype = {
 
     // set up the environment
     YUI._init();
-
 
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
@@ -2142,17 +2126,32 @@ Y.Get = function() {
      * @method _returnData
      * @private
      */
-    _returnData = function(q, msg) {
+    _returnData = function(q, msg, result) {
         return {
                 tId: q.tId,
                 win: q.win,
                 data: q.data,
                 nodes: q.nodes,
                 msg: msg,
+                statusText: result,
                 purge: function() {
                     _purge(this.tId);
                 }
             };
+    },
+
+    /**
+     * The transaction is finished
+     * @method _end
+     * @param id {string} the id of the request
+     * @private
+     */
+    _end = function(id, msg, result) {
+        var q = queues[id], sc;
+        if (q && q.onEnd) {
+            sc = q.context || q;
+            q.onEnd.call(sc, _returnData(q, msg, result));
+        }
     },
 
     /*
@@ -2176,6 +2175,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
+
+        _end(id, msg, 'failure');
     },
 
     _get = function(nId, tId) {
@@ -2212,6 +2213,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
+
+        _end(id, msg, 'OK');
     },
 
     /**
@@ -2226,7 +2229,10 @@ Y.Get = function() {
             sc = q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
+
+        _end(id, 'timeout', 'timeout');
     },
+    
 
     /**
      * Loads the next item for a given request
@@ -2533,6 +2539,8 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
+         * <dt>onEnd</dt>
+         * <dd>a function that executes when the transaction finishes, regardless of the exit path</dd>
          * <dt>onFailure</dt>
          * <dd>
          * callback to execute when the script load operation fails
@@ -3151,7 +3159,7 @@ var GLOBAL_ENV = YUI.Env,
                 },
 
                 'io-queue': {
-                    requires: [IOBASE]
+                    requires: [IOBASE, 'queue-promote']
                 }
             }
         },
@@ -4584,7 +4592,13 @@ Y.Loader.prototype = {
             if (this._combining.length) {
 
 
-                fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+                if (m.type === CSS) {
+                    fn = Y.Get.css;
+                    attr = this.cssAttributes;
+                } else {
+                    fn = Y.Get.script;
+                    attr = this.jsAttributes;
+                }
 
                 // @TODO get rid of the redundant Get code
                 fn(this._filter(url), {
@@ -4594,7 +4608,7 @@ Y.Loader.prototype = {
                     onTimeout: this._onTimeout,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
-                    attributes: this.jsAttributes,
+                    attributes: attr,
                     timeout: this.timeout,
                     context: self 
                 });
