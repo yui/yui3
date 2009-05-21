@@ -56,7 +56,7 @@ YUI({
 		pngGroup.registerImage({ domId: 'pngimg', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/us/nws/weather/gr/47s.png', isPng: true, sizingMethod: 'scale' });
 
 		// scrolling, mix of registerd images and class-name images
-		var downGroup = new Y.ImgLoadGroup({ name: 'conditional', foldDistance: 50, /* timeLimit: 6 */ });  // <-- time limit tests removal of timout when all scroll images are fetched
+		var downGroup = new Y.ImgLoadGroup({ name: 'conditional', foldDistance: 50 /*, timeLimit: 6 */ });  // <-- time limit tests removal of timout when all scroll images are fetched
 		downGroup.registerImage({ domId: 'waydown', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/ar/sp/fifa/rooney77x42.jpg' });
 		downGroup.registerImage({ domId: 'waydown2', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/ar/sp/fifa/rooney77x42.jpg' });
 		downGroup.registerImage({ domId: 'waydown3', bgUrl: 'http://us.i1.yimg.com/us.yimg.com/i/ar/sp/fifa/rooney77x42.jpg' });
