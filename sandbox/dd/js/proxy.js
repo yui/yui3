@@ -10,7 +10,7 @@ YUI.add('dd-proxy', function(Y) {
      * @class DDProxy
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
@@ -123,9 +123,9 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
     
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(P, Y.Base, proto);
-    Y.plugin.DDProxy = P;
+    Y.Plugin.DDProxy = P;
 
     //Add a couple of methods to the DDM
     Y.mix(DDM, {

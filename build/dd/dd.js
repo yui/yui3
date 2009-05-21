@@ -1894,7 +1894,7 @@ YUI.add('dd-proxy', function(Y) {
      * @class DDProxy
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
@@ -2007,9 +2007,9 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
     
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(P, Y.Base, proto);
-    Y.plugin.DDProxy = P;
+    Y.Plugin.DDProxy = P;
 
     //Add a couple of methods to the DDM
     Y.mix(DDM, {
@@ -2102,7 +2102,7 @@ YUI.add('dd-constrain', function(Y) {
      * @class DragConstrained
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
 
     var DRAG_NODE = 'dragNode',
@@ -2421,9 +2421,9 @@ YUI.add('dd-constrain', function(Y) {
         }
     };
 
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(C, Y.Base, proto);
-    Y.plugin.DDConstrained = C;
+    Y.Plugin.DDConstrained = C;
 
     Y.mix(DDM, {
         /**
@@ -2516,7 +2516,7 @@ YUI.add('dd-scroll', function(Y) {
      * @submodule dd-scroll
      */
     /**
-     * This class is the base scroller class used to create the plugin.DDNodeScroll and plugin.DDWinScroll.
+     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
@@ -2827,14 +2827,14 @@ YUI.add('dd-scroll', function(Y) {
         }
     });
 
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
 
     
     /**
      * Extends the Scroll class to make the window scroll while dragging.
      * @class DDWindowScroll
      * @extends DD.Scroll
-     * @namespace plugin
+     * @namespace Plugin
      * @constructor
      */
     var WS = function() {
@@ -2859,14 +2859,14 @@ YUI.add('dd-scroll', function(Y) {
     });
     Y.extend(WS, S);
     WS.NAME = WS.NS = 'winscroll';
-    Y.plugin.DDWinScroll = WS;
+    Y.Plugin.DDWinScroll = WS;
     
 
     /**
      * Extends the Scroll class to make a parent node scroll while dragging.
      * @class DDNodeScroll
      * @extends DD.Scroll
-     * @namespace plugin
+     * @namespace Plugin
      * @constructor
      */
     var NS = function() {
@@ -2897,7 +2897,7 @@ YUI.add('dd-scroll', function(Y) {
     });
     Y.extend(NS, S);
     NS.NAME = NS.NS = 'nodescroll';
-    Y.plugin.DDNodeScroll = NS;
+    Y.Plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    
 
@@ -2917,7 +2917,7 @@ YUI.add('dd-plugin', function(Y) {
         * @class Drag
         * @extends DD.Drag
         * @constructor
-        * @namespace plugin
+        * @namespace Plugin
         */
 
 
@@ -2942,8 +2942,8 @@ YUI.add('dd-plugin', function(Y) {
 
 
         Y.extend(Drag, Y.DD.Drag);
-        Y.namespace('plugin');
-        Y.plugin.Drag = Drag;
+        Y.namespace('Plugin');
+        Y.Plugin.Drag = Drag;
 
 
 
@@ -3438,7 +3438,7 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @class Drop
         * @extends DD.Drop
         * @constructor
-        * @namespace plugin
+        * @namespace Plugin
         */
 
 
@@ -3462,8 +3462,8 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
         Y.extend(Drop, Y.DD.Drop);
-        Y.namespace('plugin');
-        Y.plugin.Drop = Drop;
+        Y.namespace('Plugin');
+        Y.Plugin.Drop = Drop;
 
 
 
