@@ -926,7 +926,7 @@
 
 		<span class="k">var</span> <span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">oDocument</span><span class="o">);</span>
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">));</span>
 
 		<span class="c">//	Fix for Webkit:</span>
 <span class="c"></span>		<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>

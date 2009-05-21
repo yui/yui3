@@ -215,6 +215,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
+<!--script src="http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/yui/yui-debug.js"></script-->
 
 
 <script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -230,6 +231,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript">
 var yConfig = {
     base: '../../build/',
+    filter: 'DEBUG',
+    //base: 'http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/',
     allowRollup: false,
     logExclude: {
         'YUI': true,
@@ -243,6 +246,8 @@ var yConfig = {
 };
 var yConfig2 = {
     base: '../../build/',
+    //base: 'http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/',
+    filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
         'YUI': true,
@@ -272,6 +277,22 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     console.log(dd4);
     */
 
+    var DOC_SCROLL_X = 0,
+        DOC_SCROLL_Y = 0;
+    
+    Y1.get(window).on('scroll', function() {
+        var doc = document;
+        DOC_SCROLL_X = Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
+        DOC_SCROLL_Y = Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
+    });
+    Y1.DOM.docScrollX = function(node) {
+        return DOC_SCROLL_X;
+    };
+
+    Y1.DOM.docScrollY = function(node) {
+        return DOC_SCROLL_Y;
+    };
+
     
     dd4 = new Y1.DD.Drag({
         node: '#drag4',
@@ -296,7 +317,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
         //stickY: true
         foo: true
     });
-    dd4.plug(Y1.plugin.DDConstrained, {
+    dd4.plug(Y1.Plugin.DDConstrained, {
         //tickX: 25,
         //tickY: 25,
         constrain2node: '#drag4Cont',
@@ -305,9 +326,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     
     dd4.on('drag:end', function() {
         if (dd4.proxy) {
-            dd4.unplug(Y1.plugin.DDProxy);
+            dd4.unplug(Y1.Plugin.DDProxy);
         } else {
-            dd4.plug(Y1.plugin.DDProxy);
+            dd4.plug(Y1.Plugin.DDProxy);
         }
     });
     
@@ -324,7 +345,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     dd5 = new Y1.DD.Drag({
         node: '#drag5'
     }).addInvalid('strong.no');
-    dd5.plug(Y1.plugin.DDProxy, {
+    dd5.plug(Y1.Plugin.DDProxy, {
         moveOnEnd: false,
         borderStyle: '3px solid orange'
     });
@@ -333,7 +354,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     dd6 = new Y1.DD.Drag({
         node: '#drag6',
         offsetNode: false
-    }).plug(Y1.plugin.DDProxy, {
+    }).plug(Y1.Plugin.DDProxy, {
         resizeFrame: false,
     }).addInvalid('strong.no').on('drag:start', function() {
         this.get('dragNode').setStyles({
@@ -347,7 +368,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
         node: '#drag7',
         offsetNode: false,
         dragNode: '#drag7EL'
-    }).plug(Y1.plugin.DDProxy, {
+    }).plug(Y1.Plugin.DDProxy, {
         resizeFrame: false
     }).addInvalid('strong.no').on('drag:start', function() {
         this.deltaXY = [-10, -10];
@@ -508,11 +529,11 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
 
     
     dd3 = Y.Node.get('#drag3');
-    dd3.plug(Y.plugin.Drag, {
+    dd3.plug(Y.Plugin.Drag, {
         groups: ['one', 'three'],
         dragMode: 'intersect'
     });
-    dd3.dd.plug(Y.plugin.DDProxy, {});
+    dd3.dd.plug(Y.Plugin.DDProxy, {});
     dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
     
 
