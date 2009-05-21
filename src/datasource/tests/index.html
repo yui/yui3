@@ -3,6 +3,7 @@
 <head>
 <title>DataSource Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/datasource/datasource-debug.js"></script>
 </head>
 
 <body class="yui-skin-sam">
@@ -14,7 +15,7 @@
 (function() {
     YUI({
         base: "../../../build/",
-        filter: "debug",
+        //filter: "debug",
         logInclude:{"TestRunner":true,"datasource":true},
         useConsole: true
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
