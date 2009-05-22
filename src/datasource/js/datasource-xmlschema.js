@@ -98,4 +98,4 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
