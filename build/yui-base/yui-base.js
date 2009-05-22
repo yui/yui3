@@ -1247,7 +1247,7 @@ _iefix = (Y.UA && Y.UA.ie) ?
                 }
             }
         }
-    } : function() {};
+    } : null;
 
 
 /**
@@ -1304,7 +1304,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 
     var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
 
-        f = function(fr, fs, proto, iwl) {
+        f = function(fr, fs, iwl) {
 
             var arr = m && L.isArray(fr), i;
 
@@ -1328,7 +1328,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                             // console.log('aggregate RECURSE: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
+                            f(fr[i], fs[i], true); // recursive
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
                         // @TODO make sure the 'arr' check isn't desructive
@@ -1346,26 +1346,24 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 }
             }
 
-            _iefix(fr, fs, w);
-        },
-
-        rp = r.prototype, 
-
-        sp = s.prototype;
+            if (_iefix) {
+                _iefix(fr, fs, w);
+            }
+        };
 
     switch (mode) {
         case 1: // proto to proto
-            f(rp, sp, true);
+            f(r.prototype, s.prototype);
             break;
         case 2: // object to object and proto to proto
             f(r, s);
-            f(rp, sp, true);
+            f(r.prototype, s.prototype);
             break;
         case 3: // proto to static
-            f(r, sp, true);
+            f(r, s.prototype);
             break;
         case 4: // static to proto
-            f(rp, s);
+            f(r.prototype, s);
             break;
         default:  // object to object
             f(r, s);
