@@ -55,22 +55,20 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	//	Library shortcuts
 
 	Lang = Y.Lang,
- 	UA = Y.UA;
-	
+ 	UA = Y.UA,
 
+	/**
+	* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
+	* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
+	* and should not be instantiated directly.
+	* @namespace plugin
+	* @class NodeFocusManager
+	*/	
+	NodeFocusManager = function () {
 
-/**
-* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
-* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
-* and should not be instantiated directly.
-* @namespace plugin
-* @class NodeFocusManager
-*/	
-var NodeFocusManager = function () {
+		NodeFocusManager.superclass.constructor.apply(this, arguments);
 
-	NodeFocusManager.superclass.constructor.apply(this, arguments);
-
-};
+	};
 
 
 NodeFocusManager.ATTRS = {
@@ -398,9 +396,13 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		var oFocusedNode = this._focusedNode,
 			focusClass = this.get(FOCUS_CLASS),
+			sClassName;
+
+		if (focusClass) {
 			sClassName = Lang.isString(focusClass) ? 
-				focusClass : focusClass.className;
-		
+				focusClass : focusClass.className;		
+		}
+
 		if (oFocusedNode && sClassName) {
 			oFocusedNode.removeClass(sClassName);
 		}
@@ -577,21 +579,20 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		var oHost = this.get(HOST),
 			oTarget = event.target,
 			bChildNode = oHost.contains(oTarget),
-			node;
-	
+			node,
 
-		var getFocusable = function (node) {
+			getFocusable = function (node) {
 
-			var returnVal = false;
+				var returnVal = false;
 
-			if (!node.compareTo(oHost)) {
-				returnVal = Lang.isNumber(node.get(TAB_INDEX)) ? node : 
-								getFocusable(node.get("parentNode"));
-			};
+				if (!node.compareTo(oHost)) {
+					returnVal = Lang.isNumber(node.get(TAB_INDEX)) ? node : 
+									getFocusable(node.get("parentNode"));
+				}
 		
-			return returnVal;
+				return returnVal;
 
-		};
+			};
 		
 
 		if (bChildNode) {
