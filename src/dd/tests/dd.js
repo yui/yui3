@@ -87,7 +87,6 @@ YUI({
         
         tearDown : function() {
         },
-        /*
         test_shim: function() {
             var s = Y.DD.DDM._pg;
             Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
@@ -150,12 +149,12 @@ YUI({
             Y.Node.get('#drag').setStyles({ top: '', left: '' });
             proxy = new Y.DD.Drag({
                 node: '#drag'
-            }).plug(Y.plugin.DDProxy, {
+            }).plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false
             });
             var p = Y.DD.DDM._proxy;
             Y.Assert.isInstanceOf(Y.Node, p, 'Proxy: Node Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDProxy, proxy.proxy, 'Proxy: Proxy Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDProxy, proxy.proxy, 'Proxy: Proxy Instance');
             Y.Assert.isTrue(p.hasClass('yui-dd-proxy'), 'proxy: Proxy Node Instance ClassName');
         },
         test_proxy_setup_events: function() {
@@ -193,11 +192,11 @@ YUI({
             Y.Node.get('#drag').setStyles({ top: '10px', left: '950px' });
             dd = new Y.DD.Drag({
                 node: '#drag'
-            }).plug(Y.plugin.DDConstrained, {
+            }).plug(Y.Plugin.DDConstrained, {
                 constrain2node: '#wrap'
             });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_node_move: function() {
@@ -215,11 +214,11 @@ YUI({
             Y.Node.get('#drag').setStyles({ top: '-150px', left: '200px' });
             dd = new Y.DD.Drag({
                 node: '#drag'
-            }).plug(Y.plugin.DDConstrained, {
+            }).plug(Y.Plugin.DDConstrained, {
                 constrain2view: true
             });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_view_move: function() {
@@ -232,15 +231,14 @@ YUI({
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
             dd.destroy();
         },
-        */
         test_window_scroll: function() {
             Y.get('body').setStyle('height', '3000px');
             Y.Node.get('#drag').setStyles({ top: '', left: '' });
             dd = new Y.DD.Drag({
                 node: '#drag'
-            }).plug(Y.plugin.DDWinScroll);
+            }).plug(Y.Plugin.DDWinScroll);
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
 
             Y.get(window).set('scrollTop', 0);
             Y.get(window).set('scrollLeft', 0);
@@ -262,33 +260,6 @@ YUI({
                 }
             };
             this.wait(wait, 0);
-        },
-
-
-
-
-
-
-        test_node_scroll: function() {
-            Y.get('body').setStyle('height', '');
-            Y.get('#drag').setStyles({ top: '', left: '' });
-            Y.get('#drop').setStyle('height', '900px');
-            Y.get('#wrap').setStyle('overflow', 'auto');
-
-            dd = new Y.DD.Drag({
-                node: '#drag'
-            }).plug(Y.plugin.DDNodeScroll, {
-                node: '#wrap'
-            });
-            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isInstanceOf(Y.plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
-
-
-
-
-            //After
-            //Y.get('#drop').setStyle('height', '');
-            //Y.get('#wrap').setStyle('overflow', '');
         }
     };
     

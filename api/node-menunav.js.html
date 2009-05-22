@@ -734,7 +734,8 @@
     <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
-			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">),</span>
+			<span class="nx">oDoc</span><span class="o">;</span>
 
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">oRootMenu</span><span class="o">)</span> <span class="o">{</span>
@@ -759,9 +760,11 @@
 			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
 			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
 
-		    <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oDoc</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
 
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">));</span>
+		    <span class="nx">oDoc</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+
+			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">oDoc</span><span class="o">));</span>
 
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
 
@@ -2106,10 +2109,6 @@
 				
 			<span class="o">}</span>
 
-			<span class="c">// menuNav._initFocusManager();</span>
-<span class="c"></span>			<span class="c">// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);</span>
-<span class="c"></span>			<span class="c">// menuNav._setActiveItem(getItem(oTarget, true));</span>
-<span class="c"></span>
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="o">{</span>
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>			

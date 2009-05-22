@@ -10,7 +10,7 @@ YUI.add('dd-constrain', function(Y) {
      * @class DragConstrained
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
 
     var DRAG_NODE = 'dragNode',
@@ -329,9 +329,9 @@ YUI.add('dd-constrain', function(Y) {
         }
     };
 
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(C, Y.Base, proto);
-    Y.plugin.DDConstrained = C;
+    Y.Plugin.DDConstrained = C;
 
     Y.mix(DDM, {
         /**

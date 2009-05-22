@@ -62,6 +62,12 @@ YUI.add('dd-ddm-base', function(Y) {
 
     Y.extend(DDMBase, Y.Base, {
         /**
+        * @property _active
+        * @description flag set when we activate our first drag, so DDM can start listening for events.
+        * @type {Boolean}
+        */
+        _active: null,
+        /**
         * @private
         * @method _setDragMode
         * @description Handler for dragMode attribute setter.
@@ -113,6 +119,9 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _regDrag: function(d) {
             this._drags[this._drags.length] = d;
+            if (!this._active) {
+                this._setupListeners();
+            }
         },
         /**
         * @private
@@ -131,12 +140,14 @@ YUI.add('dd-ddm-base', function(Y) {
         },
         /**
         * @private
-        * @method _init
-        * @description DDM's init method
+        * @method _setupListeners
+        * @description Add the document listeners.
         */
-        initializer: function() {
-            var doc = Y.Node.get('document');
+        _setupListeners: function() {
+            this._active = true;
+            var doc = Y.get(document);
             doc.on('mousemove', Y.bind(this._move, this));
+            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
@@ -204,7 +215,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _move: function(ev) {
             if (this.activeDrag) {
-                this.activeDrag._move.apply(this.activeDrag, arguments);
+                this.activeDrag._move.call(this.activeDrag, ev);
                 this._dropMove();
             }
         },
@@ -240,7 +251,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         getDrag: function(node) {
             var drag = false,
-                n = Y.Node.get(node);
+                n = Y.get(node);
             if (n instanceof Y.Node) {
                 Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
@@ -336,7 +347,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _pg_size: function() {
             if (this.activeDrag) {
-                var b = Y.Node.get('body'),
+                var b = Y.get('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
                 this._pg.setStyles({
@@ -352,7 +363,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _createPG: function() {
             var pg = Y.Node.create('<div></div>'),
-            bd = Y.Node.get('body');
+            bd = Y.get('body');
             pg.setStyles({
                 top: '0',
                 left: '0',
@@ -1883,7 +1894,7 @@ YUI.add('dd-proxy', function(Y) {
      * @class DDProxy
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
@@ -1996,9 +2007,9 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
     
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(P, Y.Base, proto);
-    Y.plugin.DDProxy = P;
+    Y.Plugin.DDProxy = P;
 
     //Add a couple of methods to the DDM
     Y.mix(DDM, {
@@ -2091,7 +2102,7 @@ YUI.add('dd-constrain', function(Y) {
      * @class DragConstrained
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
 
     var DRAG_NODE = 'dragNode',
@@ -2410,9 +2421,9 @@ YUI.add('dd-constrain', function(Y) {
         }
     };
 
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(C, Y.Base, proto);
-    Y.plugin.DDConstrained = C;
+    Y.Plugin.DDConstrained = C;
 
     Y.mix(DDM, {
         /**
@@ -2505,7 +2516,7 @@ YUI.add('dd-scroll', function(Y) {
      * @submodule dd-scroll
      */
     /**
-     * This class is the base scroller class used to create the plugin.DDNodeScroll and plugin.DDWinScroll.
+     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
@@ -2816,14 +2827,14 @@ YUI.add('dd-scroll', function(Y) {
         }
     });
 
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
 
     
     /**
      * Extends the Scroll class to make the window scroll while dragging.
      * @class DDWindowScroll
      * @extends DD.Scroll
-     * @namespace plugin
+     * @namespace Plugin
      * @constructor
      */
     var WS = function() {
@@ -2848,14 +2859,14 @@ YUI.add('dd-scroll', function(Y) {
     });
     Y.extend(WS, S);
     WS.NAME = WS.NS = 'winscroll';
-    Y.plugin.DDWinScroll = WS;
+    Y.Plugin.DDWinScroll = WS;
     
 
     /**
      * Extends the Scroll class to make a parent node scroll while dragging.
      * @class DDNodeScroll
      * @extends DD.Scroll
-     * @namespace plugin
+     * @namespace Plugin
      * @constructor
      */
     var NS = function() {
@@ -2886,7 +2897,7 @@ YUI.add('dd-scroll', function(Y) {
     });
     Y.extend(NS, S);
     NS.NAME = NS.NS = 'nodescroll';
-    Y.plugin.DDNodeScroll = NS;
+    Y.Plugin.DDNodeScroll = NS;
 
     Y.DD.Scroll = S;    
 
@@ -2906,7 +2917,7 @@ YUI.add('dd-plugin', function(Y) {
         * @class Drag
         * @extends DD.Drag
         * @constructor
-        * @namespace plugin
+        * @namespace Plugin
         */
 
 
@@ -2931,8 +2942,8 @@ YUI.add('dd-plugin', function(Y) {
 
 
         Y.extend(Drag, Y.DD.Drag);
-        Y.namespace('plugin');
-        Y.plugin.Drag = Drag;
+        Y.namespace('Plugin');
+        Y.Plugin.Drag = Drag;
 
 
 
@@ -3427,7 +3438,7 @@ YUI.add('dd-drop-plugin', function(Y) {
         * @class Drop
         * @extends DD.Drop
         * @constructor
-        * @namespace plugin
+        * @namespace Plugin
         */
 
 
@@ -3451,8 +3462,8 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
         Y.extend(Drop, Y.DD.Drop);
-        Y.namespace('plugin');
-        Y.plugin.Drop = Drop;
+        Y.namespace('Plugin');
+        Y.Plugin.Drop = Drop;
 
 
 
