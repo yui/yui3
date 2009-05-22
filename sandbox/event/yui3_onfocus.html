@@ -3,13 +3,19 @@
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
 </head>
 <body>
+
 <form id="form1">
-<input id="query1" value="Enter a query..."></input>
+  <input id="query1" value="Enter a query..."></input>
 </form>
+
 <script>
 YUI({
-    base: '../../build/'
-}).use( 'node', 'event',
+    base: '../../build/',
+    filter: 'debug',
+    logExclude: {
+        attribute: true
+    }
+}).use('node', 'event',
   function(Y) {
 
     function clearQuery(e) {
@@ -17,10 +23,14 @@ YUI({
         e.target.set('value', '');
     }
 
-    // Y.on('focus', function(){Y.log('form')}, '#form1');
     // Y.on('focus', clearQuery, '#query1');
-    Y.Event.attach('focus', clearQuery, '#query1');
+    Y.on('focus', clearQuery, Y.get('#query1'));
+    // Y.on('focus', clearQuery, Y.DOM.byId('query1'));
+
+    // Y.on('focus', function(){Y.log('form')}, '#form1');
+    // Y.Event.attach('focus', clearQuery, '#query1');
   }
 );
 </script>
+
 </body>
