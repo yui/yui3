@@ -97,7 +97,7 @@
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
-						rollThrough: true
+						circular: true
 					});
 
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 1));
@@ -115,7 +115,7 @@
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
-						rollThrough: true
+						circular: true
 					});					
 
 	                Y.Assert.isTrue((oList2.focusManager.get("activeDescendant") === 0));
@@ -135,7 +135,7 @@
 						activeDescendant: 3,
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
-						rollThrough: true
+						circular: true
 					});
 
 	                Y.Assert.isTrue((oList1.focusManager.get("activeDescendant") === 3));
@@ -239,7 +239,7 @@
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
-						rollThrough: true
+						circular: true
 					});
 
 					Y.Assert.isTrue((oList1.focusManager.get("descendants").size() === 8));
@@ -277,7 +277,7 @@
 						descendants: ">li>.focusable",
 						keys: { next: "down:40", previous: "down:38" },
 						focusClass: "focused",
-						rollThrough: true
+						circular: true
 					});
 
 					Y.Assert.isFalse(oList2.focusManager.get("focused"));
@@ -317,7 +317,62 @@
 					//	Clean up for next set of tests
 					oList2.unplug("focusManager");	
 					
-				}
+				}, 
+
+				testFocusClassAttribute: function() {
+
+					var oList1 = Y.Node.get("#list-1");
+
+					oList1.plug(Y.Plugin.NodeFocusManager, { 
+						descendants: ">li>.focusable",
+						keys: { next: "down:40", previous: "down:38" },
+						focusClass: "focused",
+						activeDescendant: 0,
+						circular: true
+					});
+
+					oList1.focusManager.focus();
+
+					//	TEST #1:
+
+					var nodes = oList1.queryAll(".focused");
+					
+					Y.Assert.isTrue(nodes.size() === 1);
+					Y.Assert.isTrue(oList1.focusManager.get("descendants").item(0).hasClass("focused"));
+
+					oList1.focusManager.blur();
+
+
+					nodes = oList1.queryAll(".focused");
+					
+					Y.Assert.isTrue(nodes.size() === 0);
+					Y.Assert.isFalse(oList1.focusManager.get("descendants").item(0).hasClass("focused"));
+					
+
+					
+					oList1.focusManager.set("focusClass", {
+						className: "focused",
+						fn: function (node) {
+							return node.get("parentNode");
+						}
+					});
+					
+
+					oList1.focusManager.focus();					
+
+					nodes = oList1.queryAll(".focused");
+					
+					Y.Assert.isTrue(nodes.size() === 1);
+					Y.Assert.isTrue(oList1.focusManager.get("descendants").item(0).get("parentNode").hasClass("focused"));
+
+					oList1.focusManager.blur();
+
+					nodes = oList1.queryAll(".focused");
+ 
+					Y.Assert.isTrue(nodes.size() === 0);
+					Y.Assert.isFalse(oList1.focusManager.get("descendants").item(0).get("parentNode").hasClass("focused"));
+					
+				}				
 
 	        });
 
