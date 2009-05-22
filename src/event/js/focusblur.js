@@ -15,7 +15,7 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
     // To get around this, we register a NOOP listener on the
     // element's parent.
     _captureHack = function(type, o) {
-        var el = (Y.Lang.isString(o)) ? Y.Selector.query(o) : o,
+        var el = (Y.Lang.isString(o)) ? Y.Selector.query(o, null, true) : o,
             p  = el && el.parentNode;
 
         if (p) {
@@ -55,7 +55,7 @@ adapt.focus = {
 };
 
 /**
- * Adds a DOM focus listener.  Uses the focusout event in IE,
+ * Adds a DOM blur listener.  Uses the focusout event in IE,
  * and the capture phase otherwise so that
  * the event propagates in a way that enables event delegation.
  *
