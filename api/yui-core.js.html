@@ -79,7 +79,7 @@
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>
-    <span class="o">}</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
+    <span class="o">}</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
 
 
 <span class="c">/**</span>
@@ -136,7 +136,7 @@
 
     <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="o">(</span><span class="nx">wl</span> <span class="o">&amp;&amp;</span> <span class="nx">wl</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">?</span> <span class="nx">A</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="nx">wl</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">merge</span><span class="o">,</span>
 
-        <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fr</span><span class="o">,</span> <span class="nx">fs</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">iwl</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fr</span><span class="o">,</span> <span class="nx">fs</span><span class="o">,</span> <span class="nx">iwl</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">fr</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
 
@@ -161,7 +161,7 @@
                             <span class="c">// console.log(&#39;aggregate RECURSE: &#39; + i);</span>
 <span class="c"></span>                            <span class="c">// @TODO recursive or no?</span>
 <span class="c"></span>                            <span class="c">// Y.mix(fr[i], fs[i]); // not recursive</span>
-<span class="c"></span>                            <span class="nx">f</span><span class="o">(</span><span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">proto</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c">// recursive</span>
+<span class="c"></span>                            <span class="nx">f</span><span class="o">(</span><span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span> <span class="c">// recursive</span>
 <span class="c"></span>                        <span class="c">// otherwise apply the property only if overwrite</span>
 <span class="c"></span>                        <span class="c">// is specified or the receiver doesn&#39;t have one.</span>
 <span class="c"></span>                        <span class="c">// @TODO make sure the &#39;arr&#39; check isn&#39;t desructive</span>
@@ -179,26 +179,24 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="nx">_iefix</span><span class="o">(</span><span class="nx">fr</span><span class="o">,</span> <span class="nx">fs</span><span class="o">,</span> <span class="nx">w</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="nx">rp</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
-
-        <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">_iefix</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_iefix</span><span class="o">(</span><span class="nx">fr</span><span class="o">,</span> <span class="nx">fs</span><span class="o">,</span> <span class="nx">w</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
 
     <span class="nx">switch</span> <span class="o">(</span><span class="nx">mode</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">case</span> <span class="m">1</span><span class="o">:</span> <span class="c">// proto to proto</span>
-<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">rp</span><span class="o">,</span> <span class="nx">sp</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
             <span class="k">break</span><span class="o">;</span>
         <span class="nx">case</span> <span class="m">2</span><span class="o">:</span> <span class="c">// object to object and proto to proto</span>
 <span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
-            <span class="nx">f</span><span class="o">(</span><span class="nx">rp</span><span class="o">,</span> <span class="nx">sp</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
             <span class="k">break</span><span class="o">;</span>
         <span class="nx">case</span> <span class="m">3</span><span class="o">:</span> <span class="c">// proto to static</span>
-<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">sp</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
             <span class="k">break</span><span class="o">;</span>
         <span class="nx">case</span> <span class="m">4</span><span class="o">:</span> <span class="c">// static to proto</span>
-<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">rp</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
             <span class="k">break</span><span class="o">;</span>
         <span class="nx">default</span><span class="o">:</span>  <span class="c">// object to object</span>
 <span class="c"></span>            <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>

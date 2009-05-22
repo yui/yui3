@@ -52,20 +52,46 @@
 <span class="k">var</span> <span class="nx">FOCUS</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusin&quot;</span> <span class="o">:</span> <span class="s2">&quot;focus&quot;</span><span class="o">,</span>
     <span class="nx">BLUR</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">?</span> <span class="s2">&quot;focusout&quot;</span> <span class="o">:</span> <span class="s2">&quot;blur&quot;</span><span class="o">,</span>
     <span class="nx">CAPTURE</span> <span class="o">=</span> <span class="s2">&quot;capture_&quot;</span><span class="o">,</span>
-    <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">;</span>
+    <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">,</span>
+    <span class="nx">NOOP</span>  <span class="o">=</span> <span class="k">function</span><span class="o">(){},</span>
+
+    <span class="c">// Opera implents capture phase events per spec rather than</span>
+<span class="c"></span>    <span class="c">// the more useful way it is implemented in other browsers:</span>
+<span class="c"></span>    <span class="c">// The event doesn&#39;t fire on a target unless there is a</span>
+<span class="c"></span>    <span class="c">// listener on an element in the target&#39;s ancestry.  If a</span>
+<span class="c"></span>    <span class="c">// capture phase listener is added only to the element that </span>
+<span class="c"></span>    <span class="c">// will be the target of the event, the listener won&#39;t fire.  </span>
+<span class="c"></span>    <span class="c">// To get around this, we register a NOOP listener on the</span>
+<span class="c"></span>    <span class="c">// element&#39;s parent.</span>
+<span class="c"></span>    <span class="nx">_captureHack</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
+            <span class="nx">p</span>  <span class="o">=</span> <span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">NOOP</span><span class="o">,</span> <span class="nx">p</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
 
 
 <span class="c">/**</span>
 <span class="c"> * Adds a DOM focus listener.  Uses the focusin event in IE,</span>
 <span class="c"> * and the capture phase otherwise so that</span>
-<span class="c"> * the event propagates properly.</span>
+<span class="c"> * the event propagates in a way that enables event delegation.</span>
+<span class="c"> *</span>
+<span class="c"> * Note: if you are registering this event on the intended target</span>
+<span class="c"> * rather than an ancestor, the element must be in the DOM in</span>
+<span class="c"> * order for it to work in Opera.</span>
+<span class="c"> *</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> * @event focus</span>
 <span class="c"> */</span>
 <span class="nx">adapt</span><span class="o">.</span><span class="nx">focus</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">FOCUS</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">_captureHack</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">o</span><span class="o">);</span>
+        <span class="o">}</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -80,14 +106,22 @@
 <span class="c">/**</span>
 <span class="c"> * Adds a DOM focus listener.  Uses the focusout event in IE,</span>
 <span class="c"> * and the capture phase otherwise so that</span>
-<span class="c"> * the event propagates properly.</span>
+<span class="c"> * the event propagates in a way that enables event delegation.</span>
+<span class="c"> *</span>
+<span class="c"> * Note: if you are registering this event on the intended target</span>
+<span class="c"> * rather than an ancestor, the element must be in the DOM </span>
+<span class="c"> * at the time of registration in order for it to work in Opera.</span>
+<span class="c"> *</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> * @event blur</span>
 <span class="c"> */</span>
 <span class="nx">adapt</span><span class="o">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CAPTURE</span> <span class="o">+</span> <span class="nx">BLUR</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">_captureHack</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">o</span><span class="o">);</span>
+        <span class="o">}</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
     <span class="o">},</span>
 
