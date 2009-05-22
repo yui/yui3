@@ -64,7 +64,7 @@
 <span class="c"></span>    <span class="c">// To get around this, we register a NOOP listener on the</span>
 <span class="c"></span>    <span class="c">// element&#39;s parent.</span>
 <span class="c"></span>    <span class="nx">_captureHack</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
             <span class="nx">p</span>  <span class="o">=</span> <span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
@@ -104,7 +104,7 @@
 <span class="o">};</span>
 
 <span class="c">/**</span>
-<span class="c"> * Adds a DOM focus listener.  Uses the focusout event in IE,</span>
+<span class="c"> * Adds a DOM blur listener.  Uses the focusout event in IE,</span>
 <span class="c"> * and the capture phase otherwise so that</span>
 <span class="c"> * the event propagates in a way that enables event delegation.</span>
 <span class="c"> *</span>
