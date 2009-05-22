@@ -333,7 +333,8 @@
 
 					oList1.focusManager.focus();
 
-					//	TEST #1:
+					//	TEST #1: Make sure that the "focused" class is 
+					//	applied to the first descendant
 
 					var nodes = oList1.queryAll(".focused");
 					
@@ -343,12 +344,17 @@
 					oList1.focusManager.blur();
 
 
+					//	TEST #2: Make sure that the "focused" class is not 
+					//	not applied to any of the descendants
+
 					nodes = oList1.queryAll(".focused");
 					
 					Y.Assert.isTrue(nodes.size() === 0);
 					Y.Assert.isFalse(oList1.focusManager.get("descendants").item(0).hasClass("focused"));
 					
 
+					//	TEST #3: Make sure that the "focused" class is 
+					//	applied to the parent node of the first descendant
 					
 					oList1.focusManager.set("focusClass", {
 						className: "focused",
@@ -364,6 +370,10 @@
 					
 					Y.Assert.isTrue(nodes.size() === 1);
 					Y.Assert.isTrue(oList1.focusManager.get("descendants").item(0).get("parentNode").hasClass("focused"));
+
+
+					//	TEST #4: Make sure that the "focused" class is not 
+					//	not applied to any of the descendants
 
 					oList1.focusManager.blur();
 
