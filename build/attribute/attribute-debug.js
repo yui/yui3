@@ -128,10 +128,10 @@ YUI.add('attribute', function(Y) {
      */
 
     var O = Y.Object,
+        EventTarget = Y.EventTarget,
 
         DOT = ".",
         CHANGE = "Change",
-
         GETTER = "getter",
         SETTER = "setter",
         VALUE = "value",
@@ -144,18 +144,16 @@ YUI.add('attribute', function(Y) {
         PUBLISHED = "published",
         BROADCAST = "broadcast",
         DEF_VALUE = "defaultValue",
-
+        LAZY = "lazy",
+        INIT_LAZY = "initLazy",
         INVALID_VALUE,
+        MODIFIABLE = {};
 
         // Properties which can be changed after the attribute has been added.
-        MODIFIABLE = {
-            readOnly:1,
-            writeOne:1,
-            getter:1,
-            broadcast:1
-        },
-
-        EventTarget = Y.EventTarget;
+        MODIFIABLE[READ_ONLY] = 1;
+        MODIFIABLE[WRITE_ONCE] = 1;
+        MODIFIABLE[GETTER] = 1;
+        MODIFIABLE[BROADCAST] = 1;
 
     /**
      * <p>
@@ -239,37 +237,44 @@ YUI.add('attribute', function(Y) {
          *
          * @chainable
          */
-        addAttr: function(name, config) {
+        addAttr: function(name, config, lazy) {
+
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
+            var conf = this._conf;
 
-            if (this.attrAdded(name)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+            if (lazy && !this.attrAdded(name)) {
+                conf.add(name, LAZY, config || {});
+                conf.add(name, ADDED, true);
+            } else {
 
-            if (!this.attrAdded(name)) {
-                config = config || {};
+                if (this.attrAdded(name) && !conf.get(name, INIT_LAZY)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                var value,
-                    hasValue = (VALUE in config),
-                    conf = this._conf;
+                if (!this.attrAdded(name) || conf.get(name, INIT_LAZY)) {
 
-                if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
+                    config = config || {};
 
-                if(hasValue) {
-                    // We'll go through set, don't want to set value in _conf directory
-                    value = config.value;
-                    delete config.value;
+                    var value, hasValue = (VALUE in config);
+
+                    if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
+
+                    if(hasValue) {
+                        // We'll go through set, don't want to set value in _conf directory
+                        value = config.value;
+                        delete config.value;
+                    }
+
+                    config.added = true;
+                    config.initializing = true;
+
+                    conf.addAll(name, config);
+
+                    if (hasValue) {
+                        // Go through set, so that raw values get normalized/validated
+                        this.set(name, value);
+                    }
+
+                    conf.remove(name, INITIALIZING);
                 }
-
-                config[ADDED] = true;
-                config[INITIALIZING] = true;
-
-                conf.addAll(name, config);
-
-                if (hasValue) {
-                    // Go through set, so that raw values get normalized/validated
-                    this.set(name, value);
-                }
-
-                conf.remove(name, INITIALIZING);
             }
 
             return this;
@@ -283,14 +288,14 @@ YUI.add('attribute', function(Y) {
          * @return boolean, true if an attribute with the given name has been added.
          */
         attrAdded: function(name) {
-            return !!(this._conf.get(name, ADDED));
+            return !!this._conf.get(name, ADDED);
         },
 
         /**
-         * Updates the configuration of an attribute which has already been added. 
+         * Updates the configuration of an attribute which has already been added.
          * <p>
          * The properties which can be modified through this interface are limited
-         * to the following subset of attributes which can be safely modified 
+         * to the following subset of attributes which can be safely modified
          * after a value has been set on the attribute: readOnly, writeOnce, broadcast and 
          * getter.
          * </p>
@@ -300,18 +305,24 @@ YUI.add('attribute', function(Y) {
          */
         modifyAttr: function(name, config) {
             if (this.attrAdded(name)) {
-                var prop;
+
+                if (this._isLazyAttr(name)) {
+                    this._addLazyAttr(name);
+                }
+
+                var prop, conf = this._conf;
                 for (prop in config) {
                     if (MODIFIABLE[prop] && config.hasOwnProperty(prop)) {
-                        this._conf.add(name, prop, config[prop]);
+                        conf.add(name, prop, config[prop]);
 
                         // If we reconfigured broadcast, need to republish
                         if (prop === BROADCAST) {
-                            this._conf.remove(name, PUBLISHED);
+                            conf.remove(name, PUBLISHED);
                         }
                     }
                 }
             }
+
             if (!this.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
@@ -353,6 +364,18 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
+            // On Demand
+            if (this._tCfgs && this._tCfgs[name] && !this.attrAdded(name)) {
+                var cfg = {};
+                cfg[name] = this._tCfgs[name];
+                this._addAttrs(cfg, this._tVals);
+            }
+
+            // Lazy Init
+            if (this._isLazyAttr(name)) {
+                this._addLazyAttr(name);
+            }
+
             val = conf.get(name, VALUE);
             getter = conf.get(name, GETTER);
 
@@ -360,6 +383,27 @@ YUI.add('attribute', function(Y) {
             val = (path) ? O.getValue(val, path) : val;
 
             return val;
+        },
+
+        /**
+         * @method _isLazyAttr
+         * @private
+         * @param {Object} name
+         */
+        _isLazyAttr: function(name) {
+            return this._conf.get(name, LAZY);
+        },
+
+        /**
+         * @method _addLazyAttr
+         * @private
+         * @param {Object} name
+         */
+        _addLazyAttr: function(name) {
+            var cfg = this._conf.get(name, LAZY);
+            this._conf.add(name, INIT_LAZY, true);
+            this._conf.remove(name, LAZY);
+            this.addAttr(name, cfg);
         },
 
         /**
@@ -394,11 +438,14 @@ YUI.add('attribute', function(Y) {
          */
         reset : function(name) {
             if (name) {
+                if (this._isLazyAttr(name)) {
+                    this._addLazyAttr(name);
+                }
                 this.set(name, this._conf.get(name, INIT_VALUE));
             } else {
-                var initVals = this._conf.data.initValue;
-                Y.each(initVals, function(v, n) {
-                    this.set(n, v);
+                var added = this._conf.data.added;
+                Y.each(added, function(v, n) {
+                    this.reset(n);
                 }, this);
             }
             return this;
@@ -453,6 +500,10 @@ YUI.add('attribute', function(Y) {
                 strPath = name;
                 path = name.split(DOT);
                 name = path.shift();
+            }
+
+            if (this._isLazyAttr(name)) {
+                this._addLazyAttr(name);
             }
 
             initialSet = (!data.value || !(name in data.value));
@@ -651,7 +702,7 @@ YUI.add('attribute', function(Y) {
             var o = {}, i, l, attr, val,
                 modifiedOnly = (attrs === true);
 
-            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._conf.data[VALUE]);
+            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._conf.data.added);
 
             for (i = 0, l = attrs.length; i < l; i++) {
                 // Go through get, to honor cloning/normalization
@@ -677,34 +728,46 @@ YUI.add('attribute', function(Y) {
          *
          * @param {Object} cfgs Name/value hash of attribute configuration literals.
          * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
+         * @param {boolean} lazy Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
          */
-        addAttrs : function(cfgs, values) {
+        addAttrs : function(cfgs, values, lazy) {
             if (cfgs) {
-                var attr,
-                    attrCfg,
-                    value;
 
-                values = this._splitAttrVals(values);
+                if (!this._tCfgs) {
+                    this._tVals = this._splitAttrVals(values);
+                    this._tCfgs = cfgs;
+                }
 
-                for (attr in cfgs) {
-                    if (cfgs.hasOwnProperty(attr)) {
+                this._addAttrs(cfgs, this._tVals, lazy);
 
-                        // Not Merging. Caller is responsible for isolating configs
-                        attrCfg = cfgs[attr];
-                        attrCfg.defaultValue = attrCfg.value;
+                this._tCfgs = this._tVals = null;
+            }
 
-                        // Handle simple, complex and user values, accounting for read-only
-                        value = this._getAttrInitVal(attr, attrCfg, values);
+            return this;
+        },
 
-                        if (value !== undefined) {
-                            attrCfg.value = value;
-                        }
+        _addAttrs : function(cfgs, values, lazy) {
+            var attr,
+                attrCfg,
+                value;
 
-                        this.addAttr(attr, attrCfg);
+            for (attr in cfgs) {
+                if (cfgs.hasOwnProperty(attr)) {
+
+                    // Not Merging. Caller is responsible for isolating configs
+                    attrCfg = cfgs[attr];
+                    attrCfg.defaultValue = attrCfg.value;
+
+                    // Handle simple, complex and user values, accounting for read-only
+                    value = this._getAttrInitVal(attr, attrCfg, this._tVals);
+
+                    if (value !== undefined) {
+                        attrCfg.value = value;
                     }
+
+                    this.addAttr(attr, attrCfg, lazy);
                 }
             }
-            return this;
         },
 
         /**
@@ -718,7 +781,7 @@ YUI.add('attribute', function(Y) {
          * @return {Object} Object literal with 2 properties - "simple" and "complex",
          * containing simple and complex attribute values respectively keyed 
          * by attribute the top level attribute name.
-         * @private
+         * @protected
          */
         _splitAttrVals : function(valueHash) {
             var vals = {},
@@ -771,7 +834,7 @@ YUI.add('attribute', function(Y) {
                 subval,
                 subvals;
 
-            if (!cfg[READ_ONLY] && initValues) {
+            if (!cfg.readOnly && initValues) {
 
                 // Simple Attributes
                 simple = initValues.simple;
