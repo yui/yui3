@@ -13,17 +13,14 @@
 
 * Split base module up into base-base and base-build.
 
-* Added "Initialize on Demand" feature for ATTRS processing, which
-  removes order dependency when processing ATTRS for a particular class.
+* Added lazy attribute initialization support, to improve performance.
+  
+  This also removes order dependency when processing ATTRS for a particular
+  class.
 
-  If a get call is made for an uninitialized attribute A, in the 
+  If a get/set call is made for an uninitialized attribute A, in the 
   getter/setter/validator or valueFns of another attribute B, A will 
-  be intiailized on the fly and it's value returned. 
-
-  NOTE: This functionality only applies to attributes which are part of 
-  the same class' ATTRS configuration, since attributes from superclasses
-  will already have been configured based on the class hierarchy 
-  initialization.
+  be intiailized on the fly. 
 
 * Added ability to subscribe to on/after events through the constructor
   config object, e.g.:
