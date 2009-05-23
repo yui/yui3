@@ -70,7 +70,7 @@
         <span class="nx">BROADCAST</span> <span class="o">=</span> <span class="s2">&quot;broadcast&quot;</span><span class="o">,</span>
         <span class="nx">DEF_VALUE</span> <span class="o">=</span> <span class="s2">&quot;defaultValue&quot;</span><span class="o">,</span>
         <span class="nx">LAZY</span> <span class="o">=</span> <span class="s2">&quot;lazy&quot;</span><span class="o">,</span>
-        <span class="nx">INIT_LAZY</span> <span class="o">=</span> <span class="s2">&quot;initLazy&quot;</span><span class="o">,</span>
+        <span class="nx">LAZY_INIT</span> <span class="o">=</span> <span class="s2">&quot;lazyInit&quot;</span><span class="o">,</span>
         <span class="nx">INVALID_VALUE</span><span class="o">,</span>
         <span class="nx">MODIFIABLE</span> <span class="o">=</span> <span class="o">{};</span>
 
@@ -172,9 +172,9 @@
                 <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">ADDED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">INIT_LAZY</span><span class="o">))</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; already exists. Cannot add it again without removing it first&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span> <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY_INIT</span><span class="o">))</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; already exists. Cannot add it again without removing it first&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span> <span class="o">}</span>
 
-                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">||</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">INIT_LAZY</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">||</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY_INIT</span><span class="o">))</span> <span class="o">{</span>
 
                     <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -289,10 +289,11 @@
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
             <span class="o">}</span>
 
-            <span class="c">// On Demand</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c">// On Demand - Should be rare - handles out of order valueFn references</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">cfg</span> <span class="o">=</span> <span class="o">{};</span>
                 <span class="nx">cfg</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_addAttrs</span><span class="o">(</span><span class="nx">cfg</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tVals</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -325,10 +326,11 @@
 <span class="c">         * @param {Object} name</span>
 <span class="c">         */</span>
         <span class="nx">_addLazyAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">cfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">INIT_LAZY</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">addAttr</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">lazyCfg</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY</span><span class="o">);</span>
+            <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY_INIT</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">addAttr</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">lazyCfg</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -658,10 +660,8 @@
         <span class="nx">addAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">cfgs</span><span class="o">,</span> <span class="nx">values</span><span class="o">,</span> <span class="nx">lazy</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">cfgs</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_tVals</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_splitAttrVals</span><span class="o">(</span><span class="nx">values</span><span class="o">);</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span> <span class="o">=</span> <span class="nx">cfgs</span><span class="o">;</span>
-                <span class="o">}</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_tCfgs</span> <span class="o">=</span> <span class="nx">cfgs</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_tVals</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_splitAttrVals</span><span class="o">(</span><span class="nx">values</span><span class="o">);</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">_addAttrs</span><span class="o">(</span><span class="nx">cfgs</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_tVals</span><span class="o">,</span> <span class="nx">lazy</span><span class="o">);</span>
 
