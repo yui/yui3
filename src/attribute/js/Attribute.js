@@ -21,7 +21,7 @@
         BROADCAST = "broadcast",
         DEF_VALUE = "defaultValue",
         LAZY = "lazy",
-        INIT_LAZY = "initLazy",
+        LAZY_INIT = "lazyInit",
         INVALID_VALUE,
         MODIFIABLE = {};
 
@@ -123,9 +123,9 @@
                 conf.add(name, ADDED, true);
             } else {
 
-                if (this.attrAdded(name) && !conf.get(name, INIT_LAZY)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (this.attrAdded(name) && !conf.get(name, LAZY_INIT)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!this.attrAdded(name) || conf.get(name, INIT_LAZY)) {
+                if (!this.attrAdded(name) || conf.get(name, LAZY_INIT)) {
 
                     config = config || {};
 
@@ -240,10 +240,11 @@
                 name = path.shift();
             }
 
-            // On Demand
-            if (this._tCfgs && this._tCfgs[name] && !this.attrAdded(name)) {
+            // On Demand - Should be rare - handles out of order valueFn references
+            if (this._tCfgs && this._tCfgs[name]) {
                 var cfg = {};
                 cfg[name] = this._tCfgs[name];
+                delete this._tCfgs[name];
                 this._addAttrs(cfg, this._tVals);
             }
 
@@ -276,10 +277,11 @@
          * @param {Object} name
          */
         _addLazyAttr: function(name) {
-            var cfg = this._conf.get(name, LAZY);
-            this._conf.add(name, INIT_LAZY, true);
-            this._conf.remove(name, LAZY);
-            this.addAttr(name, cfg);
+            var conf = this._conf;
+            var lazyCfg = conf.get(name, LAZY);
+            conf.add(name, LAZY_INIT, true);
+            conf.remove(name, LAZY);
+            this.addAttr(name, lazyCfg);
         },
 
         /**
@@ -609,10 +611,8 @@
         addAttrs : function(cfgs, values, lazy) {
             if (cfgs) {
 
-                if (!this._tCfgs) {
-                    this._tVals = this._splitAttrVals(values);
-                    this._tCfgs = cfgs;
-                }
+                this._tCfgs = cfgs;
+                this._tVals = this._splitAttrVals(values);
 
                 this._addAttrs(cfgs, this._tVals, lazy);
 
