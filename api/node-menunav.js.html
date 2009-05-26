@@ -763,8 +763,7 @@
 			<span class="nx">oDoc</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
 
 		    <span class="nx">oDoc</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">oDoc</span><span class="o">));</span>
+			<span class="nx">oDoc</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
 
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
 
@@ -2064,7 +2063,18 @@
 
 					<span class="o">}</span>
 					<span class="k">else</span> <span class="o">{</span>
+
 						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">blur</span><span class="o">();</span>
+
+						<span class="c">//	This is necessary for Webkit since blurring the </span>
+<span class="c"></span>						<span class="c">//	active menuitem won&#39;t result in the document </span>
+<span class="c"></span>						<span class="c">//	gaining focus, meaning the that _onDocFocus </span>
+<span class="c"></span>						<span class="c">//	listener won&#39;t clear the active menuitem.</span>
+<span class="c"></span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>	
+						
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
 					<span class="o">}</span>
 
 				<span class="o">}</span>
@@ -2111,7 +2121,18 @@
 
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>			
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>
+
+			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
+<span class="c"></span>			<span class="c">//	down on it, so the &quot;_hasFocus&quot; property won&#39;t get set to the </span>
+<span class="c"></span>			<span class="c">//	correct value.  The following line corrects the problem.</span>
+<span class="c"></span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+			<span class="o">}</span>
+						
 		<span class="o">}</span>
 
 	<span class="o">}</span>
