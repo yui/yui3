@@ -175,6 +175,7 @@
 <span class="c">        */</span>
     
     <span class="nx">Drag</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAttrInit</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
         <span class="nx">Drag</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
         <span class="nx">DDM</span><span class="o">.</span><span class="nx">_regDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
@@ -312,10 +313,7 @@
         <span class="nx">target</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
             <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_handleTarget</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-                <span class="o">},</span> <span class="nx">config</span><span class="o">);</span>
-
+                <span class="k">this</span><span class="o">.</span><span class="nx">_handleTarget</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
                 <span class="k">return</span> <span class="nx">config</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -435,8 +433,9 @@
                     <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">config</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">config</span> <span class="o">=</span> <span class="o">{};</span>
                     <span class="o">}</span>
-                    <span class="nx">config</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;bubbles&#39;</span><span class="o">);</span>
+                    <span class="nx">config</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">config</span><span class="o">)</span> <span class="o">?</span> <span class="nx">config</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;bubbles&#39;</span><span class="o">);</span>
                     <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">);</span>
+                    <span class="nx">config</span><span class="o">.</span><span class="nx">groups</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">groups</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;groups&#39;</span><span class="o">);</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drop</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
