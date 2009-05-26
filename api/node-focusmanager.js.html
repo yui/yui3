@@ -104,22 +104,20 @@
 	<span class="c">//	Library shortcuts</span>
 <span class="c"></span>
 	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
- 	<span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">;</span>
-	
+ 	<span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
 
+	<span class="c">/**</span>
+<span class="c">	* The NodeFocusManager class is a plugin for a Node instance.  The class is used </span>
+<span class="c">	* via the &lt;a href=&quot;Node.html#method_plug&quot;&gt;&lt;code&gt;plug&lt;/code&gt;&lt;/a&gt; method of Node </span>
+<span class="c">	* and should not be instantiated directly.</span>
+<span class="c">	* @namespace plugin</span>
+<span class="c">	* @class NodeFocusManager</span>
+<span class="c">	*/</span>	
+	<span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
-<span class="c">/**</span>
-<span class="c">* The NodeFocusManager class is a plugin for a Node instance.  The class is used </span>
-<span class="c">* via the &lt;a href=&quot;Node.html#method_plug&quot;&gt;&lt;code&gt;plug&lt;/code&gt;&lt;/a&gt; method of Node </span>
-<span class="c">* and should not be instantiated directly.</span>
-<span class="c">* @namespace plugin</span>
-<span class="c">* @class NodeFocusManager</span>
-<span class="c">*/</span>	
-<span class="k">var</span> <span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+		<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
-	<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-
-<span class="o">};</span>
+	<span class="o">};</span>
 
 
 <span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
@@ -447,9 +445,13 @@
 
 		<span class="k">var</span> <span class="nx">oFocusedNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_focusedNode</span><span class="o">,</span>
 			<span class="nx">focusClass</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUS_CLASS</span><span class="o">),</span>
+			<span class="nx">sClassName</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">sClassName</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">?</span> 
-				<span class="nx">focusClass</span> <span class="o">:</span> <span class="nx">focusClass</span><span class="o">.</span><span class="nx">className</span><span class="o">;</span>
-		
+				<span class="nx">focusClass</span> <span class="o">:</span> <span class="nx">focusClass</span><span class="o">.</span><span class="nx">className</span><span class="o">;</span>		
+		<span class="o">}</span>
+
 		<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="nx">sClassName</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">oFocusedNode</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
 		<span class="o">}</span>
@@ -582,11 +584,10 @@
 <span class="c"></span>
 			<span class="k">if</span> <span class="o">(</span><span class="nx">aHandlers</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
 
-		    	<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> 
-						<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">)));</span>
+						<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousedown&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousedown&quot;</span><span class="o">,</span> 
+					<span class="k">this</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
 
 				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
 						<span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;keysChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_attachKeyHandler</span><span class="o">));</span>
@@ -626,21 +627,20 @@
 		<span class="k">var</span> <span class="nx">oHost</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
 			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
 			<span class="nx">bChildNode</span> <span class="o">=</span> <span class="nx">oHost</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">),</span>
-			<span class="nx">node</span><span class="o">;</span>
-	
+			<span class="nx">node</span><span class="o">,</span>
 
-		<span class="k">var</span> <span class="nx">getFocusable</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">getFocusable</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="k">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+				<span class="k">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oHost</span><span class="o">))</span> <span class="o">{</span>
-				<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
-								<span class="nx">getFocusable</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parentNode&quot;</span><span class="o">));</span>
-			<span class="o">};</span>
+				<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oHost</span><span class="o">))</span> <span class="o">{</span>
+					<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
+									<span class="nx">getFocusable</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parentNode&quot;</span><span class="o">));</span>
+				<span class="o">}</span>
 		
-			<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
+				<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
 
-		<span class="o">};</span>
+			<span class="o">};</span>
 		
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">bChildNode</span><span class="o">)</span> <span class="o">{</span>
