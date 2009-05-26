@@ -98,4 +98,4 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceTextSchema = DataSourceTextSchema;
+Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;

@@ -618,7 +618,7 @@ Y.extend(Slider, Y.Widget, {
 
         ddConf[this._key.ddStick] = true;
 
-        this._dd = new Y.DD.Drag(ddConf).plug(Y.plugin.DDConstrained, {
+        this._dd = new Y.DD.Drag(ddConf).plug(Y.Plugin.DDConstrained, {
             constrain2node : this.get(RAIL)
         });
 

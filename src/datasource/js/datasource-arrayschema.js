@@ -98,4 +98,4 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
+Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
