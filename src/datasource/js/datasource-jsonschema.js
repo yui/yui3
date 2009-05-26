@@ -98,4 +98,4 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
+Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;

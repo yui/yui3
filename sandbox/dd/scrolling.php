@@ -99,7 +99,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-scroll', function(Y) {
 
     dd4 = new Y.DD.Drag({
         node: '#drag4'
-    }).plug(Y.plugin.DDWinScroll);
+    }).plug(Y.Plugin.DDWinScroll);
 
 });
 
