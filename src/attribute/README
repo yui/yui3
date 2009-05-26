@@ -57,6 +57,9 @@
   properties which can be modified after is has been added are limited to getter,
   readOnly, writeOnce and broadcast.
 
+* Added support for lazy attribute configuration. Attributes are configured on
+  first call to get/set.
+
 3.0.0PR2
 
 * Added valueFn support, to allowing static 

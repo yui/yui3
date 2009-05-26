@@ -230,6 +230,8 @@
                 node.set('id', id);
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));           
         },
         /**
         * @private

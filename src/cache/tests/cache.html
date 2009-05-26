@@ -3,6 +3,7 @@
 <head>
 <title>Cache Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/cache/cache-debug.js"></script>
 </head>
 
 <body class="yui-skin-sam">
@@ -13,7 +14,7 @@
 (function() {
     YUI({
         base: "../../../build/",
-        filter: "debug",
+        //filter: "debug",
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "cache", function(Y) {

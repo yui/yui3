@@ -841,6 +841,8 @@
             }
             this._prep();
             this._dragThreshMet = false;
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));
         },
         /**
         * @private

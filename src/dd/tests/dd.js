@@ -127,17 +127,19 @@ YUI({
             });
         },
         test_drag_move: function() {
-            _fakeMove(dd, moveCount);
-            Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
-            Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
-            Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
-            Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
-            Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
-            Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
+            dd.on('drag:end', function() {
+                Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
+                Y.Assert.areSame(1, _count['drag:drophit'], 'drag:drophit should fire 1 time');
+                Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
+                Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
+                Y.Assert.areSame(1, _count['drag:enter'], 'drag:enter should fire 1 time');
+                Y.Assert.areSame(30, _count['drag:over'], 'drag:over should fire 30 times');
 
-            Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
-            Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
-            Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
+                Y.Assert.areSame(30, _count['drop:over'], 'drop:over should fire 30 times');
+                Y.Assert.areSame(1, _count['drop:enter'], 'drop:enter should fire 1 time');
+                Y.Assert.areSame(1, _count['drop:hit'], 'drop:hit should fire 1 time');
+            });
+            _fakeMove(dd, moveCount);
         },
         test_drag_destroy: function() {
             dd.destroy();
