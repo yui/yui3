@@ -535,11 +535,10 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			if (aHandlers.length === 0) {
 
-		    	aHandlers.push(
-					Y.on("focus", Y.bind(this._onDocFocus, this), 
-						Y.Node.getDOMNode(oDocument)));
+						aHandlers.push(oDocument.on("focus", this._onDocFocus, this));
 
-				aHandlers.push(oDocument.on("mousedown", this._onDocMouseDown, this));
+				aHandlers.push(oDocument.on("mousedown", 
+					this._onDocMouseDown, this));
 
 				aHandlers.push(
 						this.after("keysChange", this._attachKeyHandler));

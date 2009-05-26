@@ -716,8 +716,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oDoc = oRootMenu.get("ownerDocument");
 
 		    oDoc.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
-
-			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), Y.Node.getDOMNode(oDoc));
+			oDoc.on("focus", menuNav._onDocFocus, menuNav);
 
 			menuNav._initFocusManager();
 
