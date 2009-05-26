@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dd  plugin.Drop   (YUI Library)</title>
+	<title>API: dd  Plugin.DDWindowScroll   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>dd&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
-                 &gt; plugin.Drop 
+                 &gt; Plugin.DDWindowScroll 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,9 +48,9 @@
 
                         
                         
-                            Class <b property="yui:name">plugin.Drop</b>
+                            Class <b property="yui:name">Plugin.DDWindowScroll</b>
                         <span class="extends">
-                           - extends <a href="DD.Drop.html" title="DD.Drop">DD.Drop</a>
+                           - extends <a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a>
                         </span>
 
                     </h2>
@@ -60,14 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        This is a simple Drop plugin that can be attached to a Node via the plug method.
+                        Extends the Scroll class to make the window scroll while dragging.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">plugin.Drop</strong>
+                                <strong property="yui:name">Plugin.DDWindowScroll</strong>
                                 <code>
                                     (
                                     )
@@ -81,66 +81,27 @@
                     </div>
                     
                     <div rel="yui:properties" resource="#properties">
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_NAME">
-                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
-                                        - <code><span property="yui:type">{String}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            dd-drop-plugin
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_NS">
-                                    <h4><a name="property_NS" property="yui:name">NS</a>
-                                        - <code><span property="yui:type">{String}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                         <div rel="yui:inheritance">
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Drop.html">
-                            <h4>Properties inherited from <a href="DD.Drop.html" property="yui:name" title="DD.Drop">DD.Drop</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Scroll.html">
+                            <h4>Properties inherited from <a href="DD.Scroll.html" property="yui:name" title="DD.Scroll">DD.Scroll</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
-                                        <span rel="yui:property" resource="DD.Drop.html#property__groups">
-                                        <a class="private" href="DD.Drop.html#property__groups" property="yui:name" title="_groups">_groups</a><span class="private">,</span>
+                                        <span rel="yui:property" resource="DD.Scroll.html#property__dimCache">
+                                        <a class="private" href="DD.Scroll.html#property__dimCache" property="yui:name" title="_dimCache">_dimCache</a><span class="private">,</span>
                                         </span>
                                     
-                                        <span rel="yui:property" resource="DD.Drop.html#property__valid">
-                                        <a class="private" href="DD.Drop.html#property__valid" property="yui:name" title="_valid">_valid</a><span class="private">,</span>
+                                        <span rel="yui:property" resource="DD.Scroll.html#property__scrolling">
+                                        <a class="private" href="DD.Scroll.html#property__scrolling" property="yui:name" title="_scrolling">_scrolling</a><span class="private">,</span>
                                         </span>
                                     
-                                        <span rel="yui:property" resource="DD.Drop.html#property_overTarget">
-                                        <a class="" href="DD.Drop.html#property_overTarget" property="yui:name" title="overTarget">overTarget</a><span class="">,</span>
+                                        <span rel="yui:property" resource="DD.Scroll.html#property__scrollTimer">
+                                        <a class="private" href="DD.Scroll.html#property__scrollTimer" property="yui:name" title="_scrollTimer">_scrollTimer</a><span class="private">,</span>
                                         </span>
                                     
-                                        <span rel="yui:property" resource="DD.Drop.html#property_region">
-                                        <a class="" href="DD.Drop.html#property_region" property="yui:name" title="region">region</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="DD.Drop.html#property_shim">
-                                        <a class="" href="DD.Drop.html#property_shim" property="yui:name" title="shim">shim</a>
+                                        <span rel="yui:property" resource="DD.Scroll.html#property__vpRegionCache">
+                                        <a class="private" href="DD.Scroll.html#property__vpRegionCache" property="yui:name" title="_vpRegionCache">_vpRegionCache</a>
                                         </span>
                                     
                                 </code>
@@ -164,45 +125,36 @@
                     <div rel="yui:methods" resource="#methods">
 
                         <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="DD.Drop.html">
-                                <h4>Methods inherited from <a href="DD.Drop.html" property="yui:name" title="DD.Drop">DD.Drop</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="DD.Scroll.html">
+                                <h4>Methods inherited from <a href="DD.Scroll.html" property="yui:name" title="DD.Scroll">DD.Scroll</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__activateShim">                                        
-                                            <a class="private" href="DD.Drop.html#method__activateShim" property="yui:name" title="_activateShim">_activateShim</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method__cancelScroll">                                        
+                                            <a class="private" href="DD.Scroll.html#method__cancelScroll" property="yui:name" title="_cancelScroll">_cancelScroll</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__createEvents">                                        
-                                            <a class="private" href="DD.Drop.html#method__createEvents" property="yui:name" title="_createEvents">_createEvents</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method__checkWinScroll">                                        
+                                            <a class="private" href="DD.Scroll.html#method__checkWinScroll" property="yui:name" title="_checkWinScroll">_checkWinScroll</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__createShim">                                        
-                                            <a class="private" href="DD.Drop.html#method__createShim" property="yui:name" title="_createShim">_createShim</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method__getVPRegion">                                        
+                                            <a class="private" href="DD.Scroll.html#method__getVPRegion" property="yui:name" title="_getVPRegion">_getVPRegion</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__deactivateShim">                                        
-                                            <a class="private" href="DD.Drop.html#method__deactivateShim" property="yui:name" title="_deactivateShim">_deactivateShim</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method__initScroll">                                        
+                                            <a class="private" href="DD.Scroll.html#method__initScroll" property="yui:name" title="_initScroll">_initScroll</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__handleOut">                                        
-                                            <a class="private" href="DD.Drop.html#method__handleOut" property="yui:name" title="_handleOut">_handleOut</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method__setDimCache">                                        
+                                            <a class="private" href="DD.Scroll.html#method__setDimCache" property="yui:name" title="_setDimCache">_setDimCache</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__handleOutEvent">                                        
-                                            <a class="private" href="DD.Drop.html#method__handleOutEvent" property="yui:name" title="_handleOutEvent">_handleOutEvent</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method_align">                                        
+                                            <a class="" href="DD.Scroll.html#method_align" property="yui:name" title="align">align</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__handleOverEvent">                                        
-                                            <a class="private" href="DD.Drop.html#method__handleOverEvent" property="yui:name" title="_handleOverEvent">_handleOverEvent</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method_end">                                        
+                                            <a class="" href="DD.Scroll.html#method_end" property="yui:name" title="end">end</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method__handleOverTarget">                                        
-                                            <a class="private" href="DD.Drop.html#method__handleOverTarget" property="yui:name" title="_handleOverTarget">_handleOverTarget</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method_start">                                        
+                                            <a class="" href="DD.Scroll.html#method_start" property="yui:name" title="start">start</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method_destructor">                                        
-                                            <a class="private" href="DD.Drop.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method_inGroup">                                        
-                                            <a class="" href="DD.Drop.html#method_inGroup" property="yui:name" title="inGroup">inGroup</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method_initializer">                                        
-                                            <a class="private" href="DD.Drop.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DD.Drop.html#method_sizeShim">                                        
-                                            <a class="" href="DD.Drop.html#method_sizeShim" property="yui:name" title="sizeShim">sizeShim</a>
+                                            <span rel="yui:method" resource="DD.Scroll.html#method_toString">                                        
+                                            <a class="" href="DD.Scroll.html#method_toString" property="yui:name" title="toString">toString</a>
                                             </span>
                                     </code>
                                 </div>
@@ -241,9 +193,6 @@
                                             <span rel="yui:method" resource="Base.html#method_destroy">                                        
                                             <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Base.html#method_get">                                        
-                                            <a class="" href="Base.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
-                                            </span>
                                             <span rel="yui:method" resource="Base.html#method_init">                                        
                                             <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
                                             </span>
@@ -257,39 +206,82 @@
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_windowScrollChange">
+                                    <h4>
+                                        <a name="event_windowScrollChange">windowScrollChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">windowScrollChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'windowScroll' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Drop.html">
-                            <h4>Events inherited from <a href="DD.Drop.html" property="yui:name" title="DD.Drop">DD.Drop</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Scroll.html">
+                            <h4>Events inherited from <a href="DD.Scroll.html" property="yui:name" title="DD.Scroll">DD.Scroll</a>:</h4>
                             <div class="content" rel="yui:events">
                                 <code>
-                                        <span rel="yui:event" resource="DD.Drop.html#event_bubblesChange">
-                                        <a class="" href="DD.Drop.html#event_bubblesChange" property="yui:name" title="bubblesChange">bubblesChange</a><span class="">,</span>
+                                        <span rel="yui:event" resource="DD.Scroll.html#event_bufferChange">
+                                        <a class="" href="DD.Scroll.html#event_bufferChange" property="yui:name" title="bufferChange">bufferChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_drop:enter">
-                                        <a class="" href="DD.Drop.html#event_drop:enter" property="yui:name" title="drop:enter">drop:enter</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_horizontalChange">
+                                        <a class="" href="DD.Scroll.html#event_horizontalChange" property="yui:name" title="horizontalChange">horizontalChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_drop:exit">
-                                        <a class="" href="DD.Drop.html#event_drop:exit" property="yui:name" title="drop:exit">drop:exit</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_hostChange">
+                                        <a class="" href="DD.Scroll.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_drop:hit">
-                                        <a class="" href="DD.Drop.html#event_drop:hit" property="yui:name" title="drop:hit">drop:hit</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_parentScrollChange">
+                                        <a class="" href="DD.Scroll.html#event_parentScrollChange" property="yui:name" title="parentScrollChange">parentScrollChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_drop:over">
-                                        <a class="" href="DD.Drop.html#event_drop:over" property="yui:name" title="drop:over">drop:over</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_scrollDelayChange">
+                                        <a class="" href="DD.Scroll.html#event_scrollDelayChange" property="yui:name" title="scrollDelayChange">scrollDelayChange</a>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_groupsChange">
-                                        <a class="" href="DD.Drop.html#event_groupsChange" property="yui:name" title="groupsChange">groupsChange</a>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_verticalChange">
+                                        <a class="" href="DD.Scroll.html#event_verticalChange" property="yui:name" title="verticalChange">verticalChange</a>
                                         </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_lockChange">
-                                        <a class="" href="DD.Drop.html#event_lockChange" property="yui:name" title="lockChange">lockChange</a>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_nodeChange">
-                                        <a class="" href="DD.Drop.html#event_nodeChange" property="yui:name" title="nodeChange">nodeChange</a>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DD.Drop.html#event_paddingChange">
-                                        <a class="" href="DD.Drop.html#event_paddingChange" property="yui:name" title="paddingChange">paddingChange</a>
+                                                                            <span rel="yui:event" resource="DD.Scroll.html#event_windowScrollChange">
+                                        <a class="" href="DD.Scroll.html#event_windowScrollChange" property="yui:name" title="windowScrollChange">windowScrollChange</a>
                                         </span>
                                     
                                 </code>
@@ -319,26 +311,52 @@
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_windowScroll">
+                                    <h4><a name="config_windowScroll">windowScroll</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Turn on window scroll support, default: true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Drop.html">
-                            <h4>Configuration attributes inherited from <a href="DD.Drop.html" property="yui:name" title="DD.Drop">DD.Drop</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="DD.Scroll.html">
+                            <h4>Configuration attributes inherited from <a href="DD.Scroll.html" property="yui:name" title="DD.Scroll">DD.Scroll</a>:</h4>
                             <div class="content" rel="yui:attributes">
                                 <code>
-                                        <span rel="yui:attribute" resource="DD.Drop.html#config_bubbles">                                        
-                                        <a class="" href="DD.Drop.html#config_bubbles" property="yui:name" title="bubbles">bubbles</a><span class="">,</span>
+                                        <span rel="yui:attribute" resource="DD.Scroll.html#config_buffer">                                        
+                                        <a class="" href="DD.Scroll.html#config_buffer" property="yui:name" title="buffer">buffer</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="DD.Drop.html#config_groups">                                        
-                                        <a class="" href="DD.Drop.html#config_groups" property="yui:name" title="groups">groups</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_horizontal">                                        
+                                        <a class="" href="DD.Scroll.html#config_horizontal" property="yui:name" title="horizontal">horizontal</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="DD.Drop.html#config_lock">                                        
-                                        <a class="" href="DD.Drop.html#config_lock" property="yui:name" title="lock">lock</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_host">                                        
+                                        <a class="" href="DD.Scroll.html#config_host" property="yui:name" title="host">host</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="DD.Drop.html#config_node">                                        
-                                        <a class="" href="DD.Drop.html#config_node" property="yui:name" title="node">node</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_parentScroll">                                        
+                                        <a class="" href="DD.Scroll.html#config_parentScroll" property="yui:name" title="parentScroll">parentScroll</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="DD.Drop.html#config_padding">                                        
-                                        <a class="" href="DD.Drop.html#config_padding" property="yui:name" title="padding">padding</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_scrollDelay">                                        
+                                        <a class="" href="DD.Scroll.html#config_scrollDelay" property="yui:name" title="scrollDelay">scrollDelay</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_vertical">                                        
+                                        <a class="" href="DD.Scroll.html#config_vertical" property="yui:name" title="vertical">vertical</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="DD.Scroll.html#config_windowScroll">                                        
+                                        <a class="" href="DD.Scroll.html#config_windowScroll" property="yui:name" title="windowScroll">windowScroll</a>
                                         </span>
                                         
                                 </code>
@@ -420,12 +438,12 @@
                                 <li class=""><a href="DD.Drag.html" title="DD.Drag">DD.Drag</a></li>
                                 <li class=""><a href="DD.Drop.html" title="DD.Drop">DD.Drop</a></li>
                                 <li class=""><a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a></li>
-                                <li class=""><a href="plugin.DDNodeScroll.html" title="plugin.DDNodeScroll">plugin.DDNodeScroll</a></li>
-                                <li class=""><a href="plugin.DDProxy.html" title="plugin.DDProxy">plugin.DDProxy</a></li>
-                                <li class=""><a href="plugin.DDWindowScroll.html" title="plugin.DDWindowScroll">plugin.DDWindowScroll</a></li>
-                                <li class=""><a href="plugin.Drag.html" title="plugin.Drag">plugin.Drag</a></li>
-                                <li class=""><a href="plugin.DragConstrained.html" title="plugin.DragConstrained">plugin.DragConstrained</a></li>
-                                <li class="selected"><a href="plugin.Drop.html" title="plugin.Drop">plugin.Drop</a></li>
+                                <li class=""><a href="Plugin.DDNodeScroll.html" title="Plugin.DDNodeScroll">Plugin.DDNodeScroll</a></li>
+                                <li class=""><a href="Plugin.DDProxy.html" title="Plugin.DDProxy">Plugin.DDProxy</a></li>
+                                <li class="selected"><a href="Plugin.DDWindowScroll.html" title="Plugin.DDWindowScroll">Plugin.DDWindowScroll</a></li>
+                                <li class=""><a href="Plugin.Drag.html" title="Plugin.Drag">Plugin.Drag</a></li>
+                                <li class=""><a href="Plugin.DragConstrained.html" title="Plugin.DragConstrained">Plugin.DragConstrained</a></li>
+                                <li class=""><a href="Plugin.Drop.html" title="Plugin.Drop">Plugin.Drop</a></li>
                         </ul>
                     </div>
 
@@ -445,16 +463,21 @@
                         </ul>
                     </div>
 
-                    <div id="propertyList" class="module">
-                        <h4>Properties</h4>
+
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
-                                <li class=""><a href="#property_NS" title="NS">NS</a></li>
+                                <li class=""><a href="#event_windowScrollChange" title="windowScrollChange">windowScrollChange</a></li>
                         </ul>
                     </div>
 
-
-
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_windowScroll" title="windowScroll">windowScroll</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -465,7 +488,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DD.Scroll", "name": "align", "url": "DD.Scroll.html#method_align", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "buffer", "url": "DD.Scroll.html#config_buffer", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "bufferChange", "url": "DD.Scroll.html#event_bufferChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_cancelScroll", "url": "DD.Scroll.html#method__cancelScroll", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_checkWinScroll", "url": "DD.Scroll.html#method__checkWinScroll", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_dimCache", "url": "DD.Scroll.html#property__dimCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "end", "url": "DD.Scroll.html#method_end", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_getVPRegion", "url": "DD.Scroll.html#method__getVPRegion", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "horizontal", "url": "DD.Scroll.html#config_horizontal", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "horizontalChange", "url": "DD.Scroll.html#event_horizontalChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "host", "url": "DD.Scroll.html#config_host", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "hostChange", "url": "DD.Scroll.html#event_hostChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_initScroll", "url": "DD.Scroll.html#method__initScroll", "type": "method"}, {"access": "", "host": "plugin.Drop", "name": "NAME", "url": "plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "plugin.DDNodeScroll", "name": "node", "url": "plugin.DDNodeScroll.html#config_node", "type": "config"}, {"access": "", "host": "plugin.DDNodeScroll", "name": "nodeChange", "url": "plugin.DDNodeScroll.html#event_nodeChange", "type": "event"}, {"access": "", "host": "plugin.Drop", "name": "NS", "url": "plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "parentScroll", "url": "DD.Scroll.html#config_parentScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "parentScrollChange", "url": "DD.Scroll.html#event_parentScrollChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelay", "url": "DD.Scroll.html#config_scrollDelay", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelayChange", "url": "DD.Scroll.html#event_scrollDelayChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_scrolling", "url": "DD.Scroll.html#property__scrolling", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_scrollTimer", "url": "DD.Scroll.html#property__scrollTimer", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_setDimCache", "url": "DD.Scroll.html#method__setDimCache", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "start", "url": "DD.Scroll.html#method_start", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "toString", "url": "DD.Scroll.html#method_toString", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "vertical", "url": "DD.Scroll.html#config_vertical", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "verticalChange", "url": "DD.Scroll.html#event_verticalChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_vpRegionCache", "url": "DD.Scroll.html#property__vpRegionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "windowScroll", "url": "DD.Scroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "plugin.DDWindowScroll", "name": "windowScroll", "url": "plugin.DDWindowScroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "windowScrollChange", "url": "DD.Scroll.html#event_windowScrollChange", "type": "event"}, {"access": "", "host": "plugin.DDWindowScroll", "name": "windowScrollChange", "url": "plugin.DDWindowScroll.html#event_windowScrollChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DD.Scroll", "name": "align", "url": "DD.Scroll.html#method_align", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "buffer", "url": "DD.Scroll.html#config_buffer", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "bufferChange", "url": "DD.Scroll.html#event_bufferChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_cancelScroll", "url": "DD.Scroll.html#method__cancelScroll", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_checkWinScroll", "url": "DD.Scroll.html#method__checkWinScroll", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_dimCache", "url": "DD.Scroll.html#property__dimCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "end", "url": "DD.Scroll.html#method_end", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_getVPRegion", "url": "DD.Scroll.html#method__getVPRegion", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "horizontal", "url": "DD.Scroll.html#config_horizontal", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "horizontalChange", "url": "DD.Scroll.html#event_horizontalChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "host", "url": "DD.Scroll.html#config_host", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "hostChange", "url": "DD.Scroll.html#event_hostChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_initScroll", "url": "DD.Scroll.html#method__initScroll", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "parentScroll", "url": "DD.Scroll.html#config_parentScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "parentScrollChange", "url": "DD.Scroll.html#event_parentScrollChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelay", "url": "DD.Scroll.html#config_scrollDelay", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelayChange", "url": "DD.Scroll.html#event_scrollDelayChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_scrolling", "url": "DD.Scroll.html#property__scrolling", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_scrollTimer", "url": "DD.Scroll.html#property__scrollTimer", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_setDimCache", "url": "DD.Scroll.html#method__setDimCache", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "start", "url": "DD.Scroll.html#method_start", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "toString", "url": "DD.Scroll.html#method_toString", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "vertical", "url": "DD.Scroll.html#config_vertical", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "verticalChange", "url": "DD.Scroll.html#event_verticalChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_vpRegionCache", "url": "DD.Scroll.html#property__vpRegionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "windowScroll", "url": "DD.Scroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "Plugin.DDWindowScroll", "name": "windowScroll", "url": "Plugin.DDWindowScroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "windowScrollChange", "url": "DD.Scroll.html#event_windowScrollChange", "type": "event"}, {"access": "", "host": "Plugin.DDWindowScroll", "name": "windowScrollChange", "url": "Plugin.DDWindowScroll.html#event_windowScrollChange", "type": "event"}];
 </script>
 </body>
 </html>

@@ -329,7 +329,6 @@ YUI.add('dd-scroll', function(Y) {
      */
     var WS = function() {
         WS.superclass.constructor.apply(this, arguments);
-
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
         /**
@@ -345,9 +344,14 @@ YUI.add('dd-scroll', function(Y) {
                 }
                 return scroll;
             }
+        },
+    });
+    Y.extend(WS, S, {
+        //Shouldn't have to do this..
+        initializer: function() {
+            this.set('windowScroll', this.get('windowScroll'));
         }
     });
-    Y.extend(WS, S);
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -375,7 +379,7 @@ YUI.add('dd-scroll', function(Y) {
                 var n = Y.get(node);
                 if (!n) {
                     if (node !== false) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                        Y.error('DDNodeScroll: Invalid Node Given: ' + node);
                     }
                 } else {
                     n = n.item(0);

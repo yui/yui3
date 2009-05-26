@@ -3,43 +3,9 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" rel="stylesheet" href="../../profile-report/table.css">
     <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css">
     <style type="text/css">
-.yui-table {
-    display: inline;
-    float: left;
-    font-family: arial, sans-serif;
-    margin: 2em;
-}
-.yui-table caption {
-    font-weight: bold;
-    color: #c60;
-}
-.yui-table table {
-    border-collapse: collapse;
-    border: 1px solid #ccc;
-}
-.yui-table thead {
-    background: #684;
-    color: #fff;
-}
-.yui-table thead th {
-    padding: 3px 4px;
-}
-.yui-table tfoot {
-    background: #ac8;
-}
-.yui-table tfoot td {
-    padding: 3px 6px;
-    font-weight: bold;
-}
-.yui-table tbody td {
-    border: 1px solid #ccc;
-    padding: 3px 6px;
-}
-.yui-table td+td {
-    text-align: right;
-}
 .markup { 
     clear: both;
 }
@@ -60,172 +26,26 @@
             <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
         </div>
     </div>
+    <button type="button" id="report">Report</button>
 </div>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<!--script type="text/javascript" src="../../../build/console/console-filters.js"></script-->
+<script type="text/javascript" src="../../profile-report/profiler.js"></script>
+<script type="text/javascript" src="../../profile-report/profile-report.js"></script>
+<script type="text/javascript" src="../../profile-report/table.js"></script>
 <script type="text/javascript">
-YUI.add('table',function (Y) {
-
-    function Table() {
-        Table.superclass.constructor.apply(this,arguments);
-    }
-
-    Table.NAME = 'table';
-
-    Table.ATTRS = {
-        columns : {
-            value : [],
-            validator : Y.Lang.isArray
-        },
-
-        caption : {
-            value : null,
-            validator : function (v) {
-                return Y.Lang.isString(v) || Y.Lang.isNull(v);
-            }
-        },
-
-        data : {
-            value : [],
-            validator : Y.Lang.isArray
-        },
-
-        totals : {
-            value : null,
-            validator : function (v) {
-                return Y.Lang.isArray(v) || Y.Lang.isNull(v);
-            }
-        }
-    };
-
-    Y.extend(Table, Y.Widget, {
-        renderUI : function () {
-            this._table = Y.Node.create(
-                '<table>' +
-                    this._captionHTML() +
-                    this._theadHTML() +
-                    this._tfootHTML() +
-                    this._tbodyHTML() +
-                '<table>');
-
-            this.get('contentBox').appendChild(this._table);
-        },
-
-        _captionHTML : function () {
-            var cap = this.get('caption');
-            return cap ? '<caption>' + cap + '</caption>' : '';
-        },
-
-        _theadHTML : function () {
-            return '<thead><tr><th>' +
-                this.get('columns').join('</th><th>') +
-                '</th></tr></thead>';
-        },
-
-        _tfootHTML : function () {
-            var totals = this.get('totals'),
-                cols = this.get('columns'),
-                data = this.get('data'),
-                html,total,i,len;
-
-            if (totals) {
-                html = '<tfoot><tr>';
-
-                for (i = 0, len = cols.length; i < len; ++i) {
-                    if (totals[i]) {
-                        total = 0;
-                        Y.Array.each(data, function (rec) {
-                            total += +(rec[cols[i]]) || 0;
-                        });
-                        html += '<td>' + total + '</td>';
-                    } else {
-                        html += '<td></td>';
-                    }
-                }
-
-                return html + '</tr></tfoot>';
-            }
-
-            return '';
-        },
-
-        _tbodyHTML : function () {
-            var cols = this.get('columns'),
-                data = this.get('data'),
-                rows = [], r,
-                i, len,
-                j, jlen;
-
-            for (i = 0, len = data.length; i < len; ++i) {
-                r = '';
-                for (j = 0, jlen = cols.length; j < jlen; ++j) {
-                    r += '<td>' + data[i][cols[j]] + '</td>';
-                }
-                if (r) {
-                    rows.push('<tr>' + r + '</tr>');
-                }
-            }
-
-            return '<tbody>' + rows.join('') + '</tbody>';
-        }
-    });
-
-    Y.Table = Table;
-
-},'@VERSION@',{requires:['widget']});
-
 YUI({
     base: '../../../build/',
-    //filter: 'debug',
+    filter: 'raw',
     //logInclude : { global: true },
     useBrowserConsole:false
-}).use('event','table','slider','profiler',function (Y) {
+}).use('event','profile-report','table','profiler','slider',function (Y) {
 
-var P = Y.Profiler;
+Y.get('#report').on('click',function () { report("Activity since last report"); });
 
-function normalizeProfilerData() {
-    var raw = P.getFullReport(function (x) { return x.calls > 0; }),
-        data = [], name, rpt, i, total;
-
-    for (name in raw) {
-        rpt = raw[name];
-
-        total = 0;
-        for (i = rpt.points.length - 1; i >=0 ; --i) {
-            total += rpt.points[i];
-        }
-
-        data.push({
-            fn : name.replace(/.*\./,''),
-            min : rpt.min.toFixed(2),
-            max : rpt.max.toFixed(2),
-            avg : rpt.avg.toFixed(2),
-            calls : rpt.calls,
-            total : total.toFixed(2)
-        });
-    }
-
-    return data;
-}
-
-function report(caption) {
-    new Y.Table({
-        caption : caption,
-        columns : ['fn','calls','min','max','avg','total'],
-        data : normalizeProfilerData(),
-        totals : [false, true, false, false, false, true]
-    }).render();
-
-    P.clear();
-}
-
-/****************************************************************************/
-/***********************  Testing area begins here **************************/
-/****************************************************************************/
-P.registerConstructor('Slider',Y);
+Y.Profiler.registerConstructor('Slider',Y);
 
 var s = new Y.Slider();
-report("Empty construction");
+Y.Profiler.renderFullReport("Empty construction");
 
 s = new Y.Slider({
     contentBox : '#slider',
@@ -236,10 +56,10 @@ s = new Y.Slider({
     minGutter : -7,
     maxGutter : -30
 });
-report("Construction with configuration");
+Y.Profiler.renderFullReport("Construction with configuration");
 
 s.render();
-report("Render");
+Y.Profiler.renderFullReport("Render");
 });
 </script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>

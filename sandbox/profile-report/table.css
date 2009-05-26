@@ -1,0 +1,35 @@
+.yui-table {
+    display: inline;
+    float: left;
+    font-family: arial, sans-serif;
+    margin: 2em;
+}
+.yui-table caption {
+    font-weight: bold;
+    color: #c60;
+}
+.yui-table table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+.yui-table thead {
+    background: #684;
+    color: #fff;
+}
+.yui-table thead th {
+    padding: 3px 4px;
+}
+.yui-table tfoot {
+    background: #ac8;
+}
+.yui-table tfoot td {
+    padding: 3px 6px;
+    font-weight: bold;
+}
+.yui-table tbody td {
+    border: 1px solid #ccc;
+    padding: 3px 6px;
+}
+.yui-table td+td {
+    text-align: right;
+}

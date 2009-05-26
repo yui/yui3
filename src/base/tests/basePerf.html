@@ -5,7 +5,7 @@
 </head>
 <body class="yui-skin-sam">
 
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
 <p>This test creates a class with 20 attributes and extends from Y.Base.</p>
 
@@ -13,7 +13,7 @@
 
 <script>
 
-YUI({base: '../../../build/'}).use('dump', 'base', 'node', function(Y) {
+YUI({base: '../../../build/', filter:"raw"}).use('dump', 'base', 'node', function(Y) {
 
     var res = document.getElementById('results');
 
@@ -137,24 +137,17 @@ YUI({base: '../../../build/'}).use('dump', 'base', 'node', function(Y) {
         foo: function() {}
     });
 
-    var start, end;
+    var start, end, i, t, n = 1000;
 
     // console.profile("Base");
     start = new Date().getTime();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
-    new Test();
+    for (i = 0; i < n; i++) {
+        t = new Test();
+    }
     end = new Date().getTime();
     // console.profileEnd();
-    
-    res.innerHTML = "Avg Time:" + ((end-start)/10);
+
+    res.innerHTML = "Avg Time:" + ((end-start)/n);
 
     var t = new Test();
     res.innerHTML += "<pre>" + Y.dump(t.getAttrs()) + "</pre>";
