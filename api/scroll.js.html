@@ -376,7 +376,6 @@
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">WS</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">WS</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-
     <span class="o">};</span>
     <span class="nx">WS</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">S</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="o">{</span>
         <span class="c">/**</span>
@@ -392,9 +391,14 @@
                 <span class="o">}</span>
                 <span class="k">return</span> <span class="nx">scroll</span><span class="o">;</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+    <span class="o">});</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">WS</span><span class="o">,</span> <span class="nx">S</span><span class="o">,</span> <span class="o">{</span>
+        <span class="c">//Shouldn&#39;t have to do this..</span>
+<span class="c"></span>        <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;windowScroll&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;windowScroll&#39;</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">});</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">WS</span><span class="o">,</span> <span class="nx">S</span><span class="o">);</span>
     <span class="nx">WS</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">WS</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;winscroll&#39;</span><span class="o">;</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">DDWinScroll</span> <span class="o">=</span> <span class="nx">WS</span><span class="o">;</span>
     
@@ -422,7 +426,7 @@
                 <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;DD.Drag: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;DDNodeScroll: Invalid Node Given: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>
