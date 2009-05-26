@@ -59,10 +59,33 @@ YUI(yConfig).use('node', function(Y) {
         return val;
     };
 
+    Y.DOM.getStyle = function(node, att) {
+        var style = node.style,
+            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+            val = '';
+
+        if (style) {
+            if (att in CUSTOM_STYLES) {
+                if (CUSTOM_STYLES[att].get) {
+                    return CUSTOM_STYLES[att].get(node, att, style); // NOTE: return
+                } else if (typeof CUSTOM_STYLES[att] === 'string') {
+                    att = CUSTOM_STYLES[att];
+                }
+            }
+            val = style[att];
+            if (val === '') { // TODO: is empty string sufficient?
+                val = Y.DOM.getComputedStyle(node, att);
+            }
+        }
+
+        return val;
+    };
+
+
     Y.get('#one').on('click', function(e) {
         e.halt();
         var node = Y.get('#demo');
-        for (var i = 0; i < 3000; i++) {
+        for (var i = 0; i < 30000; i++) {
             node.getStyle('border');
         }
     });
@@ -72,7 +95,7 @@ YUI(yConfig2).use('node', function(Y) {
     Y.get('#two').on('click', function(e) {
         e.halt();
         var node = Y.get('#demo');
-        for (var i = 0; i < 3000; i++) {
+        for (var i = 0; i < 30000; i++) {
             node.getStyle('border');
         }
     });

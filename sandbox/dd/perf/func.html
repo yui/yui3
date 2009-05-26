@@ -10,45 +10,45 @@
 <div id="results"></div>
 
 <script>
-function foo() {
+function innerScoped() {
     var a=1, b=2, c=3, d=4, e=5;
-    function bar() {
-        return 'Bar :: ' + (a + b + c + d + e);
+    function innerScoped2() {
+        return (a + b + c + d + e);
     };
-    return bar();
+    return innerScoped2();
 };
 
-function foo3() {
+function innerPassed() {
     var a=1, b=2, c=3, d=4, e=5;
 
-    function bar3(a, b, c, d, e) {
-        return 'Bar :: ' + (a + b + c + d + e);
+    function innerPassed2(a, b, c, d, e) {
+        return (a + b + c + d + e);
     }
-    return bar3(a, b, c, d, e);
+    return innerPassed2(a, b, c, d, e);
 };
 
-function bar2(a, b, c, d, e) {
-    return 'Bar2 :: ' + (a + b + c + d + e);
+function outterPassed2(a, b, c, d, e) {
+    return (a + b + c + d + e);
 }
 
-function foo2() {
+function outterPassed() {
     var a=1, b=2, c=3, d=4, e=5;
-    return bar2(a, b, c, d, e);
+    return outterPassed2(a, b, c, d, e);
 }
 
 document.onclick = function() {
     var top = 30000;
     //console.profile('func');
     for (var i = 0; i < top; i++) {
-        foo();
+        innerScoped();
     }
 
     for (var i = 0; i < top; i++) {
-        foo2();
+        outterPassed();
     }
 
     for (var i = 0; i < top; i++) {
-        foo3();
+        innerPassed();
     }
 
     //console.profileEnd('func');
