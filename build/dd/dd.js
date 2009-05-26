@@ -1641,6 +1641,8 @@ YUI.add('dd-drag', function(Y) {
             }
             this._prep();
             this._dragThreshMet = false;
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));
         },
         /**
         * @private
@@ -2839,7 +2841,6 @@ YUI.add('dd-scroll', function(Y) {
      */
     var WS = function() {
         WS.superclass.constructor.apply(this, arguments);
-
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
         /**
@@ -2855,9 +2856,14 @@ YUI.add('dd-scroll', function(Y) {
                 }
                 return scroll;
             }
+        },
+    });
+    Y.extend(WS, S, {
+        //Shouldn't have to do this..
+        initializer: function() {
+            this.set('windowScroll', this.get('windowScroll'));
         }
     });
-    Y.extend(WS, S);
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -2885,7 +2891,7 @@ YUI.add('dd-scroll', function(Y) {
                 var n = Y.get(node);
                 if (!n) {
                     if (node !== false) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                        Y.error('DDNodeScroll: Invalid Node Given: ' + node);
                     }
                 } else {
                     n = n.item(0);
@@ -3184,6 +3190,8 @@ YUI.add('dd-drop', function(Y) {
                 node.set('id', id);
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));           
         },
         /**
         * @private
