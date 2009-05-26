@@ -2,7 +2,8 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui.js?asdf=asdf"></script>
+<!--
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
 <script type="text/javascript" src="../../build/event-custom/event-custom-debug.js"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js"></script>
@@ -10,8 +11,16 @@
 <script type="text/javascript" src="../../build/node/node.js"></script>
 <script type="text/javascript" src="../../build/dump/dump.js"></script>
 <script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+-->
 
 <body>
+<div id="container">
+<div id="n1">1</div>
+<div id="n2">2</div>
+<div id="n3">3</div>
+</div>
+<div id="echo"></div>
+
 
 
 <script>
@@ -20,24 +29,108 @@ if (typeof loadFirebugConsole == 'function') {
     loadFirebugConsole();
 }
 
-YUI({
+   var yui_config = {
+      // add MVP specific includes here, they will then be available to any
+      // YUI instantiation like: YUI(yui_config)
+      modules: {
+         'columnpicker-column': {
+            path: "../../../columnpicker/column.js"
+         },
+      },
+      base: function(o){
+         var nodes = document.getElementsByTagName('script'), i;
+         for (i=0; i<nodes.length; i=i+1) {
+            var match = nodes[i].src.match(/^(.*)yui[\.-].*js(\?.*)?$/);
+               base = match && match[1];
+            if (base) {
+               base = base.substring(0, base.length-4);
+               break;
+            }
+         }
+         return base;
+      }(),
+   }
 
-    base: '../../build/'
+YUI(yui_config).use('node', function(Y) {
 
-}).use('node', 'dump', 'substitute', function(Y) {
+    Y.log(Y.config.base);
 
-    var d = Y.get(document);
+    var divs = Y.all('#container > div');
 
-    d.on('somethinginteresting', function(e) {
-        Y.log(Y.dump(e));
+    divs.each(function(node, k) {
+        node.addAttr('clicks', {value: 0});
+        node.on('click', function(e) {
+            var count = this.get('clicks');
+            this.set('clicks', ++count);
+        });
+        node.on('clicksChange', function(e) {
+            Y.log('element ' + this.get('id') + ' clicked ' + e.newVal + ' times');
+        });
     });
 
-    var d2 = Y.get(document);
+    //
+    divs.on('clicksChange', function(e) {
+        Y.log('element ' + this.get.id + ' clicked ' + e.newVal + ' times');
+    });
 
-    d2.fire('somethinginteresting');
+    var yui_config = {};
+    // var nodes = Y.all('script'), yui_config = {};
 
+    // nodes.some(function(node){
+    //     var src = node.get('src');
+    //     // capture base in regexp, capture all variation of the yui file, 
+    //     // allow querystring, common in cache-busting and versioning schemes
+    //     var match = src.match(/^(.*)yui[\.-].*js(\?.*)?$/);
+    //         base = match && match[1];
+
+    //     if (base) {
+    //         Y.log(base);
+    //         yui_config.base = base;
+    //         return true;
+    //     }
+
+    // });
+
+    // var nodes = document.getElementsByTagName('script'), i;
+
+    // for (i=0; i<nodes.length; i=i+1) {
+    //     var match = nodes[i].src.match(/^(.*)yui[\.-].*js(\?.*)?$/);
+    //         base = match && match[1];
+    //     if (base) {
+    //         Y.log(base);
+    //         yui_config.base = base;
+    //         break;
+    //     }
+    // }
 
 });
+
+
+/*
+(function(){
+        var divs = YAHOO.util.Dom.getElementsBy(function(el){return true}, "div", "container");
+        var objEl = {};
+        var echo = YAHOO.util.Dom.get("echo");
+        for(var i = 0, l = divs.length; i<l; i++) {
+            objEl[divs[i].id] = new YAHOO.util.Element(divs[i]);
+            objEl[divs[i].id].setAttributeConfig("clicks",
+                {
+                    value : 0
+                }
+            );
+            objEl[divs[i].id].subscribe("clicksChange", function(args) {
+                echo.innerHTML = "element " + this.get("element").id + " was clicked " + args.newValue + " times";
+            });
+        }
+        YAHOO.util.Event.addListener(divs, "click", function(ev) {
+                var el = YAHOO.util.Event.getTarget(ev);
+                var clicks = objEl[el.id].get("clicks");
+                clicks += 1;
+                objEl[el.id].set("clicks", clicks);
+        });
+})();
+*/
+
 
 </script>
 
