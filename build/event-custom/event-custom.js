@@ -1559,7 +1559,8 @@ ET.prototype = {
     on: function(type, fn, context) {
 
         var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype;
+            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
+            Node = Y.Node, n;
 
         if (L.isObject(type, true)) {
 
@@ -1597,9 +1598,9 @@ ET.prototype = {
 
 
         // extra redirection so we catch adaptor events too.  take a look at this.
-        if (Y.Node && (this instanceof Y.Node) && (shorttype in Y.Node.DOM_EVENTS)) {
+        if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
             args = Y.Array(arguments, 0, true);
-            args.splice(2, 0, Y.Node.getDOMNode(this));
+            args.splice(2, 0, Node.getDOMNode(this));
             return Y.on.apply(Y, args);
         }
 
@@ -1608,9 +1609,13 @@ ET.prototype = {
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
-            args[0] = type;
+            args[0] = shorttype;
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
+                n = args[2];
+                if (Node && n && (n instanceof Node)) {
+                    args[2] = Node.getDOMNode(n);
+                }
                 handle = adapt.on.apply(Y, args);
             // check to see if the target is an Event.Target.  If so,
             // delegate to it (the Event.Target should handle whether
@@ -1620,7 +1625,7 @@ ET.prototype = {
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
             // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
-            } else if ((!type) || (!adapt && Y.Node && (shorttype in Y.Node.DOM_EVENTS))) {
+            } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
                 handle = Y.Event.attach.apply(Y.Event, args);
             }
 

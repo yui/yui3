@@ -53,26 +53,31 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 		39: true,
 		40: true
 	},
+	
+	clickableElements = {
+		"a": true,
+		"button": true,
+		"input": true,
+		"object": true
+	},	
 
 	//	Library shortcuts
 
 	Lang = Y.Lang,
- 	UA = Y.UA;
-	
+ 	UA = Y.UA,
 
+	/**
+	* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
+	* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
+	* and should not be instantiated directly.
+	* @namespace plugin
+	* @class NodeFocusManager
+	*/	
+	NodeFocusManager = function () {
 
-/**
-* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
-* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
-* and should not be instantiated directly.
-* @namespace plugin
-* @class NodeFocusManager
-*/	
-var NodeFocusManager = function () {
+		NodeFocusManager.superclass.constructor.apply(this, arguments);
 
-	NodeFocusManager.superclass.constructor.apply(this, arguments);
-
-};
+	};
 
 
 NodeFocusManager.ATTRS = {
@@ -364,6 +369,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 				//	Need to set the "tabIndex" attribute here, since the 
 				//	"activeDescendantChange" event handler used to manage
 				//	the setting of the "tabIndex" attribute isn't wired up yet.
+
 				oNode.set(TAB_INDEX, 0);
 
 			}
@@ -400,9 +406,13 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		var oFocusedNode = this._focusedNode,
 			focusClass = this.get(FOCUS_CLASS),
+			sClassName;
+
+		if (focusClass) {
 			sClassName = Lang.isString(focusClass) ? 
-				focusClass : focusClass.className;
-		
+				focusClass : focusClass.className;		
+		}
+
 		if (oFocusedNode && sClassName) {
 			oFocusedNode.removeClass(sClassName);
 		}
@@ -419,8 +429,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	_detachKeyHandler: function () {
 
 		var prevKeyHandler = this._prevKeyHandler,
-			nextKeyHandler = this._nextKeyHandler,
-			keyPressHandler = this._keyPressHandler;
+			nextKeyHandler = this._nextKeyHandler;
 
 		if (prevKeyHandler) {
 			prevKeyHandler.detach();
@@ -428,10 +437,6 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		
 		if (nextKeyHandler) {
 			nextKeyHandler.detach();
-		}
-
-		if (keyPressHandler) {
-			keyPressHandler.detach();
 		}
 		
 	},
@@ -451,6 +456,29 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		
 	},
 
+
+	/**
+	* @method _preventScroll
+	* @description Fires the click event if the enter key is pressed while 
+	* focused on an HTML element that is not natively clickable.
+	* @protected
+	*/
+	_fireClick: function (event) {
+		
+		var oTarget = event.target,
+			sNodeName = oTarget.get("nodeName").toLowerCase();
+
+		if (event.keyCode === 13 && (!clickableElements[sNodeName] || 
+				(sNodeName === "a" && !oTarget.getAttribute("href")))) {
+
+
+			oTarget.simulate("click");
+			
+		}
+		
+	},
+
+
 	/**
 	* @method _attachKeyHandler
 	* @description Attaches the "key" event handlers used to support the "keys"
@@ -462,12 +490,13 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		this._detachKeyHandler();
 
 		var sNextKey = this.get("keys.next"),
-			sPreviousKey = this.get("keys.previous"),
-			oNode = this.get(HOST);
+			sPrevKey = this.get("keys.previous"),
+			oNode = this.get(HOST),
+			aHandlers = this._eventHandlers;
 
-		if (sPreviousKey) {
+		if (sPrevKey) {
  			this._prevKeyHandler = 
-				Y.on(KEY, Y.bind(this._focusPrevious, this), oNode, sPreviousKey);
+				Y.on(KEY, Y.bind(this._focusPrevious, this), oNode, sPrevKey);
 		}
 
 		if (sNextKey) {
@@ -476,15 +505,24 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		}
 
 
-		//	For Opera and Firefox 2:  In these browsers it is necessary to 
-		//	call the "preventDefault" method on a "keypress" event in order 
-		//	to prevent the viewport from scrolling.
+		//	In Opera it is necessary to call the "preventDefault" method in  
+		//	response to the user pressing the arrow keys in order to prevent 
+		//	the viewport from scrolling when the user is moving focus among 
+		//	the focusable descendants.
 		
-		if (UA.opera || (UA.gecko && UA.gecko < 1.9)) {	
+		if (UA.opera) {	
+			aHandlers.push(oNode.on("keypress", this._preventScroll, this));
+		}
 
-			this._keyPressHandler = 
-				oNode.on("keypress", Y.bind(this._preventScroll, this));
 
+		//	For all browsers except Opera: HTML elements that are not natively
+		//	focusable but made focusable via the tabIndex attribute don't 
+		//	fire a click event when the user presses the enter key.  It is 
+		//	possible to work around this problem by simplying dispatching a 
+		//	click event in response to the user pressing the enter key.
+
+		if (!UA.opera) {
+			aHandlers.push(oNode.on("keypress", this._fireClick, this));
 		}
 
 	},
@@ -523,23 +561,22 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		var descendants = this._descendants,
 			aHandlers,
-			oDocument;
+			oDocument,
+			handle;
 
 		if (descendants && descendants.size() > 1) {
 
 			aHandlers = this._eventHandlers || [];
 			oDocument = this.get(HOST).get("ownerDocument");
 
-			//	For performance: defer attaching all event handlers until the 
-			//	first time one of the specified descendants receives focus
 
 			if (aHandlers.length === 0) {
 
-		    	aHandlers.push(
-					Y.on("focus", Y.bind(this._onDocFocus, this), 
-						Y.Node.getDOMNode(oDocument)));
 
-				aHandlers.push(oDocument.on("mousedown", this._onDocMouseDown, this));
+				aHandlers.push(oDocument.on("focus", this._onDocFocus, this));
+
+				aHandlers.push(oDocument.on("mousedown", 
+					this._onDocMouseDown, this));
 
 				aHandlers.push(
 						this.after("keysChange", this._attachKeyHandler));
@@ -550,13 +587,32 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 				aHandlers.push(
 						this.after(ACTIVE_DESCENDANT_CHANGE, 
 								this._afterActiveDescendantChange));
+
+
+				//	For performance: defer attaching all key-related event 
+				//	handlers until the first time one of the specified 
+				//	descendants receives focus.
+
+				handle = this.after("focusedChange", Y.bind(function (event) {
+					
+					if (event.newVal) {
+						
+						
+						this._attachKeyHandler();
+
+						//	Detach this "focusedChange" handler so that the 
+						//	key-related handlers only get attached once.
+
+						handle.detach();
+
+					}
+					
+				}, this));
+				
+				aHandlers.push(handle);
 				
 			}
-			else {
 
-				this._attachKeyHandler();
-			
-			}
 
 			this._eventHandlers = aHandlers;
 			
@@ -579,21 +635,20 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		var oHost = this.get(HOST),
 			oTarget = event.target,
 			bChildNode = oHost.contains(oTarget),
-			node;
-	
+			node,
 
-		var getFocusable = function (node) {
+			getFocusable = function (node) {
 
-			var returnVal = false;
+				var returnVal = false;
 
-			if (!node.compareTo(oHost)) {
-				returnVal = Lang.isNumber(node.get(TAB_INDEX)) ? node : 
-								getFocusable(node.get("parentNode"));
-			};
+				if (!node.compareTo(oHost)) {
+					returnVal = Lang.isNumber(node.get(TAB_INDEX)) ? node : 
+									getFocusable(node.get("parentNode"));
+				}
 		
-			return returnVal;
+				return returnVal;
 
-		};
+			};
 		
 
 		if (bChildNode) {
@@ -721,10 +776,6 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			
 		}
 
-
-		if (bFocused && this._eventHandlers.length === 5) {
-			this._attachEventHandlers();
-		}
 
 		this._set(FOCUSED, bFocused);			
 

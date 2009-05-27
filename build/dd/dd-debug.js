@@ -927,6 +927,7 @@ YUI.add('dd-drag', function(Y) {
         */
     
     Drag = function() {
+        this._lazyAttrInit = false;
         Drag.superclass.constructor.apply(this, arguments);
 
         DDM._regDrag(this);
@@ -1064,10 +1065,7 @@ YUI.add('dd-drag', function(Y) {
         target: {
             value: false,
             setter: function(config) {
-                Y.later(0, this, function(config) {
-                    this._handleTarget(config);
-                }, config);
-
+                this._handleTarget(config);
                 return config;
             }
         },
@@ -1187,8 +1185,9 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbles = this.get('bubbles');
+                    config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
                     config.node = this.get(NODE);
+                    config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
                 }
             } else {
@@ -1641,6 +1640,8 @@ YUI.add('dd-drag', function(Y) {
             }
             this._prep();
             this._dragThreshMet = false;
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));
         },
         /**
         * @private
@@ -2839,7 +2840,6 @@ YUI.add('dd-scroll', function(Y) {
      */
     var WS = function() {
         WS.superclass.constructor.apply(this, arguments);
-
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
         /**
@@ -2855,9 +2855,14 @@ YUI.add('dd-scroll', function(Y) {
                 }
                 return scroll;
             }
+        },
+    });
+    Y.extend(WS, S, {
+        //Shouldn't have to do this..
+        initializer: function() {
+            this.set('windowScroll', this.get('windowScroll'));
         }
     });
-    Y.extend(WS, S);
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -2885,7 +2890,7 @@ YUI.add('dd-scroll', function(Y) {
                 var n = Y.get(node);
                 if (!n) {
                     if (node !== false) {
-                        Y.error('DD.Drag: Invalid Node Given: ' + node);
+                        Y.error('DDNodeScroll: Invalid Node Given: ' + node);
                     }
                 } else {
                     n = n.item(0);
@@ -3184,6 +3189,8 @@ YUI.add('dd-drop', function(Y) {
                 node.set('id', id);
             }
             node.addClass(DDM.CSS_PREFIX + '-drop');
+            //Shouldn't have to do this..
+            this.set('groups', this.get('groups'));           
         },
         /**
         * @private

@@ -100,7 +100,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
 
     dd4 = new Y.DD.Drag({
         node: '#drag4'
-    }).plug(Y.plugin.DDNodeScroll, {
+    }).plug(Y.Plugin.DDNodeScroll, {
         node: '#drag4Cont',
         horizontal: false
     });
